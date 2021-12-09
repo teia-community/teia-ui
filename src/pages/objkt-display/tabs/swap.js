@@ -8,7 +8,7 @@ import { Button, Purchase } from '../../../components/button'
 
 export const Swap = ({ total_amount, owners, creator, royalties, token_info, address, restricted }) => {
   const { id } = useParams()
-  const { swapv2, acc, swap_hDAO, progress, setProgress, message, setMessage } = useContext(HicetnuncContext)
+  const { swapTeia, acc, swap_hDAO, progress, setProgress, message, setMessage } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState()
   const [price, setPrice] = useState()
   //const [progress, setProgress] = useState(false)
@@ -47,8 +47,8 @@ export const Swap = ({ total_amount, owners, creator, royalties, token_info, add
       console.log(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
 
       if (currency === 'tez') {
-      swapv2(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
-      //swap(parseFloat(amount), id, parseFloat(price) * 1000000)  
+        swapTeia(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
+        //swap(parseFloat(amount), id, parseFloat(price) * 1000000)  
           .then((e) => {
             // when taquito returns a success/fail message
             //setProgress(false)

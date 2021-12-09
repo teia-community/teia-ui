@@ -6,7 +6,7 @@ import { Loading } from '../../components/loading'
 import { renderMediaType } from '../../components/media-types'
 import { Identicon } from '../../components/identicons'
 import { walletPreview } from '../../utils/string'
-import { PATH } from '../../constants'
+import { PATH, MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
 import { VisuallyHidden } from '../../components/visually-hidden'
 import { GetUserMetadata } from '../../data/api'
 import { ResponsiveMasonry } from '../../components/responsive-masonry'
@@ -88,7 +88,7 @@ query creatorGallery($address: String!) {
       status
       amount_left
       creator_id
-      contract_version
+      contract_address
       creator {
         address
       }
@@ -124,7 +124,7 @@ query addressQuery($address: String!) {
 
 const query_v1_swaps = `
 query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {contract_version: {_eq: "1"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
+  hic_et_nunc_swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
     token {
       id
       title
@@ -141,14 +141,14 @@ query querySwaps($address: String!) {
     price
     id
     token_id
-    contract_version
+    contract_address
   }
 }
 `
 
-const query_v2_swaps = `
+const query_v2andTeia_swaps = `
 query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_version: {_eq: "2"}}, distinct_on: token_id) {
+  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : ["${MARKETPLACE_CONTRACT_V2}", "${MARKETPLACE_CONTRACT_TEIA}"] }}, distinct_on: token_id) {
     creator_id
     token {
       id
@@ -164,6 +164,7 @@ query querySwaps($address: String!) {
         address
       }
     }
+    contract_address
     amount_left
     price
     id
@@ -190,7 +191,7 @@ async function fetchV1Swaps(address) {
 
 async function fetchV2Swaps(address) {
 
-  const { errors, data } = await fetchGraphQL(query_v2_swaps, 'querySwaps', {
+  const { errors, data } = await fetchGraphQL(query_v2andTeia_swaps, 'querySwaps', {
     address: address
   })
   if (errors) {
@@ -468,8 +469,8 @@ export default class Display extends Component {
 
   filterCreationsForSalePrimary = async () => {
     let objkts = this.state.creations.filter(item => {
-      const swaps = item.swaps.filter(swaps => {
-        return swaps.status === 0 && swaps.contract_version === 2 && swaps.creator_id === this.state.wallet
+      const swaps = item.swaps.filter(swap => {
+        return swap.status === 0 && [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(swap.contract_address) && swap.creator_id === this.state.wallet
       })
       return swaps && swaps.length > 0
     });
@@ -623,7 +624,7 @@ export default class Display extends Component {
   }
 
   cancel_batch = async () => {
-    this.context.batch_cancel(this.state.marketV1.slice(0, 10))
+    this.context.batch_cancelv1(this.state.marketV1.slice(0, 10))
   }
 
   getDiscordTooltip() {
@@ -933,7 +934,7 @@ export default class Display extends Component {
                                     <strong>{e.amount_left}x OBJKT#{e.token_id} {e.price}µtez</strong>
                                   </Primary>
                                 </Button>
-                                <Button onClick={() => this.context.cancel(e.id)}>
+                                <Button onClick={() => this.context.cancel(e.contract_address, e.id)}>
                                   <Secondary>
                                     Cancel Swap
                                   </Secondary>
@@ -1065,7 +1066,7 @@ export default class Display extends Component {
                                     <strong>{e.amount_left}x OBJKT#{e.token_id} {e.price}µtez</strong>
                                   </Primary>
                                 </Button>
-                                <Button onClick={() => this.context.cancel(e.id)}>
+                                <Button onClick={() => this.context.cancel(e.contract_address, e.id)}>
                                   <Secondary>
                                     Cancel Swap
                                   </Secondary>

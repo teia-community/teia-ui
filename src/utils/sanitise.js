@@ -1,4 +1,4 @@
-import { MIMETYPE } from '../constants'
+import { MIMETYPE, MARKETPLACE_CONTRACT_V1 } from '../constants'
 
 /**
  * If a OBJKT is missing a relevant property, we filter it out.
@@ -71,7 +71,7 @@ export const getTotalSales = ({ owners, creators }) => {
   return Object.keys(owners).reduce((edition, ownerID) => {
     // not the platform or the creator
     if (
-      ownerID !== 'KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9' &&
+      ownerID !== MARKETPLACE_CONTRACT_V1 &&
       !creators.includes(ownerID)
     ) {
       // add the count of market owned editions

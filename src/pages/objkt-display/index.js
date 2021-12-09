@@ -69,7 +69,7 @@ swaps {
     address
     name
   }
-  contract_version
+  contract_address
   status
   royalties
   creator_id

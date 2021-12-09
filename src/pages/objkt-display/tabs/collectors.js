@@ -7,7 +7,7 @@ import { OwnerSwaps } from '../../../components/owner-swaps'
 const _ = require('lodash')
 
 export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban }) => {
-  const { syncTaquito, collect, acc, getAccount, cancel, cancelv1, reswapv2 } =
+  const { syncTaquito, collect, acc, getAccount, cancel, cancelv1, reswap } =
     useContext(HicetnuncContext)
 
   // sort swaps in ascending price order
@@ -19,12 +19,12 @@ export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban 
     s.token = { id: id, creator_id: creator.address }
   })
 
-  const handleCollect = (swap_id, price) => {
+  const handleCollect = (contract_address, swap_id, price) => {
     if (acc == null) {
       syncTaquito()
       getAccount()
     } else {
-      collect(swap_id, price)
+      collect(contract_address, swap_id, price)
     }
   }
 
@@ -44,7 +44,7 @@ export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban 
               cancelv1={cancelv1}
               restricted={restricted}
               ban={ban}
-              reswapv2={reswapv2}
+              reswap={reswap}
             />
           </Padding>
         </Container>

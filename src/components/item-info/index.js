@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { PATH } from '../../constants'
+import { PATH, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
 import { Button, Primary, Purchase, Secondary } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
@@ -12,6 +12,14 @@ import { CollaboratorType } from '../collab/constants'
 import classNames from 'classnames'
 
 const _ = require('lodash')
+
+function countEditionsForSale(token_holders) {
+  const quantities = token_holders
+    .filter((holder) => [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(holder.holder_id))
+    .map((holder) => holder.quantity)
+
+  return _.sum(quantities)
+}
 
 export const ItemInfo = ({
   id,
@@ -31,19 +39,12 @@ export const ItemInfo = ({
   const [showSignStatus, setShowSignStatus] = useState(false)
 
   if (isDetailView) {
-    // subtract burned pieces from total
-    let total = 0
+    // TODO: subtract burned pieces from total
+    const total = supply
+    const editionsForSale = countEditionsForSale(token_holders)
+    const ed = editionsForSale || 'X'
 
-    total = supply
-    let ed =
-      token_holders.filter(
-        (e) => e.holder_id === 'KT1HbQepzV1nVGg8QVznG7z4RcHseD5kwqBn'
-      ).length > 0
-        ? token_holders.filter(
-          (e) => e.holder_id === 'KT1HbQepzV1nVGg8QVznG7z4RcHseD5kwqBn'
-        )[0].quantity
-        : 'X'
-    swaps = swaps.filter(e => parseInt(e.contract_version) === 2 && parseInt(e.status) === 0 && e.is_valid)
+    swaps = swaps.filter(e => [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
     console.log(swaps)
     let s = _.minBy(swaps, (o) => Number(o.price))
 
@@ -62,7 +63,7 @@ export const ItemInfo = ({
       if (acc == null) {
         syncTaquito()
       } else {
-        collect(s.id, s.price * 1)
+        collect(s.contract_address, s.id, s.price * 1)
       }
     }
 

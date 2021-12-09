@@ -144,7 +144,7 @@ export class Friends extends Component {
         )}
         {!this.state.loading && (
           <>
-            {this.state.creations == 0 && (
+            {this.state.creations === 0 && (
               <Container>
                 <Padding>
                   <p style={{
