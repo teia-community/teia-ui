@@ -12,6 +12,7 @@ import { Config } from './pages/config'
 import { Search } from './pages/search'
 import { Tags } from './pages/tags'
 import { Friends } from './pages/friends'
+import { Terms } from './pages/terms'
 
 export const routes = [
   {
@@ -58,6 +59,11 @@ export const routes = [
     exact: false,
     path: '/about',
     component: About,
+  },
+  {
+    exact: false,
+    path: '/terms',
+    component: Terms,
   },
   {
     exact: false,
