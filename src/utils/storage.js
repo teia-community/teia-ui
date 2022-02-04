@@ -1,5 +1,11 @@
 export const getItem = (prop) => {
-  return JSON.parse(localStorage.getItem(prop))
+  let parsed
+  try {
+    parsed = JSON.parse(localStorage.getItem(prop))
+  } catch (e) {
+    parsed = null
+  }
+  return parsed
 }
 
 export const setItem = (prop, value) => {
