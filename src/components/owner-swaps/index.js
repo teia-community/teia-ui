@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Primary, Purchase } from '../button'
 import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
 import { walletPreview } from '../../utils/string'
@@ -19,7 +19,9 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
 
   console.log("SWAPS", proxyAdminAddress);
 
+
   const { acc, proxyAddress } = useContext(HicetnuncContext)
+  const [reswapPrices, setReswapPrices] = useState({});
 
   const v1Swaps = swaps.filter(e => e.contract_address === MARKETPLACE_CONTRACT_V1 && parseInt(e.status) === 0)
 
@@ -65,9 +67,10 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
       {v2andTeiaSwaps.map((swap, index) => {
 
         const showCancel = (swap.creator.address === acc?.address) || (proxyAdminAddress === acc?.address && swap.creator.address === proxyAddress)
+        const key = `${swap.contract_address}-${swap.id}`;
 
         return (
-          <div key={`${swap.id}-${index}`} className={styles.swap}>
+          <div key={key} className={styles.swap}>
             <div className={styles.issuer} style={{ position: 'relative' }}>
               {swap.amount_left} ed.&nbsp;
               {swap.creator.name ? (
@@ -96,8 +99,27 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
               {showCancel && (
                   <>
                     <div className={styles.break}></div>
-                    <input id="new_price" type="text" size="12" placeholder="New price"></input>
-                    <Button onClick={() => reswap(swap)}>
+                    <input
+                      value={reswapPrices[key] || ''}
+                      onChange={(ev) => {
+                        const { value } = ev.target;
+                        setReswapPrices((prevVal) => ({ ...prevVal, [key]: value }));
+                      }}
+                      type="number"
+                      placeholder="New price"
+                    />
+                    <Button onClick={() => {
+                      const priceTz = reswapPrices[key]
+
+                      if (!priceTz || priceTz <= 0) {
+                        // TODO: communicate the error to the user.
+                        return
+                      }
+
+                      // TODO: add a indicator (spinner or something) that shows that the reswap is in progress
+                      reswap(priceTz * 1000000, swap)
+                      // TODO: after the reswap was successful we should send some feedback to the user
+                    }}>
                       <Purchase>reswap</Purchase>
                     </Button>
 

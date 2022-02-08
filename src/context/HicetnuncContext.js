@@ -196,46 +196,41 @@ class HicetnuncContextProviderClass extends Component {
         return await batch.send()
       },
 
-      reswap: async (swap) => {
+      reswap: async (price, swap) => {
         // TODO: this function currently does not take collab contracts to account
-        let xtz_per_objkt = document.getElementById("new_price").value
-        if (typeof (xtz_per_objkt) == 'undefined' || !xtz_per_objkt) return;
-        if (parseFloat(xtz_per_objkt) == NaN) return;
-        if (parseFloat(xtz_per_objkt) <= 0.0) return;
-
         let objkt_id = swap.token.id
         let creator = swap.token.creator_id
         let from = swap.creator_id
-        let price = parseFloat(xtz_per_objkt) * 1000000
 
-        let objkts = await Tezos.wallet.at(this.state.objkts)
-        await Tezos.wallet.at(this.state.v2).then(c => console.log(c.parameterSchema.ExtractSignatures()))
-        let marketplace = await Tezos.wallet.at(swap.contract_address) // this can be either v1, v2 or teia
-        let marketplaceTeia = await Tezos.wallet.at(MARKETPLACE_CONTRACT_TEIA) // we want the reswap happen on teia
+        const [objktsContract, marketplaceContract, marketplaceTeiaContract] = await Promise.all([
+          Tezos.wallet.at(this.state.objkts),
+          Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
+          Tezos.wallet.at(MARKETPLACE_CONTRACT_TEIA) // we want the reswap happen on teia
+        ])
 
         let list = []
         // cancel current swap
         list.push({
           kind: OpKind.TRANSACTION,
-          ...marketplace.methods.cancel_swap(parseFloat(swap.id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 310 })
+          ...marketplaceContract.methods.cancel_swap(parseFloat(swap.id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 310 })
         })
         // swap with new price
         list.push(
           {
             kind: OpKind.TRANSACTION,
-            ...objkts.methods.update_operators([{ add_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
+            ...objktsContract.methods.update_operators([{ add_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
               .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
           }
         )
         list.push(
           {
             kind: OpKind.TRANSACTION,
-            ...marketplaceTeia.methods.swap(this.state.objkts, parseFloat(objkt_id), parseFloat(swap.amount_left), parseFloat(price), parseFloat(swap.royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+            ...marketplaceTeiaContract.methods.swap(this.state.objkts, parseFloat(objkt_id), parseFloat(swap.amount_left), parseFloat(price), parseFloat(swap.royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
           }
         )
         list.push({
           kind: OpKind.TRANSACTION,
-          ...objkts.methods.update_operators([{ remove_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
+          ...objktsContract.methods.update_operators([{ remove_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
             .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
         });
         console.log(list)
