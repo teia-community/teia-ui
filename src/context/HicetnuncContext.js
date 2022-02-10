@@ -21,6 +21,10 @@ const eztz = require('eztz-lib')
 // import { UnitValue } from '@taquito/michelson-encoder'
 // import { contentType } from 'mime-types';
 
+
+const SWAP_TYPE_TEIA = 'TEIA'
+const SWAP_TYPE_HEN = 'HEN'
+
 export const HicetnuncContext = createContext()
 
 // TODO: move this schema into separate place?
@@ -81,6 +85,47 @@ const wallet = new BeaconWallet({
 
 Tezos.setWalletProvider(wallet)
 
+function createSwapCalls(
+  objktsContract,
+  marketplaceContract,
+  objktsAddress,
+  marketplaceAddress,
+  objkt_id,
+  ownerAddress,
+  objkt_amount,
+  xtz_per_objkt,
+  royalties,
+  creator,
+  type = SWAP_TYPE_TEIA
+) {
+  return [
+    {
+      kind: OpKind.TRANSACTION,
+      ...objktsContract.methods.update_operators([{ add_operator: { operator: marketplaceAddress, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
+    },
+    type === SWAP_TYPE_TEIA ? (
+      // it's the teia marketplace contract
+      {
+        kind: OpKind.TRANSACTION,
+        ...marketplaceContract.methods.swap(objktsAddress, parseFloat(objkt_id), parseFloat(objkt_amount), parseFloat(xtz_per_objkt), parseFloat(royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
+      }
+      ) : (
+      // it's the hen v2 markeptlace contract
+      {
+        kind: OpKind.TRANSACTION,
+        ...marketplaceContract.methods.swap(creator, parseFloat(objkt_amount), parseFloat(objkt_id), parseFloat(royalties), parseFloat(xtz_per_objkt)).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
+      }
+    ),
+    {
+      kind: OpKind.TRANSACTION,
+      ...objktsContract.methods.update_operators([{ remove_operator: { operator: marketplaceAddress, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
+    },
+  ];
+}
+
+
 class HicetnuncContextProviderClass extends Component {
 
   constructor(props) {
@@ -109,87 +154,31 @@ class HicetnuncContextProviderClass extends Component {
       subjktInfo: {},
       setSubjktInfo: (subjkt) => this.setState({ subjktInfo: subjkt }),
 
-      // hdao marketplace
-
-      cancel_hdao: undefined,
-
-      // TODO: remove?
-      collect_hdao: async (from, swap_id, token_address, token_id) => {
-
-        let hDAO = await Tezos.wallet.at(this.state.hDAO)
-        let marketplace = await Tezos.wallet.at(this.state.hDAO_marketplace)
-
-        let list = [
-          {
-            kind: OpKind.TRANSACTION,
-            ...hDAO.methods.update_operators([{ add_operator: { operator: this.state.hDAO_marketplace, token_id: parseFloat(0), owner: from } }]).toTransferParams({ amount: 0, mutez: true, storageLimit: 150 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...marketplace.methods.collect(swap_id).toTransferParams({ amount: 0, mutez: true, storageLimit: 250 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...hDAO.methods.update_operators([{ remove_operator: { operator: this.state.hDAO_marketplace, token_id: parseFloat(0), owner: from } }]).toTransferParams({ amount: 0, mutez: true, storageLimit: 150 })
-          },
-        ]
-
-        let batch = await Tezos.wallet.batch(list);
-        return await batch.send()
-
-      },
-
-      // TODO: remove?
-      swap_hDAO: async (from, royalties, token_per_objkt, objkt_id, creator, objkt_amount) => {
-
-        let objkts = await Tezos.wallet.at(this.state.objkts)
-        let marketplace = await Tezos.wallet.at(this.state.hDAO_marketplace)
-
-        let list = [
-          {
-            kind: OpKind.TRANSACTION,
-            ...objkts.methods.update_operators([{ add_operator: { operator: this.state.hDAO_marketplace, token_id: parseFloat(objkt_id), owner: from } }]).toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...marketplace.methods.swap(this.state.hDAO_marketplace, creator, parseFloat(objkt_amount), parseFloat(objkt_id), parseFloat(royalties), parseFloat(0), parseFloat(token_per_objkt)).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...objkts.methods.update_operators([{ remove_operator: { operator: this.state.hDAO_marketplace, token_id: parseFloat(objkt_id), owner: from } }]).toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-          }
-        ]
-
-        let batch = await Tezos.wallet.batch(list);
-        return await batch.send()
-
-      },
-
-      swapTeia: async (from, royalties, xtz_per_objkt, objkt_id, creator, objkt_amount) => {
+      swap: async (from, royalties, xtz_per_objkt, objkt_id, creator, objkt_amount) => {
         // If using proxy: both calls are made through this.state.proxyAddress:
         const objktsAddress = this.state.proxyAddress || this.state.objkts;
         const marketplaceAddress = this.state.proxyAddress || MARKETPLACE_CONTRACT_TEIA;
         const ownerAddress = this.state.proxyAddress || from;
 
-        let objkts = await Tezos.wallet.at(objktsAddress)
-        let marketplace = await Tezos.wallet.at(marketplaceAddress)
+        const [
+          objktsContract,
+          marketplaceContract
+        ] = await Promise.all([Tezos.wallet.at(objktsAddress), Tezos.wallet.at(marketplaceAddress)]);
 
-        const list = [
-          {
-            kind: OpKind.TRANSACTION,
-            ...objkts.methods.update_operators([{ add_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
-              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...marketplace.methods.swap(objktsAddress, parseFloat(objkt_id), parseFloat(objkt_amount), parseFloat(xtz_per_objkt), parseFloat(royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
-          },
-          {
-            kind: OpKind.TRANSACTION,
-            ...objkts.methods.update_operators([{ remove_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
-              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-          },
-        ];
+        const list = createSwapCalls(
+          objktsContract,
+          marketplaceContract,
+          objktsAddress,
+          marketplaceAddress,
+          objkt_id,
+          ownerAddress,
+          objkt_amount,
+          xtz_per_objkt,
+          royalties,
+          creator,
+          // use v2 in case of a collab contract (until support is added)
+          this.state.proxyAddress ? SWAP_TYPE_HEN : SWAP_TYPE_TEIA
+        );
 
         let batch = await Tezos.wallet.batch(list);
 
@@ -202,37 +191,50 @@ class HicetnuncContextProviderClass extends Component {
         let creator = swap.token.creator_id
         let from = swap.creator_id
 
+        if (this.state.proxyAddress) {
+          this.state.setFeedback({
+            message: 'reswapping is not yet supported in collab mode',
+            progress: false,
+            confirm: false,
+            visible: true,
+            confirm: true,
+            confirmCallback: () => {
+              this.state.setFeedback({
+                visible: false,
+              })
+            }
+          })
+          return;
+        }
+
         const [objktsContract, marketplaceContract, marketplaceTeiaContract] = await Promise.all([
           Tezos.wallet.at(this.state.objkts),
           Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
           Tezos.wallet.at(MARKETPLACE_CONTRACT_TEIA) // we want the reswap happen on teia
         ])
 
-        let list = []
-        // cancel current swap
-        list.push({
-          kind: OpKind.TRANSACTION,
-          ...marketplaceContract.methods.cancel_swap(parseFloat(swap.id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 310 })
-        })
-        // swap with new price
-        list.push(
+        let list = [
+          // cancel current swap
           {
             kind: OpKind.TRANSACTION,
-            ...objktsContract.methods.update_operators([{ add_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
-              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-          }
-        )
-        list.push(
-          {
-            kind: OpKind.TRANSACTION,
-            ...marketplaceTeiaContract.methods.swap(this.state.objkts, parseFloat(objkt_id), parseFloat(swap.amount_left), parseFloat(price), parseFloat(swap.royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
-          }
-        )
-        list.push({
-          kind: OpKind.TRANSACTION,
-          ...objktsContract.methods.update_operators([{ remove_operator: { operator: MARKETPLACE_CONTRACT_TEIA, token_id: parseFloat(objkt_id), owner: from } }])
-            .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
-        });
+            ...marketplaceContract.methods.cancel_swap(parseFloat(swap.id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 310 })
+          },
+          // swap with new price
+          ...createSwapCalls(
+            objktsContract,
+            marketplaceTeiaContract,
+            this.state.objkts,
+            MARKETPLACE_CONTRACT_TEIA,
+            objkt_id,
+            from,
+            swap.amount_left,
+            price,
+            swap.royalties,
+            creator,
+            SWAP_TYPE_TEIA
+          )
+        ];
+
         console.log(list)
         let batch = await Tezos.wallet.batch(list);
         return await batch.send()

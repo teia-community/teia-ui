@@ -8,7 +8,7 @@ import { Button, Purchase } from '../../../components/button'
 
 export const Swap = ({ total_amount, owners, creator, royalties, token_info, address, restricted }) => {
   const { id } = useParams()
-  const { swapTeia, acc, swap_hDAO, progress, setProgress, message, setMessage } = useContext(HicetnuncContext)
+  const { swap, acc, progress, setProgress, message, setMessage } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState()
   const [price, setPrice] = useState()
   //const [progress, setProgress] = useState(false)
@@ -47,7 +47,7 @@ export const Swap = ({ total_amount, owners, creator, royalties, token_info, add
       console.log(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
 
       if (currency === 'tez') {
-        swapTeia(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
+        swap(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount))
         //swap(parseFloat(amount), id, parseFloat(price) * 1000000)  
           .then((e) => {
             // when taquito returns a success/fail message
@@ -56,20 +56,6 @@ export const Swap = ({ total_amount, owners, creator, royalties, token_info, add
             setMessage(e.description)
           })
           .catch((e) => {
-            setProgress(false)
-            setMessage('error')
-          })
-      }
-
-      if (currency === 'hDAO') {
-        swap_hDAO(acc.address, royalties, parseFloat(price) * 1000000, id, creator.address, parseFloat(amount)).then((e) => {
-          // when taquito returns a success/fail message
-          setProgress(false)
-          //setProgress(false)
-          setMessage(e.description)
-        })
-          .catch((e) => {
-            //setProgress(false)
             setProgress(false)
             setMessage('error')
           })
@@ -114,7 +100,6 @@ export const Swap = ({ total_amount, owners, creator, royalties, token_info, add
                   <div>
                     <select onChange={onChange} style={{ float: 'right', display: 'inline' }}>
                       <option value="tezos">tez</option>
-                      {/* <option value="hDAO">○ hDAO</option> */}
                     </select>
                   </div>
                 </div>

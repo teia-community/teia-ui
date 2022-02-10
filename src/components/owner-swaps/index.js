@@ -71,7 +71,7 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
 
         return (
           <div key={key} className={styles.swap}>
-            <div className={styles.issuer} style={{ position: 'relative' }}>
+            <div className={styles.issuer}>
               {swap.amount_left} ed.&nbsp;
               {swap.creator.name ? (
                 <Button to={`/tz/${swap.creator.address}`}>

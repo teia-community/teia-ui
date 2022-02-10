@@ -22,6 +22,10 @@
   position: relative;
   white-space: nowrap;
   border-radius: var(--borderWidth);
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .teiaLabel:after {
