@@ -23,6 +23,7 @@ import { fetchGraphQL, getCollabsForAddress, getNameForAddress } from '../../dat
 import collabStyles from '../../components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
+import { Link } from 'react-router-dom'
 
 const coverOptions = {
   quality: 0.85,
@@ -417,6 +418,7 @@ export const Mint = () => {
               </Button>
             </Padding>
           </Container>
+
         </>
       )}
 
@@ -462,6 +464,14 @@ export const Mint = () => {
           </Container>
         </>
       )}
+
+      <Container>
+        <Padding>
+          <Link to="/terms">
+            terms & conditions
+          </Link>
+        </Padding>
+      </Container>
       {/*       <BottomBanner>
       Collecting has been temporarily disabled. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
       </BottomBanner> */}
