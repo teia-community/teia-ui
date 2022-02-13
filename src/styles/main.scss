@@ -32,3 +32,13 @@ body {
   // font-family: 'OCR A Std', monospace;// README: crzypatchwork, this font doesn't look great.
   // font-family: 'Courier New', 'Courier', monospace;// README: oldfont
 }
+
+.markdown-doc {
+  p {
+    margin: 1em 0;
+  }
+  h1 {
+    font-size: 1.5em;
+    margin: 1.5em 0 0.5em;
+  }
+}

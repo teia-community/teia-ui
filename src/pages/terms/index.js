@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import { Page, Container, Padding } from '../../components/layout'
-import { Button, Primary } from '../../components/button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { BottomBanner } from '../../components/bottom-banner'
 import { getLanguage } from '../../constants'
-import styles from './styles.module.scss'
 
 import Markdown from 'markdown-to-jsx';
 
@@ -29,12 +26,10 @@ export class Terms extends Component {
 
   loadDocument() {
     const docLang = this.docLang
-    console.log(this.docLang)
     const document = `/languages/documents/terms-${docLang}.md`
     fetch(document)
       .then(response => response.text())
       .then(text => {
-        console.log(text)
         this.termsContent = text
         this.forceUpdate()
       })
@@ -56,7 +51,7 @@ export class Terms extends Component {
         <Container>
           <Padding>
             {this.termsContent && (
-              <Markdown options={{ forceBlock: true }}>{this.termsContent}</Markdown>
+              <Markdown options={{ forceBlock: true }} className="markdown-doc">{this.termsContent}</Markdown>
             )}
           </Padding>
         </Container>
