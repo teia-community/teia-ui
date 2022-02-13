@@ -156,10 +156,10 @@ export class Config extends Component {
   }
 
   toggle = () => this.setState({ toogled: !this.state.toogled })
-  /*     
+  /*
 
    signature studies
-   
+
    const bytes =
          '05' +
          char2Bytes(
@@ -175,8 +175,8 @@ export class Config extends Component {
          sourceAddress: this.context.addr,
        }
        console.log(payload)
-       this.context.sign(payload) 
-       
+       this.context.sign(payload)
+
   */
 
   sign = () => {
@@ -232,10 +232,8 @@ export class Config extends Component {
               <span>
                 link your Twitter, Discord, GitHub, and website with </span>
               <span>
-                <a href="https://tzprofiles.com">
-                  <Button>
-                    <a href='#' style={{ fontWeight: 'bold' }}>Tezos Profiles</a>
-                  </Button>
+                <a style={{ fontWeight: 'bold' }} target="_blank" href="https://tzprofiles.com">
+                   Tezos Profiles
                 </a>
               </span>
             </p>
