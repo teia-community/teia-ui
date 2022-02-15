@@ -38,7 +38,7 @@ query frensGallery($wallets: [String!], $lastId: bigint!) {
 
 const query_frens = `
 query collectorGallery($address: String!) {
-  hic_et_nunc_token_holder(where: {holder_id: {_eq: $address}, token: {creator_id: {_neq: $address}}}, order_by: {token_id: desc}) {
+  hic_et_nunc_token_holder(where: {holder_id: {_eq: $address}, quantity: {_gt:0}, token: {creator_id: {_neq: $address}}}, order_by: {token_id: desc}) {
     token {
       creator_id
     }
