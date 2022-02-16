@@ -1,6 +1,6 @@
-# hicetnunc UI
+# teia ui
 
-hicetnunc UI is intended to experiment with different smart contracts designs.
+teia ui is intended to experiment with different smart contracts designs.
 
 github deploy: https://main.d3cm9lcfrb8gaf.amplifyapp.com
 
