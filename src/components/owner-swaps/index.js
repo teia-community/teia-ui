@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Button, Primary, Purchase } from '../button'
-import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
+import { MARKETPLACE_CONTRACT_V1, SUPPORTED_MARKETPLACE_CONTRACTS, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
@@ -26,7 +26,7 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
   const v1Swaps = swaps.filter(e => e.contract_address === MARKETPLACE_CONTRACT_V1 && parseInt(e.status) === 0)
 
   const v2andTeiaSwaps = swaps
-    .filter(e => [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
+    .filter(e => SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
     .sort(sortByPrice)
 
   return (

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { PATH, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
+import { PATH, SUPPORTED_MARKETPLACE_CONTRACTS } from '../../constants'
 import { Button, Primary, Purchase, Secondary } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
@@ -15,7 +15,7 @@ const _ = require('lodash')
 
 function countEditionsForSale(token_holders) {
   const quantities = token_holders
-    .filter((holder) => [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(holder.holder_id))
+    .filter((holder) => SUPPORTED_MARKETPLACE_CONTRACTS.includes(holder.holder_id))
     .map((holder) => holder.quantity)
 
   return _.sum(quantities)
@@ -44,7 +44,7 @@ export const ItemInfo = ({
     const editionsForSale = countEditionsForSale(token_holders)
     const ed = editionsForSale || 'X'
 
-    swaps = swaps.filter(e => [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
+    swaps = swaps.filter(e => SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
     console.log(swaps)
     let s = _.minBy(swaps, (o) => Number(o.price))
 

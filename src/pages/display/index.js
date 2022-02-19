@@ -6,7 +6,7 @@ import { Loading } from '../../components/loading'
 import { renderMediaType } from '../../components/media-types'
 import { Identicon } from '../../components/identicons'
 import { walletPreview } from '../../utils/string'
-import { PATH, MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA } from '../../constants'
+import { PATH, MARKETPLACE_CONTRACT_V1, SUPPORTED_MARKETPLACE_CONTRACTS } from '../../constants'
 import { VisuallyHidden } from '../../components/visually-hidden'
 import { GetUserMetadata } from '../../data/api'
 import { ResponsiveMasonry } from '../../components/responsive-masonry'
@@ -148,7 +148,7 @@ query querySwaps($address: String!) {
 
 const query_v2andTeia_swaps = `
 query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : ["${MARKETPLACE_CONTRACT_V2}", "${MARKETPLACE_CONTRACT_TEIA}"] }}, distinct_on: token_id) {
+  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map((contractAddress) => `"${contractAddress}"`).join(', ')}] }}, distinct_on: token_id) {
     creator_id
     token {
       id
@@ -470,7 +470,7 @@ export default class Display extends Component {
   filterCreationsForSalePrimary = async () => {
     let objkts = this.state.creations.filter(item => {
       const swaps = item.swaps.filter(swap => {
-        return swap.status === 0 && [MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA].includes(swap.contract_address) && swap.creator_id === this.state.wallet
+        return swap.status === 0 && SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) && swap.creator_id === this.state.wallet
       })
       return swaps && swaps.length > 0
     });

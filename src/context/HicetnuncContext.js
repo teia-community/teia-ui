@@ -8,7 +8,7 @@ import {
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { packParticipantMap } from '../components/collab/functions';
 import { setItem } from '../utils/storage'
-import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MARKETPLACE_CONTRACT_TEIA, getLogoList } from '../constants'
+import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MAIN_MARKETPLACE_CONTRACT, MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE, SWAP_TYPE_TEIA, SWAP_TYPE_HEN,  getLogoList } from '../constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
@@ -21,9 +21,6 @@ const eztz = require('eztz-lib')
 // import { UnitValue } from '@taquito/michelson-encoder'
 // import { contentType } from 'mime-types';
 
-
-const SWAP_TYPE_TEIA = 'TEIA'
-const SWAP_TYPE_HEN = 'HEN'
 
 export const HicetnuncContext = createContext()
 
@@ -96,7 +93,7 @@ function createSwapCalls(
   xtz_per_objkt,
   royalties,
   creator,
-  type = SWAP_TYPE_TEIA
+  type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
 ) {
   return [
     {
@@ -157,7 +154,7 @@ class HicetnuncContextProviderClass extends Component {
       swap: async (from, royalties, xtz_per_objkt, objkt_id, creator, objkt_amount) => {
         // If using proxy: both calls are made through this.state.proxyAddress:
         const objktsAddress = this.state.proxyAddress || this.state.objkts;
-        const marketplaceAddress = this.state.proxyAddress || MARKETPLACE_CONTRACT_TEIA;
+        const marketplaceAddress = this.state.proxyAddress || MAIN_MARKETPLACE_CONTRACT;
         const ownerAddress = this.state.proxyAddress || from;
 
         const [
@@ -177,7 +174,7 @@ class HicetnuncContextProviderClass extends Component {
           royalties,
           creator,
           // use v2 in case of a collab contract (until support is added)
-          this.state.proxyAddress ? SWAP_TYPE_HEN : SWAP_TYPE_TEIA
+          this.state.proxyAddress ? SWAP_TYPE_HEN : MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
         );
 
         let batch = await Tezos.wallet.batch(list);
@@ -207,10 +204,10 @@ class HicetnuncContextProviderClass extends Component {
           return;
         }
 
-        const [objktsContract, marketplaceContract, marketplaceTeiaContract] = await Promise.all([
+        const [objktsContract, marketplaceContract, mainMarketplaceContract] = await Promise.all([
           Tezos.wallet.at(this.state.objkts),
           Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
-          Tezos.wallet.at(MARKETPLACE_CONTRACT_TEIA) // we want the reswap happen on teia
+          Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT)
         ])
 
         let list = [
@@ -222,16 +219,16 @@ class HicetnuncContextProviderClass extends Component {
           // swap with new price
           ...createSwapCalls(
             objktsContract,
-            marketplaceTeiaContract,
+            mainMarketplaceContract,
             this.state.objkts,
-            MARKETPLACE_CONTRACT_TEIA,
+            MAIN_MARKETPLACE_CONTRACT,
             objkt_id,
             from,
             swap.amount_left,
             price,
             swap.royalties,
             creator,
-            SWAP_TYPE_TEIA
+            MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
           )
         ];
 
