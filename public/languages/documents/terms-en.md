@@ -115,7 +115,9 @@ As artists and collectors of art, we want to acknowledge and protect intellectua
 # 3. **Terms and Conditions - Account restrictions**
 
 ## **About Copyminting**
-They operate on the following Terms and work voluntarily to keep TEIA free of copymints and keep collectors and artists happy. Please understand their role and that processes like this do generate mistakes. The team investigates when alerted through the #copymints channel in the TEIA Discord. Please respect their work, and help them by being courteous and accurate with the information that will help your inquiry.
+Copyminting is the act of taking another's work and minting it as your own. We come down heavily on any account that does this. It results in an instant restriction. Several processes are in place to detect copyminting and other behaviors against the CoC. A copymint team also oversees the processes and acts as moderators over accounts in question.
+
+They operate on the following Terms and work voluntarily to keep TEIA free of copymints and keep collectors and artists happy. Please understand their role and that processes like this do generate mistakes. The team investigates when alerted through the #report-copyminters channel of the [original "hicetnunc" Discord server](https://discord.gg/4CR2X7mh)). Please respect their work, and help them by being courteous and accurate with the information that will help your inquiry.
 
 ## **Restricted accounts**
 Accounts that TEIA restricts are labeled “restricted account,” and OBJKTs that a restricted account has minted are labeled “restricted OBJKT” in the marketplace.
