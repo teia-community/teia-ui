@@ -71,7 +71,7 @@ export class About extends Component {
           <Padding>
             <div className={styles.buttons}>
               <p>WIKI is available on</p>&nbsp;
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki">
+              <Button href="https://github.com/teia-community/teia-ui/wiki">
                 <Primary>
                   <strong>github</strong>
                 </Primary>
@@ -81,7 +81,7 @@ export class About extends Component {
         </Container>
         <Container>
           <Padding>
-            <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Tools-made-by-the-community">
+            <Button href="https://github.com/teia-community/teia-ui/wiki/Tools-made-by-the-community">
               <Primary>
                 <strong>Community tools</strong>
               </Primary>
@@ -100,7 +100,7 @@ export class About extends Component {
           <Padding>
             <div className={styles.buttons}>
               <p>Report</p>&nbsp;
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/issues">
+              <Button href="https://github.com/teia-community/teia-ui/issues">
                 <Primary>
                   <strong>issues</strong>
                 </Primary>

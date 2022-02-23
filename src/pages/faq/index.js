@@ -23,28 +23,28 @@ export class FAQ extends Component {
         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/Getting-Started-with-Tezos">
                 <Primary>
                   <strong>how do I get tezos/make a wallet?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Introduction">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/Introduction">
                 <Primary>
                   <strong>how do I mint?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/Edit-your-profile">
                 <Primary>
                   <strong>how do I edit my profile?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/How-to-swap-%F0%9F%94%83">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/How-to-swap-%F0%9F%94%83">
                 <Primary>
                   <strong>how do I add/change the price of my OBJKT?</strong>
                 </Primary>
@@ -58,39 +58,39 @@ export class FAQ extends Component {
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/How-to-resell-%F0%9F%8F%AA">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/How-to-resell-%F0%9F%8F%AA">
                 <Primary>
                   <strong>how do I resell an OBJKT?</strong>
                 </Primary>
               </Button>
             </div>
-            <div className={styles.buttons}>
+            {/* <div className={styles.buttons}>
               <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/hDAO">
                 <Primary>
                   <strong>what is hDAO ○?</strong>
                 </Primary>
               </Button>
-            </div>
+            </div> */}
           </Padding>
         </Container>
         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/General">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/General">
                 <Primary>
                   <strong>general faq</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Troubleshooting">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/Troubleshooting">
                 <Primary>
                   <strong>troubleshooting</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/Tools-made-by-the-community">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/Tools-made-by-the-community">
                 <Primary>
                   <strong>useful tools</strong>
                 </Primary>
