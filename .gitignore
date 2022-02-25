@@ -46,3 +46,5 @@ templates/html-image-scale/.parcel-cache
 
 # contributor specific (local) folders
 .next
+
+.dev
