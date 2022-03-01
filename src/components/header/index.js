@@ -7,6 +7,7 @@ import { Footer } from '../footer'
 // import { VoteBanner } from '../vote-banner'
 import { Container, Padding } from '../layout'
 import { Button, Primary } from '../button'
+import { Status } from '../status'
 import { fadeIn } from '../../utils/motion'
 import { Menu } from '../icons'
 import { walletPreview } from '../../utils/string'
@@ -92,7 +93,7 @@ export const Header = () => {
             <Button onClick={handleSyncUnsync} secondary>
               <Primary>{button}</Primary> {/* Main address display here */}
             </Button>
-
+            <Status/>
             <Button onClick={context.toogleNavbar} secondary>
               <VisuallyHidden>
                 {`${context.collapsed ? 'show' : 'hide'} menu`}

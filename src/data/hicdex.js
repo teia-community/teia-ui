@@ -1,3 +1,13 @@
+export const getDipdupState = `query {
+  hic_et_nunc_dipdup_state {
+    hash
+    index_hash
+    index_name
+    index_type
+    level
+  }
+}`
+
 export const getUserMetaQuery = `query UserMeta($address: String = "") {
   hic_et_nunc_holder(where: { address: { _eq: $address } }) {
       name
@@ -73,7 +83,7 @@ export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: Str
       }
     }
   }
-  
+
   hic_et_nunc_splitcontract(where: {contract: {name: {_eq: $subjkt}}}) {
     administrator
     shareholder {
@@ -194,12 +204,6 @@ export async function fetchGraphQL(operationsDoc, operationName, variables) {
       })
     }
   );
-
-  console.log(JSON.stringify({
-    query: operationsDoc,
-    variables: variables,
-    operationName: operationName
-  }))
 
   return await result.json()
 }

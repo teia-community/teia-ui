@@ -1,0 +1,33 @@
+@import '../../styles/variables.scss';
+
+.status {
+  padding-left: 0.5em;
+  cursor: default;
+  text-decoration: none;
+}
+
+span[data-tooltip].status {
+
+
+  &:before,
+  &:after {
+    transform: translate(-80%, -10px);
+  }
+
+  &:hover:after,
+  &:hover:before {
+    transform: translate(-80%, 0px);
+
+    @media (max-width: 768px) {
+      white-space: pre-wrap;
+      width: 70vw;
+      }
+
+  }
+}
+
+span[data-tooltip][data-position='bottom']:before {
+  top: 100%;
+  left: 50%;
+  margin-top: 9px;
+}
