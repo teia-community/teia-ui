@@ -23,42 +23,42 @@ export class FAQ extends Component {
         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/Getting-Started-with-Tezos">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Getting-Started-with-Tezos">
                 <Primary>
                   <strong>how do I get tezos/make a wallet?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/Introduction">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-mint-%F0%9F%8C%BF">
                 <Primary>
                   <strong>how do I mint?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/Edit-your-profile">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Edit-your-profile">
                 <Primary>
                   <strong>how do I edit my profile?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/How-to-swap-%F0%9F%94%83">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83">
                 <Primary>
                   <strong>how do I add/change the price of my OBJKT?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/How-to-burn-%F0%9F%94%A5">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-burn-%F0%9F%94%A5">
                 <Primary>
                   <strong>how do I burn my OBJKT?</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/How-to-resell-%F0%9F%8F%AA">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-resell-%F0%9F%8F%AA">
                 <Primary>
                   <strong>how do I resell an OBJKT?</strong>
                 </Primary>
@@ -76,21 +76,21 @@ export class FAQ extends Component {
         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/General">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/General">
                 <Primary>
                   <strong>general faq</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/Troubleshooting">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Troubleshooting">
                 <Primary>
                   <strong>troubleshooting</strong>
                 </Primary>
               </Button>
             </div>
             <div className={styles.buttons}>
-              <Button href="https://github.com/teia-community/teia-ui/wiki/Tools-made-by-the-community">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community">
                 <Primary>
                   <strong>useful tools</strong>
                 </Primary>
