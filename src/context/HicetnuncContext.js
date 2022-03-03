@@ -8,7 +8,7 @@ import {
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { packParticipantMap } from '../components/collab/functions';
 import { setItem } from '../utils/storage'
-import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MAIN_MARKETPLACE_CONTRACT, MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE, SWAP_TYPE_TEIA, SWAP_TYPE_HEN,  getLogoList } from '../constants'
+import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MAIN_MARKETPLACE_CONTRACT, MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE, SWAP_TYPE_TEIA, SWAP_TYPE_HEN, BURN_ADDRESS, getLogoList } from '../constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
@@ -560,7 +560,7 @@ class HicetnuncContextProviderClass extends Component {
                   from_: addressFrom,
                   txs: [
                     {
-                      to_: 'tz1burnburnburnburnburnburnburjAYjjX',
+                      to_: BURN_ADDRESS,
                       token_id: parseInt(objkt_id),
                       amount: parseInt(amount),
                     },
