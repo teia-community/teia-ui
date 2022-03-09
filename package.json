@@ -47,7 +47,8 @@
     "build": "export REACT_APP_BUILD_COMMIT=$(git rev-parse HEAD) && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prettier": "prettier --write \"./src/**/*.{js,jsx}\""
+    "prettier": "prettier --write \"./src/**/*.{js,jsx}\"",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -65,7 +66,8 @@
     ]
   },
   "devDependencies": {
-    "prettier": "^2.3.0"
+    "prettier": "^2.3.0",
+    "husky": "^7.0.0"
   },
   "module": "commonjs"
 }
