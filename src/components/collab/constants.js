@@ -29,6 +29,10 @@ export const ossProjects = [
     name: 'H=N Tezos Fountain',
     address: 'tz1eggoxCes1qYRGLc3E1bg4uzuCUUuuQBb9',
   },
+  {
+    name: 'Ukraine Relief Smart Contract',
+    address: 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx',
+  },
 ]
 
 export const collaboratorTemplate = {
