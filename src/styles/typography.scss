@@ -1,2 +1,12 @@
 //@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai&display=swap'); 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap');
+
+@font-face {
+    font-family: 'iosevka-extended';
+    font-display: swap;
+    font-weight: 400;
+    font-stretch: expanded;
+    font-style: normal;
+    src:  url('fonts/iosevka-extended.woff2') format('woff2'), 
+        url('fonts/iosevka-extended.ttf') format('truetype');
+}

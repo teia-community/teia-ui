@@ -31,7 +31,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
     rootMargin: '0px 0px 50% 0px',
   })
   const shown = useRef(false)
-  const nfs = 'not for sale'
+  const nfs = 'Not for sale'
 
   useEffect(() => {
     GetOBJKTStubbornly({ id: objkt })

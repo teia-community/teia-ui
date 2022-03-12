@@ -19,14 +19,14 @@
     "more": "Load More"
   },
   "mint": {
-    "title": "title",
-    "description": "description",
-    "tags": "tags (separated by commas)",
-    "amount": "number of OBJKT's to mint",
+    "title": "Title",
+    "description": "Description",
+    "tags": "Tags (separated by commas)",
+    "amount": "Number of OBJKT's to mint",
     "upload": "Upload OBJKT",
-    "supports": "supports",
-    "preview": "preview",
-    "mint": "mint",
+    "supports": "Supports",
+    "preview": "Preview",
+    "mint": "Mint",
     "warning": "this operation costs 0.08~ tez. 10% royalties are set by default"
   },
   "manage": {

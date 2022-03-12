@@ -91,7 +91,7 @@ export const OwnerSwaps = ({ swaps, handleCollect, cancel, proxyAdminAddress, re
                   {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (<TeiaLabel />) : null}
                 <Button onClick={() => handleCollect(swap.contract_address, swap.id, swap.price)}>
                   <Purchase>
-                    collect for {parseFloat(swap.price / 1000000)} tez
+                    Collect for {parseFloat(swap.price / 1000000)} tez
                   </Purchase>
                 </Button>
                 </>

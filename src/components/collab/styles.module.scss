@@ -1,6 +1,12 @@
 @import '../../styles/layout.scss';
 @import '../../styles/variables.scss';
 
+.container{
+  display: flex;
+  flex-direction: column;
+  margin: 0 1em;
+}
+
 .input {
   background: none;
   letter-spacing: 0.015em;

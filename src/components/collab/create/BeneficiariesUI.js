@@ -94,7 +94,7 @@ export const BeneficiariesUI = ({
 
     return (
         <Fragment>
-            <h2 className={headingClass}><strong>beneficiaries</strong></h2>
+            <h2 className={headingClass}><strong>Beneficiaries</strong></h2>
 
             {beneficiaries.length === 0 && (
                 <p className={notesClass}>Do you want to include anyone that wasn’t a collaborator, eg. the team who made the collab contract ;)</p>
@@ -103,7 +103,7 @@ export const BeneficiariesUI = ({
             {beneficiaries.length === 0 && (
                 <button className={styles.btn} onClick={addBeneficiary}>
                     <Secondary>
-                        add address manually
+                        Add address manually
                     </Secondary>
                 </button>
             )}
@@ -130,7 +130,7 @@ export const BeneficiariesUI = ({
                         <tfoot>
                             <tr>
                                 <td>
-                                    <button className={styles.btn} onClick={() => addBeneficiary()} disabled={disableAddButton}>add another beneficiary</button>
+                                    <button className={styles.btn} onClick={() => addBeneficiary()} disabled={disableAddButton}>Add another beneficiary</button>
                                 </td>
                             </tr>
                         </tfoot>

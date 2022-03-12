@@ -4,7 +4,6 @@ import { useHistory } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
-// import { VoteBanner } from '../vote-banner'
 import { Container, Padding } from '../layout'
 import { Button, Primary } from '../button'
 import { Status } from '../status'
@@ -14,7 +13,6 @@ import { walletPreview } from '../../utils/string'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
-
 /* import { BeaconWallet } from '@taquito/beacon-wallet'
 
 const wallet = new BeaconWallet({
@@ -25,7 +23,6 @@ const wallet = new BeaconWallet({
 export const Header = () => {
   const history = useHistory()
   const context = useContext(HicetnuncContext)
-
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
@@ -33,7 +30,7 @@ export const Header = () => {
   }, [])
 
   // we assume user isn't connected
-  let button = 'sync'
+  let button = 'Sync'
 
   // but if they are
   if (context.acc?.address) {
@@ -43,7 +40,7 @@ export const Header = () => {
       button = walletPreview(context.acc.address) + proxyAddress
     } else {
       // menu is open
-      button = 'unsync'
+      button = 'Unsync'
     }
   }
 
@@ -67,7 +64,6 @@ export const Header = () => {
 
   return (
     <>
-      {/* <VoteBanner /> */}
       <header className={styles.container}>
         <div className={styles.content}>
           <Button onClick={() => handleRoute('/')}>
@@ -85,7 +81,7 @@ export const Header = () => {
             {!context.collapsed && context.proxyAddress && (
               <div className={styles.mr}>
                 <Button onClick={() => context.setProxyAddress(null)} secondary>
-                  <Primary>exit collab</Primary>
+                  <Primary>Exit collab</Primary>
                 </Button>
               </div>
             )}
@@ -110,59 +106,66 @@ export const Header = () => {
             <Container>
               <Padding>
                 <nav className={styles.content}>
-                  <ul>
+                  <ul style={{ borderRight: '1px solid var(--border-color)' }}>
                     <li>
-                      <Button onClick={() => handleRoute('/explore')}>
-                        <Primary>explore</Primary>
+                      <Button onClick={() => handleRoute('/search')}>
+                        <Primary>Search</Primary>
                       </Button>
                     </li>
                     <li>
-                      <Button onClick={() => handleRoute('/galleries')}>
-                        <Primary>galleries</Primary>
-                      </Button>
-                    </li>
-                    <li>
-                      <Button onClick={() => handleRoute('/mint')}>
-                        <Primary>
-                          OBJKT<span style={{ fontSize: '16px' }}> (mint)</span>
-                        </Primary>
+                      <Button>
+                        <Primary><a className={styles.link} href='/galleries'>Galleries</a></Primary>
                       </Button>
                     </li>
                     <li>
                       <Button onClick={() => handleRoute('/collaborate')}>
-                        <Primary>collaborate</Primary>
+                        <Primary>Collaborate</Primary>
                       </Button>
                     </li>
-                    <li>
-                      <Button onClick={() => handleRoute('/sync', 'tz')}>
-                        <Primary>manage assets</Primary>
-                      </Button>
-                    </li>
-                    <li>
-                      <Button onClick={() => handleRoute('/sync', 'friends')}>
-                        <Primary>friends</Primary>
-                      </Button>
-                    </li>
-                    {context.acc?.address ?
-                      <li>
-                        <Button onClick={() => handleRoute('/config')}>
-                          <Primary>edit profile</Primary>
-                        </Button>
-                      </li>
-                      :
-                      null
-                    }
                     <li>
                       <Button onClick={() => handleRoute('/about')}>
-                        <Primary>about</Primary>
+                        <Primary>About</Primary>
                       </Button>
                     </li>
                     <li>
-                      <Button onClick={() => handleRoute('/faq')}>
-                        <Primary>faq</Primary>
+                      <Button className={styles.link} onClick={() => handleRoute('/faq')}>
+                        <Primary>F.A.Q</Primary>
                       </Button>
                     </li>
                   </ul>
+                  {context.acc?.address ?
+                    <ul>
+                      <div className={styles.address}>
+                        {walletPreview(context.acc.address)}
+                      </div>
+                      <li style={{ textAlign: 'left' }}>
+                        <Button onClick={() => handleRoute('/mint')}>
+                          <Primary left>
+                            Mint OBJKT
+                          </Primary>
+                        </Button>
+                      </li>
+                      <li style={{ textAlign: 'left' }}>
+                        <Button onClick={() => handleRoute('/sync', 'tz')}>
+                          <Primary left>Manage assets</Primary>
+                        </Button>
+                      </li>
+                      <li style={{ textAlign: 'left' }}>
+                        <Button onClick={() => handleRoute('/sync', 'friends')}>
+                          <Primary>Friends</Primary>
+                        </Button>
+                      </li>
+                      <li style={{ textAlign: 'left' }}>
+                        <Button onClick={() => handleRoute('/config')}>
+                          <Primary left>Profile</Primary>
+                        </Button>
+                      </li>
+                    </ul>
+                     :
+                     <ul>
+                        <div className={styles.no__address__text}>The present decentralized application allows its users to manage decentralized digital assets, serving as a public smart contract infrastructure on Tezos Blockchain.</div>
+                     </ul>
+                    }
                 </nav>
               </Padding>
             </Container>

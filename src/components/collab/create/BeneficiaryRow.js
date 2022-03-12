@@ -23,7 +23,7 @@ export const BeneficiaryRow = ({
 
     useEffect(() => {
         const { address, shares } = beneficiary
-        
+
         if (!meta && address) {
             GetUserMetadata(address)
             .then(({ data }) => setMeta(data))
@@ -69,8 +69,8 @@ export const BeneficiaryRow = ({
     // otherwise just show "address" and the KT or tz hint if not populated
 
     const beneficiaryName = meta ? meta.alias : null
-    const placeholderText = beneficiaryName || `address ${!address ? `(tz... or KT...)` : ''}`
-    
+    const placeholderText = beneficiaryName || `Address ${!address ? `(tz... or KT...)` : ''}`
+
     /**
      * In some situations we may want to show less UI information
      * eg. when adding beneficiarys, you don't need the whole
@@ -90,7 +90,7 @@ export const BeneficiaryRow = ({
                             rows={1}
                             value={address || ''}
                             className={styles.textInput}
-                            placeholder="address (tz... or KT...)"
+                            placeholder="Address (tz... or KT...)"
                             autoFocus={!address || address === ''}
                             onChange={event => _update('address', event.target.value)}
                         />
@@ -104,8 +104,8 @@ export const BeneficiaryRow = ({
                     <label>
                         <input
                             type="number"
-                            label="shares"
-                            placeholder="shares"
+                            label="Shares"
+                            placeholder="Shares"
                             value={shares || ''}
                             onKeyDown={_onKeyDown}
                             autoFocus={Boolean(address)}

@@ -85,8 +85,7 @@ export const CollaboratorRow = ({ collaborator, onUpdate, onAdd, onRemove, onPas
     }
 
     const collaboratorName = meta ? meta.alias : null
-    const placeholderText = collaboratorName || `address ${!address ? `(tz... or KT...)` : ''}`
-
+    const placeholderText = collaboratorName || `Address ${!address ? `(tz... or KT...)` : ''}`
     /**
      * In some situations we may want to show less UI information
      * eg. when adding benefactors, you don't need the whole
@@ -98,7 +97,7 @@ export const CollaboratorRow = ({ collaborator, onUpdate, onAdd, onRemove, onPas
                 {collaboratorName && <p>{collaboratorName}</p>}
                 <span>{address}</span>
             </td>
-            <td className={styles.cellWithPadding}>{collaborator.shares} shares</td>
+            <td className={styles.cellWithPadding}>{collaborator.shares} Shares</td>
         </tr>
     ) : (
         <tr className={styles.row}>
@@ -130,7 +129,7 @@ export const CollaboratorRow = ({ collaborator, onUpdate, onAdd, onRemove, onPas
                             label="shares"
                             value={shares || ''}
                         />
-                        <p>shares</p>
+                        <p>Shares</p>
                     </label>
                 </div>
             </td>

@@ -24,12 +24,12 @@ export const ProjectList = ({ beneficiaries, onSelect }) => {
         <div className={showList ? styles.projectList : null}>
             <button className={btnClass} onClick={() => setShowList(!showList)}>
                 <Secondary>
-                    {showList ? 'close' : 'choose from popular projects'}
+                    {showList ? 'Close' : 'Choose from popular projects'}
                 </Secondary>
             </button>
 
             {showList && (
-                <ul className={styles.list}> 
+                <ul className={styles.list}>
                     {unselectedProjects.map(project => {
                         const { name, address } = project
 

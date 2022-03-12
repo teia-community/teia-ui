@@ -1,15 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { PATH, SUPPORTED_MARKETPLACE_CONTRACTS } from '../../constants'
-import { Button, Primary, Purchase, Secondary } from '../button'
+import { Button, Primary, Purchase } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import collabStyles from '../collab/styles.module.scss'
-import { SigningUI } from '../collab/sign/SigningUI'
-import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
-import { CollaboratorType } from '../collab/constants'
-import classNames from 'classnames'
 
 const _ = require('lodash')
 
@@ -36,8 +32,6 @@ export const ItemInfo = ({
   const { syncTaquito, collect, curate, acc } =
     useContext(HicetnuncContext)
 
-  const [showSignStatus, setShowSignStatus] = useState(false)
-
   if (isDetailView) {
     // TODO: subtract burned pieces from total
     const total = supply
@@ -53,10 +47,10 @@ export const ItemInfo = ({
     try {
       message =
         swaps[0] !== undefined
-          ? 'collect for ' + Number(s.price) / 1000000 + ' tez'
-          : 'not for sale'
+          ? 'Collect for ' + Number(s.price) / 1000000 + ' tez'
+          : 'Not for sale'
     } catch (e) {
-      message = 'not for sale'
+      message = 'Not for sale'
     }
 
     const handleCollect = () => {
@@ -69,18 +63,6 @@ export const ItemInfo = ({
 
     // Check collab status
     const isCollab = creator.is_split
-    const verifiedSymbol = isCollab && is_signed ? '✓ ' : '⚠️'
-    const verifiedStatus = isCollab && is_signed ? 'VERIFIED' : 'UNVERIFIED'
-    const isCoreParticipant = isCollab ? creator.shares[0].shareholder.find(h => h.holder_id === acc?.address) : false
-
-    // Show the signing UI if required
-    const userHasSigned = token_signatures.find(sig => sig.holder_id === acc?.address)
-    const coreParticipants = isCollab ? creator.shares[0].shareholder.filter(h => h.holder_type === CollaboratorType.CORE_PARTICIPANT) : null
-
-    const signStatusStyles = classNames(
-      collabStyles.flexBetween,
-      collabStyles.alignStart
-    )
 
     return (
       <>
@@ -126,55 +108,6 @@ export const ItemInfo = ({
               <Button to={`${PATH.OBJKT}/${id}`} disabled={isDetailView}>
                 <Primary>OBJKT#{id}</Primary>
               </Button>
-            </div>
-          )}
-        </div>
-
-        {/* SHOW SIGNING UI IF COLLABORATOR */}
-        {isDetailView && isCollab && isCoreParticipant && !userHasSigned && (
-          <div className={styles.container} style={{ paddingTop: 0 }}>
-            <SigningUI id={id} hasSigned={false} />
-          </div>
-        )}
-
-        {isDetailView && !restricted && (
-          <div className={styles.spread}>
-            <div>
-              <p style={{ paddingBottom: '7.5px' }}>OBJKT#{id}</p>
-              {isCollab && (
-                <div className={collabStyles.relative}>
-                  <span>{verifiedSymbol}</span>
-                  <Button onClick={() => setShowSignStatus(!showSignStatus)}>
-                    <Primary>
-                      <strong>{verifiedStatus}</strong>
-                    </Primary>
-                  </Button>
-                  {showSignStatus && (
-                    <div className={collabStyles.collabInfo}>
-                      <div className={signStatusStyles}>
-                        <SigningSummary
-                          coreParticipants={coreParticipants}
-                          signatures={token_signatures}
-                        />
-                        <Button onClick={() => setShowSignStatus(false)}>
-                          <Secondary>
-                            close
-                          </Secondary>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-            <Button onClick={() => handleCollect()}>
-              <Purchase>{message}</Purchase>
-            </Button>
-          </div>
-        )}
-        <div className={styles.spread}>
-          <Button onClick={() => curate(id)}>
-            <Primary>
               <span
                 className={styles.top}
                 data-position={'top'}
@@ -182,9 +115,18 @@ export const ItemInfo = ({
               >
                 〇
               </span>
-            </Primary>
-          </Button>
+            </div>
+          )}
         </div>
+
+        {isDetailView && !restricted && (
+          <div className={`${styles.spread} ${styles.objkt__label__container}`}>
+            <p className={styles.objkt__label}>OBJKT#{id}</p>
+            <Button onClick={() => handleCollect()} full>
+              <Purchase>{message}</Purchase>
+            </Button>
+          </div>
+        )}
       </>
     )
   } else {

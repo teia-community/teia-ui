@@ -41,7 +41,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
         setLoadingCollabs(true)
         console.log("Now checking for available collabs")
 
-        // On boot, see what addresses the synced address can manage 
+        // On boot, see what addresses the synced address can manage
         fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
             address: acc.address,
         }).then(({ data }) => {
@@ -55,7 +55,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
 
                 // Show admin followed by participant
                 const availableCollabs = showAdminOnly ? allCollabs.filter(c => c.administrator === acc.address) : [...adminCollabs, ...participantCollabs]
-                
+
                 setCollabs(availableCollabs)
             }
         })
@@ -75,8 +75,8 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
 
                 {originatedContract && (
                     <div className={styles.mb3}>
-                        <p><strong>collaborative contract created successfully!</strong></p>
-                        <p>address: {originatedContract.address}</p>
+                        <p><strong>Collaborative contract created successfully!</strong></p>
+                        <p>Address: {originatedContract.address}</p>
                     </div>
                 )}
 

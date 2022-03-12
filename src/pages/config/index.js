@@ -230,7 +230,7 @@ export class Config extends Component {
           <div style={{ display: 'inline' }}>
             <p style={{paddingTop : '7.5px' }}>
               <span>
-                link your Twitter, Discord, GitHub, and website with </span>
+                Link your Twitter, Discord, GitHub, and website with </span>
               <span>
                 <a style={{ fontWeight: 'bold' }} target="_blank" href="https://tzprofiles.com">
                    Tezos Profiles
@@ -244,7 +244,7 @@ export class Config extends Component {
           <Padding>
             <div onClick={this.toggle}>
               <Primary>
-                + advanced
+                + Advanced
               </Primary>
             </div>
           </Padding>

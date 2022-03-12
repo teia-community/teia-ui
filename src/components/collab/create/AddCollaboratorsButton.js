@@ -9,7 +9,7 @@ export const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }
     return (
         <div className={styles.mt3}>
             <Button onClick={onClick} disabled={validCollaborators.length < threshold} className={styles.btnSecondary}>
-                <Purchase>{ validCollaborators.length === 0 ? 'skip' : 'next' }</Purchase>
+                <Purchase>{ validCollaborators.length === 0 ? 'Skip' : 'Next' }</Purchase>
             </Button>
         </div>
     )

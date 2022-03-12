@@ -9,8 +9,8 @@ import { CollabContractsOverview } from './tabs/manage'
 import { useParams } from 'react-router'
 
 const TABS = [
-    { title: 'manage', component: CollabContractsOverview },
-    { title: 'create', component: CreateCollaboration },
+    { title: 'Manage', component: CollabContractsOverview },
+    { title: 'Create', component: CreateCollaboration },
 ]
 
 const Collaborate = () => {

@@ -119,7 +119,7 @@ export const Mint = () => {
       // warning for sync
       setFeedback({
         visible: true,
-        message: 'sync your wallet',
+        message: 'Sync your wallet',
         progress: true,
         confirm: false,
       })
@@ -178,7 +178,7 @@ export const Mint = () => {
 
       setFeedback({
         visible: true,
-        message: 'preparing OBJKT',
+        message: 'Preparing OBJKT',
         progress: true,
         confirm: false,
       })
@@ -374,7 +374,7 @@ export const Mint = () => {
   const flexBetween = classNames(collabStyles.flex, collabStyles.flexBetween)
 
   return (
-    <Page title="mint" large>
+    <Page title="Mint" large>
       {step === 0 && (
         <>
 
@@ -385,7 +385,7 @@ export const Mint = () => {
                 <div className={flexBetween}>
                   <p><span style={{ opacity: 0.5 }}>minting as</span> {mintName}</p>
                   <Button onClick={() => setSelectCollab(!selectCollab)}>
-                    <Purchase>{selectCollab ? 'cancel' : 'change'}</Purchase>
+                    <Purchase>{selectCollab ? 'Cancel' : 'Change'}</Purchase>
                   </Button>
                 </div>
               </Padding>
@@ -401,8 +401,8 @@ export const Mint = () => {
               <Input
                 type="text"
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="title"
-                label="title"
+                placeholder="Title"
+                label="Title"
                 value={title}
               />
 
@@ -410,16 +410,16 @@ export const Mint = () => {
                 type="text"
                 style={{ whiteSpace: 'pre' }}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="description (max 5000 characters)"
-                label="description"
+                placeholder="Description (max 5000 characters)"
+                label="Description"
                 value={description}
               />
 
               <Input
                 type="text"
                 onChange={(e) => setTags(e.target.value)}
-                placeholder="tags (comma separated. example: illustration, digital)"
-                label="tags"
+                placeholder="Tags (comma separated. example: illustration, digital)"
+                label="Tags"
                 value={tags}
               />
 
@@ -432,8 +432,8 @@ export const Mint = () => {
                   limitNumericField(e.target, 1, MAX_EDITIONS)
                   setAmount(e.target.value)
                 }}
-                placeholder={`editions (no. editions, 1-${MAX_EDITIONS})`}
-                label="editions"
+                placeholder={`Editions (no. editions, 1-${MAX_EDITIONS})`}
+                label="Editions"
                 value={amount}
               />
 
@@ -446,8 +446,8 @@ export const Mint = () => {
                   limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
                   setRoyalties(e.target.value)
                 }}
-                placeholder={`royalties after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
-                label="royalties"
+                placeholder={`Royalties after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
+                label="Royalties"
                 value={royalties}
               />
             </Padding>
@@ -494,7 +494,7 @@ export const Mint = () => {
               <div style={{ display: 'flex' }}>
                 <Button onClick={() => setStep(0)} fit>
                   <Primary>
-                    <strong>back</strong>
+                    <strong>Back</strong>
                   </Primary>
                 </Button>
               </div>
@@ -516,7 +516,7 @@ export const Mint = () => {
           <Container>
             <Padding>
               <Button onClick={handleMint} fit>
-                <Purchase>mint OBJKT</Purchase>
+                <Purchase>Mint OBJKT</Purchase>
               </Button>
             </Padding>
           </Container>
@@ -533,7 +533,7 @@ export const Mint = () => {
       <Container>
         <Padding>
           <Link to="/terms">
-            terms & conditions
+            Terms & Conditions
           </Link>
         </Padding>
       </Container>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Page, Container, Padding } from '../../components/layout'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
+
 import { Input } from '../../components/input'
 import { FeedItem } from '../../components/feed-item'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -120,7 +121,28 @@ async function fetchInteractive(offset) {
     return undefined
   }
 }
-
+async function fetchVideo(offset) {
+  const { data } = await fetchGraphQL(`
+  query Videos {
+    hic_et_nunc_token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+      id
+      artifact_uri
+      display_uri
+      mime
+      creator_id
+      creator {
+        address
+        name
+      }
+    }
+  }
+  `, 'Videos', {})
+  try {
+    return data.hic_et_nunc_token
+  } catch (e) {
+    return undefined
+  }
+}
 async function fetchGifs(offset) {
   const { data } = await fetchGraphQL(`
     query Gifs ($offset: Int = 0) {
@@ -179,15 +201,13 @@ async function fetchRandomObjkts() {
     uniqueIds.add(rnd(firstId, lastId))
   }
 
-  const { errors } = await fetchObjkts(Array.from(uniqueIds));
-
-  let objkts = await fetchObjkts(Array.from(uniqueIds));
+  const { errors, data } = await fetchObjkts(Array.from(uniqueIds));
 
   if (errors) {
     console.error(errors);
   }
 
-  return objkts.hic_et_nunc_token
+  return data.hic_et_nunc_token
 }
 
 async function fetchDay(day, offset) {
@@ -227,7 +247,7 @@ async function fetchDay(day, offset) {
 async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(`
   query sales {
-    hic_et_nunc_trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "500000"}}}) {
+    hic_et_nunc_trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
       swap {
         price
@@ -379,6 +399,7 @@ export class Search extends Component {
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
       { id: 3, value: 'music' },
+      { id: 12, value: 'video' },
       { id: 4, value: 'html/svg' }, // algorithimc?
       { id: 5, value: 'gif' },
       { id: 6, value: 'new OBJKTs' },
@@ -465,7 +486,7 @@ export class Search extends Component {
       list = list.map(e => e.token)
       list = [...this.state.feed, ...(list)]
       list = _.uniqBy(list, 'id')
-      console.log('ath', list)
+
       this.setState({
         feed: list
       })
@@ -480,8 +501,6 @@ export class Search extends Component {
     }
 
     if (e === '○ hDAO') {
-      //let res = await fetchHdao(this.state.offset)
-      //res = res.filter(e => !arr.includes(e.creator_id))
       this.setState({ feed: _.uniqBy(_.uniqBy([...this.state.feed, ...(await fetchHdao(this.state.offset))], 'id'), 'creator_id'), hdao: true })
     }
 
@@ -490,12 +509,11 @@ export class Search extends Component {
     }
 
     if (e === 'video') {
+      this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchVideo(this.state.offset))], 'creator_id') })
 
     }
 
     if (e === 'glb') {
-      //let res = await fetchGLB(this.state.offset)
-      //res = res.filter(e => !arr.includes(e.creator_id))
       this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchGLB(this.state.offset))], 'creator_id') })
     }
 
@@ -512,8 +530,6 @@ export class Search extends Component {
     }
 
     if (e === 'gif') {
-      //let res = await fetchGifs(this.state.offset)
-      //res = res.filter(e => !arr.includes(e.creator_id))
       this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchGifs(this.state.offset))], 'creator_id') })
     }
 
@@ -600,8 +616,8 @@ export class Search extends Component {
                   type="text"
                   name="search"
                   onChange={this.handleChange}
-                  label="search ↵"
-                  placeholder="search ↵"
+                  label="Search ↵"
+                  placeholder="Search ↵"
                   onKeyPress={this.handleKey}
                 />
             {

@@ -55,18 +55,18 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
         <Container>
             <Padding>
                 <h1 className={styles.mb1}>
-                    <strong>review &amp; create</strong>
+                    <strong>Review &amp; Create</strong>
                 </h1>
 
                 <p className={styles.descriptive}>You have a total of {totalShares} shares divided between {cNum + bNum} addresses. Percentages may not total 100% due to rounding.</p>
 
-                <h2 className={styles.mt3}>collaborators</h2>
+                <h2 className={styles.mt3}>Collaborators</h2>
                 {collaborators.length > 0 && (
                     <table className={styles.reviewTable}>
                         <thead>
                             <tr>
-                                <th>address</th>
-                                <th>shares</th>
+                                <th>Address</th>
+                                <th>Shares</th>
                                 <th style={{ textAlign: 'right' }}>%</th>
                             </tr>
                         </thead>
@@ -95,12 +95,12 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
 
                 {beneficiaries.length > 0 && (
                     <Fragment>
-                        <h2 className={styles.mt3}>beneficiaries</h2>
+                        <h2 className={styles.mt3}>Beneficiaries</h2>
                         <table className={styles.reviewTable}>
                             <thead>
                                 <tr>
-                                    <th>address</th>
-                                    <th>shares</th>
+                                    <th>Address</th>
+                                    <th>Shares</th>
                                     <th style={{ textAlign: 'right' }}>%</th>
                                 </tr>
                             </thead>
@@ -126,12 +126,12 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
 
                 <div className={styles.mt3}>
                     <Button onClick={() => originateContract()}>
-                        <Curate>create collaborative contract</Curate>
+                        <Curate>Create collaborative contract</Curate>
                     </Button>
                 </div>
 
                 <button className={styles.btn} onClick={onEdit}>
-                    &lt; go back
+                    &lt; Go back
                 </button>
 
             </Padding>

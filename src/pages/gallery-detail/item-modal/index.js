@@ -18,10 +18,10 @@ export const ItemModal = ({ info }) => {
     prices.sort((a, b) => a - b)
     message =
       prices[0] !== undefined
-        ? 'collect for ' + Number(prices[0]) / 1000000 + ' tez'
-        : 'not for sale'
+        ? 'Collect for ' + Number(prices[0]) / 1000000 + ' tez'
+        : 'Not for sale'
   } catch (e) {
-    message = 'not for sale'
+    message = 'Not for sale'
   }
 
   useEffect(() => {

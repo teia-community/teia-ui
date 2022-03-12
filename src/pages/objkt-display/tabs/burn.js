@@ -4,10 +4,10 @@ import { Container, Padding } from '../../../components/layout'
 import { Button, Purchase } from '../../../components/button'
 import { Input } from '../../../components/input'
 import { Loading } from '../../../components/loading'
+import styles from '../styles.module.scss'
 
 export const Burn = (props) => {
   console.log("BURN", props)
-  
   const { token_holders, id } = props
   const { burn, acc, proxyAddress, message, setMessage, setProgress, progress } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState('')
@@ -42,7 +42,7 @@ export const Burn = (props) => {
     )
     if (r) {
       setProgress(true)
-      setMessage('burning OBJKT')
+      setMessage('Burning OBJKT')
       burn(id, amount)
     }
   }
@@ -53,56 +53,64 @@ export const Burn = (props) => {
         <div>
           <Container>
             <Padding>
-              <p>
-                You own {totalOwned} editions of OBJKT#{props.id}. How many would
-                you like to burn?
-              </p>
+              <div className={styles.container}>
+                <p>
+                  You own {totalOwned} editions of OBJKT#{props.id}. How many would
+                  you like to burn?
+                </p>
+              </div>
             </Padding>
           </Container>
           <Container>
             <Padding>
-              <Input
-                type="number"
-                placeholder="OBJKTs to burn"
-                min={1}
-                max={totalOwned}
-                onChange={(e) => setAmount(e.target.value)}
-                disabled={progress}
-              />
-            </Padding>
-          </Container>
-
-          <Container>
-            <Padding>
-              <p style={{ fontSize: '14px' }}>
-                Burning will transfer the OBJKTs from your possession to a burn
-                address. Once in the burn address, the OBJKT can't be recovered or
-                sold. You can only burn tokens that you own. If you have them
-                swapped, you first need to cancel that swap before you try to burn
-                them.
-              </p>
-              <br />
-              <p>
-                <strong>NB: This action is not reversable.</strong>
-              </p>
+              <div className={styles.container}>
+                <Input
+                  type="number"
+                  placeholder="OBJKTs to burn"
+                  min={1}
+                  max={totalOwned}
+                  onChange={(e) => setAmount(e.target.value)}
+                  disabled={progress}
+                />
+              </div>
             </Padding>
           </Container>
 
           <Container>
             <Padding>
-              <Button onClick={handleSubmit} fit>
-                <Purchase>burn</Purchase>
-              </Button>
+              <div className={styles.container}>
+                <p style={{ fontSize: '14px' }}>
+                  Burning will transfer the OBJKTs from your possession to a burn
+                  address. Once in the burn address, the OBJKT can't be recovered or
+                  sold. You can only burn tokens that you own. If you have them
+                  swapped, you first need to cancel that swap before you try to burn
+                  them.
+                </p>
+                <br />
+                <p>
+                  <strong>NB: This action is not reversable.</strong>
+                </p>
+              </div>
+            </Padding>
+          </Container>
+
+          <Container>
+            <Padding>
+              <div className={styles.container}>
+                <Button onClick={handleSubmit} fit>
+                  <Purchase>Burn</Purchase>
+                </Button>
+              </div>
             </Padding>
           </Container>
         </div>
         :
         <div>
-          <p tyle={{
-          position: 'absolute',
-          left: '46%',
-          top: '35%',
-      }}> {message}</p>
+          <p style={{
+            position: 'absolute',
+            left: '50%',
+            top: '35%',
+          }}> {message}</p>
           {progress && <Loading />}
         </div>
       }

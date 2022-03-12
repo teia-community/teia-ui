@@ -64,15 +64,9 @@ export class FAQ extends Component {
                 </Primary>
               </Button>
             </div>
-            {/* <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/hDAO">
-                <Primary>
-                  <strong>what is hDAO ○?</strong>
-                </Primary>
-              </Button>
-            </div> */}
           </Padding>
         </Container>
+
         <Container>
           <Padding>
             <div className={styles.buttons}>
@@ -98,10 +92,11 @@ export class FAQ extends Component {
             </div>
           </Padding>
         </Container>
+
         {/*         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <Button href="https://github.com/hicetnunc2000/hicetnunc/wiki/pt:Home">
+              <Button href="https://github.com/teia-community/teia-ui/wiki/pt:Home">
                 <Primary>
                   <strong>português</strong>
                 </Primary>

@@ -100,7 +100,7 @@ export const CreateCollaboration = () => {
         <Container>
             <Padding>
                 <h1 className={showCollaboratorsTable ? styles.mb1 : styles.mb2}>
-                    <strong>core collaborators</strong>
+                    <strong>Core collaborators</strong>
                 </h1>
 
                 {showCollaboratorsTable && (

@@ -93,12 +93,15 @@ export const Transfer = ({ id, creator, token_holders }) => {
         <Container>
             {tokenCount === 0 ? (
                 <Padding>
+                    <div className={styles.container}>
                     <p>You do not have any editions available to transfer.</p>
+                    </div>
                 </Padding>
             ) : (
                 <Padding>
-                    <p>Add addresses below along with how many tokens you wish to send to each.</p>
-                    <p>You currently have {tokenCount} editions available.</p>
+                    <div className={styles.container}>
+                        <p>Add addresses below along with how many tokens you wish to send to each.</p>
+                        <p>You currently have {tokenCount} editions available.</p>
 
                     <table className={tableStyle}>
                         <thead>
@@ -130,6 +133,7 @@ export const Transfer = ({ id, creator, token_holders }) => {
                     <Button onClick={onClick} disabled={validTxs.length === 0} className={styles.btnSecondary}>
                         <Purchase>send</Purchase>
                     </Button>
+                    </div>
                 </Padding>
             )}
 

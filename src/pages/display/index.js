@@ -667,7 +667,7 @@ export default class Display extends Component {
                   this.state.claim.length === 0 ?
                     <p>{this.state.hdao} ○</p>
                     :
-                    <a onClick={() => this.context.batch_claim(this.state.claim)} /* eslint-disable-line */> 
+                    <a onClick={() => this.context.batch_claim(this.state.claim)} /* eslint-disable-line */>
                       <Primary>{this.state.hdao + parseInt(this.state.claim.map(e => e.hdao_balance).reduce((a, b) => a + b, 0) / 1000000)} ○</Primary>
                     </a>
                 }
@@ -799,17 +799,17 @@ export default class Display extends Component {
               <div className={styles.menu}>
                 <Button onClick={this.creations}>
                   <Primary selected={this.state.creationsState}>
-                    creations
+                    Creations
                   </Primary>
                 </Button>
                 <Button onClick={this.collectionFull}>
                   <Primary selected={this.state.collectionState}>
-                    collection
+                    Collection
                   </Primary>
                 </Button>
                 <Button onClick={this.collabs}>
                   <Primary selected={this.state.collabsState}>
-                    collabs
+                    Collabs
                   </Primary>
                 </Button>
                 <div className={styles.filter}>
@@ -841,7 +841,7 @@ export default class Display extends Component {
             <Container>
               <Padding>
                 <div style={{ color: 'white', background: 'black', textAlign: 'center' }}>
-                  restricted account
+                  Restricted account
                 </div>
               </Padding>
             </Container>
@@ -857,7 +857,7 @@ export default class Display extends Component {
                     <Button
                       onClick={() => { this.creations() }}>
                       <div className={styles.tag}>
-                        all
+                        All
                       </div>
                     </Button>
                     <Button
@@ -865,7 +865,7 @@ export default class Display extends Component {
                         this.creationsForSale(0);
                       }}>
                       <div className={styles.tag}>
-                        primary
+                        Primary
                       </div>
                     </Button>
                     <Button
@@ -873,13 +873,13 @@ export default class Display extends Component {
                         this.creationsForSale(1);
                       }}>
                       <div className={styles.tag}>
-                        secondary
+                        Secondary
                       </div>
                     </Button>
                     <Button
                       onClick={() => { this.creationsNotForSale() }}>
                       <div className={styles.tag}>
-                        not for sale
+                        Not for sale
                       </div>
                     </Button>
                   </div>
@@ -999,17 +999,17 @@ export default class Display extends Component {
                       <Button
                         onClick={() => { this.collectionFull() }}>
                         <div className={styles.tag}>
-                          all
+                          All
                         </div>
                       </Button>
                       <Button onClick={() => { this.collectionForSale() }}>
                         <div className={styles.tag}>
-                          for sale
+                          For sale
                         </div>
                       </Button>
                       <Button onClick={() => { this.collectionNotForSale() }}>
                         <div className={styles.tag}>
-                          not for sale
+                          Not for sale
                         </div>
                       </Button>
                     </div>
