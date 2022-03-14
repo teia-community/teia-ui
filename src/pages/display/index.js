@@ -712,11 +712,8 @@ export default class Display extends Component {
                 {this.state.claim.length === 0 ? (
                   <p>{this.state.hdao} ○</p>
                 ) : (
-                  <a
-                    onClick={() =>
-                      this.context.batch_claim(this.state.claim)
-                    } /* eslint-disable-line */
-                  >
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                  <a onClick={() => this.context.batch_claim(this.state.claim)}>
                     <Primary>
                       {this.state.hdao +
                         parseInt(

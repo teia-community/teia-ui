@@ -728,11 +728,11 @@ export class Search extends Component {
             {
               <div style={{ marginTop: '15px' }}>
                 {this.state.tags.map((e) => (
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   <a
                     className="tag"
                     href="#"
                     onClick={() => {
-                      // eslint-disable-line jsx-a11y/anchor-is-valid
                       this.update(e.value, true)
                     }}
                   >

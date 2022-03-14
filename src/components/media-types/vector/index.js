@@ -64,8 +64,9 @@ export const VectorComponent = ({
           sandbox="allow-scripts"
           scrolling="no"
           onLoad={
+            // eslint-disable-next-line no-script-url
             'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-          } // eslint-disable-line no-script-url
+          }
         />
       </div>
     )
