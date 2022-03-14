@@ -95,8 +95,8 @@ export const Container = ({
     >
       <div ref={domElement} className={classes}>
         {interactive && !iOS && !nofullscreen && (
-          <div onClick={toggleFullScreen} className={styles.icon + " svg-icon"}>
-             {context.fullscreen ? (
+          <div onClick={toggleFullScreen} className={styles.icon + ' svg-icon'}>
+            {context.fullscreen ? (
               <svg viewBox="0 0 14 14">
                 <g
                   fill="none"

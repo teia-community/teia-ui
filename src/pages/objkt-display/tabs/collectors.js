@@ -6,7 +6,14 @@ import { OwnerSwaps } from '../../../components/owner-swaps'
 
 const _ = require('lodash')
 
-export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban }) => {
+export const Collectors = ({
+  id,
+  creator,
+  swaps,
+  token_holders,
+  restricted,
+  ban,
+}) => {
   const { syncTaquito, collect, acc, getAccount, cancel, cancelv1, reswap } =
     useContext(HicetnuncContext)
 
@@ -15,7 +22,7 @@ export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban 
   swaps = _.orderBy(swaps, 'price', 'asc')
 
   // for reswap, we need to have minimal token info
-  swaps.forEach(s => {
+  swaps.forEach((s) => {
     s.token = { id: id, creator_id: creator.address }
   })
 
@@ -28,7 +35,9 @@ export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban 
     }
   }
 
-  const proxyAdminAddress = creator.is_split ? creator.shares[0].administrator : null
+  const proxyAdminAddress = creator.is_split
+    ? creator.shares[0].administrator
+    : null
 
   return (
     <>
@@ -53,11 +62,7 @@ export const Collectors = ({ id, creator, swaps, token_holders, restricted, ban 
       {/* {filtered.length === 0 ? undefined : ( */}
       <Container>
         <Padding>
-          <OwnerList
-            owners={token_holders}
-            acc={acc}
-            swaps={swaps}
-          />
+          <OwnerList owners={token_holders} acc={acc} swaps={swaps} />
         </Padding>
       </Container>
       {/* )} */}

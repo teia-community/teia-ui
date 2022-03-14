@@ -22,7 +22,7 @@ export const HTMLComponent = (props) => {
     objkt,
     onDetailView,
     preview,
-    displayView
+    displayView,
   } = props
   const context = useContext(HicetnuncContext)
 
@@ -133,7 +133,7 @@ export const HTMLComponent = (props) => {
           <div className={styles.button}>
             <Button>
               <VisuallyHidden>View</VisuallyHidden>
-{/*               <svg
+              {/*               <svg
                 width="30"
                 height="30"
                 viewBox="0 0 30 30"
@@ -166,23 +166,21 @@ export const HTMLComponent = (props) => {
 
   if (!displayView) {
     try {
-    return (
-      <div>
-        <iframe
-          className={styles.html + ' zip-embed'}
-          title="html-embed"
-          src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox="allow-scripts allow-same-origin"
-          allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
-
-        />
-      </div>
-    )
+      return (
+        <div>
+          <iframe
+            className={styles.html + ' zip-embed'}
+            title="html-embed"
+            src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
+            sandbox="allow-scripts allow-same-origin"
+            allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+          />
+        </div>
+      )
     } catch (err) {
       return undefined
     }
   } else {
-
     return (
       <div>
         <iframe

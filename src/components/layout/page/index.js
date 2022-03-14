@@ -12,11 +12,7 @@ export const Page = ({ title = '', children = null, large }) => {
   return (
     <main className={classes}>
       <Helmet>
-        {title !== '' ? (
-          <title>{title} - teia</title>
-        ) : (
-          <title>teia</title>
-        )}
+        {title !== '' ? <title>{title} - teia</title> : <title>teia</title>}
       </Helmet>
       <VisuallyHidden as="h1">{title}</VisuallyHidden>
       {children}

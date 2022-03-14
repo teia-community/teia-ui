@@ -19,7 +19,7 @@ export const FeedItem = (props) => {
             displayUri: props.display_uri,
             creator: props.creator_id,
             objkt: String(props.id),
-            displayView: true
+            displayView: true,
           })}
         </div>
       </Button>

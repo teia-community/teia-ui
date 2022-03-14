@@ -11,7 +11,9 @@ const _ = require('lodash')
 
 function countEditionsForSale(token_holders) {
   const quantities = token_holders
-    .filter((holder) => SUPPORTED_MARKETPLACE_CONTRACTS.includes(holder.holder_id))
+    .filter((holder) =>
+      SUPPORTED_MARKETPLACE_CONTRACTS.includes(holder.holder_id)
+    )
     .map((holder) => holder.quantity)
 
   return _.sum(quantities)
@@ -27,10 +29,9 @@ export const ItemInfo = ({
   token_holders,
   supply,
   isDetailView,
-  restricted
+  restricted,
 }) => {
-  const { syncTaquito, collect, curate, acc } =
-    useContext(HicetnuncContext)
+  const { syncTaquito, collect, curate, acc } = useContext(HicetnuncContext)
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
@@ -38,7 +39,12 @@ export const ItemInfo = ({
     const editionsForSale = countEditionsForSale(token_holders)
     const ed = editionsForSale || 'X'
 
-    swaps = swaps.filter(e => SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) && parseInt(e.status) === 0 && e.is_valid)
+    swaps = swaps.filter(
+      (e) =>
+        SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) &&
+        parseInt(e.status) === 0 &&
+        e.is_valid
+    )
     console.log(swaps)
     let s = _.minBy(swaps, (o) => Number(o.price))
 
@@ -69,13 +75,9 @@ export const ItemInfo = ({
         <div style={{ height: '30px' }}></div>
         <div className={styles.container}>
           <div className={styles.edition}>
-
             <div className={collabStyles.relative}>
               <div className={styles.inline}>
-
-                {isCollab && (
-                  <CollabIssuerInfo creator={creator} />
-                )}
+                {isCollab && <CollabIssuerInfo creator={creator} />}
 
                 {!isCollab && (
                   <Button to={`${PATH.ISSUER}/${creator.address}`}>
@@ -134,11 +136,7 @@ export const ItemInfo = ({
       <div className={styles.container}>
         <div className={styles.edition}>
           <div className={styles.inline}>
-            <Button
-              to={
-                `/tz/${creator?.address}`
-              }
-            >
+            <Button to={`/tz/${creator?.address}`}>
               {creator?.name ? (
                 <Primary>{encodeURI(creator?.name)}</Primary>
               ) : (

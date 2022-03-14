@@ -7,17 +7,29 @@ import { Loading } from '../../../components/loading'
 import styles from '../styles.module.scss'
 
 export const Burn = (props) => {
-  console.log("BURN", props)
+  console.log('BURN', props)
   const { token_holders, id } = props
-  const { burn, acc, proxyAddress, message, setMessage, setProgress, progress } = useContext(HicetnuncContext)
+  const {
+    burn,
+    acc,
+    proxyAddress,
+    message,
+    setMessage,
+    setProgress,
+    progress,
+  } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState('')
 
   let totalOwned = 0
 
-  const proxyAdminAddress = props.creator.is_split ? props.creator.shares[0].administrator : null
+  const proxyAdminAddress = props.creator.is_split
+    ? props.creator.shares[0].administrator
+    : null
 
   const found = token_holders.find(
-    (e) => e.holder_id === acc?.address || (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+    (e) =>
+      e.holder_id === acc?.address ||
+      (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
   )
 
   if (found) {
@@ -49,14 +61,14 @@ export const Burn = (props) => {
 
   return (
     <>
-      {!progress ?
+      {!progress ? (
         <div>
           <Container>
             <Padding>
               <div className={styles.container}>
                 <p>
-                  You own {totalOwned} editions of OBJKT#{props.id}. How many would
-                  you like to burn?
+                  You own {totalOwned} editions of OBJKT#{props.id}. How many
+                  would you like to burn?
                 </p>
               </div>
             </Padding>
@@ -80,11 +92,11 @@ export const Burn = (props) => {
             <Padding>
               <div className={styles.container}>
                 <p style={{ fontSize: '14px' }}>
-                  Burning will transfer the OBJKTs from your possession to a burn
-                  address. Once in the burn address, the OBJKT can't be recovered or
-                  sold. You can only burn tokens that you own. If you have them
-                  swapped, you first need to cancel that swap before you try to burn
-                  them.
+                  Burning will transfer the OBJKTs from your possession to a
+                  burn address. Once in the burn address, the OBJKT can't be
+                  recovered or sold. You can only burn tokens that you own. If
+                  you have them swapped, you first need to cancel that swap
+                  before you try to burn them.
                 </p>
                 <br />
                 <p>
@@ -104,16 +116,21 @@ export const Burn = (props) => {
             </Padding>
           </Container>
         </div>
-        :
+      ) : (
         <div>
-          <p style={{
-            position: 'absolute',
-            left: '50%',
-            top: '35%',
-          }}> {message}</p>
+          <p
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '35%',
+            }}
+          >
+            {' '}
+            {message}
+          </p>
           {progress && <Loading />}
         </div>
-      }
+      )}
     </>
   )
 }

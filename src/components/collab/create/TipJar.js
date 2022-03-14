@@ -3,70 +3,76 @@ import { ossProjects } from '../constants'
 import { TipSelector } from './TipSelector'
 
 export const TipJar = ({ tips, setTips }) => {
+  const tipsByAddress = tips.map((t) => t.address)
 
-    const tipsByAddress = tips.map(t => t.address)
+  const toggleTip = (address) => {
+    const updatedTips = [...tips]
 
-    const toggleTip = (address) => {
-        const updatedTips = [...tips]
+    const index = tipsByAddress.indexOf(address)
 
-        const index = tipsByAddress.indexOf(address)
+    if (index > -1) {
+      updatedTips.splice(index, 1)
+    } else {
+      const projectsByAddress = ossProjects.map((project) => project.address)
+      const index = projectsByAddress.indexOf(address)
+      const project = ossProjects[index]
 
-        if (index > -1) {
-            updatedTips.splice(index, 1)
-        } else {
-            const projectsByAddress = ossProjects.map(project => project.address)
-            const index = projectsByAddress.indexOf(address)
-            const project = ossProjects[index]
-
-            updatedTips.push(project)
-        }
-
-        setTips(updatedTips)
+      updatedTips.push(project)
     }
 
-    const _updateTip = (address, percentage) => {
-        const updatedTips = [...tips]
-        const projectsByAddress = updatedTips.map(t => t.address);
-        const index = projectsByAddress.indexOf(address);
+    setTips(updatedTips)
+  }
 
-        // toggle if it's the same value
-        const shouldRemove = updatedTips[index] ? (updatedTips[index].percentage === percentage) : false
+  const _updateTip = (address, percentage) => {
+    const updatedTips = [...tips]
+    const projectsByAddress = updatedTips.map((t) => t.address)
+    const index = projectsByAddress.indexOf(address)
 
-        updatedTips[index] = {
-            ...tips[index],
-            percentage: shouldRemove ? undefined : percentage,
-        }
+    // toggle if it's the same value
+    const shouldRemove = updatedTips[index]
+      ? updatedTips[index].percentage === percentage
+      : false
 
-        setTips(updatedTips)
+    updatedTips[index] = {
+      ...tips[index],
+      percentage: shouldRemove ? undefined : percentage,
     }
 
-    return (
-        <ul className={styles.list}>
+    setTips(updatedTips)
+  }
 
-            {ossProjects.map((project, projectIndex) => {
-                const { name, address } = project
-                const isChecked = tipsByAddress.indexOf(address) > -1
+  return (
+    <ul className={styles.list}>
+      {ossProjects.map((project, projectIndex) => {
+        const { name, address } = project
+        const isChecked = tipsByAddress.indexOf(address) > -1
 
-                return (
-                    <li key={project.address}>
-                        <div className={styles.flexBetween}>
-                            <label className={styles.flex}>
-                                <div>
-                                    <input className={styles.check} type="checkbox" onChange={() => toggleTip(address)} />
-                                    {name}
-                                </div>
-                            </label>
+        return (
+          <li key={project.address}>
+            <div className={styles.flexBetween}>
+              <label className={styles.flex}>
+                <div>
+                  <input
+                    className={styles.check}
+                    type="checkbox"
+                    onChange={() => toggleTip(address)}
+                  />
+                  {name}
+                </div>
+              </label>
 
-                            {isChecked && (
-                                <TipSelector
-                                    tip={tips[projectIndex]}
-                                    onUpdate={percentage => _updateTip(project.address, percentage)}
-                                />
-                            )}
-                        </div>
-                    </li>
-                )
-            })}
-        </ul>
-    )
+              {isChecked && (
+                <TipSelector
+                  tip={tips[projectIndex]}
+                  onUpdate={(percentage) =>
+                    _updateTip(project.address, percentage)
+                  }
+                />
+              )}
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
 }

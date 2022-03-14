@@ -34,7 +34,7 @@ query frensGallery($wallets: [String!], $lastId: bigint!) {
     }
   }
 }
-`;
+`
 
 const query_frens = `
 query collectorGallery($address: String!) {
@@ -44,11 +44,13 @@ query collectorGallery($address: String!) {
     }
   }
 }
-`;
+`
 
 async function fetchAllFrensAddresses(myWalletAddr) {
-  const { errors, data } = await fetchGraphQL(query_frens, "collectorGallery", { "address": myWalletAddr });
-  if (errors) console.error(errors);
+  const { errors, data } = await fetchGraphQL(query_frens, 'collectorGallery', {
+    address: myWalletAddr,
+  })
+  if (errors) console.error(errors)
 
   let frensAddresses = []
   for (let holding of data.hic_et_nunc_token_holder) {
@@ -72,15 +74,22 @@ export class Friends extends Component {
   }
 
   fetchFeed = async () => {
-    const { errors, data } = await fetchGraphQL(query_frenCreations, "frensGallery", {
-      "wallets": this.state.frens,
-      "lastId": this.state.lastId,
-    });
+    const { errors, data } = await fetchGraphQL(
+      query_frenCreations,
+      'frensGallery',
+      {
+        wallets: this.state.frens,
+        lastId: this.state.lastId,
+      }
+    )
 
-    if (errors) console.error(errors);
+    if (errors) console.error(errors)
     const result = data.hic_et_nunc_token
 
-    let lastId = Math.min.apply(Math, result.map(e => e.id))
+    let lastId = Math.min.apply(
+      Math,
+      result.map((e) => e.id)
+    )
     this.setState({ lastId: lastId })
     return result
   }
@@ -91,8 +100,6 @@ export class Friends extends Component {
       creations: this.state.creations.concat(result),
     })
   }
-
-
 
   componentWillMount = async () => {
     const id = window.location.pathname.split('/')[1]
@@ -116,7 +123,7 @@ export class Friends extends Component {
 
     const getLatestByFrens = async () => {
       try {
-        const frensAddresses = await fetchAllFrensAddresses(myWalletAddr);
+        const frensAddresses = await fetchAllFrensAddresses(myWalletAddr)
         this.setState({ frens: frensAddresses })
         return this.fetchFeed()
       } catch (error) {
@@ -134,7 +141,6 @@ export class Friends extends Component {
   render() {
     return (
       <Page title={this.state.alias}>
-
         {this.state.loading && (
           <Container>
             <Padding>
@@ -147,11 +153,13 @@ export class Friends extends Component {
             {this.state.creations === 0 && (
               <Container>
                 <Padding>
-                  <p style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <p
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     No OBJKTs have been collected by this wallet address
                   </p>
                   {JSON.stringify(this.state.creations)}
@@ -179,7 +187,11 @@ export class Friends extends Component {
               <Container>
                 <Padding>
                   {this.state.creations.map((item, index) => (
-                    <FeedItem key={`${item.id}-${index}`} {...item} creator_id={item.creator.address} />
+                    <FeedItem
+                      key={`${item.id}-${index}`}
+                      {...item}
+                      creator_id={item.creator.address}
+                    />
                   ))}
                 </Padding>
               </Container>

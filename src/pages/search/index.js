@@ -11,7 +11,8 @@ const axios = require('axios')
 const _ = require('lodash')
 
 async function fetchFeed(lastId) {
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
 query LatestFeed {
   hic_et_nunc_token(order_by: {id: desc}, limit: 15, where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
@@ -27,9 +28,12 @@ query LatestFeed {
       address
     }
   }
-}`, "LatestFeed", {});
+}`,
+    'LatestFeed',
+    {}
+  )
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
   const result = data.hic_et_nunc_token
   /* console.log({ result }) */
@@ -37,7 +41,8 @@ query LatestFeed {
 }
 
 async function fetchObjkts(ids) {
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
     query Objkts($ids: [bigint!] = "") {
       hic_et_nunc_token(where: {id: {_in: $ids}, supply : { _neq : 0 }}) {
         artifact_uri
@@ -53,7 +58,10 @@ async function fetchObjkts(ids) {
           address
         }
       }
-    }`, "Objkts", { "ids": ids });
+    }`,
+    'Objkts',
+    { ids: ids }
+  )
   if (errors) {
     console.log(errors)
   }
@@ -61,12 +69,15 @@ async function fetchObjkts(ids) {
 }
 
 async function getLastId() {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
     query LastId {
       hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
         id
       }
-    }`, "LastId");
+    }`,
+    'LastId'
+  )
   return data.hic_et_nunc_token[0].id
 }
 
@@ -75,7 +86,8 @@ function rnd(min, max) {
 }
 
 async function fetchGLB(offset) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
   query GLBObjkts {
     hic_et_nunc_token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
@@ -89,7 +101,9 @@ async function fetchGLB(offset) {
       }
     }
   }
-  `, 'GLBObjkts', {}
+  `,
+    'GLBObjkts',
+    {}
   )
   try {
     return data.hic_et_nunc_token
@@ -99,7 +113,8 @@ async function fetchGLB(offset) {
 }
 
 async function fetchInteractive(offset) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
     query InteractiveObjkts {
       hic_et_nunc_token(where: { mime: {_in : [ "application/x-directory", "image/svg+xml" ]}, supply : { _neq : 0 } }, limit : 30, offset : ${offset}, order_by: {id: desc}) {
         id
@@ -113,7 +128,10 @@ async function fetchInteractive(offset) {
         }
       }
     }
-  `, 'InteractiveObjkts', {})
+  `,
+    'InteractiveObjkts',
+    {}
+  )
 
   try {
     return data.hic_et_nunc_token
@@ -122,7 +140,8 @@ async function fetchInteractive(offset) {
   }
 }
 async function fetchVideo(offset) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
   query Videos {
     hic_et_nunc_token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
@@ -136,7 +155,10 @@ async function fetchVideo(offset) {
       }
     }
   }
-  `, 'Videos', {})
+  `,
+    'Videos',
+    {}
+  )
   try {
     return data.hic_et_nunc_token
   } catch (e) {
@@ -144,7 +166,8 @@ async function fetchVideo(offset) {
   }
 }
 async function fetchGifs(offset) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
     query Gifs ($offset: Int = 0) {
       hic_et_nunc_token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
         id
@@ -158,7 +181,10 @@ async function fetchGifs(offset) {
         }
       }
     }
-  `, 'Gifs', {})
+  `,
+    'Gifs',
+    {}
+  )
 
   try {
     return data.hic_et_nunc_token
@@ -168,7 +194,8 @@ async function fetchGifs(offset) {
 }
 
 async function fetchMusic(offset) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
   query AudioObjkts {
     hic_et_nunc_token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
@@ -182,7 +209,9 @@ async function fetchMusic(offset) {
       }
     }
   }
-  `, 'AudioObjkts', {}
+  `,
+    'AudioObjkts',
+    {}
   )
 
   try {
@@ -201,17 +230,18 @@ async function fetchRandomObjkts() {
     uniqueIds.add(rnd(firstId, lastId))
   }
 
-  const { errors, data } = await fetchObjkts(Array.from(uniqueIds));
+  const { errors, data } = await fetchObjkts(Array.from(uniqueIds))
 
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
 
   return data.hic_et_nunc_token
 }
 
 async function fetchDay(day, offset) {
-  const { errors, data } = await fetchGraphQL(`query dayTrades {
+  const { errors, data } = await fetchGraphQL(
+    `query dayTrades {
     hic_et_nunc_trade(where: {timestamp: {_gte: "${day}"}}, order_by: {swap: {price: desc}}, limit : 15, offset : ${offset}) {
       timestamp
       swap {
@@ -228,7 +258,10 @@ async function fetchDay(day, offset) {
         }
       }
     }
-  }`, 'dayTrades', {})
+  }`,
+    'dayTrades',
+    {}
+  )
 
   if (errors) {
     console.log(errors)
@@ -238,14 +271,14 @@ async function fetchDay(day, offset) {
 
   try {
     result = data.hic_et_nunc_trade
-  } catch (e) { }
+  } catch (e) {}
 
   return result
-
 }
 
 async function fetchSales(offset) {
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
   query sales {
     hic_et_nunc_trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
@@ -264,7 +297,10 @@ async function fetchSales(offset) {
         }
       }
     }
-  }`, 'sales', {})
+  }`,
+    'sales',
+    {}
+  )
 
   if (errors) {
     console.log(errors)
@@ -274,15 +310,15 @@ async function fetchSales(offset) {
 
   try {
     result = data.hic_et_nunc_trade
-  } catch (e) { }
+  } catch (e) {}
 
   return result
-
 }
 
 async function fetchSubjkts(subjkt) {
   //console.log(subjkt)
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
   query subjktsQuery {
     hic_et_nunc_holder(where: { name: {_ilike: "%${subjkt}%"}}, order_by: {hdao_balance: desc}) {
       address
@@ -291,7 +327,10 @@ async function fetchSubjkts(subjkt) {
       metadata
     }
   }
-  `, 'subjktsQuery', {})
+  `,
+    'subjktsQuery',
+    {}
+  )
   if (errors) {
     console.error(errors)
   }
@@ -300,7 +339,7 @@ async function fetchSubjkts(subjkt) {
 
   try {
     result = data.hic_et_nunc_holder
-  } catch (e) { }
+  } catch (e) {}
 
   return result
 }
@@ -324,28 +363,27 @@ async function fetchTag(tag, offset) {
       name
     }
   }
-}`
-    , "ObjktsByTag", {});
+}`,
+    'ObjktsByTag',
+    {}
+  )
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
   const result = data.hic_et_nunc_token
   return result
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(
-    process.env.REACT_APP_GRAPHQL_API,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName
-      })
-    }
-  );
-  return await result.json();
+  const result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: operationsDoc,
+      variables: variables,
+      operationName: operationName,
+    }),
+  })
+  return await result.json()
 }
 
 const query_hdao = `query hDAOFeed($offset: Int = 0) {
@@ -367,9 +405,11 @@ const query_hdao = `query hDAOFeed($offset: Int = 0) {
 }`
 
 async function fetchHdao(offset) {
-  const { errors, data } = await fetchGraphQL(query_hdao, "hDAOFeed", { "offset": offset })
+  const { errors, data } = await fetchGraphQL(query_hdao, 'hDAOFeed', {
+    offset: offset,
+  })
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
   const result = data.hic_et_nunc_token
   return result
@@ -407,21 +447,26 @@ export class Search extends Component {
       { id: 8, value: '1D' },
       { id: 9, value: '1W' },
       { id: 10, value: '1M' },
-      { id: 11, value: 'ATH' }
+      { id: 11, value: 'ATH' },
     ],
     select: [],
     mouse: false,
     hasMore: true,
-    offset: 0
+    offset: 0,
   }
 
   componentWillMount = async () => {
     let arr = await getRestrictedAddresses()
     this.setState({ select: 'recent sales' })
     let tokens = await fetchSales(this.state.offset)
-    tokens = tokens.map(e => e.token)
-    tokens = tokens.filter(e => !arr.includes(e.creator_id))
-    this.setState({ feed: _.uniqBy(_.uniqBy([...this.state.feed, ...tokens], 'id'), 'creator_id') })
+    tokens = tokens.map((e) => e.token)
+    tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+    this.setState({
+      feed: _.uniqBy(
+        _.uniqBy([...this.state.feed, ...tokens], 'id'),
+        'creator_id'
+      ),
+    })
     //this.latest(999999)
   }
 
@@ -432,7 +477,6 @@ export class Search extends Component {
   }
 
   update = async (e, reset) => {
-
     let arr = await getRestrictedAddresses()
 
     this.setState({ select: e })
@@ -442,95 +486,137 @@ export class Search extends Component {
     }
 
     if (e === '1D') {
-
-      let list = await fetchDay(new Date((new Date()).getTime() - 60 * 60 * 24 * 1000).toISOString(), this.state.offset)
-      list = list.map(e => e.token)
-      list = [...this.state.feed, ...(list)]
-      list = list.filter(e => !arr.includes(e.creator.address))
+      let list = await fetchDay(
+        new Date(new Date().getTime() - 60 * 60 * 24 * 1000).toISOString(),
+        this.state.offset
+      )
+      list = list.map((e) => e.token)
+      list = [...this.state.feed, ...list]
+      list = list.filter((e) => !arr.includes(e.creator.address))
       list = _.uniqBy(list, 'id')
 
       this.setState({
-        feed: list
+        feed: list,
       })
     }
 
     if (e === '1W') {
-      let list = await fetchDay(new Date((new Date()).getTime() - 60 * 60 * 24 * 7 * 1000).toISOString(), this.state.offset)
-      list = list.map(e => e.token)
-      list = [...this.state.feed, ...(list)]
-      list = list.filter(e => !arr.includes(e.creator.address))
+      let list = await fetchDay(
+        new Date(new Date().getTime() - 60 * 60 * 24 * 7 * 1000).toISOString(),
+        this.state.offset
+      )
+      list = list.map((e) => e.token)
+      list = [...this.state.feed, ...list]
+      list = list.filter((e) => !arr.includes(e.creator.address))
 
       list = _.uniqBy(list, 'id')
 
       this.setState({
-        feed: list
+        feed: list,
       })
     }
 
-
     if (e === '1M') {
-      let list = await fetchDay(new Date((new Date()).getTime() - 60 * 60 * 24 * 30 * 1000).toISOString(), this.state.offset)
-      list = list.map(e => e.token)
-      list = [...this.state.feed, ...(list)]
-      list = list.filter(e => !arr.includes(e.creator.address))
+      let list = await fetchDay(
+        new Date(new Date().getTime() - 60 * 60 * 24 * 30 * 1000).toISOString(),
+        this.state.offset
+      )
+      list = list.map((e) => e.token)
+      list = [...this.state.feed, ...list]
+      list = list.filter((e) => !arr.includes(e.creator.address))
 
       list = _.uniqBy(list, 'id')
 
       this.setState({
-        feed: list
+        feed: list,
       })
     }
 
     if (e === 'ATH') {
-      let list = await fetchDay(new Date('2021-05-01').toISOString(), this.state.offset)
-      list = list.map(e => e.token)
-      list = [...this.state.feed, ...(list)]
+      let list = await fetchDay(
+        new Date('2021-05-01').toISOString(),
+        this.state.offset
+      )
+      list = list.map((e) => e.token)
+      list = [...this.state.feed, ...list]
       list = _.uniqBy(list, 'id')
 
       this.setState({
-        feed: list
+        feed: list,
       })
     }
 
     if (e === 'num') {
-      let res = await fetchFeed(Number(this.state.search) + 1 - this.state.offset)
-      res = res.filter(e => !arr.includes(e.creator_id))
+      let res = await fetchFeed(
+        Number(this.state.search) + 1 - this.state.offset
+      )
+      res = res.filter((e) => !arr.includes(e.creator_id))
       this.setState({
-        feed: [...this.state.feed, ...(res)]
+        feed: [...this.state.feed, ...res],
       })
     }
 
     if (e === '○ hDAO') {
-      this.setState({ feed: _.uniqBy(_.uniqBy([...this.state.feed, ...(await fetchHdao(this.state.offset))], 'id'), 'creator_id'), hdao: true })
+      this.setState({
+        feed: _.uniqBy(
+          _.uniqBy(
+            [...this.state.feed, ...(await fetchHdao(this.state.offset))],
+            'id'
+          ),
+          'creator_id'
+        ),
+        hdao: true,
+      })
     }
 
     if (e === 'music') {
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchMusic(this.state.offset))], 'creator_id') })
+      this.setState({
+        feed: _.uniqBy(
+          [...this.state.feed, ...(await fetchMusic(this.state.offset))],
+          'creator_id'
+        ),
+      })
     }
 
     if (e === 'video') {
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchVideo(this.state.offset))], 'creator_id') })
-
+      this.setState({
+        feed: _.uniqBy(
+          [...this.state.feed, ...(await fetchVideo(this.state.offset))],
+          'creator_id'
+        ),
+      })
     }
 
     if (e === 'glb') {
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchGLB(this.state.offset))], 'creator_id') })
+      this.setState({
+        feed: _.uniqBy(
+          [...this.state.feed, ...(await fetchGLB(this.state.offset))],
+          'creator_id'
+        ),
+      })
     }
 
     if (e === 'html/svg') {
       let res = await fetchInteractive(this.state.offset)
-      res = res.filter(e => !arr.includes(e.creator_id))
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(res)], 'creator_id') })
+      res = res.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+      })
     }
 
     if (e === 'random') {
       let res = await fetchRandomObjkts()
-      res = res.filter(e => !arr.includes(e.creator_id))
-      this.setState({ feed: [...this.state.feed, ...(res)] })
+      res = res.filter((e) => !arr.includes(e.creator_id))
+      this.setState({ feed: [...this.state.feed, ...res] })
     }
 
     if (e === 'gif') {
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(await fetchGifs(this.state.offset))], 'creator_id') })
+      this.setState({
+        feed: _.uniqBy(
+          [...this.state.feed, ...(await fetchGifs(this.state.offset))],
+          'creator_id'
+        ),
+      })
     }
 
     if (e === 'illustration') {
@@ -538,16 +624,26 @@ export class Search extends Component {
     }
 
     if (e === 'tag') {
-      let res = await fetchTag(this.state.search, this.state.feed[this.state.feed.length - 1].id)
-      res = res.filter(e => !arr.includes(e.creator_id))
-      this.setState({ feed: _.uniqBy([...this.state.feed, ...(res)], 'creator_id') })
+      let res = await fetchTag(
+        this.state.search,
+        this.state.feed[this.state.feed.length - 1].id
+      )
+      res = res.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+      })
     }
 
     if (e === 'recent sales') {
       let tokens = await fetchSales(this.state.offset)
-      tokens = tokens.map(e => e.token)
-      tokens = tokens.filter(e => !arr.includes(e.creator_id))
-      this.setState({ feed: _.uniqBy(_.uniqBy([...this.state.feed, ...tokens], 'id'), 'creator_id') })
+      tokens = tokens.map((e) => e.token)
+      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy(
+          _.uniqBy([...this.state.feed, ...tokens], 'id'),
+          'creator_id'
+        ),
+      })
     }
 
     if (this.state.select === 'new OBJKTs') {
@@ -557,37 +653,47 @@ export class Search extends Component {
     // new listings
 
     this.setState({ reset: false })
-
   }
 
   latest = async () => {
     let result = []
     if (this.state.flag) {
-      result = await fetchFeed(Math.min.apply(Math, this.state.feed.map(e => e.id)))
+      result = await fetchFeed(
+        Math.min.apply(
+          Math,
+          this.state.feed.map((e) => e.id)
+        )
+      )
     } else {
       result = await fetchFeed(999999)
     }
     console.log(result)
     let restricted = await getRestrictedAddresses()
     result = _.uniqBy([...this.state.feed, ...result], 'creator_id')
-    result = result.filter(e => !restricted.includes(e.creator_id))
+    result = result.filter((e) => !restricted.includes(e.creator_id))
     this.setState({ feed: [...result], flag: true })
   }
 
-
   search = async (e) => {
-
     console.log(e)
 
     this.setState({ items: [], feed: [], search: e })
     this.setState({ subjkt: await fetchSubjkts(this.state.search) })
 
     if (!isNaN(this.state.search)) {
-      this.setState({ feed: await fetchFeed(Number(this.state.search) + 1), select: 'num' })
+      this.setState({
+        feed: await fetchFeed(Number(this.state.search) + 1),
+        select: 'num',
+      })
     } else {
-      this.setState({ feed: _.uniqBy(await fetchTag(this.state.search.toLowerCase(), 9999999), 'creator_id'), select: 'tag' })
+      this.setState({
+        feed: _.uniqBy(
+          await fetchTag(this.state.search.toLowerCase(), 9999999),
+          'creator_id'
+        ),
+        select: 'tag',
+      })
     }
-
 
     console.log(this.state.feed)
   }
@@ -607,59 +713,63 @@ export class Search extends Component {
   }
 
   render() {
-
     return (
       <Page>
         <Container>
           <Padding>
-                <Input
-                  type="text"
-                  name="search"
-                  onChange={this.handleChange}
-                  label="Search ↵"
-                  placeholder="Search ↵"
-                  onKeyPress={this.handleKey}
-                />
+            <Input
+              type="text"
+              name="search"
+              onChange={this.handleChange}
+              label="Search ↵"
+              placeholder="Search ↵"
+              onKeyPress={this.handleKey}
+            />
             {
               <div style={{ marginTop: '15px' }}>
-                {this.state.tags.map(e => <a className='tag' href='#' onClick={() => { // eslint-disable-line jsx-a11y/anchor-is-valid
-                  this.update(e.value, true)
-                }}>{e.value} </a>)}
+                {this.state.tags.map((e) => (
+                  <a
+                    className="tag"
+                    href="#"
+                    onClick={() => {
+                      // eslint-disable-line jsx-a11y/anchor-is-valid
+                      this.update(e.value, true)
+                    }}
+                  >
+                    {e.value}{' '}
+                  </a>
+                ))}
               </div>
             }
-            {
-              (this.state.subjkt.length > 0) && (this.state.search !== "") ?
-                <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
-                  {
-                    this.state.subjkt.map(e => <div style={{ marginTop: '10px' }}><a href={`/${e.name}`}>{e.name}</a> {e.metadata.description}</div>)
-                  }
-                </div>
-                :
-                undefined
-            }
+            {this.state.subjkt.length > 0 && this.state.search !== '' ? (
+              <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
+                {this.state.subjkt.map((e) => (
+                  <div style={{ marginTop: '10px' }}>
+                    <a href={`/${e.name}`}>{e.name}</a> {e.metadata.description}
+                  </div>
+                ))}
+              </div>
+            ) : undefined}
           </Padding>
         </Container>
         <Container xlarge>
-          {
-            this.state.feed.length > 0 ?
-              <InfiniteScroll
-                dataLength={this.state.feed.length}
-                next={this.loadMore}
-                hasMore={this.state.hasMore}
-                loader={undefined}
-                endMessage={undefined}
-              >
-                <Container>
-                  <Padding>
-                    {this.state.feed.map((item, index) => (
-                      <FeedItem key={`${item.id}-${index}`} {...item} />
-                    ))}
-                  </Padding>
-                </Container>
-              </InfiniteScroll>
-              :
-              undefined
-          }
+          {this.state.feed.length > 0 ? (
+            <InfiniteScroll
+              dataLength={this.state.feed.length}
+              next={this.loadMore}
+              hasMore={this.state.hasMore}
+              loader={undefined}
+              endMessage={undefined}
+            >
+              <Container>
+                <Padding>
+                  {this.state.feed.map((item, index) => (
+                    <FeedItem key={`${item.id}-${index}`} {...item} />
+                  ))}
+                </Padding>
+              </Container>
+            </InfiniteScroll>
+          ) : undefined}
         </Container>
       </Page>
     )

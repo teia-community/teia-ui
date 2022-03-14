@@ -9,88 +9,110 @@ import { ParticipantList } from './ParticipantList'
 import { Link } from 'react-router-dom'
 
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
+  const { proxyAddress, setProxyAddress, acc } = useContext(HicetnuncContext)
+  const { administrator, contract, shareholder } = collabData
 
-    const { proxyAddress, setProxyAddress, acc } = useContext(HicetnuncContext)
-    const { administrator, contract, shareholder } = collabData
+  const isAdmin = acc?.address === administrator
 
-    const isAdmin = acc?.address === administrator;
+  // Core participants
+  const coreParticipants = shareholder.filter(
+    ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
+  )
 
-    // Core participants
-    const coreParticipants = shareholder
-        .filter(({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT);
+  // beneficiaries
+  const beneficiaries = shareholder.filter(
+    ({ holder_type }) => holder_type === CollaboratorType.BENEFACTOR
+  )
 
-    // beneficiaries
-    const beneficiaries = shareholder
-        .filter(({ holder_type }) => holder_type === CollaboratorType.BENEFACTOR);
+  // Combine various styles
+  const listStyle = classNames(
+    styles.flex,
+    styles.flexBetween,
+    styles.alignStart,
+    styles.mb2,
+    {
+      [styles.border]: contract.address === proxyAddress,
+    }
+  )
 
-    // Combine various styles
-    const listStyle = classNames(styles.flex, styles.flexBetween, styles.alignStart, styles.mb2, {
-        [styles.border]: contract.address === proxyAddress,
-    })
+  const headerStyle = classNames(
+    styles.flex,
+    styles.flexBetween,
+    styles.alignStart,
+    styles.fullWidth
+  )
 
-    const headerStyle = classNames(styles.flex, styles.flexBetween, styles.alignStart, styles.fullWidth)
+  // We'll show the name of the contract if set
+  const { name, address } = contract
 
-    // We'll show the name of the contract if set
-    const { name, address } = contract
+  const displayName = name || address
 
-    const displayName = name || address
+  // TODO: Sort out better path naming in constants file for /kt vs. /collab
+  const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${address}`
 
-    // TODO: Sort out better path naming in constants file for /kt vs. /collab
-    const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${address}`
+  return (
+    <li className={listStyle} key={address}>
+      <div className={styles.fullWidth}>
+        <div className={headerStyle}>
+          {displayName && (
+            <Fragment>
+              <h3>
+                <strong>
+                  <Link to={path}>{displayName}</Link>
+                </strong>
+              </h3>
+            </Fragment>
+          )}
 
-    return (
-        <li className={listStyle} key={address}>
-            <div className={styles.fullWidth}>
-                <div className={headerStyle}>
+          {address !== proxyAddress && isAdmin && (
+            <Button onClick={() => setProxyAddress(address, name)}>
+              <Purchase>sign in</Purchase>
+            </Button>
+          )}
 
-                    {displayName && (
-                        <Fragment>
-                            <h3>
-                                <strong>
-                                    <Link to={path}>{displayName}</Link>
-                                </strong>
-                            </h3>
-                        </Fragment>
-                    )}
+          {address === proxyAddress && isAdmin && (
+            <Button onClick={() => setProxyAddress(null)}>
+              <Purchase>sign out</Purchase>
+            </Button>
+          )}
+        </div>
 
-                    {address !== proxyAddress && isAdmin && (
-                        <Button onClick={() => setProxyAddress(address, name)}>
-                            <Purchase>sign in</Purchase>
-                        </Button>
-                    )}
+        {!name && isAdmin && (
+          <p>
+            to set the name of this collab,{' '}
+            {address !== proxyAddress ? 'sign in and' : ''} visit{' '}
+            <Link to="/config" style={{ textDecoration: 'underline' }}>
+              settings
+            </Link>
+          </p>
+        )}
 
-                    {address === proxyAddress && isAdmin && (
-                        <Button onClick={() => setProxyAddress(null)}>
-                            <Purchase>sign out</Purchase>
-                        </Button>
-                    )}
-                </div>
-
-                {!name && isAdmin && (
-                    <p>to set the name of this collab, { address !== proxyAddress ? 'sign in and' : ''} visit <Link to='/config' style={{ textDecoration: 'underline' }}>settings</Link></p>
-                )}
-
-                {expanded && (
-                    <Fragment>
-                        <p>
-                            <span className={styles.infoLabel}>address:</span>
-                            <Link className={styles.link} to={`${PATH.ISSUER}/${address}`}>{address}</Link>
-                        </p> {/* <span className={styles.muted}>(admin)</span> */}
-
-                        {coreParticipants.length > 0 && (
-                            <ParticipantList title="participants" participants={coreParticipants} />)
-                        }
-
-                        {beneficiaries.length > 0 && (
-                            <Fragment>
-                                <ParticipantList title="beneficiaries" participants={beneficiaries} />
-                            </Fragment>
-                        )}
-                    </Fragment>
-                )}
-            </div>
-
-
-        </li>
-    )
+        {expanded && (
+          <Fragment>
+            <p>
+              <span className={styles.infoLabel}>address:</span>
+              <Link className={styles.link} to={`${PATH.ISSUER}/${address}`}>
+                {address}
+              </Link>
+            </p>{' '}
+            {/* <span className={styles.muted}>(admin)</span> */}
+            {coreParticipants.length > 0 && (
+              <ParticipantList
+                title="participants"
+                participants={coreParticipants}
+              />
+            )}
+            {beneficiaries.length > 0 && (
+              <Fragment>
+                <ParticipantList
+                  title="beneficiaries"
+                  participants={beneficiaries}
+                />
+              </Fragment>
+            )}
+          </Fragment>
+        )}
+      </div>
+    </li>
+  )
 }

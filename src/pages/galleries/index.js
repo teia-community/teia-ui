@@ -9,7 +9,8 @@ import styles from './styles.module.scss'
 const _ = require('lodash')
 
 async function fetchObjkts(ids) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
     query Objkts($_in: [bigint!] = "") {
       hic_et_nunc_token(where: { id: {_in: $_in}}) {
         artifact_uri
@@ -22,7 +23,10 @@ async function fetchObjkts(ids) {
         title
         hdao_balance
       }
-    }`, "Objkts", { "_in" : ids })
+    }`,
+    'Objkts',
+    { _in: ids }
+  )
   return data.hic_et_nunc_token
 }
 
@@ -47,14 +51,16 @@ export const Galleries = () => {
       .then((e) => e.json())
       .then(async (galleries) => {
         console.log(galleries)
-         let res = await fetchObjkts(galleries.map(e => e.id))
+        let res = await fetchObjkts(galleries.map((e) => e.id))
 
-         let merged = _.merge(_.keyBy(galleries, 'id'), _.merge(_.keyBy(res, 'id')))
+        let merged = _.merge(
+          _.keyBy(galleries, 'id'),
+          _.merge(_.keyBy(res, 'id'))
+        )
 
-         let values = _.values(merged)
+        let values = _.values(merged)
 
-         setData(values.reverse())
-
+        setData(values.reverse())
       })
 
     return () => {
@@ -76,10 +82,10 @@ export const Galleries = () => {
                       mimeType: e.mime,
                       artifactUri: e.artifact_uri,
                       displayUri: e.display_uri,
-                      creator: "",
+                      creator: '',
                       objkt: e.id,
                       interactive: false,
-                      displayView: true
+                      displayView: true,
                     })}
                     <Button>
                       <Primary>

@@ -24,7 +24,7 @@ export const Preview = ({ title, description, mimeType, previewUri, tags }) => {
           previewUri,
           interactive: true,
           preview: true,
-          displayView : true
+          displayView: true,
         })}
       </div>
       <div className={styles.info}>

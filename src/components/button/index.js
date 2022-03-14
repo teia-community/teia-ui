@@ -11,7 +11,7 @@ export const Button = ({
   children,
   disabled,
   fit,
-  full
+  full,
 }) => {
   const classes = classnames({
     [styles.container]: true,
@@ -71,7 +71,7 @@ export const Purchase = ({ children = null, selected }) => {
   const classes = classnames({
     [styles.purchase]: true,
     [styles.selected]: selected,
-    [styles.dark]: context.theme === 'dark'
+    [styles.dark]: context.theme === 'dark',
   })
   return <div className={classes}>{children}</div>
 }
