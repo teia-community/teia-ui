@@ -27,23 +27,17 @@ export class FAQ extends Component {
               <ul className={styles.faq__container}>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/Getting-Started-with-Tezos">
-                    <Primary>
-                      How do I get tezos/make a wallet?
-                    </Primary>
+                    <Primary>How do I get tezos/make a wallet?</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-mint-%F0%9F%8C%BF">
-                    <Primary>
-                      How do I mint?
-                    </Primary>
+                    <Primary>How do I mint?</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/Edit-your-profile">
-                    <Primary>
-                      How do I edit my profile?
-                    </Primary>
+                    <Primary>How do I edit my profile?</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
@@ -55,16 +49,12 @@ export class FAQ extends Component {
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-burn-%F0%9F%94%A5">
-                    <Primary>
-                      How do I burn my OBJKT?
-                    </Primary>
+                    <Primary>How do I burn my OBJKT?</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-resell-%F0%9F%8F%AA">
-                    <Primary>
-                      How do I resell an OBJKT?
-                    </Primary>
+                    <Primary>How do I resell an OBJKT?</Primary>
                   </Button>
                 </li>
               </ul>
@@ -75,7 +65,7 @@ export class FAQ extends Component {
         <Container>
           <Padding>
             <div className={styles.faq__outer__container}>
-              <hr className={styles.divider}/>
+              <hr className={styles.divider} />
             </div>
           </Padding>
         </Container>
@@ -86,23 +76,17 @@ export class FAQ extends Component {
               <ul className={styles.faq__container}>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/General">
-                    <Primary>
-                      General FAQ
-                    </Primary>
+                    <Primary>General FAQ</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/Troubleshooting">
-                    <Primary>
-                      Troubleshooting
-                    </Primary>
+                    <Primary>Troubleshooting</Primary>
                   </Button>
                 </li>
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community">
-                    <Primary>
-                      Useful tools
-                    </Primary>
+                    <Primary>Useful tools</Primary>
                   </Button>
                 </li>
               </ul>
