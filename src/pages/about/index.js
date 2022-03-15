@@ -71,7 +71,7 @@ export class About extends Component {
           <Padding>
             <div className={styles.buttons}>
               <p>WIKI is available on</p>&nbsp;
-              <Button href="https://github.com/teia-community/teia-ui/wiki">
+              <Button href="https://github.com/teia-community/teia-docs/wiki">
                 <Primary>
                   <strong>github</strong>
                 </Primary>
@@ -81,7 +81,7 @@ export class About extends Component {
         </Container>
         <Container>
           <Padding>
-            <Button href="https://github.com/teia-community/teia-ui/wiki/Tools-made-by-the-community">
+            <Button href="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community">
               <Primary>
                 <strong>Community tools</strong>
               </Primary>

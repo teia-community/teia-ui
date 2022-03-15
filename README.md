@@ -1,9 +1,9 @@
 # Teia UI
-![size of the repository](https://img.shields.io/github/languages/code-size/teia-community/teia-ui?style=flat-square)
-![number of opened issues](https://img.shields.io/github/issues/teia-community/teia-ui?style=flat-square&color=blue)
-![number of opened PRs](https://img.shields.io/github/issues-pr/teia-community/teia-ui?style=flat-square&color=blue)
-![license](https://img.shields.io/github/license/teia-community/teia-ui?style=flat-square&color=black)
-![website status](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fteia.art)
+[![size of the repository](https://img.shields.io/github/languages/code-size/teia-community/teia-ui?style=flat-square)](https://github.com/teia-community/teia-ui)
+[![number of opened issues](https://img.shields.io/github/issues/teia-community/teia-ui?style=flat-square&color=blue)](https://github.com/teia-community/teia-ui/issues)
+[![number of opened PRs](https://img.shields.io/github/issues-pr/teia-community/teia-ui?style=flat-square&color=blue)](https://github.com/teia-community/teia-ui/pulls)
+[![license](https://img.shields.io/github/license/teia-community/teia-ui?style=flat-square&color=black)](./LICENSE)
+[![website status](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fteia.art)](https://teia.art)
 
 This repository is the frontend code of the open, community owned Tezos NFT Platform [teia.art](https://teia.art).
 
