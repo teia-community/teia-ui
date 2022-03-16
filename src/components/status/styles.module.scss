@@ -7,8 +7,6 @@
 }
 
 span[data-tooltip].status {
-
-
   &:before,
   &:after {
     transform: translate(-80%, -10px);
@@ -21,8 +19,7 @@ span[data-tooltip].status {
     @media (max-width: 768px) {
       white-space: pre-wrap;
       width: 70vw;
-      }
-
+    }
   }
 }
 

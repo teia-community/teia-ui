@@ -1,7 +1,7 @@
 @import '../../styles/mixins.scss';
 
 .faq__container li::before {
-  content: "-";
+  content: '-';
   position: absolute;
   margin-left: -1em;
 }

@@ -16,11 +16,11 @@
     font-weight: bold;
   }
 }
-        
+
 html {
-  margin-bottom: 10px!important;  
+  margin-bottom: 10px !important;
   @include respond-to('phone') {
-    margin-bottom: 20px!important;
+    margin-bottom: 20px !important;
     .container {
       padding: 5px;
       font-size: 13px;
