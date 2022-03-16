@@ -70,10 +70,7 @@ export const getTotalSales = ({ owners, creators }) => {
   if (!owners) return 0
   return Object.keys(owners).reduce((edition, ownerID) => {
     // not the platform or the creator
-    if (
-      ownerID !== MARKETPLACE_CONTRACT_V1 &&
-      !creators.includes(ownerID)
-    ) {
+    if (ownerID !== MARKETPLACE_CONTRACT_V1 && !creators.includes(ownerID)) {
       // add the count of market owned editions
       edition = edition + Number(owners[ownerID])
     }

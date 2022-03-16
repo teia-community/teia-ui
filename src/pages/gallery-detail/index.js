@@ -12,7 +12,8 @@ import styles from './styles.module.scss'
 import axios from 'axios'
 const _ = require('lodash')
 async function fetchObjkts(ids) {
-  const { data } = await fetchGraphQL(`
+  const { data } = await fetchGraphQL(
+    `
     query Objkts($_in: [bigint!] = "") {
       hic_et_nunc_token(where: { id: {_in: $_in}}) {
         artifact_uri
@@ -25,7 +26,10 @@ async function fetchObjkts(ids) {
         title
         hdao_balance
       }
-    }`, "Objkts", { "_in": ids })
+    }`,
+    'Objkts',
+    { _in: ids }
+  )
   return data.hic_et_nunc_token
 }
 
@@ -74,10 +78,14 @@ export const GalleryDetail = () => {
               let res = []
 
               if (id === 'thefen') {
-                res = await axios.get('https://raw.githubusercontent.com/joanielemercier/The_fen/main/thefen.json').then(res => res.data.data.map(e => e.objkt))
+                res = await axios
+                  .get(
+                    'https://raw.githubusercontent.com/joanielemercier/The_fen/main/thefen.json'
+                  )
+                  .then((res) => res.data.data.map((e) => e.objkt))
                 res = res.reduce((a, b) => [...a, ...b], [])
-                res = await(fetchObjkts(res))
-                res = res.filter(e => ![34413, 35798, 41628].includes(e.id))
+                res = await fetchObjkts(res)
+                res = res.filter((e) => ![34413, 35798, 41628].includes(e.id))
               } else {
                 res = await fetchObjkts(data.data[0].objkt)
               }
@@ -99,7 +107,10 @@ export const GalleryDetail = () => {
 
   const loadMore = () => {
     setFeed([...feed, ...items.slice(offset, offset + 15)])
-    context.feed = _.uniqBy([...context.feed, ...items.slice(offset, offset + 15)], 'id')
+    context.feed = _.uniqBy(
+      [...context.feed, ...items.slice(offset, offset + 15)],
+      'id'
+    )
     setOffset(offset + 15)
     if (feed.length === items.lenght) setHasMore(false)
   }
@@ -146,25 +157,23 @@ export const GalleryDetail = () => {
                 endMessage={undefined}
               >
                 <ResponsiveMasonry>
-                  {
-                    context.feed.map(e => {
-                      return (
-                        <Button key={e.id} to={`/objkt/${e.id}`}>
-                          <div className={styles.item}>
-                            {renderMediaType({
-                              mimeType: e.mime,
-                              artifactUri: e.artifact_uri,
-                              displayUri: e.display_uri,
-                              creator: "",
-                              objkt: e.id,
-                              interactive: false,
-                              displayView: true
-                            })}
-                          </div>
-                        </Button>
-                      )
-                    })
-                  }
+                  {context.feed.map((e) => {
+                    return (
+                      <Button key={e.id} to={`/objkt/${e.id}`}>
+                        <div className={styles.item}>
+                          {renderMediaType({
+                            mimeType: e.mime,
+                            artifactUri: e.artifact_uri,
+                            displayUri: e.display_uri,
+                            creator: '',
+                            objkt: e.id,
+                            interactive: false,
+                            displayView: true,
+                          })}
+                        </div>
+                      </Button>
+                    )
+                  })}
                 </ResponsiveMasonry>
               </InfiniteScroll>
             </Padding>

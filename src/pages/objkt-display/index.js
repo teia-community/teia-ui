@@ -109,7 +109,6 @@ trades(order_by: {timestamp: asc}) {
 `
 
 async function fetchObjkt(id) {
-
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
     console.error(errors)
@@ -120,7 +119,6 @@ async function fetchObjkt(id) {
   const result = data.hic_et_nunc_token_by_pk
   console.log(result)
   return result
-
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
@@ -166,7 +164,10 @@ export const ObjktDisplay = () => {
       objkt.ban = await getRestrictedAddresses()
       objkt.restricted = false
       // filter swaps from banned account
-      if (objkt.swaps && objkt.ban) objkt.swaps = objkt.swaps.filter(s => (s.status > 0 || !objkt.ban.includes(s.creator_id)))
+      if (objkt.swaps && objkt.ban)
+        objkt.swaps = objkt.swaps.filter(
+          (s) => s.status > 0 || !objkt.ban.includes(s.creator_id)
+        )
       setNFT(objkt)
     }
     setLoading(false)
@@ -230,13 +231,19 @@ export const ObjktDisplay = () => {
         </Container>
       )}
 
-      {!loading && (
-        !context.progress ?
+      {!loading &&
+        (!context.progress ? (
           <>
             <Container>
               <Padding>
                 {restricted && (
-                  <div style={{ color: 'white', background: 'black', textAlign: 'center' }}>
+                  <div
+                    style={{
+                      color: 'white',
+                      background: 'black',
+                      textAlign: 'center',
+                    }}
+                  >
                     Restricted OBJKT
                   </div>
                 )}
@@ -246,19 +253,26 @@ export const ObjktDisplay = () => {
               style={{
                 position: 'relative',
                 display: 'block',
-                width: '100%'
+                width: '100%',
               }}
-              className="objkt-display">
-              <div className={
-                nft.mime === 'application/x-directory' || nft.mime === 'image/svg+xml' ? 'objktview-zipembed objktview ' + styles.objktview :
-                  [(
-                    nft.mime === 'video/mp4' ||
-                      nft.mime === 'video/ogv' ||
-                      nft.mime === 'video/quicktime' ||
-                      nft.mime === 'video/webm' ||
-                      nft.mime === 'application/pdf' ? 'no-fullscreen' : 'objktview ' + styles.objktview
-                  )]
-              }>
+              className="objkt-display"
+            >
+              <div
+                className={
+                  nft.mime === 'application/x-directory' ||
+                  nft.mime === 'image/svg+xml'
+                    ? 'objktview-zipembed objktview ' + styles.objktview
+                    : [
+                        nft.mime === 'video/mp4' ||
+                        nft.mime === 'video/ogv' ||
+                        nft.mime === 'video/quicktime' ||
+                        nft.mime === 'video/webm' ||
+                        nft.mime === 'application/pdf'
+                          ? 'no-fullscreen'
+                          : 'objktview ' + styles.objktview,
+                      ]
+                }
+              >
                 {renderMediaType({
                   mimeType: nft.mime,
                   artifactUri: nft.artifact_uri,
@@ -266,7 +280,7 @@ export const ObjktDisplay = () => {
                   creator: nft.creator,
                   objkt: nft.id,
                   interactive: true,
-                  displayView: false
+                  displayView: false,
                 })}
               </div>
               <div>
@@ -322,20 +336,24 @@ export const ObjktDisplay = () => {
               </div>
             </div>
           </>
-          :
+        ) : (
           <Container>
             <Padding>
               <div>
-                <p style={{
-                  position: 'absolute',
-                  left: '46%',
-                  top: '45%',
-                }}>{context.message}</p>
+                <p
+                  style={{
+                    position: 'absolute',
+                    left: '46%',
+                    top: '45%',
+                  }}
+                >
+                  {context.message}
+                </p>
                 {context.progress && <Loading />}
               </div>
             </Padding>
           </Container>
-      )}
+        ))}
       <div style={{ height: '40px' }}></div>
     </Page>
   )

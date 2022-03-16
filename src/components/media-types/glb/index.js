@@ -6,7 +6,7 @@ export const GLBComponent = ({
   previewUri,
   preview,
   onDetailView,
-  displayView
+  displayView,
 }) => {
   const ref = useRef()
   const [width, setWidth] = useState('100px')

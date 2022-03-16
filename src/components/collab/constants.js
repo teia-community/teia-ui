@@ -41,19 +41,22 @@ export const collaboratorTemplate = {
   shares: undefined,
 }
 
-export const tipOptions = [ 1, 5, 10 ]
+export const tipOptions = [1, 5, 10]
 
-export const mockData = [{
-  address: 'tz1YJvMiZyXnzvV9pxtAiuCFvaG7XoBZhbUQ',
-  shares: 50,
-}, {
-  address: 'tz1LKpeN8ZSSFNyTWiBNaE4u4sjaq7J1Vz2z',
-  shares: 50,
-}, {
-  address: 'tz1f94uZ7SF2fLKnMjFzGQTbznd8qpAZ12is',
-  shares: 50,
-}];
-
+export const mockData = [
+  {
+    address: 'tz1YJvMiZyXnzvV9pxtAiuCFvaG7XoBZhbUQ',
+    shares: 50,
+  },
+  {
+    address: 'tz1LKpeN8ZSSFNyTWiBNaE4u4sjaq7J1Vz2z',
+    shares: 50,
+  },
+  {
+    address: 'tz1f94uZ7SF2fLKnMjFzGQTbznd8qpAZ12is',
+    shares: 50,
+  },
+]
 
 export const createProxySchema = `
 (map address (pair (bool %isCore) (nat %share))))

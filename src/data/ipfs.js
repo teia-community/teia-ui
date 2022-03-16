@@ -24,17 +24,18 @@ export const prepareFile100MB = async ({
   cover,
   thumbnail,
   generateDisplayUri,
-  file
+  file,
 }) => {
-
   const ipfs = create(infuraUrl)
 
   let formData = new FormData()
   formData.append('file', file)
 
-  let info = await axios.post('https://hesychasm.herokuapp.com/post_file', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }).then(res => res.data)
+  let info = await axios
+    .post('https://hesychasm.herokuapp.com/post_file', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then((res) => res.data)
   const hash = info.path
   const cid = `ipfs://${hash}`
 
@@ -81,7 +82,7 @@ export const prepareFile = async ({
   const ipfs = create(infuraUrl)
 
   // upload main file
- // const ipfs = create(infuraUrl)
+  // const ipfs = create(infuraUrl)
 
   const hash = await ipfs.add(new Blob([buffer]))
   console.log(hash)

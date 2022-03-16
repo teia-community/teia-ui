@@ -6,9 +6,18 @@ import {
   // BeaconWalletNotInitialized,
 } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
-import { packParticipantMap } from '../components/collab/functions';
+import { packParticipantMap } from '../components/collab/functions'
 import { setItem } from '../utils/storage'
-import { MARKETPLACE_CONTRACT_V1, MARKETPLACE_CONTRACT_V2, MAIN_MARKETPLACE_CONTRACT, MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE, SWAP_TYPE_TEIA, SWAP_TYPE_HEN, BURN_ADDRESS, getLogoList } from '../constants'
+import {
+  MARKETPLACE_CONTRACT_V1,
+  MARKETPLACE_CONTRACT_V2,
+  MAIN_MARKETPLACE_CONTRACT,
+  MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
+  SWAP_TYPE_TEIA,
+  SWAP_TYPE_HEN,
+  BURN_ADDRESS,
+  getLogoList,
+} from '../constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
@@ -20,7 +29,6 @@ const eztz = require('eztz-lib')
 // import { PermissionScope } from '@airgap/beacon-sdk'
 // import { UnitValue } from '@taquito/michelson-encoder'
 // import { contentType } from 'mime-types';
-
 
 export const HicetnuncContext = createContext()
 
@@ -38,7 +46,7 @@ const createProxySchema = `
 //const Tezos = new TezosToolkit('https://mainnet.smartpy.io')
 //const Tezos = new TezosToolkit('eu01-node.teztools.net-lb')
 const Tezos = new TezosToolkit('https://mainnet.api.tez.ie')
-const Packer = new MichelCodecPacker();
+const Packer = new MichelCodecPacker()
 //const Tezos = new TezosToolkit('https://api.tez.ie/rpc/mainnet')
 // storage fee adjustment
 
@@ -98,33 +106,64 @@ function createSwapCalls(
   return [
     {
       kind: OpKind.TRANSACTION,
-      ...objktsContract.methods.update_operators([{ add_operator: { operator: marketplaceAddress, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
-        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
+      ...objktsContract.methods
+        .update_operators([
+          {
+            add_operator: {
+              operator: marketplaceAddress,
+              token_id: parseFloat(objkt_id),
+              owner: ownerAddress,
+            },
+          },
+        ])
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
     },
-    type === SWAP_TYPE_TEIA ? (
-      // it's the teia marketplace contract
-      {
-        kind: OpKind.TRANSACTION,
-        ...marketplaceContract.methods.swap(objktsAddress, parseFloat(objkt_id), parseFloat(objkt_amount), parseFloat(xtz_per_objkt), parseFloat(royalties), creator).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
-      }
-      ) : (
-      // it's the hen v2 markeptlace contract
-      {
-        kind: OpKind.TRANSACTION,
-        ...marketplaceContract.methods.swap(creator, parseFloat(objkt_amount), parseFloat(objkt_id), parseFloat(royalties), parseFloat(xtz_per_objkt)).toTransferParams({ amount: 0, mutez: true, storageLimit: 300 })
-      }
-    ),
+    type === SWAP_TYPE_TEIA
+      ? // it's the teia marketplace contract
+        {
+          kind: OpKind.TRANSACTION,
+          ...marketplaceContract.methods
+            .swap(
+              objktsAddress,
+              parseFloat(objkt_id),
+              parseFloat(objkt_amount),
+              parseFloat(xtz_per_objkt),
+              parseFloat(royalties),
+              creator
+            )
+            .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+        }
+      : // it's the hen v2 markeptlace contract
+        {
+          kind: OpKind.TRANSACTION,
+          ...marketplaceContract.methods
+            .swap(
+              creator,
+              parseFloat(objkt_amount),
+              parseFloat(objkt_id),
+              parseFloat(royalties),
+              parseFloat(xtz_per_objkt)
+            )
+            .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+        },
     {
       kind: OpKind.TRANSACTION,
-      ...objktsContract.methods.update_operators([{ remove_operator: { operator: marketplaceAddress, token_id: parseFloat(objkt_id), owner: ownerAddress } }])
-        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
+      ...objktsContract.methods
+        .update_operators([
+          {
+            remove_operator: {
+              operator: marketplaceAddress,
+              token_id: parseFloat(objkt_id),
+              owner: ownerAddress,
+            },
+          },
+        ])
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
     },
-  ];
+  ]
 }
 
-
 class HicetnuncContextProviderClass extends Component {
-
   constructor(props) {
     super(props)
 
@@ -151,16 +190,24 @@ class HicetnuncContextProviderClass extends Component {
       subjktInfo: {},
       setSubjktInfo: (subjkt) => this.setState({ subjktInfo: subjkt }),
 
-      swap: async (from, royalties, xtz_per_objkt, objkt_id, creator, objkt_amount) => {
+      swap: async (
+        from,
+        royalties,
+        xtz_per_objkt,
+        objkt_id,
+        creator,
+        objkt_amount
+      ) => {
         // If using proxy: both calls are made through this.state.proxyAddress:
-        const objktsAddress = this.state.proxyAddress || this.state.objkts;
-        const marketplaceAddress = this.state.proxyAddress || MAIN_MARKETPLACE_CONTRACT;
-        const ownerAddress = this.state.proxyAddress || from;
+        const objktsAddress = this.state.proxyAddress || this.state.objkts
+        const marketplaceAddress =
+          this.state.proxyAddress || MAIN_MARKETPLACE_CONTRACT
+        const ownerAddress = this.state.proxyAddress || from
 
-        const [
-          objktsContract,
-          marketplaceContract
-        ] = await Promise.all([Tezos.wallet.at(objktsAddress), Tezos.wallet.at(marketplaceAddress)]);
+        const [objktsContract, marketplaceContract] = await Promise.all([
+          Tezos.wallet.at(objktsAddress),
+          Tezos.wallet.at(marketplaceAddress),
+        ])
 
         const list = createSwapCalls(
           objktsContract,
@@ -174,10 +221,12 @@ class HicetnuncContextProviderClass extends Component {
           royalties,
           creator,
           // use v2 in case of a collab contract (until support is added)
-          this.state.proxyAddress ? SWAP_TYPE_HEN : MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
-        );
+          this.state.proxyAddress
+            ? SWAP_TYPE_HEN
+            : MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
+        )
 
-        let batch = await Tezos.wallet.batch(list);
+        let batch = await Tezos.wallet.batch(list)
 
         return await batch.send()
       },
@@ -199,22 +248,25 @@ class HicetnuncContextProviderClass extends Component {
               this.state.setFeedback({
                 visible: false,
               })
-            }
+            },
           })
-          return;
+          return
         }
 
-        const [objktsContract, marketplaceContract, mainMarketplaceContract] = await Promise.all([
-          Tezos.wallet.at(this.state.objkts),
-          Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
-          Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT)
-        ])
+        const [objktsContract, marketplaceContract, mainMarketplaceContract] =
+          await Promise.all([
+            Tezos.wallet.at(this.state.objkts),
+            Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
+            Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
+          ])
 
         let list = [
           // cancel current swap
           {
             kind: OpKind.TRANSACTION,
-            ...marketplaceContract.methods.cancel_swap(parseFloat(swap.id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 310 })
+            ...marketplaceContract.methods
+              .cancel_swap(parseFloat(swap.id))
+              .toTransferParams({ amount: 0, mutez: true, storageLimit: 310 }),
           },
           // swap with new price
           ...createSwapCalls(
@@ -229,11 +281,11 @@ class HicetnuncContextProviderClass extends Component {
             swap.royalties,
             creator,
             MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
-          )
-        ];
+          ),
+        ]
 
         console.log(list)
-        let batch = await Tezos.wallet.batch(list);
+        let batch = await Tezos.wallet.batch(list)
         return await batch.send()
       },
 
@@ -260,7 +312,9 @@ class HicetnuncContextProviderClass extends Component {
       logo: '',
       setLogo: () => {
         const logo_list = getLogoList()
-        this.setState({ logo: logo_list[Math.floor(Math.random() * logo_list.length)] })
+        this.setState({
+          logo: logo_list[Math.floor(Math.random() * logo_list.length)],
+        })
       },
       // theme, DO NO CHANGE!
       theme: 'light',
@@ -293,70 +347,31 @@ class HicetnuncContextProviderClass extends Component {
           light ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)'
         )
 
-        root.style.setProperty(
-          '--gray-0',
-          light ? '#FFFFFF' : '#000000'
-        )
+        root.style.setProperty('--gray-0', light ? '#FFFFFF' : '#000000')
 
-        root.style.setProperty(
-          '--gray-05',
-          light ? '#F2F2F2' : '#0D0D0D'
-        )
+        root.style.setProperty('--gray-05', light ? '#F2F2F2' : '#0D0D0D')
 
-        root.style.setProperty(
-          '--gray-10',
-          light ? '#E6E6E6' : '#1A1A1A'
-        )
+        root.style.setProperty('--gray-10', light ? '#E6E6E6' : '#1A1A1A')
 
-        root.style.setProperty(
-          '--gray-15',
-          light ? '#D9D9D9' : '#262626'
-        )
+        root.style.setProperty('--gray-15', light ? '#D9D9D9' : '#262626')
 
-        root.style.setProperty(
-          '--gray-20',
-          light ? '#CCCCCC' : '#333333'
-        )
+        root.style.setProperty('--gray-20', light ? '#CCCCCC' : '#333333')
 
-        root.style.setProperty(
-          '--gray-30',
-          light ? '#B3B3B3' : '#4D4D4D'
-        )
+        root.style.setProperty('--gray-30', light ? '#B3B3B3' : '#4D4D4D')
 
-        root.style.setProperty(
-          '--gray-40',
-          light ? '#999999' : '#666666'
-        )
+        root.style.setProperty('--gray-40', light ? '#999999' : '#666666')
 
-        root.style.setProperty(
-          '--gray-50',
-          light ? '#808080' : '#808080'
-        )
+        root.style.setProperty('--gray-50', light ? '#808080' : '#808080')
 
-        root.style.setProperty(
-          '--gray-60',
-          light ? '#666666' : '#999999'
-        )
+        root.style.setProperty('--gray-60', light ? '#666666' : '#999999')
 
-        root.style.setProperty(
-          '--gray-70',
-          light ? '#4D4D4D' : '#B3B3B3'
-        )
+        root.style.setProperty('--gray-70', light ? '#4D4D4D' : '#B3B3B3')
 
-        root.style.setProperty(
-          '--gray-80',
-          light ? '#333333' : '#CCCCCC'
-        )
+        root.style.setProperty('--gray-80', light ? '#333333' : '#CCCCCC')
 
-        root.style.setProperty(
-          '--gray-90',
-          light ? '#191919' : '#E6E6E6'
-        )
+        root.style.setProperty('--gray-90', light ? '#191919' : '#E6E6E6')
 
-        root.style.setProperty(
-          '--gray-100',
-          light ? '#000000' : '#FFFFFF'
-        )
+        root.style.setProperty('--gray-100', light ? '#000000' : '#FFFFFF')
 
         this.setState({ theme })
       },
@@ -456,7 +471,7 @@ class HicetnuncContextProviderClass extends Component {
         this.setState({
           proxyAddress,
           proxyName,
-        });
+        })
 
         // Store in local storage too for retrieval later
         ls.set('collab_address', proxyAddress)
@@ -538,13 +553,11 @@ class HicetnuncContextProviderClass extends Component {
         return await Tezos.wallet
           .at(this.state.proxyAddress || contract_address)
           .then((c) =>
-            c.methods
-              .collect(parseFloat(swap_id))
-              .send({
-                amount: parseFloat(amount),
-                mutez: true,
-                storageLimit: 350,
-              })
+            c.methods.collect(parseFloat(swap_id)).send({
+              amount: parseFloat(amount),
+              mutez: true,
+              storageLimit: 350,
+            })
           )
           .catch((e) => e)
       },
@@ -567,31 +580,27 @@ class HicetnuncContextProviderClass extends Component {
       sign: async (objkt_id) => {
         await Tezos.wallet
           .at(this.state.signingContractAddress)
-          .then(c => c.methods
-            .sign(objkt_id)
-            .send({ amount: 0, storageLimit: 310 })
+          .then((c) =>
+            c.methods.sign(objkt_id).send({ amount: 0, storageLimit: 310 })
           )
           .then((op) => console.log(op))
       },
 
       claim_hDAO: async (hDAO_amount, objkt_id) => {
-        await Tezos.wallet
-          .at(this.state.hDAO_curation)
-          .then((c) => {
-            c.methods
-              .claim_hDAO(parseInt(hDAO_amount), parseInt(objkt_id))
-              .send()
-          })
+        await Tezos.wallet.at(this.state.hDAO_curation).then((c) => {
+          c.methods.claim_hDAO(parseInt(hDAO_amount), parseInt(objkt_id)).send()
+        })
       },
 
       batch_claim: async (arr) => {
         console.log(arr)
         let curation = await Tezos.wallet.at(this.state.hDAO_curation)
-        let transactions = arr.map(e => {
+        let transactions = arr.map((e) => {
           return {
             kind: OpKind.TRANSACTION,
-            ...curation.methods.claim_hDAO(e.hdao_balance, e.id)
-              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 })
+            ...curation.methods
+              .claim_hDAO(e.hdao_balance, e.id)
+              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
           }
         })
         let batch = await Tezos.wallet.batch(transactions)
@@ -599,45 +608,43 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       transfer: async (txs) => {
-        const { proxyAddress } = this.state;
+        const { proxyAddress } = this.state
 
-        await Tezos.wallet
-          .at(proxyAddress)
-          .then(async (c) => c.methods.transfer([
-                {
-                  from_: proxyAddress,
-                  txs,
-                },
-              ])
-              .send()
-          )
+        await Tezos.wallet.at(proxyAddress).then(async (c) =>
+          c.methods
+            .transfer([
+              {
+                from_: proxyAddress,
+                txs,
+              },
+            ])
+            .send()
+        )
       },
 
       burn: async (objkt_id, amount) => {
         var tz = await wallet.client.getActiveAccount()
-        const objktsOrProxy = this.state.proxyAddress || this.state.objkts;
-        const addressFrom = this.state.proxyAddress || tz.address;
+        const objktsOrProxy = this.state.proxyAddress || this.state.objkts
+        const addressFrom = this.state.proxyAddress || tz.address
 
-        console.log("Using", objktsOrProxy, "for burn");
+        console.log('Using', objktsOrProxy, 'for burn')
 
-        await Tezos.wallet
-          .at(objktsOrProxy)
-          .then(async (c) =>
-            c.methods
-              .transfer([
-                {
-                  from_: addressFrom,
-                  txs: [
-                    {
-                      to_: BURN_ADDRESS,
-                      token_id: parseInt(objkt_id),
-                      amount: parseInt(amount),
-                    },
-                  ],
-                },
-              ])
-              .send()
-          )
+        await Tezos.wallet.at(objktsOrProxy).then(async (c) =>
+          c.methods
+            .transfer([
+              {
+                from_: addressFrom,
+                txs: [
+                  {
+                    to_: BURN_ADDRESS,
+                    token_id: parseInt(objkt_id),
+                    amount: parseInt(amount),
+                  },
+                ],
+              },
+            ])
+            .send()
+        )
 
         this.state.setProgress(false)
       },
@@ -687,7 +694,8 @@ class HicetnuncContextProviderClass extends Component {
 
       registry: async (alias, metadata) => {
         // console.log(metadata)
-        const subjktAddressOrProxy = this.state.proxyAddress || this.state.subjkt
+        const subjktAddressOrProxy =
+          this.state.proxyAddress || this.state.subjkt
 
         return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
           c.methods
@@ -873,7 +881,6 @@ class HicetnuncContextProviderClass extends Component {
       hDAO_vote: ls.get('hDAO_vote'),
 
       mockProxy: async () => {
-
         this.state.setFeedback({
           visible: true,
           message: 'creating collaborative contract',
@@ -887,7 +894,7 @@ class HicetnuncContextProviderClass extends Component {
           }
 
           this.setState({
-            originationOpHash: result.opHash
+            originationOpHash: result.opHash,
           })
 
           this.state.setFeedback({
@@ -897,7 +904,6 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       findOriginatedContractFromOpHash: async (hash) => {
-
         this.state.setFeedback({
           visible: true,
           message: 'Checking network for collab contract',
@@ -907,11 +913,10 @@ class HicetnuncContextProviderClass extends Component {
 
         axios
           .get(`https://api.tzkt.io/v1/operations/originations/${hash}`)
-          .then(response => {
+          .then((response) => {
+            const { data } = response
 
-            const { data } = response;
-
-            console.log("response from originations call", data[0]);
+            console.log('response from originations call', data[0])
 
             if (data[0]) {
               console.log('There is correct data', data[0])
@@ -924,7 +929,7 @@ class HicetnuncContextProviderClass extends Component {
                 originationOpHash: undefined,
               }) // save hash
 
-              console.log("Saved state originatedContract", originatedContract);
+              console.log('Saved state originatedContract', originatedContract)
 
               // We have got our contract address
               this.state.setFeedback({
@@ -939,13 +944,13 @@ class HicetnuncContextProviderClass extends Component {
                   visible: false,
                 })
               }, 2000)
-
             } else {
               console.log('missing data')
 
               // We have got our contract address
               this.state.setFeedback({
-                message: 'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address',
+                message:
+                  'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address',
                 progress: true,
                 confirm: true,
               })
@@ -960,9 +965,8 @@ class HicetnuncContextProviderClass extends Component {
           })
       },
 
-      originateProxy: async participantData => {
-
-        console.log("originateProxy", participantData)
+      originateProxy: async (participantData) => {
+        console.log('originateProxy', participantData)
 
         // Clear any existing calls
         this.setState({
@@ -978,30 +982,27 @@ class HicetnuncContextProviderClass extends Component {
           confirm: false,
         })
 
-        const packDataParams = packParticipantMap(participantData);
-        console.log("packDataParams", packDataParams);
+        const packDataParams = packParticipantMap(participantData)
+        console.log('packDataParams', packDataParams)
 
         // Pack hex data for origination call
-        const { packed } = await Packer.packData(packDataParams);
+        const { packed } = await Packer.packData(packDataParams)
 
         // Blockchain ops
         await Tezos.wallet
           .at(this.state.proxyFactoryAddress)
-          .then(c =>
-            c.methods
-              .create_proxy(packed, 'hic_proxy')
-              .send({ amount: 0 })
+          .then((c) =>
+            c.methods.create_proxy(packed, 'hic_proxy').send({ amount: 0 })
           )
-          .then(result => {
-
-            console.log("Result of originate call", result)
+          .then((result) => {
+            console.log('Result of originate call', result)
 
             // Set the operation hash to trigger the countdown that checks for the originated contract
             this.setState({
-              originationOpHash: result.opHash
+              originationOpHash: result.opHash,
             })
           })
-          .catch(e => {
+          .catch((e) => {
             this.state.setFeedback({
               message: e.message || 'an error occurred',
               progress: false,
@@ -1010,7 +1011,7 @@ class HicetnuncContextProviderClass extends Component {
                 this.state.setFeedback({
                   visible: false,
                 })
-              }
+              },
             })
           })
       },

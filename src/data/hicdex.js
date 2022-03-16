@@ -182,7 +182,11 @@ hic_et_nunc_holder(where: {address: {_eq: $address}}) {
 }`
 
 export async function fetchUserMetadataFile(subjkt) {
-  const { errors, data } = await fetchGraphQL(getUserMetadataFile, 'subjktsQuery', { subjkt })
+  const { errors, data } = await fetchGraphQL(
+    getUserMetadataFile,
+    'subjktsQuery',
+    { subjkt }
+  )
 
   if (errors) {
     console.error(errors)
@@ -192,19 +196,14 @@ export async function fetchUserMetadataFile(subjkt) {
 }
 
 export async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(
-    process.env.REACT_APP_GRAPHQL_API,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName
-      })
-    }
-  );
+  const result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: operationsDoc,
+      variables: variables,
+      operationName: operationName,
+    }),
+  })
 
   return await result.json()
 }
-
-

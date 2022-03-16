@@ -66,14 +66,18 @@ const query_hdao = `query hDAOFeed($offset: Int = 0) {
 }`
 
 async function fetchProfiles(arr) {
-  const { errors, data } = await fetchGraphQLProfiles(tz_profiles, "profiles", { "arr": arr })
+  const { errors, data } = await fetchGraphQLProfiles(tz_profiles, 'profiles', {
+    arr: arr,
+  })
   return data.tzprofiles
 }
 
 async function fetchHdao(offset) {
-  const { errors, data } = await fetchGraphQL(query_hdao, "hDAOFeed", { "offset": offset })
+  const { errors, data } = await fetchGraphQL(query_hdao, 'hDAOFeed', {
+    offset: offset,
+  })
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
   const result = data.hic_et_nunc_token
   /* console.log({ result }) */
@@ -81,9 +85,11 @@ async function fetchHdao(offset) {
 }
 
 async function fetchFeed(lastId) {
-  const { errors, data } = await fetchGraphQL(latest_feed, "LatestFeed", { "lastId": lastId });
+  const { errors, data } = await fetchGraphQL(latest_feed, 'LatestFeed', {
+    lastId: lastId,
+  })
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
   const result = data.hic_et_nunc_token
   /* console.log({ result }) */
@@ -96,8 +102,8 @@ async function fetchGraphQLProfiles(operationsDoc, operationName, variables) {
     body: JSON.stringify({
       query: operationsDoc,
       variables: variables,
-      operationName: operationName
-    })
+      operationName: operationName,
+    }),
   })
   return await result.json()
 }
@@ -115,7 +121,8 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
 }
 
 async function fetchObjkts(ids) {
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
     query Objkts($ids: [bigint!] = "") {
       hic_et_nunc_token(where: {id: {_in: $ids}}) {
         artifact_uri
@@ -131,7 +138,10 @@ async function fetchObjkts(ids) {
           address
         }
       }
-    }`, "Objkts", { "ids": ids });
+    }`,
+    'Objkts',
+    { ids: ids }
+  )
   if (errors) {
     console.log(errors)
   }
@@ -139,12 +149,15 @@ async function fetchObjkts(ids) {
 }
 
 async function getLastId() {
-  const { errors, data } = await fetchGraphQL(`
+  const { errors, data } = await fetchGraphQL(
+    `
     query LastId {
       hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
         id
       }
-    }`, "LastId");
+    }`,
+    'LastId'
+  )
   return data.hic_et_nunc_token[0].id
 }
 
@@ -154,10 +167,10 @@ function rnd(min, max) {
 
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
-  return a;
+  return a
 }
 
 async function fetchRandomObjkts() {
@@ -169,12 +182,12 @@ async function fetchRandomObjkts() {
     uniqueIds.add(rnd(firstId, lastId))
   }
 
-  const { errors, data } = await fetchObjkts(Array.from(uniqueIds));
+  const { errors, data } = await fetchObjkts(Array.from(uniqueIds))
 
-  let objkts = await fetchObjkts(Array.from(uniqueIds));
+  let objkts = await fetchObjkts(Array.from(uniqueIds))
 
   if (errors) {
-    console.error(errors);
+    console.error(errors)
   }
 
   const result = data
@@ -213,7 +226,12 @@ export const Feeds = ({ type }) => {
           await getHdaoFeed()
         } */
     //await getRandomFeed()
-    await getLatest(Math.min.apply(Math, items.map(e => e.id)))
+    await getLatest(
+      Math.min.apply(
+        Math,
+        items.map((e) => e.id)
+      )
+    )
   }
 
   useEffect(async () => {
@@ -262,14 +280,14 @@ export const Feeds = ({ type }) => {
   const getLatest = async (id) => {
     let result = await fetchFeed(id)
     //console.log('feed', await fetchProfiles(result.map(e => e.creator_id)))
-    setCreators([...creators, result.map(e => e.creator_id)])
+    setCreators([...creators, result.map((e) => e.creator_id)])
 
     result = _.uniqBy(result, 'creator_id')
-    setCreators(creators.concat(result.map(e => e.creator_id)))
-    result = result.filter(e => !creators.includes(e.creator_id))
+    setCreators(creators.concat(result.map((e) => e.creator_id)))
+    result = result.filter((e) => !creators.includes(e.creator_id))
 
     let restricted = await getRestrictedAddresses()
-    result = result.filter(e => !restricted.includes(e.creator_id))
+    result = result.filter((e) => !restricted.includes(e.creator_id))
 
     //fetchProfiles(addrs)
     const next = items.concat(result)
@@ -285,21 +303,21 @@ export const Feeds = ({ type }) => {
 
   const getRandomFeed = async () => {
     let result = await fetchRandomObjkts()
-    setCreators([...creators, result.map(e => e.creator_id)])
+    setCreators([...creators, result.map((e) => e.creator_id)])
 
     result = _.uniqBy(result, 'creator_id')
-    setCreators(creators.concat(result.map(e => e.creator_id)))
-    result = result.filter(e => !creators.includes(e.creator_id))
+    setCreators(creators.concat(result.map((e) => e.creator_id)))
+    result = result.filter((e) => !creators.includes(e.creator_id))
 
     let restricted = await getRestrictedAddresses()
-    result = result.filter(e => !restricted.includes(e.creator_id))
+    result = result.filter((e) => !restricted.includes(e.creator_id))
     const next = items.concat(result)
     setItems(next)
   }
 
   return (
     <Page title="">
-      {items.length > 0 ?
+      {items.length > 0 ? (
         <Container xlarge>
           <InfiniteScroll
             dataLength={items.length}
@@ -322,15 +340,16 @@ export const Feeds = ({ type }) => {
                 ))}
               </Padding>
             </Container>
-          </InfiniteScroll> 
+          </InfiniteScroll>
+           
         </Container>
-        :
+      ) : (
         <Container>
           <Padding>
             <Loading />
           </Padding>
         </Container>
-      }
+      )}
       {/*       <BottomBanner>
         API is down due to heavy server load — We're working to fix the issue — please be patient with us. <a href="https://discord.gg/mNNSpxpDce" target="_blank">Join the discord</a> for updates.
       </BottomBanner> */}

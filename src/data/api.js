@@ -167,11 +167,14 @@ export const GetUserMetadata = async (walletAddr) => {
       for (const claim of claims.data.data.tzprofiles_by_pk.valid_claims) {
         let claimJSON = JSON.parse(claim[1])
         if (claimJSON.type.includes('TwitterVerification')) {
-          if (!tzktData.data || !tzktData.data.twitter ) {
+          if (!tzktData.data || !tzktData.data.twitter) {
             tzpData['twitter'] = claimJSON.evidence.handle
           }
         } else if (claimJSON.type.includes('BasicProfile')) {
-          if (claimJSON.credentialSubject.alias !== "" && !(tzktData.data && tzktData.data.alias))
+          if (
+            claimJSON.credentialSubject.alias !== '' &&
+            !(tzktData.data && tzktData.data.alias)
+          )
             tzpData['alias'] = claimJSON.credentialSubject.alias
           tzpData['tzprofile'] = walletAddr
         } else if (claimJSON.type.includes('DiscordVerification')) {
@@ -189,7 +192,7 @@ export const GetUserMetadata = async (walletAddr) => {
         }
       }
   } catch (e) {
-    console.error(e, e.stack);
+    console.error(e, e.stack)
   }
 
   if (tzpData) {

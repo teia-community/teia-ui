@@ -36,7 +36,9 @@ export const Header = () => {
   if (context.acc?.address) {
     // is menu closed?
     if (context.collapsed) {
-      const proxyAddress = context.proxyAddress ? ` (${context.proxyName || walletPreview(context.proxyAddress)})` : ''
+      const proxyAddress = context.proxyAddress
+        ? ` (${context.proxyName || walletPreview(context.proxyAddress)})`
+        : ''
       button = walletPreview(context.acc.address) + proxyAddress
     } else {
       // menu is open
@@ -50,7 +52,6 @@ export const Header = () => {
     context.setMenu(true)
     history.push(path, data)
   }
-
 
   const handleSyncUnsync = () => {
     if (context.acc?.address && !context.collapsed) {
@@ -70,7 +71,10 @@ export const Header = () => {
             <div className={styles.logo}>
               {/* HIC LOGO */}
               {true && (
-                <img src={`https://teia.art/logos/${context.theme}/${context.logo}`} alt="teia"></img>
+                <img
+                  src={`https://teia.art/logos/${context.theme}/${context.logo}`}
+                  alt="teia"
+                ></img>
               )}
               {/* PRIDE LOGO */}
               {false && <img src="/hen-pride.gif" alt="pride 2021" />}
@@ -89,7 +93,7 @@ export const Header = () => {
             <Button onClick={handleSyncUnsync} secondary>
               <Primary>{button}</Primary> {/* Main address display here */}
             </Button>
-            <Status/>
+            <Status />
             <Button onClick={context.toogleNavbar} secondary>
               <VisuallyHidden>
                 {`${context.collapsed ? 'show' : 'hide'} menu`}
@@ -114,7 +118,11 @@ export const Header = () => {
                     </li>
                     <li>
                       <Button>
-                        <Primary><a className={styles.link} href='/galleries'>Galleries</a></Primary>
+                        <Primary>
+                          <a className={styles.link} href="/galleries">
+                            Galleries
+                          </a>
+                        </Primary>
                       </Button>
                     </li>
                     <li>
@@ -128,21 +136,22 @@ export const Header = () => {
                       </Button>
                     </li>
                     <li>
-                      <Button className={styles.link} onClick={() => handleRoute('/faq')}>
+                      <Button
+                        className={styles.link}
+                        onClick={() => handleRoute('/faq')}
+                      >
                         <Primary>F.A.Q</Primary>
                       </Button>
                     </li>
                   </ul>
-                  {context.acc?.address ?
+                  {context.acc?.address ? (
                     <ul>
                       <div className={styles.address}>
                         {walletPreview(context.acc.address)}
                       </div>
                       <li style={{ textAlign: 'left' }}>
                         <Button onClick={() => handleRoute('/mint')}>
-                          <Primary left>
-                            Mint OBJKT
-                          </Primary>
+                          <Primary left>Mint OBJKT</Primary>
                         </Button>
                       </li>
                       <li style={{ textAlign: 'left' }}>
@@ -161,11 +170,16 @@ export const Header = () => {
                         </Button>
                       </li>
                     </ul>
-                     :
-                     <ul>
-                        <div className={styles.no__address__text}>The present decentralized application allows its users to manage decentralized digital assets, serving as a public smart contract infrastructure on Tezos Blockchain.</div>
-                     </ul>
-                    }
+                  ) : (
+                    <ul>
+                      <div className={styles.no__address__text}>
+                        The present decentralized application allows its users
+                        to manage decentralized digital assets, serving as a
+                        public smart contract infrastructure on Tezos
+                        Blockchain.
+                      </div>
+                    </ul>
+                  )}
                 </nav>
               </Padding>
             </Container>

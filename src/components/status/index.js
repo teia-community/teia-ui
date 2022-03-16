@@ -8,14 +8,18 @@ export const Status = ({ criticalDelta = 50 }) => {
   const [statusDetails, setStatusDetails] = useState()
 
   const checkIndexerStatus = useCallback(async () => {
-    const tzktStatus = await fetch('https://api.tzkt.io/v1/head').then((res) => res && res.json())
+    const tzktStatus = await fetch('https://api.tzkt.io/v1/head').then(
+      (res) => res && res.json()
+    )
 
     if (!tzktStatus) {
       return
     }
 
     const dipdupState = await fetchGraphQL(getDipdupState)
-    const mainnetNode = dipdupState.data.hic_et_nunc_dipdup_state.find(({ index_name }) => index_name === 'hen_mainnet')
+    const mainnetNode = dipdupState.data.hic_et_nunc_dipdup_state.find(
+      ({ index_name }) => index_name === 'hen_mainnet'
+    )
 
     if (!mainnetNode) {
       return
@@ -23,17 +27,21 @@ export const Status = ({ criticalDelta = 50 }) => {
 
     const delta = Math.abs(tzktStatus.level - mainnetNode.level)
 
-    if (delta > criticalDelta) { // arbitrary blockchain level comparison
-      console.log(`Indexer problem: ${tzktStatus.level} vs ${mainnetNode.level} = ${delta}`)
-      setStatusDetails(`Indexer problem: The indexer is currently delayed (-${delta} blocks)`)
+    if (delta > criticalDelta) {
+      // arbitrary blockchain level comparison
+      console.log(
+        `Indexer problem: ${tzktStatus.level} vs ${mainnetNode.level} = ${delta}`
+      )
+      setStatusDetails(
+        `Indexer problem: The indexer is currently delayed (-${delta} blocks)`
+      )
     }
-  }, [criticalDelta]);
+  }, [criticalDelta])
 
   useEffect(() => {
-    checkIndexerStatus()
-      .catch((err) => {
-        console.error(err)
-      })
+    checkIndexerStatus().catch((err) => {
+      console.error(err)
+    })
   }, [checkIndexerStatus])
 
   if (!statusDetails) {
@@ -41,16 +49,16 @@ export const Status = ({ criticalDelta = 50 }) => {
   }
 
   return (
-      <span
-        className={styles.status}
-        data-position={'bottom'}
-        data-tooltip={statusDetails}
-        style={{
-          marginRight: '10px',
-        }}
-      >
-        <VisuallyHidden>{`${statusDetails}`}</VisuallyHidden>
-        🔴
-      </span>
+    <span
+      className={styles.status}
+      data-position={'bottom'}
+      data-tooltip={statusDetails}
+      style={{
+        marginRight: '10px',
+      }}
+    >
+      <VisuallyHidden>{`${statusDetails}`}</VisuallyHidden>
+      🔴
+    </span>
   )
 }

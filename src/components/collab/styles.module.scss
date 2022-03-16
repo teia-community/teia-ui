@@ -1,7 +1,7 @@
 @import '../../styles/layout.scss';
 @import '../../styles/variables.scss';
 
-.container{
+.container {
   display: flex;
   flex-direction: column;
   margin: 0 1em;
@@ -327,7 +327,7 @@
   padding: 5px;
 }
 
-.row input[type="text"] {
+.row input[type='text'] {
   margin-bottom: 0 !important;
 }
 

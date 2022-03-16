@@ -8,7 +8,7 @@ export const ImageComponent = ({
   previewUri,
   onDetailView,
   preview,
-  displayView
+  displayView,
 }) => {
   let src = onDetailView ? artifactUri : displayUri || artifactUri
 

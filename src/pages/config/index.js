@@ -68,7 +68,7 @@ export class Config extends Component {
     subjktUri: '', // uploads image
     cid: undefined,
     selectedFile: undefined,
-    toogled: false
+    toogled: false,
   }
 
   componentWillMount = async () => {
@@ -86,14 +86,19 @@ export class Config extends Component {
     console.log(this.context.subjktInfo)
 
     if (this.context.subjktInfo) {
-      let cid = await axios.get('https://ipfs.io/ipfs/' + (this.context.subjktInfo.metadata_file).split('//')[1]).then(res => res.data)
+      let cid = await axios
+        .get(
+          'https://ipfs.io/ipfs/' +
+            this.context.subjktInfo.metadata_file.split('//')[1]
+        )
+        .then((res) => res.data)
 
       this.context.subjktInfo.gravatar = cid
 
       if (cid.description) this.setState({ description: cid.description })
       if (cid.identicon) this.setState({ identicon: cid.identicon })
-      if (this.context.subjktInfo.name) this.setState({ subjkt: this.context.subjktInfo.name })
-
+      if (this.context.subjktInfo.name)
+        this.setState({ subjkt: this.context.subjktInfo.name })
     }
     //console.log(this.context.subjktInfo)
     this.setState({ loading: false })
@@ -102,7 +107,7 @@ export class Config extends Component {
   handleChange = (e) => {
     if (e.target.name == 'subjkt' && !e.target.checkValidity()) {
       console.log(e.target.pattern)
-      e.target.value = e.target.value.replace(/[^a-z0-9-._]/g, "")
+      e.target.value = e.target.value.replace(/[^a-z0-9-._]/g, '')
     }
     console.log('set', e.target.name, 'to', e.target.value)
     this.setState({ [e.target.name]: e.target.value })
@@ -111,7 +116,6 @@ export class Config extends Component {
   // config subjkt
 
   subjkt_config = async () => {
-
     if (this.state.selectedFile) {
       const [file] = this.state.selectedFile
 
@@ -124,7 +128,12 @@ export class Config extends Component {
     this.context.registry(
       this.state.subjkt,
       await ipfs.add(
-        Buffer.from(JSON.stringify({ description: this.state.description, identicon: this.state.identicon }))
+        Buffer.from(
+          JSON.stringify({
+            description: this.state.description,
+            identicon: this.state.identicon,
+          })
+        )
       )
     )
   }
@@ -141,7 +150,6 @@ export class Config extends Component {
 
     const buffer = Buffer.from(await file.arrayBuffer())
     this.setState({ identicon: 'ipfs://' + (await ipfs.add(buffer)).path })
-
   }
 
   hDAO_operators = () => {
@@ -199,9 +207,7 @@ export class Config extends Component {
   render() {
     return (
       <Page>
-
         <Container>
-
           <Identicon address={this.state.address} logo={this.state.identicon} />
 
           <div style={{ height: '20px' }}></div>
@@ -213,7 +219,11 @@ export class Config extends Component {
               onChange={this.handleChange}
               placeholder="Username"
               label="Username"
-              value={this.context.subjktInfo ? this.context.subjktInfo.name : undefined}
+              value={
+                this.context.subjktInfo
+                  ? this.context.subjktInfo.name
+                  : undefined
+              }
               pattern="^[a-z0-9-._]*$"
             />
             <Input
@@ -228,12 +238,15 @@ export class Config extends Component {
             </Button>
           </Padding>
           <div style={{ display: 'inline' }}>
-            <p style={{paddingTop : '7.5px' }}>
+            <p style={{ paddingTop: '7.5px' }}>
+              <span>Link your Twitter, Discord, GitHub, and website with </span>
               <span>
-                Link your Twitter, Discord, GitHub, and website with </span>
-              <span>
-                <a style={{ fontWeight: 'bold' }} target="_blank" href="https://tzprofiles.com">
-                   Tezos Profiles
+                <a
+                  style={{ fontWeight: 'bold' }}
+                  target="_blank"
+                  href="https://tzprofiles.com"
+                >
+                  Tezos Profiles
                 </a>
               </span>
             </p>
@@ -243,35 +256,31 @@ export class Config extends Component {
         <Container>
           <Padding>
             <div onClick={this.toggle}>
-              <Primary>
-                + Advanced
-              </Primary>
+              <Primary>+ Advanced</Primary>
             </div>
           </Padding>
         </Container>
-        {
-          this.state.toogled ?
-            <Container>
-              <Padding>
-                <Input
-                  name="vote"
-                  onChange={this.handleChange}
-                  placeholder="hDAO Curation"
-                  label="hDAO Curation"
-                  value={undefined}
-                />
+        {this.state.toogled ? (
+          <Container>
+            <Padding>
+              <Input
+                name="vote"
+                onChange={this.handleChange}
+                placeholder="hDAO Curation"
+                label="hDAO Curation"
+                value={undefined}
+              />
 
-                <Button onClick={this.hDAO_config}>
-                  <Purchase>Save ○</Purchase>
-                </Button>
+              <Button onClick={this.hDAO_config}>
+                <Purchase>Save ○</Purchase>
+              </Button>
 
-                <p style={{ marginTop : '7.5px' }}>hic et nunc DAO ○ curation parameter</p>
-              </Padding>
-            </Container>
-            :
-            undefined
-        }
-
+              <p style={{ marginTop: '7.5px' }}>
+                hic et nunc DAO ○ curation parameter
+              </p>
+            </Padding>
+          </Container>
+        ) : undefined}
 
         {/*         <Container>
           <Padding>

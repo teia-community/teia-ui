@@ -20,29 +20,29 @@ export const getTimeAgo = (props) => {
   let now = Math.round(new Date().getTime() / 1000)
 
   let difference = now - stamp
-  let unit, value;
+  let unit, value
 
   if (difference / 60 < 60) {
-      unit = 'minutes'
-      value = Math.round(difference / 60)
+    unit = 'minutes'
+    value = Math.round(difference / 60)
 
-      if (value <= 1) {
-          unit = 'minute'
-      }
+    if (value <= 1) {
+      unit = 'minute'
+    }
   } else if (difference / (60 * 60) < 24) {
-      unit = 'hours'
-      value = Math.round(difference / (60 * 60))
+    unit = 'hours'
+    value = Math.round(difference / (60 * 60))
 
-      if (value <= 1) {
-          unit = 'hour'
-      }
+    if (value <= 1) {
+      unit = 'hour'
+    }
   } else {
-      unit = 'days'
-      value = Math.round(difference / (60 * 60 * 24))
+    unit = 'days'
+    value = Math.round(difference / (60 * 60 * 24))
 
-      if (value <= 1) {
-          unit = 'day'
-      }
+    if (value <= 1) {
+      unit = 'day'
+    }
   }
 
   // console.log(unit, value)

@@ -9,13 +9,13 @@
   justify-content: center;
 
   @include respond-to('tablet') {
-    width : 60vh;
+    width: 60vh;
     height: 60vh;
     margin: 0 auto;
   }
 }
 
-.container{
+.container {
   display: flex;
   flex-direction: column;
   margin: 0 1em;
@@ -40,7 +40,8 @@
   margin-bottom: 15px;
   border-bottom: 1px solid var(--border-color);
 
-  a, .history__mint__op {
+  a,
+  .history__mint__op {
     min-width: 0px;
 
     font-size: $font-small-mobile;
@@ -62,7 +63,8 @@
 
     fill: var(--text-color);
 
-    line, path {
+    line,
+    path {
       stroke: var(--text-color);
     }
   }
@@ -116,7 +118,12 @@
   }
 }
 
-.history__event, .history__from, .history__to, .history__ed, .history__price, .history__date {
+.history__event,
+.history__from,
+.history__to,
+.history__ed,
+.history__price,
+.history__date {
   margin-bottom: 7px;
 
   height: 20px;
@@ -139,7 +146,8 @@
   }
 }
 
-.history__from, .history__to {
+.history__from,
+.history__to {
   @include respond-to('desktop') {
     text-overflow: ellipsis;
     width: calc(20.833333333%);
@@ -153,7 +161,8 @@
   }
 }
 
-.history__price, .history__date {
+.history__price,
+.history__date {
   @include respond-to('desktop') {
     text-align: right;
     width: calc(13.888888888%);
@@ -186,11 +195,14 @@
   }
 }
 
-.history__from, .history__to {
+.history__from,
+.history__to {
   display: flex;
 }
 
-.history__ed, .history__price, .history__date {
+.history__ed,
+.history__price,
+.history__date {
   display: none;
 
   @include respond-to('desktop') {
@@ -204,7 +216,9 @@
 
   text-align: right;
 
-  .history__ed, .history__price, .history__date {
+  .history__ed,
+  .history__price,
+  .history__date {
     display: block;
   }
 

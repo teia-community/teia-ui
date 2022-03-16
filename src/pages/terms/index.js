@@ -3,7 +3,7 @@ import { Page, Container, Padding } from '../../components/layout'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { getLanguage } from '../../constants'
 
-import Markdown from 'markdown-to-jsx';
+import Markdown from 'markdown-to-jsx'
 
 export class Terms extends Component {
   static contextType = HicetnuncContext
@@ -28,8 +28,8 @@ export class Terms extends Component {
     const docLang = this.docLang
     const document = `/languages/documents/terms-${docLang}.md`
     fetch(document)
-      .then(response => response.text())
-      .then(text => {
+      .then((response) => response.text())
+      .then((text) => {
         this.termsContent = text
         this.forceUpdate()
       })
@@ -51,7 +51,9 @@ export class Terms extends Component {
         <Container>
           <Padding>
             {this.termsContent && (
-              <Markdown options={{ forceBlock: true }} className="markdown-doc">{this.termsContent}</Markdown>
+              <Markdown options={{ forceBlock: true }} className="markdown-doc">
+                {this.termsContent}
+              </Markdown>
             )}
           </Padding>
         </Container>

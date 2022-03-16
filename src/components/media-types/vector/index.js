@@ -11,14 +11,13 @@ export const VectorComponent = ({
   objkt,
   onDetailView,
   preview,
-  displayView
+  displayView,
 }) => {
   const context = useContext(HicetnuncContext)
   const classes = classnames({
     [styles.container]: true,
     [styles.interactive]: onDetailView,
   })
-
 
   let _creator_ = false
   let _viewer_ = false
@@ -64,7 +63,10 @@ export const VectorComponent = ({
           src={path}
           sandbox="allow-scripts"
           scrolling="no"
-          onLoad={'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'} // eslint-disable-line no-script-url
+          onLoad={
+            // eslint-disable-next-line no-script-url
+            'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
+          }
         />
       </div>
     )

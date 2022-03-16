@@ -10,7 +10,7 @@ export const VideoComponent = ({
   preview,
   interactive,
   inView,
-  displayView
+  displayView,
 }) => {
   const domElement = useRef()
 

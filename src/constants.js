@@ -17,22 +17,30 @@ export const getBanBlockList = () => banBlockList
 let logoList = []
 export const setLogoList = (data) => {
   // Shuffles the list daily
-  let logos = data.logos;
-  let currentIndex = logos.length, temporaryValue, randomIndex;
-  const date = new Date(Date.now());
-  let day = (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
-  let random = function() {
-    var x = Math.sin(day++) * 10000;
-    return x - Math.floor(x);
-  };
+  let logos = data.logos
+  let currentIndex = logos.length,
+    temporaryValue,
+    randomIndex
+  const date = new Date(Date.now())
+  let day =
+    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
+      Date.UTC(date.getFullYear(), 0, 0)) /
+    24 /
+    60 /
+    60 /
+    1000
+  let random = function () {
+    var x = Math.sin(day++) * 10000
+    return x - Math.floor(x)
+  }
 
   while (0 !== currentIndex) {
-    randomIndex = Math.floor(random() * currentIndex);
-    currentIndex -= 1;
+    randomIndex = Math.floor(random() * currentIndex)
+    currentIndex -= 1
     //swap
-    temporaryValue = logos[currentIndex];
-    logos[currentIndex] = logos[randomIndex];
-    logos[randomIndex] = temporaryValue;
+    temporaryValue = logos[currentIndex]
+    logos[currentIndex] = logos[randomIndex]
+    logos[randomIndex] = temporaryValue
   }
 
   logoList = logos
@@ -79,7 +87,7 @@ export const MIMETYPE = {
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
-  MD : 'text/markdown'
+  MD: 'text/markdown',
 }
 
 export const IPFS_DIRECTORY_MIMETYPE = 'application/x-directory'
@@ -90,7 +98,20 @@ export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
-  .filter((e) => !['ZIP1', 'ZIP2', 'OGA', 'OGV', 'BMP', 'TIFF', 'XWAV', 'QUICKTIME', 'WEBP'].includes(e[0]))
+  .filter(
+    (e) =>
+      ![
+        'ZIP1',
+        'ZIP2',
+        'OGA',
+        'OGV',
+        'BMP',
+        'TIFF',
+        'XWAV',
+        'QUICKTIME',
+        'WEBP',
+      ].includes(e[0])
+  )
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
   .join(', ')
 

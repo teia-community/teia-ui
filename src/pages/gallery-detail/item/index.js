@@ -91,14 +91,14 @@ export const Item = ({ objkt, onClick, minimal }) => {
                     displayUri: data.token_info.displayUri,
                     creator: data.token_info.creators[0],
                     objkt: data.token_id,
-                    displayView: true
+                    displayView: true,
                   })}
                   {/* <div className={styles.number}>OBJKT#{objkt}</div> */}
                 </div>
                 {minimal !== true && (
                   <div className={styles.info}>
                     {data.edition !== false && <p>{data.edition}</p>}
-{/*                     <p
+                    {/*                     <p
                       style={{
                         opacity: data.price === nfs ? 0.5 : 1,
                       }}
@@ -111,9 +111,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
             )}
           </div>
         ) : (
-          <div>
-            {/* <Loading /> */}
-          </div>
+          <div>{/* <Loading /> */}</div>
         )}
       </>
     </div>

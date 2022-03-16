@@ -32,12 +32,12 @@ const HashToURL = (hash, type) => {
       return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
     case 'INFURA':
       try {
-      var cidv1 = new ipfsClient.CID(hash.replace('ipfs://', '')).toV1()
-      var subdomain = cidv1.toBaseEncodedString('base32')
-      return `https://${subdomain}.ipfs.infura-ipfs.io/`
-    } catch (err) {
-      return undefined
-    }
+        var cidv1 = new ipfsClient.CID(hash.replace('ipfs://', '')).toV1()
+        var subdomain = cidv1.toBaseEncodedString('base32')
+        return `https://${subdomain}.ipfs.infura-ipfs.io/`
+      } catch (err) {
+        return undefined
+      }
     case 'DWEB':
       return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
     default:
@@ -91,7 +91,7 @@ export const renderMediaType = ({
   // when previewing during mint process
   preview = false,
 
-  displayView
+  displayView,
 }) => {
   let parsedArtifactUri
   let parsedDisplayUri
@@ -238,8 +238,7 @@ export const renderMediaType = ({
         <MD
           artifactUri={HashToURL(artifactUri, 'IPFS')}
           displayView={displayView}
-        >
-        </MD>
+        ></MD>
       )
 
     default:

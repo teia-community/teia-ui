@@ -2,7 +2,6 @@
 @import '../../styles/layout.scss';
 
 .outer__container {
-
 }
 
 .container {
@@ -50,7 +49,6 @@
         width: auto;
         height: 32px;
       }
-
     }
 
     .right {
@@ -158,7 +156,7 @@
   word-break: keep-all;
 
   @include respond-to('desktop') {
-    width: 250px;    
+    width: 250px;
   }
 }
 
