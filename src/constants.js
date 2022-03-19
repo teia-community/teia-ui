@@ -147,6 +147,6 @@ export const SWAP_TYPE_TEIA = 'TEIA'
 export const SWAP_TYPE_HEN = 'HEN'
 
 export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one that is used for swapping
-export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_HEN
+export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
