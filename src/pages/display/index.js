@@ -1042,7 +1042,7 @@ export default class Display extends Component {
                   {this.state.items.map((nft) => {
                     // console.log('swaps ' + JSON.stringify(nft))
                     return (
-                      <li key={nft.id} className={styles.cardContainer}>
+                      <div key={nft.id} className={styles.cardContainer}>
                         <Button
                           style={{ positon: 'relative' }}
                           to={`${PATH.OBJKT}/${nft.id}`}
@@ -1056,7 +1056,7 @@ export default class Display extends Component {
                             })}
                           </div>
                         </Button>
-                      </li>
+                      </div>
                     )
                   })}
                 </ResponsiveMasonry>

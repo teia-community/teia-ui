@@ -5,6 +5,7 @@ import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Input } from '../../components/input'
 import { FeedItem } from '../../components/feed-item'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { ErrorBoundary } from 'react-error-boundary'
 import './style.css'
 import { getWalletBlockList } from '../../constants'
 import { getObjktsByShare } from '../../data/hicdex'
@@ -716,6 +717,7 @@ export class Search extends Component {
                 {this.state.tags.map((e) => (
                   // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   <a
+                    key={e.value}
                     className="tag"
                     href="#"
                     onClick={() => {
@@ -739,23 +741,25 @@ export class Search extends Component {
           </Padding>
         </Container>
         <Container xlarge>
-          {this.state.feed.length > 0 ? (
-            <InfiniteScroll
-              dataLength={this.state.feed.length}
-              next={this.loadMore}
-              hasMore={this.state.hasMore}
-              loader={undefined}
-              endMessage={undefined}
-            >
-              <Container>
-                <Padding>
+          <Container>
+            <Padding>
+              {this.state.feed.length > 0 ? (
+                <InfiniteScroll
+                  dataLength={this.state.feed.length}
+                  next={this.loadMore}
+                  hasMore={this.state.hasMore}
+                  loader={undefined}
+                  endMessage={undefined}
+                >
                   {this.state.feed.map((item, index) => (
-                    <FeedItem key={`${item.id}-${index}`} {...item} />
+                    <div key={`${item.id}-${index}`}>
+                      <FeedItem {...item} />
+                    </div>
                   ))}
-                </Padding>
-              </Container>
-            </InfiniteScroll>
-          ) : undefined}
+                </InfiniteScroll>
+              ) : undefined}
+            </Padding>
+          </Container>
         </Container>
       </Page>
     )
