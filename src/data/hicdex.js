@@ -304,7 +304,7 @@ export async function fetchRandomObjkts(count) {
   }
   try {
     let objkts = await fetchObjkts(Array.from(uniqueIds))
-    return objkts.hic_et_nunc_token
+    return objkts
   } catch (e) {
     console.error(e)
   }
