@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Button, Secondary } from '../../button'
+import { Button, Secondary } from '@components/button'
 import { TipSelector } from './TipSelector'
 import styles from '../styles.module.scss'
-import inputStyles from '../../../components/input/styles.module.scss'
+import inputStyles from '@components/input/styles.module.scss'
 import classNames from 'classnames'
 import { CloseIcon } from '..'
-import { GetUserMetadata } from '../../../data/api'
+import { GetUserMetadata } from '@data/api'
 
 export const BeneficiaryRow = ({
   beneficiary,

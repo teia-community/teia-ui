@@ -1,7 +1,14 @@
 const webpack = require("webpack");
-
+const path = require("path");
 module.exports = {
   webpack: {
+    alias: {
+      '@data': path.resolve(__dirname, 'src/data'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@context': path.resolve(__dirname, 'src/context'),
+      '@constants': path.resolve(__dirname, 'src/constants'),
+      '@components': path.resolve(__dirname, 'src/components')
+    },
     configure: {
       resolve: {
         fallback: {

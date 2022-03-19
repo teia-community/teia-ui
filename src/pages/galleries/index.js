@@ -1,46 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Button, Primary } from '../../components/button'
-import { Page, Container, Padding } from '../../components/layout'
-import { renderMediaType } from '../../components/media-types'
-import { PATH } from '../../constants'
-import { ResponsiveMasonry } from '../../components/responsive-masonry'
+import { Button, Primary } from '@components/button'
+import { Page, Container, Padding } from '@components/layout'
+import { renderMediaType } from '@components/media-types'
+import { PATH } from '@constants'
+import { ResponsiveMasonry } from '@components/responsive-masonry'
 import styles from './styles.module.scss'
-
+import { fetchObjkts } from '@data/hicdex'
 const _ = require('lodash')
-
-async function fetchObjkts(ids) {
-  const { data } = await fetchGraphQL(
-    `
-    query Objkts($_in: [bigint!] = "") {
-      hic_et_nunc_token(where: { id: {_in: $_in}}) {
-        artifact_uri
-        display_uri
-        creator_id
-        id
-        mime
-        thumbnail_uri
-        timestamp
-        title
-        hdao_balance
-      }
-    }`,
-    'Objkts',
-    { _in: ids }
-  )
-  return data.hic_et_nunc_token
-}
-
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  })
-  return await result.json()
-}
 
 export const Galleries = () => {
   const [data, setData] = useState([])

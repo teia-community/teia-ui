@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react'
 
-import { renderMediaType } from '../../../components/media-types'
-import { Button, Purchase } from '../../../components/button'
-import { PATH } from '../../../constants'
-import { GetUserMetadata } from '../../../data/api'
+import { renderMediaType } from '@components/media-types'
+import { Button, Purchase } from '@components/button'
+import { PATH } from '@constants'
+import { GetUserMetadata } from '@data/api'
 import { ArtistLogo } from '../artist-icon'
 import styles from './styles.module.scss'
 

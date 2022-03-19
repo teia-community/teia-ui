@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Container, Padding } from '../../../components/layout'
-import styles from '../../../components/collab/styles.module.scss'
-import { fetchGraphQL, getCollabsForAddress } from '../../../data/hicdex'
-// import { Input } from '../../../components/input'
-import { CountdownTimer } from '../../../components/collab/manage/CountdownTimer'
-import { CollabList } from '../../../components/collab/manage/CollabList'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import styles from '@components/collab/styles.module.scss'
+import { fetchGraphQL, getCollabsForAddress } from '@data/hicdex'
+// import { Input } from '@components/input'
+import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
+import { CollabList } from '@components/collab/manage/CollabList'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const {

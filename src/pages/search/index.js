@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { Page, Container, Padding } from '../../components/layout'
+import { Page, Container, Padding } from '@components/layout'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 
-import { Input } from '../../components/input'
-import { FeedItem } from '../../components/feed-item'
+import { Input } from '@components/input'
+import { FeedItem } from '@components/feed-item'
+
+import { fetchRandomObjkts } from '@data/hicdex'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { ErrorBoundary } from 'react-error-boundary'
+
 import './style.css'
 import { getWalletBlockList } from '../../constants'
 import { getObjktsByShare } from '../../data/hicdex'
@@ -40,51 +42,6 @@ query LatestFeed {
   const result = data.hic_et_nunc_token
   /* console.log({ result }) */
   return result
-}
-
-async function fetchObjkts(ids) {
-  const { errors, data } = await fetchGraphQL(
-    `
-    query Objkts($ids: [bigint!] = "") {
-      hic_et_nunc_token(where: {id: {_in: $ids}, supply : { _neq : 0 }}) {
-        artifact_uri
-        display_uri
-        creator_id
-        id
-        mime
-        thumbnail_uri
-        timestamp
-        title
-        creator {
-          name
-          address
-        }
-      }
-    }`,
-    'Objkts',
-    { ids: ids }
-  )
-  if (errors) {
-    console.log(errors)
-  }
-  return data
-}
-
-async function getLastId() {
-  const { data } = await fetchGraphQL(
-    `
-    query LastId {
-      hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
-        id
-      }
-    }`,
-    'LastId'
-  )
-  return data.hic_et_nunc_token[0].id
-}
-
-function rnd(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 async function fetchGLB(offset) {
@@ -221,20 +178,6 @@ async function fetchMusic(offset) {
   } catch (e) {
     return undefined
   }
-}
-
-async function fetchRandomObjkts() {
-  const firstId = 196
-  const lastId = await getLastId()
-
-  const uniqueIds = new Set()
-  while (uniqueIds.size < 15) {
-    uniqueIds.add(rnd(firstId, lastId))
-  }
-
-  const data = await fetchObjkts(Array.from(uniqueIds))
-
-  return data.hic_et_nunc_token
 }
 
 async function fetchDay(day, offset) {
@@ -592,7 +535,7 @@ export class Search extends Component {
       })
     }
     if (e === 'random') {
-      let res = await fetchRandomObjkts()
+      let res = await fetchRandomObjkts(15)
       res = res.filter((e) => !arr.includes(e.creator_id))
       this.setState({ feed: [...this.state.feed, ...res] })
     }

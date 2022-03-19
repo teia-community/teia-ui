@@ -2,17 +2,18 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { BottomBanner } from '../../components/bottom-banner'
+import { BottomBanner } from '@components/bottom-banner'
 import {
   GetLatestFeed,
   // GethDAOFeed,
   // GetRandomFeed,
   // GetFeaturedFeed,
-} from '../../data/api'
-import { Page, Container, Padding } from '../../components/layout'
-import { FeedItem } from '../../components/feed-item'
-import { Loading } from '../../components/loading'
-import { getWalletBlockList } from '../../constants'
+} from '@data/api'
+import { Page, Container, Padding } from '@components/layout'
+import { FeedItem } from '@components/feed-item'
+import { Loading } from '@components/loading'
+import { getWalletBlockList } from '@constants'
+import { getLastObjktId } from '@data/hicdex'
 
 const axios = require('axios')
 const _ = require('lodash')
@@ -121,51 +122,6 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
   return await result.json()
 }
 
-async function fetchObjkts(ids) {
-  const { errors, data } = await fetchGraphQL(
-    `
-    query Objkts($ids: [bigint!] = "") {
-      hic_et_nunc_token(where: {id: {_in: $ids}}) {
-        artifact_uri
-        display_uri
-        creator_id
-        id
-        mime
-        thumbnail_uri
-        timestamp
-        title
-        creator {
-          name
-          address
-        }
-      }
-    }`,
-    'Objkts',
-    { ids: ids }
-  )
-  if (errors) {
-    console.log(errors)
-  }
-  return data
-}
-
-async function getLastId() {
-  const { errors, data } = await fetchGraphQL(
-    `
-    query LastId {
-      hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
-        id
-      }
-    }`,
-    'LastId'
-  )
-  return data.hic_et_nunc_token[0].id
-}
-
-function rnd(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -174,26 +130,6 @@ function shuffle(a) {
   return a
 }
 
-async function fetchRandomObjkts() {
-  const firstId = 196
-  const lastId = await getLastId()
-
-  const uniqueIds = new Set()
-  while (uniqueIds.size < 10) {
-    uniqueIds.add(rnd(firstId, lastId))
-  }
-
-  const { errors, data } = await fetchObjkts(Array.from(uniqueIds))
-
-  let objkts = await fetchObjkts(Array.from(uniqueIds))
-
-  if (errors) {
-    console.error(errors)
-  }
-
-  const result = data
-  return shuffle(objkts.hic_et_nunc_token)
-}
 
 const GetUserClaims = async (arr) => {
   return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
@@ -296,7 +232,7 @@ export const Feeds = ({ type }) => {
   }
 
   const getRandomFeed = async () => {
-    let result = await fetchRandomObjkts()
+    let result = await fetchRandomObjkts(10)
     setCreators([...creators, result.map((e) => e.creator_id)])
 
     result = _.uniqBy(result, 'creator_id')

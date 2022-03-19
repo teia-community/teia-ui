@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { Container, Padding } from '../../../components/layout'
-import { OwnerList } from '../../../components/owner-list'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { OwnerSwaps } from '../../../components/owner-swaps'
+import { Container, Padding } from '@components/layout'
+import { OwnerList } from '@components/owner-list'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { OwnerSwaps } from '@components/owner-swaps'
 
 const _ = require('lodash')
 
