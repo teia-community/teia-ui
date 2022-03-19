@@ -87,6 +87,7 @@ token_tags {
 }
 trades(order_by: {timestamp: asc}) {
   amount
+  id
   ophash
   swap {
     price

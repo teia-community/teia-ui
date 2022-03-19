@@ -109,7 +109,7 @@ export const History = (token_info) => {
             {history.map((e) => {
               if (e.trade) {
                 return (
-                  <div className={`${styles.history}`} key={`t-${e.ophash}`}>
+                  <div className={`${styles.history}`} key={`t-${e.id}`}>
                     <div className={styles.history__event__container}>
                       <TradeIcon />
                       <a
@@ -207,7 +207,7 @@ export const History = (token_info) => {
                 return (
                   <div
                     className={`${styles.history}`}
-                    key={`s-${e.ophash | uniqueId()}`}
+                    key={`s-${e.id | uniqueId()}`}
                   >
                     <div className={styles.history__event__container}>
                       <SwapIcon />
