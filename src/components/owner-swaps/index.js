@@ -85,7 +85,7 @@ export const OwnerSwaps = ({
         </div>
       )}
       {v2andTeiaSwaps.map((swap, index) => {
-        const showCancel =
+        const isOwnSwap =
           swap.creator.address === acc?.address ||
           (proxyAdminAddress === acc?.address &&
             swap.creator.address === proxyAddress)
@@ -104,14 +104,17 @@ export const OwnerSwaps = ({
                   <Primary>{walletPreview(swap.creator.address)}</Primary>
                 </Button>
               )}
+              {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
+                <>
+                  &nbsp;
+                  <TeiaLabel />
+                </>
+              ) : null}
             </div>
 
             <div className={styles.buttons}>
-              {!restricted && !ban.includes(swap.creator_id) && (
+              {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
                 <>
-                  {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
-                    <TeiaLabel />
-                  ) : null}
                   <Button
                     onClick={() =>
                       handleCollect(swap.contract_address, swap.id, swap.price)
@@ -123,11 +126,13 @@ export const OwnerSwaps = ({
                   </Button>
                 </>
               )}
-              {showCancel && (
+              {isOwnSwap && (
                 <>
                   <div className={styles.break}></div>
                   <input
-                    value={reswapPrices[key] || ''}
+                    value={
+                      reswapPrices[key] || parseFloat(swap.price / 1000000)
+                    }
                     onChange={(ev) => {
                       const { value } = ev.target
                       setReswapPrices((prevVal) => ({
@@ -137,6 +142,7 @@ export const OwnerSwaps = ({
                     }}
                     type="number"
                     placeholder="New price"
+                    style={{ width: '80px', marginRight: '5px' }}
                   />
                   <Button
                     onClick={() => {
