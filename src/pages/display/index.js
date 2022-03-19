@@ -20,7 +20,6 @@ import styles from './styles.module.scss'
 import { getWalletBlockList } from '../../constants'
 
 const axios = require('axios')
-const fetch = require('node-fetch')
 
 const TAB_CREATIONS = 'creations'
 const TAB_COLLECTION = 'collection'
@@ -1000,7 +999,6 @@ export default class Display extends Component {
                       ) : null}
 
                       {this.state.marketV1.map((e, key) => {
-                        // console.log(e)
                         return (
                           <>
                             <Container key={key}>
@@ -1044,10 +1042,9 @@ export default class Display extends Component {
                   {this.state.items.map((nft) => {
                     // console.log('swaps ' + JSON.stringify(nft))
                     return (
-                      <div className={styles.cardContainer}>
+                      <li key={nft.id} className={styles.cardContainer}>
                         <Button
                           style={{ positon: 'relative' }}
-                          key={nft.id}
                           to={`${PATH.OBJKT}/${nft.id}`}
                         >
                           <div className={styles.container}>
@@ -1059,7 +1056,7 @@ export default class Display extends Component {
                             })}
                           </div>
                         </Button>
-                      </div>
+                      </li>
                     )
                   })}
                 </ResponsiveMasonry>
