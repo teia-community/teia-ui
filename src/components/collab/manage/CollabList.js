@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Button, Purchase } from '../../button'
+import { Button, Purchase } from '@components/button'
 import { CollabParticipantInfo } from './CollabParticipantInfo'
-import styles from '../../../components/collab/styles.module.scss'
+import styles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 
 export const CollabList = ({ description, collabs }) => {

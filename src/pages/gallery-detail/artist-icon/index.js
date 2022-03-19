@@ -1,6 +1,6 @@
-import { Button } from '../../../components/button'
-import { PATH } from '../../../constants'
-import { ArtistSocials } from '../../../components/artist-socials'
+import { Button } from '@components/button'
+import { PATH } from '@constants'
+import { ArtistSocials } from '@components/artist-socials'
 import styles from './styles.module.scss'
 
 export const ArtistLogo = ({

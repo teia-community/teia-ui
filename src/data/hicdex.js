@@ -1,3 +1,4 @@
+import { rnd } from '../utils'
 const _ = require('lodash')
 
 export const getDipdupState = `query {
@@ -274,4 +275,63 @@ export async function getObjktsByShare(addresses, min_shares) {
     objkts = objkts.concat(...tokens)
   }
   return _.orderBy(objkts, ['timestamp'], ['desc'])
+}
+
+//- Utility query functions
+
+export async function getLastObjktId() {
+  const { data } = await fetchGraphQL(
+    `
+    query LastId {
+      hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
+        id
+      }
+    }`,
+    'LastId'
+  )
+  return data.hic_et_nunc_token[0].id
+}
+
+export async function fetchRandomObjkts(count) {
+  const firstId = 196
+  const lastId = await getLastObjktId()
+  console.log(`Last id is : ${lastId}`)
+  const uniqueIds = new Set()
+  while (uniqueIds.size < count) {
+    const id = rnd(firstId, lastId)
+    console.log(id)
+    uniqueIds.add(id)
+  }
+  try {
+    let objkts = await fetchObjkts(Array.from(uniqueIds))
+    return objkts.hic_et_nunc_token
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export async function fetchObjkts(ids) {
+  const { data } = await fetchGraphQL(
+    `
+    query Objkts($_in: [bigint!] = "") {
+      hic_et_nunc_token(where: { id: {_in: $_in}, supply : { _neq : 0 }}) {
+        artifact_uri
+        creator_id
+        display_uri
+        hdao_balance
+        id
+        mime
+        thumbnail_uri
+        timestamp
+        title
+        creator {
+          name
+          address
+        }
+      }
+    }`,
+    'Objkts',
+    { _in: ids }
+  )
+  return data.hic_et_nunc_token
 }

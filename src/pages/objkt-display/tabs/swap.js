@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Container, Padding } from '../../../components/layout'
-import { Loading } from '../../../components/loading'
-import { Input } from '../../../components/input'
-import { Button, Purchase } from '../../../components/button'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import { Loading } from '@components/loading'
+import { Input } from '@components/input'
+import { Button, Purchase } from '@components/button'
 import styles from '../styles.module.scss'
 
 export const Swap = ({

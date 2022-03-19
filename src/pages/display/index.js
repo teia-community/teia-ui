@@ -1,21 +1,21 @@
 import React, { Component } from 'react'
-import { Button, Primary, Secondary } from '../../components/button'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { Page, Container, Padding } from '../../components/layout'
-import { Loading } from '../../components/loading'
-import { renderMediaType } from '../../components/media-types'
-import { Identicon } from '../../components/identicons'
-import { walletPreview } from '../../utils/string'
+import { Button, Primary, Secondary } from '@components/button'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Page, Container, Padding } from '@components/layout'
+import { Loading } from '@components/loading'
+import { renderMediaType } from '@components/media-types'
+import { Identicon } from '@components/identicons'
+import { walletPreview } from '@utils/string'
 import {
   PATH,
   MARKETPLACE_CONTRACT_V1,
   SUPPORTED_MARKETPLACE_CONTRACTS,
-} from '../../constants'
-import { VisuallyHidden } from '../../components/visually-hidden'
-import { GetUserMetadata } from '../../data/api'
-import { ResponsiveMasonry } from '../../components/responsive-masonry'
+} from '@constants'
+import { VisuallyHidden } from '@components/visually-hidden'
+import { GetUserMetadata } from '@data/api'
+import { ResponsiveMasonry } from '@components/responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { CollabsTab } from '../../components/collab/show/CollabsTab'
+import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
 import { getWalletBlockList } from '../../constants'
 

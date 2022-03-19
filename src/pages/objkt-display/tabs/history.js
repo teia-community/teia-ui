@@ -1,8 +1,8 @@
 import React from 'react'
-import { Container, Padding } from '../../../components/layout'
-import { Primary } from '../../../components/button'
-import { walletPreview } from '../../../utils/string'
-import { getTimeAgo } from '../../../utils/time'
+import { Container, Padding } from '@components/layout'
+import { Primary } from '@components/button'
+import { walletPreview } from '@utils/string'
+import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
 import { uniqueId } from 'lodash'
 

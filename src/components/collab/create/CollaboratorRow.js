@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Secondary } from '../../../components/button'
-import {} from '../../media-types/'
+import { Button, Secondary } from '@components/button'
+import {} from '@components/media-types/'
 import styles from '../styles.module.scss'
-import inputStyles from '../../../components/input/styles.module.scss'
+import inputStyles from '@components/input/styles.module.scss'
 import { CloseIcon } from '../'
 import classNames from 'classnames'
-import { GetUserMetadata } from '../../../data/api'
+import { GetUserMetadata } from '@data/api'
 import { validAddress } from '../functions'
 
 export const CollaboratorRow = ({

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Page, Container, Padding } from '../../components/layout'
-import { Button, Primary } from '../../components/button'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
+import { Page, Container, Padding } from '@components/layout'
+import { Button, Primary } from '@components/button'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 import styles from './styles.module.scss'
 
 export class FAQ extends Component {

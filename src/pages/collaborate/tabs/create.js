@@ -1,16 +1,13 @@
 import { useState, useEffect, Fragment, useContext } from 'react'
-import {
-  groupShareTotal,
-  validAddress,
-} from '../../../components/collab/functions'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Container, Padding } from '../../../components/layout'
-import { CollaboratorTable, BeneficiariesUI } from '../../../components/collab'
-import { AddCollaboratorsButton } from '../../../components/collab/create/AddCollaboratorsButton'
-import { ReviewStage } from '../../../components/collab/create/ReviewStage'
+import { groupShareTotal, validAddress } from '@components/collab/functions'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import { CollaboratorTable, BeneficiariesUI } from '@components/collab'
+import { AddCollaboratorsButton } from '@components/collab/create/AddCollaboratorsButton'
+import { ReviewStage } from '@components/collab/create/ReviewStage'
 import styles from '../styles.module.scss'
 import classNames from 'classnames'
-import { Button, Secondary } from '../../../components/button'
+import { Button, Secondary } from '@components/button'
 
 export const CreateCollaboration = () => {
   const { acc } = useContext(HicetnuncContext)

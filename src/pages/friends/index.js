@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { Page, Container, Padding } from '../../components/layout'
-import { Loading } from '../../components/loading'
-import { FeedItem } from '../../components/feed-item'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Page, Container, Padding } from '@components/layout'
+import { Loading } from '@components/loading'
+import { FeedItem } from '@components/feed-item'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { GetOBJKT } from '../../../data/api'
-import { renderMediaType } from '../../../components/media-types'
+import { GetOBJKT } from '@data/api'
+import { renderMediaType } from '@components/media-types'
 import styles from './styles.module.scss'
 
 /**

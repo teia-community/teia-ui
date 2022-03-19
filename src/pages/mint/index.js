@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from 'react'
 import Compressor from 'compressorjs'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { Page, Container, Padding } from '../../components/layout'
-import { Input, Textarea } from '../../components/input'
-import { Button, Curate, Primary, Purchase } from '../../components/button'
-import { Upload } from '../../components/upload'
-import { Preview } from '../../components/preview'
-import { prepareFile, prepareDirectory } from '../../data/ipfs'
-import { prepareFilesFromZIP } from '../../utils/html'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Page, Container, Padding } from '@components/layout'
+import { Input, Textarea } from '@components/input'
+import { Button, Curate, Primary, Purchase } from '@components/button'
+import { Upload } from '@components/upload'
+import { Preview } from '@components/preview'
+import { prepareFile, prepareDirectory } from '@data/ipfs'
+import { prepareFilesFromZIP } from '@utils/html'
 import {
   ALLOWED_MIMETYPES,
   ALLOWED_FILETYPES_LABEL,
@@ -21,13 +21,13 @@ import {
   MIN_ROYALTIES,
   MAX_ROYALTIES,
   BURN_ADDRESS,
-} from '../../constants'
+} from '@constants'
 import {
   fetchGraphQL,
   getCollabsForAddress,
   getNameForAddress,
-} from '../../data/hicdex'
-import collabStyles from '../../components/collab/styles.module.scss'
+} from '@data/hicdex'
+import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
 import { Link } from 'react-router-dom'

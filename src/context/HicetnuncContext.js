@@ -6,9 +6,9 @@ import {
   // BeaconWalletNotInitialized,
 } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
-import { packParticipantMap } from '../components/collab/functions'
-import { setItem } from '../utils/storage'
-import { verify } from '../utils/verify'
+import { packParticipantMap } from '@components/collab/functions'
+import { setItem } from '@utils/storage'
+import { verify } from '@utils/verify'
 import {
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
@@ -18,7 +18,7 @@ import {
   SWAP_TYPE_HEN,
   BURN_ADDRESS,
   getLogoList,
-} from '../constants'
+} from '@constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')

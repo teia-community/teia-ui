@@ -1,6 +1,6 @@
 import React from 'react'
-import { Container, Padding } from '../../../components/layout'
-import { Tags } from '../../../components/tags'
+import { Container, Padding } from '@components/layout'
+import { Tags } from '@components/tags'
 import styles from '../styles.module.scss'
 import '../style.css'
 

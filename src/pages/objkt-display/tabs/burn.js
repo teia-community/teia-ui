@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Container, Padding } from '../../../components/layout'
-import { Button, Purchase } from '../../../components/button'
-import { Input } from '../../../components/input'
-import { Loading } from '../../../components/loading'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import { Button, Purchase } from '@components/button'
+import { Input } from '@components/input'
+import { Loading } from '@components/loading'
 import styles from '../styles.module.scss'
 
 export const Burn = (props) => {

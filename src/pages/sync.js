@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-import { HicetnuncContext } from '../context/HicetnuncContext'
-import { Page, Container, Padding } from '../components/layout'
-import { LoadingContainer } from '../components/loading'
-import { Button, Primary } from '../components/button'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { Page, Container, Padding } from '@components/layout'
+import { LoadingContainer } from '@components/loading'
+import { Button, Primary } from '@components/button'
 
 export default class Sync extends Component {
   constructor(props) {

@@ -1,9 +1,9 @@
 import { useContext } from 'react'
-import { Container, Padding } from '../../layout'
+import { Container, Padding } from '@components/layout'
 import styles from '../styles.module.scss'
 import { groupShareTotal } from '../functions'
-import { Button, Curate } from '../../../components/button'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { Button, Curate } from '@components/button'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Fragment } from 'react'
 
 export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
