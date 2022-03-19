@@ -1,5 +1,5 @@
 import React from 'react'
-import ipfsClient from 'ipfs-http-client'
+import { CID } from 'ipfs-http-client'
 import { GLBComponent } from './glb'
 import { ImageComponent } from './image'
 import { VideoComponent } from './video'
@@ -32,7 +32,7 @@ const HashToURL = (hash, type) => {
       return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
     case 'INFURA':
       try {
-        var cidv1 = new ipfsClient.CID(hash.replace('ipfs://', '')).toV1()
+        var cidv1 = new CID(hash.replace('ipfs://', '')).toV1()
         var subdomain = cidv1.toBaseEncodedString('base32')
         return `https://${subdomain}.ipfs.infura-ipfs.io/`
       } catch (err) {
