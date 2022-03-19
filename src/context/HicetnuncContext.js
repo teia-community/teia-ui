@@ -8,6 +8,7 @@ import {
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { packParticipantMap } from '../components/collab/functions'
 import { setItem } from '../utils/storage'
+import { verify } from '../utils/verify'
 import {
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
@@ -21,7 +22,6 @@ import {
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
-const eztz = require('eztz-lib')
 
 // import { Parser, Expr } from "@taquito/michel-codec";
 // import { Schema } from "@taquito/michelson-encoder";
@@ -685,7 +685,7 @@ class HicetnuncContextProviderClass extends Component {
           await axios.get(`https://tezos-prod.cryptonomic-infra.tech/chains/main/blocks/head/context/contracts/${await wallet.getPKH()}/manager_key`).then(res => res.data)
         ) */
 
-        const r = await eztz.crypto.verify(
+        const r = await verify(
           payload.payload.toString(),
           signature.signature,
           await axios.get(
