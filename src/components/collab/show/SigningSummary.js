@@ -9,14 +9,15 @@ export const SigningSummary = ({ coreParticipants, signatures }) => {
       </h2>
       <ul className={styles.list}>
         {coreParticipants.map(({ holder }) => {
-          console.log(holder, signatures)
           const hasSigned = signatures.some(
             ({ holder_id }) => holder.address === holder_id
           )
 
           return (
             <li>
-              {holder.name || walletPreview(holder.address)}:{' '}
+              <a href={`/tz/${holder.address}`}>
+                {holder.name || walletPreview(holder.address)}:{' '}
+              </a>
               {hasSigned ? '✓' : '❌'}
             </li>
           )

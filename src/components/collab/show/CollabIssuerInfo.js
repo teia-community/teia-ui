@@ -20,16 +20,14 @@ export const CollabIssuerInfo = ({ creator }) => {
       <a
         className={styles.issuerBtn}
         href={path}
-        onMouseEnter={() => setShowCollabSummary(true)}
+        onMouseOver={() => setShowCollabSummary(true)}
+        onMouseOut={() => setShowCollabSummary(false)}
       >
         <Primary>{name !== '' ? name : walletPreview(address)}</Primary>
       </a>
 
       {showCollabSummary && (
-        <div
-          className={styles.collabInfo}
-          onMouseLeave={() => setShowCollabSummary(false)}
-        >
+        <div className={styles.collabInfo}>
           <ParticipantList title={false} participants={coreParticipants} />
         </div>
       )}
