@@ -1,4 +1,4 @@
-var sodium = require('sodium-universal')
+var sodium = require('libsodium-wrappers')
 var bs58check = require('bs58check')
 
 const prefixes = {
