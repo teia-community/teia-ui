@@ -20,6 +20,7 @@
     "framer-motion": "^4.1.16",
     "ipfs-http-client": "^53.0.1",
     "ipfs-only-hash": "^4.0.0",
+    "libsodium-wrappers": "^0.7.9",
     "local-storage": "^2.0.0",
     "lodash": "^4.17.21",
     "markdown-to-jsx": "^7.1.7",
@@ -38,9 +39,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.0",
     "read-json-lines-sync": "^2.1.7",
-    "screenfull": "^5.1.0",
-    "sodium-native": "^3.3.0",
-    "sodium-universal": "^3.1.0"
+    "screenfull": "^5.1.0"
   },
   "scripts": {
     "start": "export REACT_APP_BUILD_COMMIT=$(git rev-parse HEAD) && craco start",
