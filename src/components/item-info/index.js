@@ -153,12 +153,16 @@ export const ItemInfo = ({
               <p className={styles.objkt__label}>OBJKT#{id}</p>
               {isCollab && (
                 <div className={collabStyles.relative}>
-                  <span>{verifiedSymbol}</span>
-                  <Button onClick={() => setShowSignStatus(!showSignStatus)}>
-                    <Primary>
-                      <strong>{verifiedStatus}</strong>
-                    </Primary>
-                  </Button>
+                  <div className={styles.collab_verification_title}>
+                    <span className={styles.collab_verification_symbol}>
+                      {verifiedSymbol}
+                    </span>
+                    <Button onClick={() => setShowSignStatus(!showSignStatus)}>
+                      <Primary>
+                        <strong>{verifiedStatus}</strong>
+                      </Primary>
+                    </Button>
+                  </div>
                   {showSignStatus && (
                     <div className={collabStyles.collabInfo}>
                       <div className={signStatusStyles}>
