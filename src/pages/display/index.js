@@ -1071,156 +1071,160 @@ export default class Display extends Component {
             onLoaded={this.disableLoading}
           />
         )}
-        {this.state.collabsState && !this.state.loading && (
-          <Container>
-            <Padding>
-              <h1>No collabs</h1>
-            </Padding>
-          </Container>
-        )}
-
-        {!this.state.loading && this.state.collectionState && (
-          <div>
+        {((this.state.collabsState && this.state.collabs.length === 0) ||
+          (this.state.collectionState && this.state.collection.length === 0)) &&
+          !this.state.loading && (
             <Container>
               <Padding>
-                {this.state.filter && (
-                  <div>
-                    <div
-                      style={{ display: 'flex', justifyContent: 'flex-end' }}
-                    >
-                      <Button
-                        onClick={() => {
-                          this.collectionFull()
-                        }}
-                      >
-                        <div className={styles.tag}>All</div>
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          this.collectionForSale()
-                        }}
-                      >
-                        <div className={styles.tag}>For sale</div>
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          this.collectionNotForSale()
-                        }}
-                      >
-                        <div className={styles.tag}>Not for sale</div>
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                <h1>No {this.state.collabsState ? 'collabs' : 'collection'}</h1>
               </Padding>
             </Container>
-            <Container xlarge>
-              {this.state.collectionType === 'forSale' ? (
-                <>
-                  {this.context.acc != null &&
-                  this.context.acc.address === this.state.wallet ? (
-                    <>
-                      {Object.keys(this.state.marketV1).length !== 0 && (
-                        <>
-                          <Container>
-                            <Padding>
-                              <p>
-                                We're currently migrating the marketplace smart
-                                contract. We ask for users to cancel their
-                                listings as the v1 marketplace will no longer be
-                                maintained. Auditing tools for the v1 protocol
-                                can be found at{' '}
-                                <a href="https://hictory.xyz">hictory.xyz</a>
-                              </p>
-                            </Padding>
-                          </Container>
-                        </>
-                      )}
+          )}
 
-                      {this.state.marketV1.length !== 0 ? (
-                        <Container>
-                          <Padding>
-                            <p>
-                              One can delist multiple swaps in once batch
-                              transaction or delist each single one at a time.
-                            </p>
-                            <br />
-                            <Button onClick={this.cancel_batch}>
-                              <Primary>Batch Cancel</Primary>
-                            </Button>
-                          </Padding>
-                        </Container>
-                      ) : null}
-
-                      {this.state.marketV1.map((e, key) => {
-                        // console.log(e)
-                        return (
+        {!this.state.loading &&
+          this.state.collectionState &&
+          this.state.collection.length > 0 && (
+            <div>
+              <Container>
+                <Padding>
+                  {this.state.filter && (
+                    <div>
+                      <div
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}
+                      >
+                        <Button
+                          onClick={() => {
+                            this.collectionFull()
+                          }}
+                        >
+                          <div className={styles.tag}>All</div>
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            this.collectionForSale()
+                          }}
+                        >
+                          <div className={styles.tag}>For sale</div>
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            this.collectionNotForSale()
+                          }}
+                        >
+                          <div className={styles.tag}>Not for sale</div>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </Padding>
+              </Container>
+              <Container xlarge>
+                {this.state.collectionType === 'forSale' ? (
+                  <>
+                    {this.context.acc != null &&
+                    this.context.acc.address === this.state.wallet ? (
+                      <>
+                        {Object.keys(this.state.marketV1).length !== 0 && (
                           <>
-                            <Container key={key}>
+                            <Container>
                               <Padding>
-                                <Button to={`${PATH.OBJKT}/${e.token_id}`}>
-                                  {/* {console.log(e)} */}
-                                  <Primary>
-                                    <strong>
-                                      {e.amount_left}x OBJKT#{e.token_id}{' '}
-                                      {e.price}µtez
-                                    </strong>
-                                  </Primary>
-                                </Button>
-                                <Button
-                                  onClick={() =>
-                                    this.context.cancel(
-                                      e.contract_address,
-                                      e.id
-                                    )
-                                  }
-                                >
-                                  <Secondary>Cancel Swap</Secondary>
-                                </Button>
+                                <p>
+                                  We're currently migrating the marketplace
+                                  smart contract. We ask for users to cancel
+                                  their listings as the v1 marketplace will no
+                                  longer be maintained. Auditing tools for the
+                                  v1 protocol can be found at{' '}
+                                  <a href="https://hictory.xyz">hictory.xyz</a>
+                                </p>
                               </Padding>
                             </Container>
                           </>
-                        )
-                      })}
-                    </>
-                  ) : null}
-                </>
-              ) : null}
+                        )}
 
-              <InfiniteScroll
-                dataLength={this.state.items.length}
-                next={this.loadMore}
-                hasMore={this.state.hasMore}
-                loader={undefined}
-                endMessage={<p></p>}
-              >
-                <ResponsiveMasonry>
-                  {this.state.items.map((nft) => {
-                    //console.log('nft: ' + JSON.stringify(nft))
-                    return (
-                      <div className={styles.cardContainer}>
-                        <Button
-                          style={{ position: 'relative' }}
-                          key={nft.token.id}
-                          to={`${PATH.OBJKT}/${nft.token.id}`}
-                        >
-                          <div className={styles.container}>
-                            {renderMediaType({
-                              mimeType: nft.token.mime,
-                              artifactUri: nft.token.artifact_uri,
-                              displayUri: nft.token.display_uri,
-                              displayView: true,
-                            })}
-                          </div>
-                        </Button>
-                      </div>
-                    )
-                  })}
-                </ResponsiveMasonry>
-              </InfiniteScroll>
-            </Container>
-          </div>
-        )}
+                        {this.state.marketV1.length !== 0 ? (
+                          <Container>
+                            <Padding>
+                              <p>
+                                One can delist multiple swaps in once batch
+                                transaction or delist each single one at a time.
+                              </p>
+                              <br />
+                              <Button onClick={this.cancel_batch}>
+                                <Primary>Batch Cancel</Primary>
+                              </Button>
+                            </Padding>
+                          </Container>
+                        ) : null}
+
+                        {this.state.marketV1.map((e, key) => {
+                          // console.log(e)
+                          return (
+                            <>
+                              <Container key={key}>
+                                <Padding>
+                                  <Button to={`${PATH.OBJKT}/${e.token_id}`}>
+                                    {/* {console.log(e)} */}
+                                    <Primary>
+                                      <strong>
+                                        {e.amount_left}x OBJKT#{e.token_id}{' '}
+                                        {e.price}µtez
+                                      </strong>
+                                    </Primary>
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      this.context.cancel(
+                                        e.contract_address,
+                                        e.id
+                                      )
+                                    }
+                                  >
+                                    <Secondary>Cancel Swap</Secondary>
+                                  </Button>
+                                </Padding>
+                              </Container>
+                            </>
+                          )
+                        })}
+                      </>
+                    ) : null}
+                  </>
+                ) : null}
+
+                <InfiniteScroll
+                  dataLength={this.state.items.length}
+                  next={this.loadMore}
+                  hasMore={this.state.hasMore}
+                  loader={undefined}
+                  endMessage={<p></p>}
+                >
+                  <ResponsiveMasonry>
+                    {this.state.items.map((nft) => {
+                      //console.log('nft: ' + JSON.stringify(nft))
+                      return (
+                        <div className={styles.cardContainer}>
+                          <Button
+                            style={{ position: 'relative' }}
+                            key={nft.token.id}
+                            to={`${PATH.OBJKT}/${nft.token.id}`}
+                          >
+                            <div className={styles.container}>
+                              {renderMediaType({
+                                mimeType: nft.token.mime,
+                                artifactUri: nft.token.artifact_uri,
+                                displayUri: nft.token.display_uri,
+                                displayView: true,
+                              })}
+                            </div>
+                          </Button>
+                        </div>
+                      )
+                    })}
+                  </ResponsiveMasonry>
+                </InfiniteScroll>
+              </Container>
+            </div>
+          )}
 
         {/*       <BottomBanner>
         API is down due to heavy server load — We're working to fix the issue — please be patient with us. <a href="https://discord.gg/mNNSpxpDce" target="_blank">Join the discord</a> for updates.

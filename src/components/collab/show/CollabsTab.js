@@ -68,42 +68,44 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
   const hasUnverifiedObjkts = items.some((i) => !i.is_signed).length > 0
 
   return (
-    <Container xlarge>
-      {hasUnverifiedObjkts && (
-        <div className={toolbarStyles}>
-          <label>
-            <input
-              type="checkbox"
-              onChange={() => setShowUnverified(!showUnverified)}
-              checked={showUnverified}
-            />
-            include unverified OBJKTs
-          </label>
-        </div>
-      )}
+    objkts.length > 0 && (
+      <Container xlarge>
+        {hasUnverifiedObjkts && (
+          <div className={toolbarStyles}>
+            <label>
+              <input
+                type="checkbox"
+                onChange={() => setShowUnverified(!showUnverified)}
+                checked={showUnverified}
+              />
+              include unverified OBJKTs
+            </label>
+          </div>
+        )}
 
-      <InfiniteScroll
-        dataLength={itemsToShow.length}
-        next={loadMore}
-        hasMore={hasMore}
-        loader={undefined}
-        endMessage={undefined}
-      >
-        <ResponsiveMasonry>
-          {itemsToShow.map((nft) => {
-            return (
-              <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
-                {renderMediaType({
-                  mimeType: nft.mime,
-                  artifactUri: nft.artifact_uri,
-                  displayUri: nft.display_uri,
-                  displayView: true,
-                })}
-              </Button>
-            )
-          })}
-        </ResponsiveMasonry>
-      </InfiniteScroll>
-    </Container>
+        <InfiniteScroll
+          dataLength={itemsToShow.length}
+          next={loadMore}
+          hasMore={hasMore}
+          loader={undefined}
+          endMessage={undefined}
+        >
+          <ResponsiveMasonry>
+            {itemsToShow.map((nft) => {
+              return (
+                <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
+                  {renderMediaType({
+                    mimeType: nft.mime,
+                    artifactUri: nft.artifact_uri,
+                    displayUri: nft.display_uri,
+                    displayView: true,
+                  })}
+                </Button>
+              )
+            })}
+          </ResponsiveMasonry>
+        </InfiniteScroll>
+      </Container>
+    )
   )
 }
