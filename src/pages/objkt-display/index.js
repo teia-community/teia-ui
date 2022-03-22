@@ -14,8 +14,6 @@ import styles from './styles.module.scss'
 import './style.css'
 import { Transfer } from '../../components/collab/show/Transfer'
 
-const axios = require('axios')
-
 const TABS = [
   { title: 'Info', component: Info }, // public tab
   { title: 'Listings', component: Collectors }, // public tab

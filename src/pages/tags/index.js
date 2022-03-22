@@ -10,7 +10,6 @@ import { PATH } from '../../constants'
 import styles from './styles.module.scss'
 import { getWalletBlockList } from '../../constants'
 
-const axios = require('axios')
 const _ = require('lodash')
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {

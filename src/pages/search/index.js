@@ -8,7 +8,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import './style.css'
 import { getWalletBlockList } from '../../constants'
 
-const axios = require('axios')
 const _ = require('lodash')
 
 async function fetchFeed(lastId) {
