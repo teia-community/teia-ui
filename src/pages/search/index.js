@@ -6,8 +6,8 @@ import { Input } from '../../components/input'
 import { FeedItem } from '../../components/feed-item'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import './style.css'
+import { getWalletBlockList } from '../../constants'
 
-const axios = require('axios')
 const _ = require('lodash')
 
 async function fetchFeed(lastId) {
@@ -415,13 +415,6 @@ async function fetchHdao(offset) {
   return result
 }
 
-const getRestrictedAddresses = async () =>
-  await axios
-    .get(
-      'https://raw.githubusercontent.com/hicetnunc2000/hicetnunc-reports/main/filters/w.json'
-    )
-    .then((res) => res.data)
-
 export class Search extends Component {
   static contextType = HicetnuncContext
 
@@ -456,7 +449,7 @@ export class Search extends Component {
   }
 
   componentWillMount = async () => {
-    let arr = await getRestrictedAddresses()
+    let arr = getWalletBlockList()
     this.setState({ select: 'recent sales' })
     let tokens = await fetchSales(this.state.offset)
     tokens = tokens.map((e) => e.token)
@@ -477,7 +470,7 @@ export class Search extends Component {
   }
 
   update = async (e, reset) => {
-    let arr = await getRestrictedAddresses()
+    let arr = getWalletBlockList()
 
     this.setState({ select: e })
     if (reset) {
@@ -668,7 +661,7 @@ export class Search extends Component {
       result = await fetchFeed(999999)
     }
     console.log(result)
-    let restricted = await getRestrictedAddresses()
+    let restricted = getWalletBlockList()
     result = _.uniqBy([...this.state.feed, ...result], 'creator_id')
     result = result.filter((e) => !restricted.includes(e.creator_id))
     this.setState({ feed: [...result], flag: true })

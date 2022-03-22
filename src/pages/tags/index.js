@@ -8,8 +8,8 @@ import { renderMediaType } from '../../components/media-types'
 import { Page, Container } from '../../components/layout'
 import { PATH } from '../../constants'
 import styles from './styles.module.scss'
+import { getWalletBlockList } from '../../constants'
 
-const axios = require('axios')
 const _ = require('lodash')
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
@@ -50,13 +50,6 @@ async function fetchTag(tag, offset) {
   }
 }
 
-const getRestrictedAddresses = async () =>
-  await axios
-    .get(
-      'https://raw.githubusercontent.com/hicetnunc2000/hicetnunc-reports/main/filters/w.json'
-    )
-    .then((res) => res.data)
-
 export const Tags = () => {
   const { id } = useParams()
   const [feed, setFeed] = useState([])
@@ -79,7 +72,7 @@ export const Tags = () => {
 
   useEffect(async () => {
     let arr = await fetchTag(id, offset)
-    let res = await getRestrictedAddresses()
+    let res = getWalletBlockList()
     setRestricted(res)
     console.log(arr)
     setFeed(

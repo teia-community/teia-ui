@@ -14,8 +14,6 @@ import styles from './styles.module.scss'
 import './style.css'
 import { Transfer } from '../../components/collab/show/Transfer'
 
-const axios = require('axios')
-
 const TABS = [
   { title: 'Info', component: Info }, // public tab
   { title: 'Listings', component: Collectors }, // public tab
@@ -145,12 +143,7 @@ export const ObjktDisplay = () => {
 
   const address = context.acc?.address
   const proxy = context.getProxy()
-  const getRestrictedAddresses = async () =>
-    await axios
-      .get(
-        'https://raw.githubusercontent.com/hicetnunc2000/hicetnunc-reports/main/filters/w.json'
-      )
-      .then((res) => res.data)
+
   useEffect(async () => {
     let objkt = await fetchObjkt(id)
 
@@ -161,7 +154,7 @@ export const ObjktDisplay = () => {
       objkt.restricted = true
       setNFT(objkt)
     } else {
-      objkt.ban = await getRestrictedAddresses()
+      objkt.ban = getWalletBlockList()
       objkt.restricted = false
       // filter swaps from banned account
       if (objkt.swaps && objkt.ban)
