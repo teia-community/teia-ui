@@ -7,7 +7,20 @@ export const setObjktBlockList = (data) => (objktBlockList = data)
 export const getObjktBlockList = () => objktBlockList
 
 let walletBlockList = []
-export const setWalletBlockList = (data) => (walletBlockList = data)
+export const setWalletBlockList = (
+  henRestricted,
+  teiaRestricted,
+  teiaPermitted
+) => {
+  // Remove duplicates
+  walletBlockList = [...new Set(henRestricted)]
+  // Add Teia's restricted accounts
+  walletBlockList = walletBlockList.concat(teiaRestricted)
+  // Override with Teia's permitted list
+  walletBlockList = walletBlockList.filter(
+    (account) => !teiaPermitted.includes(account)
+  )
+}
 export const getWalletBlockList = () => walletBlockList
 
 let banBlockList = []

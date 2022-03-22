@@ -12,6 +12,7 @@ import {
 import { Page, Container, Padding } from '../../components/layout'
 import { FeedItem } from '../../components/feed-item'
 import { Loading } from '../../components/loading'
+import { getWalletBlockList } from '../../constants'
 
 const axios = require('axios')
 const _ = require('lodash')
@@ -194,13 +195,6 @@ async function fetchRandomObjkts() {
   return shuffle(objkts.hic_et_nunc_token)
 }
 
-const getRestrictedAddresses = async () =>
-  await axios
-    .get(
-      'https://raw.githubusercontent.com/hicetnunc2000/hicetnunc-reports/main/filters/w.json'
-    )
-    .then((res) => res.data)
-
 const GetUserClaims = async (arr) => {
   return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
     query: `query MyQuery { tzprofiles_by_pk(account: \"${walletAddr}\") { valid_claims } }`,
@@ -286,7 +280,7 @@ export const Feeds = ({ type }) => {
     setCreators(creators.concat(result.map((e) => e.creator_id)))
     result = result.filter((e) => !creators.includes(e.creator_id))
 
-    let restricted = await getRestrictedAddresses()
+    let restricted = getWalletBlockList()
     result = result.filter((e) => !restricted.includes(e.creator_id))
 
     //fetchProfiles(addrs)
@@ -309,7 +303,7 @@ export const Feeds = ({ type }) => {
     setCreators(creators.concat(result.map((e) => e.creator_id)))
     result = result.filter((e) => !creators.includes(e.creator_id))
 
-    let restricted = await getRestrictedAddresses()
+    let restricted = getWalletBlockList()
     result = result.filter((e) => !restricted.includes(e.creator_id))
     const next = items.concat(result)
     setItems(next)

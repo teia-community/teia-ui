@@ -17,16 +17,10 @@ import { ResponsiveMasonry } from '../../components/responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '../../components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
+import { getWalletBlockList } from '../../constants'
 
 const axios = require('axios')
 const fetch = require('node-fetch')
-
-const getRestrictedAddresses = async () =>
-  await axios
-    .get(
-      'https://raw.githubusercontent.com/hicetnunc2000/hicetnunc-reports/main/filters/w.json'
-    )
-    .then((res) => res.data)
 
 const query_collection = `
 query collectorGallery($address: String!) {
@@ -410,7 +404,7 @@ export default class Display extends Component {
 
     this.reset()
 
-    let list = await getRestrictedAddresses()
+    let list = getWalletBlockList()
     // console.log(this.state.wallet)
     // console.log(!list.includes(this.state.wallet))
     if (!list.includes(this.state.wallet)) {
@@ -538,7 +532,7 @@ export default class Display extends Component {
 
     this.setState({ collectionType: 'notForSale' })
 
-    let list = await getRestrictedAddresses()
+    let list = getWalletBlockList()
 
     if (!list.includes(this.state.wallet)) {
       this.setState({ loading: false, items: [] })
@@ -567,7 +561,7 @@ export default class Display extends Component {
   }
 
   collabs = async () => {
-    let list = await getRestrictedAddresses()
+    let list = getWalletBlockList()
 
     if (!list.includes(this.state.wallet)) {
       this.setState({
