@@ -573,12 +573,11 @@ export default class Display extends Component {
       })
     }
 
-    this.updateLocation('collabs')
-  }
-
-  updateLocation = (slug) => {
-    const { subjkt, wallet } = this.state
-    this.props.history.push(`/${subjkt === '' ? wallet : subjkt}/${slug}`)
+    if (this.state.subjkt !== '') {
+      this.props.history.push(`/${this.state.subjkt}/collabs`)
+    } else {
+      this.props.history.push(`/tz/${this.state.wallet}/collabs`)
+    }
   }
 
   collectionForSale = async () => {
@@ -658,6 +657,10 @@ export default class Display extends Component {
 
   cancel_batch = async () => {
     this.context.batch_cancelv1(this.state.marketV1.slice(0, 10))
+  }
+
+  disableLoading = () => {
+    this.setState({ loading: false })
   }
 
   getDiscordTooltip() {
@@ -1062,7 +1065,11 @@ export default class Display extends Component {
 
         {/* TODO - someone really needs to clean up the other tabs :) */}
         {this.state.collabsState && (
-          <CollabsTab wallet={this.state.wallet} filter={this.state.filter} />
+          <CollabsTab
+            wallet={this.state.wallet}
+            filter={this.state.filter}
+            onLoaded={this.disableLoading}
+          />
         )}
 
         {!this.state.loading && this.state.collectionState && (

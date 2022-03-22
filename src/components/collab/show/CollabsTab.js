@@ -9,7 +9,7 @@ import { fetchGraphQL, getCollabTokensForAddress } from '../../../data/hicdex'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
-export const CollabsTab = ({ wallet }) => {
+export const CollabsTab = ({ wallet, onLoaded }) => {
   const chunkSize = 20
   const [objkts, setObjkts] = useState([])
   const [items, setItems] = useState([])
@@ -19,24 +19,30 @@ export const CollabsTab = ({ wallet }) => {
   useEffect(() => {
     fetchGraphQL(getCollabTokensForAddress, 'GetCollabTokens', {
       address: wallet,
-    }).then(({ errors, data }) => {
-      if (errors) {
-        console.error(errors)
-      }
-
-      let tokens = []
-      const result = data.hic_et_nunc_shareholder
-
-      if (result) {
-        result.forEach(
-          (contract) =>
-            (tokens = tokens.concat(contract.split_contract.contract.tokens))
-        )
-      }
-
-      setObjkts(tokens)
     })
-  }, [wallet])
+      .then(({ errors, data }) => {
+        if (errors) {
+          console.error(errors)
+        }
+
+        let tokens = []
+        const result = data.hic_et_nunc_shareholder
+
+        if (result) {
+          result.forEach(
+            (contract) =>
+              (tokens = tokens.concat(contract.split_contract.contract.tokens))
+          )
+        }
+
+        setObjkts(tokens)
+        onLoaded()
+      })
+      .catch((err) => {
+        console.error(err)
+        onLoaded()
+      })
+  }, [wallet, onLoaded])
 
   useEffect(() => {
     if (objkts.length === 0) {
