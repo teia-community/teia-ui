@@ -1071,6 +1071,13 @@ export default class Display extends Component {
             onLoaded={this.disableLoading}
           />
         )}
+        {this.state.collabsState && !this.state.loading && (
+          <Container>
+            <Padding>
+              <h1>No collabs</h1>
+            </Padding>
+          </Container>
+        )}
 
         {!this.state.loading && this.state.collectionState && (
           <div>
