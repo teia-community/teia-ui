@@ -94,7 +94,7 @@ function createSwapCalls(
   objktsContract,
   marketplaceContract,
   objktsAddress,
-  marketplaceAddress,
+  operatorAddress,
   objkt_id,
   ownerAddress,
   objkt_amount,
@@ -110,7 +110,7 @@ function createSwapCalls(
         .update_operators([
           {
             add_operator: {
-              operator: marketplaceAddress,
+              operator: operatorAddress,
               token_id: parseFloat(objkt_id),
               owner: ownerAddress,
             },
@@ -152,7 +152,7 @@ function createSwapCalls(
         .update_operators([
           {
             remove_operator: {
-              operator: marketplaceAddress,
+              operator: operatorAddress,
               token_id: parseFloat(objkt_id),
               owner: ownerAddress,
             },
@@ -213,7 +213,10 @@ class HicetnuncContextProviderClass extends Component {
           objktsContract,
           marketplaceContract,
           objktsAddress,
-          marketplaceAddress,
+          // use v2 in case of a collab contract (until support is added)
+          this.state.proxyAddress
+            ? MARKETPLACE_CONTRACT_V2
+            : MAIN_MARKETPLACE_CONTRACT,
           objkt_id,
           ownerAddress,
           objkt_amount,
