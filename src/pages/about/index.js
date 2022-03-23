@@ -25,42 +25,68 @@ export class About extends Component {
       <Page title="about" large>
         <Container>
           <Padding>
-            <strong>teia</strong>
+            <strong>teia is ...</strong>
           </Padding>
         </Container>
 
         <Container>
           <Padding>
-            <p>{this.language.about.paragraphs[0]}</p>
+            <p>... {this.language.about.paragraphs[0]}</p>
+            <p>... {this.language.about.paragraphs[1]}</p>
+            <p>... {this.language.about.paragraphs[2]}</p>
+            <p>... {this.language.about.paragraphs[3]}</p>
           </Padding>
         </Container>
-
         <Container>
           <Padding>
-            <p>{this.language.about.paragraphs[1]}</p>
-          </Padding>
-        </Container>
-
-        <Container>
-          <Padding>
-            <p>{this.language.about.paragraphs[2]}</p>
+            <p>{this.language.about.paragraphs[4]}</p>
           </Padding>
         </Container>
 
         <Container>
           <Padding>
             <div className={styles.buttons}>
-              <p>Join or contact teia on</p>
-              &nbsp;
-              <Button href="https://discord.gg/7pZrPCcgnG">
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#1-core-values">
                 <Primary>
-                  <strong>discord</strong>
+                  <strong>Core Value</strong>
                 </Primary>
               </Button>
-              <p>,</p>&nbsp;
+              &nbsp;<p>/</p>&nbsp;
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#2-code-of-conduct">
+                <Primary>
+                  <strong>Code of Conduct</strong>
+                </Primary>
+              </Button>
+              &nbsp;<p>/</p>&nbsp;
+              <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
+                <Primary>
+                  <strong>Terms and Conditions</strong>
+                </Primary>
+              </Button>
+            </div>
+          </Padding>
+        </Container>
+
+        <Container>
+          <Padding>
+            <div className={styles.buttons}>
+              <p>Find current news on our</p>
+              &nbsp;
+              <Button href="https://blog.teia.art">
+                <Primary>
+                  <strong>blog</strong>
+                </Primary>
+              </Button>
+              <p>, follow us on</p>&nbsp;
               <Button href="https://twitter.com/TeiaCommunity">
                 <Primary>
                   <strong>twitter</strong>
+                </Primary>
+              </Button>
+              <p>, join the community on </p>&nbsp;
+              <Button href="https://discord.gg/7pZrPCcgnG">
+                <Primary>
+                  <strong>discord</strong>
                 </Primary>
               </Button>
             </div>
