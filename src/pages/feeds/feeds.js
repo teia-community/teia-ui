@@ -130,7 +130,6 @@ function shuffle(a) {
   return a
 }
 
-
 const GetUserClaims = async (arr) => {
   return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
     query: `query MyQuery { tzprofiles_by_pk(account: \"${walletAddr}\") { valid_claims } }`,
