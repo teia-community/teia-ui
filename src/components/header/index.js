@@ -70,7 +70,7 @@ export const Header = () => {
           <Button onClick={() => handleRoute('/')}>
             <div className={styles.logo}>
               {/* HIC LOGO */}
-              {true && (
+              {true && context.theme !== 'unset' && (
                 <img
                   src={`${process.env.REACT_APP_LOGOS}/logos/${context.theme}/${context.logo}`}
                   alt="teia-logo"
