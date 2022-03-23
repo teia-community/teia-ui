@@ -440,7 +440,6 @@ export class Search extends Component {
       { id: 8, value: '1D' },
       { id: 9, value: '1W' },
       { id: 10, value: '1M' },
-      { id: 11, value: 'ATH' },
     ],
     select: [],
     mouse: false,
@@ -518,20 +517,6 @@ export class Search extends Component {
       list = [...this.state.feed, ...list]
       list = list.filter((e) => !arr.includes(e.creator.address))
 
-      list = _.uniqBy(list, 'id')
-
-      this.setState({
-        feed: list,
-      })
-    }
-
-    if (e === 'ATH') {
-      let list = await fetchDay(
-        new Date('2021-05-01').toISOString(),
-        this.state.offset
-      )
-      list = list.map((e) => e.token)
-      list = [...this.state.feed, ...list]
       list = _.uniqBy(list, 'id')
 
       this.setState({
