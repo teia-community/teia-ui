@@ -22,6 +22,12 @@ import { getWalletBlockList } from '../../constants'
 const axios = require('axios')
 const fetch = require('node-fetch')
 
+const TAB_CREATIONS = 'creations'
+const TAB_COLLECTION = 'collection'
+const TAB_COLLABS = 'collabs'
+
+const TABS = [TAB_CREATIONS, TAB_COLLECTION, TAB_COLLABS]
+
 const query_collection = `
 query collectorGallery($address: String!) {
   hic_et_nunc_token_holder(where: {holder_id: {_eq: $address}, token: {creator: {address: {_neq: $address}}}, quantity: {_gt: "0"}}, order_by: {token_id: desc}) {
@@ -264,6 +270,16 @@ async function fetchBalance(addr) {
   return result
 }
 
+export function EmptyTab({ children }) {
+  return (
+    <Container>
+      <Padding>
+        <h1>{children}</h1>
+      </Padding>
+    </Container>
+  )
+}
+
 export default class Display extends Component {
   static contextType = HicetnuncContext
 
@@ -283,14 +299,11 @@ export default class Display extends Component {
     objkts: [],
     creations: [],
     collection: [],
-    collabs: [],
     forSale: [],
     notForSale: [],
     marketV1: [],
     items: [],
-    creationsState: true,
-    collectionState: false,
-    collabsState: false,
+    currentTab: TAB_CREATIONS,
     collectionType: 'notForSale',
     showUnverifiedCollabObjkts: false,
     hdao: 0,
@@ -396,9 +409,7 @@ export default class Display extends Component {
 
   creations = async () => {
     this.setState({
-      creationsState: true,
-      collectionState: false,
-      collabsState: false,
+      currentTab: TAB_CREATIONS,
       collectionType: 'notForSale',
     })
 
@@ -525,9 +536,7 @@ export default class Display extends Component {
     this.reset()
 
     this.setState({
-      creationsState: false,
-      collectionState: true,
-      collabsState: false,
+      currentTab: TAB_COLLECTION,
     })
 
     this.setState({ collectionType: 'notForSale' })
@@ -553,10 +562,10 @@ export default class Display extends Component {
 
     if (this.state.subjkt !== '') {
       // if alias route
-      this.props.history.push(`/${this.state.subjkt}/collection`)
+      this.props.history.push(`/${this.state.subjkt}/${TAB_COLLECTION}`)
     } else {
       // if tz/wallethash route
-      this.props.history.push(`/tz/${this.state.wallet}/collection`)
+      this.props.history.push(`/tz/${this.state.wallet}/${TAB_COLLECTION}`)
     }
   }
 
@@ -567,16 +576,14 @@ export default class Display extends Component {
       this.setState({
         objkts: [],
         loading: true,
-        creationsState: false,
-        collectionState: false,
-        collabsState: true,
+        currentTab: TAB_COLLABS,
       })
     }
 
     if (this.state.subjkt !== '') {
-      this.props.history.push(`/${this.state.subjkt}/collabs`)
+      this.props.history.push(`/${this.state.subjkt}/${TAB_COLLABS}`)
     } else {
-      this.props.history.push(`/tz/${this.state.wallet}/collabs`)
+      this.props.history.push(`/tz/${this.state.wallet}/${TAB_COLLABS}`)
     }
   }
 
@@ -634,12 +641,10 @@ export default class Display extends Component {
       window.location.pathname.split('/')[this.state.subjkt !== '' ? 2 : 3]
 
     // Make sure it's in the allowed tabs. If not, default to creations
-    let tabFunc =
-      ['creations', 'collection', 'collabs'].find((s) => s === slug) ||
-      'creations'
+    let tabFunc = TABS.find((s) => s === slug) || TAB_CREATIONS
 
     // Strangely named function for collection
-    if (slug === 'collection') {
+    if (slug === TAB_COLLECTION) {
       tabFunc = 'collectionFull'
     }
 
@@ -677,8 +682,6 @@ export default class Display extends Component {
       }`
     }
   }
-
-  // const isCollab = this.state.wallet
 
   render() {
     return (
@@ -851,17 +854,19 @@ export default class Display extends Component {
             <Padding>
               <div className={styles.menu}>
                 <Button onClick={this.creations}>
-                  <Primary selected={this.state.creationsState}>
+                  <Primary selected={this.state.currentTab === TAB_CREATIONS}>
                     Creations
                   </Primary>
                 </Button>
                 <Button onClick={this.collectionFull}>
-                  <Primary selected={this.state.collectionState}>
+                  <Primary selected={this.state.currentTab === TAB_COLLECTION}>
                     Collection
                   </Primary>
                 </Button>
                 <Button onClick={this.collabs}>
-                  <Primary selected={this.state.collabsState}>Collabs</Primary>
+                  <Primary selected={this.state.currentTab === TAB_COLLABS}>
+                    Collabs
+                  </Primary>
                 </Button>
                 <div className={styles.filter}>
                   <Button
@@ -918,7 +923,7 @@ export default class Display extends Component {
           </Container>
         )}
 
-        {!this.state.loading && this.state.creationsState && (
+        {!this.state.loading && this.state.currentTab === TAB_CREATIONS && (
           <div>
             <Container>
               <Padding>
@@ -1064,25 +1069,24 @@ export default class Display extends Component {
         )}
 
         {/* TODO - someone really needs to clean up the other tabs :) */}
-        {this.state.collabsState && (
+        {this.state.currentTab === TAB_COLLABS && (
           <CollabsTab
             wallet={this.state.wallet}
             filter={this.state.filter}
             onLoaded={this.disableLoading}
           />
         )}
-        {((this.state.collabsState && this.state.collabs.length === 0) ||
-          (this.state.collectionState && this.state.collection.length === 0)) &&
-          !this.state.loading && (
-            <Container>
-              <Padding>
-                <h1>No {this.state.collabsState ? 'collabs' : 'collection'}</h1>
-              </Padding>
-            </Container>
-          )}
 
         {!this.state.loading &&
-          this.state.collectionState &&
+          this.state.currentTab === TAB_CREATIONS &&
+          !this.state.creations.length && <EmptyTab>No creations</EmptyTab>}
+
+        {!this.state.loading &&
+          this.state.currentTab === TAB_COLLECTION &&
+          !this.state.collection.length && <EmptyTab>No collection</EmptyTab>}
+
+        {!this.state.loading &&
+          this.state.currentTab === TAB_COLLECTION &&
           this.state.collection.length > 0 && (
             <div>
               <Container>
@@ -1200,7 +1204,6 @@ export default class Display extends Component {
                 >
                   <ResponsiveMasonry>
                     {this.state.items.map((nft) => {
-                      //console.log('nft: ' + JSON.stringify(nft))
                       return (
                         <div className={styles.cardContainer}>
                           <Button
