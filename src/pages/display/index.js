@@ -22,6 +22,12 @@ import { getWalletBlockList } from '../../constants'
 const axios = require('axios')
 const fetch = require('node-fetch')
 
+const TAB_CREATIONS = 'creations'
+const TAB_COLLECTION = 'collection'
+const TAB_COLLABS = 'collabs'
+
+const TABS = [TAB_CREATIONS, TAB_COLLECTION, TAB_COLLABS]
+
 const query_collection = `
 query collectorGallery($address: String!) {
   hic_et_nunc_token_holder(where: {holder_id: {_eq: $address}, token: {creator: {address: {_neq: $address}}}, quantity: {_gt: "0"}}, order_by: {token_id: desc}) {
@@ -264,6 +270,16 @@ async function fetchBalance(addr) {
   return result
 }
 
+export function EmptyTab({ children }) {
+  return (
+    <Container>
+      <Padding>
+        <h1>{children}</h1>
+      </Padding>
+    </Container>
+  )
+}
+
 export default class Display extends Component {
   static contextType = HicetnuncContext
 
@@ -283,14 +299,11 @@ export default class Display extends Component {
     objkts: [],
     creations: [],
     collection: [],
-    collabs: [],
     forSale: [],
     notForSale: [],
     marketV1: [],
     items: [],
-    creationsState: true,
-    collectionState: false,
-    collabsState: false,
+    currentTab: TAB_CREATIONS,
     collectionType: 'notForSale',
     showUnverifiedCollabObjkts: false,
     hdao: 0,
@@ -396,9 +409,7 @@ export default class Display extends Component {
 
   creations = async () => {
     this.setState({
-      creationsState: true,
-      collectionState: false,
-      collabsState: false,
+      currentTab: TAB_CREATIONS,
       collectionType: 'notForSale',
     })
 
@@ -525,9 +536,7 @@ export default class Display extends Component {
     this.reset()
 
     this.setState({
-      creationsState: false,
-      collectionState: true,
-      collabsState: false,
+      currentTab: TAB_COLLECTION,
     })
 
     this.setState({ collectionType: 'notForSale' })
@@ -553,10 +562,10 @@ export default class Display extends Component {
 
     if (this.state.subjkt !== '') {
       // if alias route
-      this.props.history.push(`/${this.state.subjkt}/collection`)
+      this.props.history.push(`/${this.state.subjkt}/${TAB_COLLECTION}`)
     } else {
       // if tz/wallethash route
-      this.props.history.push(`/tz/${this.state.wallet}/collection`)
+      this.props.history.push(`/tz/${this.state.wallet}/${TAB_COLLECTION}`)
     }
   }
 
@@ -567,18 +576,15 @@ export default class Display extends Component {
       this.setState({
         objkts: [],
         loading: true,
-        creationsState: false,
-        collectionState: false,
-        collabsState: true,
+        currentTab: TAB_COLLABS,
       })
     }
 
-    this.updateLocation('collabs')
-  }
-
-  updateLocation = (slug) => {
-    const { subjkt, wallet } = this.state
-    this.props.history.push(`/${subjkt === '' ? wallet : subjkt}/${slug}`)
+    if (this.state.subjkt !== '') {
+      this.props.history.push(`/${this.state.subjkt}/${TAB_COLLABS}`)
+    } else {
+      this.props.history.push(`/tz/${this.state.wallet}/${TAB_COLLABS}`)
+    }
   }
 
   collectionForSale = async () => {
@@ -635,12 +641,10 @@ export default class Display extends Component {
       window.location.pathname.split('/')[this.state.subjkt !== '' ? 2 : 3]
 
     // Make sure it's in the allowed tabs. If not, default to creations
-    let tabFunc =
-      ['creations', 'collection', 'collabs'].find((s) => s === slug) ||
-      'creations'
+    let tabFunc = TABS.find((s) => s === slug) || TAB_CREATIONS
 
     // Strangely named function for collection
-    if (slug === 'collection') {
+    if (slug === TAB_COLLECTION) {
       tabFunc = 'collectionFull'
     }
 
@@ -660,6 +664,10 @@ export default class Display extends Component {
     this.context.batch_cancelv1(this.state.marketV1.slice(0, 10))
   }
 
+  disableLoading = () => {
+    this.setState({ loading: false })
+  }
+
   getDiscordTooltip() {
     const handleSize = this.state.discord.length
     const missingSize = handleSize - 6
@@ -674,8 +682,6 @@ export default class Display extends Component {
       }`
     }
   }
-
-  // const isCollab = this.state.wallet
 
   render() {
     return (
@@ -848,17 +854,19 @@ export default class Display extends Component {
             <Padding>
               <div className={styles.menu}>
                 <Button onClick={this.creations}>
-                  <Primary selected={this.state.creationsState}>
+                  <Primary selected={this.state.currentTab === TAB_CREATIONS}>
                     Creations
                   </Primary>
                 </Button>
                 <Button onClick={this.collectionFull}>
-                  <Primary selected={this.state.collectionState}>
+                  <Primary selected={this.state.currentTab === TAB_COLLECTION}>
                     Collection
                   </Primary>
                 </Button>
                 <Button onClick={this.collabs}>
-                  <Primary selected={this.state.collabsState}>Collabs</Primary>
+                  <Primary selected={this.state.currentTab === TAB_COLLABS}>
+                    Collabs
+                  </Primary>
                 </Button>
                 <div className={styles.filter}>
                   <Button
@@ -915,7 +923,7 @@ export default class Display extends Component {
           </Container>
         )}
 
-        {!this.state.loading && this.state.creationsState && (
+        {!this.state.loading && this.state.currentTab === TAB_CREATIONS && (
           <div>
             <Container>
               <Padding>
@@ -1061,152 +1069,165 @@ export default class Display extends Component {
         )}
 
         {/* TODO - someone really needs to clean up the other tabs :) */}
-        {this.state.collabsState && (
-          <CollabsTab wallet={this.state.wallet} filter={this.state.filter} />
+        {this.state.currentTab === TAB_COLLABS && (
+          <CollabsTab
+            wallet={this.state.wallet}
+            filter={this.state.filter}
+            onLoaded={this.disableLoading}
+          />
         )}
 
-        {!this.state.loading && this.state.collectionState && (
-          <div>
-            <Container>
-              <Padding>
-                {this.state.filter && (
-                  <div>
-                    <div
-                      style={{ display: 'flex', justifyContent: 'flex-end' }}
-                    >
-                      <Button
-                        onClick={() => {
-                          this.collectionFull()
-                        }}
+        {!this.state.loading &&
+          this.state.currentTab === TAB_CREATIONS &&
+          !this.state.creations.length && <EmptyTab>No creations</EmptyTab>}
+
+        {!this.state.loading &&
+          this.state.currentTab === TAB_COLLECTION &&
+          !this.state.collection.length && <EmptyTab>No collection</EmptyTab>}
+
+        {!this.state.loading &&
+          this.state.currentTab === TAB_COLLECTION &&
+          this.state.collection.length > 0 && (
+            <div>
+              <Container>
+                <Padding>
+                  {this.state.filter && (
+                    <div>
+                      <div
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}
                       >
-                        <div className={styles.tag}>All</div>
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          this.collectionForSale()
-                        }}
-                      >
-                        <div className={styles.tag}>For sale</div>
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          this.collectionNotForSale()
-                        }}
-                      >
-                        <div className={styles.tag}>Not for sale</div>
-                      </Button>
+                        <Button
+                          onClick={() => {
+                            this.collectionFull()
+                          }}
+                        >
+                          <div className={styles.tag}>All</div>
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            this.collectionForSale()
+                          }}
+                        >
+                          <div className={styles.tag}>For sale</div>
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            this.collectionNotForSale()
+                          }}
+                        >
+                          <div className={styles.tag}>Not for sale</div>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Padding>
-            </Container>
-            <Container xlarge>
-              {this.state.collectionType === 'forSale' ? (
-                <>
-                  {this.context.acc != null &&
-                  this.context.acc.address === this.state.wallet ? (
-                    <>
-                      {Object.keys(this.state.marketV1).length !== 0 && (
-                        <>
-                          <Container>
-                            <Padding>
-                              <p>
-                                We're currently migrating the marketplace smart
-                                contract. We ask for users to cancel their
-                                listings as the v1 marketplace will no longer be
-                                maintained. Auditing tools for the v1 protocol
-                                can be found at{' '}
-                                <a href="https://hictory.xyz">hictory.xyz</a>
-                              </p>
-                            </Padding>
-                          </Container>
-                        </>
-                      )}
-
-                      {this.state.marketV1.length !== 0 ? (
-                        <Container>
-                          <Padding>
-                            <p>
-                              One can delist multiple swaps in once batch
-                              transaction or delist each single one at a time.
-                            </p>
-                            <br />
-                            <Button onClick={this.cancel_batch}>
-                              <Primary>Batch Cancel</Primary>
-                            </Button>
-                          </Padding>
-                        </Container>
-                      ) : null}
-
-                      {this.state.marketV1.map((e, key) => {
-                        // console.log(e)
-                        return (
+                  )}
+                </Padding>
+              </Container>
+              <Container xlarge>
+                {this.state.collectionType === 'forSale' ? (
+                  <>
+                    {this.context.acc != null &&
+                    this.context.acc.address === this.state.wallet ? (
+                      <>
+                        {Object.keys(this.state.marketV1).length !== 0 && (
                           <>
-                            <Container key={key}>
+                            <Container>
                               <Padding>
-                                <Button to={`${PATH.OBJKT}/${e.token_id}`}>
-                                  {/* {console.log(e)} */}
-                                  <Primary>
-                                    <strong>
-                                      {e.amount_left}x OBJKT#{e.token_id}{' '}
-                                      {e.price}µtez
-                                    </strong>
-                                  </Primary>
-                                </Button>
-                                <Button
-                                  onClick={() =>
-                                    this.context.cancel(
-                                      e.contract_address,
-                                      e.id
-                                    )
-                                  }
-                                >
-                                  <Secondary>Cancel Swap</Secondary>
-                                </Button>
+                                <p>
+                                  We're currently migrating the marketplace
+                                  smart contract. We ask for users to cancel
+                                  their listings as the v1 marketplace will no
+                                  longer be maintained. Auditing tools for the
+                                  v1 protocol can be found at{' '}
+                                  <a href="https://hictory.xyz">hictory.xyz</a>
+                                </p>
                               </Padding>
                             </Container>
                           </>
-                        )
-                      })}
-                    </>
-                  ) : null}
-                </>
-              ) : null}
+                        )}
 
-              <InfiniteScroll
-                dataLength={this.state.items.length}
-                next={this.loadMore}
-                hasMore={this.state.hasMore}
-                loader={undefined}
-                endMessage={<p></p>}
-              >
-                <ResponsiveMasonry>
-                  {this.state.items.map((nft) => {
-                    //console.log('nft: ' + JSON.stringify(nft))
-                    return (
-                      <div className={styles.cardContainer}>
-                        <Button
-                          style={{ position: 'relative' }}
-                          key={nft.token.id}
-                          to={`${PATH.OBJKT}/${nft.token.id}`}
-                        >
-                          <div className={styles.container}>
-                            {renderMediaType({
-                              mimeType: nft.token.mime,
-                              artifactUri: nft.token.artifact_uri,
-                              displayUri: nft.token.display_uri,
-                              displayView: true,
-                            })}
-                          </div>
-                        </Button>
-                      </div>
-                    )
-                  })}
-                </ResponsiveMasonry>
-              </InfiniteScroll>
-            </Container>
-          </div>
-        )}
+                        {this.state.marketV1.length !== 0 ? (
+                          <Container>
+                            <Padding>
+                              <p>
+                                One can delist multiple swaps in once batch
+                                transaction or delist each single one at a time.
+                              </p>
+                              <br />
+                              <Button onClick={this.cancel_batch}>
+                                <Primary>Batch Cancel</Primary>
+                              </Button>
+                            </Padding>
+                          </Container>
+                        ) : null}
+
+                        {this.state.marketV1.map((e, key) => {
+                          // console.log(e)
+                          return (
+                            <>
+                              <Container key={key}>
+                                <Padding>
+                                  <Button to={`${PATH.OBJKT}/${e.token_id}`}>
+                                    {/* {console.log(e)} */}
+                                    <Primary>
+                                      <strong>
+                                        {e.amount_left}x OBJKT#{e.token_id}{' '}
+                                        {e.price}µtez
+                                      </strong>
+                                    </Primary>
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      this.context.cancel(
+                                        e.contract_address,
+                                        e.id
+                                      )
+                                    }
+                                  >
+                                    <Secondary>Cancel Swap</Secondary>
+                                  </Button>
+                                </Padding>
+                              </Container>
+                            </>
+                          )
+                        })}
+                      </>
+                    ) : null}
+                  </>
+                ) : null}
+
+                <InfiniteScroll
+                  dataLength={this.state.items.length}
+                  next={this.loadMore}
+                  hasMore={this.state.hasMore}
+                  loader={undefined}
+                  endMessage={<p></p>}
+                >
+                  <ResponsiveMasonry>
+                    {this.state.items.map((nft) => {
+                      return (
+                        <div className={styles.cardContainer}>
+                          <Button
+                            style={{ position: 'relative' }}
+                            key={nft.token.id}
+                            to={`${PATH.OBJKT}/${nft.token.id}`}
+                          >
+                            <div className={styles.container}>
+                              {renderMediaType({
+                                mimeType: nft.token.mime,
+                                artifactUri: nft.token.artifact_uri,
+                                displayUri: nft.token.display_uri,
+                                displayView: true,
+                              })}
+                            </div>
+                          </Button>
+                        </div>
+                      )
+                    })}
+                  </ResponsiveMasonry>
+                </InfiniteScroll>
+              </Container>
+            </div>
+          )}
 
         {/*       <BottomBanner>
         API is down due to heavy server load — We're working to fix the issue — please be patient with us. <a href="https://discord.gg/mNNSpxpDce" target="_blank">Join the discord</a> for updates.

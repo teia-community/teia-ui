@@ -4,39 +4,50 @@ import { Button } from '../../button'
 import { Container } from '../../layout'
 import { renderMediaType } from '../../media-types'
 import { ResponsiveMasonry } from '../../responsive-masonry'
+import { EmptyTab } from '../../../pages/display'
 import { PATH } from '../../../constants'
 import { fetchGraphQL, getCollabTokensForAddress } from '../../../data/hicdex'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
-export const CollabsTab = ({ wallet }) => {
+export const CollabsTab = ({ wallet, onLoaded }) => {
   const chunkSize = 20
   const [objkts, setObjkts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [items, setItems] = useState([])
   const [showUnverified, setShowUnverified] = useState(false)
   const [offset, setOffset] = useState(0)
 
   useEffect(() => {
+    setLoading(true)
     fetchGraphQL(getCollabTokensForAddress, 'GetCollabTokens', {
       address: wallet,
-    }).then(({ errors, data }) => {
-      if (errors) {
-        console.error(errors)
-      }
-
-      let tokens = []
-      const result = data.hic_et_nunc_shareholder
-
-      if (result) {
-        result.forEach(
-          (contract) =>
-            (tokens = tokens.concat(contract.split_contract.contract.tokens))
-        )
-      }
-
-      setObjkts(tokens)
     })
-  }, [wallet])
+      .then(({ errors, data }) => {
+        if (errors) {
+          console.error(errors)
+        }
+
+        let tokens = []
+        const result = data.hic_et_nunc_shareholder
+
+        if (result) {
+          result.forEach(
+            (contract) =>
+              (tokens = tokens.concat(contract.split_contract.contract.tokens))
+          )
+        }
+
+        setObjkts(tokens)
+        setLoading(false)
+        onLoaded()
+      })
+      .catch((err) => {
+        console.error(err)
+        setLoading(false)
+        onLoaded()
+      })
+  }, [wallet, onLoaded])
 
   useEffect(() => {
     if (objkts.length === 0) {
@@ -60,6 +71,10 @@ export const CollabsTab = ({ wallet }) => {
     : items.filter((item) => item.is_signed)
 
   const hasUnverifiedObjkts = items.some((i) => !i.is_signed).length > 0
+
+  if (!loading && !objkts.length) {
+    return <EmptyTab>No collabs</EmptyTab>
+  }
 
   return (
     <Container xlarge>
