@@ -141,8 +141,9 @@ export const Swap = ({
             <Padding>
               <div className={styles.container}>
                 <p>
-                  swaps which carry values are charged with a 2.5% fee for
-                  platform maintenance
+                  The Teia marketplace fee is temporarily set to 0%. Please
+                  consider donating to the address hereandnow-fund.tez for
+                  maintenance funding.
                 </p>
               </div>
             </Padding>

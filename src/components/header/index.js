@@ -173,10 +173,9 @@ export const Header = () => {
                   ) : (
                     <ul>
                       <div className={styles.no__address__text}>
-                        The present decentralized application allows its users
-                        to manage decentralized digital assets, serving as a
-                        public smart contract infrastructure on Tezos
-                        Blockchain.
+                        Teia is an artwork made of artworks, an open, community
+                        owned digital platform for experimentation, trading
+                        ideas and works of creativity as OBJKT NFTs.
                       </div>
                     </ul>
                   )}
