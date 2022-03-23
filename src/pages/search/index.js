@@ -230,11 +230,7 @@ async function fetchRandomObjkts() {
     uniqueIds.add(rnd(firstId, lastId))
   }
 
-  const { errors, data } = await fetchObjkts(Array.from(uniqueIds))
-
-  if (errors) {
-    console.error(errors)
-  }
+  const data = await fetchObjkts(Array.from(uniqueIds))
 
   return data.hic_et_nunc_token
 }
