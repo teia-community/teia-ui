@@ -4,7 +4,6 @@ import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
-import { uniqueId } from 'lodash'
 
 const MintedIcon = () => (
   <svg
@@ -205,10 +204,7 @@ export const History = (token_info) => {
                 )
               } else {
                 return (
-                  <div
-                    className={`${styles.history}`}
-                    key={`s-${e.id | uniqueId()}`}
-                  >
+                  <div className={`${styles.history}`} key={`s-${e.opid}`}>
                     <div className={styles.history__event__container}>
                       <SwapIcon />
                       <a
