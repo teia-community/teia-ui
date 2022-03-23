@@ -62,6 +62,7 @@ swaps {
   amount_left
   id
   opid
+  ophash
   price
   timestamp
   creator {
