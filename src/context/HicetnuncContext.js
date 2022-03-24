@@ -320,7 +320,7 @@ class HicetnuncContextProviderClass extends Component {
         })
       },
       // theme, DO NO CHANGE!
-      theme: 'light',
+      theme: 'unset',
       setTheme: (theme) => {
         let root = document.documentElement
 
