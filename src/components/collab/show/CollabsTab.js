@@ -10,6 +10,8 @@ import { fetchGraphQL, getCollabTokensForAddress } from '../../../data/hicdex'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
+const _ = require('lodash')
+
 export const CollabsTab = ({ wallet, onLoaded }) => {
   const chunkSize = 20
   const [objkts, setObjkts] = useState([])
@@ -37,7 +39,7 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
               (tokens = tokens.concat(contract.split_contract.contract.tokens))
           )
         }
-
+        tokens = _.orderBy(tokens, ['timestamp'], ['desc'])
         setObjkts(tokens)
         setLoading(false)
         onLoaded()
