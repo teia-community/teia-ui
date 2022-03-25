@@ -7,6 +7,7 @@ import { FeedItem } from '../../components/feed-item'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import './style.css'
 import { getWalletBlockList } from '../../constants'
+import { getObjktsByShare } from '../../data/hicdex'
 
 const _ = require('lodash')
 
@@ -424,6 +425,7 @@ export class Search extends Component {
     flag: false,
     lastId: undefined,
     tags: [
+      { id: 11, value: '🇺🇦' },
       { id: 0, value: '○ hDAO' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
@@ -578,6 +580,16 @@ export class Search extends Component {
       })
     }
 
+    if (e === '🇺🇦') {
+      let ukr = await getObjktsByShare(
+        ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
+        '50'
+      )
+
+      this.setState({
+        feed: ukr,
+      })
+    }
     if (e === 'random') {
       let res = await fetchRandomObjkts()
       res = res.filter((e) => !arr.includes(e.creator_id))
