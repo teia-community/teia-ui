@@ -425,7 +425,7 @@ export class Search extends Component {
     flag: false,
     lastId: undefined,
     tags: [
-      { id: 11, value: '🇺🇦' },
+      { id: 11, value: '🇺🇦 ukraine' },
       { id: 0, value: '○ hDAO' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
@@ -580,7 +580,7 @@ export class Search extends Component {
       })
     }
 
-    if (e === '🇺🇦') {
+    if (e === '🇺🇦 ukraine') {
       let ukr = await getObjktsByShare(
         ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
         '50'
