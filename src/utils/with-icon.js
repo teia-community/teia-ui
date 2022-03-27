@@ -6,7 +6,7 @@ export const useIconCache = () => React.useContext(IconCache)
 
 const withIcon = (icon) => {
   const Icon = (props) => {
-    const { size = 30 } = props
+    const { size = 30, viewBox = null } = props
     const cache = useIconCache()
 
     const cachedId = cache[icon]
@@ -19,7 +19,7 @@ const withIcon = (icon) => {
 
     return (
       <svg
-        viewBox={`0 0 ${size} ${size}`}
+        viewBox={`0 0 ${viewBox || size} ${viewBox || size}`}
         width={size}
         height={size}
         fill="none"
