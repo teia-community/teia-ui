@@ -8,7 +8,7 @@ import {
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { packParticipantMap } from '@components/collab/functions'
 import { setItem } from '@utils/storage'
-import { verify } from '@utils/verify'
+
 import {
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
@@ -22,7 +22,7 @@ import {
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
-
+const verify = require('@utils/verify')
 // import { Parser, Expr } from "@taquito/michel-codec";
 // import { Schema } from "@taquito/michelson-encoder";
 // import { KeyStoreUtils } from 'conseiljs-softsigner'
