@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 export const getDipdupState = `query {
   hic_et_nunc_dipdup_state {
     hash
@@ -135,6 +137,39 @@ hic_et_nunc_shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "
 }
 }`
 
+export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addresses: [String!]) {
+  hic_et_nunc_splitcontract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
+    contract {
+      address
+      name
+      shares {
+        total_shares
+        shareholder {
+          holder_id
+          shares
+        }
+      }
+      tokens(order_by: {timestamp: desc}) {
+        id
+        artifact_uri
+        display_uri
+        thumbnail_uri
+        timestamp
+        mime
+        title
+        description
+        supply
+        royalties
+        creator {
+          name
+          address
+        }
+      }
+    }
+  }
+}
+`
+
 export const getManagedCollabs = `query GetManagedCollabs($address: String!) {
 hic_et_nunc_splitcontract(where: {administrator: {_eq: $address}}) {
   id
@@ -206,4 +241,37 @@ export async function fetchGraphQL(operationsDoc, operationName, variables) {
   })
 
   return await result.json()
+}
+
+export async function getObjktsByShare(addresses, min_shares) {
+  const { errors, data } = await fetchGraphQL(
+    getCollabTokensForAddressesByShare,
+    'GetCollabTokens',
+    { addresses }
+  )
+
+  if (errors) {
+    throw errors
+  }
+  let objkts = []
+  const contracts_info = data.hic_et_nunc_splitcontract
+  for (const i in contracts_info) {
+    const contract = contracts_info[i].contract
+    const total = contract.shares[0].total_shares
+    const tokens = _.filter(
+      contract.shares[0].shareholder.map((shareholder) => {
+        if (
+          addresses.includes(shareholder.holder_id) &&
+          (shareholder.shares / total) * 100 >= min_shares
+        ) {
+          return contract.tokens
+        }
+        return undefined
+      }),
+      (tokens) => tokens !== undefined
+    )
+
+    objkts = objkts.concat(...tokens)
+  }
+  return _.orderBy(objkts, ['timestamp'], ['desc'])
 }
