@@ -251,7 +251,7 @@ export async function getObjktsByShare(addresses, min_shares) {
   )
 
   if (errors) {
-    console.error(errors)
+    throw errors
   }
   let objkts = []
   const contracts_info = data.hic_et_nunc_splitcontract
@@ -268,11 +268,10 @@ export async function getObjktsByShare(addresses, min_shares) {
         }
         return undefined
       }),
-      (token) => token !== undefined
+      (tokens) => tokens !== undefined
     )
 
     objkts = objkts.concat(...tokens)
   }
-  objkts = _.orderBy(objkts, ['timestamp'], ['desc'])
-  return objkts
+  return _.orderBy(objkts, ['timestamp'], ['desc'])
 }
