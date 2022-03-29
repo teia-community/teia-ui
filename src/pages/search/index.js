@@ -684,25 +684,25 @@ export class Search extends Component {
           </Padding>
         </Container>
         <Container xlarge>
-          <Container>
-            <Padding>
-              {this.state.feed.length > 0 ? (
-                <InfiniteScroll
-                  dataLength={this.state.feed.length}
-                  next={this.loadMore}
-                  hasMore={this.state.hasMore}
-                  loader={undefined}
-                  endMessage={undefined}
-                >
+          {this.state.feed.length > 0 ? (
+            <InfiniteScroll
+              dataLength={this.state.feed.length}
+              next={this.loadMore}
+              hasMore={this.state.hasMore}
+              loader={undefined}
+              endMessage={undefined}
+            >
+              <Container>
+                <Padding>
                   {this.state.feed.map((item, index) => (
                     <div key={`${item.id}-${index}`}>
                       <FeedItem {...item} />
                     </div>
                   ))}
-                </InfiniteScroll>
-              ) : undefined}
-            </Padding>
-          </Container>
+                </Padding>
+              </Container>
+            </InfiniteScroll>
+          ) : undefined}
         </Container>
       </Page>
     )

@@ -292,15 +292,13 @@ export async function getLastObjktId() {
   return data.hic_et_nunc_token[0].id
 }
 
-export async function fetchRandomObjkts(count) {
+export async function fetchRandomObjkts(count = 10) {
   const firstId = 196
   const lastId = await getLastObjktId()
   console.log(`Last id is : ${lastId}`)
   const uniqueIds = new Set()
   while (uniqueIds.size < count) {
-    const id = rnd(firstId, lastId)
-    console.log(id)
-    uniqueIds.add(id)
+    uniqueIds.add(rnd(firstId, lastId))
   }
   try {
     let objkts = await fetchObjkts(Array.from(uniqueIds))

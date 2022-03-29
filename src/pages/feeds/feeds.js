@@ -2,34 +2,33 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { BottomBanner } from '@components/bottom-banner'
-import {
-  GetLatestFeed,
-  // GethDAOFeed,
-  // GetRandomFeed,
-  // GetFeaturedFeed,
-} from '@data/api'
+// import { BottomBanner } from '@components/bottom-banner'
+import // GetLatestFeed,
+// GethDAOFeed,
+// GetRandomFeed,
+// GetFeaturedFeed,
+'@data/api'
 import { Page, Container, Padding } from '@components/layout'
 import { FeedItem } from '@components/feed-item'
 import { Loading } from '@components/loading'
 import { getWalletBlockList } from '@constants'
-import { getLastObjktId } from '@data/hicdex'
+// import { getLastObjktId } from '@data/hicdex'
 
-const axios = require('axios')
+// const axios = require('axios')
 const _ = require('lodash')
 
 const customFloor = function (value, roundTo) {
   return Math.floor(value / roundTo) * roundTo
 }
 
-const tz_profiles = `
-query profiles {
-  tzprofiles(where: {account: {_in: $arr }}) {
-    account
-    contract
-  }
-}
-`
+// const tz_profiles = `
+// query profiles {
+//   tzprofiles(where: {account: {_in: $arr }}) {
+//     account
+//     contract
+//   }
+// }
+// `
 
 const latest_feed = `
 query LatestFeed($lastId: bigint = 99999999) {
@@ -49,42 +48,42 @@ query LatestFeed($lastId: bigint = 99999999) {
   }
 }`
 
-const query_hdao = `query hDAOFeed($offset: Int = 0) {
-  hic_et_nunc_token(order_by: {hdao_balance: desc}, limit: 50, where: {hdao_balance: {_gt: 100}}, offset: $offset) {
-    artifact_uri
-    display_uri
-    creator_id
-    id
-    mime
-    thumbnail_uri
-    timestamp
-    title
-    hdao_balance
-    creator {
-      name
-      address
-    }
-  }
-}`
+// const query_hdao = `query hDAOFeed($offset: Int = 0) {
+//   hic_et_nunc_token(order_by: {hdao_balance: desc}, limit: 50, where: {hdao_balance: {_gt: 100}}, offset: $offset) {
+//     artifact_uri
+//     display_uri
+//     creator_id
+//     id
+//     mime
+//     thumbnail_uri
+//     timestamp
+//     title
+//     hdao_balance
+//     creator {
+//       name
+//       address
+//     }
+//   }
+// }`
 
-async function fetchProfiles(arr) {
-  const { errors, data } = await fetchGraphQLProfiles(tz_profiles, 'profiles', {
-    arr: arr,
-  })
-  return data.tzprofiles
-}
+// async function fetchProfiles(arr) {
+//   const { errors, data } = await fetchGraphQLProfiles(tz_profiles, 'profiles', {
+//     arr: arr,
+//   })
+//   return data.tzprofiles
+// }
 
-async function fetchHdao(offset) {
-  const { errors, data } = await fetchGraphQL(query_hdao, 'hDAOFeed', {
-    offset: offset,
-  })
-  if (errors) {
-    console.error(errors)
-  }
-  const result = data.hic_et_nunc_token
-  /* console.log({ result }) */
-  return result
-}
+// async function fetchHdao(offset) {
+//   const { errors, data } = await fetchGraphQL(query_hdao, 'hDAOFeed', {
+//     offset: offset,
+//   })
+//   if (errors) {
+//     console.error(errors)
+//   }
+//   const result = data.hic_et_nunc_token
+//   /* console.log({ result }) */
+//   return result
+// }
 
 async function fetchFeed(lastId) {
   const { errors, data } = await fetchGraphQL(latest_feed, 'LatestFeed', {
@@ -98,17 +97,17 @@ async function fetchFeed(lastId) {
   return result
 }
 
-async function fetchGraphQLProfiles(operationsDoc, operationName, variables) {
-  let result = await fetch('https://indexer.tzprofiles.com/v1/graphql', {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  })
-  return await result.json()
-}
+// async function fetchGraphQLProfiles(operationsDoc, operationName, variables) {
+//   let result = await fetch('https://indexer.tzprofiles.com/v1/graphql', {
+//     method: 'POST',
+//     body: JSON.stringify({
+//       query: operationsDoc,
+//       variables: variables,
+//       operationName: operationName,
+//     }),
+//   })
+//   return await result.json()
+// }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
   let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
@@ -122,26 +121,18 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
   return await result.json()
 }
 
-function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
-}
-
-const GetUserClaims = async (arr) => {
-  return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
-    query: `query MyQuery { tzprofiles_by_pk(account: \"${walletAddr}\") { valid_claims } }`,
-    variables: null,
-    operationName: 'MyQuery',
-  })
-}
+// const GetUserClaims = async (arr) => {
+//   return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
+//     query: `query MyQuery { tzprofiles_by_pk(account: \"${walletAddr}\") { valid_claims } }`,
+//     variables: null,
+//     operationName: 'MyQuery',
+//   })
+// }
 
 const ONE_MINUTE_MILLIS = 60 * 1000
 
 export const Feeds = ({ type }) => {
-  const [error, setError] = useState(false)
+  // const [error, setError] = useState(false)
   const [items, setItems] = useState([])
   const [count, setCount] = useState(0)
   const [lastId, setId] = useState(999999)
@@ -164,10 +155,10 @@ export const Feeds = ({ type }) => {
   }
 
   useEffect(async () => {
-    if (error) {
-      console.log('returning on error')
-      return
-    }
+    // if (error) {
+    //   console.log('returning on error')
+    //   return
+    // }
     /*     if (type === 0) {
           GetLatestFeed({ counter: count, max_time: startTime })
             .then((result) => {
@@ -223,26 +214,26 @@ export const Feeds = ({ type }) => {
     setItems(next)
   }
 
-  const getHdaoFeed = async () => {
-    let result = await fetchHdao(offset)
-    setOffset(offset + 15)
-    const next = items.concat(result)
-    setItems(next)
-  }
+  // const getHdaoFeed = async () => {
+  //   let result = await fetchHdao(offset)
+  //   setOffset(offset + 15)
+  //   const next = items.concat(result)
+  //   setItems(next)
+  // }
 
-  const getRandomFeed = async () => {
-    let result = await fetchRandomObjkts(10)
-    setCreators([...creators, result.map((e) => e.creator_id)])
+  // const getRandomFeed = async () => {
+  //   let result = await fetchRandomObjkts()
+  //   setCreators([...creators, result.map((e) => e.creator_id)])
 
-    result = _.uniqBy(result, 'creator_id')
-    setCreators(creators.concat(result.map((e) => e.creator_id)))
-    result = result.filter((e) => !creators.includes(e.creator_id))
+  //   result = _.uniqBy(result, 'creator_id')
+  //   setCreators(creators.concat(result.map((e) => e.creator_id)))
+  //   result = result.filter((e) => !creators.includes(e.creator_id))
 
-    let restricted = getWalletBlockList()
-    result = result.filter((e) => !restricted.includes(e.creator_id))
-    const next = items.concat(result)
-    setItems(next)
-  }
+  //   let restricted = getWalletBlockList()
+  //   result = result.filter((e) => !restricted.includes(e.creator_id))
+  //   const next = items.concat(result)
+  //   setItems(next)
+  // }
 
   return (
     <Page title="">
@@ -251,7 +242,7 @@ export const Feeds = ({ type }) => {
           <InfiniteScroll
             dataLength={items.length}
             next={loadMore}
-            hasMore={hasMore}
+            hasMore={true}
             loader={undefined}
             endMessage={
               <p>
