@@ -10,6 +10,7 @@ import { packParticipantMap } from '@components/collab/functions'
 import { setItem } from '@utils/storage'
 
 import {
+  HEN_CONTRACT_FA2,
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
   MAIN_MARKETPLACE_CONTRACT,
@@ -176,7 +177,7 @@ class HicetnuncContextProviderClass extends Component {
       v1: MARKETPLACE_CONTRACT_V1,
       unregistry: 'KT18xby6bb1ur1dKe7i6YVrBaksP4AgtuLES',
       v2: MARKETPLACE_CONTRACT_V2,
-      objkts: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+      objkts: HEN_CONTRACT_FA2,
       hDAO_curation: 'KT1TybhR7XraG75JFYKSrh7KnxukMBT5dor6',
       hDAO_marketplace: 'KT1QPvv7sWVaT9PcPiC4fN9BgfX8NB2d5WzL',
 

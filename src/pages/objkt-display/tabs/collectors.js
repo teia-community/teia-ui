@@ -2,29 +2,20 @@ import React, { useContext } from 'react'
 import { Container, Padding } from '@components/layout'
 import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { OwnerSwaps } from '@components/owner-swaps'
+import { Listings } from '@components/listings'
 
 const _ = require('lodash')
 
 export const Collectors = ({
   id,
   creator,
-  swaps,
+  listings,
   token_holders,
   restricted,
   ban,
 }) => {
   const { syncTaquito, collect, acc, getAccount, cancel, cancelv1, reswap } =
     useContext(HicetnuncContext)
-
-  // sort swaps in ascending price order
-
-  swaps = _.orderBy(swaps, 'price', 'asc')
-
-  // for reswap, we need to have minimal token info
-  swaps.forEach((s) => {
-    s.token = { id: id, creator_id: creator.address }
-  })
 
   const handleCollect = (contract_address, swap_id, price) => {
     if (acc == null) {
@@ -41,11 +32,12 @@ export const Collectors = ({
 
   return (
     <>
-      {swaps.length > 0 && (
+      {listings.length > 0 && (
         <Container>
           <Padding>
-            <OwnerSwaps
-              swaps={swaps}
+            <Listings
+              id={id}
+              listings={listings}
               handleCollect={handleCollect}
               acc={acc}
               proxyAdminAddress={proxyAdminAddress}
@@ -62,7 +54,7 @@ export const Collectors = ({
       {/* {filtered.length === 0 ? undefined : ( */}
       <Container>
         <Padding>
-          <OwnerList owners={token_holders} acc={acc} swaps={swaps} />
+          <OwnerList owners={token_holders} />
         </Padding>
       </Container>
       {/* )} */}

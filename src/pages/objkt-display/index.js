@@ -1,8 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import get from 'lodash/get'
+import sortBy from 'lodash/sortBy'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { getWalletBlockList } from '@constants'
+import {
+  getWalletBlockList,
+  SUPPORTED_MARKETPLACE_CONTRACTS,
+  HEN_CONTRACT_FA2,
+} from '@constants'
 import { Loading } from '@components/loading'
 import { Button, Primary } from '@components/button'
 import { Page, Container, Padding } from '@components/layout'
@@ -109,6 +115,27 @@ trades(order_by: {timestamp: asc}) {
 }
 `
 
+const query_objktcom_asks = `
+query getTokenAsks($tokenId: String! $fa2: String!) {
+  token(where: {token_id: {_eq: $tokenId}, fa_contract: {_eq: $fa2}}) {
+    asks(
+      order_by: {price: asc}
+      where: {price: {_gt: 0}, _or: [{status: {_eq: "active"}, currency_id: {_eq: 1}, seller: {owner_operators: {token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}, allowed: {_eq: true}}, held_tokens: {quantity: {_gt: "0"}, token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}}}}, {contract_version: {_lt: 4}, status: {_eq: "active"}}]}
+    ) {
+      id
+      amount
+      amount_left
+      price
+      seller_address
+      seller {
+        alias
+        address
+      }
+    }
+  }
+}
+`
+
 async function fetchObjkt(id) {
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
@@ -122,15 +149,41 @@ async function fetchObjkt(id) {
   return result
 }
 
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  })
+async function fetchObjktcomAsks(id) {
+  const { errors, data } = await fetchGraphQL(
+    query_objktcom_asks,
+    'getTokenAsks',
+    {
+      tokenId: id,
+      fa2: HEN_CONTRACT_FA2,
+    },
+    process.env.REACT_APP_OBJKTCOM_GRAPHQL_API
+  )
+  if (errors) {
+    console.error(errors)
+    throw errors
+  }
+
+  return get(data, 'token.0.asks', [])
+}
+
+async function fetchGraphQL(
+  operationsDoc,
+  operationName,
+  variables,
+  graphqlApi
+) {
+  let result = await fetch(
+    graphqlApi || process.env.REACT_APP_TEIA_GRAPHQL_API,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        query: operationsDoc,
+        variables: variables,
+        operationName: operationName,
+      }),
+    }
+  )
   return await result.json()
 }
 
@@ -148,7 +201,36 @@ export const ObjktDisplay = () => {
   const proxy = context.getProxy()
 
   useEffect(async () => {
-    let objkt = await fetchObjkt(id)
+    const [objkt, objktcomAsks] = await Promise.all([
+      fetchObjkt(id),
+      fetchObjktcomAsks(id),
+    ])
+
+    const listings = sortBy(
+      [
+        ...objkt.swaps
+          .filter(
+            (swap) =>
+              SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) &&
+              parseInt(swap.status) === 0 &&
+              swap.is_valid
+          )
+          .map((swap) => ({
+            ...swap,
+            token: { id: id, creator_id: objkt.creator.address },
+            key: `${swap.contract_address}-${swap.id}`,
+            type: 'swap',
+          })),
+        ...objktcomAsks.map((ask) => ({
+          ...ask,
+          key: `objktcom_ask_${ask.id}`,
+          type: 'objktcom_ask',
+        })),
+      ],
+      ({ price }) => price
+    )
+
+    objkt.listings = listings
 
     await context.setAccount()
 

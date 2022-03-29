@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import classNames from 'classnames'
-import { PATH, SUPPORTED_MARKETPLACE_CONTRACTS } from '../../constants'
+import sum from 'lodash/sum'
+import { PATH } from '../../constants'
 import { Button, Primary, Purchase, Secondary } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
@@ -11,26 +12,13 @@ import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 
-const _ = require('lodash')
-
-function countEditionsForSale(token_holders) {
-  const quantities = token_holders
-    .filter((holder) =>
-      SUPPORTED_MARKETPLACE_CONTRACTS.includes(holder.holder_id)
-    )
-    .map((holder) => holder.quantity)
-
-  return _.sum(quantities)
-}
-
 export const ItemInfo = ({
   id,
-  swaps,
+  listings,
   creator,
   is_signed,
   token_signatures,
   feed,
-  token_holders,
   supply,
   isDetailView,
   restricted,
@@ -42,35 +30,51 @@ export const ItemInfo = ({
   if (isDetailView) {
     // TODO: subtract burned pieces from total
     const total = supply
-    const editionsForSale = countEditionsForSale(token_holders)
+    const editionsForSale = sum(listings.map(({ amount_left }) => amount_left))
     const ed = editionsForSale || 'X'
+    let purchaseButton = null
 
-    swaps = swaps.filter(
-      (e) =>
-        SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) &&
-        parseInt(e.status) === 0 &&
-        e.is_valid
-    )
-    console.log(swaps)
-    let s = _.minBy(swaps, (o) => Number(o.price))
+    const cheapestListing = listings[0] // listings are sorted by price
 
-    var message = ''
-
-    try {
-      message =
-        swaps[0] !== undefined
-          ? 'Collect for ' + Number(s.price) / 1000000 + ' tez'
-          : 'Not for sale'
-    } catch (e) {
-      message = 'Not for sale'
-    }
-
-    const handleCollect = () => {
-      if (acc == null) {
-        syncTaquito()
+    if (cheapestListing) {
+      if (cheapestListing.type === 'swap') {
+        purchaseButton = (
+          <Button
+            onClick={() => {
+              if (acc == null) {
+                syncTaquito()
+              } else {
+                collect(
+                  cheapestListing.contract_address,
+                  cheapestListing.id,
+                  cheapestListing.price * 1
+                )
+              }
+            }}
+            full
+          >
+            <Purchase>
+              Collect for {Number(cheapestListing.price) / 1000000} tez
+            </Purchase>
+          </Button>
+        )
       } else {
-        collect(s.contract_address, s.id, s.price * 1)
+        // objktcom ask
+        purchaseButton = (
+          <Button href={`https://objkt.com/asset/hicetnunc/${id}`} full>
+            <Purchase>
+              Collect on Objkt.com for{' '}
+              {parseFloat(cheapestListing.price / 1000000)} tez
+            </Purchase>
+          </Button>
+        )
       }
+    } else {
+      purchaseButton = (
+        <Button full>
+          <Purchase>Not for sale</Purchase>
+        </Button>
+      )
     }
 
     // Check collab status
@@ -179,9 +183,7 @@ export const ItemInfo = ({
                 </div>
               )}
             </div>
-            <Button onClick={() => handleCollect()} full>
-              <Purchase>{message}</Purchase>
-            </Button>
+            {purchaseButton}
           </div>
         )}
         <div className={styles.spread}>
