@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Page, Container, Padding } from '@components/layout'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 
 import { Input } from '@components/input'
 import { FeedItem } from '@components/feed-item'
@@ -9,9 +9,9 @@ import { fetchRandomObjkts } from '@data/hicdex'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import './style.css'
-import { getWalletBlockList } from '../../constants'
-import { getObjktsByShare } from '../../data/hicdex'
-
+import { getWalletBlockList } from '@constants'
+import { getObjktsByShare } from '@data/hicdex'
+import { IconCache } from '@utils/with-icon'
 const _ = require('lodash')
 
 async function fetchFeed(lastId) {
@@ -645,65 +645,68 @@ export class Search extends Component {
   render() {
     return (
       <Page>
-        <Container>
-          <Padding>
-            <Input
-              type="text"
-              name="search"
-              onChange={this.handleChange}
-              label="Search ↵"
-              placeholder="Search ↵"
-              onKeyPress={this.handleKey}
-            />
-            {
-              <div style={{ marginTop: '15px' }}>
-                {this.state.tags.map((e) => (
-                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                  <a
-                    key={e.value}
-                    className="tag"
-                    href="#"
-                    onClick={() => {
-                      this.update(e.value, true)
-                    }}
-                  >
-                    {e.value}{' '}
-                  </a>
-                ))}
-              </div>
-            }
-            {this.state.subjkt.length > 0 && this.state.search !== '' ? (
-              <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
-                {this.state.subjkt.map((e) => (
-                  <div style={{ marginTop: '10px' }}>
-                    <a href={`/${e.name}`}>{e.name}</a> {e.metadata.description}
-                  </div>
-                ))}
-              </div>
-            ) : undefined}
-          </Padding>
-        </Container>
-        <Container xlarge>
-          {this.state.feed.length > 0 ? (
-            <InfiniteScroll
-              dataLength={this.state.feed.length}
-              next={this.loadMore}
-              hasMore={this.state.hasMore}
-              loader={undefined}
-              endMessage={undefined}
-            >
-              <Container>
-                <Padding>
-                  {this.state.feed.map((item, index) => (
-                    <div key={`${item.id}-${index}`}>
-                      <FeedItem {...item} />
+        <IconCache.Provider value={{}}>
+          <Container>
+            <Padding>
+              <Input
+                type="text"
+                name="search"
+                onChange={this.handleChange}
+                label="Search ↵"
+                placeholder="Search ↵"
+                onKeyPress={this.handleKey}
+              />
+              {
+                <div style={{ marginTop: '15px' }}>
+                  {this.state.tags.map((e) => (
+                    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                    <a
+                      key={e.value}
+                      className="tag"
+                      href="#"
+                      onClick={() => {
+                        this.update(e.value, true)
+                      }}
+                    >
+                      {e.value}{' '}
+                    </a>
+                  ))}
+                </div>
+              }
+              {this.state.subjkt.length > 0 && this.state.search !== '' ? (
+                <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
+                  {this.state.subjkt.map((e) => (
+                    <div style={{ marginTop: '10px' }}>
+                      <a href={`/${e.name}`}>{e.name}</a>{' '}
+                      {e.metadata.description}
                     </div>
                   ))}
-                </Padding>
-              </Container>
-            </InfiniteScroll>
-          ) : undefined}
-        </Container>
+                </div>
+              ) : undefined}
+            </Padding>
+          </Container>
+          <Container xlarge>
+            {this.state.feed.length > 0 ? (
+              <InfiniteScroll
+                dataLength={this.state.feed.length}
+                next={this.loadMore}
+                hasMore={this.state.hasMore}
+                loader={undefined}
+                endMessage={undefined}
+              >
+                <Container>
+                  <Padding>
+                    {this.state.feed.map((item, index) => (
+                      <div key={`${item.id}-${index}`}>
+                        <FeedItem {...item} />
+                      </div>
+                    ))}
+                  </Padding>
+                </Container>
+              </InfiniteScroll>
+            ) : undefined}
+          </Container>
+        </IconCache.Provider>
       </Page>
     )
   }

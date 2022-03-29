@@ -3,6 +3,7 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
 import { Loading } from '@components/loading'
 import { FeedItem } from '@components/feed-item'
+import { IconCache } from '@utils/with-icon'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
@@ -141,63 +142,65 @@ export class Friends extends Component {
   render() {
     return (
       <Page title={this.state.alias}>
-        {this.state.loading && (
-          <Container>
-            <Padding>
-              <Loading />
-            </Padding>
-          </Container>
-        )}
-        {!this.state.loading && (
-          <>
-            {this.state.creations === 0 && (
-              <Container>
-                <Padding>
-                  <p
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    No OBJKTs have been collected by this wallet address
+        <IconCache.Provider value={{}}>
+          {this.state.loading && (
+            <Container>
+              <Padding>
+                <Loading />
+              </Padding>
+            </Container>
+          )}
+          {!this.state.loading && (
+            <>
+              {this.state.creations === 0 && (
+                <Container>
+                  <Padding>
+                    <p
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      No OBJKTs have been collected by this wallet address
+                    </p>
+                    {JSON.stringify(this.state.creations)}
+                  </Padding>
+                </Container>
+              )}
+            </>
+          )}
+          {!this.state.loading && this.state.creations && (
+            <Container xlarge>
+              <InfiniteScroll
+                dataLength={this.state.creations.length}
+                next={this.loadMore}
+                hasMore={true}
+                loader={undefined}
+                endMessage={
+                  <p>
+                    mint mint mint{' '}
+                    <span role="img" aria-labelledby={'Sparkles emoji'}>
+                      ✨
+                    </span>
                   </p>
-                  {JSON.stringify(this.state.creations)}
-                </Padding>
-              </Container>
-            )}
-          </>
-        )}
-        {!this.state.loading && this.state.creations && (
-          <Container xlarge>
-            <InfiniteScroll
-              dataLength={this.state.creations.length}
-              next={this.loadMore}
-              hasMore={true}
-              loader={undefined}
-              endMessage={
-                <p>
-                  mint mint mint{' '}
-                  <span role="img" aria-labelledby={'Sparkles emoji'}>
-                    ✨
-                  </span>
-                </p>
-              }
-            >
-              <Container>
-                <Padding>
-                  {this.state.creations.map((item, index) => (
-                    <FeedItem
-                      key={`${item.id}-${index}`}
-                      {...item}
-                      creator_id={item.creator.address}
-                    />
-                  ))}
-                </Padding>
-              </Container>
-            </InfiniteScroll>
-          </Container>
-        )}
+                }
+              >
+                <Container>
+                  <Padding>
+                    {this.state.creations.map((item, index) => (
+                      <FeedItem
+                        key={`${item.id}-${index}`}
+                        {...item}
+                        creator_id={item.creator.address}
+                      />
+                    ))}
+                  </Padding>
+                </Container>
+              </InfiniteScroll>
+            </Container>
+          )}
+        </IconCache.Provider>
       </Page>
     )
   }
