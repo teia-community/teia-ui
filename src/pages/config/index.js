@@ -43,7 +43,7 @@ async function fetchTz(addr) {
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
+  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,

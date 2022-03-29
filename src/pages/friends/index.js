@@ -7,7 +7,7 @@ import { IconCache } from '@utils/with-icon'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
+  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
