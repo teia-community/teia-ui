@@ -19,12 +19,12 @@ module.exports = {
           buffer: require.resolve("buffer/"),
           crypto: require.resolve("crypto-browserify"),
           stream: require.resolve("stream-browserify"),
-          events: require.resolve("events/"),
+          // events: require.resolve("events/"),
           path: require.resolve("path-browserify"),
-          http: require.resolve("stream-http"),
-          https: require.resolve("https-browserify"),
-          os: require.resolve("os-browserify/browser"),
-          url: require.resolve("url")
+          // http: require.resolve("stream-http"),
+          // https: require.resolve("https-browserify"),
+          // os: require.resolve("os-browserify/browser"),
+          // url: require.resolve("url")
         },
       },
       // experiments: { asyncWebAssembly: true },
