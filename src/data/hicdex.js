@@ -295,7 +295,6 @@ export async function getLastObjktId() {
 export async function fetchRandomObjkts(count = 10) {
   const firstId = 196
   const lastId = await getLastObjktId()
-  console.log(`Last id is : ${lastId}`)
   const uniqueIds = new Set()
   while (uniqueIds.size < count) {
     uniqueIds.add(rnd(firstId, lastId))

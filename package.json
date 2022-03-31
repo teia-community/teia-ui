@@ -24,7 +24,6 @@
     "lodash": "^4.17.21",
     "markdown-to-jsx": "^7.1.7",
     "mime-types": "^2.1.35",
-    "nanoassert": "^2.0.0",
     "node-sass": "^7.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
