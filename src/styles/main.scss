@@ -14,7 +14,9 @@ body {
   // font-family: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
   // font-family: 'OCR A Std', monospace; // README: crzypatchwork, this font doesn't look great.
   // font-family: 'Courier New', 'Courier', monospace; // README: old font
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // FIXME: APRIL
+  font-family: 'Comic Sans', cursive, sans-serif;
   overflow-x: hidden;
   color: var(--text-color);
   background-color: var(--background-color);
@@ -42,5 +44,7 @@ body {
     font-size: 1.5em;
     margin: 1.5em 0 0.5em;
   }
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // FIXME: APRIL
+  font-family: 'Comic Sans', cursive, sans-serif;
 }
