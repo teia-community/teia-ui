@@ -3,7 +3,9 @@
 
 .container {
   @include resetButton();
-  font-family: 'ioveska-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  // FIXME: APRIL
+  font-family: 'Comic Sans MS', cursive, sans-serif;
 
   &.fit {
     display: contents;
