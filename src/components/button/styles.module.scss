@@ -72,6 +72,8 @@
   border-bottom: 2px solid var(--gray-100);
   transition: border-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
+  min-width: 220px;
+  text-justify: center;
 }
 
 .purchase:hover {

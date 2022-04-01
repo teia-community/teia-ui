@@ -23,13 +23,13 @@
   position: relative;
   white-space: nowrap;
   margin-right: 10px;
+  display: flex;
 }
 
 .container {
   display: flex;
   flex-direction: column;
   color: var(--text-color);
-
   margin: 0 1em;
 
   .swap {
@@ -48,6 +48,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      min-width: 200px;
 
       @include respond-to('desktop') {
         justify-content: initial;
@@ -58,14 +59,21 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: flex-end;
-
+      width: 100%;
       & > * {
         margin-top: 1em;
-
         @include respond-to('desktop') {
           margin-top: 0;
         }
+      }
+      & > *:not(.swapLabel) {
+        flex-grow: 1;
+        @include respond-to('desktop') {
+          flex-grow: 0;
+        }
+      }
+      @include respond-to('desktop') {
+        justify-content: flex-end;
       }
     }
   }

@@ -66,36 +66,31 @@ function TeiaOrHenSwapRow({
       <div className={styles.buttons}>
         {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
           <>
-            &nbsp;
             <TeiaLabel />
           </>
         ) : null}
         {swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
         swap.contract_address === MARKETPLACE_CONTRACT_V2 ? (
           <>
-            &nbsp;
             <HENLabel />
           </>
         ) : null}
         {swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
         swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ? (
           <>
-            &nbsp;
             <OBJKTLabel />
           </>
         ) : null}
         {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
-          <>
-            <Button
-              onClick={() =>
-                handleCollect(swap.contract_address, swap.id, swap.price)
-              }
-            >
-              <Purchase>
-                Collect for {parseFloat(swap.price / 1000000)} tez
-              </Purchase>
-            </Button>
-          </>
+          <Button
+            onClick={() =>
+              handleCollect(swap.contract_address, swap.id, swap.price)
+            }
+          >
+            <Purchase>
+              Collect for {parseFloat(swap.price / 1000000)} tez
+            </Purchase>
+          </Button>
         )}
         {isOwnSwap && (
           <>
