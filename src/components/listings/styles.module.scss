@@ -48,7 +48,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-width: 200px;
+      min-width: fit-content;
 
       @include respond-to('desktop') {
         justify-content: initial;
