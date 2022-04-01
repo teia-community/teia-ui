@@ -7,10 +7,7 @@ import { HicetnuncContext } from '../../context/HicetnuncContext'
 
 const TeiaLabel = () => (
   <span className={styles.teiaLabel} title="buy this listing and support teia">
-    <span style={{ color: '#f79533' }}>T</span>
-    <span style={{ color: '#ef4e7b' }}>E</span>
-    <span style={{ color: '#5073b8' }}>I</span>
-    <span style={{ color: '#07b39b' }}>A</span>
+    TEIA
   </span>
 )
 
@@ -46,14 +43,14 @@ function TeiaOrHenSwapRow({
             <Primary>{walletPreview(swap.creator.address)}</Primary>
           </Button>
         )}
+      </div>
+      <div className={styles.buttons}>
         {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
           <>
             &nbsp;
             <TeiaLabel />
           </>
         ) : null}
-      </div>
-      <div className={styles.buttons}>
         {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
           <>
             <Button
