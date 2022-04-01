@@ -1,19 +1,19 @@
 @import '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-@keyframes animatedgradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+// @keyframes animatedgradient {
+//   0% {
+//     background-position: 0% 50%;
+//   }
+//   50% {
+//     background-position: 100% 50%;
+//   }
+//   100% {
+//     background-position: 0% 50%;
+//   }
+// }
 
-.teiaLabel {
+.swapLabel {
   color: var(--gray-40);
   border: 1px solid var(--gray-30);
   padding: 6px 8px;
