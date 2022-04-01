@@ -4,6 +4,8 @@ import {
   MARKETPLACE_CONTRACT_TEIA,
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
 } from '../../constants'
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
@@ -68,11 +70,18 @@ function TeiaOrHenSwapRow({
             <TeiaLabel />
           </>
         ) : null}
-        {swap.contract_address === MARKETPLACE_CONTRACT_V2 ||
-        swap.contract_address === MARKETPLACE_CONTRACT_V1 ? (
+        {swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
+        swap.contract_address === MARKETPLACE_CONTRACT_V2 ? (
           <>
             &nbsp;
             <HENLabel />
+          </>
+        ) : null}
+        {swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
+        swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ? (
+          <>
+            &nbsp;
+            <OBJKTLabel />
           </>
         ) : null}
         {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
@@ -142,11 +151,11 @@ function ObjktcomAskRow({ id, ask }) {
           </Primary>
         </Button>
       </div>
+
       <div className={styles.buttons}>
+        <OBJKTLabel />
         <Button href={`https://objkt.com/asset/hicetnunc/${id}`}>
-          <Purchase>
-            On the sussy amogus for {parseFloat(ask.price / 1000000)} tez
-          </Purchase>
+          <Purchase>Collect for {parseFloat(ask.price / 1000000)} tez</Purchase>
         </Button>
       </div>
     </div>
