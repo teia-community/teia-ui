@@ -3,7 +3,7 @@ import styles from './styles.module.scss'
 import { useState } from 'react'
 import { VisuallyHidden } from '../visually-hidden'
 import { fetchGraphQL, getDipdupState } from '../../data/hicdex'
-
+import IndexerStatus from '@icons/indexer_status'
 export const Status = ({ criticalDelta = 50 }) => {
   const [statusDetails, setStatusDetails] = useState()
 
@@ -33,7 +33,8 @@ export const Status = ({ criticalDelta = 50 }) => {
         `Indexer problem: ${tzktStatus.level} vs ${mainnetNode.level} = ${delta}`
       )
       setStatusDetails(
-        `Indexer problem: The indexer is currently delayed (-${delta} blocks)`
+        `The indexer is currently delayed by ${delta} blocks.
+        During this period, operations (mint, collect, swap) are prone to fail.`
       )
     }
   }, [criticalDelta])
@@ -53,12 +54,9 @@ export const Status = ({ criticalDelta = 50 }) => {
       className={styles.status}
       data-position={'bottom'}
       data-tooltip={statusDetails}
-      style={{
-        marginRight: '10px',
-      }}
     >
-      <VisuallyHidden>{`${statusDetails}`}</VisuallyHidden>
-      🔴
+      <VisuallyHidden>{statusDetails}</VisuallyHidden>
+      <IndexerStatus />
     </span>
   )
 }
