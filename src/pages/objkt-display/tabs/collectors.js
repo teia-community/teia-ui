@@ -12,15 +12,29 @@ export const Collectors = ({
   restricted,
   ban,
 }) => {
-  const { syncTaquito, collect, acc, getAccount, cancel, cancelv1, reswap } =
-    useContext(HicetnuncContext)
+  const {
+    syncTaquito,
+    collect,
+    fulfillObjktcomAsk,
+    acc,
+    cancel,
+    cancelv1,
+    reswap,
+  } = useContext(HicetnuncContext)
 
   const handleCollect = (contract_address, swap_id, price) => {
-    if (acc == null) {
+    if (acc === null) {
       syncTaquito()
-      getAccount()
     } else {
       collect(contract_address, swap_id, price)
+    }
+  }
+
+  const handleCollectObjktcomAsk = (ask) => {
+    if (acc === null) {
+      syncTaquito()
+    } else {
+      fulfillObjktcomAsk(ask)
     }
   }
 
@@ -37,6 +51,7 @@ export const Collectors = ({
               id={id}
               listings={listings}
               handleCollect={handleCollect}
+              handleCollectObjktcomAsk={handleCollectObjktcomAsk}
               acc={acc}
               proxyAdminAddress={proxyAdminAddress}
               cancel={cancel}

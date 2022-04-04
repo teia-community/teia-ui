@@ -23,7 +23,8 @@ export const ItemInfo = ({
   isDetailView,
   restricted,
 }) => {
-  const { syncTaquito, collect, curate, acc } = useContext(HicetnuncContext)
+  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
+    useContext(HicetnuncContext)
 
   const [showSignStatus, setShowSignStatus] = useState(false)
 
@@ -37,37 +38,31 @@ export const ItemInfo = ({
     const cheapestListing = listings[0] // listings are sorted by price
 
     if (cheapestListing) {
-      if (cheapestListing.type === 'swap') {
-        purchaseButton = (
-          <Button
-            onClick={() => {
-              if (acc == null) {
-                syncTaquito()
-              } else {
+      purchaseButton = (
+        <Button
+          onClick={() => {
+            if (acc == null) {
+              syncTaquito()
+            } else {
+              if (cheapestListing.type === 'swap') {
                 collect(
                   cheapestListing.contract_address,
                   cheapestListing.id,
                   cheapestListing.price * 1
                 )
+              } else {
+                fulfillObjktcomAsk(cheapestListing)
               }
-            }}
-            full
-          >
-            <Purchase>
-              Collect for {Number(cheapestListing.price) / 1000000} tez
-            </Purchase>
-          </Button>
-        )
-      } else {
-        // objktcom ask
-        purchaseButton = (
-          <Button href={`https://objkt.com/asset/hicetnunc/${id}`} full>
-            <Purchase>
-              On Objkt.com for {parseFloat(cheapestListing.price / 1000000)} tez
-            </Purchase>
-          </Button>
-        )
-      }
+            }
+          }}
+          full
+        >
+          <Purchase>
+            {cheapestListing.type === 'swap' ? 'Collect' : 'On Objkt.com'} for{' '}
+            {Number(cheapestListing.price) / 1000000} tez
+          </Purchase>
+        </Button>
+      )
     } else {
       purchaseButton = (
         <Button full>

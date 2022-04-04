@@ -135,7 +135,7 @@ function TeiaOrHenSwapRow({
   )
 }
 
-function ObjktcomAskRow({ id, ask }) {
+function ObjktcomAskRow({ id, ask, onCollectClick }) {
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -149,7 +149,7 @@ function ObjktcomAskRow({ id, ask }) {
 
       <div className={styles.buttons}>
         <OBJKTLabel />
-        <Button href={`https://objkt.com/asset/hicetnunc/${id}`}>
+        <Button onClick={() => onCollectClick()}>
           <Purchase>Collect for {parseFloat(ask.price / 1000000)} tez</Purchase>
         </Button>
       </div>
@@ -161,6 +161,7 @@ export const Listings = ({
   id,
   listings,
   handleCollect,
+  handleCollectObjktcomAsk,
   cancel,
   proxyAdminAddress,
   restricted,
@@ -192,7 +193,16 @@ export const Listings = ({
             />
           )
         } else {
-          return <ObjktcomAskRow id={id} key={listing.key} ask={listing} />
+          return (
+            <ObjktcomAskRow
+              id={id}
+              key={listing.key}
+              ask={listing}
+              onCollectClick={() => {
+                handleCollectObjktcomAsk(listing)
+              }}
+            />
+          )
         }
       })}
     </div>

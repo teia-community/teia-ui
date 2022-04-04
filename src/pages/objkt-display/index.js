@@ -126,6 +126,7 @@ query getTokenAsks($tokenId: String! $fa2: String!) {
       amount
       amount_left
       price
+      contract_version
       seller_address
       seller {
         alias

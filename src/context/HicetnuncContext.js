@@ -13,6 +13,8 @@ import {
   HEN_CONTRACT_FA2,
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
   MAIN_MARKETPLACE_CONTRACT,
   MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
   SWAP_TYPE_TEIA,
@@ -564,6 +566,26 @@ class HicetnuncContextProviderClass extends Component {
             })
           )
           .catch((e) => e)
+      },
+
+      fulfillObjktcomAsk: async (ask) => {
+        let contractAddress
+
+        if (ask.contract_version === 1) {
+          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V1
+        } else if (ask.contract_version === 4) {
+          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V4
+        } else {
+          throw new Error('unsupported objkt.com marketplace contract')
+        }
+
+        return await Tezos.wallet.at(contractAddress).then((c) =>
+          c.methods.fulfill_ask(ask.id).send({
+            amount: ask.price,
+            mutez: true,
+            storageLimit: 350,
+          })
+        )
       },
 
       curate: async (objkt_id) => {
