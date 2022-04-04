@@ -63,8 +63,7 @@ export const ItemInfo = ({
         purchaseButton = (
           <Button href={`https://objkt.com/asset/hicetnunc/${id}`} full>
             <Purchase>
-              Collect on Objkt.com for{' '}
-              {parseFloat(cheapestListing.price / 1000000)} tez
+              On Objkt.com for {parseFloat(cheapestListing.price / 1000000)} tez
             </Purchase>
           </Button>
         )
