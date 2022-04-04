@@ -1,16 +1,32 @@
 import React, { useContext, useState } from 'react'
 import { Button, Primary, Purchase } from '../button'
-import { MARKETPLACE_CONTRACT_TEIA } from '../../constants'
+import {
+  MARKETPLACE_CONTRACT_TEIA,
+  MARKETPLACE_CONTRACT_V1,
+  MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
+} from '../../constants'
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 
 const TeiaLabel = () => (
-  <span className={styles.teiaLabel} title="buy this listing and support teia">
-    <span style={{ color: '#f79533' }}>T</span>
-    <span style={{ color: '#ef4e7b' }}>E</span>
-    <span style={{ color: '#5073b8' }}>I</span>
-    <span style={{ color: '#07b39b' }}>A</span>
+  <span className={styles.swapLabel} title="buy this listing and support teia">
+    TEIA
+  </span>
+)
+const HENLabel = () => (
+  <span
+    className={styles.swapLabel}
+    title="this listing is through the original HEN contract"
+  >
+    H=N
+  </span>
+)
+const OBJKTLabel = () => (
+  <span className={styles.swapLabel} title="This swap is through OBJKT.com">
+    Objkt.com
   </span>
 )
 
@@ -46,26 +62,35 @@ function TeiaOrHenSwapRow({
             <Primary>{walletPreview(swap.creator.address)}</Primary>
           </Button>
         )}
+      </div>
+      <div className={styles.buttons}>
         {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
           <>
-            &nbsp;
             <TeiaLabel />
           </>
         ) : null}
-      </div>
-      <div className={styles.buttons}>
-        {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
+        {swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
+        swap.contract_address === MARKETPLACE_CONTRACT_V2 ? (
           <>
-            <Button
-              onClick={() =>
-                handleCollect(swap.contract_address, swap.id, swap.price)
-              }
-            >
-              <Purchase>
-                Collect for {parseFloat(swap.price / 1000000)} tez
-              </Purchase>
-            </Button>
+            <HENLabel />
           </>
+        ) : null}
+        {swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
+        swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ? (
+          <>
+            <OBJKTLabel />
+          </>
+        ) : null}
+        {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
+          <Button
+            onClick={() =>
+              handleCollect(swap.contract_address, swap.id, swap.price)
+            }
+          >
+            <Purchase>
+              Collect for {parseFloat(swap.price / 1000000)} tez
+            </Purchase>
+          </Button>
         )}
         {isOwnSwap && (
           <>
@@ -121,11 +146,11 @@ function ObjktcomAskRow({ id, ask }) {
           </Primary>
         </Button>
       </div>
+
       <div className={styles.buttons}>
+        <OBJKTLabel />
         <Button href={`https://objkt.com/asset/hicetnunc/${id}`}>
-          <Purchase>
-            On Objkt.com for {parseFloat(ask.price / 1000000)} tez
-          </Purchase>
+          <Purchase>Collect for {parseFloat(ask.price / 1000000)} tez</Purchase>
         </Button>
       </div>
     </div>

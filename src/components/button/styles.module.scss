@@ -63,15 +63,16 @@
 
 .purchase {
   width: 100%;
-
-  padding: 4px 6px;
-
+  padding: 4px 16px;
   color: var(--gray-100);
   background-color: var(--gray-5);
   border-right: 2px solid var(--gray-100);
   border-bottom: 2px solid var(--gray-100);
   transition: border-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
+  min-width: 220px;
+  text-justify: center;
+  text-align: center;
 }
 
 .purchase:hover {
