@@ -4,8 +4,6 @@ import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Listings } from '@components/listings'
 
-const _ = require('lodash')
-
 export const Collectors = ({
   id,
   creator,

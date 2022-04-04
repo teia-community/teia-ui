@@ -124,7 +124,7 @@ function ObjktcomAskRow({ id, ask }) {
       <div className={styles.buttons}>
         <Button href={`https://objkt.com/asset/hicetnunc/${id}`}>
           <Purchase>
-            Collect on Objkt.com for {parseFloat(ask.price / 1000000)} tez
+            On Objkt.com for {parseFloat(ask.price / 1000000)} tez
           </Purchase>
         </Button>
       </div>
