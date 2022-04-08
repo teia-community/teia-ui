@@ -10,12 +10,11 @@ For subsequent runs, you simply need to run `npm start`.
 
 ## Build
 
-Please remove all the content from folder `dist` and run `npm run build`. This will generate the HTML necessary for your HTML NFT on folder `dist`.
+Run `npm run build`. This will delete & regenerate the files necessary for your HTML NFT in the `build` folder.
 
 ## Gotchas
 
-- The reason you should remove the contents of the folder before you run `npm run build` is so you only end up with the necessary files for your NFT since the assets are hashed on every run.
-- Please make sure the exported HTML also doesn't have references to the files with `./filename.jpg` or `/filename.jpg` but `filename.jpg`.
+- Please make sure the exported HTML doesn't have references to the files with `./filename.jpg` or `/filename.jpg` but `filename.jpg`.
 
 ## Publishing
 
@@ -40,4 +39,4 @@ const viewer = new URLSearchParams(window.location.search).get('viewer')
 ```
 
 Hope you guys enjoy!
-Hicetnunc team
+HEN/Teia team

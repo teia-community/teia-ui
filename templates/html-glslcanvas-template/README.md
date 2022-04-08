@@ -24,4 +24,4 @@ const viewer = new URLSearchParams(window.location.search).get('viewer')
 ```
 
 Hope you guys enjoy!
-Hicetnunc team
+HEN/Teia team

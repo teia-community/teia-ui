@@ -90,7 +90,7 @@ export default class App extends Component {
               <React.Fragment>
                 <div className="element">
                   <div className="tools">
-                    <div onClick={zoomIn} className="icon">
+                    <div onClick={() => zoomIn()} className="icon">
                       <svg viewBox="0 0 32 32">
                         <circle
                           cx="14"
@@ -141,7 +141,7 @@ export default class App extends Component {
                         />
                       </svg>
                     </div>
-                    <div onClick={zoomOut} className="icon">
+                    <div onClick={() => zoomOut()} className="icon">
                       <svg viewBox="0 0 32 32">
                         <circle
                           cx="14"
@@ -181,7 +181,7 @@ export default class App extends Component {
                         />
                       </svg>
                     </div>
-                    <div onClick={resetTransform} className="icon">
+                    <div onClick={() => resetTransform()} className="icon">
                       <svg viewBox="0 0 48 48">
                         <path
                           d="M24 10V2L14 12l10 10v-8c6.63 0 12 5.37 12 12s-5.37 12-12 12-12-5.37-12-12H8c0 8.84 7.16 16 16 16s16-7.16 16-16-7.16-16-16-16z"
