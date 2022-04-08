@@ -5,7 +5,7 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Input } from '@components/input'
 import { FeedItem } from '@components/feed-item'
 
-import { fetchRandomObjkts } from '@data/hicdex'
+import { fetchRandomObjkts, getLastObjktId } from '@data/hicdex'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import './style.css'
@@ -40,7 +40,6 @@ query LatestFeed {
     console.error(errors)
   }
   const result = data.hic_et_nunc_token
-  /* console.log({ result }) */
   return result
 }
 
@@ -417,6 +416,7 @@ export class Search extends Component {
     if (reset) {
       this.state.feed = []
       this.state.offset = 0
+      this.state.lastId = await getLastObjktId()
     }
 
     if (e === '1D') {
@@ -576,7 +576,7 @@ export class Search extends Component {
       })
     }
 
-    if (this.state.select === 'new OBJKTs') {
+    if (e === 'new OBJKTs') {
       this.latest()
     }
 
@@ -586,18 +586,7 @@ export class Search extends Component {
   }
 
   latest = async () => {
-    let result = []
-    if (this.state.flag) {
-      result = await fetchFeed(
-        Math.min.apply(
-          Math,
-          this.state.feed.map((e) => e.id)
-        )
-      )
-    } else {
-      result = await fetchFeed(999999)
-    }
-    console.log(result)
+    let result = await fetchFeed(this.state.lastId)
     let restricted = getWalletBlockList()
     result = _.uniqBy([...this.state.feed, ...result], 'creator_id')
     result = result.filter((e) => !restricted.includes(e.creator_id))
