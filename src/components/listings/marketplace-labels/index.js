@@ -38,8 +38,11 @@ export const MarketplaceLabel = ({ swap }) => {
   }
   if (
     swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
-    swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4
+    swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ||
+    swap.type === 'objktcom_ask'
   ) {
     return <OBJKTLabel />
   }
+  console.error('Could not resolve the proper label for this swap', swap)
+  return null
 }

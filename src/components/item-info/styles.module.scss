@@ -178,3 +178,9 @@ span[data-tooltip][data-position='top']:after {
 .collab_verification_symbol {
   padding-right: 0.5em;
 }
+
+.main_swap {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}

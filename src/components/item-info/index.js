@@ -11,6 +11,7 @@ import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
 import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
+import { MarketplaceLabel } from '../listings/marketplace-labels'
 
 export const ItemInfo = ({
   id,
@@ -39,28 +40,32 @@ export const ItemInfo = ({
 
     if (cheapestListing) {
       purchaseButton = (
-        <Button
-          onClick={() => {
-            if (acc == null) {
-              syncTaquito()
-            } else {
-              if (cheapestListing.type === 'swap') {
-                collect(
-                  cheapestListing.contract_address,
-                  cheapestListing.id,
-                  cheapestListing.price * 1
-                )
+        <div className={styles.main_swap}>
+          <MarketplaceLabel swap={cheapestListing} />
+
+          <Button
+            onClick={() => {
+              if (acc == null) {
+                syncTaquito()
               } else {
-                fulfillObjktcomAsk(cheapestListing)
+                if (cheapestListing.type === 'swap') {
+                  collect(
+                    cheapestListing.contract_address,
+                    cheapestListing.id,
+                    cheapestListing.price * 1
+                  )
+                } else {
+                  fulfillObjktcomAsk(cheapestListing)
+                }
               }
-            }
-          }}
-          full
-        >
-          <Purchase>
-            Collect for {Number(cheapestListing.price) / 1000000} tez
-          </Purchase>
-        </Button>
+            }}
+            full
+          >
+            <Purchase>
+              Collect for {Number(cheapestListing.price) / 1000000} tez
+            </Purchase>
+          </Button>
+        </div>
       )
     } else {
       purchaseButton = (
