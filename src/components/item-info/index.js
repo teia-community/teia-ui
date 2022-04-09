@@ -150,9 +150,9 @@ export const ItemInfo = ({
         )}
 
         {isDetailView && !restricted && (
-          <div className={`${styles.spread} ${styles.objkt__label__container}`}>
-            <div>
-              <p className={styles.objkt__label}>OBJKT#{id}</p>
+          <div className={`${styles.spread} ${styles.objkt_details_container}`}>
+            <div className={styles.objkt_label_container}>
+              <p className={styles.objkt_label}>OBJKT#{id}</p>
               {isCollab && (
                 <div className={collabStyles.relative}>
                   <div className={styles.collab_verification_title}>
