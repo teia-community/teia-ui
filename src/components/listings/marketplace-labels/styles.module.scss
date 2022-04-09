@@ -1,0 +1,12 @@
+.swapLabel {
+  color: var(--gray-40);
+  border: 1px solid var(--gray-30);
+  padding: 6px 8px;
+  font-weight: bold;
+  font-size: 12px;
+  --borderWidth: 2px;
+  position: relative;
+  white-space: nowrap;
+  margin-right: 10px;
+  display: flex;
+}

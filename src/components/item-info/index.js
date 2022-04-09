@@ -58,8 +58,7 @@ export const ItemInfo = ({
           full
         >
           <Purchase>
-            {cheapestListing.type === 'swap' ? 'Collect' : 'On Objkt.com'} for{' '}
-            {Number(cheapestListing.price) / 1000000} tez
+            Collect for {Number(cheapestListing.price) / 1000000} tez
           </Purchase>
         </Button>
       )

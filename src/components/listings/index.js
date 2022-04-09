@@ -1,34 +1,10 @@
 import React, { useContext, useState } from 'react'
 import { Button, Primary, Purchase } from '../button'
-import {
-  MARKETPLACE_CONTRACT_TEIA,
-  MARKETPLACE_CONTRACT_V1,
-  MARKETPLACE_CONTRACT_V2,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
-} from '../../constants'
+
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-
-const TeiaLabel = () => (
-  <span className={styles.swapLabel} title="buy this listing and support teia">
-    TEIA
-  </span>
-)
-const HENLabel = () => (
-  <span
-    className={styles.swapLabel}
-    title="this listing is through the original HEN contract"
-  >
-    H=N
-  </span>
-)
-const OBJKTLabel = () => (
-  <span className={styles.swapLabel} title="This swap is through OBJKT.com">
-    Objkt.com
-  </span>
-)
+import { MarketplaceLabel, OBJKTLabel } from './marketplace-labels'
 
 function TeiaOrHenSwapRow({
   rowId,
@@ -64,23 +40,7 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {swap.contract_address === MARKETPLACE_CONTRACT_TEIA ? (
-          <>
-            <TeiaLabel />
-          </>
-        ) : null}
-        {swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
-        swap.contract_address === MARKETPLACE_CONTRACT_V2 ? (
-          <>
-            <HENLabel />
-          </>
-        ) : null}
-        {swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
-        swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ? (
-          <>
-            <OBJKTLabel />
-          </>
-        ) : null}
+        <MarketplaceLabel swap={swap} />
         {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
           <Button
             onClick={() =>
