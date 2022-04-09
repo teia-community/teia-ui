@@ -1,15 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import get from 'lodash/get'
+
 import sortBy from 'lodash/sortBy'
-import padEnd from 'lodash/padEnd'
+
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import {
-  getWalletBlockList,
-  SUPPORTED_MARKETPLACE_CONTRACTS,
-  HEN_CONTRACT_FA2,
-} from '@constants'
+import { getWalletBlockList, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import { fetchObjktDetails } from '@data/hicdex'
+import { fetchObjktcomAsks } from '@data/objktcom'
 import { Loading } from '@components/loading'
 import { Button, Primary } from '@components/button'
 import { Page, Container, Padding } from '@components/layout'
@@ -30,227 +28,6 @@ const TABS = [
   { title: 'Transfer', component: Transfer, private: true }, // private tab (users only see if they are the creators or own a copy)
 ]
 
-const query_objkt = `
-query objkt($id: bigint!) {
-  hic_et_nunc_token_by_pk(id: $id) {
-id
-mime
-timestamp
-display_uri
-description
-artifact_uri
-is_signed
-metadata
-creator {
-  address
-  name
-  is_split
-  shares {
-    administrator
-    shareholder {
-      holder_type
-      holder_id
-      holder {
-        name
-        address
-      }
-    }
-  }
-}
-token_signatures {
-  holder_id
-}
-thumbnail_uri
-title
-supply
-royalties
-swaps {
-  amount
-  amount_left
-  id
-  opid
-  ophash
-  price
-  timestamp
-  creator {
-    address
-    name
-  }
-  contract_address
-  status
-  royalties
-  creator_id
-  is_valid
-}
-token_holders(where: {quantity: {_gt: "0"}}) {
-  holder_id
-  quantity
-  holder {
-    name
-  }
-}
-token_tags {
-  tag {
-    tag
-  }
-}
-trades(order_by: {timestamp: asc}) {
-  amount
-  id
-  ophash
-  swap {
-    price
-  }
-
-  seller {
-    address
-    name
-  }
-  buyer {
-    address
-    name
-  }
-  timestamp
-}
-}
-}
-`
-
-const query_objktcom_asks = `
-query getTokenAsks($tokenId: String! $fa2: String!) {
-  token(where: {token_id: {_eq: $tokenId}, fa_contract: {_eq: $fa2}}) {
-    creators {
-      creator_address
-    }
-    royalties {
-      receiver_address
-      amount
-      decimals
-    }
-    asks(
-      order_by: {price: asc}
-      where: {price: {_gt: 0}, _or: [{status: {_eq: "active"}, currency_id: {_eq: 1}, seller: {owner_operators: {token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}, allowed: {_eq: true}}, held_tokens: {quantity: {_gt: "0"}, token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}}}}, {contract_version: {_lt: 4}, status: {_eq: "active"}}]}
-    ) {
-      id
-      amount
-      amount_left
-      price
-      contract_version
-      seller_address
-      shares
-      seller {
-        alias
-        address
-      }
-    }
-  }
-}
-`
-
-async function fetchObjkt(id) {
-  const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
-  if (errors) {
-    console.error(errors)
-  }
-
-  console.log(errors, data)
-
-  const result = data.hic_et_nunc_token_by_pk
-  console.log(result)
-  return result
-}
-
-async function fetchObjktcomAsks(id) {
-  const { errors, data } = await fetchGraphQL(
-    query_objktcom_asks,
-    'getTokenAsks',
-    {
-      tokenId: id,
-      fa2: HEN_CONTRACT_FA2,
-    },
-    process.env.REACT_APP_OBJKTCOM_GRAPHQL_API
-  )
-  if (errors) {
-    console.error(errors)
-    throw errors
-  }
-
-  const token = get(data, 'token.0')
-
-  if (!token) {
-    // this can be the case if the token wasn't indexed yet by objkt.com
-    return []
-  }
-
-  const creatorAddresses = (token.creators || []).map(
-    ({ creator_address }) => creator_address
-  )
-  const asks = token.asks || []
-  const firstRoyalties = (token.royalties || [])[0]
-
-  if (!firstRoyalties) {
-    // for some reason the token has no royalties set, ignore asks in this case
-    return []
-  }
-
-  return asks.filter((ask) => {
-    const isPrimarySale = creatorAddresses.includes(ask.seller_address)
-
-    // always keep the ask in the result-set if it was created by the artist
-    if (isPrimarySale) {
-      return true
-    }
-
-    if (!ask.shares.length) {
-      // ask without royalties, discard
-      return false
-    }
-
-    // for now, we will just inspect the first share
-    const firstShare = ask.shares[0]
-
-    if (!creatorAddresses.includes(firstShare.recipient)) {
-      // the artist should always be the first recipient when it's a secondary ask
-      return false
-    }
-
-    if (firstRoyalties.receiver_address !== firstShare.recipient) {
-      // mismatch in the royalties receiver defined in the token vs what was defined in the ask
-      return false
-    }
-
-    if (
-      padEnd(firstRoyalties.amount, 4, '0') !==
-      padEnd(firstShare.amount, 4, '0')
-    ) {
-      // mismatch in royalties, discard
-      return false
-    }
-
-    return true
-  })
-}
-
-async function fetchGraphQL(
-  operationsDoc,
-  operationName,
-  variables,
-  graphqlApi
-) {
-  let result = await fetch(
-    graphqlApi || process.env.REACT_APP_TEIA_GRAPHQL_API,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    }
-  )
-  return await result.json()
-}
-
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
@@ -266,7 +43,7 @@ export const ObjktDisplay = () => {
 
   useEffect(async () => {
     const [objkt, objktcomAsks] = await Promise.all([
-      fetchObjkt(id),
+      fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
 

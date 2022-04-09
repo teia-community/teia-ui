@@ -6,11 +6,8 @@ import { Loading } from '@components/loading'
 import { renderMediaType } from '@components/media-types'
 import { Identicon } from '@components/identicons'
 import { walletPreview } from '@utils/string'
-import {
-  PATH,
-  MARKETPLACE_CONTRACT_V1,
-  SUPPORTED_MARKETPLACE_CONTRACTS,
-} from '@constants'
+import { PATH, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import { fetchV1Swaps, fetchV2Swaps } from '@data/hicdex'
 import { VisuallyHidden } from '@components/visually-hidden'
 import { GetUserMetadata } from '@data/api'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
@@ -124,92 +121,6 @@ query addressQuery($address: String!) {
   }
 }
 `
-
-const query_v1_swaps = `
-query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
-    token {
-      id
-      title
-      creator {
-        address
-      }
-      creator_id
-    }
-    creator {
-      address
-    }
-    creator_id
-    amount_left
-    price
-    id
-    token_id
-    contract_address
-  }
-}
-`
-
-const query_v2andTeia_swaps = `
-query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map(
-    (contractAddress) => `"${contractAddress}"`
-  ).join(', ')}] }}, distinct_on: token_id) {
-    creator_id
-    token {
-      id
-      title
-      artifact_uri
-      display_uri
-      mime
-      description
-      supply
-      royalties
-      creator {
-        name
-        address
-      }
-    }
-    contract_address
-    amount_left
-    price
-    id
-  }
-}
-`
-
-async function fetchV1Swaps(address) {
-  const { errors, data } = await fetchGraphQL(query_v1_swaps, 'querySwaps', {
-    address: address,
-  })
-  if (errors) {
-    console.error(errors)
-  }
-
-  if (!data) {
-    return
-  }
-
-  const result = data.hic_et_nunc_swap
-  // console.log('swapresultv1 ' + JSON.stringify(result))
-  return result
-}
-
-async function fetchV2Swaps(address) {
-  const { errors, data } = await fetchGraphQL(
-    query_v2andTeia_swaps,
-    'querySwaps',
-    {
-      address: address,
-    }
-  )
-  if (errors) {
-    console.error(errors)
-  }
-  const result = data.hic_et_nunc_swap
-  // console.log('swapresultv2 ' + JSON.stringify(result))
-
-  return result
-}
 
 async function fetchSubjkts(subjkt) {
   const { errors, data } = await fetchGraphQL(query_subjkts, 'subjktsQuery', {
@@ -1156,24 +1067,21 @@ export default class Display extends Component {
                                   </p>
                                 </Padding>
                               </Container>
+                              <Container>
+                                <Padding>
+                                  <p>
+                                    One can delist multiple swaps in once batch
+                                    transaction or delist each single one at a
+                                    time.
+                                  </p>
+                                  <br />
+                                  <Button onClick={this.cancel_batch}>
+                                    <Primary>Batch Cancel</Primary>
+                                  </Button>
+                                </Padding>
+                              </Container>
                             </>
                           )}
-
-                          {this.state.marketV1.length !== 0 ? (
-                            <Container>
-                              <Padding>
-                                <p>
-                                  One can delist multiple swaps in once batch
-                                  transaction or delist each single one at a
-                                  time.
-                                </p>
-                                <br />
-                                <Button onClick={this.cancel_batch}>
-                                  <Primary>Batch Cancel</Primary>
-                                </Button>
-                              </Padding>
-                            </Container>
-                          ) : null}
 
                           {this.state.marketV1.map((e, key) => {
                             // console.log(e)

@@ -1,4 +1,5 @@
 import { rnd } from '../utils'
+import {MARKETPLACE_CONTRACT_V1,SUPPORTED_MARKETPLACE_CONTRACTS} from '@constants'
 const _ = require('lodash')
 
 export const getDipdupState = `query {
@@ -217,6 +218,146 @@ hic_et_nunc_holder(where: {address: {_eq: $address}}) {
 }
 }`
 
+const query_objkt = `
+query objkt($id: bigint!) {
+  hic_et_nunc_token_by_pk(id: $id) {
+id
+mime
+timestamp
+display_uri
+description
+artifact_uri
+is_signed
+metadata
+creator {
+  address
+  name
+  is_split
+  shares {
+    administrator
+    shareholder {
+      holder_type
+      holder_id
+      holder {
+        name
+        address
+      }
+    }
+  }
+}
+token_signatures {
+  holder_id
+}
+thumbnail_uri
+title
+supply
+royalties
+swaps {
+  amount
+  amount_left
+  id
+  opid
+  ophash
+  price
+  timestamp
+  creator {
+    address
+    name
+  }
+  contract_address
+  status
+  royalties
+  creator_id
+  is_valid
+}
+token_holders(where: {quantity: {_gt: "0"}}) {
+  holder_id
+  quantity
+  holder {
+    name
+  }
+}
+token_tags {
+  tag {
+    tag
+  }
+}
+trades(order_by: {timestamp: asc}) {
+  amount
+  id
+  ophash
+  swap {
+    price
+  }
+
+  seller {
+    address
+    name
+  }
+  buyer {
+    address
+    name
+  }
+  timestamp
+}
+}
+}
+`
+
+
+const query_v1_swaps = `
+query querySwaps($address: String!) {
+  hic_et_nunc_swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
+    token {
+      id
+      title
+      creator {
+        address
+      }
+      creator_id
+    }
+    creator {
+      address
+    }
+    creator_id
+    amount_left
+    price
+    id
+    token_id
+    contract_address
+  }
+}
+`
+
+const query_v2andTeia_swaps = `
+query querySwaps($address: String!) {
+  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map(
+    (contractAddress) => `"${contractAddress}"`
+  ).join(', ')}] }}, distinct_on: token_id) {
+    creator_id
+    token {
+      id
+      title
+      artifact_uri
+      display_uri
+      mime
+      description
+      supply
+      royalties
+      creator {
+        name
+        address
+      }
+    }
+    contract_address
+    amount_left
+    price
+    id
+  }
+}
+`
+
+
 export async function fetchUserMetadataFile(subjkt) {
   const { errors, data } = await fetchGraphQL(
     getUserMetadataFile,
@@ -331,4 +472,51 @@ export async function fetchObjkts(ids) {
     { _in: ids }
   )
   return data.hic_et_nunc_token
+}
+
+export async function fetchObjktDetails(id) {
+  const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
+  if (errors) {
+    console.error(errors)
+  }
+
+  console.log(errors, data)
+
+  const result = data.hic_et_nunc_token_by_pk
+  console.log(result)
+  return result
+}
+
+/* SWAPS */
+export async function fetchV1Swaps(address) {
+  const { errors, data } = await fetchGraphQL(query_v1_swaps, 'querySwaps', {
+    address: address,
+  })
+  if (errors) {
+    console.error(errors)
+  }
+
+  if (!data) {
+    return
+  }
+
+  const result = data.hic_et_nunc_swap
+  // console.log('swapresultv1 ' + JSON.stringify(result))
+  return result
+}
+export async function fetchV2Swaps(address) {
+  const { errors, data } = await fetchGraphQL(
+    query_v2andTeia_swaps,
+    'querySwaps',
+    {
+      address: address,
+    }
+  )
+  if (errors) {
+    console.error(errors)
+  }
+  const result = data.hic_et_nunc_swap
+  // console.log('swapresultv2 ' + JSON.stringify(result))
+
+  return result
 }
