@@ -8,7 +8,10 @@ import {
 } from '@constants'
 
 export const TeiaLabel = () => (
-  <span className={styles.swapLabel} title="buy this listing and support teia">
+  <span
+    className={`${styles.swapLabel} ${styles.teiaLabel}`}
+    title="buy this listing and support teia"
+  >
     TEIA
   </span>
 )
@@ -20,7 +23,6 @@ export const HENLabel = () => (
     H=N
   </span>
 )
-
 export const CollabLabel = () => (
   <span
     className={styles.swapLabel}

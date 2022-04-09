@@ -76,3 +76,11 @@
     width: 45%;
   }
 }
+
+.nomobile {
+  display: none;
+  width: 50%;
+  @include respond-to('desktop') {
+    display: block;
+  }
+}

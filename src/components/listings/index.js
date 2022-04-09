@@ -82,10 +82,13 @@ function TeiaOrHenSwapRow({
                 // TODO: after the reswap was successful we should send some feedback to the user
               }}
             >
-              <Purchase>reswap</Purchase>
+              <Purchase className={styles.smol}>reswap</Purchase>
             </Button>
 
-            <Button onClick={() => cancel(swap.contract_address, swap.id)}>
+            <Button
+              onClick={() => cancel(swap.contract_address, swap.id)}
+              className={styles.smol}
+            >
               <Purchase>cancel</Purchase>
             </Button>
           </>
@@ -165,6 +168,7 @@ export const Listings = ({
           )
         }
       })}
+      <hr className={styles.nomobile}></hr>
     </div>
   )
 }
