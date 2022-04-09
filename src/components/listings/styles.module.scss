@@ -1,0 +1,86 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+// @keyframes animatedgradient {
+//   0% {
+//     background-position: 0% 50%;
+//   }
+//   50% {
+//     background-position: 100% 50%;
+//   }
+//   100% {
+//     background-position: 0% 50%;
+//   }
+// }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+  margin: 0 1em;
+
+  .swap {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+    margin-bottom: 30px;
+
+    @include respond-to('desktop') {
+      flex-direction: row;
+      margin-bottom: 10px;
+    }
+
+    .issuer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: fit-content;
+
+      @include respond-to('desktop') {
+        justify-content: initial;
+      }
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+      & > * {
+        margin-top: 1em;
+        @include respond-to('desktop') {
+          margin-top: 0;
+        }
+      }
+      & > *:not(.swapLabel) {
+        flex-grow: 1;
+        @include respond-to('desktop') {
+          flex-grow: 0;
+        }
+      }
+      @include respond-to('desktop') {
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+.border {
+  width: 100%;
+  border-bottom: 1px solid var(--gray-20);
+
+  padding-top: 1em;
+
+  @include respond-to('desktop') {
+    width: 45%;
+  }
+}
+
+.nomobile {
+  display: none;
+  width: 50%;
+  @include respond-to('desktop') {
+    display: block;
+  }
+}

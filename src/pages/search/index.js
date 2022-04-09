@@ -315,7 +315,7 @@ async function fetchTag(tag, offset) {
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
+  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,

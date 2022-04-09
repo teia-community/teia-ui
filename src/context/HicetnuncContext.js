@@ -10,8 +10,11 @@ import { packParticipantMap } from '@components/collab/functions'
 import { setItem } from '@utils/storage'
 
 import {
+  HEN_CONTRACT_FA2,
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
+  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
   MAIN_MARKETPLACE_CONTRACT,
   MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
   SWAP_TYPE_TEIA,
@@ -176,7 +179,7 @@ class HicetnuncContextProviderClass extends Component {
       v1: MARKETPLACE_CONTRACT_V1,
       unregistry: 'KT18xby6bb1ur1dKe7i6YVrBaksP4AgtuLES',
       v2: MARKETPLACE_CONTRACT_V2,
-      objkts: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+      objkts: HEN_CONTRACT_FA2,
       hDAO_curation: 'KT1TybhR7XraG75JFYKSrh7KnxukMBT5dor6',
       hDAO_marketplace: 'KT1QPvv7sWVaT9PcPiC4fN9BgfX8NB2d5WzL',
 
@@ -563,6 +566,26 @@ class HicetnuncContextProviderClass extends Component {
             })
           )
           .catch((e) => e)
+      },
+
+      fulfillObjktcomAsk: async (ask) => {
+        let contractAddress
+
+        if (ask.contract_version === 1) {
+          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V1
+        } else if (ask.contract_version === 4) {
+          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V4
+        } else {
+          throw new Error('unsupported objkt.com marketplace contract')
+        }
+
+        return await Tezos.wallet.at(contractAddress).then((c) =>
+          c.methods.fulfill_ask(ask.id).send({
+            amount: ask.price,
+            mutez: true,
+            storageLimit: 350,
+          })
+        )
       },
 
       curate: async (objkt_id) => {

@@ -1,8 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+
+import sortBy from 'lodash/sortBy'
+
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { getWalletBlockList } from '@constants'
+import { getWalletBlockList, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import { fetchObjktDetails } from '@data/hicdex'
+import { fetchObjktcomAsks } from '@data/objktcom'
 import { Loading } from '@components/loading'
 import { Button, Primary } from '@components/button'
 import { Page, Container, Padding } from '@components/layout'
@@ -23,117 +28,6 @@ const TABS = [
   { title: 'Transfer', component: Transfer, private: true }, // private tab (users only see if they are the creators or own a copy)
 ]
 
-const query_objkt = `
-query objkt($id: bigint!) {
-  hic_et_nunc_token_by_pk(id: $id) {
-id
-mime
-timestamp
-display_uri
-description
-artifact_uri
-is_signed
-metadata
-creator {
-  address
-  name
-  is_split
-  shares {
-    administrator
-    shareholder {
-      holder_type
-      holder_id
-      holder {
-        name
-        address
-      }
-    }
-  }
-}
-token_signatures {
-  holder_id
-}
-thumbnail_uri
-title
-supply
-royalties
-swaps {
-  amount
-  amount_left
-  id
-  opid
-  ophash
-  price
-  timestamp
-  creator {
-    address
-    name
-  }
-  contract_address
-  status
-  royalties
-  creator_id
-  is_valid
-}
-token_holders(where: {quantity: {_gt: "0"}}) {
-  holder_id
-  quantity
-  holder {
-    name
-  }
-}
-token_tags {
-  tag {
-    tag
-  }
-}
-trades(order_by: {timestamp: asc}) {
-  amount
-  id
-  ophash
-  swap {
-    price
-  }
-
-  seller {
-    address
-    name
-  }
-  buyer {
-    address
-    name
-  }
-  timestamp
-}
-}
-}
-`
-
-async function fetchObjkt(id) {
-  const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
-  if (errors) {
-    console.error(errors)
-  }
-
-  console.log(errors, data)
-
-  const result = data.hic_et_nunc_token_by_pk
-  console.log(result)
-  return result
-}
-
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  })
-  return await result.json()
-}
-
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
@@ -148,7 +42,36 @@ export const ObjktDisplay = () => {
   const proxy = context.getProxy()
 
   useEffect(async () => {
-    let objkt = await fetchObjkt(id)
+    const [objkt, objktcomAsks] = await Promise.all([
+      fetchObjktDetails(id),
+      fetchObjktcomAsks(id),
+    ])
+
+    const listings = sortBy(
+      [
+        ...objkt.swaps
+          .filter(
+            (swap) =>
+              SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) &&
+              parseInt(swap.status) === 0 &&
+              swap.is_valid
+          )
+          .map((swap) => ({
+            ...swap,
+            token: { id: id, creator_id: objkt.creator.address },
+            key: `${swap.contract_address}-${swap.id}`,
+            type: 'swap',
+          })),
+        ...objktcomAsks.map((ask) => ({
+          ...ask,
+          key: `objktcom_ask_${ask.id}`,
+          type: 'objktcom_ask',
+        })),
+      ],
+      ({ price }) => price
+    )
+
+    objkt.listings = listings
 
     await context.setAccount()
 

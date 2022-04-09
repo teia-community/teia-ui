@@ -1,0 +1,20 @@
+.swapLabel {
+  color: var(--gray-40);
+  border: 1px solid var(--gray-30);
+  padding: 6px 8px;
+  font-weight: bold;
+  font-size: 12px;
+  --borderWidth: 2px;
+  position: relative;
+  white-space: nowrap;
+  margin-right: 10px;
+  display: flex;
+  min-width: fit-content;
+  max-width: fit-content;
+  align-items: center;
+}
+
+.teiaLabel {
+  color: var(--gray-70);
+  border-color: var(--gray-70);
+}

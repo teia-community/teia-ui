@@ -154,7 +154,7 @@ span[data-tooltip][data-position='top']:after {
   margin-bottom: 4px;
 }
 
-.objkt__label {
+.objkt_label {
   padding-bottom: 7.5px;
 
   @include respond-to('desktop') {
@@ -163,12 +163,15 @@ span[data-tooltip][data-position='top']:after {
   }
 }
 
-.objkt__label__container {
+.objkt_details_container {
   align-items: flex-start;
 
   @include respond-to('dekstop') {
     align-items: center;
   }
+}
+.objkt_label_container {
+  width: 100%;
 }
 
 .collab_verification_title {
@@ -177,4 +180,10 @@ span[data-tooltip][data-position='top']:after {
 }
 .collab_verification_symbol {
   padding-right: 0.5em;
+}
+
+.main_swap {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }

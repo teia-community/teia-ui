@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import classNames from 'classnames'
-import { PATH, SUPPORTED_MARKETPLACE_CONTRACTS } from '../../constants'
+import sum from 'lodash/sum'
+import { PATH } from '../../constants'
 import { Button, Primary, Purchase, Secondary } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
@@ -10,67 +11,68 @@ import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
 import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
-
-const _ = require('lodash')
-
-function countEditionsForSale(token_holders) {
-  const quantities = token_holders
-    .filter((holder) =>
-      SUPPORTED_MARKETPLACE_CONTRACTS.includes(holder.holder_id)
-    )
-    .map((holder) => holder.quantity)
-
-  return _.sum(quantities)
-}
+import { MarketplaceLabel } from '../listings/marketplace-labels'
 
 export const ItemInfo = ({
   id,
-  swaps,
+  listings,
   creator,
   is_signed,
   token_signatures,
   feed,
-  token_holders,
   supply,
   isDetailView,
   restricted,
 }) => {
-  const { syncTaquito, collect, curate, acc } = useContext(HicetnuncContext)
+  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
+    useContext(HicetnuncContext)
 
   const [showSignStatus, setShowSignStatus] = useState(false)
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
     const total = supply
-    const editionsForSale = countEditionsForSale(token_holders)
+    const editionsForSale = sum(listings.map(({ amount_left }) => amount_left))
     const ed = editionsForSale || 'X'
+    let purchaseButton = null
 
-    swaps = swaps.filter(
-      (e) =>
-        SUPPORTED_MARKETPLACE_CONTRACTS.includes(e.contract_address) &&
-        parseInt(e.status) === 0 &&
-        e.is_valid
-    )
-    console.log(swaps)
-    let s = _.minBy(swaps, (o) => Number(o.price))
+    const cheapestListing = listings[0] // listings are sorted by price
 
-    var message = ''
+    if (cheapestListing) {
+      purchaseButton = (
+        <div className={styles.main_swap}>
+          <MarketplaceLabel swap={cheapestListing} />
 
-    try {
-      message =
-        swaps[0] !== undefined
-          ? 'Collect for ' + Number(s.price) / 1000000 + ' tez'
-          : 'Not for sale'
-    } catch (e) {
-      message = 'Not for sale'
-    }
-
-    const handleCollect = () => {
-      if (acc == null) {
-        syncTaquito()
-      } else {
-        collect(s.contract_address, s.id, s.price * 1)
-      }
+          <Button
+            onClick={() => {
+              if (acc == null) {
+                syncTaquito()
+              } else {
+                if (cheapestListing.type === 'swap') {
+                  collect(
+                    cheapestListing.contract_address,
+                    cheapestListing.id,
+                    cheapestListing.price * 1
+                  )
+                } else {
+                  fulfillObjktcomAsk(cheapestListing)
+                }
+              }
+            }}
+            full
+          >
+            <Purchase>
+              Collect for {Number(cheapestListing.price) / 1000000} tez
+            </Purchase>
+          </Button>
+        </div>
+      )
+    } else {
+      purchaseButton = (
+        <Button full>
+          <Purchase>Not for sale</Purchase>
+        </Button>
+      )
     }
 
     // Check collab status
@@ -148,9 +150,9 @@ export const ItemInfo = ({
         )}
 
         {isDetailView && !restricted && (
-          <div className={`${styles.spread} ${styles.objkt__label__container}`}>
-            <div>
-              <p className={styles.objkt__label}>OBJKT#{id}</p>
+          <div className={`${styles.spread} ${styles.objkt_details_container}`}>
+            <div className={styles.objkt_label_container}>
+              <p className={styles.objkt_label}>OBJKT#{id}</p>
               {isCollab && (
                 <div className={collabStyles.relative}>
                   <div className={styles.collab_verification_title}>
@@ -179,9 +181,7 @@ export const ItemInfo = ({
                 </div>
               )}
             </div>
-            <Button onClick={() => handleCollect()} full>
-              <Purchase>{message}</Purchase>
-            </Button>
+            {purchaseButton}
           </div>
         )}
         <div className={styles.spread}>
