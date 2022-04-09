@@ -20,6 +20,15 @@ export const HENLabel = () => (
     H=N
   </span>
 )
+
+export const CollabLabel = () => (
+  <span
+    className={styles.swapLabel}
+    title="this listing is a collab through the original HEN contract"
+  >
+    Collab
+  </span>
+)
 export const OBJKTLabel = () => (
   <span className={styles.swapLabel} title="This swap is through OBJKT.com">
     Objkt.com
@@ -29,6 +38,13 @@ export const OBJKTLabel = () => (
 export const MarketplaceLabel = ({ swap }) => {
   if (swap.contract_address === MARKETPLACE_CONTRACT_TEIA) {
     return <TeiaLabel />
+  }
+  if (
+    (swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
+      swap.contract_address === MARKETPLACE_CONTRACT_V2) &&
+    swap.token.creator_id.startsWith('KT1')
+  ) {
+    return <CollabLabel />
   }
   if (
     swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
@@ -43,6 +59,7 @@ export const MarketplaceLabel = ({ swap }) => {
   ) {
     return <OBJKTLabel />
   }
+
   console.error('Could not resolve the proper label for this swap', swap)
   return null
 }
