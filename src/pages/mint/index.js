@@ -44,7 +44,7 @@ const thumbnailOptions = {
 }
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
-  hic_et_nunc_token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
+  token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
     id
     creator {
       address
@@ -87,9 +87,9 @@ export const Mint = () => {
       address: acc?.address,
     }).then(({ data, errors }) => {
       if (data) {
-        // const shareholderInfo = data.hic_et_nunc_shareholder.map(s => s.split_contract);
+        // const shareholderInfo = data.shareholder.map(s => s.split_contract);
         // setCollabs(shareholderInfo || [])
-        const managedCollabs = data.hic_et_nunc_splitcontract
+        const managedCollabs = data.splitcontract
         setCollabs(managedCollabs || [])
       }
     })
@@ -109,7 +109,7 @@ export const Mint = () => {
       address: currentAddress,
     }).then(({ data, errors }) => {
       if (data) {
-        const holder = data.hic_et_nunc_holder[0]
+        const holder = data.holder[0]
         setMintName(holder.name || currentAddress)
       }
     })
@@ -261,7 +261,7 @@ export const Mint = () => {
       })
       return true
     } else if (data) {
-      const areAllTokensBurned = (data.hic_et_nunc_token || []).every(
+      const areAllTokensBurned = (data.token || []).every(
         (token) =>
           _.get(token, 'token_holders.0.holder.address') === BURN_ADDRESS
       )
@@ -272,7 +272,7 @@ export const Mint = () => {
 
       setFeedback({
         visible: true,
-        message: `Duplicate mint detected: #${data.hic_et_nunc_token[0].id} is already minted`,
+        message: `Duplicate mint detected: #${data.token[0].id} is already minted`,
         progress: false,
         confirm: true,
         confirmCallback: () => {
