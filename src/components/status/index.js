@@ -17,8 +17,8 @@ export const Status = ({ criticalDelta = 50 }) => {
     }
 
     const dipdupState = await fetchGraphQL(getDipdupState)
-    const mainnetNode = dipdupState.data.hic_et_nunc_dipdup_state.find(
-      ({ index_name }) => index_name === 'hen_mainnet'
+    const mainnetNode = dipdupState.data.dipdup_index.find(
+      ({ name }) => name === 'hen_mainnet'
     )
 
     if (!mainnetNode) {

@@ -18,7 +18,7 @@ async function fetchFeed(lastId) {
   const { errors, data } = await fetchGraphQL(
     `
 query LatestFeed {
-  hic_et_nunc_token(order_by: {id: desc}, limit: 15, where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
+  token(order_by: {id: desc}, limit: 15, where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
     display_uri
     creator_id
@@ -39,7 +39,7 @@ query LatestFeed {
   if (errors) {
     console.error(errors)
   }
-  const result = data.hic_et_nunc_token
+  const result = data.token
   return result
 }
 
@@ -47,7 +47,7 @@ async function fetchGLB(offset) {
   const { data } = await fetchGraphQL(
     `
   query GLBObjkts {
-    hic_et_nunc_token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -64,7 +64,7 @@ async function fetchGLB(offset) {
     {}
   )
   try {
-    return data.hic_et_nunc_token
+    return data.token
   } catch (e) {
     return undefined
   }
@@ -74,7 +74,7 @@ async function fetchInteractive(offset) {
   const { data } = await fetchGraphQL(
     `
     query InteractiveObjkts {
-      hic_et_nunc_token(where: { mime: {_in : [ "application/x-directory", "image/svg+xml" ]}, supply : { _neq : 0 } }, limit : 30, offset : ${offset}, order_by: {id: desc}) {
+      token(where: { mime: {_in : [ "application/x-directory", "image/svg+xml" ]}, supply : { _neq : 0 } }, limit : 30, offset : ${offset}, order_by: {id: desc}) {
         id
         artifact_uri
         display_uri
@@ -92,7 +92,7 @@ async function fetchInteractive(offset) {
   )
 
   try {
-    return data.hic_et_nunc_token
+    return data.token
   } catch (e) {
     return undefined
   }
@@ -101,7 +101,7 @@ async function fetchVideo(offset) {
   const { data } = await fetchGraphQL(
     `
   query Videos {
-    hic_et_nunc_token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -118,7 +118,7 @@ async function fetchVideo(offset) {
     {}
   )
   try {
-    return data.hic_et_nunc_token
+    return data.token
   } catch (e) {
     return undefined
   }
@@ -127,7 +127,7 @@ async function fetchGifs(offset) {
   const { data } = await fetchGraphQL(
     `
     query Gifs ($offset: Int = 0) {
-      hic_et_nunc_token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
+      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
         id
         artifact_uri
         display_uri
@@ -145,7 +145,7 @@ async function fetchGifs(offset) {
   )
 
   try {
-    return data.hic_et_nunc_token
+    return data.token
   } catch (e) {
     return undefined
   }
@@ -155,7 +155,7 @@ async function fetchMusic(offset) {
   const { data } = await fetchGraphQL(
     `
   query AudioObjkts {
-    hic_et_nunc_token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -173,7 +173,7 @@ async function fetchMusic(offset) {
   )
 
   try {
-    return data.hic_et_nunc_token
+    return data.token
   } catch (e) {
     return undefined
   }
@@ -182,7 +182,7 @@ async function fetchMusic(offset) {
 async function fetchDay(day, offset) {
   const { errors, data } = await fetchGraphQL(
     `query dayTrades {
-    hic_et_nunc_trade(where: {timestamp: {_gte: "${day}"}}, order_by: {swap: {price: desc}}, limit : 15, offset : ${offset}) {
+    trade(where: {timestamp: {_gte: "${day}"}}, order_by: {swap: {price: desc}}, limit : 15, offset : ${offset}) {
       timestamp
       swap {
         price
@@ -210,7 +210,7 @@ async function fetchDay(day, offset) {
   let result = []
 
   try {
-    result = data.hic_et_nunc_trade
+    result = data.trade
   } catch (e) {}
 
   return result
@@ -220,7 +220,7 @@ async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
   query sales {
-    hic_et_nunc_trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
+    trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
       swap {
         price
@@ -249,7 +249,7 @@ async function fetchSales(offset) {
   let result = []
 
   try {
-    result = data.hic_et_nunc_trade
+    result = data.trade
   } catch (e) {}
 
   return result
@@ -260,7 +260,7 @@ async function fetchSubjkts(subjkt) {
   const { errors, data } = await fetchGraphQL(
     `
   query subjktsQuery {
-    hic_et_nunc_holder(where: { name: {_ilike: "%${subjkt}%"}}, order_by: {hdao_balance: desc}) {
+    holder(where: { name: {_ilike: "%${subjkt}%"}}, order_by: {hdao_balance: desc}) {
       address
       name
       hdao_balance
@@ -278,7 +278,7 @@ async function fetchSubjkts(subjkt) {
   let result = []
 
   try {
-    result = data.hic_et_nunc_holder
+    result = data.holder
   } catch (e) {}
 
   return result
@@ -287,7 +287,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  hic_et_nunc_token(where: {supply : { _neq : 0 }, token_tags: {tag: {tag: {_eq: ${tag}}}}, id: {_lt: ${offset}}}, limit : 15, order_by: {id: desc}) {
+  token(where: {supply : { _neq : 0 }, token_tags: {tag: {tag: {_eq: ${tag}}}}, id: {_lt: ${offset}}}, limit : 15, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -310,7 +310,7 @@ async function fetchTag(tag, offset) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.hic_et_nunc_token
+  const result = data.token
   return result
 }
 
@@ -327,7 +327,7 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
 }
 
 const query_hdao = `query hDAOFeed($offset: Int = 0) {
-  hic_et_nunc_token(order_by: {hdao_balance: desc}, limit: 15, where: {hdao_balance: {_gt: 100}}, offset: $offset) {
+  token(order_by: {hdao_balance: desc}, limit: 15, where: {hdao_balance: {_gt: 100}}, offset: $offset) {
     artifact_uri
     display_uri
     creator_id
@@ -351,7 +351,7 @@ async function fetchHdao(offset) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.hic_et_nunc_token
+  const result = data.token
   return result
 }
 
