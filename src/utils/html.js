@@ -192,6 +192,8 @@ export function injectCSPMetaTagIntoHTML(html) {
       https://*.tzkt.io
       https://api.hicdex.com
 	  https://hdapi.teztools.io
+      https://api.teia.rocks
+      https://data.objkt.com
       https://api.tzstats.com
       https://*.wikidata.org
       https://*.coinmarketcap.com
