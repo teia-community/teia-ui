@@ -30,7 +30,6 @@ import {
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
-import { Link } from 'react-router-dom'
 
 const coverOptions = {
   quality: 0.85,
@@ -635,7 +634,9 @@ export const Mint = () => {
 
       <Container>
         <Padding>
-          <Link to="/terms">Terms & Conditions</Link>
+          <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
+            <Primary>Terms & Conditions</Primary>
+          </Button>
         </Padding>
       </Container>
       {/*       <BottomBanner>
