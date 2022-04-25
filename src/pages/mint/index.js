@@ -30,7 +30,6 @@ import {
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
-import { Link } from 'react-router-dom'
 
 const coverOptions = {
   quality: 0.85,
