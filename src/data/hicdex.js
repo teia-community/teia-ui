@@ -1,5 +1,8 @@
 import { rnd } from '../utils'
-import {MARKETPLACE_CONTRACT_V1,SUPPORTED_MARKETPLACE_CONTRACTS} from '@constants'
+import {
+  MARKETPLACE_CONTRACT_V1,
+  SUPPORTED_MARKETPLACE_CONTRACTS,
+} from '@constants'
 const _ = require('lodash')
 
 export const getDipdupState = `query {
@@ -304,7 +307,6 @@ trades(order_by: {timestamp: asc}) {
 }
 `
 
-
 const query_v1_swaps = `
 query querySwaps($address: String!) {
   hic_et_nunc_swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
@@ -356,7 +358,6 @@ query querySwaps($address: String!) {
   }
 }
 `
-
 
 export async function fetchUserMetadataFile(subjkt) {
   const { errors, data } = await fetchGraphQL(

@@ -11,11 +11,10 @@ export const getObjktBlockList = () => objktBlockList
 let walletBlockList = []
 
 export const setWalletBlockList = (restrictedLists, permittedLists) => {
-  walletBlockList = _.flatten(restrictedLists)
-  let walletAllowList = _.flatten(permittedLists)
+  const walletAllowList = _.flatten(permittedLists)
 
   // Override with permitted list
-  walletBlockList = walletBlockList.filter(
+  walletBlockList = _.flatten(restrictedLists).filter(
     (account) => !walletAllowList.includes(account)
   )
 }
