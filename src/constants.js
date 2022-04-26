@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 let LANGUAGE = {}
 export const setLanguage = (data) => (LANGUAGE = data)
 export const getLanguage = () => LANGUAGE
@@ -7,18 +9,13 @@ export const setObjktBlockList = (data) => (objktBlockList = data)
 export const getObjktBlockList = () => objktBlockList
 
 let walletBlockList = []
-export const setWalletBlockList = (
-  henRestricted,
-  teiaRestricted,
-  teiaPermitted
-) => {
-  // Remove duplicates
-  walletBlockList = [...new Set(henRestricted)]
-  // Add Teia's restricted accounts
-  walletBlockList = walletBlockList.concat(teiaRestricted)
-  // Override with Teia's permitted list
-  walletBlockList = walletBlockList.filter(
-    (account) => !teiaPermitted.includes(account)
+
+export const setWalletBlockList = (restrictedLists, permittedLists) => {
+  const walletAllowList = _.flatten(permittedLists)
+
+  // Override with permitted list
+  walletBlockList = _.flatten(restrictedLists).filter(
+    (account) => !walletAllowList.includes(account)
   )
 }
 export const getWalletBlockList = () => walletBlockList

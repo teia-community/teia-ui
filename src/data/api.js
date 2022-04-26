@@ -22,7 +22,6 @@ export const getInitialData = () => {
   return Promise.all([
     axios.get(`/languages/${language}.json`), // loads language file
     axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
-    axios.get(process.env.REACT_APP_BLOCKLIST_WALLET), // loads blocked wallets
     axios.get(process.env.REACT_APP_BLOCKLIST_BAN), // blocked wallets (dont allow to visualise in /tz/walletid)
     axios.get(`${process.env.REACT_APP_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(process.env.REACT_APP_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
@@ -30,9 +29,9 @@ export const getInitialData = () => {
   ]).then((results) => {
     setLanguage(results[0].data)
     setObjktBlockList(results[1].data)
-    setWalletBlockList(results[2].data, results[5].data, results[6].data)
-    setBanBlockList(results[3].data)
-    setLogoList(results[4].data)
+    setWalletBlockList([results[4].data], [results[5].data])
+    setBanBlockList(results[2].data)
+    setLogoList(results[3].data)
 
     return true
   })
