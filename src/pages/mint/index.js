@@ -89,7 +89,7 @@ export const Mint = () => {
       if (data) {
         // const shareholderInfo = data.shareholder.map(s => s.split_contract);
         // setCollabs(shareholderInfo || [])
-        const managedCollabs = data.splitcontract
+        const managedCollabs = data.split_contract
         setCollabs(managedCollabs || [])
       }
     })
