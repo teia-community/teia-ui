@@ -20,7 +20,7 @@ export const getUserMetaQuery = `query UserMeta($address: String = "") {
 }`
 
 export const getAvailableCollabAddresses = `query GetCollabContracts($address: String!) {
-splitcontract(where: {administrator: {_eq: $address}}) {
+split_contract(where: {administrator: {_eq: $address}}) {
   contract {
     address
     shares {
@@ -53,7 +53,7 @@ token(where: {creator: {is_split: {_eq: true}, address: {_eq: $address}}, supply
   }
 }
 
-splitcontract(where: {contract_id: {_eq: $address}}) {
+split_contract(where: {contract_id: {_eq: $address}}) {
   administrator
   shareholder {
     holder {
@@ -87,7 +87,7 @@ export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: Str
       }
     }
   }
-  splitcontract(where: {contract: {name: {_eq: $subjkt}}}) {
+  split_contract(where: {contract: {name: {_eq: $subjkt}}}) {
     administrator
     shareholder {
       holder {
@@ -140,7 +140,7 @@ shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_partici
 }`
 
 export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addresses: [String!]) {
-  splitcontract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
+  split_contract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
     contract {
       address
       name
@@ -173,7 +173,7 @@ export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addres
 `
 
 export const getManagedCollabs = `query GetManagedCollabs($address: String!) {
-splitcontract(where: {administrator: {_eq: $address}}) {
+split_contract(where: {administrator: {_eq: $address}}) {
   id
   contract {
     address
@@ -193,7 +193,7 @@ splitcontract(where: {administrator: {_eq: $address}}) {
 }`
 
 export const getCollabsForAddress = `query GetCollabs($address: String!) {
-splitcontract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
+split_contract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
   id
   contract {
     address
@@ -394,7 +394,7 @@ export async function getObjktsByShare(addresses, min_shares) {
     throw errors
   }
   let objkts = []
-  const contracts_info = data.splitcontract
+  const contracts_info = data.split_contract
   for (const i in contracts_info) {
     const contract = contracts_info[i].contract
     const total = contract.shares[0].total_shares
