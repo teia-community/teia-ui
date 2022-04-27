@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React, { createContext, Component } from 'react'
-import { withRouter } from 'react-router'
 import {
   BeaconWallet,
   // BeaconWalletNotInitialized,
@@ -30,7 +29,6 @@ import {
   SWAP_TYPE_TEIA,
   SWAP_TYPE_HEN,
   BURN_ADDRESS,
-  getLogoList,
 } from '@constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
@@ -45,51 +43,8 @@ const verify = require('@utils/verify')
 
 export const HicetnuncContext = createContext()
 
-//const bandwidth = navigator.connection.downlink
-//const connectionType = navigator.connection
-//console.log('band', bandwidth, 'type', connectionType)
-// This should be moved to a service so it is only done once on page load
-//const Tezos = new TezosToolkit('https://api.tez.ie/rpc/mainnet')
-//const Tezos = new TezosToolkit('https://mainnet-tezos.giganode.io')
-//const Tezos = new TezosToolkit('https://mainnet.smartpy.io')
-//const Tezos = new TezosToolkit('eu01-node.teztools.net-lb')
 const Tezos = new TezosToolkit('https://mainnet.api.tez.ie')
 const Packer = new MichelCodecPacker()
-//const Tezos = new TezosToolkit('https://api.tez.ie/rpc/mainnet')
-// storage fee adjustment
-
-/* export class PatchedBeaconWallet extends BeaconWallet {
-  async sendOperations(params) {
-    const account = await this.client.getActiveAccount();
-    if (!account) {
-      throw new BeaconWalletNotInitialized();
-    }
-    const permissions = account.scopes;
-    this.validateRequiredScopesOrFail(permissions, [PermissionScope.OPERATION_REQUEST]);
-
-    const { transactionHash } = await this.client.requestOperation({
-      operationDetails: params.map(op => ({
-        ...modifyFeeAndLimit(op),
-      })),
-    });
-    return transactionHash;
-  }
-}
-
-function modifyFeeAndLimit(op) {
-  const { fee, gas_limit, storage_limit, ...rest } = op;
-
-  if (op.parameters && (op.parameters.entrypoint === "swap") || (op.parameters.entrypoint === "mint_OBJKT") || (op.parameters.entrypoint === "collect")) {
-    rest.storage_limit = 310
-  }
-  return rest;
-}
-
-
-const wallet = new PatchedBeaconWallet({
-  name: 'hicetnunc.xyz',
-  preferredNetwork: 'mainnet',
-}) */
 
 const wallet = new BeaconWallet({
   name: 'teia.art',
@@ -411,6 +366,7 @@ class HicetnuncContextProviderClass extends Component {
         return await batch.send()
       },
 
+      // TODO (xat): remove all the v1 logic
       batch_cancelv1: async (arr) => {
         const v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACT_V1)
 
@@ -431,15 +387,10 @@ class HicetnuncContextProviderClass extends Component {
       fullscreen: false,
       setFullscreen: (fullscreen) => this.setState({ fullscreen }),
 
-      logo: '',
-      setLogo: () => {
-        const logo_list = getLogoList()
-        this.setState({
-          logo: logo_list[Math.floor(Math.random() * logo_list.length)],
-        })
-      },
       // theme, DO NO CHANGE!
       theme: 'unset',
+
+      // TODO (xat): theme stuff should not happen here
       setTheme: (theme) => {
         const root = document.documentElement
 
@@ -447,6 +398,7 @@ class HicetnuncContextProviderClass extends Component {
 
         setItem('theme', light ? 'light' : 'dark')
 
+        // TODO (xat): move these styles into css files (or some other styles abstraction)
         root.style.setProperty(
           '--background-color',
           light ? '#ffffff' : '#111111'
@@ -501,6 +453,8 @@ class HicetnuncContextProviderClass extends Component {
       // --------------------
       // feedback component
       // --------------------
+
+      // TODO (xat): use some kind of modal/proxy for the feedback stuff
       feedback: {
         visible: false, // show or hide the component
         message: 'OBJKT minted', // what message to display?
@@ -570,33 +524,6 @@ class HicetnuncContextProviderClass extends Component {
       // but we don't want to auto-sign in
       originatedContract: undefined,
       originationOpHash: undefined,
-
-      setClient: (client) => {
-        this.setState({
-          client: client,
-        })
-      },
-
-      dAppClient: async () => {
-        this.state.client = wallet.client
-
-        // It doesn't look like this code is called, otherwise the active account should be checked, see below.
-        this.state.client
-          .requestPermissions({
-            network: {
-              type: NetworkType.MAINNET,
-              rpcUrl: 'https://mainnet.smartpy.io',
-            },
-          })
-          .then((permissions) => {
-            this.setState({
-              address: permissions.address,
-            })
-
-            this.state.setAuth(permissions.address)
-          })
-          .catch((error) => console.log(error))
-      },
 
       // This will be set after creating a new collab
       // but we don't want to auto-sign in
@@ -1247,5 +1174,4 @@ class HicetnuncContextProviderClass extends Component {
   }
 }
 
-const HicetnuncContextProvider = withRouter(HicetnuncContextProviderClass)
-export default HicetnuncContextProvider
+export default HicetnuncContextProviderClass

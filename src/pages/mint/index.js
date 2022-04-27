@@ -71,6 +71,7 @@ export const Mint = () => {
 
   const [balance, setBalance] = useState(-1.0)
   // const history = useHistory()
+
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState()
   const [mintName, setMintName] = useState('')

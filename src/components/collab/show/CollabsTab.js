@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button } from '../../button'
-import { Container } from '../../layout'
+import { Container, Padding } from '../../layout'
 import { renderMediaType } from '../../media-types'
 import { ResponsiveMasonry } from '../../responsive-masonry'
-import { EmptyTab } from '../../../pages/display'
 import { PATH } from '../../../constants'
 import { fetchGraphQL, getCollabTokensForAddress } from '../../../data/hicdex'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
 const _ = require('lodash')
+
+function EmptyTab({ children }) {
+  return (
+    <Container>
+      <Padding>
+        <h1>{children}</h1>
+      </Padding>
+    </Container>
+  )
+}
 
 export const CollabsTab = ({ wallet, onLoaded }) => {
   const chunkSize = 20

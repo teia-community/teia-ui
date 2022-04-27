@@ -1,47 +1,41 @@
-import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import React, { useContext, useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
 import { LoadingContainer } from '@components/loading'
 import { Button, Primary } from '@components/button'
 
-export default class Sync extends Component {
-  constructor(props) {
-    super(props)
+export default function Sync() {
+  const location = useLocation()
+  const context = useContext(HicetnuncContext)
 
-    this.state = {
-      addr: '',
-    }
-  }
+  useEffect(() => {
+    ;(async () => {
+      if (!context.acc) {
+        await context.syncTaquito()
+        await context.setAccount()
+      } else {
+        await context.setAccount()
+      }
+    })()
+  }, [context])
 
-  static contextType = HicetnuncContext
-
-  componentDidMount = async () => {
-    if (this.context.acc == null) {
-      await this.context.syncTaquito()
-    }
-    await this.context.setAccount()
-  }
-
-  render() {
-    return this.context.acc !== undefined ? (
-      <Redirect
-        to={`/${this.props.location.state}/${
-          this.context.getProxy() || this.context.acc.address
-        }`}
-      />
-    ) : (
-      <Page title="">
-        <Container>
-          <Padding>
-            <p>requesting permissions</p>
-            <Button to="/sync">
-              <Primary>try again?</Primary>
-            </Button>
-            <LoadingContainer />
-          </Padding>
-        </Container>
-      </Page>
-    )
-  }
+  return context.acc ? (
+    <Navigate
+      to={`/${location.state}/${context.getProxy() || context.acc.address}`}
+      replace
+    />
+  ) : (
+    <Page title="">
+      <Container>
+        <Padding>
+          <p>requesting permissions</p>
+          <Button to="/sync">
+            <Primary>try again?</Primary>
+          </Button>
+          <LoadingContainer />
+        </Padding>
+      </Container>
+    </Page>
+  )
 }

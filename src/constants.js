@@ -1,78 +1,8 @@
-import _ from 'lodash'
-
 export const BANNER_URL =
   'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
-let LANGUAGE = {}
-export const setLanguage = (data) => (LANGUAGE = data)
-export const getLanguage = () => LANGUAGE
-
-let objktBlockList = []
-export const setObjktBlockList = (data) => (objktBlockList = data)
-export const getObjktBlockList = () => objktBlockList
-
-let walletBlockList = []
-
-export const setWalletBlockList = (restrictedLists, permittedLists) => {
-  const walletAllowList = _.flatten(permittedLists)
-
-  // Override with permitted list
-  walletBlockList = _.flatten(restrictedLists).filter(
-    (account) => !walletAllowList.includes(account)
-  )
-}
-export const getWalletBlockList = () => walletBlockList
-
-let banBlockList = []
-export const setBanBlockList = (data) => (banBlockList = data)
-export const getBanBlockList = () => banBlockList
-
-let logoList = []
-export const setLogoList = (data) => {
-  // Shuffles the list daily
-
-  let logos = []
-
-  for (const logo_pack of data) {
-    logos = logos.concat(
-      logo_pack.logos.map((logo) => {
-        return {
-          name: logo,
-          themable: logo_pack.themable,
-          collection: logo_pack.collection,
-        }
-      })
-    )
-  }
-
-  let currentIndex = logos.length,
-    temporaryValue,
-    randomIndex
-  const date = new Date(Date.now())
-  let day =
-    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
-      Date.UTC(date.getFullYear(), 0, 0)) /
-    24 /
-    60 /
-    60 /
-    1000
-  let random = function () {
-    var x = Math.sin(day++) * 10000
-    return x - Math.floor(x)
-  }
-
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(random() * currentIndex)
-    currentIndex -= 1
-    //swap
-    temporaryValue = logos[currentIndex]
-    logos[currentIndex] = logos[randomIndex]
-    logos[randomIndex] = temporaryValue
-  }
-
-  logoList = logos
-}
-export const getLogoList = () => logoList
+// TODO sk: use use-settings hook instead
+export const getWalletBlockList = () => []
 
 let nsfwList = []
 export const setNsfwList = (data) => (nsfwList = data)
@@ -181,6 +111,8 @@ export const MARKETPLACE_CONTRACT_OBJKTCOM_V4 =
   'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC'
 
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
+
+export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,

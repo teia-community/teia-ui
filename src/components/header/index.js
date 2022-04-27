@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
+import React, { useContext, useEffect, useState, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 
 import { BANNER_URL } from '@constants'
 import JSON5 from 'json5'
@@ -18,9 +18,25 @@ import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
 import { EventBanner } from '@components/event-banner/index'
 import { useWindowScroll } from 'react-use'
+import useSettings from '@hooks/use-settings'
+/* import { BeaconWallet } from '@taquito/beacon-wallet'
+
+const wallet = new BeaconWallet({
+  name: 'hicetnunc.xyz',
+  preferredNetwork: 'mainnet',
+}) */
 
 export const Header = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
+  const { logos } = useSettings()
+  const logo = useMemo(
+    () =>
+      logos && logos.length
+        ? logos[Math.floor(Math.random() * logos.length)]
+        : null,
+    [logos]
+  )
+
   const context = useContext(HicetnuncContext)
   const [displayBanner, setDisplayBanner] = useState(false)
 
@@ -29,7 +45,7 @@ export const Header = () => {
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
-    context.setLogo()
+    //context.setLogo()
   }, [])
 
   useEffect(() => {
@@ -78,7 +94,7 @@ export const Header = () => {
   //console.log(activeAccount)
   const handleRoute = (path, data) => {
     context.setMenu(true)
-    history.push(path, data)
+    navigate(path, { state: data })
   }
 
   const handleSyncUnsync = () => {
@@ -115,10 +131,10 @@ export const Header = () => {
               {true && context.theme !== 'unset' && (
                 <img
                   src={`${process.env.REACT_APP_LOGOS}/logos${
-                    context.logo.themable ? `/${context.theme}` : ''
-                  }${
-                    context.logo.collection ? `/${context.logo.collection}` : ''
-                  }/${context.logo.name}`}
+                    logo.themable ? '/' + context.theme : ''
+                  }${logo.collection ? '/' + logo.collection : ''}/${
+                    logo.name
+                  }`}
                   alt="teia-logo"
                 />
               )}

@@ -1,35 +1,56 @@
-import React, { useEffect, useState } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import HicetnuncContextProvider from '@context/HicetnuncContext'
-import { getInitialData } from '@data/api'
-import { Header } from '@components/header'
+import useSettings from '@hooks/use-settings'
 import { Loading as Preloading } from '@components/loading'
-import { FeedbackComponent } from '@components/feedback'
-import { routes } from './routes'
+import Sync from './pages/sync'
+import { About } from './pages/about'
+import { FAQ } from './pages/faq'
+import Display from './pages/display'
+import { Mint } from './pages/mint'
+import { ObjktDisplay } from './pages/objkt-display'
+import { Collaborate, CollabDisplay } from './pages/collaborate'
+import { Galleries } from './pages/galleries'
+import { GalleryDetail } from './pages/gallery-detail'
+import { Config } from './pages/config'
+import { Search } from './pages/search'
+import { Tags } from './pages/tags'
+import { Friends } from './pages/friends'
+import { Terms } from './pages/terms'
 
 const App = () => {
-  const [loading, setLoading] = useState(true)
+  const { isLoading } = useSettings()
 
-  // 1st time loading the site ???
-  useEffect(() => {
-    getInitialData().then(() => {
-      setLoading(false)
-    })
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return <Preloading />
   }
 
   return (
     <HicetnuncContextProvider>
-      <Header />
-      <FeedbackComponent />
-      <Switch>
-        {routes.map(({ exact, path, component: Comp }) => (
-          <Route path={path} exact={exact} key={path} component={Comp} />
-        ))}
-      </Switch>
+      <Routes>
+        <Route path="/" element={<Search />} />
+        <Route path="/feed/*" element={<Search />} />
+        <Route path="/search" element={<Search />} />
+
+        <Route path="/friends/:id" element={<Friends />} />
+        <Route path="/tz/:address/*" element={<Display />} />
+        <Route path="/kt/:id" element={<CollabDisplay />} />
+        <Route path="/collab/:name" element={<CollabDisplay />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/sync" element={<Sync />} />
+        <Route path="/mint" element={<Mint />} />
+        <Route path="/collaborate" element={<Collaborate />} />
+        <Route path="/objkt/:id" element={<ObjktDisplay />} />
+        <Route path="/galleries" element={<Galleries />} />
+        <Route path="/gallery/:id" element={<GalleryDetail />} />
+        <Route path="/config" element={<Config />} />
+        <Route path="/tags/:id" element={<Tags />} />
+        <Route path="/:id/:collection?" element={<Display />} />
+        <Route path="/:subjkt" element={<Display />} />
+        <Route path="/:subjkt/*" element={<Display />} />
+      </Routes>
     </HicetnuncContextProvider>
   )
 }
