@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import HicetnuncContextProvider from '@context/HicetnuncContext'
 import { getInitialData } from '@data/api'
 import { Header } from '@components/header'
@@ -25,11 +25,11 @@ const App = () => {
     <HicetnuncContextProvider>
       <Header />
       <FeedbackComponent />
-      <Switch>
-        {routes.map(({ exact, path, component: Comp }) => (
-          <Route path={path} exact={exact} key={path} component={Comp} />
+      <Routes>
+        {routes.map(({ path, component: Comp }) => (
+          <Route path={path} key={path} element={<Comp />} />
         ))}
-      </Switch>
+      </Routes>
     </HicetnuncContextProvider>
   )
 }

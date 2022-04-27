@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
 import { LoadingContainer } from '@components/loading'
@@ -27,10 +27,11 @@ export default class Sync extends Component {
 
   render() {
     return this.context.acc !== undefined ? (
-      <Redirect
+      <Navigate
         to={`/${this.props.location.state}/${
           this.context.getProxy() || this.context.acc.address
         }`}
+        replace
       />
     ) : (
       <Page title="">

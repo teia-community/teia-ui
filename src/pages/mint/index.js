@@ -65,7 +65,6 @@ export const Mint = () => {
   const { mint, acc, setAccount, proxyAddress, setFeedback, syncTaquito } =
     useContext(HicetnuncContext)
 
-  // const history = useHistory()
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState('')
   const [mintName, setMintName] = useState('')

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect } from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
@@ -21,7 +21,7 @@ const wallet = new BeaconWallet({
 }) */
 
 export const Header = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const context = useContext(HicetnuncContext)
   useEffect(() => {
     context.setAccount()
@@ -50,7 +50,7 @@ export const Header = () => {
   //console.log(activeAccount)
   const handleRoute = (path, data) => {
     context.setMenu(true)
-    history.push(path, data)
+    navigate(path, data)
   }
 
   const handleSyncUnsync = () => {
