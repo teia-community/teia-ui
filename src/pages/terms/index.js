@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 import { Page, Container, Padding } from '@components/layout'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { getLanguage } from '@constants'
 
 import Markdown from 'markdown-to-jsx'
 
 export class Terms extends Component {
   static contextType = HicetnuncContext
-
-  language = getLanguage()
 
   docLang = 'en'
 

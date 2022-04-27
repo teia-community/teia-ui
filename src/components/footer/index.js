@@ -1,18 +1,16 @@
 import React from 'react'
-import { ButtonLanguage } from '../button-language'
 import { ButtonTheme } from '../button-theme'
-import { getLanguage } from '../../constants'
+import useLanguage from '../../hooks/use-language'
 import styles from './styles.module.scss'
 
 export const Footer = () => {
-  const language = getLanguage()
+  const { language } = useLanguage()
 
   return (
     <footer className={styles.container}>
       <div>
         <div className={styles.copy}>{language.footer.mint}</div>
         <div className={styles.buttons}>
-          {false && <ButtonLanguage />}
           <ButtonTheme />
         </div>
       </div>

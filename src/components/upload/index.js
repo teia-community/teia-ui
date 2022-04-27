@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { getLanguage } from '../../constants'
+import useLanguage from '../../hooks/use-language'
 import { getMimeType } from '../../utils/sanitise'
 import styles from './styles.module.scss'
 
@@ -11,7 +11,7 @@ export const Upload = ({
   allowedTypesLabel,
   onChange = () => null,
 }) => {
-  const language = getLanguage()
+  const { language } = useLanguage()
   const [title, setTitle] = useState(label)
 
   const onFileChange = async (e) => {
