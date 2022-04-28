@@ -16,6 +16,7 @@ const axios = require('axios')
 /**
  * This loads the initial data (language.json, o.json, w.json, b.json)
  */
+// TODO sk: remove
 export const getInitialData = () => {
   const language = getItem('language') || setItem('language', 'en')
 

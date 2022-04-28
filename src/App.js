@@ -1,30 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import HicetnuncContextProvider from '@context/HicetnuncContext'
-import { getInitialData } from '@data/api'
-import { Header } from '@components/header'
+import useSettings from '@hooks/use-settings'
 import { Loading as Preloading } from '@components/loading'
-import { FeedbackComponent } from '@components/feedback'
 import { routes } from './routes'
 
 const App = () => {
-  const [loading, setLoading] = useState(true)
+  const { isLoading } = useSettings()
 
-  // 1st time loading the site ???
-  useEffect(() => {
-    getInitialData().then(() => {
-      setLoading(false)
-    })
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return <Preloading />
   }
 
   return (
     <HicetnuncContextProvider>
-      <Header />
-      <FeedbackComponent />
       <Routes>
         {routes.map(({ path, component: Comp }) => (
           <Route path={path} key={path} element={<Comp />} />

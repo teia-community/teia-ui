@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
@@ -13,6 +13,7 @@ import { walletPreview } from '../../utils/string'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
+import useSettings from '@hooks/use-settings'
 /* import { BeaconWallet } from '@taquito/beacon-wallet'
 
 const wallet = new BeaconWallet({
@@ -22,11 +23,20 @@ const wallet = new BeaconWallet({
 
 export const Header = () => {
   const navigate = useNavigate()
+  const { logos } = useSettings()
+  const logo = useMemo(
+    () =>
+      logos && logos.length
+        ? logos[Math.floor(Math.random() * logos.length)]
+        : null,
+    [logos]
+  )
+
   const context = useContext(HicetnuncContext)
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
-    context.setLogo()
+    //context.setLogo()
   }, [])
 
   // we assume user isn't connected
@@ -72,7 +82,7 @@ export const Header = () => {
               {/* HIC LOGO */}
               {true && context.theme !== 'unset' && (
                 <img
-                  src={`${process.env.REACT_APP_LOGOS}/logos/${context.theme}/${context.logo}`}
+                  src={`${process.env.REACT_APP_LOGOS}/logos/${context.theme}/${logo}`}
                   alt="teia-logo"
                 ></img>
               )}
