@@ -29,7 +29,8 @@ const App = () => {
   return (
     <HicetnuncContextProvider>
       <Routes>
-        <Route path="/" element={<Search />} />
+        <Route path="/*" element={<Search />} />
+
         <Route path="/hdao" element={<Hdao />} />
         <Route path="/random" element={<Random />} />
         <Route path="/latest" element={<Latest />} />
