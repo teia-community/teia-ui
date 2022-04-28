@@ -75,7 +75,7 @@ export class FAQ extends Component {
             <div className={styles.faq__outer__container}>
               <ul className={styles.faq__container}>
                 <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/General">
+                  <Button href="https://github.com/teia-community/teia-docs/wiki/General-FAQs">
                     <Primary>General FAQ</Primary>
                   </Button>
                 </li>
@@ -87,6 +87,11 @@ export class FAQ extends Component {
                 <li className={styles.buttons}>
                   <Button href="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community">
                     <Primary>Useful tools</Primary>
+                  </Button>
+                </li>
+                <li className={styles.buttons}>
+                  <Button href="https://github.com/teia-community/teia-docs/wiki/User-safety">
+                    <Primary>User Safety</Primary>
                   </Button>
                 </li>
               </ul>
