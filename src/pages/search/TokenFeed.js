@@ -19,6 +19,18 @@ function TokenFeed({
   keyPath = 'id',
   emptyMessage = 'no results',
   postProcessTokens = (tokens) => tokens,
+  enableInfinityScroll = true,
+  extractTokensFromResponse = (
+    data,
+    { postProcessTokens, resultsPath, tokenPath, keyPath }
+  ) => {
+    return postProcessTokens(
+      get(data, resultsPath).map((result) => ({
+        ...(tokenPath ? get(result, tokenPath) : result),
+        key: get(result, keyPath),
+      }))
+    )
+  },
 }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [limit, setLimit] = useState(
@@ -31,7 +43,7 @@ function TokenFeed({
     (ns, limit) =>
       request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
         ...variables,
-        limit,
+        ...(enableInfinityScroll ? { limit } : {}),
       }),
     {
       revalidateIfStale: false,
@@ -55,18 +67,34 @@ function TokenFeed({
   }
 
   // TODO: remove tokens from blocked wallets
-  let tokens = postProcessTokens(
-    get(data, resultsPath).map((result) => ({
-      ...(tokenPath ? get(result, tokenPath) : result),
-      key: get(result, keyPath),
-    }))
-  )
+  let tokens = extractTokensFromResponse(data, {
+    postProcessTokens,
+    resultsPath,
+    tokenPath,
+    keyPath,
+  })
 
   const hasProbablyMore = tokens.length === limit
 
   if (!tokens.length) {
     // TODO: style
     return <div>{emptyMessage}</div>
+  }
+
+  const tokensContainer = (
+    <Container>
+      <Padding>
+        {tokens.map((token) => (
+          <div key={token.key}>
+            <FeedItem {...token} />
+          </div>
+        ))}
+      </Padding>
+    </Container>
+  )
+
+  if (!enableInfinityScroll) {
+    return tokensContainer
   }
 
   return (
@@ -81,15 +109,7 @@ function TokenFeed({
       loader={undefined}
       endMessage={undefined}
     >
-      <Container>
-        <Padding>
-          {tokens.map((token) => (
-            <div key={token.key}>
-              <FeedItem {...token} />
-            </div>
-          ))}
-        </Padding>
-      </Container>
+      {tokensContainer}
     </InfiniteScroll>
   )
 }

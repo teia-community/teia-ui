@@ -7,7 +7,6 @@ import Sync from './pages/sync'
 import { About } from './pages/about'
 import { FAQ } from './pages/faq'
 import Display from './pages/display'
-import { Latest, Hdao, Random } from './pages/feeds'
 import { Mint } from './pages/mint'
 import { ObjktDisplay } from './pages/objkt-display'
 import { Collaborate, CollabDisplay } from './pages/collaborate'
@@ -31,9 +30,6 @@ const App = () => {
       <Routes>
         <Route path="/*" element={<Search />} />
 
-        <Route path="/hdao" element={<Hdao />} />
-        <Route path="/random" element={<Random />} />
-        <Route path="/latest" element={<Latest />} />
         <Route path="/friends/:id" element={<Friends />} />
         <Route path="/tz/:id/:collection?" element={<Display />} />
         <Route path="/kt/:id" element={<CollabDisplay />} />
@@ -48,7 +44,6 @@ const App = () => {
         <Route path="/galleries" element={<Galleries />} />
         <Route path="/gallery/:id" element={<GalleryDetail />} />
         <Route path="/config" element={<Config />} />
-        <Route path="/search" element={<Search />} />
         <Route path="/tags/:id" element={<Tags />} />
         <Route path="/:id/:collection?" element={<Display />} />
       </Routes>

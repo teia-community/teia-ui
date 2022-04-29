@@ -2,10 +2,10 @@ import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
 import TokenFeed from './TokenFeed'
 
-function SalesFeed() {
+function RecentSalesFeed() {
   return (
     <TokenFeed
-      namespace="sales-feed"
+      namespace="recent-sales-feed"
       resultsPath="trade"
       tokenPath="token"
       keyPath="token.id"
@@ -36,4 +36,4 @@ function SalesFeed() {
   )
 }
 
-export default SalesFeed
+export default RecentSalesFeed

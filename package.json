@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "@tezos-contrib/react-wallet-provider": "^1.0.0-alpha.12",
     "axios": "^0.26.1",
     "base-x": "^3.0.8",
     "bs58check": "^2.1.2",
