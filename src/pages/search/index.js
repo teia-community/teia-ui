@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom'
 import { Input } from '@components/input'
 
+import SubjktsSearchResults from './SubjktsSearchResults'
 import RecentSalesFeed from './RecentSalesFeed'
 import NewObjktsFeed from './NewObjktsFeed'
 import UkraineFeed from './UkraineFeed'
@@ -92,6 +93,9 @@ export function Search() {
               <FilterLink to="/1W">1W</FilterLink>
               <FilterLink to="/1M">1M</FilterLink>
             </div>
+            <Routes>
+              <Route path="/search" element={<SubjktsSearchResults />} />
+            </Routes>
           </Padding>
         </Container>
         <Container xlarge>

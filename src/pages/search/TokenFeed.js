@@ -53,17 +53,21 @@ function TokenFeed({
   )
 
   if (error) {
-    // TODO: style
     return (
-      <div>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      </div>
+      <Container>
+        <Padding>
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        </Padding>
+      </Container>
     )
   }
 
   if (!data) {
-    // TODO: style
-    return <div>loading...</div>
+    return (
+      <Container>
+        <Padding>loading...</Padding>
+      </Container>
+    )
   }
 
   // TODO: remove tokens from blocked wallets
@@ -74,11 +78,15 @@ function TokenFeed({
     keyPath,
   })
 
+  // TODO: tokens.length might be incorrect
   const hasProbablyMore = tokens.length === limit
 
   if (!tokens.length) {
-    // TODO: style
-    return <div>{emptyMessage}</div>
+    return (
+      <Container>
+        <Padding>{emptyMessage}</Padding>
+      </Container>
+    )
   }
 
   const tokensContainer = (
