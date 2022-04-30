@@ -5,7 +5,15 @@ import {
   // BeaconWalletNotInitialized,
 } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
-import { packParticipantMap } from '@components/collab/functions'
+import { MichelsonMap } from '@taquito/taquito'
+import { packData } from '@components/collab/functions'
+import {
+  createProxySchema,
+  teiaSwapSchema,
+  teiaCancelSwapSchema,
+} from '@components/collab/constants'
+import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
+import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import { setItem } from '@utils/storage'
 
 import {
@@ -44,6 +52,127 @@ const wallet = new BeaconWallet({
 
 Tezos.setWalletProvider(wallet)
 
+function createAddOperatorCall(
+  objktsContract,
+  objkt_id,
+  ownerAddress,
+  operatorAddress
+) {
+  return {
+    kind: OpKind.TRANSACTION,
+    ...objktsContract.methods
+      .update_operators([
+        {
+          add_operator: {
+            operator: operatorAddress,
+            token_id: parseFloat(objkt_id),
+            owner: ownerAddress,
+          },
+        },
+      ])
+      .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
+  }
+}
+
+function createRemoveOperatorCall(
+  objktsContract,
+  objkt_id,
+  ownerAddress,
+  operatorAddress
+) {
+  return {
+    kind: OpKind.TRANSACTION,
+    ...objktsContract.methods
+      .update_operators([
+        {
+          remove_operator: {
+            operator: operatorAddress,
+            token_id: parseFloat(objkt_id),
+            owner: ownerAddress,
+          },
+        },
+      ])
+      .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
+  }
+}
+
+function createSwapCall(
+  marketplaceContract,
+  objktsAddress,
+  objkt_id,
+  ownerAddress,
+  objkt_amount,
+  xtz_per_objkt,
+  royalties,
+  creator,
+  type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
+) {
+  if (type === SWAP_TYPE_TEIA) {
+    return {
+      kind: OpKind.TRANSACTION,
+      ...marketplaceContract.methods
+        .swap(
+          objktsAddress,
+          parseFloat(objkt_id),
+          parseFloat(objkt_amount),
+          parseFloat(xtz_per_objkt),
+          parseFloat(royalties),
+          creator
+        )
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+    }
+  }
+
+  if (type === SWAP_TYPE_HEN) {
+    return {
+      kind: OpKind.TRANSACTION,
+      ...marketplaceContract.methods
+        .swap(
+          creator,
+          parseFloat(objkt_amount),
+          parseFloat(objkt_id),
+          parseFloat(royalties),
+          parseFloat(xtz_per_objkt)
+        )
+        .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+    }
+  }
+}
+
+async function createLambdaSwapCall(
+  collabContract,
+  marketplaceAddress,
+  objktsAddress,
+  objkt_id,
+  ownerAddress,
+  objkt_amount,
+  xtz_per_objkt,
+  royalties,
+  creator
+) {
+  const data = {
+    marketplaceAddress: marketplaceAddress,
+    params: {
+      fa2: objktsAddress,
+      objkt_id: parseFloat(objkt_id),
+      objkt_amount: parseFloat(objkt_amount),
+      royalties: parseFloat(royalties),
+      xtz_per_objkt: parseFloat(xtz_per_objkt),
+      creator: creator,
+    },
+  }
+
+  const preparedSwap = packData(data, teiaSwapSchema)
+  const { packed } = await Packer.packData(preparedSwap)
+
+  return {
+    kind: OpKind.TRANSACTION,
+    ...collabContract.methods
+      .execute(teiaSwapLambda, packed)
+      .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
+  }
+}
+
 function createSwapCalls(
   objktsContract,
   marketplaceContract,
@@ -58,62 +187,29 @@ function createSwapCalls(
   type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
 ) {
   return [
-    {
-      kind: OpKind.TRANSACTION,
-      ...objktsContract.methods
-        .update_operators([
-          {
-            add_operator: {
-              operator: operatorAddress,
-              token_id: parseFloat(objkt_id),
-              owner: ownerAddress,
-            },
-          },
-        ])
-        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
-    },
-    type === SWAP_TYPE_TEIA
-      ? // it's the teia marketplace contract
-        {
-          kind: OpKind.TRANSACTION,
-          ...marketplaceContract.methods
-            .swap(
-              objktsAddress,
-              parseFloat(objkt_id),
-              parseFloat(objkt_amount),
-              parseFloat(xtz_per_objkt),
-              parseFloat(royalties),
-              creator
-            )
-            .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
-        }
-      : // it's the hen v2 markeptlace contract
-        {
-          kind: OpKind.TRANSACTION,
-          ...marketplaceContract.methods
-            .swap(
-              creator,
-              parseFloat(objkt_amount),
-              parseFloat(objkt_id),
-              parseFloat(royalties),
-              parseFloat(xtz_per_objkt)
-            )
-            .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
-        },
-    {
-      kind: OpKind.TRANSACTION,
-      ...objktsContract.methods
-        .update_operators([
-          {
-            remove_operator: {
-              operator: operatorAddress,
-              token_id: parseFloat(objkt_id),
-              owner: ownerAddress,
-            },
-          },
-        ])
-        .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
-    },
+    createAddOperatorCall(
+      objktsContract,
+      objkt_id,
+      ownerAddress,
+      operatorAddress
+    ),
+    createSwapCall(
+      marketplaceContract,
+      objktsAddress,
+      objkt_id,
+      ownerAddress,
+      objkt_amount,
+      xtz_per_objkt,
+      royalties,
+      creator,
+      type
+    ),
+    createRemoveOperatorCall(
+      objktsContract,
+      objkt_id,
+      ownerAddress,
+      operatorAddress
+    ),
   ]
 }
 
@@ -152,39 +248,62 @@ class HicetnuncContextProviderClass extends Component {
         creator,
         objkt_amount
       ) => {
-        // If using proxy: both calls are made through this.state.proxyAddress:
-        const objktsAddress = this.state.proxyAddress || this.state.objkts
-        const marketplaceAddress =
-          this.state.proxyAddress || MAIN_MARKETPLACE_CONTRACT
-        const ownerAddress = this.state.proxyAddress || from
+        if (this.state.proxyAddress) {
+          /* collab contract swap case */
+          const proxyContract = await Tezos.wallet.at(this.state.proxyAddress)
 
+          const collabSwapCall = await createLambdaSwapCall(
+            proxyContract,
+            MAIN_MARKETPLACE_CONTRACT,
+            this.state.objkts,
+            objkt_id,
+            this.state.proxyAddress,
+            objkt_amount,
+            xtz_per_objkt,
+            royalties,
+            creator
+          )
+
+          const operations = [
+            createAddOperatorCall(
+              proxyContract,
+              objkt_id,
+              this.state.proxyAddress,
+              MAIN_MARKETPLACE_CONTRACT
+            ),
+            collabSwapCall,
+            createRemoveOperatorCall(
+              proxyContract,
+              objkt_id,
+              this.state.proxyAddress,
+              MAIN_MARKETPLACE_CONTRACT
+            ),
+          ]
+
+          let batch = await Tezos.wallet.batch(operations)
+          return await batch.send()
+        }
+        const objktsAddress = this.state.objkts
         const [objktsContract, marketplaceContract] = await Promise.all([
           Tezos.wallet.at(objktsAddress),
-          Tezos.wallet.at(marketplaceAddress),
+          Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
         ])
 
-        const list = createSwapCalls(
+        const operations = createSwapCalls(
           objktsContract,
           marketplaceContract,
           objktsAddress,
-          // use v2 in case of a collab contract (until support is added)
-          this.state.proxyAddress
-            ? MARKETPLACE_CONTRACT_V2
-            : MAIN_MARKETPLACE_CONTRACT,
+          MAIN_MARKETPLACE_CONTRACT,
           objkt_id,
-          ownerAddress,
+          from,
           objkt_amount,
           xtz_per_objkt,
           royalties,
           creator,
-          // use v2 in case of a collab contract (until support is added)
-          this.state.proxyAddress
-            ? SWAP_TYPE_HEN
-            : MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
+          MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
         )
 
-        let batch = await Tezos.wallet.batch(list)
-
+        let batch = await Tezos.wallet.batch(operations)
         return await batch.send()
       },
 
@@ -617,8 +736,25 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       cancel: async (contract_address, swap_id) => {
+        if (this.state.proxyAddress) {
+          /* collab contract cancel swap case */
+          const data = {
+            marketplaceAddress: contract_address,
+            swap_id: parseFloat(swap_id),
+          }
+          const preparedCancel = packData(data, teiaCancelSwapSchema)
+          const { packed } = await Packer.packData(preparedCancel)
+          return await Tezos.wallet
+            .at(this.state.proxyAddress)
+            .then((c) =>
+              c.methods
+                .execute(teiaCancelSwapLambda, packed)
+                .send({ amount: 0, storageLimit: 310 })
+            )
+            .catch((e) => e)
+        }
         return await Tezos.wallet
-          .at(this.state.proxyAddress || contract_address)
+          .at(contract_address)
           .then((c) =>
             c.methods
               .cancel_swap(parseFloat(swap_id))
@@ -938,8 +1074,8 @@ class HicetnuncContextProviderClass extends Component {
           confirm: false,
         })
 
-        const packDataParams = packParticipantMap(participantData)
-        console.log('packDataParams', packDataParams)
+        const participantMap = MichelsonMap.fromLiteral(participantData)
+        const packDataParams = packData(participantMap, createProxySchema)
 
         // Pack hex data for origination call
         const { packed } = await Packer.packData(packDataParams)
