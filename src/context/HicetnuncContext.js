@@ -20,6 +20,7 @@ import {
   HEN_CONTRACT_FA2,
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACT_TEIA,
   MARKETPLACE_CONTRACT_OBJKTCOM_V1,
   MARKETPLACE_CONTRACT_OBJKTCOM_V4,
   MAIN_MARKETPLACE_CONTRACT,
@@ -736,8 +737,9 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       cancel: async (contract_address, swap_id) => {
-        if (this.state.proxyAddress) {
-          /* collab contract cancel swap case */
+        const isSwapTeia = contract_address === MARKETPLACE_CONTRACT_TEIA
+        if (this.state.proxyAddress && isSwapTeia) {
+          /* collab contract cancel swap for Teia Marketplace case */
           const data = {
             marketplaceAddress: contract_address,
             swap_id: parseFloat(swap_id),
@@ -753,8 +755,10 @@ class HicetnuncContextProviderClass extends Component {
             )
             .catch((e) => e)
         }
+
+        /* Marketplace without collab case OR collab on V1/V2 marketplace */
         return await Tezos.wallet
-          .at(contract_address)
+          .at(this.state.proxyAddress || contract_address)
           .then((c) =>
             c.methods
               .cancel_swap(parseFloat(swap_id))
