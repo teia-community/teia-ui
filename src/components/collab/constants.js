@@ -61,3 +61,16 @@ export const mockData = [
 export const createProxySchema = `
 (map address (pair (bool %isCore) (nat %share))))
 `
+
+export const teiaSwapSchema = `
+(pair (address %marketplaceAddress)
+  (pair %params (address %fa2)
+    (pair (nat %objkt_id)
+      (pair (nat %objkt_amount)
+        (pair (mutez %xtz_per_objkt)
+          (pair (nat %royalties) (address %creator)))))))
+`
+
+export const teiaCancelSwapSchema = `
+(pair (address %marketplaceAddress) (nat %swap_id))
+`
