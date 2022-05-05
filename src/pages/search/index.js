@@ -14,11 +14,11 @@ import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
 const _ = require('lodash')
 
-async function fetchFeed(lastId) {
+async function fetchFeed(lastId, offset) {
   const { errors, data } = await fetchGraphQL(
     `
 query LatestFeed {
-  hic_et_nunc_token(order_by: {id: desc}, limit: 15, where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
+  hic_et_nunc_token(order_by: {id: desc}, limit: 15, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
     display_uri
     creator_id
@@ -414,9 +414,11 @@ export class Search extends Component {
 
     this.setState({ select: e })
     if (reset) {
-      this.state.feed = []
-      this.state.offset = 0
-      this.state.lastId = await getLastObjktId()
+      this.setState({
+        feed: [],
+        offset: 0,
+        lastId: await getLastObjktId(),
+      })
     }
 
     if (e === '1D') {
@@ -577,20 +579,19 @@ export class Search extends Component {
     }
 
     if (e === 'new OBJKTs') {
-      this.latest()
+      let tokens = await fetchFeed(this.state.lastId, this.state.offset)
+      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy(
+          _.uniqBy([...this.state.feed, ...tokens], 'id'),
+          'creator_id'
+        ),
+      })
     }
 
     // new listings
 
     this.setState({ reset: false })
-  }
-
-  latest = async () => {
-    let result = await fetchFeed(this.state.lastId)
-    let restricted = getWalletBlockList()
-    result = _.uniqBy([...this.state.feed, ...result], 'creator_id')
-    result = result.filter((e) => !restricted.includes(e.creator_id))
-    this.setState({ feed: [...result], flag: true })
   }
 
   search = async (e) => {
