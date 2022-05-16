@@ -1,14 +1,11 @@
-import { createProxySchema } from './constants'
 import { Parser } from '@taquito/michel-codec'
 import { Schema } from '@taquito/michelson-encoder'
-import { MichelsonMap } from '@taquito/taquito'
 
-export const packParticipantMap = (participantData) => {
-  const participantMap = MichelsonMap.fromLiteral(participantData)
+export const packData = (rawData, schema) => {
   const parser = new Parser()
-  const michelsonType = parser.parseData(createProxySchema)
-  const schema = new Schema(michelsonType)
-  const data = schema.Encode(participantMap)
+  const michelsonType = parser.parseData(schema)
+  const parsedSchema = new Schema(michelsonType)
+  const data = parsedSchema.Encode(rawData)
 
   return {
     data,
