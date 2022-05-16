@@ -51,7 +51,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
       setLoadingCollabs(false)
 
       if (data) {
-        const allCollabs = data.hic_et_nunc_splitcontract || []
+        const allCollabs = data.split_contract || []
         const adminCollabs = allCollabs.filter(
           (c) => c.administrator === acc.address
         )

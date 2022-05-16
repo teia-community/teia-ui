@@ -58,8 +58,8 @@ export const CollabDisplay = () => {
       [key]: value,
     }).then(({ data, errors }) => {
       if (data) {
-        setCreations(data.hic_et_nunc_token)
-        setContractInfo(data.hic_et_nunc_splitcontract[0])
+        setCreations(data.token)
+        setContractInfo(data.split_contract[0])
       }
 
       setLoading(false)

@@ -31,7 +31,7 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
         }
 
         let tokens = []
-        const result = data.hic_et_nunc_shareholder
+        const result = data.shareholder
 
         if (result) {
           result.forEach(

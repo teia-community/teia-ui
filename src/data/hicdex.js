@@ -6,24 +6,21 @@ import {
 const _ = require('lodash')
 
 export const getDipdupState = `query {
-  hic_et_nunc_dipdup_state {
-    hash
-    index_hash
-    index_name
-    index_type
+  dipdup_index {
+    name
     level
   }
 }`
 
 export const getUserMetaQuery = `query UserMeta($address: String = "") {
-  hic_et_nunc_holder(where: { address: { _eq: $address } }) {
+  holder(where: { address: { _eq: $address } }) {
       name
       metadata
   }
 }`
 
 export const getAvailableCollabAddresses = `query GetCollabContracts($address: String!) {
-hic_et_nunc_splitcontract(where: {administrator: {_eq: $address}}) {
+split_contract(where: {administrator: {_eq: $address}}) {
   contract {
     address
     shares {
@@ -39,7 +36,7 @@ hic_et_nunc_splitcontract(where: {administrator: {_eq: $address}}) {
 }`
 
 export const getCollabCreationsByAddress = `query GetCollabCreations($address: String!) {
-hic_et_nunc_token(where: {creator: {is_split: {_eq: true}, address: {_eq: $address}}, supply: {_gt: "0"}}, order_by: {id: desc}) {
+token(where: {creator: {is_split: {_eq: true}, address: {_eq: $address}}, supply: {_gt: "0"}}, order_by: {id: desc}) {
   id
   artifact_uri
   display_uri
@@ -56,7 +53,7 @@ hic_et_nunc_token(where: {creator: {is_split: {_eq: true}, address: {_eq: $addre
   }
 }
 
-hic_et_nunc_splitcontract(where: {contract_id: {_eq: $address}}) {
+split_contract(where: {contract_id: {_eq: $address}}) {
   administrator
   shareholder {
     holder {
@@ -74,7 +71,7 @@ hic_et_nunc_splitcontract(where: {contract_id: {_eq: $address}}) {
 }`
 
 export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: String!) {
-  hic_et_nunc_token(where: {creator: {is_split: {_eq: true}, name: {_eq: $subjkt}}, supply: {_gt: "0"}}, order_by: {id: desc}) {
+  token(where: {creator: {is_split: {_eq: true}, name: {_eq: $subjkt}}, supply: {_gt: "0"}}, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -90,7 +87,7 @@ export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: Str
       }
     }
   }
-  hic_et_nunc_splitcontract(where: {contract: {name: {_eq: $subjkt}}}) {
+  split_contract(where: {contract: {name: {_eq: $subjkt}}}) {
     administrator
     shareholder {
       holder {
@@ -109,14 +106,14 @@ export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: Str
 
 export const getUserMetadataFile = `
 query subjktsQuery($subjkt: String!) {
-  hic_et_nunc_holder(where: { name: {_eq: $subjkt}}) {
+  holder(where: { name: {_eq: $subjkt}}) {
     metadata_file
   }
 }
 `
 
 export const getCollabTokensForAddress = `query GetCollabTokens($address: String!) {
-hic_et_nunc_shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_participant"}}) {
+shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_participant"}}) {
   split_contract {
     contract {
       address
@@ -143,7 +140,7 @@ hic_et_nunc_shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "
 }`
 
 export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addresses: [String!]) {
-  hic_et_nunc_splitcontract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
+  split_contract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
     contract {
       address
       name
@@ -176,7 +173,7 @@ export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addres
 `
 
 export const getManagedCollabs = `query GetManagedCollabs($address: String!) {
-hic_et_nunc_splitcontract(where: {administrator: {_eq: $address}}) {
+split_contract(where: {administrator: {_eq: $address}}) {
   id
   contract {
     address
@@ -196,7 +193,7 @@ hic_et_nunc_splitcontract(where: {administrator: {_eq: $address}}) {
 }`
 
 export const getCollabsForAddress = `query GetCollabs($address: String!) {
-hic_et_nunc_splitcontract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
+split_contract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
   id
   contract {
     address
@@ -216,14 +213,14 @@ hic_et_nunc_splitcontract(where: {_or: [{administrator: {_eq: $address}}, {share
 }`
 
 export const getNameForAddress = `query GetNameForAddress($address: String!) {
-hic_et_nunc_holder(where: {address: {_eq: $address}}) {
+holder(where: {address: {_eq: $address}}) {
   name
 }
 }`
 
 const query_objkt = `
 query objkt($id: bigint!) {
-  hic_et_nunc_token_by_pk(id: $id) {
+  token_by_pk(id: $id) {
 id
 mime
 timestamp
@@ -309,7 +306,7 @@ trades(order_by: {timestamp: asc}) {
 
 const query_v1_swaps = `
 query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
+  swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
     token {
       id
       title
@@ -333,7 +330,7 @@ query querySwaps($address: String!) {
 
 const query_v2andTeia_swaps = `
 query querySwaps($address: String!) {
-  hic_et_nunc_swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map(
+  swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map(
     (contractAddress) => `"${contractAddress}"`
   ).join(', ')}] }}, distinct_on: token_id) {
     creator_id
@@ -370,7 +367,7 @@ export async function fetchUserMetadataFile(subjkt) {
     console.error(errors)
   }
 
-  return data.hic_et_nunc_holder
+  return data.holder
 }
 
 export async function fetchGraphQL(operationsDoc, operationName, variables) {
@@ -397,7 +394,7 @@ export async function getObjktsByShare(addresses, min_shares) {
     throw errors
   }
   let objkts = []
-  const contracts_info = data.hic_et_nunc_splitcontract
+  const contracts_info = data.split_contract
   for (const i in contracts_info) {
     const contract = contracts_info[i].contract
     const total = contract.shares[0].total_shares
@@ -425,13 +422,13 @@ export async function getLastObjktId() {
   const { data } = await fetchGraphQL(
     `
     query LastId {
-      hic_et_nunc_token(limit: 1, order_by: {id: desc}) {
+      token(limit: 1, order_by: {id: desc}) {
         id
       }
     }`,
     'LastId'
   )
-  return data.hic_et_nunc_token[0].id
+  return data.token[0].id
 }
 
 export async function fetchRandomObjkts(count = 10) {
@@ -453,7 +450,7 @@ export async function fetchObjkts(ids) {
   const { data } = await fetchGraphQL(
     `
     query Objkts($_in: [bigint!] = "") {
-      hic_et_nunc_token(where: { id: {_in: $_in}, supply : { _neq : 0 }}) {
+      token(where: { id: {_in: $_in}, supply : { _neq : 0 }}) {
         artifact_uri
         creator_id
         display_uri
@@ -472,7 +469,7 @@ export async function fetchObjkts(ids) {
     'Objkts',
     { _in: ids }
   )
-  return data.hic_et_nunc_token
+  return data.token
 }
 
 export async function fetchObjktDetails(id) {
@@ -483,7 +480,7 @@ export async function fetchObjktDetails(id) {
 
   console.log(errors, data)
 
-  const result = data.hic_et_nunc_token_by_pk
+  const result = data.token_by_pk
   console.log(result)
   return result
 }
@@ -501,7 +498,7 @@ export async function fetchV1Swaps(address) {
     return
   }
 
-  const result = data.hic_et_nunc_swap
+  const result = data.swap
   // console.log('swapresultv1 ' + JSON.stringify(result))
   return result
 }
@@ -516,7 +513,7 @@ export async function fetchV2Swaps(address) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.hic_et_nunc_swap
+  const result = data.swap
   // console.log('swapresultv2 ' + JSON.stringify(result))
 
   return result
