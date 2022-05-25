@@ -33,6 +33,10 @@ export const ossProjects = [
     name: 'Ukraine Relief Smart Contract',
     address: 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx',
   },
+  {
+    name: 'Teia infrastructure run by TezTools (servers, indexer, maintenance)',
+    address: 'tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8',
+  },
 ]
 
 export const collaboratorTemplate = {
