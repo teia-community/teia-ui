@@ -26,16 +26,20 @@ export const ossProjects = [
     address: 'tz1ZUohCAkGjp7vPjQcC4VWcpgYZR1t3Si5C',
   },
   {
-    name: 'H=N Tezos Fountain',
-    address: 'tz1eggoxCes1qYRGLc3E1bg4uzuCUUuuQBb9',
+    name: 'Teia infrastructure run by TezTools (servers, indexer, maintenance)',
+    address: 'tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8',
+  },
+  {
+    name: 'Teia Fountain Donations (Multisig)',
+    address: 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG',
+  },
+  {
+    name: 'Community Representation/Equity Donations (Multisig)',
+    address: 'KT1TGJGjh9oMntcny4J7eVn1NDPgCXimHqss',
   },
   {
     name: 'Ukraine Relief Smart Contract',
     address: 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx',
-  },
-  {
-    name: 'Teia infrastructure run by TezTools (servers, indexer, maintenance)',
-    address: 'tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8',
   },
 ]
 
