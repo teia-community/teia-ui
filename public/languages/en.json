@@ -68,7 +68,7 @@
       "amount": "number of OBJKTs",
       "price": "price per OBJKT (in tez)",
       "cta": "swap it",
-      "warning": "The Teia marketplace fee is temporarily set to 0%. Please consider donating to the address hereandnow-fund.tez for maintenance funding."
+      "warning": "The Teia marketplace fee is temporarily set to 0%. Please consider donating to teiaescrow.tez (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance funding."
     },
     "cancel": {
       "title": "you're about to cancel your swap",
