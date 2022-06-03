@@ -1,5 +1,13 @@
 const webpack = require("webpack");
 const path = require("path");
+
+let commitHash = require('child_process')
+  .execSync('git rev-parse HEAD')
+  .toString()
+  .trim();
+
+process.env["REACT_APP_BUILD_COMMIT"] = commitHash;
+
 module.exports = {
   webpack: {
     alias: {
@@ -13,22 +21,12 @@ module.exports = {
     configure: {
       resolve: {
         fallback: {
-          // assert: require.resolve("assert"),
-          // process: require.resolve("process/browser"),
-          // util: require.resolve("util"),
-          // zlib: require.resolve("browserify-zlib"),
           buffer: require.resolve("buffer/"),
           crypto: require.resolve("crypto-browserify"),
           stream: require.resolve("stream-browserify"),
-          // events: require.resolve("events/"),
           path: require.resolve("path-browserify"),
-          // http: require.resolve("stream-http"),
-          // https: require.resolve("https-browserify"),
-          // os: require.resolve("os-browserify/browser"),
-          // url: require.resolve("url")
         },
       },
-      // experiments: { asyncWebAssembly: true },
       plugins: [
         new webpack.ProvidePlugin({
           Buffer: ["buffer", "Buffer"],
