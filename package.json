@@ -40,8 +40,8 @@
     "screenfull": "^5.1.0"
   },
   "scripts": {
-    "start": "export REACT_APP_BUILD_COMMIT=$(git rev-parse HEAD) && craco start",
-    "build": "export REACT_APP_BUILD_COMMIT=$(git rev-parse HEAD) && craco build",
+    "start": "craco start",
+    "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
