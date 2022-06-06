@@ -6,6 +6,8 @@
 [![license](https://img.shields.io/github/license/teia-community/teia-ui?style=flat-square&color=black)](./LICENSE)
 [![website status](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fteia.art)](https://teia.art)
 
+[![deployment](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fmelmassadian.npkn.net%2Fteia-commit%2F)](https://github.com/teia-community/teia-ui/commits/main)
+
 This repository is the frontend code of the open, community owned Tezos NFT Platform [teia.art](https://teia.art).
 
 > Teia is a fork of the Tezos NFT platform [Hic et Nunc](https://www.hicetnunc.xyz/), build by the Teia community for the Teia community with accessibility, sustainability, decentralization and equity in mind. Read more about Teia's [Core Values (Wiki)](https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#1-core-values)
