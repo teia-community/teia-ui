@@ -2,8 +2,10 @@ import { rnd } from '../utils'
 import {
   MARKETPLACE_CONTRACT_V1,
   SUPPORTED_MARKETPLACE_CONTRACTS,
+  BURN_ADDRESS,
 } from '@constants'
 const _ = require('lodash')
+const axios = require('axios')
 
 export const getDipdupState = `query {
   dipdup_index {
@@ -478,10 +480,29 @@ export async function fetchObjktDetails(id) {
     console.error(errors)
   }
 
-  console.log(errors, data)
-
   const result = data.token_by_pk
-  console.log(result)
+
+  const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
+  axios
+    .get(endpoint)
+    .then((response) => {
+      result.transfers = []
+      response.data.forEach((item) => {
+        result.transfers.push({
+          timestamp: item.timestamp,
+          sender: item.sender,
+          receiver: item.parameter.value[0].txs[0].to_,
+          ophash: item.hash,
+          opid: item.id,
+          amount: item.parameter.value[0].txs[0].amount,
+        })
+      })
+    })
+    .catch((error) => {
+      console.error('Problem with call to tzkt')
+      console.error(error)
+    })
+
   return result
 }
 

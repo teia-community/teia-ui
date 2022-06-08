@@ -6,15 +6,32 @@ import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
 
 import { IconCache } from '@utils/with-icon'
-import TradeIcon from '@icons/trade'
-import MintedIcon from '@icons/minted'
-import SwapIcon from '@icons/swap'
+import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
+// import MintedIcon from '@icons/minted'
+// import SwapIcon from '@icons/swap'
+
+class OperationType {
+  static Trade = new OperationType('trade')
+  static Transfer = new OperationType('transfer')
+  static Swap = new OperationType('swap')
+
+  constructor(name) {
+    this.name = name
+  }
+}
 
 export const History = (token_info) => {
-  let trades = token_info.trades.map((e) => ({ ...e, trade: true }))
-  let swaps = token_info.swaps.map((e) => ({ ...e, trade: false }))
+  let trades = token_info.trades.map((e) => ({
+    ...e,
+    type: OperationType.Trade,
+  }))
+  let swaps = token_info.swaps.map((e) => ({ ...e, type: OperationType.Swap }))
+  let transfers = token_info.transfers.map((e) => ({
+    ...e,
+    type: OperationType.Transfer,
+  }))
 
-  let history = [...trades, ...swaps]
+  let history = [...trades, ...swaps, ...transfers]
     .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
     .reverse()
 
@@ -38,7 +55,7 @@ export const History = (token_info) => {
                 <div className={styles.history__date}>Time</div>
               </div>
               {history.map((e) => {
-                if (e.trade) {
+                if (e.type === OperationType.Trade) {
                   return (
                     <div className={`${styles.history}`} key={`t-${e.id}`}>
                       <div className={styles.history__event__container}>
@@ -141,7 +158,8 @@ export const History = (token_info) => {
                       </div>
                     </div>
                   )
-                } else {
+                }
+                if (e.type === OperationType.Swap) {
                   return (
                     <div className={`${styles.history}`} key={`s-${e.opid}`}>
                       <div className={styles.history__event__container}>
@@ -210,6 +228,100 @@ export const History = (token_info) => {
                     </div>
                   )
                 }
+                if (e.type === OperationType.Transfer) {
+                  return (
+                    <div className={`${styles.history}`} key={`b-${e.opid}`}>
+                      <div className={styles.history__event__container}>
+                        <BurnIcon size={16} viewBox={16} />
+                        <a
+                          href={`https://tzkt.io/${e.ophash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Burn
+                        </a>
+                      </div>
+
+                      <div className={styles.history__from}>
+                        <div
+                          className={`${styles.history__mobile} ${styles.history__secondary}`}
+                        >
+                          From
+                        </div>
+                        {e.sender.alias ? (
+                          <span>
+                            <a
+                              href={`/tz/${encodeURI(e.sender.address)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <Primary>{encodeURI(e.sender.alias)}</Primary>
+                            </a>
+                          </span>
+                        ) : (
+                          <span>
+                            <a href={`/tz/${e.sender.address}`}>
+                              <Primary>
+                                {walletPreview(e.sender.address)}
+                              </Primary>
+                            </a>
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.history__to}>
+                        <div
+                          className={`${styles.history__mobile} ${styles.history__secondary}`}
+                        >
+                          To
+                        </div>
+                        {
+                          <span>
+                            <a
+                              href={`/tz/${encodeURI(e.receiver)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <Primary>{walletPreview(e.receiver)}</Primary>
+                            </a>
+                          </span>
+                        }
+                      </div>
+
+                      <div
+                        className={`${styles.history__ed} ${styles.history__desktop}`}
+                      >
+                        {e.amount}
+                      </div>
+
+                      <div
+                        className={`${styles.history__price} ${styles.history__desktop}`}
+                      ></div>
+
+                      <div
+                        className={`${styles.history__date} ${styles.history__desktop}`}
+                        title={e.timestamp}
+                      >
+                        {getTimeAgo(e.timestamp)}
+                      </div>
+
+                      <div className={styles.history__inner__mobile}>
+                        <div
+                          className={styles.history__date}
+                          title={e.timestamp}
+                        >
+                          {getTimeAgo(e.timestamp)}
+                        </div>
+
+                        <div className={styles.history__ed}>ed. {e.amount}</div>
+
+                        <div className={styles.history__price}></div>
+                      </div>
+                    </div>
+                  )
+                }
+
+                return null
               })}
 
               <div className={styles.history} key="mint-op">

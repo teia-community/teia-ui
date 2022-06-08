@@ -1,0 +1,6 @@
+export { default as BurnIcon } from './burn'
+export { default as GenerativeIcon } from './generative'
+export { default as IndexerStatusIcon } from './indexer_status'
+export { default as MintedIcon } from './minted'
+export { default as SwapIcon } from './swap'
+export { default as TradeIcon } from './trade'
