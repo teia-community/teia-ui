@@ -1,6 +1,7 @@
 import { rnd } from '../utils'
 import {
   MARKETPLACE_CONTRACT_V1,
+  HEN_CONTRACT_FA2,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   BURN_ADDRESS,
 } from '@constants'
@@ -482,12 +483,13 @@ export async function fetchObjktDetails(id) {
 
   const result = data.token_by_pk
 
-  const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
+  const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?target.eq=${HEN_CONTRACT_FA2}&parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
   axios
     .get(endpoint)
     .then((response) => {
       result.transfers = []
       response.data.forEach((item) => {
+        console.log(item.target)
         result.transfers.push({
           timestamp: item.timestamp,
           sender: item.sender,
