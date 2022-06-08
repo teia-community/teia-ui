@@ -21,6 +21,9 @@ import {
   MIN_ROYALTIES,
   MAX_ROYALTIES,
   BURN_ADDRESS,
+  COVER_COMPRESSOR_OPTIONS,
+  THUMBNAIL_COMPRESSOR_OPTIONS,
+  IPFS_DIRECTORY_MIMETYPE,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -30,18 +33,6 @@ import {
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
-
-const coverOptions = {
-  quality: 0.85,
-  maxWidth: 1024,
-  maxHeight: 1024,
-}
-
-const thumbnailOptions = {
-  quality: 0.85,
-  maxWidth: 350,
-  maxHeight: 350,
-}
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
@@ -79,6 +70,12 @@ export const Mint = () => {
   const [needsCover, setNeedsCover] = useState(false)
   const [collabs, setCollabs] = useState([])
   const [selectCollab, setSelectCollab] = useState(false)
+  const [rights, setRights] = useState('') // To allow the artist to specify the asset rights.
+  const [rightUri, setRightUri] = useState('') // A URI to a statement of rights.
+  const [language, setLanguage] = useState('') // The language of the intellectual content of the asset.
+  const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
+  const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
+    useState(false) // Photosensitivity flag
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -132,8 +129,7 @@ export const Mint = () => {
       })
     } else {
       await setAccount()
-      console.log(file.mimeType)
-      console.log(ALLOWED_MIMETYPES)
+
       // check mime type
       if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
         // alert(
@@ -191,11 +187,125 @@ export const Mint = () => {
 
       console.log({ minterAddress })
 
+      // Metadata attributes
+      const attributes = [
+        {
+          name: 'nsfw',
+          value: nsfw,
+          type: 'boolean',
+        },
+        {
+          name: 'photosensitiveSeizureWarning',
+          value: photosensitiveSeizureWarning,
+          type: 'boolean',
+        },
+      ]
+
+      const getImageDimensions = async (file) => {
+        return await new Promise((resolve, reject) => {
+          if (file) {
+            const image = new Image()
+            image.src = file.reader
+            image.onload = function () {
+              resolve({ imageWidth: this.width, imageHeight: this.height })
+            }
+            image.onerror = function (e) {
+              resolve({ imageWidth: 0, imageHeight: 0 })
+            }
+          } else {
+            resolve({ imageWidth: 0, imageHeight: 0 })
+          }
+        })
+      }
+      const { imageWidth, imageHeight } = await getImageDimensions(file)
+
+      const isDirectory = [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(
+        file.mimeType
+      )
+      const formats = []
+      if (file.mimeType.indexOf('image') === 0) {
+        let format = {
+          mimeType: file.mimeType,
+          fileSize: file.file.size,
+          fileName: file.file.name,
+        }
+        if (imageWidth && imageHeight) {
+          format.dimensions = {
+            value: `${imageWidth}x${imageHeight}`,
+            unit: 'px',
+          }
+        }
+        formats.push(format)
+      } else if (isDirectory) {
+        formats.push({
+          fileSize: file.file.size,
+          fileName: file.file.name,
+          mimeType: IPFS_DIRECTORY_MIMETYPE,
+        })
+      } else {
+        formats.push({
+          fileSize: file.file.size,
+          fileName: file.file.name,
+          mimeType: file.mimeType,
+        })
+      }
+
+      const removeExtension = (name) => {
+        return name.split('.').slice(0, -1).join('.')
+      }
+
+      const extensionFromMimetype = (mime) => {
+        switch (mime) {
+          case MIMETYPE.JPEG:
+            return 'jpg'
+          case MIMETYPE.PNG:
+            return 'png'
+          case MIMETYPE.GIF:
+            return 'gif'
+          default:
+            return 'jpg'
+        }
+      }
+
+      // TMP: skip GIFs to avoid making static
+      if (file.mimeType !== MIMETYPE.GIF) {
+        let coverIsGif = false
+        if (cover) {
+          coverIsGif = cover.mimeType === MIMETYPE.GIF
+          const { imageWidth, imageHeight } = await getImageDimensions(cover)
+          cover.format = {
+            mimeType: cover.mimeType,
+            fileSize: cover.buffer.byteLength,
+            fileName: `${removeExtension(file.file.name)}.${
+              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+            }`,
+            dimensions: {
+              value: `${imageWidth}x${imageHeight}`,
+              unit: 'px',
+            },
+          }
+        }
+        if (thumbnail && !coverIsGif) {
+          const { imageWidth, imageHeight } = await getImageDimensions(
+            thumbnail
+          )
+          thumbnail.format = {
+            mimeType: thumbnail.mimeType,
+            fileSize: thumbnail.buffer.byteLength,
+            fileName: `${removeExtension(
+              file.file.name
+            )}.${extensionFromMimetype(thumbnail.mimeType)}`,
+            dimensions: {
+              value: `${imageWidth}x${imageHeight}`,
+              unit: 'px',
+            },
+          }
+        }
+      }
+
       // upload file(s)
       let nftCid
-      if (
-        [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(file.mimeType)
-      ) {
+      if (isDirectory) {
         const files = await prepareFilesFromZIP(file.buffer)
 
         nftCid = await prepareDirectory({
@@ -207,7 +317,11 @@ export const Mint = () => {
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
-          file,
+          rights,
+          rightUri,
+          language,
+          attributes,
+          formats,
         })
       } else {
         // process all other files
@@ -216,11 +330,15 @@ export const Mint = () => {
           description,
           tags,
           address: minterAddress,
-          buffer: file.buffer,
-          mimeType: file.mimeType,
+          file,
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
+          rights,
+          rightUri,
+          language,
+          attributes,
+          formats,
         })
       }
 
@@ -348,10 +466,13 @@ export const Mint = () => {
       return
     }
 
-    const cover = await generateCompressedImage(props, coverOptions)
+    const cover = await generateCompressedImage(props, COVER_COMPRESSOR_OPTIONS)
     setCover(cover)
 
-    const thumb = await generateCompressedImage(props, thumbnailOptions)
+    const thumb = await generateCompressedImage(
+      props,
+      THUMBNAIL_COMPRESSOR_OPTIONS
+    )
     setThumbnail(thumb)
   }
 

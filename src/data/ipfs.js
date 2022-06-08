@@ -1,6 +1,8 @@
 import {
   IPFS_DIRECTORY_MIMETYPE,
   IPFS_DEFAULT_THUMBNAIL_URI,
+  COVER_COMPRESSOR_OPTIONS,
+  THUMBNAIL_COMPRESSOR_OPTIONS,
 } from '../constants'
 //import { NFTStorage, File } from 'nft.storage'
 
@@ -14,96 +16,63 @@ const infuraUrl = 'https://ipfs.infura.io:5001'
 //const apiKey = process.env.REACT_APP_IPFS_KEY
 //const storage = new NFTStorage({ token: apiKey })
 
-export const prepareFile100MB = async ({
-  name,
-  description,
-  tags,
-  address,
-  buffer,
-  mimeType,
-  cover,
-  thumbnail,
-  generateDisplayUri,
-  file,
-}) => {
-  const ipfs = create(infuraUrl)
-
-  let formData = new FormData()
-  formData.append('file', file)
-
-  let info = await axios
-    .post('https://hesychasm.herokuapp.com/post_file', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-    .then((res) => res.data)
-  const hash = info.path
-  const cid = `ipfs://${hash}`
-
-  // upload cover image
-  let displayUri = ''
-  if (generateDisplayUri) {
-    const coverInfo = await ipfs.add(cover.buffer)
-    const coverHash = coverInfo.path
-    displayUri = `ipfs://${coverHash}`
-  }
-
-  // upload thumbnail image
-  let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  // @crzypatch works wants the thumbnailUri to be the black circle
-  // if (generateDisplayUri) {
-  //   const thumbnailInfo = await ipfs.add(thumbnail.buffer)
-  //   const thumbnailHash = thumbnailInfo.path
-  //   thumbnailUri = `ipfs://${thumbnailHash}`
-  // }
-
-  return await uploadMetadataFile({
-    name,
-    description,
-    tags,
-    cid,
-    address,
-    mimeType,
-    displayUri,
-    thumbnailUri,
-  })
-}
-
 export const prepareFile = async ({
   name,
   description,
   tags,
   address,
-  buffer,
-  mimeType,
+  file,
   cover,
   thumbnail,
   generateDisplayUri,
+  rights,
+  rightUri,
+  language,
+  attributes,
+  formats,
 }) => {
+  console.log('generateDisplayUri', generateDisplayUri)
   const ipfs = create(infuraUrl)
 
-  // upload main file
-  // const ipfs = create(infuraUrl)
+  const buffer = file.buffer
+  const mimeType = file.mimeType
 
   const hash = await ipfs.add(new Blob([buffer]))
   console.log(hash)
   const cid = `ipfs://${hash.path}`
 
+  if (formats.length > 0) {
+    formats[0].uri = cid
+    console.log('file format', formats[0])
+  }
+
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
     const coverHash = await ipfs.add(new Blob([cover.buffer]))
-    console.log(coverHash)
     displayUri = `ipfs://${coverHash.path}`
+    if (cover && cover.format) {
+      const format = JSON.parse(JSON.stringify(cover.format))
+      format.uri = displayUri
+      format.fileName = `cover_${format.fileName}`
+      formats.push(format)
+      console.log('cover format', format)
+    }
   }
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  // @crzypatch works wants the thumbnailUri to be the black circle
-  // if (generateDisplayUri) {
-  //   const thumbnailInfo = await ipfs.add(thumbnail.buffer)
-  //   const thumbnailHash = thumbnailInfo.path
-  //   thumbnailUri = `ipfs://${thumbnailHash}`
-  // }
+  if (generateDisplayUri) {
+    const thumbnailInfo = await ipfs.add(thumbnail.buffer)
+    thumbnailUri = `ipfs://${thumbnailInfo.path}`
+    if (thumbnail && thumbnail.format) {
+      const format = JSON.parse(JSON.stringify(thumbnail.format))
+      format.uri = thumbnailUri
+      format.fileName = `thumbnail_${format.fileName}`
+      formats.push(format)
+      console.log('thumbnail format', format)
+    }
+  }
 
   return await uploadMetadataFile({
     name,
@@ -111,9 +80,13 @@ export const prepareFile = async ({
     tags,
     cid,
     address,
-    mimeType,
     displayUri,
     thumbnailUri,
+    rights,
+    rightUri,
+    language,
+    attributes,
+    formats,
   })
 }
 
@@ -126,10 +99,20 @@ export const prepareDirectory = async ({
   cover,
   thumbnail,
   generateDisplayUri,
+  rights,
+  rightUri,
+  language,
+  attributes,
+  formats,
 }) => {
   // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
   const cid = `ipfs://${hashes.directory}`
+
+  if (formats.length > 0) {
+    formats[0].uri = cid
+    console.log('file format', formats[0])
+  }
 
   // upload cover image
   const ipfs = create(infuraUrl)
@@ -137,15 +120,39 @@ export const prepareDirectory = async ({
   let displayUri = ''
   if (generateDisplayUri) {
     const coverInfo = await ipfs.add(cover.buffer)
-    const coverHash = coverInfo.path
-    displayUri = `ipfs://${coverHash}`
+    displayUri = `ipfs://${coverInfo.path}`
+    if (cover && cover.format) {
+      const format = JSON.parse(JSON.stringify(cover.format))
+      format.uri = displayUri
+      format.fileName = `cover_${format.fileName}`
+      formats.push(format)
+      console.log('cover format', format)
+    }
   } else if (hashes.cover) {
     // TODO: Remove this once generateDisplayUri option is gone
     displayUri = `ipfs://${hashes.cover}`
+    if (cover && cover.format) {
+      const format = JSON.parse(JSON.stringify(cover.format))
+      format.uri = displayUri
+      format.fileName = `cover_${format.fileName}`
+      formats.push(format)
+      console.log('cover format', format)
+    }
   }
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
+  if (generateDisplayUri) {
+    const thumbnailInfo = await ipfs.add(thumbnail.buffer)
+    thumbnailUri = `ipfs://${thumbnailInfo.path}`
+    if (thumbnail && thumbnail.format) {
+      const format = JSON.parse(JSON.stringify(thumbnail.format))
+      format.uri = thumbnailUri
+      format.fileName = `thumbnail_${format.fileName}`
+      formats.push(format)
+      console.log('thumbnail format', format)
+    }
+  }
 
   return await uploadMetadataFile({
     name,
@@ -153,9 +160,13 @@ export const prepareDirectory = async ({
     tags,
     cid,
     address,
-    mimeType: IPFS_DIRECTORY_MIMETYPE,
     displayUri,
     thumbnailUri,
+    rights,
+    rightUri,
+    language,
+    attributes,
+    formats,
   })
 }
 
@@ -207,9 +218,13 @@ async function uploadMetadataFile({
   tags,
   cid,
   address,
-  mimeType,
   displayUri = '',
   thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI,
+  rights,
+  rightUri,
+  language,
+  attributes,
+  formats,
 }) {
   const ipfs = create(infuraUrl)
 
@@ -224,10 +239,15 @@ async function uploadMetadataFile({
         displayUri,
         thumbnailUri,
         creators: [address],
-        formats: [{ uri: cid, mimeType }],
+        formats,
         decimals: 0,
         isBooleanAmount: false,
         shouldPreferSymbol: false,
+        rights,
+        rightUri,
+        language,
+        date: new Date().toISOString(),
+        attributes,
       })
     )
   )

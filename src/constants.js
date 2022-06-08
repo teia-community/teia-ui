@@ -166,3 +166,15 @@ export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one th
 export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
+
+export const COVER_COMPRESSOR_OPTIONS = {
+  quality: 0.85,
+  maxWidth: 1024,
+  maxHeight: 1024,
+}
+
+export const THUMBNAIL_COMPRESSOR_OPTIONS = {
+  quality: 0.85,
+  maxWidth: 350,
+  maxHeight: 350,
+}
