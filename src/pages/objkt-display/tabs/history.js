@@ -59,7 +59,7 @@ export const History = (token_info) => {
                   return (
                     <div className={`${styles.history}`} key={`t-${e.id}`}>
                       <div className={styles.history__event__container}>
-                        <TradeIcon size={16} viewBox={16} />
+                        <TradeIcon size={14} viewBox={16} />
                         <a
                           href={`https://tzkt.io/${e.ophash}`}
                           target="_blank"
@@ -163,7 +163,7 @@ export const History = (token_info) => {
                   return (
                     <div className={`${styles.history}`} key={`s-${e.opid}`}>
                       <div className={styles.history__event__container}>
-                        <SwapIcon size={16} viewBox={16} />
+                        <SwapIcon size={14} viewBox={16} />
                         <a
                           href={`https://tzkt.io/${e.ophash}`}
                           target="_blank"
@@ -232,7 +232,7 @@ export const History = (token_info) => {
                   return (
                     <div className={`${styles.history}`} key={`b-${e.opid}`}>
                       <div className={styles.history__event__container}>
-                        <BurnIcon size={16} viewBox={16} />
+                        <BurnIcon size={14} viewBox={16} />
                         <a
                           href={`https://tzkt.io/${e.ophash}`}
                           target="_blank"
@@ -326,7 +326,7 @@ export const History = (token_info) => {
 
               <div className={styles.history} key="mint-op">
                 <div className={styles.history__event__container}>
-                  <MintedIcon size={16} viewBox={16} />
+                  <MintedIcon size={14} viewBox={16} />
                   <div className={styles.history__mint__op}>Minted</div>
                 </div>
 
