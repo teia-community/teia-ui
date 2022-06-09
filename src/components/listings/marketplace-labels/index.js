@@ -36,6 +36,14 @@ export const OBJKTLabel = () => (
     Objkt.com
   </span>
 )
+export const RestrictedLabel = () => (
+  <span
+    className={styles.swapLabel}
+    title="This swap is made by a restricted wallet."
+  >
+    Restricted
+  </span>
+)
 
 export const MarketplaceLabel = ({ swap }) => {
   if (swap.contract_address === MARKETPLACE_CONTRACT_TEIA) {

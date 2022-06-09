@@ -4,7 +4,11 @@ import { Button, Primary, Purchase } from '../button'
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { MarketplaceLabel, OBJKTLabel } from './marketplace-labels'
+import {
+  MarketplaceLabel,
+  OBJKTLabel,
+  RestrictedLabel,
+} from './marketplace-labels'
 
 function TeiaOrHenSwapRow({
   rowId,
@@ -40,6 +44,7 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
+        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
         <MarketplaceLabel swap={swap} />
         {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
           <Button
@@ -98,7 +103,7 @@ function TeiaOrHenSwapRow({
   )
 }
 
-function ObjktcomAskRow({ id, ask, onCollectClick }) {
+function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -111,10 +116,15 @@ function ObjktcomAskRow({ id, ask, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
+        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
         <OBJKTLabel />
-        <Button onClick={() => onCollectClick()}>
-          <Purchase>Collect for {parseFloat(ask.price / 1000000)} tez</Purchase>
-        </Button>
+        {!restricted && !ban.includes(swap.creator_id) && (
+          <Button onClick={() => onCollectClick()}>
+            <Purchase>
+              Collect for {parseFloat(ask.price / 1000000)} tez
+            </Purchase>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -161,6 +171,9 @@ export const Listings = ({
               id={id}
               key={listing.key}
               ask={listing}
+              swap={listing}
+              restricted={restricted}
+              ban={ban}
               onCollectClick={() => {
                 handleCollectObjktcomAsk(listing)
               }}
