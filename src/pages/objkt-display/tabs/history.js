@@ -4,6 +4,7 @@ import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
+import { BURN_ADDRESS } from '@constants'
 
 import { IconCache } from '@utils/with-icon'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
@@ -82,7 +83,7 @@ export const History = (token_info) => {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{encodeURI(e.seller.name)}</Primary>
+                              <Primary>{e.seller.name}</Primary>
                             </a>
                           </span>
                         ) : (
@@ -109,7 +110,7 @@ export const History = (token_info) => {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{encodeURI(e.buyer.name)}</Primary>
+                              <Primary>{e.buyer.name}</Primary>
                             </a>
                           </span>
                         ) : (
@@ -186,7 +187,7 @@ export const History = (token_info) => {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{encodeURI(e.creator.name)}</Primary>
+                              <Primary>{e.creator.name}</Primary>
                             </a>
                           </span>
                         ) : (
@@ -255,7 +256,7 @@ export const History = (token_info) => {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{encodeURI(e.sender.alias)}</Primary>
+                              <Primary>{e.sender.alias}</Primary>
                             </a>
                           </span>
                         ) : (
@@ -278,11 +279,11 @@ export const History = (token_info) => {
                         {
                           <span>
                             <a
-                              href={`/tz/${encodeURI(e.receiver)}`}
+                              href={`/tz/${encodeURI(BURN_ADDRESS)}`}
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{walletPreview(e.receiver)}</Primary>
+                              <Primary>Burn Address</Primary>
                             </a>
                           </span>
                         }
@@ -338,7 +339,7 @@ export const History = (token_info) => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Primary>{encodeURI(token_info.creator.name)}</Primary>
+                        <Primary>{token_info.creator.name}</Primary>
                       </a>
                     </span>
                   ) : (
