@@ -287,7 +287,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  token(where: {supply : { _neq : 0 }, token_tags: {tag: {tag: {_eq: ${tag}}}}, id: {_lt: ${offset}}}, limit : 15, order_by: {id: desc}) {
+  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 15, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -369,6 +369,7 @@ export class Search extends Component {
     lastId: undefined,
     tags: [
       { id: 11, value: '🇺🇦 ukraine' },
+      { id: 12, value: 'tezospride' },
       { id: 0, value: '○ hDAO' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
@@ -515,6 +516,14 @@ export class Search extends Component {
           [...this.state.feed, ...(await fetchGLB(this.state.offset))],
           'creator_id'
         ),
+      })
+    }
+
+    if (e === 'tezospride') {
+      let res = await fetchTag('tezospride', this.state.offset)
+      res = res.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
     }
 
