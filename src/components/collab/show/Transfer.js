@@ -96,7 +96,7 @@ export const Transfer = ({ id, creator, token_holders }) => {
       {tokenCount === 0 ? (
         <Padding>
           <div className={styles.container}>
-            <p>You do not have any editions available to transfer.</p>
+            <p>No editions found to transfer. This tool is only for sending OBJKTs from a collab contract to other tezos addresses, make sure to be signed into a collab contract to use it.</p>
           </div>
         </Padding>
       ) : (
