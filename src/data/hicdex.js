@@ -6,7 +6,6 @@ import {
   BURN_ADDRESS,
 } from '@constants'
 const _ = require('lodash')
-const axios = require('axios')
 
 export const getDipdupState = `query {
   dipdup_index {
@@ -475,6 +474,25 @@ export async function fetchObjkts(ids) {
   return data.token
 }
 
+async function fetchSubjktNames(ad) {
+  const { errors, data } = await fetchGraphQL(
+    `query SubjktNames ($addresses: [String!]) {
+    holder(where: {address: {_in: $addresses}}) {
+      address
+      name
+    }
+  }
+  `,
+    'SubjktNames',
+    { addresses: [...ad] }
+  )
+  if (errors) {
+    console.error('Failed to fetch SUBJKTs')
+    console.error(errors)
+  }
+  return data.holder
+}
+
 export async function fetchObjktDetails(id) {
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
@@ -483,27 +501,38 @@ export async function fetchObjktDetails(id) {
 
   const result = data.token_by_pk
 
+  // Fetch burn transfers
+  // we want to use SUBJKT to resolve aliases not tzkt.
+  const addressesToResolve = []
+  result.transfers = []
   const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?target.eq=${HEN_CONTRACT_FA2}&parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
-  axios
-    .get(endpoint)
-    .then((response) => {
-      result.transfers = []
-      response.data.forEach((item) => {
-        console.log(item.target)
-        result.transfers.push({
-          timestamp: item.timestamp,
-          sender: item.sender,
-          receiver: item.parameter.value[0].txs[0].to_,
-          ophash: item.hash,
-          opid: item.id,
-          amount: item.parameter.value[0].txs[0].amount,
-        })
+  try {
+    const burn_operations = await (await fetch(endpoint)).json()
+    burn_operations.forEach((item) => {
+      if (addressesToResolve.indexOf(item.sender.address) === -1) {
+        addressesToResolve.push(item.sender.address)
+      }
+
+      result.transfers.push({
+        timestamp: item.timestamp,
+        ophash: item.hash,
+        sender: item.sender.address,
+        opid: item.id,
+        amount: item.parameter.value[0].txs[0].amount,
       })
     })
-    .catch((error) => {
-      console.error('Problem with call to tzkt')
-      console.error(error)
-    })
+  } catch (error) {
+    console.error('Problem with call to tzkt')
+    console.error(error)
+  }
+  const resolvedAddresses = await fetchSubjktNames(addressesToResolve)
+
+  _.each(result.transfers, (transfer) => {
+    const resolvedAddress = resolvedAddresses.find(
+      (subjkt) => subjkt.address === transfer.sender
+    )
+    transfer.sender = resolvedAddress
+  })
 
   return result
 }

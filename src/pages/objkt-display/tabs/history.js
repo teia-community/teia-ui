@@ -249,14 +249,14 @@ export const History = (token_info) => {
                         >
                           From
                         </div>
-                        {e.sender.alias ? (
+                        {e.sender.name ? (
                           <span>
                             <a
                               href={`/tz/${encodeURI(e.sender.address)}`}
                               target="_blank"
                               rel="noreferrer"
                             >
-                              <Primary>{e.sender.alias}</Primary>
+                              <Primary>{e.sender.name}</Primary>
                             </a>
                           </span>
                         ) : (
