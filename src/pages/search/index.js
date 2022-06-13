@@ -369,7 +369,7 @@ export class Search extends Component {
     lastId: undefined,
     tags: [
       { id: 11, value: '🇺🇦 ukraine' },
-      { id: 12, value: 'tezospride' },
+      { id: 12, value: '🏳️‍🌈 tezospride' },
       { id: 0, value: '○ hDAO' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
@@ -524,7 +524,7 @@ export class Search extends Component {
       })
     }
 
-    if (e === 'tezospride') {
+    if (e === '🏳️‍🌈 tezospride') {
       let res = await fetchTag('tezospride', this.state.offset)
       res = res.filter((e) => !arr.includes(e.creator_id))
       this.setState({
