@@ -11,25 +11,19 @@ import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
 // import MintedIcon from '@icons/minted'
 // import SwapIcon from '@icons/swap'
 
-class OperationType {
-  static Trade = new OperationType('trade')
-  static Transfer = new OperationType('transfer')
-  static Swap = new OperationType('swap')
-
-  constructor(name) {
-    this.name = name
-  }
-}
+const OPERATION_SWAP = 'SWAP'
+const OPERATION_TRANSFER = 'TRANSFER'
+const OPERATION_TRADE = 'TRADE'
 
 export const History = (token_info) => {
   let trades = token_info.trades.map((e) => ({
     ...e,
-    type: OperationType.Trade,
+    type: OPERATION_TRADE,
   }))
-  let swaps = token_info.swaps.map((e) => ({ ...e, type: OperationType.Swap }))
+  let swaps = token_info.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
   let transfers = token_info.transfers.map((e) => ({
     ...e,
-    type: OperationType.Transfer,
+    type: OPERATION_TRANSFER,
   }))
 
   let history = [...trades, ...swaps, ...transfers]
@@ -56,7 +50,7 @@ export const History = (token_info) => {
                 <div className={styles.history__date}>Time</div>
               </div>
               {history.map((e) => {
-                if (e.type === OperationType.Trade) {
+                if (e.type === OPERATION_TRADE) {
                   return (
                     <div className={`${styles.history}`} key={`t-${e.id}`}>
                       <div className={styles.history__event__container}>
@@ -160,7 +154,7 @@ export const History = (token_info) => {
                     </div>
                   )
                 }
-                if (e.type === OperationType.Swap) {
+                if (e.type === OPERATION_SWAP) {
                   return (
                     <div className={`${styles.history}`} key={`s-${e.opid}`}>
                       <div className={styles.history__event__container}>
@@ -229,7 +223,7 @@ export const History = (token_info) => {
                     </div>
                   )
                 }
-                if (e.type === OperationType.Transfer) {
+                if (e.type === OPERATION_TRANSFER) {
                   return (
                     <div className={`${styles.history}`} key={`b-${e.opid}`}>
                       <div className={styles.history__event__container}>
