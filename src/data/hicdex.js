@@ -474,7 +474,7 @@ export async function fetchObjkts(ids) {
   return data.token
 }
 
-async function fetchSubjktNames(ad) {
+async function fetchSubjktNames(addresses) {
   const { errors, data } = await fetchGraphQL(
     `query SubjktNames ($addresses: [String!]) {
     holder(where: {address: {_in: $addresses}}) {
@@ -484,7 +484,7 @@ async function fetchSubjktNames(ad) {
   }
   `,
     'SubjktNames',
-    { addresses: [...ad] }
+    { addresses }
   )
   if (errors) {
     console.error('Failed to fetch SUBJKTs')
@@ -527,7 +527,7 @@ export async function fetchObjktDetails(id) {
   }
   const resolvedAddresses = await fetchSubjktNames(addressesToResolve)
 
-  _.each(result.transfers, (transfer) => {
+  result.transfers.forEach((transfer) => {
     const resolvedAddress = resolvedAddresses.find(
       (subjkt) => subjkt.address === transfer.sender
     )
