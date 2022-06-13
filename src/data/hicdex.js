@@ -1,7 +1,9 @@
 import { rnd } from '../utils'
 import {
   MARKETPLACE_CONTRACT_V1,
+  HEN_CONTRACT_FA2,
   SUPPORTED_MARKETPLACE_CONTRACTS,
+  BURN_ADDRESS,
 } from '@constants'
 const _ = require('lodash')
 
@@ -472,16 +474,68 @@ export async function fetchObjkts(ids) {
   return data.token
 }
 
+async function fetchSubjktNames(addresses) {
+  const { errors, data } = await fetchGraphQL(
+    `query SubjktNames ($addresses: [String!]) {
+    holder(where: {address: {_in: $addresses}}) {
+      address
+      name
+    }
+  }
+  `,
+    'SubjktNames',
+    { addresses }
+  )
+  if (errors) {
+    console.error('Failed to fetch SUBJKTs')
+    console.error(errors)
+  }
+  return data.holder
+}
+
 export async function fetchObjktDetails(id) {
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
     console.error(errors)
   }
 
-  console.log(errors, data)
-
   const result = data.token_by_pk
-  console.log(result)
+
+  // Fetch burn transfers
+  // we want to use SUBJKT to resolve aliases not tzkt.
+  const addressesToResolve = []
+  result.transfers = []
+  const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?target.eq=${HEN_CONTRACT_FA2}&parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
+  try {
+    const burn_operations = await (await fetch(endpoint)).json()
+    burn_operations.forEach((item) => {
+      if (addressesToResolve.indexOf(item.sender.address) === -1) {
+        addressesToResolve.push(item.sender.address)
+      }
+
+      result.transfers.push({
+        timestamp: item.timestamp,
+        ophash: item.hash,
+        sender: item.sender.address,
+        opid: item.id,
+        amount: _(item.parameter.value[0].txs)
+          .filter((tx) => tx.to_ === BURN_ADDRESS)
+          .sumBy('amount'),
+      })
+    })
+  } catch (error) {
+    console.error('Problem with call to tzkt')
+    console.error(error)
+  }
+  const resolvedAddresses = await fetchSubjktNames(addressesToResolve)
+
+  result.transfers.forEach((transfer) => {
+    const resolvedAddress = resolvedAddresses.find(
+      (subjkt) => subjkt.address === transfer.sender
+    )
+    transfer.sender = resolvedAddress
+  })
+
   return result
 }
 
