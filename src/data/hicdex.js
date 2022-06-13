@@ -518,7 +518,9 @@ export async function fetchObjktDetails(id) {
         ophash: item.hash,
         sender: item.sender.address,
         opid: item.id,
-        amount: item.parameter.value[0].txs[0].amount,
+        amount: _(item.parameter.value[0].txs)
+          .filter((tx) => tx.to_ === BURN_ADDRESS)
+          .sumBy('amount'),
       })
     })
   } catch (error) {
