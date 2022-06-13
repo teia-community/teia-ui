@@ -179,43 +179,6 @@ async function fetchMusic(offset) {
   }
 }
 
-async function fetchDay(day, offset) {
-  const { errors, data } = await fetchGraphQL(
-    `query dayTrades {
-    trade(where: {timestamp: {_gte: "${day}"}}, order_by: {swap: {price: desc}}, limit : 15, offset : ${offset}) {
-      timestamp
-      swap {
-        price
-      }
-      token {
-        artifact_uri
-        display_uri
-        id
-        mime
-        creator {
-          name
-          address
-        }
-      }
-    }
-  }`,
-    'dayTrades',
-    {}
-  )
-
-  if (errors) {
-    console.log(errors)
-  }
-
-  let result = []
-
-  try {
-    result = data.trade
-  } catch (e) {}
-
-  return result
-}
-
 async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
@@ -287,7 +250,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  token(where: {supply : { _neq : 0 }, token_tags: {tag: {tag: {_eq: ${tag}}}}, id: {_lt: ${offset}}}, limit : 15, order_by: {id: desc}) {
+  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 15, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -326,35 +289,6 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
   return await result.json()
 }
 
-const query_hdao = `query hDAOFeed($offset: Int = 0) {
-  token(order_by: {hdao_balance: desc}, limit: 15, where: {hdao_balance: {_gt: 100}}, offset: $offset) {
-    artifact_uri
-    display_uri
-    creator_id
-    id
-    mime
-    thumbnail_uri
-    timestamp
-    title
-    hdao_balance
-    creator {
-      name
-      address
-    }
-  }
-}`
-
-async function fetchHdao(offset) {
-  const { errors, data } = await fetchGraphQL(query_hdao, 'hDAOFeed', {
-    offset: offset,
-  })
-  if (errors) {
-    console.error(errors)
-  }
-  const result = data.token
-  return result
-}
-
 export class Search extends Component {
   static contextType = HicetnuncContext
 
@@ -369,7 +303,7 @@ export class Search extends Component {
     lastId: undefined,
     tags: [
       { id: 11, value: '🇺🇦 ukraine' },
-      { id: 0, value: '○ hDAO' },
+      { id: 12, value: '🏳️‍🌈 tezospride' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
       { id: 3, value: 'music' },
@@ -378,9 +312,6 @@ export class Search extends Component {
       { id: 5, value: 'gif' },
       { id: 6, value: 'new OBJKTs' },
       { id: 7, value: 'recent sales' },
-      { id: 8, value: '1D' },
-      { id: 9, value: '1W' },
-      { id: 10, value: '1M' },
     ],
     select: [],
     mouse: false,
@@ -400,9 +331,13 @@ export class Search extends Component {
         'creator_id'
       ),
     })
-    //this.latest(999999)
   }
-
+  componentDidMount = () => {
+    window.twemoji.parse(
+      document.body,
+      { folder: 'svg', ext: '.svg' } // This is to specify to Twemoji to use SVGs and not PNGs
+    )
+  }
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value })
 
@@ -421,53 +356,6 @@ export class Search extends Component {
       })
     }
 
-    if (e === '1D') {
-      let list = await fetchDay(
-        new Date(new Date().getTime() - 60 * 60 * 24 * 1000).toISOString(),
-        this.state.offset
-      )
-      list = list.map((e) => e.token)
-      list = [...this.state.feed, ...list]
-      list = list.filter((e) => !arr.includes(e.creator.address))
-      list = _.uniqBy(list, 'id')
-
-      this.setState({
-        feed: list,
-      })
-    }
-
-    if (e === '1W') {
-      let list = await fetchDay(
-        new Date(new Date().getTime() - 60 * 60 * 24 * 7 * 1000).toISOString(),
-        this.state.offset
-      )
-      list = list.map((e) => e.token)
-      list = [...this.state.feed, ...list]
-      list = list.filter((e) => !arr.includes(e.creator.address))
-
-      list = _.uniqBy(list, 'id')
-
-      this.setState({
-        feed: list,
-      })
-    }
-
-    if (e === '1M') {
-      let list = await fetchDay(
-        new Date(new Date().getTime() - 60 * 60 * 24 * 30 * 1000).toISOString(),
-        this.state.offset
-      )
-      list = list.map((e) => e.token)
-      list = [...this.state.feed, ...list]
-      list = list.filter((e) => !arr.includes(e.creator.address))
-
-      list = _.uniqBy(list, 'id')
-
-      this.setState({
-        feed: list,
-      })
-    }
-
     if (e === 'num') {
       let res = await fetchFeed(
         Number(this.state.search) + 1 - this.state.offset
@@ -475,19 +363,6 @@ export class Search extends Component {
       res = res.filter((e) => !arr.includes(e.creator_id))
       this.setState({
         feed: [...this.state.feed, ...res],
-      })
-    }
-
-    if (e === '○ hDAO') {
-      this.setState({
-        feed: _.uniqBy(
-          _.uniqBy(
-            [...this.state.feed, ...(await fetchHdao(this.state.offset))],
-            'id'
-          ),
-          'creator_id'
-        ),
-        hdao: true,
       })
     }
 
@@ -515,6 +390,14 @@ export class Search extends Component {
           [...this.state.feed, ...(await fetchGLB(this.state.offset))],
           'creator_id'
         ),
+      })
+    }
+
+    if (e === '🏳️‍🌈 tezospride') {
+      let res = await fetchTag('tezospride', this.state.offset)
+      res = res.filter((e) => !arr.includes(e.creator_id))
+      this.setState({
+        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
     }
 
