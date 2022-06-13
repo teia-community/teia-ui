@@ -34,6 +34,12 @@ body {
   // font-family: 'Courier New', 'Courier', monospace;// README: oldfont
 }
 
+img.emoji {
+  //width: 1em;
+  width: $font-small-mobile;
+  pointer-events: none;
+}
+
 .markdown-doc {
   p {
     margin: 1em 0;

@@ -26,6 +26,7 @@
     text-transform: lowercase;
     text-decoration: none;
     font-size: $font-small-mobile;
+    align-items: center;
 
     transition: background-color #{$theme-duration} ease-out,
       color #{$theme-duration} ease-out;

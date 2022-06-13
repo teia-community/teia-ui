@@ -403,7 +403,12 @@ export class Search extends Component {
     })
     //this.latest(999999)
   }
-
+  componentDidMount = async () => {
+    window.twemoji.parse(
+      document.body,
+      { folder: 'svg', ext: '.svg' } // This is to specify to Twemoji to use SVGs and not PNGs
+    )
+  }
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value })
 
