@@ -191,6 +191,7 @@ export const LICENSE_TYPES = {
 }
 
 export const LANGUAGES = {
+  none: 'None',
   AD: '🇦🇩 Andorra',
   AE: '🇦🇪 United Arab Emirates',
   AF: '🇦🇫 Afghanistan',

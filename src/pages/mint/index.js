@@ -553,6 +553,7 @@ export const Mint = () => {
     setRightUri('')
     setNsfw(false)
     setPhotosensitiveSeizureWarning(false)
+    setLanguage('')
 
     const keys = [
       'objkt::title',
@@ -729,7 +730,7 @@ export const Mint = () => {
                 <Padding>
                   <label for="nsfw">NSFW</label>
                   <input
-                    value={nsfw}
+                    checked={nsfw}
                     onChange={(e) => {
                       setNsfw(e.target.checked)
                       window.localStorage.setItem(
@@ -744,7 +745,7 @@ export const Mint = () => {
                 <Padding>
                   <label for="photosens">Photo Sensitive Seizure</label>
                   <input
-                    value={photosensitiveSeizureWarning}
+                    checked={photosensitiveSeizureWarning}
                     onChange={(e) => {
                       setPhotosensitiveSeizureWarning(e.target.checked)
                       window.localStorage.setItem(
