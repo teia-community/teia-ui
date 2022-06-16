@@ -1,8 +1,6 @@
 import {
   IPFS_DIRECTORY_MIMETYPE,
   IPFS_DEFAULT_THUMBNAIL_URI,
-  COVER_COMPRESSOR_OPTIONS,
-  THUMBNAIL_COMPRESSOR_OPTIONS,
 } from '../constants'
 //import { NFTStorage, File } from 'nft.storage'
 
