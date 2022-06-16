@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
 import { Input, Textarea } from '@components/input'
+import { Select } from '@components/select'
 import { Button, Curate, Primary, Purchase } from '@components/button'
 import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
@@ -48,6 +49,17 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
     }
   }
 }`
+
+const LICENSE_TYPES = {
+  none: 'None',
+  'cc-by-4.0': 'CC-BY-4.0 (Attribution)',
+  'cc-by-sa-4.0': 'CC BY-SA 4.0 (Attribution ShareAlike)',
+  'cc-by-nd-4.0': 'CC BY-ND 4.0 (Attribution-NoDerivs)',
+  'cc-by-nc-4.0': 'CC BY-NC 4.0 (Attribution-NonCommercial)',
+  'cc-by-nc-sa-4.0': 'CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)',
+  'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
+  custom: 'Custom (Specify)',
+}
 
 // @crzypathwork change to "true" to activate displayUri and thumbnailUri
 const GENERATE_DISPLAY_AND_THUMBNAIL = true
@@ -509,12 +521,22 @@ export const Mint = () => {
     const tags = window.localStorage.getItem('objkt::tags')
     const edition_count = window.localStorage.getItem('objkt::edition_count')
     const royalties = window.localStorage.getItem('objkt::royalties')
+    const rights = window.localStorage.getItem('objkt::rights')
+    const rights_uri = window.localStorage.getItem('objkt::rights_uri')
+    const nsfw = window.localStorage.getItem('objkt::nsfw')
+    const photoSeizureWarning = window.localStorage.getItem(
+      'objkt::photosensitive_seizure_warning'
+    )
 
     setTitle(title)
     setDescription(description)
     setTags(tags)
     setAmount(edition_count)
     setRoyalties(royalties)
+    setRights(LICENSE_TYPES[rights])
+    setRightUri(rights_uri)
+    setNsfw(nsfw)
+    setPhotosensitiveSeizureWarning(photoSeizureWarning)
 
     console.log(`
     Restoring fields from localStorage:
@@ -523,6 +545,10 @@ export const Mint = () => {
       tags = ${tags}
       edition_count = ${edition_count}
       royalties = ${royalties}
+      rights = ${rights}
+      rights_uri = ${rights_uri}
+      nsfw = ${nsfw}
+      photosensitive_seizure_warning = ${photoSeizureWarning}
     `)
   }
 
@@ -532,6 +558,10 @@ export const Mint = () => {
     setTags('')
     setAmount('')
     setRoyalties('')
+    setRights('none')
+    setRightUri('')
+    setNsfw(false)
+    setPhotosensitiveSeizureWarning(false)
 
     const keys = [
       'objkt::title',
@@ -539,6 +569,10 @@ export const Mint = () => {
       'objkt::tags',
       'objkt::edition_count',
       'objkt::royalties',
+      'objkt::rights',
+      'objkt::rights_uri',
+      'objkt::nsfw',
+      'objkt::photosensitive_seizure_warning',
     ]
 
     keys.forEach((k) => window.localStorage.removeItem(k))
@@ -664,6 +698,64 @@ export const Mint = () => {
                 label="Royalties"
                 value={royalties}
               />
+              <Select
+                label="Rights"
+                value={rights}
+                onChange={(e) => {
+                  setRights(e.target.value)
+                  window.localStorage.setItem('objkt::rights', e.target.value)
+                }}
+                options={LICENSE_TYPES}
+              />
+              {rights === 'custom' && (
+                <Padding>
+                  <Input
+                    type="text"
+                    onChange={(e) => {
+                      setRightUri(e.target.value)
+                      window.localStorage.setItem(
+                        'objkt::rights_uri',
+                        e.target.value
+                      )
+                    }}
+                    placeholder=""
+                    label="Right URI"
+                    value={rightUri}
+                  />
+                </Padding>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Padding>
+                  <label for="nsfw">NSFW</label>
+                  <input
+                    value={nsfw}
+                    onChange={(e) => {
+                      setNsfw(e.target.checked)
+                      window.localStorage.setItem(
+                        'objkt::nsfw',
+                        e.target.checked
+                      )
+                    }}
+                    type="checkbox"
+                    name="nsfw"
+                  />
+                </Padding>
+                <Padding>
+                  <label for="photosens">Photo Sensitive Seizure</label>
+                  <input
+                    value={photosensitiveSeizureWarning}
+                    onChange={(e) => {
+                      setPhotosensitiveSeizureWarning(e.target.checked)
+                      window.localStorage.setItem(
+                        'objkt::photosensitive_seizure_warning',
+                        e.target.checked
+                      )
+                    }}
+                    type="checkbox"
+                    name="photosens"
+                  />
+                </Padding>
+              </div>
             </Padding>
           </Container>
 
