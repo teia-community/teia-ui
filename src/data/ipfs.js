@@ -33,8 +33,6 @@ export const prepareFile = async ({
   const ipfs = create(infuraUrl)
 
   const buffer = file.buffer
-  const mimeType = file.mimeType
-
   const hash = await ipfs.add(new Blob([buffer]))
   console.log(hash)
   const cid = `ipfs://${hash.path}`

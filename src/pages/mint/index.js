@@ -25,6 +25,8 @@ import {
   COVER_COMPRESSOR_OPTIONS,
   THUMBNAIL_COMPRESSOR_OPTIONS,
   IPFS_DIRECTORY_MIMETYPE,
+  LICENSE_TYPES,
+  LANGUAGES,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -49,17 +51,6 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
     }
   }
 }`
-
-const LICENSE_TYPES = {
-  none: 'None',
-  'cc-by-4.0': 'CC-BY-4.0 (Attribution)',
-  'cc-by-sa-4.0': 'CC BY-SA 4.0 (Attribution ShareAlike)',
-  'cc-by-nd-4.0': 'CC BY-ND 4.0 (Attribution-NoDerivs)',
-  'cc-by-nc-4.0': 'CC BY-NC 4.0 (Attribution-NonCommercial)',
-  'cc-by-nc-sa-4.0': 'CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)',
-  'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
-  custom: 'Custom (Specify)',
-}
 
 // @crzypathwork change to "true" to activate displayUri and thumbnailUri
 const GENERATE_DISPLAY_AND_THUMBNAIL = true
@@ -724,6 +715,16 @@ export const Mint = () => {
                   />
                 </Padding>
               )}
+              <Select
+                label="Language"
+                options={LANGUAGES}
+                value={language}
+                onChange={(e) => {
+                  setLanguage(e.target.value)
+                  window.localStorage.setItem('objkt::language', e.target.value)
+                }}
+              />
+
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Padding>
                   <label for="nsfw">NSFW</label>
