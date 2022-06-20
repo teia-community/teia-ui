@@ -51,7 +51,7 @@ export const Preview = ({
         </div>
 
         <div className={styles.description}>
-          <strong>Rights:</strong> {rights.label}
+          <strong>License:</strong> {rights.label}
         </div>
         <div className={styles.description}>
           <strong>Language:</strong> {language.label}

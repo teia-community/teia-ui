@@ -690,9 +690,9 @@ export const Mint = () => {
                 value={royalties}
               />
               <Select
-                label="Rights"
+                label="License"
                 value={rights}
-                placeholder="License (select one)"
+                placeholder="(optional)"
                 onChange={(e) => {
                   setRights(e)
                   window.localStorage.setItem(
@@ -721,7 +721,7 @@ export const Mint = () => {
               )}
               <Select
                 label="Language"
-                placeholder="Language (select one)"
+                placeholder="(optional)"
                 options={LANGUAGES_OPTIONS}
                 value={language}
                 onChange={(e) => {
