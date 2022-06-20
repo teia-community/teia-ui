@@ -13,7 +13,20 @@ function isHTML(mimeType) {
   )
 }
 
-export const Preview = ({ title, description, mimeType, previewUri, tags }) => {
+export const Preview = ({
+  title,
+  description,
+  mimeType,
+  previewUri,
+  tags,
+  rights,
+  rightsUri,
+  language,
+  nsfw,
+  photosensitiveSeizureWarning,
+  amount,
+  royalties,
+}) => {
   const token_tags = tags !== '' ? tags.replace(/\s/g, '').split(',') : []
   return (
     <div className={styles.container}>
@@ -28,9 +41,43 @@ export const Preview = ({ title, description, mimeType, previewUri, tags }) => {
         })}
       </div>
       <div className={styles.info}>
-        <div className={styles.title}>{title}</div>
-        <div className={styles.description}>{description}</div>
-        <Tags token_tags={token_tags} preview={true} />
+        <div className={styles.title}>
+          <strong>Title:</strong>
+          {title}
+        </div>
+        <div className={styles.description}>
+          <strong>Description:</strong>
+          {description}
+        </div>
+
+        <div className={styles.description}>
+          <strong>Rights:</strong> {rights.label}
+        </div>
+        <div className={styles.description}>
+          <strong>Language:</strong> {language.label}
+        </div>
+        {(photosensitiveSeizureWarning || nsfw) && (
+          <div className={styles.attributes}>
+            <strong>Attributes:</strong>
+            {nsfw && (
+              <span className={styles.label} title={'This artwork is NSFW'}>
+                NSFW
+              </span>
+            )}
+            {photosensitiveSeizureWarning && (
+              <span
+                className={styles.label}
+                title={'This artwork is can cause seizures'}
+              >
+                Photo Sensitive Seizure Warning!
+              </span>
+            )}
+          </div>
+        )}
+        <div className={styles.attributes}>
+          <strong>Tags:</strong>
+          <Tags token_tags={token_tags} preview={true} />
+        </div>
       </div>
     </div>
   )

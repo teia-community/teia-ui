@@ -20,6 +20,30 @@
     white-space: pre-wrap;
   }
 
+  .attributes {
+    display: flex;
+    flex-direction: row;
+  }
+  strong {
+    margin-right: 1em;
+  }
+  .label {
+    color: var(--gray-40);
+    border: 1px solid var(--gray-30);
+    padding: 6px 8px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: default;
+    --borderWidth: 2px;
+    position: relative;
+    white-space: nowrap;
+    margin-right: 10px;
+    display: flex;
+    min-width: fit-content;
+    max-width: fit-content;
+    align-items: center;
+  }
+
   @include respond-to('tablet') {
     flex-direction: initial;
 

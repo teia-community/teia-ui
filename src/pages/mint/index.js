@@ -25,8 +25,8 @@ import {
   COVER_COMPRESSOR_OPTIONS,
   THUMBNAIL_COMPRESSOR_OPTIONS,
   IPFS_DIRECTORY_MIMETYPE,
-  LICENSE_TYPES,
-  LANGUAGES,
+  LICENSE_TYPES_OPTIONS,
+  LANGUAGES_OPTIONS,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -135,10 +135,6 @@ export const Mint = () => {
 
       // check mime type
       if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
-        // alert(
-        //   `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`
-        // )
-
         setFeedback({
           visible: true,
           message: `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`,
@@ -155,10 +151,6 @@ export const Mint = () => {
       // check file size
       const filesize = (file.file.size / 1024 / 1024).toFixed(4)
       if (filesize > MINT_FILESIZE) {
-        // alert(
-        //   `File too big (${filesize}). Limit is currently set at ${MINT_FILESIZE}MB`
-        // )
-
         setFeedback({
           visible: true,
           message: `Max file size (${filesize}). Limit is currently ${MINT_FILESIZE}MB`,
@@ -173,7 +165,6 @@ export const Mint = () => {
       }
 
       // file about to be minted, change to the mint screen
-
       setStep(2)
 
       setFeedback({
@@ -320,9 +311,9 @@ export const Mint = () => {
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
-          rights,
+          rights: rights.value,
           rightUri,
-          language,
+          language: language.value,
           attributes,
           formats,
         })
@@ -337,9 +328,9 @@ export const Mint = () => {
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
-          rights,
+          rights: rights.value,
           rightUri,
-          language,
+          language: language.value,
           attributes,
           formats,
         })
@@ -506,41 +497,68 @@ export const Mint = () => {
     return true
   }
 
+  const mintKeys = [
+    'objkt::title',
+    'objkt::description',
+    'objkt::tags',
+    'objkt::edition_count',
+    'objkt::royalties',
+    'objkt::rights',
+    'objkt::rights_uri',
+    'objkt::nsfw',
+    'objkt::photosensitive_seizure_warning',
+  ]
+
   const restoreFields = () => {
-    const title = window.localStorage.getItem('objkt::title')
-    const description = window.localStorage.getItem('objkt::description')
-    const tags = window.localStorage.getItem('objkt::tags')
-    const edition_count = window.localStorage.getItem('objkt::edition_count')
-    const royalties = window.localStorage.getItem('objkt::royalties')
-    const rights = window.localStorage.getItem('objkt::rights')
-    const rights_uri = window.localStorage.getItem('objkt::rights_uri')
-    const nsfw = window.localStorage.getItem('objkt::nsfw')
-    const photoSeizureWarning = window.localStorage.getItem(
-      'objkt::photosensitive_seizure_warning'
-    )
+    try {
+      const title = window.localStorage.getItem('objkt::title')
+      const description = window.localStorage.getItem('objkt::description')
+      const tags = window.localStorage.getItem('objkt::tags')
+      const edition_count = window.localStorage.getItem('objkt::edition_count')
+      const royalties = window.localStorage.getItem('objkt::royalties')
+      let rights = window.localStorage.getItem('objkt::rights')
+      rights = rights ? JSON.parse(rights) : 'null'
+      const rights_uri = window.localStorage.getItem('objkt::rights_uri')
+      const language = window.localStorage.getItem('objkt::language')
+      const nsfw = window.localStorage.getItem('objkt::nsfw') || 0
+      const photoSeizureWarning =
+        window.localStorage.getItem('objkt::photosensitive_seizure_warning') ||
+        0
 
-    setTitle(title)
-    setDescription(description)
-    setTags(tags)
-    setAmount(edition_count)
-    setRoyalties(royalties)
-    setRights(LICENSE_TYPES[rights])
-    setRightUri(rights_uri)
-    setNsfw(nsfw)
-    setPhotosensitiveSeizureWarning(photoSeizureWarning)
+      setTitle(title)
+      setDescription(description)
+      setTags(tags)
+      setAmount(edition_count)
+      setRoyalties(royalties)
 
-    console.log(`
-    Restoring fields from localStorage:
-      title = ${title}
-      description = ${description}
-      tags = ${tags}
-      edition_count = ${edition_count}
-      royalties = ${royalties}
-      rights = ${rights}
-      rights_uri = ${rights_uri}
-      nsfw = ${nsfw}
-      photosensitive_seizure_warning = ${photoSeizureWarning}
-    `)
+      setRights(rights)
+      setRightUri(rights_uri)
+      setLanguage(language)
+      setNsfw(nsfw)
+      setPhotosensitiveSeizureWarning(photoSeizureWarning)
+
+      console.log(`
+      Restoring fields from localStorage:
+        title = ${title}
+        description = ${description}
+        tags = ${tags}
+        edition_count = ${edition_count}
+        royalties = ${royalties}
+        rights = ${JSON.stringify(rights)}
+        rights_uri = ${rights_uri}
+        language = ${JSON.stringify(language)}
+        nsfw = ${nsfw}
+        photosensitive_seizure_warning = ${photoSeizureWarning}
+      `)
+    } catch (e) {
+      console.log(
+        'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
+      )
+      console.groupCollapsed('expand for details')
+      console.error(e)
+      console.groupEnd()
+      clearFields()
+    }
   }
 
   const clearFields = () => {
@@ -549,41 +567,22 @@ export const Mint = () => {
     setTags('')
     setAmount('')
     setRoyalties('')
-    setRights('none')
+    setRights('')
     setRightUri('')
     setNsfw(false)
     setPhotosensitiveSeizureWarning(false)
     setLanguage('')
 
-    const keys = [
-      'objkt::title',
-      'objkt::description',
-      'objkt::tags',
-      'objkt::edition_count',
-      'objkt::royalties',
-      'objkt::rights',
-      'objkt::rights_uri',
-      'objkt::nsfw',
-      'objkt::photosensitive_seizure_warning',
-    ]
-
-    keys.forEach((k) => window.localStorage.removeItem(k))
+    mintKeys.forEach((k) => window.localStorage.removeItem(k))
   }
 
   const hasStoredFields = () => {
-    const title = window.localStorage.getItem('objkt::title')
-    const description = window.localStorage.getItem('objkt::description')
-    const tags = window.localStorage.getItem('objkt::tags')
-    const edition_count = window.localStorage.getItem('objkt::edition_count')
-    const royalties = window.localStorage.getItem('objkt::royalties')
-
-    return (
-      title != null ||
-      description != null ||
-      tags != null ||
-      edition_count != null ||
-      royalties != null
-    )
+    for (const key of mintKeys) {
+      if (window.localStorage.getItem(key)) {
+        return true
+      }
+    }
+    return false
   }
 
   // const proxyDisplay = proxyName || proxyAddress
@@ -622,7 +621,7 @@ export const Mint = () => {
                 }}
                 placeholder="title"
                 label="Title"
-                value={title}
+                value={title || ''}
               />
 
               <Textarea
@@ -693,13 +692,17 @@ export const Mint = () => {
               <Select
                 label="Rights"
                 value={rights}
+                placeholder="License (select one)"
                 onChange={(e) => {
-                  setRights(e.target.value)
-                  window.localStorage.setItem('objkt::rights', e.target.value)
+                  setRights(e)
+                  window.localStorage.setItem(
+                    'objkt::rights',
+                    JSON.stringify(e)
+                  )
                 }}
-                options={LICENSE_TYPES}
+                options={LICENSE_TYPES_OPTIONS}
               />
-              {rights === 'custom' && (
+              {rights.value === 'custom' && (
                 <Padding>
                   <Input
                     type="text"
@@ -710,7 +713,7 @@ export const Mint = () => {
                         e.target.value
                       )
                     }}
-                    placeholder=""
+                    placeholder="The URI to the custom license"
                     label="Right URI"
                     value={rightUri}
                   />
@@ -718,24 +721,28 @@ export const Mint = () => {
               )}
               <Select
                 label="Language"
-                options={LANGUAGES}
+                placeholder="Language (select one)"
+                options={LANGUAGES_OPTIONS}
                 value={language}
                 onChange={(e) => {
-                  setLanguage(e.target.value)
-                  window.localStorage.setItem('objkt::language', e.target.value)
+                  setLanguage(e)
+                  window.localStorage.setItem(
+                    'objkt::language',
+                    JSON.stringify(e)
+                  )
                 }}
               />
 
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Padding>
-                  <label for="nsfw">NSFW</label>
+                  <label htmlFor="nsfw">NSFW</label>
                   <input
                     checked={nsfw}
                     onChange={(e) => {
                       setNsfw(e.target.checked)
                       window.localStorage.setItem(
                         'objkt::nsfw',
-                        e.target.checked
+                        e.target.checked ? 1 : 0
                       )
                     }}
                     type="checkbox"
@@ -743,14 +750,14 @@ export const Mint = () => {
                   />
                 </Padding>
                 <Padding>
-                  <label for="photosens">Photo Sensitive Seizure</label>
+                  <label htmlFor="photosens">Photo Sensitive Seizure</label>
                   <input
                     checked={photosensitiveSeizureWarning}
                     onChange={(e) => {
                       setPhotosensitiveSeizureWarning(e.target.checked)
                       window.localStorage.setItem(
                         'objkt::photosensitive_seizure_warning',
-                        e.target.checked
+                        e.target.checked ? 1 : 0
                       )
                     }}
                     type="checkbox"
@@ -826,6 +833,13 @@ export const Mint = () => {
                 title={title}
                 description={description}
                 tags={tags}
+                rights={rights}
+                rightUri={rightUri}
+                language={language}
+                nsfw={nsfw}
+                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
+                amount={amount}
+                royalties={royalties}
               />
             </Padding>
           </Container>

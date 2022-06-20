@@ -180,7 +180,7 @@ export const THUMBNAIL_COMPRESSOR_OPTIONS = {
 }
 
 export const LICENSE_TYPES = {
-  none: 'None',
+  none: 'None (All rights reserved)',
   'cc-by-4.0': 'CC-BY-4.0 (Attribution)',
   'cc-by-sa-4.0': 'CC BY-SA 4.0 (Attribution ShareAlike)',
   'cc-by-nd-4.0': 'CC BY-ND 4.0 (Attribution-NoDerivs)',
@@ -189,6 +189,13 @@ export const LICENSE_TYPES = {
   'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
   custom: 'Custom (Specify)',
 }
+
+export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => {
+  return {
+    label: LICENSE_TYPES[k],
+    value: k,
+  }
+})
 
 export const LANGUAGES = {
   none: 'None',
@@ -318,3 +325,10 @@ export const LANGUAGES = {
   xh: 'isiXhosa (isiXhosa)',
   zu: 'isiZulu (isiZulu)',
 }
+
+export const LANGUAGES_OPTIONS = Object.keys(LANGUAGES).map((k) => {
+  return {
+    label: LANGUAGES[k],
+    value: k,
+  }
+})

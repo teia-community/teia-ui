@@ -4,54 +4,36 @@
   position: relative;
   width: 100%;
   margin-bottom: 12px;
-
-  label {
-    display: block;
-    position: relative;
-    width: 100%;
-
-    p {
-      position: absolute;
-      top: 6px;
-      left: 0;
-      color: var(--text-color);
-      letter-spacing: $letter-spacing;
-      opacity: 0.7;
-      transition: all 0.2s;
-      pointer-events: none;
-      border: 1px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: none;
+  div:first-child {
+    z-index: 0;
+  }
+  :nth-child(3) {
+    border: none;
+    :hover {
     }
+  }
+  div:hover,
+  div:active {
+    border: none;
+  }
 
-    select {
-      background-color: transparent;
-      width: 100%;
-      padding: 5px 0;
-      border: none;
-      color: var(--text-color);
-      transition: color #{$theme-duration} ease-out;
-      letter-spacing: $letter-spacing;
-      // border-bottom: 1px solid var(--text-color);
-      // border: 1px dashed red;
-      margin-bottom: 10px;
+  div {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+}
 
-      &::placeholder {
-        color: var(--text-color);
-        opacity: 0.4;
-      }
-
-      &:focus {
-        outline: none;
-      }
-
-      &:focus + p,
-      &:not(:placeholder-shown) + p {
-        // opacity: 0.4;
-        transform: translateY(-25px);
-      }
-
-      &:focus::placeholder {
-        opacity: 0;
-      }
-    }
+.label {
+  p {
+    color: var(--text-color);
+    letter-spacing: 0.015em;
+    opacity: 0.7;
+    transition: all 0.2s;
+    pointer-events: none;
+    border: 1px;
+    font-weight: 400;
   }
 }
