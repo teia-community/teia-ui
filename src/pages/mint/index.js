@@ -519,7 +519,8 @@ export const Mint = () => {
       let rights = window.localStorage.getItem('objkt::rights')
       rights = rights ? JSON.parse(rights) : 'null'
       const rights_uri = window.localStorage.getItem('objkt::rights_uri')
-      const language = window.localStorage.getItem('objkt::language')
+      let language = window.localStorage.getItem('objkt::language')
+      language = language ? JSON.parse(language) : 'null'
       const nsfw = window.localStorage.getItem('objkt::nsfw') || 0
       const photoSeizureWarning =
         window.localStorage.getItem('objkt::photosensitive_seizure_warning') ||
@@ -537,7 +538,7 @@ export const Mint = () => {
       setNsfw(nsfw)
       setPhotosensitiveSeizureWarning(photoSeizureWarning)
 
-      console.log(`
+      console.debug(`
       Restoring fields from localStorage:
         title = ${title}
         description = ${description}

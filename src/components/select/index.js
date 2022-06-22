@@ -7,6 +7,7 @@ export const Select = ({
   value,
   options,
   onChange = () => null,
+  disabled,
   ...props
 }) => (
   <label className={styles.label}>
@@ -15,6 +16,8 @@ export const Select = ({
       className={styles.container}
       onChange={onChange}
       options={options}
+      disabled={disabled}
+      value={value}
       {...props}
     />
   </label>
