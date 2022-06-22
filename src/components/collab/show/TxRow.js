@@ -27,7 +27,7 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
           type="text"
           placeholder="OBJKT quantity"
           min={1}
-          value={tx.amount}
+          defaultValue={tx.amount}
           onChange={(event) => _update('amount', event.target.value)}
           onWheel={(e) => e.target.blur()}
           autoFocus
@@ -37,7 +37,7 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
         <Input
           type="text"
           placeholder="to address (tz...)"
-          value={tx.to_}
+          defaultValue={tx.to_}
           onChange={(event) => _update('to_', event.target.value)}
           onKeyPress={_handleKeyPress}
         />

@@ -14,6 +14,7 @@ export const Input = ({
   onWheel = () => null,
   disabled,
   value,
+  defaultValue,
   pattern,
   onKeyPress,
   autoFocus = false,
@@ -27,7 +28,8 @@ export const Input = ({
         min={min}
         max={max}
         maxLength={maxlength}
-        value={value}
+        defaultValue={defaultValue === null ? undefined : defaultValue}
+        value={value === null ? '' : value}
         onChange={onChange}
         onBlur={onBlur}
         pattern={pattern}
@@ -62,7 +64,7 @@ export const Textarea = ({
         min={min}
         max={max}
         maxLength={maxlength}
-        value={value}
+        defaultValue={value}
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}

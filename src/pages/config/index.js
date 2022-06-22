@@ -219,7 +219,7 @@ export class Config extends Component {
               onChange={this.handleChange}
               placeholder="Username"
               label="Username"
-              value={
+              defaultValue={
                 this.context.subjktInfo
                   ? this.context.subjktInfo.name
                   : undefined
@@ -231,7 +231,7 @@ export class Config extends Component {
               onChange={this.handleChange}
               placeholder="Description"
               label="Description"
-              value={this.state.description}
+              defaultValue={this.state.description}
             />
             <Button onClick={this.subjkt_config}>
               <Purchase>Save Profile</Purchase>
@@ -268,7 +268,7 @@ export class Config extends Component {
                 onChange={this.handleChange}
                 placeholder="hDAO Curation"
                 label="hDAO Curation"
-                value={undefined}
+                // defaultValue={undefined}
               />
 
               <Button onClick={this.hDAO_config}>

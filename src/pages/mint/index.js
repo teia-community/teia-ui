@@ -521,10 +521,10 @@ export const Mint = () => {
       const rights_uri = window.localStorage.getItem('objkt::rights_uri')
       let language = window.localStorage.getItem('objkt::language')
       language = language ? JSON.parse(language) : 'null'
-      const nsfw = window.localStorage.getItem('objkt::nsfw') || 0
-      const photoSeizureWarning =
-        window.localStorage.getItem('objkt::photosensitive_seizure_warning') ||
-        0
+      const nsfw = window.localStorage.getItem('objkt::nsfw')
+      const photoSeizureWarning = window.localStorage.getItem(
+        'objkt::photosensitive_seizure_warning'
+      )
 
       setTitle(title)
       setDescription(description)
@@ -622,7 +622,7 @@ export const Mint = () => {
                 }}
                 placeholder="title"
                 label="Title"
-                value={title || ''}
+                value={title}
               />
 
               <Textarea
