@@ -4,7 +4,7 @@ import styles from './styles.module.scss'
 export const Input = ({
   type = 'text',
   placeholder = 'placeholder',
-  name = 'input-name-not-set',
+  name,
   min,
   max,
   maxlength = 500,
@@ -24,7 +24,7 @@ export const Input = ({
       <input
         type={type}
         placeholder={placeholder}
-        name={name}
+        name={name || label}
         min={min}
         max={max}
         maxLength={maxlength}
@@ -40,6 +40,31 @@ export const Input = ({
       <p>{label}</p>
     </label>
   </div>
+)
+
+export const Checkbox = ({
+  name,
+  label,
+  onChange = () => null,
+  onBlur = () => null,
+  onWheel = () => null,
+  disabled,
+  checked = false,
+  autoFocus = false,
+}) => (
+  <label className={styles.check_container}>
+    {label}
+    <input
+      type="checkbox"
+      name={name}
+      onChange={onChange}
+      onBlur={onBlur}
+      onWheel={onWheel}
+      autoFocus={autoFocus}
+      checked={checked}
+    />
+    <span className={styles.checkmark}></span>
+  </label>
 )
 
 export const Textarea = ({

@@ -4,7 +4,7 @@ import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
-import { Input, Textarea } from '@components/input'
+import { Input, Textarea, Checkbox } from '@components/input'
 import { Select } from '@components/select'
 import { Button, Curate, Primary, Purchase } from '@components/button'
 import { Upload } from '@components/upload'
@@ -65,8 +65,8 @@ export const Mint = () => {
   const [mintName, setMintName] = useState('')
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState('')
-  const [amount, setAmount] = useState()
-  const [royalties, setRoyalties] = useState()
+  const [amount, setAmount] = useState(0)
+  const [royalties, setRoyalties] = useState(0)
   const [file, setFile] = useState() // the uploaded file
   const [cover, setCover] = useState() // the uploaded or generated cover image
   const [thumbnail, setThumbnail] = useState() // the uploaded or generated cover image
@@ -505,15 +505,17 @@ export const Mint = () => {
     'objkt::royalties',
     'objkt::rights',
     'objkt::rights_uri',
+    'objkt::language',
     'objkt::nsfw',
     'objkt::photosensitive_seizure_warning',
   ]
 
   const restoreFields = () => {
     try {
-      const title = window.localStorage.getItem('objkt::title')
-      const description = window.localStorage.getItem('objkt::description')
-      const tags = window.localStorage.getItem('objkt::tags')
+      const title = window.localStorage.getItem('objkt::title') || ''
+      const description =
+        window.localStorage.getItem('objkt::description') || ''
+      const tags = window.localStorage.getItem('objkt::tags') || ''
       const edition_count = window.localStorage.getItem('objkt::edition_count')
       const royalties = window.localStorage.getItem('objkt::royalties')
       let rights = window.localStorage.getItem('objkt::rights')
@@ -733,11 +735,17 @@ export const Mint = () => {
                   )
                 }}
               />
-
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Padding>
-                  <label htmlFor="nsfw">NSFW</label>
-                  <input
+              <Padding>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    paddingLeft: '50px',
+                    paddingRight: '50px',
+                  }}
+                >
+                  <Checkbox
+                    label="NSFW"
                     checked={nsfw}
                     onChange={(e) => {
                       setNsfw(e.target.checked)
@@ -746,13 +754,9 @@ export const Mint = () => {
                         e.target.checked ? 1 : 0
                       )
                     }}
-                    type="checkbox"
                     name="nsfw"
                   />
-                </Padding>
-                <Padding>
-                  <label htmlFor="photosens">Photo Sensitive Seizure</label>
-                  <input
+                  <Checkbox
                     checked={photosensitiveSeizureWarning}
                     onChange={(e) => {
                       setPhotosensitiveSeizureWarning(e.target.checked)
@@ -761,11 +765,11 @@ export const Mint = () => {
                         e.target.checked ? 1 : 0
                       )
                     }}
-                    type="checkbox"
                     name="photosens"
+                    label="Photo Sensitive Seizure Warning"
                   />
-                </Padding>
-              </div>
+                </div>
+              </Padding>
             </Padding>
           </Container>
 
