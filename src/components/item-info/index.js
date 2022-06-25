@@ -23,6 +23,7 @@ export const ItemInfo = ({
   supply,
   isDetailView,
   restricted,
+  ban,
 }) => {
   const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
     useContext(HicetnuncContext)
@@ -36,7 +37,11 @@ export const ItemInfo = ({
     const ed = editionsForSale || 'X'
     let purchaseButton = null
 
-    const cheapestListing = listings[0] // listings are sorted by price
+    const cheapestListing = listings.filter(
+      (listing) => !ban.includes(listing.creator_id)
+    )[0]
+    // listings are sorted by price
+    // filterering restricted here like this because restricted listing should stay in listings for labeling them as such
 
     if (cheapestListing) {
       purchaseButton = (
