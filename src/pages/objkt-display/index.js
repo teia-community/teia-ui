@@ -72,15 +72,15 @@ export const ObjktDisplay = () => {
     )
 
     objkt.listings = listings
-
+    objkt.ban = getWalletBlockList()
     await context.setAccount()
 
     if (getWalletBlockList().includes(objkt.creator.address)) {
       setRestricted(true)
       objkt.restricted = true
+
       setNFT(objkt)
     } else {
-      objkt.ban = getWalletBlockList()
       objkt.restricted = false
       // filter swaps from banned account
       if (objkt.swaps && objkt.ban)
