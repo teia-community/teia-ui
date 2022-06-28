@@ -622,7 +622,7 @@ export const Mint = () => {
                   setTitle(e.target.value)
                   window.localStorage.setItem('objkt::title', e.target.value)
                 }}
-                placeholder="title"
+                placeholder="(max xx characters)"
                 label="Title"
                 value={title}
               />
@@ -637,7 +637,7 @@ export const Mint = () => {
                     e.target.value
                   )
                 }}
-                placeholder="description (max 5000 characters)"
+                placeholder="(max 5000 characters)"
                 label="Description"
                 value={description}
               />
@@ -648,7 +648,7 @@ export const Mint = () => {
                   setTags(e.target.value)
                   window.localStorage.setItem('objkt::tags', e.target.value)
                 }}
-                placeholder="tags (comma separated. example: illustration, digital)"
+                placeholder="(comma separated. example: illustration, digital)"
                 label="Tags"
                 value={tags}
               />
@@ -668,7 +668,7 @@ export const Mint = () => {
                   limitNumericField(e.target, 1, MAX_EDITIONS)
                   setAmount(e.target.value)
                 }}
-                placeholder={`Editions (no. editions, 1-${MAX_EDITIONS})`}
+                placeholder={`(no. editions, 1-${MAX_EDITIONS})`}
                 label="Editions"
                 value={amount}
               />
@@ -688,7 +688,7 @@ export const Mint = () => {
                   limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
                   setRoyalties(e.target.value)
                 }}
-                placeholder={`Royalties after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
+                placeholder={`after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
                 label="Royalties"
                 value={royalties}
               />
@@ -740,8 +740,6 @@ export const Mint = () => {
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    paddingLeft: '50px',
-                    paddingRight: '50px',
                   }}
                 >
                   <Checkbox
