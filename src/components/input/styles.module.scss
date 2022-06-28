@@ -23,7 +23,8 @@
     left: 0;
     height: 20px;
     width: 20px;
-    background-color: var(--text-color);
+    background-color: var(--background-color);
+    box-shadow: 1px 1px 0px 1px var(--text-color);
   }
   input:focus-visible ~ .checkmark {
     opacity: 0.4;
@@ -41,15 +42,16 @@
   // }
 
   .checkmark:after {
-    left: 7px;
-    top: 3px;
-    width: 3px;
+    left: 5px;
+    top: 5px;
+    width: 10px;
     height: 10px;
-    border: solid var(--background-color);
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
+    background-color: var(--text-color);
+    // border: solid var(--background-color);
+    // border-width: 0 3px 3px 0;
+    // -webkit-transform: rotate(45deg);
+    // -ms-transform: rotate(45deg);
+    // transform: rotate(45deg);
   }
 }
 
@@ -66,8 +68,8 @@
 
     p {
       display: inline-block;
+      font-weight: 700;
       letter-spacing: $letter-spacing;
-      opacity: 0.7;
       color: inherit;
       pointer-events: none;
       border: 1px;
