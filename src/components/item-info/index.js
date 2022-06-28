@@ -33,7 +33,18 @@ export const ItemInfo = ({
   if (isDetailView) {
     // TODO: subtract burned pieces from total
     const total = supply
-    const editionsForSale = sum(listings.map(({ amount_left }) => amount_left))
+    const editionsForSale = sum(
+      listings
+        .filter(
+          (listing) =>
+            !ban.includes(
+              listing.seller_address
+                ? listing.seller_address
+                : listing.creator.address
+            )
+        )
+        .map(({ amount_left }) => amount_left)
+    )
     const ed = editionsForSale || 'X'
     let purchaseButton = null
 
