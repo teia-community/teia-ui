@@ -36,13 +36,17 @@ select:focus ~ .container {
 }
 
 .label {
+  display: block;
+  position: relative;
+  width: 100%;
+  color: var(--text-color);
+  padding-top: 20px;
   p {
-    color: var(--text-color);
+    display: inline-block;
+    font-weight: 700;
     letter-spacing: $letter-spacing;
-    opacity: 0.7;
-    transition: all #{$theme-duration};
+    color: inherit;
     pointer-events: none;
     border: 1px;
-    font-weight: 400;
   }
 }
