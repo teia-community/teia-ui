@@ -24,6 +24,7 @@ const style = {
   }),
   menu: (provided, state) => ({
     ...provided,
+    backgroundColor: 'var(--background-color)',
   }),
   clearIndicator: (provided, state) => ({
     ...provided,
