@@ -49,6 +49,7 @@ export const Select = ({
   options,
   onChange = () => null,
   disabled,
+  children,
   placeholder,
   ...props
 }) => {
@@ -70,6 +71,7 @@ export const Select = ({
         value={value === (null || undefined) ? '' : value}
         {...props}
       />
+      {children}
     </label>
   )
 }
