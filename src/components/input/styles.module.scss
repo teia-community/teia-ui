@@ -65,6 +65,7 @@
     position: relative;
     width: 100%;
     color: var(--text-color);
+    padding-top: 20px;
 
     p {
       display: inline-block;
@@ -79,12 +80,11 @@
     input {
       background-color: transparent;
       width: 100%;
-      padding: 5px 0;
+      padding: 10px 0;
       border: none;
       color: inherit;
       transition: color #{$theme-duration} ease-out;
       letter-spacing: $letter-spacing;
-      margin-bottom: 10px;
 
       &::placeholder {
         color: inherit;
