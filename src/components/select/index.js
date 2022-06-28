@@ -10,6 +10,10 @@ const style = {
       ? 'var(--text-color)'
       : 'var(--background-color)',
   }),
+  valueContainer: (provided) => ({
+    ...provided,
+    padding: '0px',
+  }),
   control: (provided, state) => ({
     ...provided,
     color: state.isSelected ? 'red' : 'var(--text-color)',
