@@ -1,37 +1,46 @@
 @import '../../styles/variables.scss';
 
+select:focus ~ .container {
+  background-color: red;
+}
 .container {
   position: relative;
   width: 100%;
   margin-bottom: 12px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  border: none;
-  div:first-child {
-    z-index: 0;
-  }
-  :nth-child(3) {
-    border: none;
-    :hover {
-    }
-  }
-  div:hover,
-  div:active {
-    border: none;
+
+  // [class^='react_select__single-value'] {
+  //   z-index: 0;
+  //   color: var(--text-color);
+  // }
+
+  // [class^='react_select__value'],
+  // [class^='react_select__control'] {
+  //   background-color: var(--background-color);
+  //   color: var(--text-color);
+  // }
+
+  // [class^='react_select__menu'] {
+  //   background-color: var(--background-color);
+  //   color: var(--text-color);
+  // }
+
+  [class^='react_select__control'] {
+    box-shadow: none; // outline of the select input
+    border-radius: 0;
   }
 
-  div {
-    background-color: var(--background-color);
-    color: var(--text-color);
+  [class^='react_select__option']:hover {
+    background-color: var(--text-color);
+    color: var(--background-color);
   }
 }
 
 .label {
   p {
     color: var(--text-color);
-    letter-spacing: 0.015em;
+    letter-spacing: $letter-spacing;
     opacity: 0.7;
-    transition: all 0.2s;
+    transition: all #{$theme-duration};
     pointer-events: none;
     border: 1px;
     font-weight: 400;

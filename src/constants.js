@@ -187,7 +187,7 @@ export const LICENSE_TYPES = {
   'cc-by-nc-4.0': 'CC BY-NC 4.0 (Attribution-NonCommercial)',
   'cc-by-nc-sa-4.0': 'CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)',
   'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
-  custom: 'Custom (Specify)',
+  custom: 'Custom (Specify below)',
 }
 
 export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => {

@@ -2,53 +2,41 @@ import React from 'react'
 import styles from './styles.module.scss'
 import ReactSelect from 'react-select'
 
-// const theme = {
-//   option: (provided, state) => ({
-//     ...provided,
-//     // borderBottom: '1px dotted pink',
-//     // color: state.isSelected ? 'red' : 'blue',
-//     color: 'var(--text-color)',
-//     backgroundColor: 'var(--background-color)',
-//     // padding: 20,
-//   }),
-//   control: (provided, state) => {
-//     // console.log(state)
-//     return {
-//       ...provided,
-//       color: state.isSelected ? 'red' : 'var(--text-color)',
-//       backgroundColor: 'var(--background-color)',
-//       border: 'none',
+const style = {
+  option: (provided, state) => ({
+    ...provided,
+    color: state.isSelected ? 'var(--background-color)' : 'var(--text-color)',
+    backgroundColor: state.isSelected
+      ? 'var(--text-color)'
+      : 'var(--background-color)',
+  }),
+  control: (provided, state) => ({
+    ...provided,
+    color: state.isSelected ? 'red' : 'var(--text-color)',
+    backgroundColor: 'var(--background-color)',
+    border: 'none',
+    // none of react-select's styles are passed to <Control />
+    // width: 200,
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+  }),
+  clearIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  singleValue: (provided, state) => ({
+    ...provided,
+  }),
+}
 
-//       '&:hover': {
-//         border: 'none',
-//       },
-//       ':active': {
-//         ...provided[':active'],
-//         border: 'none',
-//         color: 'red'
-//       },
-
-//       // none of react-select's styles are passed to <Control />
-//       // width: 200,
-//     }
-//   },
-//   menu: (provided, state) => ({
-//     ...provided,
-
-//     "&:hover": {
-//       backgroundColor: 'red',
-//     }
-//   }),
-//   clearIndicator: (provided, state) => ({
-//     ...provided,
-
-//   }),
-//   singleValue: (provided, state) => ({
-//     ...provided,
-
-//   }),
-// }
-
+const theme = (theme) => ({
+  ...theme,
+  colors: {
+    ...theme.colors,
+    text: 'var(--background-color)',
+    primary: 'var(--text-color)',
+  },
+})
 export const Select = ({
   label,
   value,
@@ -59,20 +47,22 @@ export const Select = ({
   placeholder,
   ...props
 }) => {
-  console.log(
-    `Creating select with label: ${label}, value: ${value}, defaultValue: ${defaultValue}`
-  )
+  // console.log(
+  //   `Creating select with label: ${label}, value: ${value}, defaultValue: ${defaultValue}`
+  // )
   return (
     <label className={styles.label}>
       <p>{label}</p>
       <ReactSelect
-        // styles={theme}
+        styles={style}
+        theme={theme}
         className={styles.container}
+        classNamePrefix="react_select"
         onChange={onChange}
         options={options}
         disabled={disabled}
         placeholder={placeholder}
-        value={value === null ? '' : value}
+        value={value === (null || undefined) ? '' : value}
         {...props}
       />
     </label>

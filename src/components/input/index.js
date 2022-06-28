@@ -18,29 +18,32 @@ export const Input = ({
   pattern,
   onKeyPress,
   autoFocus = false,
-}) => (
-  <div className={styles.container}>
-    <label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        name={name || label}
-        min={min}
-        max={max}
-        maxLength={maxlength}
-        defaultValue={defaultValue === null ? undefined : defaultValue}
-        value={value === null ? '' : value}
-        onChange={onChange}
-        onBlur={onBlur}
-        pattern={pattern}
-        onWheel={onWheel}
-        onKeyPress={onKeyPress}
-        autoFocus={autoFocus}
-      />
-      <p>{label}</p>
-    </label>
-  </div>
-)
+}) => {
+  //console.log(label,value,defaultValue)
+  return (
+    <div className={styles.container}>
+      <label htmlFor={name}>
+        <p>{label}</p>
+        <input
+          type={type}
+          placeholder={placeholder}
+          name={name || label}
+          min={min}
+          max={max}
+          maxLength={maxlength}
+          defaultValue={defaultValue === null ? '' : defaultValue}
+          value={value === null ? '' : value === undefined ? '' : value}
+          onChange={onChange}
+          onBlur={onBlur}
+          pattern={pattern}
+          onWheel={onWheel}
+          onKeyPress={onKeyPress}
+          autoFocus={autoFocus}
+        />
+      </label>
+    </div>
+  )
+}
 
 export const Checkbox = ({
   name,
@@ -61,7 +64,9 @@ export const Checkbox = ({
       onBlur={onBlur}
       onWheel={onWheel}
       autoFocus={autoFocus}
-      checked={checked}
+      checked={
+        checked === null ? false : checked === undefined ? false : checked
+      }
     />
     <span className={styles.checkmark}></span>
   </label>
@@ -81,7 +86,8 @@ export const Textarea = ({
   value,
 }) => (
   <div className={styles.container}>
-    <label>
+    <label htmlFor={name}>
+      <p>{label}</p>
       <textarea
         type={type}
         placeholder={placeholder}
@@ -89,12 +95,11 @@ export const Textarea = ({
         min={min}
         max={max}
         maxLength={maxlength}
-        defaultValue={value}
+        value={value}
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
       />
-      <p>{label}</p>
     </label>
   </div>
 )

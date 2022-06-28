@@ -61,12 +61,12 @@ export const Mint = () => {
 
   // const history = useHistory()
   const [step, setStep] = useState(0)
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState()
   const [mintName, setMintName] = useState('')
-  const [description, setDescription] = useState('')
-  const [tags, setTags] = useState('')
-  const [amount, setAmount] = useState(0)
-  const [royalties, setRoyalties] = useState(0)
+  const [description, setDescription] = useState()
+  const [tags, setTags] = useState()
+  const [amount, setAmount] = useState()
+  const [royalties, setRoyalties] = useState()
   const [file, setFile] = useState() // the uploaded file
   const [cover, setCover] = useState() // the uploaded or generated cover image
   const [thumbnail, setThumbnail] = useState() // the uploaded or generated cover image
@@ -74,8 +74,8 @@ export const Mint = () => {
   const [collabs, setCollabs] = useState([])
   const [selectCollab, setSelectCollab] = useState(false)
   const [rights, setRights] = useState('') // To allow the artist to specify the asset rights.
-  const [rightUri, setRightUri] = useState('') // A URI to a statement of rights.
-  const [language, setLanguage] = useState('') // The language of the intellectual content of the asset.
+  const [rightUri, setRightUri] = useState() // A URI to a statement of rights.
+  const [language, setLanguage] = useState() // The language of the intellectual content of the asset.
   const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
   const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
     useState(false) // Photosensitivity flag
