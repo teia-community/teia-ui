@@ -39,10 +39,9 @@ select:focus ~ .container {
   p {
     color: var(--text-color);
     letter-spacing: $letter-spacing;
-    opacity: 0.7;
     transition: all #{$theme-duration};
     pointer-events: none;
     border: 1px;
-    font-weight: 400;
+    font-weight: 700;
   }
 }
