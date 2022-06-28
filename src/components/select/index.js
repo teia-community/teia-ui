@@ -26,6 +26,7 @@ const style = {
   }),
   singleValue: (provided, state) => ({
     ...provided,
+    color: 'var(--text-color)',
   }),
 }
 
