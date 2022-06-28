@@ -14,6 +14,7 @@ export const Input = ({
   onWheel = () => null,
   disabled,
   value,
+  children,
   defaultValue,
   pattern,
   onKeyPress,
@@ -41,6 +42,7 @@ export const Input = ({
           autoFocus={autoFocus}
         />
       </label>
+      {children}
     </div>
   )
 }
@@ -78,6 +80,7 @@ export const Textarea = ({
   name = 'input-name-not-set',
   min,
   max,
+  children,
   maxlength = 5000,
   label,
   onChange = () => null,
@@ -101,5 +104,6 @@ export const Textarea = ({
         disabled={disabled}
       />
     </label>
+    {children}
   </div>
 )

@@ -36,6 +36,7 @@ import {
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
+import styles from './styles.module.scss'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
@@ -622,10 +623,12 @@ export const Mint = () => {
                   setTitle(e.target.value)
                   window.localStorage.setItem('objkt::title', e.target.value)
                 }}
-                placeholder="(max xx characters)"
+                placeholder="Max 500 characters"
                 label="Title"
                 value={title}
-              />
+              >
+                <span className={styles.line} />
+              </Input>
 
               <Textarea
                 type="text"
@@ -637,10 +640,12 @@ export const Mint = () => {
                     e.target.value
                   )
                 }}
-                placeholder="(max 5000 characters)"
+                placeholder="Max 5000 characters"
                 label="Description"
                 value={description}
-              />
+              >
+                <span className={styles.line} />
+              </Textarea>
 
               <Input
                 type="text"
@@ -648,11 +653,12 @@ export const Mint = () => {
                   setTags(e.target.value)
                   window.localStorage.setItem('objkt::tags', e.target.value)
                 }}
-                placeholder="(comma separated. example: illustration, digital)"
+                placeholder="Comma separated. example: illustration, digital"
                 label="Tags"
                 value={tags}
-              />
-
+              >
+                <span className={styles.line} />
+              </Input>
               <Input
                 type="number"
                 min={1}
@@ -668,10 +674,12 @@ export const Mint = () => {
                   limitNumericField(e.target, 1, MAX_EDITIONS)
                   setAmount(e.target.value)
                 }}
-                placeholder={`(no. editions, 1-${MAX_EDITIONS})`}
+                placeholder={`No. editions, 1-${MAX_EDITIONS})`}
                 label="Editions"
                 value={amount}
-              />
+              >
+                <span className={styles.line} />
+              </Input>
 
               <Input
                 type="number"
@@ -688,10 +696,12 @@ export const Mint = () => {
                   limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
                   setRoyalties(e.target.value)
                 }}
-                placeholder={`after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
+                placeholder={`After each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
                 label="Royalties"
                 value={royalties}
-              />
+              >
+                <span className={styles.line} />
+              </Input>
               <Select
                 label="License"
                 value={rights}
@@ -705,6 +715,7 @@ export const Mint = () => {
                 }}
                 options={LICENSE_TYPES_OPTIONS}
               />
+
               {rights.value === 'custom' && (
                 <Padding>
                   <Input
@@ -722,6 +733,7 @@ export const Mint = () => {
                   />
                 </Padding>
               )}
+              <span className={styles.line} />
               <Select
                 label="Language"
                 placeholder="(optional)"
@@ -734,7 +746,9 @@ export const Mint = () => {
                     JSON.stringify(e)
                   )
                 }}
-              />
+              >
+                <span className={styles.line} />
+              </Select>
               <Padding>
                 <div
                   style={{
