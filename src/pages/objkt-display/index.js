@@ -75,7 +75,7 @@ export const ObjktDisplay = () => {
     objkt.ban = getWalletBlockList()
     await context.setAccount()
 
-    if (getWalletBlockList().includes(objkt.creator.address)) {
+    if (objkt.ban.includes(objkt.creator.address)) {
       setRestricted(true)
       objkt.restricted = true
 
