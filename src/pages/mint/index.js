@@ -674,7 +674,7 @@ export const Mint = () => {
                   limitNumericField(e.target, 1, MAX_EDITIONS)
                   setAmount(e.target.value)
                 }}
-                placeholder={`No. editions, 1-${MAX_EDITIONS})`}
+                placeholder={`No. editions, 1-${MAX_EDITIONS}`}
                 label="Editions"
                 value={amount}
               >
@@ -754,6 +754,7 @@ export const Mint = () => {
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
+                    paddingTop: '30px',
                   }}
                 >
                   <Checkbox

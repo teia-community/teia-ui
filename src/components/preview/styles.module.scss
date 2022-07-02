@@ -23,9 +23,11 @@
   .attributes {
     display: flex;
     flex-direction: row;
+    margin-bottom: 20px;
   }
   strong {
     margin-right: 1em;
+    min-width: 75px;
   }
   .label {
     color: var(--gray-40);
@@ -70,9 +72,7 @@
       }
 
       .title {
-        font-family: 'iosevka-extended';
         font-weight: bold;
-        font-size: 20px;
       }
     }
   }

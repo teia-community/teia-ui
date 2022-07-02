@@ -6,7 +6,6 @@ select:focus ~ .container {
 .container {
   position: relative;
   width: 100%;
-  margin-bottom: 12px;
 
   // [class^='react_select__single-value'] {
   //   z-index: 0;
@@ -36,6 +35,9 @@ select:focus ~ .container {
 }
 
 .label {
+  display: block;
+  padding-top: 20px;
+
   p {
     color: var(--text-color);
     letter-spacing: $letter-spacing;

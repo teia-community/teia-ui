@@ -5,3 +5,12 @@
   display: block;
   border-bottom: 1px solid var(--text-color);
 }
+
+::selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+::-moz-selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}

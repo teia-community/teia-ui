@@ -58,7 +58,8 @@
 .container {
   position: relative;
   width: 100%;
-  margin-bottom: 12px;
+  //margin-bottom: 12px;
+  padding-top: 20px;
 
   label {
     display: block;
@@ -98,6 +99,10 @@
       &:focus::placeholder {
         opacity: 0;
       }
+    }
+
+    textarea {
+      min-height: 75px;
     }
   }
 }
