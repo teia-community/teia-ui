@@ -653,6 +653,14 @@ export const Mint = () => {
                   setTags(e.target.value)
                   window.localStorage.setItem('objkt::tags', e.target.value)
                 }}
+                onBlur={(e) => {
+                  const tags = _.join(
+                    _.uniq(e.target.value.split(',').map((tag) => tag.trim())),
+                    ','
+                  )
+                  setTags(tags)
+                  window.localStorage.setItem('objkt::tags', tags)
+                }}
                 placeholder="Comma separated. example: illustration, digital"
                 label="Tags"
                 value={tags}
