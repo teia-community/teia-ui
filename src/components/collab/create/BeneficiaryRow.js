@@ -67,7 +67,7 @@ export const BeneficiaryRow = ({
 
   const beneficiaryName = meta ? meta.alias : null
   const placeholderText =
-    beneficiaryName || `Address ${!address ? `(tz... or KT...)` : ''}`
+    beneficiaryName || `${!address ? `(tz... or KT...)` : ''}`
 
   /**
    * In some situations we may want to show less UI information
@@ -84,15 +84,15 @@ export const BeneficiaryRow = ({
       <td className={styles.addressCell}>
         <div className={cellClass}>
           <label>
+            <p>Address</p>
             <textarea
               rows={1}
               value={address || ''}
               className={styles.textInput}
-              placeholder="Address (tz... or KT...)"
+              placeholder={placeholderText}
               autoFocus={!address || address === ''}
               onChange={(event) => _update('address', event.target.value)}
             />
-            <p>{placeholderText}</p>
           </label>
         </div>
       </td>
@@ -100,16 +100,15 @@ export const BeneficiaryRow = ({
       <td className={styles.sharesCell}>
         <div className={cellClass}>
           <label>
+            <p>Shares</p>
             <input
               type="number"
-              label="Shares"
-              placeholder="Shares"
+              placeholder="(proportional)"
               value={shares || ''}
               onKeyDown={_onKeyDown}
               autoFocus={Boolean(address)}
               onChange={(event) => _update('shares', event.target.value)}
             />
-            <p>shares</p>
           </label>
           {!shares && onSelectPercentage && (
             <TipSelector onSelect={onSelectPercentage} />
