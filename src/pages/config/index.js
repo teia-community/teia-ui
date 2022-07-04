@@ -253,14 +253,14 @@ export class Config extends Component {
           </div>
         </Container>
 
-        <Container>
+        {/* <Container>
           <Padding>
             <div onClick={this.toggle}>
               <Primary>+ Advanced</Primary>
             </div>
           </Padding>
-        </Container>
-        {this.state.toogled ? (
+        </Container> */}
+        {/* {this.state.toogled ? (
           <Container>
             <Padding>
               <Input
@@ -280,7 +280,7 @@ export class Config extends Component {
               </p>
             </Padding>
           </Container>
-        ) : undefined}
+        ) : undefined} */}
 
         {/*         <Container>
           <Padding>
