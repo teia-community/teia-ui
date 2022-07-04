@@ -217,9 +217,9 @@ export class Config extends Component {
             <Input
               name="subjkt"
               onChange={this.handleChange}
-              placeholder="Username"
+              placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
               label="Username"
-              defaultValue={
+              value={
                 this.context.subjktInfo
                   ? this.context.subjktInfo.name
                   : undefined
@@ -229,9 +229,9 @@ export class Config extends Component {
             <Input
               name="description"
               onChange={this.handleChange}
-              placeholder="Description"
+              placeholder="(Max length 500 characters)"
               label="Description"
-              defaultValue={this.state.description}
+              value={this.state.description}
             />
             <Button onClick={this.subjkt_config}>
               <Purchase>Save Profile</Purchase>
