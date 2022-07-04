@@ -484,6 +484,7 @@ export const Mint = () => {
       amount > MAX_EDITIONS ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
+      (rightUri === '' ? false : rightUri.match('^(https|ipfs)://')) ||
       !file
     ) {
       return true
