@@ -769,7 +769,7 @@ export const Mint = () => {
                 <div
                   style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                     paddingTop: '30px',
                   }}
                 >

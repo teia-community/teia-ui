@@ -5,6 +5,7 @@
   position: relative;
   padding-left: 35px;
   margin-bottom: 12px;
+  margin-right: 24px;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -24,7 +25,8 @@
     height: 20px;
     width: 20px;
     background-color: var(--background-color);
-    box-shadow: 1px 1px 0px 1px var(--text-color);
+    //box-shadow: 1px 1px 0px 1px var(--text-color);
+    box-shadow: 1px 1px 0px 1px rgb(239, 239, 239);
   }
   input:focus-visible ~ .checkmark {
     opacity: 0.4;
@@ -46,7 +48,8 @@
     top: 5px;
     width: 10px;
     height: 10px;
-    background-color: var(--text-color);
+    background-color: rgb(239, 239, 239);
+    // background-color: var(--text-color);
     // border: solid var(--background-color);
     // border-width: 0 3px 3px 0;
     // -webkit-transform: rotate(45deg);
