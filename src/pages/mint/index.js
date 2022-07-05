@@ -479,14 +479,19 @@ export const Mint = () => {
   }
 
   const handleValidation = () => {
+    const urlR =
+      '^(http|ipf)s?://(?:www.)?([-a-zA-Z0-9@:%._+~#=]{1,256}.?[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))?'
+    console.log(rights)
     if (
       amount <= 0 ||
       amount > MAX_EDITIONS ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
-      (rightUri === ('' || undefined)
-        ? false
-        : rightUri.match('^(https|ipfs)://')) ||
+      (rights && rights.value === 'custom'
+        ? rightUri === ('' || undefined || null)
+          ? true
+          : !rightUri.match(urlR)
+        : false) ||
       !file
     ) {
       return true
