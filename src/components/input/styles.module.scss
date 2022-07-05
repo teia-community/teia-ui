@@ -39,9 +39,6 @@
   input:checked ~ .checkmark:after {
     display: block;
   }
-  // :hover input ~ .checkmark {
-  //   background-color: #ccc;
-  // }
 
   .checkmark:after {
     left: 5px;
@@ -49,12 +46,6 @@
     width: 10px;
     height: 10px;
     background-color: rgb(239, 239, 239);
-    // background-color: var(--text-color);
-    // border: solid var(--background-color);
-    // border-width: 0 3px 3px 0;
-    // -webkit-transform: rotate(45deg);
-    // -ms-transform: rotate(45deg);
-    // transform: rotate(45deg);
   }
 }
 
@@ -77,7 +68,6 @@
       color: inherit;
       pointer-events: none;
       border: 1px;
-      //border-bottom: 1px solid var(--text-color);
     }
     textarea,
     input {

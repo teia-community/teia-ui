@@ -180,7 +180,7 @@ export const Mint = () => {
       // ztepler: I have not understand the difference between acc.address and getAuth here
       //    so I am using acc.address (minterAddress) in both nftCid.address and in mint call
 
-      console.log({ minterAddress })
+      console.debug({ minterAddress })
 
       // Metadata attributes
       const attributes = [
@@ -337,7 +337,7 @@ export const Mint = () => {
         })
       }
 
-      console.log('Calling mint with', {
+      console.debug('Calling mint with', {
         minterAddress,
         amount,
         path: nftCid.path,
@@ -352,8 +352,8 @@ export const Mint = () => {
     const rawLeaves = false
     const hashv0 = await ipfsHash.of(file.buffer, { cidVersion: 0, rawLeaves })
     const hashv1 = await ipfsHash.of(file.buffer, { cidVersion: 1, rawLeaves })
-    console.log(`Current CIDv0: ${hashv0}`)
-    console.log(`Current CIDv1: ${hashv1}`)
+    console.debug(`Current CIDv0: ${hashv0}`)
+    console.debug(`Current CIDv1: ${hashv1}`)
 
     const uri0 = `ipfs://${hashv0}`
     const uri1 = `ipfs://${hashv1}`
@@ -478,20 +478,27 @@ export const Mint = () => {
     )
   }
 
-  const handleValidation = () => {
+  const handleRightsValidation = () => {
     const urlR =
       '^(http|ipf)s?://(?:www.)?([-a-zA-Z0-9@:%._+~#=]{1,256}.?[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))?'
-    console.log(rights)
+    if (rights && rights.value === 'custom') {
+      if (rightUri) {
+        if (rightUri.match(urlR)) {
+          return true
+        }
+      }
+      return false
+    } else {
+      return true
+    }
+  }
+  const handleValidation = () => {
     if (
       amount <= 0 ||
       amount > MAX_EDITIONS ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
-      (rights && rights.value === 'custom'
-        ? rightUri === ('' || undefined || null)
-          ? true
-          : !rightUri.match(urlR)
-        : false) ||
+      !handleRightsValidation() ||
       !file
     ) {
       return true

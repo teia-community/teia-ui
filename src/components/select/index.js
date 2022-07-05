@@ -53,26 +53,21 @@ export const Select = ({
   children,
   placeholder,
   ...props
-}) => {
-  // console.log(
-  //   `Creating select with label: ${label}, value: ${value}, defaultValue: ${defaultValue}`
-  // )
-  return (
-    <label className={styles.label}>
-      <p>{label}</p>
-      <ReactSelect
-        styles={style}
-        theme={theme}
-        className={styles.container}
-        classNamePrefix="react_select"
-        onChange={onChange}
-        options={options}
-        disabled={disabled}
-        placeholder={placeholder}
-        value={value === (null || undefined) ? '' : value}
-        {...props}
-      />
-      {children}
-    </label>
-  )
-}
+}) => (
+  <label className={styles.label}>
+    <p>{label}</p>
+    <ReactSelect
+      styles={style}
+      theme={theme}
+      className={styles.container}
+      classNamePrefix="react_select"
+      onChange={onChange}
+      options={options}
+      disabled={disabled}
+      placeholder={placeholder}
+      value={value === (null || undefined) ? '' : value}
+      {...props}
+    />
+    {children}
+  </label>
+)

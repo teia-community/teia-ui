@@ -19,33 +19,30 @@ export const Input = ({
   pattern,
   onKeyPress,
   autoFocus = false,
-}) => {
-  //console.log(label,value,defaultValue)
-  return (
-    <div className={styles.container}>
-      <label htmlFor={name}>
-        <p>{label}</p>
-        <input
-          type={type}
-          placeholder={placeholder}
-          name={name || label}
-          min={min}
-          max={max}
-          maxLength={maxlength}
-          defaultValue={defaultValue === null ? '' : defaultValue}
-          value={value === null ? '' : value === undefined ? '' : value}
-          onChange={onChange}
-          onBlur={onBlur}
-          pattern={pattern}
-          onWheel={onWheel}
-          onKeyPress={onKeyPress}
-          autoFocus={autoFocus}
-        />
-      </label>
-      {children}
-    </div>
-  )
-}
+}) => (
+  <div className={styles.container}>
+    <label htmlFor={name}>
+      <p>{label}</p>
+      <input
+        type={type}
+        placeholder={placeholder}
+        name={name || label}
+        min={min}
+        max={max}
+        maxLength={maxlength}
+        defaultValue={defaultValue === null ? '' : defaultValue}
+        value={value === null ? '' : value === undefined ? '' : value}
+        onChange={onChange}
+        onBlur={onBlur}
+        pattern={pattern}
+        onWheel={onWheel}
+        onKeyPress={onKeyPress}
+        autoFocus={autoFocus}
+      />
+    </label>
+    {children}
+  </div>
+)
 
 export const Checkbox = ({
   name,
