@@ -45,15 +45,15 @@ export const Preview = ({
           <strong>Title:</strong>
           {title}
         </div>
-        <div className={styles.description}>
+        <div className={styles.field}>
           <strong>Description:</strong>
           {description}
         </div>
 
-        <div className={styles.description}>
+        <div className={styles.field}>
           <strong>License:</strong> {rights.label}
         </div>
-        <div className={styles.description}>
+        <div className={styles.field}>
           <strong>Language:</strong> {language.label}
         </div>
         {(photosensitiveSeizureWarning || nsfw) && (
@@ -67,7 +67,7 @@ export const Preview = ({
             {photosensitiveSeizureWarning && (
               <span
                 className={styles.label}
-                title={'This artwork is can cause seizures'}
+                title={'This artwork can cause seizures'}
               >
                 Photo Sensitive Seizure Warning!
               </span>

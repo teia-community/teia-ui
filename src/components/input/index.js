@@ -31,7 +31,7 @@ export const Input = ({
         max={max}
         maxLength={maxlength}
         defaultValue={defaultValue === null ? '' : defaultValue}
-        value={value === null ? '' : value === undefined ? '' : value}
+        value={value === (null || undefined) ? '' : value}
         onChange={onChange}
         onBlur={onBlur}
         pattern={pattern}

@@ -19,15 +19,10 @@ const style = {
     color: state.isSelected ? 'red' : 'var(--text-color)',
     backgroundColor: 'var(--background-color)',
     border: 'none',
-    // none of react-select's styles are passed to <Control />
-    // width: 200,
   }),
   menu: (provided, state) => ({
     ...provided,
     backgroundColor: 'var(--background-color)',
-  }),
-  clearIndicator: (provided, state) => ({
-    ...provided,
   }),
   singleValue: (provided, state) => ({
     ...provided,
