@@ -1,4 +1,4 @@
-import { Redirect, useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { PATH } from '../../../constants'
 import { Loading } from '../../loading'
@@ -133,7 +133,7 @@ export const CollabDisplay = () => {
   ]
 
   if (oldContractAddresses.indexOf(id) > -1) {
-    return <Redirect to={`${PATH.ISSUER}/${id}`} />
+    return <Navigate to={`${PATH.ISSUER}/${id}`} replace />
   }
 
   return (
