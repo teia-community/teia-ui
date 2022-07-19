@@ -8,12 +8,11 @@ body:
     attributes:
       value: |
         ## Before submiting an issue
-        - First reach out over our discord as it's usually the best place to get the fastest support as there are mostly likely others experiencing the same issues as you and active Teia team members assisting with troubleshooting.
-           Please seek help in the `# ❓help` channel, and read recent dev updates in `# 📢announcements`.
-           You can join the discord [here](https://discord.gg/AmG86s7nfe)
-        - Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) about this problem first.
+        - First reach out over the [Teia Discord Server](https://discord.gg/AmG86s7nfe) to get fast support and troubleshooting assistance by active Teia members; There are most likely others experiencing the same issues as you.  
+           Please seek help in the `# ❓help` channel and find recent dev updates in `# 📢announcements`.
+        - Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) around your problem before filing a report.
 
-        ### Useful tools to provide more informations
+        ### Useful tools to provide more information
 
         - **See transaction history for an objkt**
         [hicdex.com/objkt](https://hicdex.com/objkt)
@@ -27,8 +26,8 @@ body:
         **If you need help with minting or managing assets, please give us the following information**
           - The link to your teia profiles or collabs affected by the issue.
           - Your tezos wallet address.
-          - The ID(#) of the OBJKTs that are being affected
-          - A screenshots of the browser console *in chrome windows, press ctrl + shift + j to open the developer console*
+          - The ID(#) of the OBJKTs that are affected
+          - If possible, a screenshots of the browser console (for example in chrome for windows, press ctrl + shift + j to open the developer console)
 
   - type: textarea
     id: description
