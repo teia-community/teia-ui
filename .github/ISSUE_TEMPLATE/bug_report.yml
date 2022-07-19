@@ -7,25 +7,28 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Checklist
-        1. First reach out over our discord as it's usually the best place to get the fastest support as there are mostly likely others experiencing the same issues as you and active Teia team members assisting with troubleshooting. Please seek help in the #help channel, and read recent dev updates in #announcements. You can join the discord here: https://discord.gg/AmG86s7nfe
+        ## Before submiting an issue
+        - First reach out over our discord as it's usually the best place to get the fastest support as there are mostly likely others experiencing the same issues as you and active Teia team members assisting with troubleshooting.
+           Please seek help in the `# ❓help` channel, and read recent dev updates in `# 📢announcements`.
+           You can join the discord [here](https://discord.gg/AmG86s7nfe)
         2. Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) about this problem first.
 
-        *See transaction history for an objkt*
-        https://hicdex.com/objkt
+        ### Useful tools to provide more informations
 
-        *See transaction history for your wallet address*
-        https://hicdex.com/sold
+        - **See transaction history for an objkt**
+        [hicdex.com/objkt](https://hicdex.com/objkt)
+
+        - **See transaction history for your wallet address**
+        [hicdex.com/sold](https://hicdex.com/sold)
 
   - type: markdown
     attributes:
       value: |
         **If you need help with minting or managing assets, please give us the following information**
-          - your profile link
-          - any other profile links affected
-          - tezos wallet address
-          - objkt #'s that are being affected
-          - screenshots of the browser console (in chrome windows, press ctrl + shift + j to open the developer console)
+          - The link to your teia profiles or collabs affected by the issue.
+          - Your tezos wallet address.
+          - The ID(#) of the OBJKTs that are being affected
+          - A screenshots of the browser console *in chrome windows, press ctrl + shift + j to open the developer console*
 
   - type: textarea
     id: description
@@ -73,7 +76,7 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Stack trace
+      label: Console output
       render: shell
 
   - type: textarea
