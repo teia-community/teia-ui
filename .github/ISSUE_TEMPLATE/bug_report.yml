@@ -11,7 +11,7 @@ body:
         - First reach out over our discord as it's usually the best place to get the fastest support as there are mostly likely others experiencing the same issues as you and active Teia team members assisting with troubleshooting.
            Please seek help in the `# ❓help` channel, and read recent dev updates in `# 📢announcements`.
            You can join the discord [here](https://discord.gg/AmG86s7nfe)
-        2. Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) about this problem first.
+        - Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) about this problem first.
 
         ### Useful tools to provide more informations
 
@@ -54,16 +54,12 @@ body:
     attributes:
       label: Expected behavior
       description: A clear description of what you expected to happen.
-  - type: markdown
-    attributes:
-      value: |
-        **Platform (please complete the following information):**
 
   - type: textarea
     id: info
     attributes:
       label: Platform and versions
-      description: 'Output of `npm run tauri info` or `cargo tauri info`'
+      description: 'node and npm version too if applicable'
       render: shell
       placeholder: |
         - OS: [e.g. iOS]
