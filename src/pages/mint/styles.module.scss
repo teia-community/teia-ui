@@ -1,0 +1,16 @@
+@import '../../styles/layout.scss';
+@import '../../styles/variables.scss';
+
+.line {
+  display: block;
+  border-bottom: 1px solid var(--gray-20);
+}
+
+::selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+::-moz-selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}

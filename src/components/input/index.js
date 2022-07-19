@@ -4,7 +4,7 @@ import styles from './styles.module.scss'
 export const Input = ({
   type = 'text',
   placeholder = 'placeholder',
-  name = 'input-name-not-set',
+  name,
   min,
   max,
   maxlength = 500,
@@ -14,20 +14,24 @@ export const Input = ({
   onWheel = () => null,
   disabled,
   value,
+  children,
+  defaultValue,
   pattern,
   onKeyPress,
   autoFocus = false,
 }) => (
   <div className={styles.container}>
-    <label>
+    <label htmlFor={name}>
+      <p>{label}</p>
       <input
         type={type}
         placeholder={placeholder}
-        name={name}
+        name={name || label}
         min={min}
         max={max}
         maxLength={maxlength}
-        defaultValue={value}
+        defaultValue={defaultValue === null ? '' : defaultValue}
+        value={value === (null || undefined) ? '' : value}
         onChange={onChange}
         onBlur={onBlur}
         pattern={pattern}
@@ -35,9 +39,36 @@ export const Input = ({
         onKeyPress={onKeyPress}
         autoFocus={autoFocus}
       />
-      <p>{label}</p>
     </label>
+    {children}
   </div>
+)
+
+export const Checkbox = ({
+  name,
+  label,
+  onChange = () => null,
+  onBlur = () => null,
+  onWheel = () => null,
+  disabled,
+  checked = false,
+  autoFocus = false,
+}) => (
+  <label className={styles.check_container}>
+    {label}
+    <input
+      type="checkbox"
+      name={name}
+      onChange={onChange}
+      onBlur={onBlur}
+      onWheel={onWheel}
+      autoFocus={autoFocus}
+      checked={
+        checked === null ? false : checked === undefined ? false : checked
+      }
+    />
+    <span className={styles.checkmark}></span>
+  </label>
 )
 
 export const Textarea = ({
@@ -46,6 +77,7 @@ export const Textarea = ({
   name = 'input-name-not-set',
   min,
   max,
+  children,
   maxlength = 5000,
   label,
   onChange = () => null,
@@ -54,7 +86,8 @@ export const Textarea = ({
   value,
 }) => (
   <div className={styles.container}>
-    <label>
+    <label htmlFor={name}>
+      <p>{label}</p>
       <textarea
         type={type}
         placeholder={placeholder}
@@ -62,12 +95,12 @@ export const Textarea = ({
         min={min}
         max={max}
         maxLength={maxlength}
-        defaultValue={value}
+        value={value}
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
       />
-      <p>{label}</p>
     </label>
+    {children}
   </div>
 )

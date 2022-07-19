@@ -1,42 +1,87 @@
 @import '../../styles/variables.scss';
 
+.check_container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  margin-right: 24px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: var(--background-color);
+    //box-shadow: 1px 1px 0px 1px var(--text-color);
+    box-shadow: 1px 1px 0px 1px rgb(239, 239, 239);
+  }
+  input:focus-visible ~ .checkmark {
+    opacity: 0.4;
+  }
+  .checkmark:after {
+    content: '';
+    position: absolute;
+    display: none;
+  }
+  input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .checkmark:after {
+    left: 5px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: rgb(239, 239, 239);
+  }
+}
+
 .container {
   position: relative;
   width: 100%;
-  margin-bottom: 12px;
+  //margin-bottom: 12px;
+  padding-top: 20px;
 
   label {
     display: block;
     position: relative;
     width: 100%;
+    color: var(--text-color);
 
     p {
-      position: absolute;
-      top: 6px;
-      left: 0;
-      color: var(--text-color);
+      display: inline-block;
+      font-weight: 700;
       letter-spacing: $letter-spacing;
-      opacity: 0.7;
-      transition: all 0.2s;
+      color: inherit;
       pointer-events: none;
       border: 1px;
     }
-
     textarea,
     input {
       background-color: transparent;
       width: 100%;
       padding: 5px 0;
       border: none;
-      color: var(--text-color);
+      color: inherit;
       transition: color #{$theme-duration} ease-out;
       letter-spacing: $letter-spacing;
-      // border-bottom: 1px solid var(--text-color);
-      // border: 1px dashed red;
       margin-bottom: 10px;
 
       &::placeholder {
-        color: var(--text-color);
+        color: inherit;
         opacity: 0.4;
       }
 
@@ -44,15 +89,13 @@
         outline: none;
       }
 
-      &:focus + p,
-      &:not(:placeholder-shown) + p {
-        opacity: 0.4;
-        transform: translateY(-25px);
-      }
-
       &:focus::placeholder {
         opacity: 0;
       }
+    }
+
+    textarea {
+      min-height: 75px;
     }
   }
 }

@@ -1,0 +1,33 @@
+@import '../../styles/variables.scss';
+
+select:focus ~ .container {
+  background-color: red;
+}
+.container {
+  position: relative;
+  width: 100%;
+
+  [class^='react_select__control'] {
+    box-shadow: none; // outline of the select input
+    border-radius: 0;
+  }
+
+  [class^='react_select__option']:hover {
+    background-color: var(--text-color);
+    color: var(--background-color);
+  }
+}
+
+.label {
+  display: block;
+  padding-top: 20px;
+
+  p {
+    color: var(--text-color);
+    letter-spacing: $letter-spacing;
+    transition: all #{$theme-duration};
+    pointer-events: none;
+    border: 1px;
+    font-weight: 700;
+  }
+}

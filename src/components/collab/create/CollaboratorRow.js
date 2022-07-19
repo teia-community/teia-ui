@@ -90,7 +90,7 @@ export const CollaboratorRow = ({
 
   const collaboratorName = meta ? meta.alias : null
   const placeholderText =
-    collaboratorName || `Address ${!address ? `(tz... or KT...)` : ''}`
+    collaboratorName || `${!address ? `(tz... or KT...)` : ''}`
   /**
    * In some situations we may want to show less UI information
    * eg. when adding benefactors, you don't need the whole
@@ -109,6 +109,7 @@ export const CollaboratorRow = ({
       <td className={styles.addressCell}>
         <div className={cellClass}>
           <label>
+            <p>{'Address'}</p>
             <textarea
               rows={1}
               className={styles.textInput}
@@ -117,7 +118,6 @@ export const CollaboratorRow = ({
               value={address || ''}
               autoFocus={!address}
             />
-            <p>{placeholderText}</p>
           </label>
         </div>
       </td>
@@ -125,16 +125,16 @@ export const CollaboratorRow = ({
       <td className={styles.sharesCell}>
         <div className={cellClass}>
           <label>
+            <p>Shares</p>
             <input
               ref={sharesRef}
               type="number"
               onChange={(event) => _update('shares', event.target.value)}
               onKeyDown={_onKeyDown}
-              placeholder="shares"
+              placeholder="(proportional)"
               label="shares"
               value={shares || ''}
             />
-            <p>Shares</p>
           </label>
         </div>
       </td>

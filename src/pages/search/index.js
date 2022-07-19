@@ -524,8 +524,9 @@ export class Search extends Component {
               <Input
                 type="text"
                 name="search"
+                value={this.state.search}
                 onChange={this.handleChange}
-                label="Search ↵"
+                label=""
                 placeholder="Search ↵"
                 onKeyPress={this.handleKey}
               />

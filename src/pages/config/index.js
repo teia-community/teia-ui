@@ -217,7 +217,7 @@ export class Config extends Component {
             <Input
               name="subjkt"
               onChange={this.handleChange}
-              placeholder="Username"
+              placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
               label="Username"
               value={
                 this.context.subjktInfo
@@ -229,7 +229,7 @@ export class Config extends Component {
             <Input
               name="description"
               onChange={this.handleChange}
-              placeholder="Description"
+              placeholder="(Max length 500 characters)"
               label="Description"
               value={this.state.description}
             />
@@ -253,14 +253,14 @@ export class Config extends Component {
           </div>
         </Container>
 
-        <Container>
+        {/* <Container>
           <Padding>
             <div onClick={this.toggle}>
               <Primary>+ Advanced</Primary>
             </div>
           </Padding>
-        </Container>
-        {this.state.toogled ? (
+        </Container> */}
+        {/* {this.state.toogled ? (
           <Container>
             <Padding>
               <Input
@@ -268,7 +268,7 @@ export class Config extends Component {
                 onChange={this.handleChange}
                 placeholder="hDAO Curation"
                 label="hDAO Curation"
-                value={undefined}
+                // defaultValue={undefined}
               />
 
               <Button onClick={this.hDAO_config}>
@@ -280,7 +280,7 @@ export class Config extends Component {
               </p>
             </Padding>
           </Container>
-        ) : undefined}
+        ) : undefined} */}
 
         {/*         <Container>
           <Padding>

@@ -4,7 +4,8 @@ import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Page, Container, Padding } from '@components/layout'
-import { Input, Textarea } from '@components/input'
+import { Input, Textarea, Checkbox } from '@components/input'
+import { Select } from '@components/select'
 import { Button, Curate, Primary, Purchase } from '@components/button'
 import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
@@ -21,6 +22,11 @@ import {
   MIN_ROYALTIES,
   MAX_ROYALTIES,
   BURN_ADDRESS,
+  COVER_COMPRESSOR_OPTIONS,
+  THUMBNAIL_COMPRESSOR_OPTIONS,
+  IPFS_DIRECTORY_MIMETYPE,
+  LICENSE_TYPES_OPTIONS,
+  LANGUAGES_OPTIONS,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -30,18 +36,7 @@ import {
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
-
-const coverOptions = {
-  quality: 0.85,
-  maxWidth: 1024,
-  maxHeight: 1024,
-}
-
-const thumbnailOptions = {
-  quality: 0.85,
-  maxWidth: 350,
-  maxHeight: 350,
-}
+import styles from './styles.module.scss'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
@@ -67,10 +62,10 @@ export const Mint = () => {
 
   // const history = useHistory()
   const [step, setStep] = useState(0)
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState()
   const [mintName, setMintName] = useState('')
-  const [description, setDescription] = useState('')
-  const [tags, setTags] = useState('')
+  const [description, setDescription] = useState()
+  const [tags, setTags] = useState()
   const [amount, setAmount] = useState()
   const [royalties, setRoyalties] = useState()
   const [file, setFile] = useState() // the uploaded file
@@ -79,6 +74,12 @@ export const Mint = () => {
   const [needsCover, setNeedsCover] = useState(false)
   const [collabs, setCollabs] = useState([])
   const [selectCollab, setSelectCollab] = useState(false)
+  const [rights, setRights] = useState('') // To allow the artist to specify the asset rights.
+  const [rightUri, setRightUri] = useState() // A URI to a statement of rights.
+  const [language, setLanguage] = useState() // The language of the intellectual content of the asset.
+  const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
+  const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
+    useState(false) // Photosensitivity flag
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -132,14 +133,9 @@ export const Mint = () => {
       })
     } else {
       await setAccount()
-      console.log(file.mimeType)
-      console.log(ALLOWED_MIMETYPES)
+
       // check mime type
       if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
-        // alert(
-        //   `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`
-        // )
-
         setFeedback({
           visible: true,
           message: `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`,
@@ -156,10 +152,6 @@ export const Mint = () => {
       // check file size
       const filesize = (file.file.size / 1024 / 1024).toFixed(4)
       if (filesize > MINT_FILESIZE) {
-        // alert(
-        //   `File too big (${filesize}). Limit is currently set at ${MINT_FILESIZE}MB`
-        // )
-
         setFeedback({
           visible: true,
           message: `Max file size (${filesize}). Limit is currently ${MINT_FILESIZE}MB`,
@@ -174,7 +166,6 @@ export const Mint = () => {
       }
 
       // file about to be minted, change to the mint screen
-
       setStep(2)
 
       setFeedback({
@@ -189,13 +180,127 @@ export const Mint = () => {
       // ztepler: I have not understand the difference between acc.address and getAuth here
       //    so I am using acc.address (minterAddress) in both nftCid.address and in mint call
 
-      console.log({ minterAddress })
+      console.debug({ minterAddress })
+
+      // Metadata attributes
+      const attributes = [
+        {
+          name: 'nsfw',
+          value: nsfw,
+          type: 'boolean',
+        },
+        {
+          name: 'photosensitiveSeizureWarning',
+          value: photosensitiveSeizureWarning,
+          type: 'boolean',
+        },
+      ]
+
+      const getImageDimensions = async (file) => {
+        return await new Promise((resolve, reject) => {
+          if (file) {
+            const image = new Image()
+            image.src = file.reader
+            image.onload = function () {
+              resolve({ imageWidth: this.width, imageHeight: this.height })
+            }
+            image.onerror = function (e) {
+              resolve({ imageWidth: 0, imageHeight: 0 })
+            }
+          } else {
+            resolve({ imageWidth: 0, imageHeight: 0 })
+          }
+        })
+      }
+      const { imageWidth, imageHeight } = await getImageDimensions(file)
+
+      const isDirectory = [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(
+        file.mimeType
+      )
+      const formats = []
+      if (file.mimeType.indexOf('image') === 0) {
+        let format = {
+          mimeType: file.mimeType,
+          fileSize: file.file.size,
+          fileName: file.file.name,
+        }
+        if (imageWidth && imageHeight) {
+          format.dimensions = {
+            value: `${imageWidth}x${imageHeight}`,
+            unit: 'px',
+          }
+        }
+        formats.push(format)
+      } else if (isDirectory) {
+        formats.push({
+          fileSize: file.file.size,
+          fileName: file.file.name,
+          mimeType: IPFS_DIRECTORY_MIMETYPE,
+        })
+      } else {
+        formats.push({
+          fileSize: file.file.size,
+          fileName: file.file.name,
+          mimeType: file.mimeType,
+        })
+      }
+
+      const removeExtension = (name) => {
+        return name.split('.').slice(0, -1).join('.')
+      }
+
+      const extensionFromMimetype = (mime) => {
+        switch (mime) {
+          case MIMETYPE.JPEG:
+            return 'jpg'
+          case MIMETYPE.PNG:
+            return 'png'
+          case MIMETYPE.GIF:
+            return 'gif'
+          default:
+            return 'jpg'
+        }
+      }
+
+      // TMP: skip GIFs to avoid making static
+      if (file.mimeType !== MIMETYPE.GIF) {
+        let coverIsGif = false
+        if (cover) {
+          coverIsGif = cover.mimeType === MIMETYPE.GIF
+          const { imageWidth, imageHeight } = await getImageDimensions(cover)
+          cover.format = {
+            mimeType: cover.mimeType,
+            fileSize: cover.buffer.byteLength,
+            fileName: `${removeExtension(file.file.name)}.${
+              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+            }`,
+            dimensions: {
+              value: `${imageWidth}x${imageHeight}`,
+              unit: 'px',
+            },
+          }
+        }
+        if (thumbnail && !coverIsGif) {
+          const { imageWidth, imageHeight } = await getImageDimensions(
+            thumbnail
+          )
+          thumbnail.format = {
+            mimeType: thumbnail.mimeType,
+            fileSize: thumbnail.buffer.byteLength,
+            fileName: `${removeExtension(
+              file.file.name
+            )}.${extensionFromMimetype(thumbnail.mimeType)}`,
+            dimensions: {
+              value: `${imageWidth}x${imageHeight}`,
+              unit: 'px',
+            },
+          }
+        }
+      }
 
       // upload file(s)
       let nftCid
-      if (
-        [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(file.mimeType)
-      ) {
+      if (isDirectory) {
         const files = await prepareFilesFromZIP(file.buffer)
 
         nftCid = await prepareDirectory({
@@ -207,7 +312,11 @@ export const Mint = () => {
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
-          file,
+          rights: rights.value,
+          rightUri,
+          language: language.value,
+          attributes,
+          formats,
         })
       } else {
         // process all other files
@@ -216,15 +325,19 @@ export const Mint = () => {
           description,
           tags,
           address: minterAddress,
-          buffer: file.buffer,
-          mimeType: file.mimeType,
+          file,
           cover,
           thumbnail,
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
+          rights: rights.value,
+          rightUri,
+          language: language.value,
+          attributes,
+          formats,
         })
       }
 
-      console.log('Calling mint with', {
+      console.debug('Calling mint with', {
         minterAddress,
         amount,
         path: nftCid.path,
@@ -239,8 +352,8 @@ export const Mint = () => {
     const rawLeaves = false
     const hashv0 = await ipfsHash.of(file.buffer, { cidVersion: 0, rawLeaves })
     const hashv1 = await ipfsHash.of(file.buffer, { cidVersion: 1, rawLeaves })
-    console.log(`Current CIDv0: ${hashv0}`)
-    console.log(`Current CIDv1: ${hashv1}`)
+    console.debug(`Current CIDv0: ${hashv0}`)
+    console.debug(`Current CIDv1: ${hashv1}`)
 
     const uri0 = `ipfs://${hashv0}`
     const uri1 = `ipfs://${hashv1}`
@@ -348,10 +461,13 @@ export const Mint = () => {
       return
     }
 
-    const cover = await generateCompressedImage(props, coverOptions)
+    const cover = await generateCompressedImage(props, COVER_COMPRESSOR_OPTIONS)
     setCover(cover)
 
-    const thumb = await generateCompressedImage(props, thumbnailOptions)
+    const thumb = await generateCompressedImage(
+      props,
+      THUMBNAIL_COMPRESSOR_OPTIONS
+    )
     setThumbnail(thumb)
   }
 
@@ -362,12 +478,27 @@ export const Mint = () => {
     )
   }
 
+  const handleRightsValidation = () => {
+    const urlR =
+      '^(http|ipf)s?://(?:www.)?([-a-zA-Z0-9@:%._+~#=]{1,256}.?[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))?'
+    if (rights && rights.value === 'custom') {
+      if (rightUri) {
+        if (rightUri.match(urlR)) {
+          return true
+        }
+      }
+      return false
+    } else {
+      return true
+    }
+  }
   const handleValidation = () => {
     if (
       amount <= 0 ||
       amount > MAX_EDITIONS ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
+      !handleRightsValidation() ||
       !file
     ) {
       return true
@@ -382,27 +513,71 @@ export const Mint = () => {
     return true
   }
 
+  const mintKeys = [
+    'objkt::title',
+    'objkt::description',
+    'objkt::tags',
+    'objkt::edition_count',
+    'objkt::royalties',
+    'objkt::rights',
+    'objkt::rights_uri',
+    'objkt::language',
+    'objkt::nsfw',
+    'objkt::photosensitive_seizure_warning',
+  ]
+
   const restoreFields = () => {
-    const title = window.localStorage.getItem('objkt::title')
-    const description = window.localStorage.getItem('objkt::description')
-    const tags = window.localStorage.getItem('objkt::tags')
-    const edition_count = window.localStorage.getItem('objkt::edition_count')
-    const royalties = window.localStorage.getItem('objkt::royalties')
+    try {
+      const title = window.localStorage.getItem('objkt::title') || ''
+      const description =
+        window.localStorage.getItem('objkt::description') || ''
+      const tags = window.localStorage.getItem('objkt::tags') || ''
+      const edition_count = window.localStorage.getItem('objkt::edition_count')
+      const royalties = window.localStorage.getItem('objkt::royalties')
+      let rights = window.localStorage.getItem('objkt::rights')
+      rights = rights ? JSON.parse(rights) : 'null'
+      const rights_uri = window.localStorage.getItem('objkt::rights_uri')
+      let language = window.localStorage.getItem('objkt::language')
+      language = language ? JSON.parse(language) : 'null'
+      const nsfw = window.localStorage.getItem('objkt::nsfw')
+      const photoSeizureWarning = window.localStorage.getItem(
+        'objkt::photosensitive_seizure_warning'
+      )
 
-    setTitle(title)
-    setDescription(description)
-    setTags(tags)
-    setAmount(edition_count)
-    setRoyalties(royalties)
+      setTitle(title)
+      setDescription(description)
+      setTags(tags)
+      setAmount(edition_count)
+      setRoyalties(royalties)
 
-    console.log(`
-    Restoring fields from localStorage:
-      title = ${title}
-      description = ${description}
-      tags = ${tags}
-      edition_count = ${edition_count}
-      royalties = ${royalties}
-    `)
+      setRights(rights)
+      setRightUri(rights_uri)
+      setLanguage(language)
+      setNsfw(nsfw)
+      setPhotosensitiveSeizureWarning(photoSeizureWarning)
+
+      console.debug(`
+      Restoring fields from localStorage:
+        title = ${title}
+        description = ${description}
+        tags = ${tags}
+        edition_count = ${edition_count}
+        royalties = ${royalties}
+        rights = ${JSON.stringify(rights)}
+        rights_uri = ${rights_uri}
+        language = ${JSON.stringify(language)}
+        nsfw = ${nsfw}
+        photosensitive_seizure_warning = ${photoSeizureWarning}
+      `)
+    } catch (e) {
+      console.log(
+        'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
+      )
+      console.groupCollapsed('expand for details')
+      console.error(e)
+      console.groupEnd()
+      clearFields()
+    }
   }
 
   const clearFields = () => {
@@ -411,32 +586,22 @@ export const Mint = () => {
     setTags('')
     setAmount('')
     setRoyalties('')
+    setRights('')
+    setRightUri('')
+    setNsfw(false)
+    setPhotosensitiveSeizureWarning(false)
+    setLanguage('')
 
-    const keys = [
-      'objkt::title',
-      'objkt::description',
-      'objkt::tags',
-      'objkt::edition_count',
-      'objkt::royalties',
-    ]
-
-    keys.forEach((k) => window.localStorage.removeItem(k))
+    mintKeys.forEach((k) => window.localStorage.removeItem(k))
   }
 
   const hasStoredFields = () => {
-    const title = window.localStorage.getItem('objkt::title')
-    const description = window.localStorage.getItem('objkt::description')
-    const tags = window.localStorage.getItem('objkt::tags')
-    const edition_count = window.localStorage.getItem('objkt::edition_count')
-    const royalties = window.localStorage.getItem('objkt::royalties')
-
-    return (
-      title != null ||
-      description != null ||
-      tags != null ||
-      edition_count != null ||
-      royalties != null
-    )
+    for (const key of mintKeys) {
+      if (window.localStorage.getItem(key)) {
+        return true
+      }
+    }
+    return false
   }
 
   // const proxyDisplay = proxyName || proxyAddress
@@ -473,10 +638,12 @@ export const Mint = () => {
                   setTitle(e.target.value)
                   window.localStorage.setItem('objkt::title', e.target.value)
                 }}
-                placeholder="title"
+                placeholder="Max 500 characters"
                 label="Title"
                 value={title}
-              />
+              >
+                <span className={styles.line} />
+              </Input>
 
               <Textarea
                 type="text"
@@ -488,10 +655,12 @@ export const Mint = () => {
                     e.target.value
                   )
                 }}
-                placeholder="description (max 5000 characters)"
+                placeholder="Max 5000 characters"
                 label="Description"
                 value={description}
-              />
+              >
+                <span className={styles.line} />
+              </Textarea>
 
               <Input
                 type="text"
@@ -499,11 +668,20 @@ export const Mint = () => {
                   setTags(e.target.value)
                   window.localStorage.setItem('objkt::tags', e.target.value)
                 }}
-                placeholder="tags (comma separated. example: illustration, digital)"
+                onBlur={(e) => {
+                  const tags = _.join(
+                    _.uniq(e.target.value.split(',').map((tag) => tag.trim())),
+                    ','
+                  )
+                  setTags(tags)
+                  window.localStorage.setItem('objkt::tags', tags)
+                }}
+                placeholder="Comma separated. example: illustration, digital"
                 label="Tags"
                 value={tags}
-              />
-
+              >
+                <span className={styles.line} />
+              </Input>
               <Input
                 type="number"
                 min={1}
@@ -519,10 +697,12 @@ export const Mint = () => {
                   limitNumericField(e.target, 1, MAX_EDITIONS)
                   setAmount(e.target.value)
                 }}
-                placeholder={`Editions (no. editions, 1-${MAX_EDITIONS})`}
+                placeholder={`No. editions, 1-${MAX_EDITIONS}`}
                 label="Editions"
                 value={amount}
-              />
+              >
+                <span className={styles.line} />
+              </Input>
 
               <Input
                 type="number"
@@ -539,10 +719,93 @@ export const Mint = () => {
                   limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
                   setRoyalties(e.target.value)
                 }}
-                placeholder={`Royalties after each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
+                placeholder={`After each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
                 label="Royalties"
                 value={royalties}
+              >
+                <span className={styles.line} />
+              </Input>
+              <Select
+                label="License"
+                value={rights}
+                placeholder="(optional)"
+                onChange={(e) => {
+                  setRights(e)
+                  window.localStorage.setItem(
+                    'objkt::rights',
+                    JSON.stringify(e)
+                  )
+                }}
+                options={LICENSE_TYPES_OPTIONS}
               />
+
+              {rights.value === 'custom' && (
+                <Padding>
+                  <Input
+                    type="text"
+                    onChange={(e) => {
+                      setRightUri(e.target.value)
+                      window.localStorage.setItem(
+                        'objkt::rights_uri',
+                        e.target.value
+                      )
+                    }}
+                    placeholder="The URI to the custom license"
+                    label="Right URI"
+                    value={rightUri}
+                  />
+                </Padding>
+              )}
+              <span className={styles.line} />
+              <Select
+                label="Language"
+                placeholder="(optional)"
+                options={LANGUAGES_OPTIONS}
+                value={language}
+                onChange={(e) => {
+                  setLanguage(e)
+                  window.localStorage.setItem(
+                    'objkt::language',
+                    JSON.stringify(e)
+                  )
+                }}
+              >
+                <span className={styles.line} />
+              </Select>
+              <Padding>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    paddingTop: '30px',
+                  }}
+                >
+                  <Checkbox
+                    label="NSFW"
+                    checked={nsfw}
+                    onChange={(e) => {
+                      setNsfw(e.target.checked)
+                      window.localStorage.setItem(
+                        'objkt::nsfw',
+                        e.target.checked ? 1 : 0
+                      )
+                    }}
+                    name="nsfw"
+                  />
+                  <Checkbox
+                    checked={photosensitiveSeizureWarning}
+                    onChange={(e) => {
+                      setPhotosensitiveSeizureWarning(e.target.checked)
+                      window.localStorage.setItem(
+                        'objkt::photosensitive_seizure_warning',
+                        e.target.checked ? 1 : 0
+                      )
+                    }}
+                    name="photosens"
+                    label="Photo Sensitive Seizure Warning"
+                  />
+                </div>
+              </Padding>
             </Padding>
           </Container>
 
@@ -611,6 +874,13 @@ export const Mint = () => {
                 title={title}
                 description={description}
                 tags={tags}
+                rights={rights}
+                rightUri={rightUri}
+                language={language}
+                nsfw={nsfw}
+                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
+                amount={amount}
+                royalties={royalties}
               />
             </Padding>
           </Container>
