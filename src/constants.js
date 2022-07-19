@@ -27,7 +27,21 @@ export const getBanBlockList = () => banBlockList
 let logoList = []
 export const setLogoList = (data) => {
   // Shuffles the list daily
-  let logos = data.logos
+
+  let logos = []
+
+  for (const logo_pack of data) {
+    logos = logos.concat(
+      logo_pack.logos.map((logo) => {
+        return {
+          name: logo,
+          themable: logo_pack.themable,
+          collection: logo_pack.collection,
+        }
+      })
+    )
+  }
+
   let currentIndex = logos.length,
     temporaryValue,
     randomIndex
