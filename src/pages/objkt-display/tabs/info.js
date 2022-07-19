@@ -5,8 +5,17 @@ import styles from '../styles.module.scss'
 import '../style.css'
 
 export const Info = (token_info) => {
-  const { title, description, metadata, token_tags, mime, artifact_uri } =
-    token_info
+  const {
+    address,
+    title,
+    creator,
+    id,
+    description,
+    metadata,
+    token_tags,
+    mime,
+    artifact_uri,
+  } = token_info
   console.log(token_info)
   // cloudflare isn't useful in this case. they don't allow video streaming...
   // const CLOUDFLARE = 'https://cloudflare-ipfs.com/ipfs/'
@@ -58,7 +67,15 @@ export const Info = (token_info) => {
                 Metadata
               </a>
               &nbsp;//&nbsp;
-              <a style={tag} href={artifact_uri.replace('ipfs://', IPFS)}>
+              <a
+                style={tag}
+                href={
+                  artifact_uri.replace('ipfs://', IPFS) +
+                  `/?creator=${creator.address}&viewer=${
+                    address || ''
+                  }&objkt=${id}`
+                }
+              >
                 View on ipfs
               </a>
             </div>
