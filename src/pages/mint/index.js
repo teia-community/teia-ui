@@ -271,8 +271,9 @@ export const Mint = () => {
           cover.format = {
             mimeType: cover.mimeType,
             fileSize: cover.buffer.byteLength,
-            fileName: `${removeExtension(file.file.name)}.${coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
-              }`,
+            fileName: `${removeExtension(file.file.name)}.${
+              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+            }`,
             dimensions: {
               value: `${imageWidth}x${imageHeight}`,
               unit: 'px',
