@@ -9,6 +9,7 @@ import styles from '../styles.module.scss'
 
 export const Swap = ({
   total_amount,
+  token_holders,
   owners,
   creator,
   royalties,
@@ -16,9 +17,17 @@ export const Swap = ({
   address,
   restricted,
 }) => {
+  let totalOwned = 0
   const { id } = useParams()
-  const { swap, acc, progress, setProgress, message, setMessage } =
-    useContext(HicetnuncContext)
+  const {
+    swap,
+    acc,
+    progress,
+    setProgress,
+    proxyAddress,
+    message,
+    setMessage,
+  } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState()
   const [price, setPrice] = useState()
   //const [progress, setProgress] = useState(false)
@@ -32,15 +41,24 @@ export const Swap = ({
       setMessage(
         'please note that items intended to be giveaways can be collected in multiple editions and resold in large quantities. please ensure you are happy with the quantity and price chosen before swapping'
       )
-    } else {
-      setPrice(value)
-      setMessage('')
+      return
     }
 
-    if (value === '') {
-      setPrice(value)
-      setMessage('')
-    }
+    setPrice(value)
+    setMessage('')
+  }
+
+  const proxyAdminAddress = creator.is_split
+    ? creator.shares[0].administrator
+    : null
+  const found = token_holders.find(
+    (e) =>
+      e.holder_id === acc?.address ||
+      (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+  )
+
+  if (found) {
+    totalOwned = found.quantity
   }
 
   const handleSubmit = () => {
@@ -98,13 +116,29 @@ export const Swap = ({
           <Container>
             <Padding>
               <div className={styles.container}>
+                <p>
+                  You own {totalOwned} editions of OBJKT#{id}. How many would
+                  you like to swap?
+                </p>
+              </div>
+            </Padding>
+          </Container>
+
+          <Container>
+            <Padding>
+              <div className={styles.container}>
                 <Input
                   type="number"
                   placeholder="OBJKT quantity"
                   min={1}
-                  defaultValue={amount}
+                  value={amount}
                   /* max={total_amount - sales} */
                   onChange={(e) => setAmount(e.target.value)}
+                  onBlur={(e) => {
+                    if (parseInt(e.target.value) > totalOwned) {
+                      setAmount(totalOwned)
+                    }
+                  }}
                   onWheel={(e) => e.target.blur()}
                   disabled={progress}
                 />
@@ -114,9 +148,13 @@ export const Swap = ({
                       style={style}
                       type="number"
                       placeholder="Price per OBJKT"
-                      min={0}
-                      max={10000}
-                      onChange={(e) => checkPrice(e.target.value)}
+                      value={price}
+                      onChange={(e) => checkPrice(parseFloat(e.target.value))}
+                      onBlur={(e) => {
+                        if (parseFloat(e.target.value) > 10000) {
+                          setPrice(10000)
+                        }
+                      }}
                       onWheel={(e) => e.target.blur()}
                       disabled={progress}
                     />
@@ -142,7 +180,9 @@ export const Swap = ({
               <div className={styles.container}>
                 <p>
                   The Teia marketplace fee is temporarily set to 0%. Please
-                  consider donating to teiaescrow.tez (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance funding.
+                  consider donating to teiaescrow.tez
+                  (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance
+                  funding.
                 </p>
               </div>
             </Padding>
