@@ -186,12 +186,12 @@ export const Mint = () => {
       const attributes = [
         {
           name: 'nsfw',
-          value: nsfw,
+          value: nsfw ? 'true' : 'false',
           type: 'boolean',
         },
         {
           name: 'photosensitiveSeizureWarning',
-          value: photosensitiveSeizureWarning,
+          value: photosensitiveSeizureWarning ? 'true' : 'false',
           type: 'boolean',
         },
       ]
@@ -271,9 +271,8 @@ export const Mint = () => {
           cover.format = {
             mimeType: cover.mimeType,
             fileSize: cover.buffer.byteLength,
-            fileName: `${removeExtension(file.file.name)}.${
-              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
-            }`,
+            fileName: `${removeExtension(file.file.name)}.${coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+              }`,
             dimensions: {
               value: `${imageWidth}x${imageHeight}`,
               unit: 'px',
