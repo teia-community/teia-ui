@@ -532,29 +532,19 @@ export const Mint = () => {
       const description =
         window.localStorage.getItem('objkt::description') || ''
       const tags = window.localStorage.getItem('objkt::tags') || ''
-      const edition_count = window.localStorage.getItem('objkt::edition_count')
-      const royalties = window.localStorage.getItem('objkt::royalties')
-      let rights = window.localStorage.getItem('objkt::rights')
+      const edition_count =
+        window.localStorage.getItem('objkt::edition_count') || undefined
+      const royalties =
+        window.localStorage.getItem('objkt::royalties') || undefined
+      let rights = window.localStorage.getItem('objkt::rights') || undefined
       rights = rights ? JSON.parse(rights) : 'null'
-      const rights_uri = window.localStorage.getItem('objkt::rights_uri')
+      const rights_uri = window.localStorage.getItem('objkt::rights_uri') || ''
       let language = window.localStorage.getItem('objkt::language')
       language = language ? JSON.parse(language) : 'null'
       const nsfw = window.localStorage.getItem('objkt::nsfw')
       const photoSeizureWarning = window.localStorage.getItem(
         'objkt::photosensitive_seizure_warning'
       )
-
-      setTitle(title)
-      setDescription(description)
-      setTags(tags)
-      setAmount(edition_count)
-      setRoyalties(royalties)
-
-      setRights(rights)
-      setRightUri(rights_uri)
-      setLanguage(language)
-      setNsfw(nsfw)
-      setPhotosensitiveSeizureWarning(photoSeizureWarning)
 
       console.debug(`
       Restoring fields from localStorage:
@@ -569,6 +559,18 @@ export const Mint = () => {
         nsfw = ${nsfw}
         photosensitive_seizure_warning = ${photoSeizureWarning}
       `)
+
+      setTitle(title)
+      setDescription(description)
+      setTags(tags)
+      setAmount(edition_count)
+      setRoyalties(royalties)
+
+      setRights(rights)
+      setRightUri(rights_uri)
+      setLanguage(language)
+      setNsfw(nsfw)
+      setPhotosensitiveSeizureWarning(photoSeizureWarning)
     } catch (e) {
       console.log(
         'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
