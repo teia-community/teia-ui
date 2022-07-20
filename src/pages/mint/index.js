@@ -186,12 +186,12 @@ export const Mint = () => {
       const attributes = [
         {
           name: 'nsfw',
-          value: nsfw,
+          value: nsfw ? 'true' : 'false',
           type: 'boolean',
         },
         {
           name: 'photosensitiveSeizureWarning',
-          value: photosensitiveSeizureWarning,
+          value: photosensitiveSeizureWarning ? 'true' : 'false',
           type: 'boolean',
         },
       ]
