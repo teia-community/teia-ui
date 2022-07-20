@@ -541,10 +541,13 @@ export const Mint = () => {
       const rights_uri = window.localStorage.getItem('objkt::rights_uri') || ''
       let language = window.localStorage.getItem('objkt::language')
       language = language ? JSON.parse(language) : 'null'
-      const nsfw = window.localStorage.getItem('objkt::nsfw')
-      const photoSeizureWarning = window.localStorage.getItem(
-        'objkt::photosensitive_seizure_warning'
-      )
+      const nsfw =
+        window.localStorage.getItem('objkt::nsfw') === 'true' ? true : false
+      const photoSeizureWarning =
+        window.localStorage.getItem('objkt::photosensitive_seizure_warning') ===
+        'true'
+          ? true
+          : false
 
       console.debug(`
       Restoring fields from localStorage:
@@ -789,7 +792,7 @@ export const Mint = () => {
                       setNsfw(e.target.checked)
                       window.localStorage.setItem(
                         'objkt::nsfw',
-                        e.target.checked ? 1 : 0
+                        e.target.checked ? 'true' : 'false'
                       )
                     }}
                     name="nsfw"
@@ -800,7 +803,7 @@ export const Mint = () => {
                       setPhotosensitiveSeizureWarning(e.target.checked)
                       window.localStorage.setItem(
                         'objkt::photosensitive_seizure_warning',
-                        e.target.checked ? 1 : 0
+                        e.target.checked ? 'true' : 'false'
                       )
                     }}
                     name="photosens"
