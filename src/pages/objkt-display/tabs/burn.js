@@ -7,7 +7,7 @@ import { Loading } from '@components/loading'
 import styles from '../styles.module.scss'
 
 export const Burn = (props) => {
-  console.log('BURN', props)
+  console.debug('BURN', props)
   const { token_holders, id } = props
   const {
     burn,
@@ -37,7 +37,7 @@ export const Burn = (props) => {
   }
 
   const handleSubmit = () => {
-    if (amount === '') {
+    if (amount === '' || amount === '0') {
       alert('Error: No amount specified.')
       return
     }
@@ -79,9 +79,15 @@ export const Burn = (props) => {
                 <Input
                   type="number"
                   placeholder="OBJKTs to burn"
-                  min={1}
-                  max={totalOwned}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={amount}
+                  onChange={(e) => {
+                    setAmount(e.target.value)
+                  }}
+                  onBlur={(e) => {
+                    if (parseInt(e.target.value) >= totalOwned) {
+                      setAmount(totalOwned)
+                    }
+                  }}
                   disabled={progress}
                 />
               </div>
