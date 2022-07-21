@@ -1,0 +1,81 @@
+name: 🐞 Bug Report
+title: '[bug] '
+description: Report a bug
+labels: ['🐛 bug', '🧹 needs triage']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before submiting an issue
+        - First reach out over the [Teia Discord Server](https://discord.gg/AmG86s7nfe) to get fast support and troubleshooting assistance by active Teia members; There are most likely others experiencing the same issues as you.  
+           Please seek help in the `# ❓help` channel and find recent dev updates in `# 📢announcements`.
+        - Please search for [existing issues](https://github.com/teia-community/teia-ui/issues?q=is%3Aissue) around your problem before filing a report.
+
+        ### Useful tools to provide more information
+
+        - **See transaction history for an objkt**
+        [hicdex.com/objkt](https://hicdex.com/objkt)
+
+        - **See transaction history for your wallet address**
+        [hicdex.com/sold](https://hicdex.com/sold)
+
+  - type: markdown
+    attributes:
+      value: |
+        **If you need help with minting or managing assets, please give us the following information**
+          - The link to your teia profiles or collabs affected by the issue.
+          - Your tezos wallet address.
+          - The ID(#) of the OBJKTs that are affected
+          - If possible, a screenshots of the browser console (for example in chrome for windows, press ctrl + shift + j to open the developer console)
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear description of what the bug is. Include screenshots if applicable.
+      placeholder: Bug description
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. See error
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear description of what you expected to happen.
+
+  - type: textarea
+    id: info
+    attributes:
+      label: Platform and versions
+      description: 'node and npm version too if applicable'
+      render: shell
+      placeholder: |
+        - OS: [e.g. iOS]
+        - Browser [e.g. chrome, safari]
+        - Version [e.g. 22]
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
