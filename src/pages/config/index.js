@@ -106,10 +106,10 @@ export class Config extends Component {
 
   handleChange = (e) => {
     if (e.target.name == 'subjkt' && !e.target.checkValidity()) {
-      console.log(e.target.pattern)
+      console.debug(e.target.pattern)
       e.target.value = e.target.value.replace(/[^a-z0-9-._]/g, '')
     }
-    console.log('set', e.target.name, 'to', e.target.value)
+    console.debug('set', e.target.name, 'to', e.target.value)
     this.setState({ [e.target.name]: e.target.value })
   }
 
@@ -216,13 +216,12 @@ export class Config extends Component {
           <Padding>
             <Input
               name="subjkt"
+              value={this.state.subjkt}
               onChange={this.handleChange}
               placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
               label="Username"
-              value={
-                this.context.subjktInfo
-                  ? this.context.subjktInfo.name
-                  : undefined
+              defaultValue={
+                this.context.subjktInfo ? this.context.subjktInfo.name : ''
               }
               pattern="^[a-z0-9-._]*$"
             />
