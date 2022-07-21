@@ -102,7 +102,7 @@ export const Swap = ({
                   type="number"
                   placeholder="OBJKT quantity"
                   min={1}
-                  value={amount}
+                  defaultValue={amount}
                   /* max={total_amount - sales} */
                   onChange={(e) => setAmount(e.target.value)}
                   onWheel={(e) => e.target.blur()}
@@ -116,7 +116,6 @@ export const Swap = ({
                       placeholder="Price per OBJKT"
                       min={0}
                       max={10000}
-                      value={price}
                       onChange={(e) => checkPrice(e.target.value)}
                       onWheel={(e) => e.target.blur()}
                       disabled={progress}
@@ -143,9 +142,7 @@ export const Swap = ({
               <div className={styles.container}>
                 <p>
                   The Teia marketplace fee is temporarily set to 0%. Please
-                  consider donating to teiaescrow.tez
-                  (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance
-                  funding.
+                  consider donating to teiaescrow.tez (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance funding.
                 </p>
               </div>
             </Padding>
