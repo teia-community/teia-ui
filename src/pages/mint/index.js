@@ -77,9 +77,9 @@ export const Mint = () => {
   const [rights, setRights] = useState('') // To allow the artist to specify the asset rights.
   const [rightUri, setRightUri] = useState() // A URI to a statement of rights.
   const [language, setLanguage] = useState() // The language of the intellectual content of the asset.
-  const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
-  const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
-    useState(false) // Photosensitivity flag
+  // const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
+  // const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
+  useState(false) // Photosensitivity flag
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -184,16 +184,16 @@ export const Mint = () => {
 
       // Metadata attributes
       const attributes = [
-        {
-          name: 'nsfw',
-          value: nsfw ? 'true' : 'false',
-          type: 'boolean',
-        },
-        {
-          name: 'photosensitiveSeizureWarning',
-          value: photosensitiveSeizureWarning ? 'true' : 'false',
-          type: 'boolean',
-        },
+        // {
+        // name: 'nsfw',
+        // value: nsfw ? 'true' : 'false',
+        // type: 'boolean',
+        // },
+        // {
+        // name: 'photosensitiveSeizureWarning',
+        // value: photosensitiveSeizureWarning ? 'true' : 'false',
+        // type: 'boolean',
+        // },
       ]
 
       const getImageDimensions = async (file) => {
@@ -522,8 +522,8 @@ export const Mint = () => {
     'objkt::rights',
     'objkt::rights_uri',
     'objkt::language',
-    'objkt::nsfw',
-    'objkt::photosensitive_seizure_warning',
+    // 'objkt::nsfw',
+    // 'objkt::photosensitive_seizure_warning',
   ]
 
   const restoreFields = () => {
@@ -572,8 +572,8 @@ export const Mint = () => {
       setRights(rights)
       setRightUri(rights_uri)
       setLanguage(language)
-      setNsfw(nsfw)
-      setPhotosensitiveSeizureWarning(photoSeizureWarning)
+      // setNsfw(nsfw)
+      // setPhotosensitiveSeizureWarning(photoSeizureWarning)
     } catch (e) {
       console.log(
         'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
@@ -593,8 +593,8 @@ export const Mint = () => {
     setRoyalties('')
     setRights('')
     setRightUri('')
-    setNsfw(false)
-    setPhotosensitiveSeizureWarning(false)
+    // setNsfw(false)
+    // setPhotosensitiveSeizureWarning(false)
     setLanguage('')
 
     mintKeys.forEach((k) => window.localStorage.removeItem(k))
@@ -777,7 +777,7 @@ export const Mint = () => {
               >
                 <span className={styles.line} />
               </Select>
-              <Padding>
+              {/*<Padding>
                 <div
                   style={{
                     display: 'flex',
@@ -810,7 +810,7 @@ export const Mint = () => {
                     label="Photo Sensitive Seizure Warning"
                   />
                 </div>
-              </Padding>
+              </Padding>*/}
             </Padding>
           </Container>
 
@@ -882,11 +882,11 @@ export const Mint = () => {
                 rights={rights}
                 rightUri={rightUri}
                 language={language}
-                nsfw={nsfw}
-                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
                 amount={amount}
                 royalties={royalties}
               />
+              {/* nsfw={nsfw}
+                photosensitiveSeizureWarning={photosensitiveSeizureWarning} */}
             </Padding>
           </Container>
 
