@@ -343,8 +343,12 @@ export const Mint = () => {
         path: nftCid.path,
         royalties,
       })
-      await mint(minterAddress, amount, nftCid.path, royalties)
-      clearFields()
+      const success = await mint(minterAddress, amount, nftCid.path, royalties)
+      console.log('success', success)
+      if (success) {
+        clearFields()
+      }
+      setStep(0)
     }
   }
 
