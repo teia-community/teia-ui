@@ -611,13 +611,45 @@ class HicetnuncContextProviderClass extends Component {
 
         this.state.setFeedback({
           visible: true,
-          message: 'preparing OBJKT',
+          message: 'minting OBJKT',
           progress: true,
           confirm: false,
         })
 
+        const showFeedback = (message) => {
+          this.state.setFeedback({
+            message: message,
+            progress: false,
+            confirm: true,
+            confirmCallback: () => {
+              this.state.setFeedback({
+                visible: false,
+              })
+            },
+          })
+        }
+
+        const handleOpStatus = async (op) => {
+          try {
+            const status = await op.status()
+            console.log('op', status)
+            if (status === 'applied') {
+              showFeedback('OBJKT minted successfully')
+              return { handled: true, error: false }
+            } else if (status === 'backtracked') {
+              showFeedback('the transaction was backtracked. try minting again')
+              return { handled: true, error: true }
+            }
+          } catch (error) {
+            console.error(error)
+          }
+          return { handled: false, error: false }
+        }
+
+        const DEFAULT_ERROR_MESSAGE = 'an error occurred ❌'
+
         // call mint method
-        await Tezos.wallet
+        return await Tezos.wallet
           .at(this.state.proxyAddress || this.state.v1)
           .then((c) =>
             c.methods
@@ -635,38 +667,44 @@ class HicetnuncContextProviderClass extends Component {
               )
               .send({ amount: 0, storageLimit: 310 })
           )
-          .then((op) =>
-            op.confirmation(1).then(() => {
-              this.setState({ op: op.hash }) // save hash
-              // if everything goes okay, show the success message and redirect to profile
-              this.state.setFeedback({
-                message: 'OBJKT minted successfully',
-                progress: true,
-                confirm: false,
-              })
-
-              // hide after 1 second
-              setTimeout(() => {
-                this.state.setFeedback({
-                  visible: false,
-                })
-              }, 1000)
-            })
-          )
-          .catch((err) => {
-            // if any error happens
+          .then((op) => {
             this.state.setFeedback({
-              message: 'an error occurred ❌',
+              visible: true,
+              message: 'confirming transaction',
               progress: true,
               confirm: false,
             })
-
-            // hide after 1 second
-            setTimeout(() => {
-              this.state.setFeedback({
-                visible: false,
+            return op
+              .confirmation(1)
+              .then(async () => {
+                const { handled, error } = await handleOpStatus(op)
+                if (!handled) {
+                  showFeedback(DEFAULT_ERROR_MESSAGE)
+                  return !error
+                } else {
+                  return !error
+                }
               })
-            }, 1000)
+              .catch(async (err) => {
+                console.error(err)
+                const { handled, error } = await handleOpStatus(op)
+                if (!handled) {
+                  let message = DEFAULT_ERROR_MESSAGE
+                  // bad way to detect timeouts, but the Taquito error is generic unfortunately
+                  if (error.message === 'Confirmation polling timed out') {
+                    message =
+                      'a timeout occurred, but the mint might have succeeded'
+                  }
+                  showFeedback(message)
+                  return !error
+                }
+                return false
+              })
+          })
+          .catch((error) => {
+            console.error(error)
+            showFeedback(DEFAULT_ERROR_MESSAGE)
+            return false
           })
       },
 
