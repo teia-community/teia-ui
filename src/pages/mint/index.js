@@ -185,7 +185,7 @@ export const Mint = () => {
       // Metadata accessibility
       const accessibility = photosensitiveSeizureWarning
         ? {
-            hazards: ['photosensitive'],
+            hazards: ['flashing'],
           }
         : null
 
