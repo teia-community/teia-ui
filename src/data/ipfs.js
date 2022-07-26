@@ -26,7 +26,8 @@ export const prepareFile = async ({
   rights,
   rightUri,
   language,
-  attributes,
+  accessibility,
+  contentRating,
   formats,
 }) => {
   console.log('generateDisplayUri', generateDisplayUri)
@@ -81,7 +82,8 @@ export const prepareFile = async ({
     rights,
     rightUri,
     language,
-    attributes,
+    accessibility,
+    contentRating,
     formats,
   })
 }
@@ -98,7 +100,8 @@ export const prepareDirectory = async ({
   rights,
   rightUri,
   language,
-  attributes,
+  accessibility,
+  contentRating,
   formats,
 }) => {
   // upload directory of files
@@ -161,7 +164,8 @@ export const prepareDirectory = async ({
     rights,
     rightUri,
     language,
-    attributes,
+    accessibility,
+    contentRating,
     formats,
   })
 }
@@ -219,32 +223,36 @@ async function uploadMetadataFile({
   rights,
   rightUri,
   language,
-  attributes,
+  accessibility,
+  contentRating,
   formats,
 }) {
   const ipfs = create(infuraUrl)
 
-  return await ipfs.add(
-    Buffer.from(
-      JSON.stringify({
-        name,
-        description,
-        tags: tags.replace(/\s/g, '').split(','),
-        symbol: 'OBJKT',
-        artifactUri: cid,
-        displayUri,
-        thumbnailUri,
-        creators: [address],
-        formats,
-        decimals: 0,
-        isBooleanAmount: false,
-        shouldPreferSymbol: false,
-        rights,
-        rightUri,
-        language,
-        date: new Date().toISOString(),
-        attributes,
-      })
-    )
-  )
+  let metadata = {
+    name,
+    description,
+    tags: tags.replace(/\s/g, '').split(','),
+    symbol: 'OBJKT',
+    artifactUri: cid,
+    displayUri,
+    thumbnailUri,
+    creators: [address],
+    formats,
+    decimals: 0,
+    isBooleanAmount: false,
+    shouldPreferSymbol: false,
+    rights,
+    rightUri,
+    language,
+    date: new Date().toISOString(),
+  }
+  if (accessibility) {
+    metadata.accessibility = accessibility
+  }
+  if (contentRating) {
+    metadata.contentRating = contentRating
+  }
+
+  return await ipfs.add(Buffer.from(JSON.stringify(metadata)))
 }

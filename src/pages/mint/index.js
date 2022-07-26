@@ -182,19 +182,14 @@ export const Mint = () => {
 
       console.debug({ minterAddress })
 
-      // Metadata attributes
-      const attributes = [
-        {
-          name: 'nsfw',
-          value: nsfw ? 'true' : 'false',
-          type: 'boolean',
-        },
-        {
-          name: 'photosensitiveSeizureWarning',
-          value: photosensitiveSeizureWarning ? 'true' : 'false',
-          type: 'boolean',
-        },
-      ]
+      // Metadata accessibility
+      const accessibility = photosensitiveSeizureWarning
+        ? {
+            hazards: ['flashing'],
+          }
+        : null
+
+      const contentRating = nsfw ? 'mature' : null
 
       const getImageDimensions = async (file) => {
         return await new Promise((resolve, reject) => {
@@ -315,7 +310,8 @@ export const Mint = () => {
           rights: rights.value,
           rightUri,
           language: language.value,
-          attributes,
+          accessibility,
+          contentRating,
           formats,
         })
       } else {
@@ -332,7 +328,8 @@ export const Mint = () => {
           rights: rights.value,
           rightUri,
           language: language.value,
-          attributes,
+          accessibility,
+          contentRating,
           formats,
         })
       }
