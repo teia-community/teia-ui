@@ -12,6 +12,7 @@ export const VectorComponent = ({
   onDetailView,
   preview,
   displayView,
+  blur
 }) => {
   const context = useContext(HicetnuncContext)
   const classes = classnames({
@@ -47,6 +48,7 @@ export const VectorComponent = ({
     return (
       <div className={classes}>
         <iframe
+          className={`${blur ? styles.blur : ''}`}
           title="teia SVG renderer"
           src={path}
           sandbox="allow-scripts"
@@ -58,7 +60,7 @@ export const VectorComponent = ({
     return (
       <div className={styles.container + ' vector-container'}>
         <iframe
-          className={styles.vector + ' vector'}
+          className={`${styles.vector} vector ${blur ? styles.blur : ''}`}
           title="teia SVG renderer"
           src={path}
           sandbox="allow-scripts"

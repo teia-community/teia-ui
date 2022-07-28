@@ -7,6 +7,7 @@ export const GLBComponent = ({
   preview,
   onDetailView,
   displayView,
+  blur
 }) => {
   const ref = useRef()
   const [width, setWidth] = useState('100px')
@@ -44,7 +45,7 @@ export const GLBComponent = ({
   }, [width, height])
   if (displayView) {
     return (
-      <div className={styles.container} ref={ref}>
+      <div className={`${styles.container} ${blur ? styles.blur : ''}`} ref={ref}>
         <model-viewer {...props} style={{ width, height }}>
           <button slot="ar-button" className={styles.arButton}>
             AR
@@ -54,7 +55,7 @@ export const GLBComponent = ({
     )
   } else {
     return (
-      <div>
+      <div className={`${blur ? styles.blur : ''}`}>
         <model-viewer {...props}>
           <button slot="ar-button" className={styles.arButton}>
             AR

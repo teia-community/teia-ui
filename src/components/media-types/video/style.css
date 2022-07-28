@@ -1,18 +1,22 @@
 .objkt-display video {
-  position: relative;
-  display: block;
-  margin: auto;
-  width: 100%;
-  height: auto;
+    position: relative;
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: auto;
 }
 
 @media screen and (min-width: 801px) {
-  .objkt-display video {
-    width: auto;
-    height: 60vh;
-  }
+    .objkt-display video {
+        width: auto;
+        height: 60vh;
+    }
 }
 
 video {
-  width: 100%;
+    width: 100%;
+}
+
+.blur {
+    filter: blur(1.17rem);
 }

@@ -1,59 +1,58 @@
 @import '../../../styles/layout.scss';
-
 .audio {
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  object-fit: cover;
-  @include respond-to('desktop') {
-    width: 50%;
-  }
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    object-fit: cover;
+    @include respond-to('desktop') {
+        width: 50%;
+    }
 }
+
 .container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 320px;
-  height: 320px;
-  margin: 0 auto;
-
-  &.userTouch {
-    .icons {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    &:hover {
-      .icons {
-        opacity: 1;
-      }
-    }
-  }
-
-  img {
-    display: none;
-    width: 100%;
-    height: auto;
-  }
-
-  .icons {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
-
-    svg {
-      width: 50px;
-      rect,
-      path {
-        fill: var(--text-color);
-      }
+    width: 320px;
+    height: 320px;
+    margin: 0 auto;
+    &.userTouch {
+        .icons {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        &:hover {
+            .icons {
+                opacity: 1;
+            }
+        }
     }
-  }
+    img {
+        display: none;
+        width: 100%;
+        height: auto;
+    }
+    .icons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        svg {
+            width: 50px;
+            rect,
+            path {
+                fill: var(--text-color);
+            }
+        }
+    }
+}
+
+.blur {
+    filter: blur(2rem);
 }

@@ -9,6 +9,9 @@ import {
   getWalletBlockList,
   setBanBlockList,
   setLogoList,
+  setNsfwList,
+  setUnderReviewList,
+  setIgnoreUriList
 } from '../constants'
 
 const axios = require('axios')
@@ -27,12 +30,18 @@ export const getInitialData = () => {
     axios.get(`${process.env.REACT_APP_LOGOS}/logos_pride.json`), // list of logos for the pride month
     axios.get(process.env.REACT_APP_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
     axios.get(process.env.REACT_APP_TEIA_PERMITTED_LIST), // Teia list of acccounts that override HEN's restricted list
+    axios.get(process.env.REACT_APP_TEIA_NSFW_LIST), // Teia list of NSFW OBJKTs
+    axios.get(process.env.REACT_APP_TEIA_UNDER_REVIEW_LIST), // Teia list of accounts under review
+    axios.get(process.env.REACT_APP_TEIA_IGNORE_URI_LIST), // IPFS URIs to ignore for violations
   ]).then((results) => {
     setLanguage(results[0].data)
     setObjktBlockList(results[1].data)
     setLogoList([results[3].data, results[4].data])
     setWalletBlockList([results[5].data], [results[6].data])
     setBanBlockList(results[2].data)
+    setNsfwList(results[7].data)
+    setUnderReviewList(results[8].data)
+    setIgnoreUriList(results[9].data)
 
     return true
   })

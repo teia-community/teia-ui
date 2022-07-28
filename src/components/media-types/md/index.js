@@ -1,9 +1,10 @@
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
 import { Container, Padding } from '../../layout'
+import styles from './styles.module.scss'
 const axios = require('axios')
 
-export const MD = ({ artifactUri }) => {
+export const MD = ({ artifactUri, displayView, blur }) => {
   const [content, setContent] = React.useState('')
 
   React.useEffect(() => {
@@ -17,7 +18,7 @@ export const MD = ({ artifactUri }) => {
   }, [artifactUri])
 
   return (
-    <div>
+    <div className={`${blur ? styles.blur : ''}`}>
       <Container>
         <Padding>
           <Markdown>{content}</Markdown>

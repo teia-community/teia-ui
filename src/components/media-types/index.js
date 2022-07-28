@@ -92,6 +92,9 @@ export const renderMediaType = ({
   preview = false,
 
   displayView,
+
+  // blur for NSFW
+  blur = false
 }) => {
   let parsedArtifactUri
   let parsedDisplayUri
@@ -115,6 +118,7 @@ export const renderMediaType = ({
             onDetailView={interactive || mimeType === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -134,6 +138,7 @@ export const renderMediaType = ({
             objkt={objkt}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -156,6 +161,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -175,6 +181,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -192,6 +199,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -212,6 +220,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -228,6 +237,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            blur={blur}
           />
         </Container>
       )
@@ -238,6 +248,7 @@ export const renderMediaType = ({
         <MD
           artifactUri={HashToURL(artifactUri, 'IPFS')}
           displayView={displayView}
+          blur={blur}
         ></MD>
       )
 

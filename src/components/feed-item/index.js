@@ -6,8 +6,10 @@ import { ItemInfo } from '../item-info'
 import { renderMediaType } from '../media-types'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
+import { getNsfwList } from '@constants'
 
 export const FeedItem = (props) => {
+  const nsfwList = getNsfwList()
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${props.id}`}>
@@ -20,6 +22,7 @@ export const FeedItem = (props) => {
             creator: props.creator_id,
             objkt: String(props.id),
             displayView: true,
+            blur: nsfwList.includes(props.id.toString())
           })}
         </div>
       </Button>

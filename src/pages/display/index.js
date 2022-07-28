@@ -14,9 +14,11 @@ import { ResponsiveMasonry } from '@components/responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
-import { getWalletBlockList } from '@constants'
+import { getWalletBlockList, getUnderReviewList, getNsfwList } from '@constants'
 import { IconCache } from '@utils/with-icon'
 const axios = require('axios')
+
+const urlParameters = new URLSearchParams(window.location.search)
 
 const TAB_CREATIONS = 'creations'
 const TAB_COLLECTION = 'collection'
@@ -203,7 +205,8 @@ export default class Display extends Component {
     render: false,
     loading: true,
     hasMore: true,
-    rstricted: false,
+    restricted: false,
+    underReview: false,
     offset: 0,
     results: [],
     objkts: [],
@@ -248,7 +251,7 @@ export default class Display extends Component {
           let meta = await axios
             .get(
               'https://cloudflare-ipfs.com/ipfs/' +
-                res[0].metadata_file.split('//')[1]
+              res[0].metadata_file.split('//')[1]
             )
             .then((res) => res.data)
 
@@ -272,7 +275,7 @@ export default class Display extends Component {
         let meta = await axios
           .get(
             'https://cloudflare-ipfs.com/ipfs/' +
-              res[0].metadata_file.split('//')[1]
+            res[0].metadata_file.split('//')[1]
           )
           .then((res) => res.data)
         console.log(meta)
@@ -326,14 +329,23 @@ export default class Display extends Component {
     this.reset()
 
     let list = getWalletBlockList()
-    // console.log(this.state.wallet)
-    // console.log(!list.includes(this.state.wallet))
     if (!list.includes(this.state.wallet)) {
+      const underReviewList = getUnderReviewList()
+      this.setState({ underReview: underReviewList.includes(this.state.wallet) })
+
       this.setState({ creations: await fetchCreations(this.state.wallet) })
       this.setState({ objkts: this.state.creations, loading: false, items: [] })
       this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
     } else {
-      this.setState({ restricted: true, loading: false })
+      // The 'show' parameter display OBJKTs for restricted accounts
+      if (urlParameters.has('show')) {
+        this.setState({ creations: await fetchCreations(this.state.wallet) })
+        this.setState({ objkts: this.state.creations, loading: false, items: [] })
+        this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
+        this.setState({ restricted: true })
+      } else {
+        this.setState({ restricted: true, loading: false })
+      }
     }
 
     this.setState({ items: this.state.objkts.slice(0, 15), offset: 15 })
@@ -454,6 +466,9 @@ export default class Display extends Component {
     let list = getWalletBlockList()
 
     if (!list.includes(this.state.wallet)) {
+      const underReviewList = getUnderReviewList()
+      this.setState({ underReview: underReviewList.includes(this.state.wallet) })
+
       this.setState({ loading: false, items: [] })
       let collection = await fetchCollection(this.state.wallet)
       let swaps = await fetchV2Swaps(this.state.wallet)
@@ -464,7 +479,15 @@ export default class Display extends Component {
       this.setState({ collection: combinedCollection })
       this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
     } else {
-      this.setState({ restricted: true, loading: false })
+      // The 'show' parameter display OBJKTs for restricted accounts
+      if (urlParameters.has('show')) {
+        this.setState({ restricted: true })
+        this.setState({ creations: await fetchCreations(this.state.wallet) })
+        this.setState({ objkts: this.state.creations, loading: false, items: [] })
+        this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
+      } else {
+        this.setState({ restricted: true, loading: false })
+      }
     }
 
     this.setState({ objkts: this.state.collection, loading: false, items: [] })
@@ -583,17 +606,16 @@ export default class Display extends Component {
     const missingSize = handleSize - 6
     const spaces = ' '.repeat(Math.ceil(Math.abs(missingSize / 2)))
     if (missingSize < 0) {
-      return `${
-        this.state.copied ? 'Copied' : `${spaces}${this.state.discord}${spaces}`
-      }`
+      return `${this.state.copied ? 'Copied' : `${spaces}${this.state.discord}${spaces}`
+        }`
     } else {
-      return `${
-        this.state.copied ? `${spaces}Copied${spaces}` : `${this.state.discord}`
-      }`
+      return `${this.state.copied ? `${spaces}Copied${spaces}` : `${this.state.discord}`
+        }`
     }
   }
 
   render() {
+    const nsfwList = getNsfwList()
     return (
       <Page title={this.state.alias}>
         <IconCache.Provider value={{}}>
@@ -830,14 +852,18 @@ export default class Display extends Component {
           {!this.state.loading && this.state.restricted && (
             <Container>
               <Padding>
-                <div
-                  style={{
-                    color: 'white',
-                    background: 'black',
-                    textAlign: 'center',
-                  }}
-                >
-                  Restricted account
+                <div className={styles.restricted}>
+                  Restricted account. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status. See the <a href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions" target="_blank" rel="noreferrer">Teia Terms and Conditions</a>.
+                </div>
+              </Padding>
+            </Container>
+          )}
+
+          {!this.state.loading && this.state.underReview && (
+            <Container>
+              <Padding>
+                <div className={styles.restricted}>
+                  Account under review. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status.
                 </div>
               </Padding>
             </Container>
@@ -887,7 +913,7 @@ export default class Display extends Component {
                 {this.state.collectionType === 'forSale' ? (
                   <>
                     {this.context.acc != null &&
-                    this.context.acc.address === this.state.wallet ? (
+                      this.context.acc.address === this.state.wallet ? (
                       <>
                         {Object.keys(this.state.marketV1).length !== 0 && (
                           <>
@@ -976,6 +1002,7 @@ export default class Display extends Component {
                                 artifactUri: nft.artifact_uri,
                                 displayUri: nft.display_uri,
                                 displayView: true,
+                                blur: !urlParameters.has('show') && nsfwList.includes(nft.id.toString())
                               })}
                             </div>
                           </Button>
@@ -999,11 +1026,11 @@ export default class Display extends Component {
 
           {!this.state.loading &&
             this.state.currentTab === TAB_CREATIONS &&
-            !this.state.creations.length && <EmptyTab>No creations</EmptyTab>}
+            !this.state.creations.length && !this.state.restricted && <EmptyTab>No creations</EmptyTab>}
 
           {!this.state.loading &&
             this.state.currentTab === TAB_COLLECTION &&
-            !this.state.collection.length && <EmptyTab>No collection</EmptyTab>}
+            !this.state.collection.length && !this.state.restricted && <EmptyTab>No collection</EmptyTab>}
 
           {!this.state.loading &&
             this.state.currentTab === TAB_COLLECTION &&
@@ -1049,7 +1076,7 @@ export default class Display extends Component {
                   {this.state.collectionType === 'forSale' ? (
                     <>
                       {this.context.acc != null &&
-                      this.context.acc.address === this.state.wallet ? (
+                        this.context.acc.address === this.state.wallet ? (
                         <>
                           {Object.keys(this.state.marketV1).length !== 0 && (
                             <>
@@ -1140,6 +1167,7 @@ export default class Display extends Component {
                                   artifactUri: nft.token.artifact_uri,
                                   displayUri: nft.token.display_uri,
                                   displayView: true,
+                                  nsfw: nsfwList.includes(nft.token.id.toString())
                                 })}
                               </div>
                             </Button>
