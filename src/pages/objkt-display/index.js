@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { getWalletBlockList, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import { getWalletBlockList, getUnderReviewList, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
 import { Loading } from '@components/loading'
@@ -37,6 +37,7 @@ export const ObjktDisplay = () => {
   const [nft, setNFT] = useState()
   const [error] = useState(false)
   const [restricted, setRestricted] = useState(false)
+  const [underReview, setUnderReview] = useState(false)
 
   const address = context.acc?.address
   const proxy = context.getProxy()
@@ -82,6 +83,12 @@ export const ObjktDisplay = () => {
       setNFT(objkt)
     } else {
       objkt.restricted = false
+
+      const underReviewList = getUnderReviewList()
+      if (underReviewList.includes(objkt.creator.address)) {
+        setUnderReview(true)
+        objkt.underReview = true
+      }
       // filter swaps from banned account
       if (objkt.swaps && objkt.ban)
         objkt.swaps = objkt.swaps.filter(
@@ -156,14 +163,13 @@ export const ObjktDisplay = () => {
             <Container>
               <Padding>
                 {restricted && (
-                  <div
-                    style={{
-                      color: 'white',
-                      background: 'black',
-                      textAlign: 'center',
-                    }}
-                  >
-                    Restricted OBJKT
+                  <div className={styles.restricted}>
+                    Restricted OBJKT. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status. See the <a href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions" target="_blank" rel="noreferrer">Teia Terms and Conditions</a>.
+                  </div>
+                )}
+                {underReview && (
+                  <div className={styles.restricted}>
+                    OBJKT under review. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status.
                   </div>
                 )}
               </Padding>
@@ -179,17 +185,17 @@ export const ObjktDisplay = () => {
               <div
                 className={
                   nft.mime === 'application/x-directory' ||
-                  nft.mime === 'image/svg+xml'
+                    nft.mime === 'image/svg+xml'
                     ? 'objktview-zipembed objktview ' + styles.objktview
                     : [
-                        nft.mime === 'video/mp4' ||
+                      nft.mime === 'video/mp4' ||
                         nft.mime === 'video/ogv' ||
                         nft.mime === 'video/quicktime' ||
                         nft.mime === 'video/webm' ||
                         nft.mime === 'application/pdf'
-                          ? 'no-fullscreen'
-                          : 'objktview ' + styles.objktview,
-                      ]
+                        ? 'no-fullscreen'
+                        : 'objktview ' + styles.objktview,
+                    ]
                 }
               >
                 {renderMediaType({
