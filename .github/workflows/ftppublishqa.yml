@@ -36,7 +36,7 @@ jobs:
             sftpArgs: '-o ConnectTimeout=5'
             delete_remote_files: true
     - name: Clear Cloudflare cache
-      uses: Cyb3r-Jak3/action-cloudflare-cache@<Latest Release>
+      uses: Cyb3r-Jak3/action-cloudflare-cache@v1.1.0
       with:
         zone: ${{ secrets.CLOUDFLARE_ZONE }}
         api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
