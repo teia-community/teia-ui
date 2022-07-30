@@ -33,3 +33,11 @@ jobs:
             local_path: '${{ secrets.LOACL_PATH }}'
             remote_path: '${{ secrets.SERVER_PATH }}'
             sftpArgs: '-o ConnectTimeout=5'
+            delete_remote_files: true
+    - name: Clear Cloudflare cache
+      uses: Cyb3r-Jak3/action-cloudflare-cache@<Latest Release>
+      with:
+        zone: ${{ secrets.CLOUDFLARE_ZONE }}
+        api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
+
+          
