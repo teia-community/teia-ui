@@ -4,13 +4,19 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        type: environment
+        required: true 
+    
 
 name: 🚀 Deploy website on push
 jobs:
   web-deploy:  
     name: 🎉 Deploy
     runs-on: ubuntu-latest
-    environment: qa
+    environment: ${{ inputs.environment }}
     strategy:
       matrix:
         node-version: [16.x]
@@ -41,5 +47,4 @@ jobs:
       with:
         zone: ${{ secrets.CLOUDFLARE_ZONE }}
         api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
-
           
