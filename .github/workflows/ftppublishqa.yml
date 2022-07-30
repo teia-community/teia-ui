@@ -1,19 +1,17 @@
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
+
   workflow_dispatch:
     inputs:
       environment:
         description: 'Environment to deploy'
         type: environment
-        required: true 
-    
+        required: true
 
 name: 🚀 Deploy website on push
 jobs:
-  web-deploy:  
+  web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -23,28 +21,27 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    
-    - name: 📂 Sync files
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-      with:
-            username: '${{ secrets.USER }}'
-            server: '${{ secrets.SERVER }}'
-            ssh_private_key: ${{ secrets.KEY }}
-            local_path: '${{ secrets.LOACL_PATH }}'
-            remote_path: '${{ secrets.SERVER_PATH }}'
-            sftpArgs: '-o ConnectTimeout=5'
-            delete_remote_files: true
-    - name: Clear Cloudflare cache
-      uses: Cyb3r-Jak3/action-cloudflare-cache@v1.1.0
-      with:
-        zone: ${{ secrets.CLOUDFLARE_ZONE }}
-        api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
-          
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+
+      - name: 📂 Sync files
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: '${{ secrets.USER }}'
+          server: '${{ secrets.SERVER }}'
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: '${{ secrets.LOACL_PATH }}'
+          remote_path: '${{ secrets.SERVER_PATH }}'
+          sftpArgs: '-o ConnectTimeout=5'
+          delete_remote_files: true
+      - name: Clear Cloudflare cache
+        uses: Cyb3r-Jak3/action-cloudflare-cache@v1.1.0
+        with:
+          zone: ${{ secrets.CLOUDFLARE_ZONE }}
+          api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
