@@ -6,10 +6,9 @@ on:
 
 name: 🚀 Deploy website on push
 jobs:
-  build:
-
+  web-deploy:  
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16.x]
@@ -24,16 +23,13 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
-  web-deploy:  
-    name: 🎉 Deploy
-    runs-on: ubuntu-latest
-    steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
-        server: ftp.samkirkland.com
-        username: ${{ secrets.DEPLOYUSER }}
-        password: ${{ secrets.DEPLOYPW }}
+            username: '${{ secrets.USER }}'
+            server: '${{ secrets.SERVER }}'
+            ssh_private_key: ${{ secrets.KEY }}
+            local_path: '${{ secrets.LOACL_PATH }}'
+            remote_path: '${{ secrets.SERVER_PATH }}'
+            sftpArgs: '-o ConnectTimeout=5'
