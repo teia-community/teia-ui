@@ -9,6 +9,7 @@ jobs:
   web-deploy:  
     name: 🎉 Deploy
     runs-on: ubuntu-latest
+    environment: qa
     strategy:
       matrix:
         node-version: [16.x]
