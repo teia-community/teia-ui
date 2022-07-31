@@ -46,7 +46,8 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "e2e": "cd e2e && jest"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -75,6 +76,7 @@
     "libsodium-wrappers": "^0.7.8",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
+    "playwright": "^1.24.2",
     "prettier": "^2.6.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
