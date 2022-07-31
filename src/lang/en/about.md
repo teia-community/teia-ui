@@ -36,17 +36,17 @@ The Teia Marketplace Interface and marketplace contract are [code forks](https:/
 
 ---
 
-**FA2 Token Contract:** [KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton](https://tzstats.com/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton) - developed and deployed by [hicetnunclab2000](https://github.com/hicetnunc2000/objkt-swap)
+**FA2 Token Contract:** [KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton](https://tzstats.com/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton) by [hicetnunclab2000](https://github.com/hicetnunc2000/objkt-swap)
 
 ---
 
-**Minting Contract:** [KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9](https://tzkt.io/KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9/operations/) - developed and deployed by [hicetnunclab2000](https://github.com/hicetnunc2000/objkt-swap)
+**Minting Contract:** [KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9](https://tzkt.io/KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9/operations/) by [hicetnunclab2000](https://github.com/hicetnunc2000/objkt-swap)
 
 ---
 
-**Marketplace Contract:** [KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w](https://tzkt.io/KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w/operations/) - developed and deployed by the [Teia community](https://github.com/teia-community/teia-smart-contracts/blob/main/python/contracts/teiaMarketplace_v1.py) and audited by [Inference AG](https://github.com/InferenceAG/ReportPublications/blob/master/Inference%20AG%20-%20Teia%20community%20-%20marketplace%20%26%20multisig%20-%20v1.0.pdf)
+**Marketplace Contract:** [KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w](https://tzkt.io/KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w/operations/) by [Teia community](https://github.com/teia-community/teia-smart-contracts/blob/main/python/contracts/teiaMarketplace_v1.py) - audited by [Inference AG](https://github.com/InferenceAG/ReportPublications/blob/master/Inference%20AG%20-%20Teia%20community%20-%20marketplace%20%26%20multisig%20-%20v1.0.pdf)
 
-**Marketplace Contract Admin:** [KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P](https://tzkt.io/KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P/operations/) - community owned multisig
+**Marketplace Contract Admin:** [KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P](https://tzkt.io/KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P/operations/) - [multisig contract](https://multisign.onrender.com/) developed and owned by the Teia Community
 
 The [marketplace fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees) are temporarily set to 0%.
 
