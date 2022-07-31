@@ -16,22 +16,20 @@ export const close = async () => await browser.close()
 
 export const getTitle = async () => await page.title()
 
-export const scroll = async (args) => {
+export const scroll = async (dom, args) => {
   const { direction, speed } = args
+
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
   const scrollHeight = () => document.body.scrollHeight
-  const start = direction === 'down' ? 0 : scrollHeight()
-
+  //   const start = direction === 'down' ? 0 : scrollHeight()
+  const start = () => document.documentElement.scrollTop
   const shouldStop = (position) =>
     direction === 'down' ? position > scrollHeight() : position < 0
   const increment = direction === 'down' ? 100 : -100
   const delayTime = speed === 'slow' ? 50 : 10
-  let scrolled = start
-  console.error(start, shouldStop(start), increment)
-  for (let i = start; !shouldStop(i); i += increment) {
+  console.error(start(), shouldStop(start()), increment)
+  for (let i = start(); !shouldStop(i); i += increment) {
     window.scrollTo(0, i)
-    scrolled = i
     await delay(delayTime)
   }
-  return scrolled
 }
