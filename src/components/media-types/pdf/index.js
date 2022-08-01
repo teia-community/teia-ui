@@ -11,7 +11,6 @@ export const PdfComponent = ({
   previewUri,
   preview,
   onDetailView,
-  blur
 }) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
@@ -37,7 +36,7 @@ export const PdfComponent = ({
   }
 
   return (
-    <div className={`${styles.container} ${blur ? styles.blur : ''}`}>
+    <div className={styles.container}>
       <Document
         file={preview ? previewUri : artifactUri}
         onLoadSuccess={onDocumentLoadSuccess}

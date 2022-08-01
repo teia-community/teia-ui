@@ -10,7 +10,6 @@ export const AudioComponent = ({
   previewUri,
   preview,
   displayView,
-  blur
 }) => {
   const visualiser = useRef()
   const [userTouched, setUserTouched] = useState(false)
@@ -45,7 +44,6 @@ export const AudioComponent = ({
       <div>
         <div>
           <img
-            className={`${blur ? styles.blur : ''}`}
             style={{ height: '50vh', display: 'block', margin: '0 auto' }}
             alt=""
             src={displayUri}
@@ -72,7 +70,7 @@ export const AudioComponent = ({
       <>
         <div>
           <span>
-            <img className={`${blur ? styles.blur : ''}`} style={{ width: '100%' }} src={displayUri} alt="" />
+            <img style={{ width: '100%' }} src={displayUri} alt="" />
             <br />
             <audio
               style={{ width: '100%' }}

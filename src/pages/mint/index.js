@@ -27,7 +27,7 @@ import {
   IPFS_DIRECTORY_MIMETYPE,
   LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
-  getIgnoreUriList
+  getIgnoreUriList,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -186,8 +186,8 @@ export const Mint = () => {
       // Metadata accessibility
       const accessibility = photosensitiveSeizureWarning
         ? {
-          hazards: ['flashing'],
-        }
+            hazards: ['flashing'],
+          }
         : null
 
       const contentRating = nsfw ? 'mature' : null
@@ -267,8 +267,9 @@ export const Mint = () => {
           cover.format = {
             mimeType: cover.mimeType,
             fileSize: cover.buffer.byteLength,
-            fileName: `${removeExtension(file.file.name)}.${coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
-              }`,
+            fileName: `${removeExtension(file.file.name)}.${
+              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+            }`,
             dimensions: {
               value: `${imageWidth}x${imageHeight}`,
               unit: 'px',
@@ -362,7 +363,6 @@ export const Mint = () => {
     // Ignore IPFS URI's that are in the ignore list; they can be minted multiple times
     const ignoreUriList = getIgnoreUriList()
     if (ignoreUriList.includes(uri0) || ignoreUriList.includes(uri1)) {
-      console.log('ignore uri')
       return false
     }
 
@@ -554,7 +554,7 @@ export const Mint = () => {
         window.localStorage.getItem('objkt::nsfw') === 'true' ? true : false
       const photoSeizureWarning =
         window.localStorage.getItem('objkt::photosensitive_seizure_warning') ===
-          'true'
+        'true'
           ? true
           : false
 

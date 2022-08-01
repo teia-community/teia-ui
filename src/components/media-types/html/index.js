@@ -24,7 +24,6 @@ export const HTMLComponent = (props) => {
     onDetailView,
     preview,
     displayView,
-    blur
   } = props
   const context = useContext(HicetnuncContext)
 
@@ -131,7 +130,7 @@ export const HTMLComponent = (props) => {
     return (
       <div className={classes}>
         <div className={styles.preview}>
-          <img className={`${blur ? styles.blur : ''}`} src={displayUri} alt="display" />
+          <img src={displayUri} alt="display" />
           <div className={styles.button}>
             <Button>
               <VisuallyHidden>View</VisuallyHidden>

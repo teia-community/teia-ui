@@ -11,7 +11,6 @@ export const VideoComponent = ({
   interactive,
   inView,
   displayView,
-  blur
 }) => {
   const domElement = useRef()
 
@@ -55,7 +54,7 @@ export const VideoComponent = ({
       <div className={styles.video}>
         <video
           ref={domElement}
-          className={`${styles.video} ${blur ? styles.blur : ''}`}
+          className={styles.displayviewVideo}
           autoPlay={inView}
           playsInline
           muted
@@ -71,7 +70,7 @@ export const VideoComponent = ({
       <>
         <video
           ref={domElement}
-          className={`${styles.video} ${blur ? styles.blur : ''}`}
+          className={styles.video}
           autoPlay={inView}
           playsInline
           muted

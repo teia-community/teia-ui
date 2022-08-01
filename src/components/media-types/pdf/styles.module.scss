@@ -1,38 +1,39 @@
 @import '../../../styles/layout.scss';
+
 .container {
-    position: relative;
+  position: relative;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &:after {
+    content: '';
     display: block;
+  }
+
+  iframe {
+    border: none;
+  }
+
+  canvas {
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 0 auto;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  .pdfNav {
+    position: relative;
+    margin: 6px;
+    text-align: center;
+    font-size: 0.8em;
+    display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    &:after {
-        content: '';
-        display: block;
+    p {
+      margin: 6px 12px;
     }
-    iframe {
-        border: none;
-    }
-    canvas {
-        max-width: 100%;
-        max-height: 80vh;
-        margin: 0 auto;
-        height: auto !important;
-        width: auto !important;
-    }
-    .pdfNav {
-        position: relative;
-        margin: 6px;
-        text-align: center;
-        font-size: 0.8em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        p {
-            margin: 6px 12px;
-        }
-    }
-}
-
-.blur {
-    filter: blur(2rem);
+  }
 }

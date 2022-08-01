@@ -13,8 +13,12 @@ export const FeedItem = (props) => {
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${props.id}`}>
-        <VisuallyHidden>{`Go to OBJKT: ${props.title}`}</VisuallyHidden>
-        <div className={styles.container}>
+        <VisuallyHidden>{`Go to OBJKT: ${props.id}`}</VisuallyHidden>
+        <div
+          className={`${styles.container} ${
+            nsfwList.includes(props.id.toString()) ? styles.blur : ''
+          }`}
+        >
           {renderMediaType({
             mimeType: props.mime,
             artifactUri: props.artifact_uri,
@@ -22,7 +26,6 @@ export const FeedItem = (props) => {
             creator: props.creator_id,
             objkt: String(props.id),
             displayView: true,
-            blur: nsfwList.includes(props.id.toString())
           })}
         </div>
       </Button>

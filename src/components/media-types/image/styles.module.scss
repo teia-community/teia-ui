@@ -1,29 +1,27 @@
 @import '../../../styles/layout.scss';
 .style {
-    max-height: 60vh;
-    max-width: 100%;
-    display: block;
-    margin: 0 auto;
-    border: none;
+  max-height: 60vh;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  border: none;
 }
 
 .container {
-    .image {
-        display: block;
-        width: auto;
-        max-width: 100%;
-        height: auto;
-        margin: 0 auto;
-        @include respond-to('tablet') {
-            max-height: 70vh;
-            height: initial;
-        }
-        @include respond-to('desktop') {
-            max-height: 60vh;
-        }
-    }
-}
+  .image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
 
-.blur {
-    filter: blur(2rem);
+    @include respond-to('tablet') {
+      max-height: 70vh;
+      height: initial;
+    }
+
+    @include respond-to('desktop') {
+      max-height: 60vh;
+    }
+  }
 }
