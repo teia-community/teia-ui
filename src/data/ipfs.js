@@ -14,6 +14,48 @@ const infuraUrl = 'https://ipfs.infura.io:5001'
 //const apiKey = process.env.REACT_APP_IPFS_KEY
 //const storage = new NFTStorage({ token: apiKey })
 
+export async function uploadFileToIPFSProxy(file) {
+  const form = new FormData()
+
+  form.append('asset', file)
+
+  const res = await axios.post(
+    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/single`,
+    form,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  )
+
+  return res.data.cid
+}
+
+export async function uploadMultipleFilesToIPFSProxy(files) {
+  const form = new FormData()
+
+  files.forEach((file) => {
+    form.append('assets', file)
+  })
+
+  const res = await axios.post(
+    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/multiple`,
+    form,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  )
+
+  return res.data.cid
+}
+
+export async function uploadMetadataToIPFSProxy(metadata) {
+  return await uploadFileToIPFSProxy(
+    new File([metadata], 'metadata', {
+      type: 'application/json',
+    })
+  )
+}
+
 export const prepareFile = async ({
   name,
   description,
@@ -182,6 +224,7 @@ async function uploadFilesToDirectory(files) {
   files.forEach((file) => {
     form.append('file', file.blob, encodeURIComponent(file.path))
   })
+
   const endpoint = `${infuraUrl}/api/v0/add?pin=true&recursive=true&wrap-with-directory=true`
   const res = await axios.post(endpoint, form, {
     headers: { 'Content-Type': 'multipart/form-data' },
