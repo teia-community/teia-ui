@@ -34,7 +34,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   const form = new FormData()
 
   files.forEach((file) => {
-    form.append('assets', file)
+    form.append('assets', file.blob)
   })
 
   const res = await axios.post(
@@ -154,8 +154,8 @@ export const prepareDirectory = async ({
 }) => {
   // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
-  console.debug(`Successfully uploaded directory to IPFS: ${hashes}`)
-  const cid = `ipfs://${hashes}`
+  console.debug(`Successfully uploaded directory to IPFS:`, hashes.directory)
+  const cid = `ipfs://${hashes.directory}`
 
   if (formats.length > 0) {
     formats[0].uri = cid
@@ -167,7 +167,7 @@ export const prepareDirectory = async ({
 
   let displayUri = ''
   if (generateDisplayUri) {
-    const coverCid = await uploadFileToIPFSProxy(cover.buffer)
+    const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
     if (cover?.format) {
@@ -192,7 +192,9 @@ export const prepareDirectory = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await uploadFileToIPFSProxy(thumbnail.buffer)
+    const thumbnailInfo = await uploadFileToIPFSProxy(
+      new Blob([thumbnail.buffer])
+    )
     thumbnailUri = `ipfs://${thumbnailInfo.path}`
     if (thumbnail && thumbnail.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
