@@ -106,7 +106,9 @@ export const prepareFile = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await uploadFileToIPFSProxy(thumbnail.buffer)
+    const thumbnailInfo = await uploadFileToIPFSProxy(
+      new Blob([thumbnail.buffer])
+    )
     thumbnailUri = `ipfs://${thumbnailInfo}`
     if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
@@ -173,7 +175,7 @@ export const prepareDirectory = async ({
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   } else if (hashes.cover) {
     // TODO: Remove this once generateDisplayUri option is gone
@@ -197,7 +199,7 @@ export const prepareDirectory = async ({
       format.uri = thumbnailUri
       format.fileName = `thumbnail_${format.fileName}`
       formats.push(format)
-      console.log('thumbnail format', format)
+      console.debug('thumbnail format', format)
     }
   }
 
