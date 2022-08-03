@@ -337,11 +337,11 @@ export const Mint = () => {
       console.debug('Calling mint with', {
         minterAddress,
         amount,
-        path: nftCid.path,
+        path: nftCid,
         royalties,
       })
-      const success = await mint(minterAddress, amount, nftCid.path, royalties)
-      console.log('success', success)
+      const success = await mint(minterAddress, amount, nftCid, royalties)
+      console.debug('success', success)
       if (success) {
         clearFields()
       }
@@ -576,7 +576,7 @@ export const Mint = () => {
       setNsfw(nsfw)
       setPhotosensitiveSeizureWarning(photoSeizureWarning)
     } catch (e) {
-      console.log(
+      console.warn(
         'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
       )
       console.groupCollapsed('expand for details')
