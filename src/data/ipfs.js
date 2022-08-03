@@ -5,10 +5,10 @@ import {
 //import { NFTStorage, File } from 'nft.storage'
 
 // const { create } = require('ipfs-http-client')
-const Buffer = require('buffer').Buffer
+const { Buffer } = require('buffer')
 const axios = require('axios')
 // const readJsonLines = require('read-json-lines-sync').default
-const { getCoverImagePathFromBuffer } = require('../utils/html')
+// const { getCoverImagePathFromBuffer } = require('../utils/html')
 
 // const infuraUrl = 'https://ipfs.infura.io:5001'
 //const apiKey = process.env.REACT_APP_IPFS_KEY
@@ -79,7 +79,7 @@ export const prepareFile = async ({
   // const hash = await ipfs.add(new Blob([buffer]))
 
   const _cid = await uploadFileToIPFSProxy(new Blob([file.buffer]))
-  // console.log(hash)
+  console.debug(`Successfully uploaded file to IPFS: ${_cid}`)
   const cid = `ipfs://${_cid}`
 
   if (formats.length > 0) {
@@ -92,13 +92,14 @@ export const prepareFile = async ({
   if (generateDisplayUri) {
     // const coverHash = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
     const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
+    console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
-    if (cover && cover.format) {
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   }
 
@@ -106,13 +107,13 @@ export const prepareFile = async ({
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
     const thumbnailInfo = await uploadFileToIPFSProxy(thumbnail.buffer)
-    thumbnailUri = `ipfs://${thumbnailInfo.path}`
-    if (thumbnail && thumbnail.format) {
+    thumbnailUri = `ipfs://${thumbnailInfo}`
+    if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
       format.fileName = `thumbnail_${format.fileName}`
       formats.push(format)
-      console.log('thumbnail format', format)
+      console.debug('thumbnail format', format)
     }
   }
 
@@ -151,11 +152,12 @@ export const prepareDirectory = async ({
 }) => {
   // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
-  const cid = `ipfs://${hashes.directory}`
+  console.debug(`Successfully uploaded directory to IPFS: ${hashes}`)
+  const cid = `ipfs://${hashes}`
 
   if (formats.length > 0) {
     formats[0].uri = cid
-    console.log('file format', formats[0])
+    console.debug('file format', formats[0])
   }
 
   // upload cover image
@@ -164,8 +166,9 @@ export const prepareDirectory = async ({
   let displayUri = ''
   if (generateDisplayUri) {
     const coverCid = await uploadFileToIPFSProxy(cover.buffer)
+    console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
-    if (cover && cover.format) {
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
@@ -175,12 +178,12 @@ export const prepareDirectory = async ({
   } else if (hashes.cover) {
     // TODO: Remove this once generateDisplayUri option is gone
     displayUri = `ipfs://${hashes.cover}`
-    if (cover && cover.format) {
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   }
 
@@ -278,7 +281,7 @@ async function uploadMetadataFile({
 }) {
   // const ipfs = create(infuraUrl)
 
-  let metadata = {
+  const metadata = {
     name,
     description,
     tags: tags.replace(/\s/g, '').split(','),
