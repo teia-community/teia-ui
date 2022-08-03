@@ -106,10 +106,10 @@ export const prepareFile = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await uploadFileToIPFSProxy(
+    const thumbnailCID = await uploadFileToIPFSProxy(
       new Blob([thumbnail.buffer])
     )
-    thumbnailUri = `ipfs://${thumbnailInfo}`
+    thumbnailUri = `ipfs://${thumbnailCID}`
     if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
@@ -297,7 +297,6 @@ async function uploadMetadataFile({
     isBooleanAmount: false,
     shouldPreferSymbol: false,
     rights,
-    rightUri,
     language,
     date: new Date().toISOString(),
   }
@@ -308,5 +307,10 @@ async function uploadMetadataFile({
     metadata.contentRating = contentRating
   }
 
+  if (rights === 'custom') {
+    metadata.rightsUri = rightUri
+  }
+
+  console.debug(`Uploading metadata file: ${JSON.stringify(metadata)}`)
   return await uploadMetadataToIPFSProxy(Buffer.from(JSON.stringify(metadata)))
 }
