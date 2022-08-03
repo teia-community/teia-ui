@@ -20,7 +20,7 @@ export const Preview = ({
   previewUri,
   tags,
   rights,
-  rightsUri,
+  rightUri,
   language,
   nsfw,
   photosensitiveSeizureWarning,

@@ -225,6 +225,7 @@ function not_directory(file) {
 }
 
 async function uploadFilesToDirectory(files) {
+  console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
 
   // const form = new FormData()
@@ -233,7 +234,7 @@ async function uploadFilesToDirectory(files) {
   //   form.append('file', file.blob, encodeURIComponent(file.path))
   // })
 
-  const directory = await uploadFilesToDirectory(files)
+  const directory = await uploadMultipleFilesToIPFSProxy(files)
 
   // const endpoint = `${infuraUrl}/api/v0/add?pin=true&recursive=true&wrap-with-directory=true`
   // const res = await axios.post(endpoint, form, {
@@ -308,9 +309,9 @@ async function uploadMetadataFile({
   }
 
   if (rights === 'custom') {
-    metadata.rightsUri = rightUri
+    metadata.rightUri = rightUri
   }
 
-  console.debug(`Uploading metadata file: ${JSON.stringify(metadata)}`)
+  console.debug('Uploading metadata file:', metadata)
   return await uploadMetadataToIPFSProxy(Buffer.from(JSON.stringify(metadata)))
 }
