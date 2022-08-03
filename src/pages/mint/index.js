@@ -757,7 +757,7 @@ export const Mint = () => {
                       )
                     }}
                     placeholder="The URI to the custom license"
-                    label="Right URI"
+                    label="Custom license URI"
                     value={rightUri}
                   />
                 </Padding>
