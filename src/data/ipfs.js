@@ -34,7 +34,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   const form = new FormData()
 
   files.forEach((file) => {
-    form.append('assets', file.blob)
+    form.append('assets', new File([file.blob], encodeURIComponent(file.path)))
   })
 
   const res = await axios.post(
