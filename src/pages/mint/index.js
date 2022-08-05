@@ -495,6 +495,7 @@ export const Mint = () => {
   }
   const handleValidation = () => {
     if (
+      amount == null ||
       amount <= 0 ||
       amount > MAX_EDITIONS ||
       royalties < MIN_ROYALTIES ||

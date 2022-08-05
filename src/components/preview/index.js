@@ -54,7 +54,7 @@ export const Preview = ({
           <strong>License:</strong> {rights.label}
         </div>
         <div className={styles.field}>
-          <strong>Language:</strong> {language.label}
+          <strong>Language:</strong> {language?.label}
         </div>
         {(photosensitiveSeizureWarning || nsfw) && (
           <div className={styles.attributes}>
