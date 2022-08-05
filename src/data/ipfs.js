@@ -2,23 +2,16 @@ import {
   IPFS_DIRECTORY_MIMETYPE,
   IPFS_DEFAULT_THUMBNAIL_URI,
 } from '../constants'
-//import { NFTStorage, File } from 'nft.storage'
 
-// const { create } = require('ipfs-http-client')
 const { Buffer } = require('buffer')
 const axios = require('axios')
 // const readJsonLines = require('read-json-lines-sync').default
 // const { getCoverImagePathFromBuffer } = require('../utils/html')
 
-// const infuraUrl = 'https://ipfs.infura.io:5001'
-//const apiKey = process.env.REACT_APP_IPFS_KEY
-//const storage = new NFTStorage({ token: apiKey })
-
 export async function uploadFileToIPFSProxy(file) {
   const form = new FormData()
 
   form.append('asset', file)
-
   const res = await axios.post(
     `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/single`,
     form,
@@ -26,7 +19,6 @@ export async function uploadFileToIPFSProxy(file) {
       headers: { 'Content-Type': 'multipart/form-data' },
     }
   )
-
   return res.data.cid
 }
 
@@ -34,7 +26,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   const form = new FormData()
 
   files.forEach((file) => {
-    form.append('assets', new File([file.blob], encodeURIComponent(file.path)))
+    form.append('assets', file.blob, encodeURIComponent(file.path))
   })
 
   const res = await axios.post(
@@ -73,17 +65,13 @@ export const prepareFile = async ({
   formats,
 }) => {
   console.debug('generateDisplayUri', generateDisplayUri)
-  // const ipfs = create(infuraUrl)
 
-  // const buffer = file.buffer
-  // const hash = await ipfs.add(new Blob([buffer]))
-
-  const _cid = await uploadFileToIPFSProxy(new Blob([file.buffer]))
-  console.debug(`Successfully uploaded file to IPFS: ${_cid}`)
-  const cid = `ipfs://${_cid}`
+  const cid = await uploadFileToIPFSProxy(new Blob([file.buffer]))
+  console.debug(`Successfully uploaded file to IPFS: ${cid}`)
+  const uri = `ipfs://${cid}`
 
   if (formats.length > 0) {
-    formats[0].uri = cid
+    formats[0].uri = uri
     console.debug('file format', formats[0])
   }
 
@@ -106,10 +94,10 @@ export const prepareFile = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailCID = await uploadFileToIPFSProxy(
+    const thumbnailCid = await uploadFileToIPFSProxy(
       new Blob([thumbnail.buffer])
     )
-    thumbnailUri = `ipfs://${thumbnailCID}`
+    thumbnailUri = `ipfs://${thumbnailCid}`
     if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
@@ -163,8 +151,6 @@ export const prepareDirectory = async ({
   }
 
   // upload cover image
-  // const ipfs = create(infuraUrl)
-
   let displayUri = ''
   if (generateDisplayUri) {
     const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
@@ -230,41 +216,30 @@ async function uploadFilesToDirectory(files) {
   console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
 
-  // const form = new FormData()
-
-  // files.forEach((file) => {
-  //   form.append('file', file.blob, encodeURIComponent(file.path))
-  // })
-
   const directory = await uploadMultipleFilesToIPFSProxy(files)
 
-  // const endpoint = `${infuraUrl}/api/v0/add?pin=true&recursive=true&wrap-with-directory=true`
-  // const res = await axios.post(endpoint, form, {
-  // headers: { 'Content-Type': 'multipart/form-data' },
-  // })
-
-  // const data = readJsonLines(res.data)
-
+  // TODO: Parse index.html to find the cover
   // TODO: Remove this once generateDisplayUri option is gone
-  // get cover hash
+  /*
+  const data = readJsonLines(res.data)QmcjamRcHkdcADx6pYjBb5g4znZZtgenmQJyj3cwVZCzYv
+  //get cover hash
 
-  // let cover = null
-  // const indexFile = files.find((f) => f.path === 'index.html')
-  // if (indexFile) {
-  //   const indexBuffer = await indexFile.blob.arrayBuffer()
-  //   const coverImagePath = getCoverImagePathFromBuffer(indexBuffer)
+  let cover = null
+  const indexFile = files.find((f) => f.path === 'index.html')
+  if (indexFile) {
+    const indexBuffer = await indexFile.blob.arrayBuffer()
+    const coverImagePath = getCoverImagePathFromBuffer(indexBuffer)
+    if (coverImagePath) {
+      const coverEntry = data.find((f) => f.Name === coverImagePath)
+      if (coverEntry) {
+        cover = coverEntry.Hash
+      }
+    }
+  }
+  const rootDir = data.find((e) => e.Name === '')
 
-  //   if (coverImagePath) {
-  //     const coverEntry = data.find((f) => f.Name === coverImagePath)
-  //     if (coverEntry) {
-  //       cover = coverEntry.Hash
-  //     }
-  //   }
-  // }
-
-  // const rootDir = data.find((e) => e.Name === '')
-
-  // const directory = rootDir.Hash
+  const directory = rootDir.Hash
+  */
 
   return { directory }
 }
