@@ -132,7 +132,7 @@ export const prepareFile = async ({
     name,
     description,
     tags,
-    cid,
+    uri,
     address,
     displayUri,
     thumbnailUri,
@@ -166,10 +166,10 @@ export const prepareDirectory = async ({
   // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
   console.debug(`Successfully uploaded directory to IPFS:`, hashes.directory)
-  const cid = `ipfs://${hashes.directory}`
+  const uri = `ipfs://${hashes.directory}`
 
   if (formats.length > 0) {
-    formats[0].uri = cid
+    formats[0].uri = uri
     console.debug('file format', formats[0])
   }
 
@@ -218,7 +218,7 @@ export const prepareDirectory = async ({
     name,
     description,
     tags,
-    cid,
+    uri,
     address,
     displayUri,
     thumbnailUri,
@@ -279,7 +279,7 @@ async function buildMetadataFile({
   name,
   description,
   tags,
-  cid,
+  uri,
   address,
   displayUri = '',
   thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI,
@@ -295,7 +295,7 @@ async function buildMetadataFile({
     description,
     tags: tags.replace(/\s/g, '').split(','),
     symbol: 'OBJKT',
-    artifactUri: cid,
+    artifactUri: uri,
     displayUri,
     thumbnailUri,
     creators: [address],
