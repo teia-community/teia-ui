@@ -275,19 +275,15 @@ async function uploadMetadataFile({
     isBooleanAmount: false,
     shouldPreferSymbol: false,
     rights,
-    language,
     date: new Date().toISOString(),
   }
-  if (accessibility) {
-    metadata.accessibility = accessibility
-  }
-  if (contentRating) {
-    metadata.contentRating = contentRating
-  }
+  if (accessibility) metadata.accessibility = accessibility
 
-  if (rights === 'custom') {
-    metadata.rightUri = rightUri
-  }
+  if (contentRating) metadata.contentRating = contentRating
+
+  if (rights === 'custom') metadata.rightUri = rightUri
+
+  if (language != null) metadata.language = language
 
   console.debug('Uploading metadata file:', metadata)
   return await uploadMetadataToIPFSProxy(Buffer.from(JSON.stringify(metadata)))
