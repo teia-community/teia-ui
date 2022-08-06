@@ -7,7 +7,6 @@ const { Buffer } = require('buffer')
 const axios = require('axios')
 
 /**
- * @typedef { {name: string, age: number} } Metadata
  * @typedef { {path: string, blob: Blob} } FileHolder
  */
 
@@ -99,7 +98,6 @@ export const prepareFile = async ({
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
-    // const coverHash = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
     const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
@@ -163,7 +161,6 @@ export const prepareDirectory = async ({
   contentRating,
   formats,
 }) => {
-  // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
   console.debug(`Successfully uploaded directory to IPFS:`, hashes.directory)
   const uri = `ipfs://${hashes.directory}`
@@ -176,9 +173,9 @@ export const prepareDirectory = async ({
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
-    const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
-    console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
-    displayUri = `ipfs://${coverCid}`
+    const displayCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
+    console.debug(`Successfully uploaded cover to IPFS: ${displayCid}`)
+    displayUri = `ipfs://${displayCid}`
     if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
