@@ -498,6 +498,7 @@ export const Mint = () => {
       amount == null ||
       amount <= 0 ||
       amount > MAX_EDITIONS ||
+      royalties == null ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
       !handleRightsValidation() ||
