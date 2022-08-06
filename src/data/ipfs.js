@@ -5,9 +5,20 @@ import {
 
 const { Buffer } = require('buffer')
 const axios = require('axios')
+
+/**
+ * @typedef { {name: string, age: number} } Metadata
+ * @typedef { {path: string, blob: Blob} } FileHolder
+ */
+
 // const readJsonLines = require('read-json-lines-sync').default
 // const { getCoverImagePathFromBuffer } = require('../utils/html')
 
+/**
+ * Upload a single file through the IPFS proxy.
+ * @param {Blob|File} file
+ * @returns {Promise<string>}
+ */
 export async function uploadFileToIPFSProxy(file) {
   const form = new FormData()
 
@@ -22,6 +33,11 @@ export async function uploadFileToIPFSProxy(file) {
   return res.data.cid
 }
 
+/**
+ * Upload multiple files through the IPFS proxy
+ * @param {Array<Blob|File>} files
+ * @returns {Promise<string>}
+ */
 export async function uploadMultipleFilesToIPFSProxy(files) {
   const form = new FormData()
 
@@ -40,6 +56,11 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   return res.data.cid
 }
 
+/**
+ * Uploads a metadata file through the IPFS proxy.
+ * @param {Blob|File} metadata
+ * @returns {Promise<string>}
+ */
 export async function uploadMetadataToIPFSProxy(metadata) {
   return await uploadFileToIPFSProxy(
     new File([metadata], 'metadata', {
@@ -107,7 +128,7 @@ export const prepareFile = async ({
     }
   }
 
-  return await uploadMetadataFile({
+  const metadata = await buildMetadataFile({
     name,
     description,
     tags,
@@ -122,6 +143,8 @@ export const prepareFile = async ({
     contentRating,
     formats,
   })
+
+  return await uploadMetadataToIPFSProxy(Buffer.from(metadata))
 }
 
 export const prepareDirectory = async ({
@@ -191,7 +214,7 @@ export const prepareDirectory = async ({
     }
   }
 
-  return await uploadMetadataFile({
+  const metadata = await buildMetadataFile({
     name,
     description,
     tags,
@@ -206,12 +229,20 @@ export const prepareDirectory = async ({
     contentRating,
     formats,
   })
+
+  return await uploadMetadataToIPFSProxy(Buffer.from(metadata))
 }
 
 function not_directory(file) {
   return file.blob.type !== IPFS_DIRECTORY_MIMETYPE
 }
 
+/**
+ * Uploads multiple files through the IPFS proxy,
+ * grep the `index.html` for a cover image.
+ * @param {Array<FileHolder>} files
+ * @returns {{directory: string} }
+ */
 async function uploadFilesToDirectory(files) {
   console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
@@ -244,7 +275,7 @@ async function uploadFilesToDirectory(files) {
   return { directory }
 }
 
-async function uploadMetadataFile({
+async function buildMetadataFile({
   name,
   description,
   tags,
@@ -259,8 +290,6 @@ async function uploadMetadataFile({
   contentRating,
   formats,
 }) {
-  // const ipfs = create(infuraUrl)
-
   const metadata = {
     name,
     description,
@@ -286,5 +315,6 @@ async function uploadMetadataFile({
   if (language != null) metadata.language = language
 
   console.debug('Uploading metadata file:', metadata)
-  return await uploadMetadataToIPFSProxy(Buffer.from(JSON.stringify(metadata)))
+
+  return JSON.stringify(metadata)
 }
