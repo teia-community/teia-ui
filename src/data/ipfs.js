@@ -181,8 +181,8 @@ export const prepareDirectory = async ({
     const thumbnailInfo = await uploadFileToIPFSProxy(
       new Blob([thumbnail.buffer])
     )
-    thumbnailUri = `ipfs://${thumbnailInfo.path}`
-    if (thumbnail && thumbnail.format) {
+    thumbnailUri = `ipfs://${thumbnailInfo}`
+    if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
       format.fileName = `thumbnail_${format.fileName}`
