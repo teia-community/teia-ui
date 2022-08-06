@@ -9,7 +9,7 @@ on:
         type: environment
         required: true
 
-name: 🚀 Deploy website on push
+name: Deploy to assigned SFTP for environment
 jobs:
   web-deploy:
     name: 🎉 Deploy
@@ -36,7 +36,7 @@ jobs:
           username: '${{ secrets.USER }}'
           server: '${{ secrets.SERVER }}'
           ssh_private_key: ${{ secrets.KEY }}
-          local_path: '${{ secrets.LOACL_PATH }}'
+          local_path: '${{ secrets.LOCAL_PATH }}'
           remote_path: '${{ secrets.SERVER_PATH }}'
           sftpArgs: '-o ConnectTimeout=5'
           delete_remote_files: true
