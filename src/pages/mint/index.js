@@ -584,11 +584,11 @@ export const Mint = () => {
       console.groupCollapsed('expand for details')
       console.error(e)
       console.groupEnd()
-      clearFields()
+      clearFields(true)
     }
   }
 
-  const clearFields = () => {
+  const clearFields = (full = false) => {
     setTitle('')
     setDescription('')
     setTags('')
@@ -599,6 +599,11 @@ export const Mint = () => {
     setNsfw(false)
     setPhotosensitiveSeizureWarning(false)
     setLanguage('')
+
+    if (full) {
+      setCover(null)
+      setFile(null)
+    }
 
     mintKeys.forEach((k) => window.localStorage.removeItem(k))
   }
