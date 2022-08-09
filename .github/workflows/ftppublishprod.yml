@@ -1,15 +1,14 @@
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
-name: Deploy to assigned SFTP for environment
+name: Deploy to prod
 jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     environment:
       name: prod
-      url: http://qateia.art
+      url: https://teia.art
     strategy:
       matrix:
         node-version: [16.x]
