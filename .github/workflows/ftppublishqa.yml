@@ -1,6 +1,6 @@
 on:
-  push:
-    branches: [main]
+  #push:
+  #  branches: [main]
 
   workflow_dispatch:
     inputs:
@@ -41,7 +41,7 @@ jobs:
           sftpArgs: '-o ConnectTimeout=5'
           delete_remote_files: true
       - name: Setup Deployment
-        uses: D3rHase/ssh-command-action@{version}
+        uses: D3rHase/ssh-command-action@v0.2.1
         with:
          HOST: ${{secrets.SERVER}}                             # Remote server address / ip - Required: true
          PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
