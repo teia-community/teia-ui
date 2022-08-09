@@ -1,0 +1,50 @@
+on:
+  push:
+    branches: [main]
+
+name: Deploy to 
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: https://teia.art
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+
+      - name: 📂 Sync files
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: '${{ secrets.USER }}'
+          server: '${{ secrets.SERVER }}'
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: '${{ secrets.LOCAL_PATH }}'
+          remote_path: '${{ secrets.SERVER_PATH }}'
+          sftpArgs: '-o ConnectTimeout=5'
+          delete_remote_files: true
+      - name: Setup Deployment
+        uses: D3rHase/ssh-command-action@v0.2.1
+        with:
+         HOST: ${{secrets.SERVER}}                           
+         PORT: ${{secrets.SSH_PORT}}                             
+         USER: ${{secrets.USER}}                             
+         PRIVATE_SSH_KEY: ${{secrets.KEY}}
+         COMMAND: ${{secrets.SSH_COMMAND}}       
+      - name: Clear Cloudflare cache
+        uses: Cyb3r-Jak3/action-cloudflare-cache@v1.1.0
+        with:
+          zone: ${{ secrets.CLOUDFLARE_ZONE }}
+          api_token: ${{ secrets.CLOUDFLARE_TOKEN }}
