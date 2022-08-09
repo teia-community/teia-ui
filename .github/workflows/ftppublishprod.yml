@@ -1,8 +1,7 @@
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
-name: Deploy to 
+name: Deploy to prod
 jobs:
   web-deploy:
     name: 🎉 Deploy
