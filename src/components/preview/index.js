@@ -20,14 +20,18 @@ export const Preview = ({
   previewUri,
   tags,
   rights,
-  rightsUri,
+  rightUri,
   language,
   nsfw,
   photosensitiveSeizureWarning,
   amount,
   royalties,
 }) => {
-  const token_tags = tags !== '' ? tags.replace(/\s/g, '').split(',') : []
+  const token_tags = tags
+    ? tags !== ''
+      ? tags.replace(/\s/g, '').split(',')
+      : []
+    : []
   return (
     <div className={styles.container}>
       {isHTML(mimeType) && <HTMLWarning />}
@@ -54,7 +58,7 @@ export const Preview = ({
           <strong>License:</strong> {rights.label}
         </div>
         <div className={styles.field}>
-          <strong>Language:</strong> {language.label}
+          <strong>Language:</strong> {language?.label}
         </div>
         {(photosensitiveSeizureWarning || nsfw) && (
           <div className={styles.attributes}>

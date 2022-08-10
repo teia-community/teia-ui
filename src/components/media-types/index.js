@@ -236,6 +236,7 @@ export const renderMediaType = ({
       parsedArtifactUri = HashToURL(artifactUri, 'IPFS')
       return (
         <MD
+          previewUri={previewUri}
           artifactUri={HashToURL(artifactUri, 'IPFS')}
           displayView={displayView}
         ></MD>

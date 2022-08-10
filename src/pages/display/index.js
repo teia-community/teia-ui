@@ -259,23 +259,22 @@ export default class Display extends Component {
             this.setState({ hdao: Math.floor(res[0].hdao_balance / 1000000) })
         }
       } catch (e) {
-        console.log('error ' + e)
+        console.error('error ' + e)
       }
-      this.onReady()
     } else {
-      let res = await fetchSubjkts(
+      const res = await fetchSubjkts(
         decodeURI(window.location.pathname.split('/')[1])
       )
       // console.log(decodeURI(window.location.pathname.split('/')[1]))
-      console.log(res)
+      console.debug(res)
       if (res[0]?.metadata_file) {
-        let meta = await axios
+        const meta = await axios
           .get(
             'https://cloudflare-ipfs.com/ipfs/' +
               res[0].metadata_file.split('//')[1]
           )
           .then((res) => res.data)
-        console.log(meta)
+        console.debug(meta)
         if (meta.description) this.setState({ description: meta.description })
         if (meta.identicon) this.setState({ identicon: meta.identicon })
       }
@@ -285,8 +284,8 @@ export default class Display extends Component {
           walletPreview: walletPreview(res[0].address),
           subjkt: window.location.pathname.split('/')[1],
         })
-        let resTz = await fetchTz(this.state.wallet)
-        console.log(resTz)
+        const resTz = await fetchTz(this.state.wallet)
+        console.debug(resTz)
         this.setState({ hdao: Math.floor(resTz[0].hdao_balance / 1000000) })
       } else {
         this.props.history.push('/')
@@ -300,9 +299,9 @@ export default class Display extends Component {
         if (data.data.twitter) this.setState({ twitter })
         if (data.data.tzprofile) this.setState({ tzprofile })
       })
-      this.onReady()
     }
-    console.log(await fetchBalance(this.state.wallet))
+    this.onReady()
+    console.debug(await fetchBalance(this.state.wallet))
     this.setState({ claim: await fetchBalance(this.state.wallet) })
     //.reduce((a, b) => a + b, 0)
   }
@@ -325,7 +324,7 @@ export default class Display extends Component {
 
     this.reset()
 
-    let list = getWalletBlockList()
+    const list = getWalletBlockList()
     // console.log(this.state.wallet)
     // console.log(!list.includes(this.state.wallet))
     if (!list.includes(this.state.wallet)) {
@@ -390,14 +389,14 @@ export default class Display extends Component {
         })
       }
     } else {
-      console.log('forSaleType is null')
+      console.debug('forSaleType is null')
     }
 
     this.setState({ items: this.state.objkts.slice(0, 15), offset: 15 })
   }
 
   filterCreationsForSalePrimary = async () => {
-    let objkts = this.state.creations.filter((item) => {
+    return this.state.creations.filter((item) => {
       const swaps = item.swaps.filter((swap) => {
         return (
           swap.status === 0 &&
@@ -407,23 +406,19 @@ export default class Display extends Component {
       })
       return swaps && swaps.length > 0
     })
-
-    return objkts
   }
 
   filterCreationsForSaleSecondary = async () => {
-    let objkts = this.state.creations.filter((item) => {
+    return this.state.creations.filter((item) => {
       const swaps = item.swaps.filter((swaps) => {
         return swaps.status === 0 && swaps.creator_id !== this.state.wallet
       })
       return swaps && swaps.length > 0
     })
-
-    return objkts
   }
 
   combineCollection = async (collection, swaps) => {
-    let combinedCollection = []
+    const combinedCollection = []
 
     collection.forEach(function (item) {
       combinedCollection.push(item)
@@ -451,16 +446,16 @@ export default class Display extends Component {
 
     this.setState({ collectionType: 'notForSale' })
 
-    let list = getWalletBlockList()
+    const list = getWalletBlockList()
 
     if (!list.includes(this.state.wallet)) {
       this.setState({ loading: false, items: [] })
-      let collection = await fetchCollection(this.state.wallet)
-      let swaps = await fetchV2Swaps(this.state.wallet)
+      const collection = await fetchCollection(this.state.wallet)
+      const swaps = await fetchV2Swaps(this.state.wallet)
       // console.log(swaps)
-      let combinedCollection = await this.combineCollection(collection, swaps)
+      const combinedCollection = await this.combineCollection(collection, swaps)
       this.sortCollection(combinedCollection)
-      console.log(combinedCollection)
+      console.debug(combinedCollection)
       this.setState({ collection: combinedCollection })
       this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
     } else {
@@ -480,7 +475,7 @@ export default class Display extends Component {
   }
 
   collabs = async () => {
-    let list = getWalletBlockList()
+    const list = getWalletBlockList()
 
     if (!list.includes(this.state.wallet)) {
       this.setState({
@@ -500,7 +495,7 @@ export default class Display extends Component {
   collectionForSale = async () => {
     this.setState({ collectionType: 'forSale' })
 
-    let v1Swaps = this.state.marketV1.filter((item) => {
+    const v1Swaps = this.state.marketV1.filter((item) => {
       const objkts = item.token.creator.address !== this.state.wallet
       return objkts
     })
@@ -528,7 +523,7 @@ export default class Display extends Component {
   }
 
   filterCollectionNotForSale = async () => {
-    let objktsNotForSale = this.state.collection.filter(
+    const objktsNotForSale = this.state.collection.filter(
       (item) =>
         item.token.creator.address !== this.state.wallet &&
         item.creator_id !== this.state.wallet
@@ -583,13 +578,13 @@ export default class Display extends Component {
     const missingSize = handleSize - 6
     const spaces = ' '.repeat(Math.ceil(Math.abs(missingSize / 2)))
     if (missingSize < 0) {
-      return `${
-        this.state.copied ? 'Copied' : `${spaces}${this.state.discord}${spaces}`
-      }`
+      return this.state.copied
+        ? 'Copied'
+        : `${spaces}${this.state.discord}${spaces}`
     } else {
-      return `${
-        this.state.copied ? `${spaces}Copied${spaces}` : `${this.state.discord}`
-      }`
+      return this.state.copied
+        ? `${spaces}Copied${spaces}`
+        : `${this.state.discord}`
     }
   }
 
@@ -923,31 +918,29 @@ export default class Display extends Component {
 
                         {this.state.marketV1.map((e, key) => {
                           return (
-                            <>
-                              <Container key={key}>
-                                <Padding>
-                                  <Button to={`${PATH.OBJKT}/${e.token_id}`}>
-                                    {/* {console.log(e)} */}
-                                    <Primary>
-                                      <strong>
-                                        {e.amount_left}x OBJKT#{e.token_id}{' '}
-                                        {e.price}µtez
-                                      </strong>
-                                    </Primary>
-                                  </Button>
-                                  <Button
-                                    onClick={() =>
-                                      this.context.cancel(
-                                        e.contract_address,
-                                        e.id
-                                      )
-                                    }
-                                  >
-                                    <Secondary>Cancel Swap</Secondary>
-                                  </Button>
-                                </Padding>
-                              </Container>
-                            </>
+                            <Container key={key}>
+                              <Padding>
+                                <Button to={`${PATH.OBJKT}/${e.token_id}`}>
+                                  {/* {console.log(e)} */}
+                                  <Primary>
+                                    <strong>
+                                      {e.amount_left}x OBJKT#{e.token_id}{' '}
+                                      {e.price}µtez
+                                    </strong>
+                                  </Primary>
+                                </Button>
+                                <Button
+                                  onClick={() =>
+                                    this.context.cancel(
+                                      e.contract_address,
+                                      e.id
+                                    )
+                                  }
+                                >
+                                  <Secondary>Cancel Swap</Secondary>
+                                </Button>
+                              </Padding>
+                            </Container>
                           )
                         })}
                       </>
@@ -1086,31 +1079,29 @@ export default class Display extends Component {
                           {this.state.marketV1.map((e, key) => {
                             // console.log(e)
                             return (
-                              <>
-                                <Container key={key}>
-                                  <Padding>
-                                    <Button to={`${PATH.OBJKT}/${e.token_id}`}>
-                                      {/* {console.log(e)} */}
-                                      <Primary>
-                                        <strong>
-                                          {e.amount_left}x OBJKT#{e.token_id}{' '}
-                                          {e.price}µtez
-                                        </strong>
-                                      </Primary>
-                                    </Button>
-                                    <Button
-                                      onClick={() =>
-                                        this.context.cancel(
-                                          e.contract_address,
-                                          e.id
-                                        )
-                                      }
-                                    >
-                                      <Secondary>Cancel Swap</Secondary>
-                                    </Button>
-                                  </Padding>
-                                </Container>
-                              </>
+                              <Container key={key}>
+                                <Padding>
+                                  <Button to={`${PATH.OBJKT}/${e.token_id}`}>
+                                    {/* {console.log(e)} */}
+                                    <Primary>
+                                      <strong>
+                                        {e.amount_left}x OBJKT#{e.token_id}{' '}
+                                        {e.price}µtez
+                                      </strong>
+                                    </Primary>
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      this.context.cancel(
+                                        e.contract_address,
+                                        e.id
+                                      )
+                                    }
+                                  >
+                                    <Secondary>Cancel Swap</Secondary>
+                                  </Button>
+                                </Padding>
+                              </Container>
                             )
                           })}
                         </>

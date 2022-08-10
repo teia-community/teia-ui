@@ -114,7 +114,7 @@ export const HTMLComponent = (props) => {
             ref={iframeRef}
             title="html-zip-embed"
             src={`https://teia-community.github.io/teia-ui/gh-pages/html-preview/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin allow-modals"
+            sandbox="allow-scripts allow-same-origin allow-modals allow-pointer-lock"
             allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
           />
         </div>
@@ -150,7 +150,7 @@ export const HTMLComponent = (props) => {
             className={styles.html + ' zip-embed'}
             title="html-embed"
             src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
             allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
           />
         </div>
@@ -165,7 +165,7 @@ export const HTMLComponent = (props) => {
           className={styles.html}
           title="html-embed"
           src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts allow-same-origin allow-pointer-lock"
           allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
         />
       </div>
