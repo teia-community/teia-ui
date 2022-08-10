@@ -343,7 +343,7 @@ export const Mint = () => {
       const success = await mint(minterAddress, amount, nftCid, royalties)
       console.debug('success', success)
       if (success) {
-        clearFields()
+        clearFields(true)
       }
       setStep(0)
     }
