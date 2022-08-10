@@ -1,14 +1,21 @@
 on:
   push:
     branches: [main]
+    
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        type: environment
+        required: true    
 
-name: Deploy to assigned SFTP for environment
+name: QA Deploy
 jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     environment:
-      name: prod
+      name: qa
       url: http://qateia.art
     strategy:
       matrix:
