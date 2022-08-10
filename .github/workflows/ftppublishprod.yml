@@ -1,22 +1,14 @@
 on:
-  push:
-    branches: [main]
-    
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy'
-        type: environment
-        required: true    
 
-name: QA Deploy
+name: Deploy to prod
 jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     environment:
-      name: qa
-      url: http://qateia.art
+      name: prod
+      url: https://teia.art
     strategy:
       matrix:
         node-version: [16.x]
