@@ -3,11 +3,12 @@ import {
   IPFS_DEFAULT_THUMBNAIL_URI,
 } from '../constants'
 
+import mime from 'mime-types'
 const { Buffer } = require('buffer')
 const axios = require('axios')
 
 /**
- * @typedef { {path: string, blob: Blob} } FileHolder
+ * @typedef { {path: string?, blob: Blob} } FileHolder
  */
 
 // const readJsonLines = require('read-json-lines-sync').default
@@ -15,13 +16,15 @@ const axios = require('axios')
 
 /**
  * Upload a single file through the IPFS proxy.
- * @param {Blob|File} file
+ * @param {FileHolder} file
  * @returns {Promise<string>}
  */
 export async function uploadFileToIPFSProxy(file) {
   const form = new FormData()
 
-  form.append('asset', file)
+  const file_type = mime.lookup(file.path)
+  form.append('asset', new File([file.blob], file.path, { type: file_type }))
+
   const res = await axios.post(
     `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/single`,
     form,
@@ -34,14 +37,18 @@ export async function uploadFileToIPFSProxy(file) {
 
 /**
  * Upload multiple files through the IPFS proxy
- * @param {Array<Blob|File>} files
+ * @param {Array<FileHolder>} files
  * @returns {Promise<string>}
  */
 export async function uploadMultipleFilesToIPFSProxy(files) {
   const form = new FormData()
 
   files.forEach((file) => {
-    form.append('assets', file.blob, encodeURIComponent(file.path))
+    const file_type = mime.lookup(file.path)
+    form.append(
+      'assets',
+      new File([file.blob], encodeURIComponent(file.path), { type: file_type })
+    )
   })
 
   const res = await axios.post(
@@ -53,19 +60,6 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   )
 
   return res.data.cid
-}
-
-/**
- * Uploads a metadata file through the IPFS proxy.
- * @param {Blob|File} metadata
- * @returns {Promise<string>}
- */
-export async function uploadMetadataToIPFSProxy(metadata) {
-  return await uploadFileToIPFSProxy(
-    new File([metadata], 'metadata', {
-      type: 'application/json',
-    })
-  )
 }
 
 export const prepareFile = async ({
@@ -85,8 +79,10 @@ export const prepareFile = async ({
   formats,
 }) => {
   console.debug('generateDisplayUri', generateDisplayUri)
-
-  const cid = await uploadFileToIPFSProxy(new Blob([file.buffer]))
+  const cid = await uploadFileToIPFSProxy({
+    blob: new Blob([file.buffer]),
+    path: file.file.name,
+  })
   console.debug(`Successfully uploaded file to IPFS: ${cid}`)
   const uri = `ipfs://${cid}`
 
@@ -98,7 +94,10 @@ export const prepareFile = async ({
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
-    const coverCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
+    const coverCid = await uploadFileToIPFSProxy({
+      blob: new Blob([cover.buffer]),
+      path: cover.format.fileName,
+    })
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
     if (cover?.format) {
@@ -113,9 +112,10 @@ export const prepareFile = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailCid = await uploadFileToIPFSProxy(
-      new Blob([thumbnail.buffer])
-    )
+    const thumbnailCid = await uploadFileToIPFSProxy({
+      blob: new Blob([thumbnail.buffer]),
+      path: thumbnail.format.fileName,
+    })
     thumbnailUri = `ipfs://${thumbnailCid}`
     if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
@@ -142,7 +142,10 @@ export const prepareFile = async ({
     formats,
   })
 
-  return await uploadMetadataToIPFSProxy(Buffer.from(metadata))
+  return await uploadFileToIPFSProxy({
+    blob: new Blob([Buffer.from(metadata)]),
+    path: 'metadata',
+  })
 }
 
 export const prepareDirectory = async ({
@@ -173,7 +176,10 @@ export const prepareDirectory = async ({
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
-    const displayCid = await uploadFileToIPFSProxy(new Blob([cover.buffer]))
+    const displayCid = await uploadFileToIPFSProxy({
+      blob: new Blob([cover.buffer]),
+      path: cover.format.fileName,
+    })
     console.debug(`Successfully uploaded cover to IPFS: ${displayCid}`)
     displayUri = `ipfs://${displayCid}`
     if (cover?.format) {
@@ -198,9 +204,10 @@ export const prepareDirectory = async ({
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await uploadFileToIPFSProxy(
-      new Blob([thumbnail.buffer])
-    )
+    const thumbnailInfo = await uploadFileToIPFSProxy({
+      blob: new Blob([thumbnail.buffer]),
+      path: thumbnail.format.fileName,
+    })
     thumbnailUri = `ipfs://${thumbnailInfo}`
     if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
@@ -227,9 +234,17 @@ export const prepareDirectory = async ({
     formats,
   })
 
-  return await uploadMetadataToIPFSProxy(Buffer.from(metadata))
+  return await uploadFileToIPFSProxy({
+    blob: new Blob([Buffer.from(metadata)]),
+    path: 'metadata.json',
+  })
 }
 
+/**
+ * Check if the given FileHolder is a directory.
+ * @param {FileHolder} file
+ * @returns {boolean}
+ */
 function not_directory(file) {
   return file.blob.type !== IPFS_DIRECTORY_MIMETYPE
 }
