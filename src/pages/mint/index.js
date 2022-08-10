@@ -310,7 +310,7 @@ export const Mint = () => {
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
           rights: rights.value,
           rightUri,
-          language: language.value,
+          language: language?.value,
           accessibility,
           contentRating,
           formats,
@@ -328,7 +328,7 @@ export const Mint = () => {
           generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
           rights: rights.value,
           rightUri,
-          language: language.value,
+          language: language?.value,
           accessibility,
           contentRating,
           formats,
@@ -338,13 +338,13 @@ export const Mint = () => {
       console.debug('Calling mint with', {
         minterAddress,
         amount,
-        path: nftCid.path,
+        path: nftCid,
         royalties,
       })
-      const success = await mint(minterAddress, amount, nftCid.path, royalties)
-      console.log('success', success)
+      const success = await mint(minterAddress, amount, nftCid, royalties)
+      console.debug('success', success)
       if (success) {
-        clearFields()
+        clearFields(true)
       }
       setStep(0)
     }
@@ -503,8 +503,10 @@ export const Mint = () => {
   }
   const handleValidation = () => {
     if (
+      amount == null ||
       amount <= 0 ||
       amount > MAX_EDITIONS ||
+      royalties == null ||
       royalties < MIN_ROYALTIES ||
       royalties > MAX_ROYALTIES ||
       !handleRightsValidation() ||
@@ -584,17 +586,17 @@ export const Mint = () => {
       setNsfw(nsfw)
       setPhotosensitiveSeizureWarning(photoSeizureWarning)
     } catch (e) {
-      console.log(
+      console.warn(
         'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
       )
       console.groupCollapsed('expand for details')
       console.error(e)
       console.groupEnd()
-      clearFields()
+      clearFields(true)
     }
   }
 
-  const clearFields = () => {
+  const clearFields = (full = false) => {
     setTitle('')
     setDescription('')
     setTags('')
@@ -605,6 +607,11 @@ export const Mint = () => {
     setNsfw(false)
     setPhotosensitiveSeizureWarning(false)
     setLanguage('')
+
+    if (full) {
+      setCover(null)
+      setFile(null)
+    }
 
     mintKeys.forEach((k) => window.localStorage.removeItem(k))
   }
@@ -765,7 +772,7 @@ export const Mint = () => {
                       )
                     }}
                     placeholder="The URI to the custom license"
-                    label="Right URI"
+                    label="Custom license URI"
                     value={rightUri}
                   />
                 </Padding>

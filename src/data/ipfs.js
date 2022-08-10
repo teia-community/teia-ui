@@ -2,17 +2,68 @@ import {
   IPFS_DIRECTORY_MIMETYPE,
   IPFS_DEFAULT_THUMBNAIL_URI,
 } from '../constants'
-//import { NFTStorage, File } from 'nft.storage'
 
-const { create } = require('ipfs-http-client')
-const Buffer = require('buffer').Buffer
+import mime from 'mime-types'
+const { Buffer } = require('buffer')
 const axios = require('axios')
-const readJsonLines = require('read-json-lines-sync').default
-const { getCoverImagePathFromBuffer } = require('../utils/html')
 
-const infuraUrl = 'https://ipfs.infura.io:5001'
-//const apiKey = process.env.REACT_APP_IPFS_KEY
-//const storage = new NFTStorage({ token: apiKey })
+/**
+ * @typedef { {path: string?, blob: Blob} } FileHolder
+ */
+
+// const readJsonLines = require('read-json-lines-sync').default
+// const { getCoverImagePathFromBuffer } = require('../utils/html')
+
+/**
+ * Upload a single file through the IPFS proxy.
+ * @param {FileHolder} file
+ * @returns {Promise<string>}
+ */
+export async function uploadFileToIPFSProxy(file) {
+  const form = new FormData()
+
+  const file_type = mime.lookup(file.path)
+  console.debug(`iploading ${file.path} as ${file_type}`)
+
+  form.append('asset', new File([file.blob], file.path, { type: file_type }))
+
+  const res = await axios.post(
+    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/single`,
+    form,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  )
+  return res.data.cid
+}
+
+/**
+ * Upload multiple files through the IPFS proxy
+ * @param {Array<FileHolder>} files
+ * @returns {Promise<string>}
+ */
+export async function uploadMultipleFilesToIPFSProxy(files) {
+  const form = new FormData()
+
+  files.forEach((file) => {
+    const file_type = mime.lookup(file.path)
+    console.debug(`uploading ${file.path} as ${file_type}`)
+    form.append(
+      'assets',
+      new File([file.blob], encodeURIComponent(file.path), { type: file_type })
+    )
+  })
+
+  const res = await axios.post(
+    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/multiple`,
+    form,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  )
+
+  return res.data.cid
+}
 
 export const prepareFile = async ({
   name,
@@ -30,52 +81,59 @@ export const prepareFile = async ({
   contentRating,
   formats,
 }) => {
-  console.log('generateDisplayUri', generateDisplayUri)
-  const ipfs = create(infuraUrl)
-
-  const buffer = file.buffer
-  const hash = await ipfs.add(new Blob([buffer]))
-  console.log(hash)
-  const cid = `ipfs://${hash.path}`
+  console.debug('generateDisplayUri', generateDisplayUri)
+  const cid = await uploadFileToIPFSProxy({
+    blob: new Blob([file.buffer]),
+    path: file.file.name,
+  })
+  console.debug(`Successfully uploaded file to IPFS: ${cid}`)
+  const uri = `ipfs://${cid}`
 
   if (formats.length > 0) {
-    formats[0].uri = cid
-    console.log('file format', formats[0])
+    formats[0].uri = uri
+    console.debug('file format', formats[0])
   }
 
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
-    const coverHash = await ipfs.add(new Blob([cover.buffer]))
-    displayUri = `ipfs://${coverHash.path}`
-    if (cover && cover.format) {
+    const coverCid = await uploadFileToIPFSProxy({
+      blob: new Blob([cover.buffer]),
+      path: `cover_${cover.format.fileName}`,
+    })
+    console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
+    displayUri = `ipfs://${coverCid}`
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   }
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await ipfs.add(thumbnail.buffer)
-    thumbnailUri = `ipfs://${thumbnailInfo.path}`
-    if (thumbnail && thumbnail.format) {
+    const thumbnailCid = await uploadFileToIPFSProxy({
+      blob: new Blob([thumbnail.buffer]),
+      path: `thumbnail_${thumbnail.format.fileName}`,
+    })
+    thumbnailUri = `ipfs://${thumbnailCid}`
+    if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
       format.fileName = `thumbnail_${format.fileName}`
       formats.push(format)
-      console.log('thumbnail format', format)
+      console.debug('thumbnail format', format)
     }
   }
 
-  return await uploadMetadataFile({
+  const metadata = await buildMetadataFile({
     name,
     description,
     tags,
-    cid,
+    uri,
     address,
     displayUri,
     thumbnailUri,
@@ -85,6 +143,13 @@ export const prepareFile = async ({
     accessibility,
     contentRating,
     formats,
+  })
+
+  console.debug('Uploading metadata file:', metadata)
+
+  return await uploadFileToIPFSProxy({
+    blob: new Blob([Buffer.from(metadata)]),
+    path: 'metadata',
   })
 }
 
@@ -104,60 +169,65 @@ export const prepareDirectory = async ({
   contentRating,
   formats,
 }) => {
-  // upload directory of files
   const hashes = await uploadFilesToDirectory(files)
-  const cid = `ipfs://${hashes.directory}`
+  console.debug(`Successfully uploaded directory to IPFS:`, hashes.directory)
+  const uri = `ipfs://${hashes.directory}`
 
   if (formats.length > 0) {
-    formats[0].uri = cid
-    console.log('file format', formats[0])
+    formats[0].uri = uri
+    console.debug('file format', formats[0])
   }
 
   // upload cover image
-  const ipfs = create(infuraUrl)
-
   let displayUri = ''
   if (generateDisplayUri) {
-    const coverInfo = await ipfs.add(cover.buffer)
-    displayUri = `ipfs://${coverInfo.path}`
-    if (cover && cover.format) {
+    const displayCid = await uploadFileToIPFSProxy({
+      blob: new Blob([cover.buffer]),
+      path: `cover_${cover.format.fileName}`,
+    })
+    console.debug(`Successfully uploaded cover to IPFS: ${displayCid}`)
+    displayUri = `ipfs://${displayCid}`
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   } else if (hashes.cover) {
     // TODO: Remove this once generateDisplayUri option is gone
     displayUri = `ipfs://${hashes.cover}`
-    if (cover && cover.format) {
+    if (cover?.format) {
       const format = JSON.parse(JSON.stringify(cover.format))
       format.uri = displayUri
       format.fileName = `cover_${format.fileName}`
       formats.push(format)
-      console.log('cover format', format)
+      console.debug('cover format', format)
     }
   }
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri) {
-    const thumbnailInfo = await ipfs.add(thumbnail.buffer)
-    thumbnailUri = `ipfs://${thumbnailInfo.path}`
-    if (thumbnail && thumbnail.format) {
+    const thumbnailInfo = await uploadFileToIPFSProxy({
+      blob: new Blob([thumbnail.buffer]),
+      path: thumbnail.format.fileName,
+    })
+    thumbnailUri = `ipfs://${thumbnailInfo}`
+    if (thumbnail?.format) {
       const format = JSON.parse(JSON.stringify(thumbnail.format))
       format.uri = thumbnailUri
       format.fileName = `thumbnail_${format.fileName}`
       formats.push(format)
-      console.log('thumbnail format', format)
+      console.debug('thumbnail format', format)
     }
   }
 
-  return await uploadMetadataFile({
+  const metadata = await buildMetadataFile({
     name,
     description,
     tags,
-    cid,
+    uri,
     address,
     displayUri,
     thumbnailUri,
@@ -168,35 +238,47 @@ export const prepareDirectory = async ({
     contentRating,
     formats,
   })
+
+  console.debug('Uploading metadata file:', metadata)
+
+  return await uploadFileToIPFSProxy({
+    blob: new Blob([Buffer.from(metadata)]),
+    path: 'metadata.json',
+  })
 }
 
+/**
+ * Check if the given FileHolder is a directory.
+ * @param {FileHolder} file
+ * @returns {boolean}
+ */
 function not_directory(file) {
   return file.blob.type !== IPFS_DIRECTORY_MIMETYPE
 }
 
+/**
+ * Uploads multiple files through the IPFS proxy,
+ * grep the `index.html` for a cover image.
+ * @param {Array<FileHolder>} files
+ * @returns {{directory: string} }
+ */
 async function uploadFilesToDirectory(files) {
+  console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
 
-  const form = new FormData()
+  const directory = await uploadMultipleFilesToIPFSProxy(files)
 
-  files.forEach((file) => {
-    form.append('file', file.blob, encodeURIComponent(file.path))
-  })
-  const endpoint = `${infuraUrl}/api/v0/add?pin=true&recursive=true&wrap-with-directory=true`
-  const res = await axios.post(endpoint, form, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
-
-  const data = readJsonLines(res.data)
-
+  // TODO: Parse index.html to find the cover
   // TODO: Remove this once generateDisplayUri option is gone
-  // get cover hash
+  /*
+  const data = readJsonLines(res.data)QmcjamRcHkdcADx6pYjBb5g4znZZtgenmQJyj3cwVZCzYv
+  //get cover hash
+
   let cover = null
   const indexFile = files.find((f) => f.path === 'index.html')
   if (indexFile) {
     const indexBuffer = await indexFile.blob.arrayBuffer()
     const coverImagePath = getCoverImagePathFromBuffer(indexBuffer)
-
     if (coverImagePath) {
       const coverEntry = data.find((f) => f.Name === coverImagePath)
       if (coverEntry) {
@@ -204,19 +286,19 @@ async function uploadFilesToDirectory(files) {
       }
     }
   }
-
   const rootDir = data.find((e) => e.Name === '')
 
   const directory = rootDir.Hash
+  */
 
-  return { directory, cover }
+  return { directory }
 }
 
-async function uploadMetadataFile({
+async function buildMetadataFile({
   name,
   description,
   tags,
-  cid,
+  uri,
   address,
   displayUri = '',
   thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI,
@@ -227,14 +309,12 @@ async function uploadMetadataFile({
   contentRating,
   formats,
 }) {
-  const ipfs = create(infuraUrl)
-
-  let metadata = {
+  const metadata = {
     name,
     description,
-    tags: tags.replace(/\s/g, '').split(','),
+    tags: tags ? tags.replace(/\s/g, '').split(',') : [],
     symbol: 'OBJKT',
-    artifactUri: cid,
+    artifactUri: uri,
     displayUri,
     thumbnailUri,
     creators: [address],
@@ -243,16 +323,15 @@ async function uploadMetadataFile({
     isBooleanAmount: false,
     shouldPreferSymbol: false,
     rights,
-    rightUri,
-    language,
     date: new Date().toISOString(),
   }
-  if (accessibility) {
-    metadata.accessibility = accessibility
-  }
-  if (contentRating) {
-    metadata.contentRating = contentRating
-  }
+  if (accessibility) metadata.accessibility = accessibility
 
-  return await ipfs.add(Buffer.from(JSON.stringify(metadata)))
+  if (contentRating) metadata.contentRating = contentRating
+
+  if (rights === 'custom') metadata.rightUri = rightUri
+
+  if (language != null) metadata.language = language
+
+  return JSON.stringify(metadata)
 }
