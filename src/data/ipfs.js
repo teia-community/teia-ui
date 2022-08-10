@@ -23,6 +23,8 @@ export async function uploadFileToIPFSProxy(file) {
   const form = new FormData()
 
   const file_type = mime.lookup(file.path)
+  console.debug(`iploading ${file.path} as ${file_type}`)
+
   form.append('asset', new File([file.blob], file.path, { type: file_type }))
 
   const res = await axios.post(
@@ -45,6 +47,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
 
   files.forEach((file) => {
     const file_type = mime.lookup(file.path)
+    console.debug(`uploading ${file.path} as ${file_type}`)
     form.append(
       'assets',
       new File([file.blob], encodeURIComponent(file.path), { type: file_type })
@@ -142,6 +145,8 @@ export const prepareFile = async ({
     formats,
   })
 
+  console.debug('Uploading metadata file:', metadata)
+
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
     path: 'metadata',
@@ -234,6 +239,8 @@ export const prepareDirectory = async ({
     formats,
   })
 
+  console.debug('Uploading metadata file:', metadata)
+
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
     path: 'metadata.json',
@@ -305,7 +312,7 @@ async function buildMetadataFile({
   const metadata = {
     name,
     description,
-    tags: tags.replace(/\s/g, '').split(','),
+    tags: tags ? tags.replace(/\s/g, '').split(',') : [],
     symbol: 'OBJKT',
     artifactUri: uri,
     displayUri,
@@ -325,8 +332,6 @@ async function buildMetadataFile({
   if (rights === 'custom') metadata.rightUri = rightUri
 
   if (language != null) metadata.language = language
-
-  console.debug('Uploading metadata file:', metadata)
 
   return JSON.stringify(metadata)
 }
