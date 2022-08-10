@@ -27,7 +27,11 @@ export const Preview = ({
   amount,
   royalties,
 }) => {
-  const token_tags = tags !== '' ? tags.replace(/\s/g, '').split(',') : []
+  const token_tags = tags
+    ? tags !== ''
+      ? tags.replace(/\s/g, '').split(',')
+      : []
+    : []
   return (
     <div className={styles.container}>
       {isHTML(mimeType) && <HTMLWarning />}
