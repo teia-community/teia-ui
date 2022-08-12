@@ -238,7 +238,7 @@ export default class Display extends Component {
       try {
         if (res[0]) {
           const meta = await axios
-            .get(CIDToURL(res[0].metadata_file.split('//')[1], 'CLOUDFLARE'))
+            .get(CIDToURL(res[0].metadata_file.split('//')[1]))
             .then((res) => res.data)
 
           if (meta.description) this.setState({ description: meta.description })
@@ -258,7 +258,7 @@ export default class Display extends Component {
       console.debug(res)
       if (res[0]?.metadata_file) {
         const meta = await axios
-          .get(CIDToURL(res[0].metadata_file.split('//')[1], 'CLOUDFLARE'))
+          .get(CIDToURL(res[0].metadata_file.split('//')[1]))
           .then((res) => res.data)
         console.debug(meta)
         if (meta.description) this.setState({ description: meta.description })

@@ -3,6 +3,7 @@ import mime from 'mime-types'
 import { MIMETYPE } from '../constants'
 
 export async function prepareFilesFromZIP(buffer) {
+  console.debug('Preparing files from ZIP')
   // unzip files
   let files = await unzipBuffer(buffer)
 
@@ -23,6 +24,7 @@ export async function prepareFilesFromZIP(buffer) {
 
   // reformat
   files = Object.entries(files).map((file) => {
+    console.debug('Entry: ', file)
     return {
       path: file[0],
       blob: file[1],
@@ -36,8 +38,10 @@ export async function prepareFilesFromZIP(buffer) {
 }
 
 export async function unzipBuffer(buffer) {
+  console.debug('Unzipping buffer')
   let entries = fflate.unzipSync(buffer)
   entries = Object.entries(entries).map((entry) => {
+    console.debug('Entry: ', entry)
     return {
       path: entry[0],
       buffer: entry[1],
@@ -63,10 +67,12 @@ export async function unzipBuffer(buffer) {
     throw new Error(msg)
   }
 
+  console.debug('Creating file map')
   // Create files map
   const files = {}
   entries.forEach((entry, index) => {
     const relPath = entry.path.replace(`${rootDir}/`, '')
+    console.debug('Entry relPath: ', relPath)
     let type
     if (entry.buffer.length === 0 && entry.path.endsWith('/')) {
       type = MIMETYPE.IPFS_DIRECTORY

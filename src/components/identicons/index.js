@@ -292,7 +292,7 @@ export const Identicon = ({ address = '', logo }) => {
   if (logo) {
     return (
       <div className={styles.identicon}>
-        <img src={CIDToURL(logo.split('//')[1], 'IPFS')} alt="identicon" />
+        <img src={CIDToURL(logo.split('//')[1])} alt="identicon" />
       </div>
     )
   }

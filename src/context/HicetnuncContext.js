@@ -891,6 +891,12 @@ class HicetnuncContextProviderClass extends Component {
         // console.log(r)
       },
 
+      /**
+       * Call the SUBJKT Contract Registry
+       * @param {str} alias
+       * @param {str} metadataCID
+       * @returns {any}
+       * */
       registry: async (alias, metadata) => {
         // console.log(metadata)
         const subjktAddressOrProxy =
@@ -899,7 +905,7 @@ class HicetnuncContextProviderClass extends Component {
         return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
           c.methods
             .registry(
-              ('ipfs://' + metadata.path)
+              `ipfs://${metadata}`
                 .split('')
                 .reduce(
                   (hex, c) =>

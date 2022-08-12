@@ -89,11 +89,9 @@ export const CollabDisplay = () => {
       const metadataFile = res[0] ? res[0].metadata_file : false
 
       if (metadataFile) {
-        axios
-          .get(CIDToURL(metadataFile.split('//')[1], 'CLOUDFLARE'))
-          .then(({ data }) => {
-            setLogo(data.identicon)
-          })
+        axios.get(CIDToURL(metadataFile.split('//')[1])).then(({ data }) => {
+          setLogo(data.identicon)
+        })
       }
     }
 

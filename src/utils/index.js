@@ -10,7 +10,10 @@ export function shuffle(a) {
   return a
 }
 
-export const CIDToURL = (cid, type) => {
+export const CIDToURL = (
+  cid,
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+) => {
   if (cid == null) {
     return ''
   }
@@ -35,7 +38,10 @@ export const CIDToURL = (cid, type) => {
 }
 
 // converts an ipfs hash to ipfs url
-export const HashToURL = (hash, type) => {
+export const HashToURL = (
+  hash,
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
   // artifactUri or displayUri

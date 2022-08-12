@@ -59,8 +59,8 @@ export const renderMediaType = ({
 
   displayView,
 }) => {
-  const parsedArtifactUri = artifactUri ? HashToURL(artifactUri, 'IPFS') : ''
-  const parsedDisplayUri = displayUri ? HashToURL(displayUri, 'IPFS') : ''
+  const parsedArtifactUri = artifactUri ? HashToURL(artifactUri) : ''
+  const parsedDisplayUri = displayUri ? HashToURL(displayUri) : ''
   switch (mimeType) {
     /* IMAGES */
     case MIMETYPE.BMP:

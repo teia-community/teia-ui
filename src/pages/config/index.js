@@ -84,9 +84,7 @@ export class Config extends Component {
 
     if (this.context.subjktInfo) {
       const cid = await axios
-        .get(
-          CIDToURL(this.context.subjktInfo.metadata_file.split('//')[1], 'IPFS')
-        )
+        .get(CIDToURL(this.context.subjktInfo.metadata_file.split('//')[1]))
         .then((res) => res.data)
 
       // this.context.subjktInfo.gravatar = cid
