@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeIn } from '../../utils/motion'
 import { Button, Purchase } from '../button'
-import { IPFS_DIRECTORY_MIMETYPE } from '../../constants'
+import { MIMETYPE } from '../../constants'
 import styles from './index.module.scss'
 
 const IFRAME_PERMISSIONS_ALERT_KEY = 'hen:iframe-permissions-alert'
@@ -14,7 +14,7 @@ export const MediaToolbar = (props) => {
     setOpen(!open)
   }
 
-  const isHtml = props.mimeType === IPFS_DIRECTORY_MIMETYPE
+  const isHtml = props.mimeType === MIMETYPE.IPFS_DIRECTORY
 
   if (isHtml) {
     const alerted = window.localStorage.getItem(IFRAME_PERMISSIONS_ALERT_KEY)

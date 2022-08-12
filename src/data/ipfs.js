@@ -1,7 +1,4 @@
-import {
-  IPFS_DIRECTORY_MIMETYPE,
-  IPFS_DEFAULT_THUMBNAIL_URI,
-} from '../constants'
+import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '../constants'
 
 import mime from 'mime-types'
 const { Buffer } = require('buffer')
@@ -255,7 +252,7 @@ export const prepareDirectory = async ({
  * @returns {boolean}
  */
 function not_directory(file) {
-  return file.blob.type !== IPFS_DIRECTORY_MIMETYPE
+  return file.blob.type !== MIMETYPE.IPFS_DIRECTORY
 }
 
 /**

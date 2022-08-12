@@ -1,6 +1,6 @@
 import * as fflate from 'fflate'
 import mime from 'mime-types'
-import { IPFS_DIRECTORY_MIMETYPE } from '../constants'
+import { MIMETYPE } from '../constants'
 
 export async function prepareFilesFromZIP(buffer) {
   // unzip files
@@ -46,11 +46,11 @@ export async function unzipBuffer(buffer) {
 
   // Find root dir
   let rootDir = null
-  for (let i = 0; i < entries.length; i++) {
-    const parts = entries[i].path.split('/')
+  for (const entry of entries) {
+    const parts = entry.path.split('/')
     const filename = parts[parts.length - 1]
     if (filename === 'index.html') {
-      const parts = entries[i].path.split('/')
+      const parts = entry.path.split('/')
       parts.pop()
       rootDir = parts.join('/')
       break
@@ -69,7 +69,7 @@ export async function unzipBuffer(buffer) {
     const relPath = entry.path.replace(`${rootDir}/`, '')
     let type
     if (entry.buffer.length === 0 && entry.path.endsWith('/')) {
-      type = IPFS_DIRECTORY_MIMETYPE
+      type = MIMETYPE.IPFS_DIRECTORY
     } else {
       type = mime.lookup(entry.path)
     }
@@ -116,8 +116,8 @@ export function injectCSPMetaTagIntoHTML(html) {
     'meta[http-equiv="Content-Security-Policy"]'
   )
   if (existing.length) {
-    for (let i = 0; i < existing.length; i++) {
-      existing[i].remove()
+    for (const element of existing) {
+      element.remove()
     }
   }
 

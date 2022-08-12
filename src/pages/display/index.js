@@ -48,12 +48,12 @@ query collectorGallery($address: String!) {
 `
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
+      variables,
+      operationName,
     }),
   })
   return await result.json()
@@ -68,9 +68,7 @@ async function fetchCollection(addr) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.token_holder
-  // console.log('collection result' + { result })
-  return result
+  return data.token_holder
 }
 
 const query_creations = `
@@ -124,14 +122,12 @@ query addressQuery($address: String!) {
 
 async function fetchSubjkts(subjkt) {
   const { errors, data } = await fetchGraphQL(query_subjkts, 'subjktsQuery', {
-    subjkt: subjkt,
+    subjkt,
   })
   if (errors) {
     console.error(errors)
   }
-  const result = data.holder
-  /* console.log({ result }) */
-  return result
+  return data.holder
 }
 
 async function fetchCreations(addr) {
@@ -143,9 +139,7 @@ async function fetchCreations(addr) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.token
-  /* console.log({ result }) */
-  return result
+  return data.token
 }
 
 async function fetchTz(addr) {
@@ -155,9 +149,7 @@ async function fetchTz(addr) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.holder
-  // console.log({ result })
-  return result
+  return data.holder
 }
 
 async function fetchBalance(addr) {
@@ -174,10 +166,9 @@ async function fetchBalance(addr) {
     {}
   )
   if (errors) {
-    console.log(errors)
+    console.error(errors)
   }
-  const result = data.token
-  return result
+  return data.token
 }
 
 export function EmptyTab({ children }) {
@@ -242,10 +233,10 @@ export default class Display extends Component {
         if (data.data.github) this.setState({ github })
         if (data.data.dns) this.setState({ dns })
       })
-      let res = await fetchTz(wallet)
+      const res = await fetchTz(wallet)
       try {
         if (res[0]) {
-          let meta = await axios
+          const meta = await axios
             .get(
               'https://cloudflare-ipfs.com/ipfs/' +
                 res[0].metadata_file.split('//')[1]
@@ -325,14 +316,13 @@ export default class Display extends Component {
     this.reset()
 
     const list = getWalletBlockList()
-    // console.log(this.state.wallet)
-    // console.log(!list.includes(this.state.wallet))
-    if (!list.includes(this.state.wallet)) {
+
+    if (list.includes(this.state.wallet)) {
+      this.setState({ restricted: true, loading: false })
+    } else {
       this.setState({ creations: await fetchCreations(this.state.wallet) })
       this.setState({ objkts: this.state.creations, loading: false, items: [] })
       this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
-    } else {
-      this.setState({ restricted: true, loading: false })
     }
 
     this.setState({ items: this.state.objkts.slice(0, 15), offset: 15 })
@@ -359,20 +349,16 @@ export default class Display extends Component {
   }
 
   filterCreationsNotForSale = async () => {
-    // console.log(JSON.stringify(this.state.creations[0]))
-    let objkts = this.state.creations.filter((item) => {
+    return this.state.creations.filter((item) => {
       return item.swaps.length === 0
     })
-
-    return objkts
   }
 
   creationsForSale = async (forSaleType) => {
     this.setState({ collectionType: 'forSale' })
 
-    let v1Swaps = this.state.marketV1.filter((item) => {
-      const objkts = item.token.creator.address === this.state.wallet
-      return objkts
+    const v1Swaps = this.state.marketV1.filter((item) => {
+      return item.token.creator.address === this.state.wallet
     })
 
     this.setState({ marketV1: v1Swaps, loading: false })
@@ -452,7 +438,7 @@ export default class Display extends Component {
       this.setState({ loading: false, items: [] })
       const collection = await fetchCollection(this.state.wallet)
       const swaps = await fetchV2Swaps(this.state.wallet)
-      // console.log(swaps)
+
       const combinedCollection = await this.combineCollection(collection, swaps)
       this.sortCollection(combinedCollection)
       console.debug(combinedCollection)
@@ -496,8 +482,7 @@ export default class Display extends Component {
     this.setState({ collectionType: 'forSale' })
 
     const v1Swaps = this.state.marketV1.filter((item) => {
-      const objkts = item.token.creator.address !== this.state.wallet
-      return objkts
+      return item.token.creator.address !== this.state.wallet
     })
 
     this.setState({ marketV1: v1Swaps, loading: false })
@@ -523,19 +508,17 @@ export default class Display extends Component {
   }
 
   filterCollectionNotForSale = async () => {
-    const objktsNotForSale = this.state.collection.filter(
+    return this.state.collection.filter(
       (item) =>
         item.token.creator.address !== this.state.wallet &&
         item.creator_id !== this.state.wallet
     )
-    return objktsNotForSale
   }
 
   filterCollectionForSale = async () => {
-    let objktsForSale = this.state.collection.filter(
+    return this.state.collection.filter(
       (item) => item.creator_id === this.state.wallet
     )
-    return objktsForSale
   }
 
   batch_claim = async () => this.context.batch_claim(this.state.claim)
@@ -885,20 +868,18 @@ export default class Display extends Component {
                     this.context.acc.address === this.state.wallet ? (
                       <>
                         {Object.keys(this.state.marketV1).length !== 0 && (
-                          <>
-                            <Container>
-                              <Padding>
-                                <p>
-                                  We're currently migrating the marketplace
-                                  smart contract. We ask for users to cancel
-                                  their listings as the v1 marketplace will no
-                                  longer be maintained. Auditing tools for the
-                                  v1 protocol can be found at{' '}
-                                  <a href="https://hictory.xyz">hictory.xyz</a>
-                                </p>
-                              </Padding>
-                            </Container>
-                          </>
+                          <Container>
+                            <Padding>
+                              <p>
+                                We're currently migrating the marketplace smart
+                                contract. We ask for users to cancel their
+                                listings as the v1 marketplace will no longer be
+                                maintained. Auditing tools for the v1 protocol
+                                can be found at{' '}
+                                <a href="https://hictory.xyz">hictory.xyz</a>
+                              </p>
+                            </Padding>
+                          </Container>
                         )}
 
                         {this.state.marketV1.length !== 0 ? (

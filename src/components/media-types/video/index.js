@@ -18,12 +18,10 @@ export const VideoComponent = ({
     const isVideoAvailable = (video) => iOS || video.readyState > 2
 
     const isVideoPlaying = (video) =>
-      !!(
-        video.currentTime > 0 &&
-        !video.paused &&
-        !video.ended &&
-        video.readyState > 2
-      )
+      video.currentTime > 0 &&
+      !video.paused &&
+      !video.ended &&
+      video.readyState > 2
 
     if (inView) {
       // play
@@ -49,37 +47,33 @@ export const VideoComponent = ({
     }
   }, [inView])
 
-  if (displayView) {
-    return (
-      <div className={styles.video}>
-        <video
-          ref={domElement}
-          className={styles.displayviewVideo}
-          autoPlay={inView}
-          playsInline
-          muted
-          loop
-          controls={interactive}
-          src={preview ? previewUri : artifactUri}
-          poster={displayUri}
-        />
-      </div>
-    )
-  } else {
-    return (
-      <>
-        <video
-          ref={domElement}
-          className={styles.video}
-          autoPlay={inView}
-          playsInline
-          muted
-          loop
-          controls={interactive}
-          src={preview ? previewUri : artifactUri}
-          poster={displayUri}
-        />
-      </>
-    )
-  }
+  return displayView ? (
+    <div className={styles.video}>
+      <video
+        ref={domElement}
+        className={styles.displayviewVideo}
+        autoPlay={inView}
+        playsInline
+        muted
+        loop
+        controls={interactive}
+        src={preview ? previewUri : artifactUri}
+        poster={displayUri}
+      />
+    </div>
+  ) : (
+    <>
+      <video
+        ref={domElement}
+        className={styles.video}
+        autoPlay={inView}
+        playsInline
+        muted
+        loop
+        controls={interactive}
+        src={preview ? previewUri : artifactUri}
+        poster={displayUri}
+      />
+    </>
+  )
 }

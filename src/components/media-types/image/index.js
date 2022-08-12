@@ -16,19 +16,15 @@ export const ImageComponent = ({
     src = previewUri
   }
 
-  if (displayView) {
-    return (
-      <div className={styles.container}>
-        <LazyLoadImage className={styles.image} src={src} /* alt="💥" */ />
-      </div>
-    )
-  } else {
-    return (
+  return displayView ? (
+    <div className={styles.container}>
+      <LazyLoadImage className={styles.image} src={src} /* alt="💥" */ />
+    </div>
+  ) : (
+    <div>
       <div>
-        <div>
-          <LazyLoadImage className={styles.style} src={src} /* alt="💥" */ />
-        </div>
+        <LazyLoadImage className={styles.style} src={src} /* alt="💥" */ />
       </div>
-    )
-  }
+    </div>
+  )
 }

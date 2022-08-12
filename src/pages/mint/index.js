@@ -24,7 +24,6 @@ import {
   BURN_ADDRESS,
   COVER_COMPRESSOR_OPTIONS,
   THUMBNAIL_COMPRESSOR_OPTIONS,
-  IPFS_DIRECTORY_MIMETYPE,
   LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
 } from '@constants'
@@ -230,7 +229,7 @@ export const Mint = () => {
         formats.push({
           fileSize: file.file.size,
           fileName: file.file.name,
-          mimeType: IPFS_DIRECTORY_MIMETYPE,
+          mimeType: MIMETYPE.IPFS_DIRECTORY,
         })
       } else {
         formats.push({
