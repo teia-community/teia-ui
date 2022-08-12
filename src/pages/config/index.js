@@ -10,7 +10,7 @@ import { Upload } from '@components/upload'
 import { Identicon } from '@components/identicons'
 import { SigningType } from '@airgap/beacon-sdk'
 import { char2Bytes } from '@taquito/utils'
-import { CIDtoURL } from '@utils'
+import { CIDToURL } from '@utils'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 import styles from './styles.module.scss'
 import axios from 'axios'
@@ -85,7 +85,7 @@ export class Config extends Component {
     if (this.context.subjktInfo) {
       const cid = await axios
         .get(
-          CIDtoURL(this.context.subjktInfo.metadata_file.split('//')[1], 'IPFS')
+          CIDToURL(this.context.subjktInfo.metadata_file.split('//')[1], 'IPFS')
         )
         .then((res) => res.data)
 

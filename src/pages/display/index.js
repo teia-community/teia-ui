@@ -15,7 +15,8 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
 import { getWalletBlockList } from '@constants'
-import { IconCache, CIDToURL } from '@utils/with-icon'
+import { IconCache } from '@utils/with-icon'
+import { CIDToURL } from '@utils'
 const axios = require('axios')
 
 const TAB_CREATIONS = 'creations'

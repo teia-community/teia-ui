@@ -1,7 +1,7 @@
 import React from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
-import { CIDtoURL } from '@utils/index'
+import { CIDToURL } from '@utils'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -292,7 +292,7 @@ export const Identicon = ({ address = '', logo }) => {
   if (logo) {
     return (
       <div className={styles.identicon}>
-        <img src={CIDtoURL(logo.split('//')[1], 'IPFS')} alt="identicon" />
+        <img src={CIDToURL(logo.split('//')[1], 'IPFS')} alt="identicon" />
       </div>
     )
   }

@@ -10,7 +10,7 @@ export function shuffle(a) {
   return a
 }
 
-export const CIDtoURL = (cid, type) => {
+export const CIDToURL = (cid, type) => {
   if (cid == null) {
     return ''
   }
