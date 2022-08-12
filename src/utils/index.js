@@ -1,5 +1,3 @@
-import { CID } from 'ipfs-http-client'
-
 export function rnd(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -27,6 +25,9 @@ export const CIDtoURL = (cid, type) => {
       return `https://ipfs.io/ipfs/${cid}`
     case 'DWEB':
       return `http://dweb.link/ipfs/${cid}`
+    case 'NFTSTORAGE':
+      return `https://nftstorage.link/ipfs/${cid}`
+
     default:
       console.error('please specify type')
       return cid
@@ -53,6 +54,9 @@ export const HashToURL = (hash, type) => {
       return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
     case 'DWEB':
       return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
+    case 'NFTSTORAGE':
+      return hash.replace('ipfs://', 'https://nftstorage.link/ipfs/')
+
     default:
       console.error('please specify type')
       return hash
