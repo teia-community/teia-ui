@@ -89,7 +89,7 @@ export class Config extends Component {
         )
         .then((res) => res.data)
 
-      this.context.subjktInfo.gravatar = cid
+      // this.context.subjktInfo.gravatar = cid
 
       if (cid.description) this.setState({ description: cid.description })
       if (cid.identicon) this.setState({ identicon: cid.identicon })
