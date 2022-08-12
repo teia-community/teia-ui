@@ -1,5 +1,4 @@
 import React from 'react'
-import { CID } from 'ipfs-http-client'
 import { GLBComponent } from './glb'
 import { ImageComponent } from './image'
 import { VideoComponent } from './video'
@@ -11,40 +10,7 @@ import { PdfComponent } from './pdf'
 import { MIMETYPE } from '../../constants'
 import { Container } from './container'
 import { MD } from './md'
-
-// converts an ipfs hash to ipfs url
-const HashToURL = (hash, type) => {
-  // when on preview the hash might be undefined.
-  // its safe to return empty string as whatever called HashToURL is not going to be used
-  // artifactUri or displayUri
-  if (hash === undefined) {
-    return ''
-  }
-
-  switch (type) {
-    case 'HIC':
-      return hash.replace('ipfs://', 'https://pinata.hicetnunc.xyz/ipfs/')
-    case 'CLOUDFLARE':
-      return hash.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
-    case 'PINATA':
-      return hash.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
-    case 'IPFS':
-      return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
-    case 'INFURA':
-      try {
-        var cidv1 = new CID(hash.replace('ipfs://', '')).toV1()
-        var subdomain = cidv1.toBaseEncodedString('base32')
-        return `https://${subdomain}.ipfs.infura-ipfs.io/`
-      } catch (err) {
-        return undefined
-      }
-    case 'DWEB':
-      return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
-    default:
-      console.error('please specify type')
-      return hash
-  }
-}
+import { HashToURL } from '@utils'
 
 /*
 

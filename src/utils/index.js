@@ -1,3 +1,5 @@
+import { CID } from 'ipfs-http-client'
+
 export function rnd(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -8,4 +10,60 @@ export function shuffle(a) {
     ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
+}
+
+export const CIDtoURL = (cid, type) => {
+  if (cid == null) {
+    return ''
+  }
+  switch (type) {
+    case 'HIC':
+      return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
+    case 'CLOUDFLARE':
+      return `https://cloudflare-ipfs.com/ipfs/${cid}`
+    case 'PINATA':
+      return `https://gateway.pinata.cloud/ipfs/${cid}`
+    case 'IPFS':
+      return `https://ipfs.io/ipfs/${cid}`
+
+    case 'DWEB':
+      return `http://dweb.link/ipfs/${cid}`
+    default:
+      console.error('please specify type')
+      return cid
+  }
+}
+
+// converts an ipfs hash to ipfs url
+export const HashToURL = (hash, type) => {
+  // when on preview the hash might be undefined.
+  // its safe to return empty string as whatever called HashToURL is not going to be used
+  // artifactUri or displayUri
+  if (hash == null) {
+    return ''
+  }
+
+  switch (type) {
+    case 'HIC':
+      return hash.replace('ipfs://', 'https://pinata.hicetnunc.xyz/ipfs/')
+    case 'CLOUDFLARE':
+      return hash.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
+    case 'PINATA':
+      return hash.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
+    case 'IPFS':
+      return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    case 'INFURA':
+      try {
+        const cidv1 = new CID(hash.replace('ipfs://', '')).toV1()
+        const subdomain = cidv1.toBaseEncodedString('base32')
+        return `https://${subdomain}.ipfs.infura-ipfs.io/`
+      } catch (err) {
+        return undefined
+      }
+    case 'DWEB':
+      return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
+    default:
+      console.error('please specify type')
+      return hash
+  }
 }
