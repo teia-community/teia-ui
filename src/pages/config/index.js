@@ -10,11 +10,10 @@ import { Upload } from '@components/upload'
 import { Identicon } from '@components/identicons'
 import { SigningType } from '@airgap/beacon-sdk'
 import { char2Bytes } from '@taquito/utils'
+import { CIDtoURL } from '@utils'
+import { uploadFileToIPFSProxy } from '@data/ipfs'
 import styles from './styles.module.scss'
 import axios from 'axios'
-const { create } = require('ipfs-http-client')
-const infuraUrl = 'https://ipfs.infura.io:5001'
-const ipfs = create(infuraUrl)
 
 const ls = require('local-storage')
 
@@ -37,18 +36,16 @@ async function fetchTz(addr) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.holder
-  // console.log({ result })
-  return result
+  return data.holder
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
+      variables,
+      operationName,
     }),
   })
   return await result.json()
@@ -80,16 +77,15 @@ export class Config extends Component {
     const address = proxyAddress || acc.address
 
     this.setState({ address })
-    let res = await fetchTz(address)
+    const res = await fetchTz(address)
 
     this.context.subjktInfo = res[0]
-    console.log(this.context.subjktInfo)
+    console.debug('Subjkt Infos:', this.context.subjktInfo)
 
     if (this.context.subjktInfo) {
-      let cid = await axios
+      const cid = await axios
         .get(
-          'https://ipfs.io/ipfs/' +
-            this.context.subjktInfo.metadata_file.split('//')[1]
+          CIDtoURL(this.context.subjktInfo.metadata_file.split('//')[1], 'IPFS')
         )
         .then((res) => res.data)
 
@@ -100,7 +96,6 @@ export class Config extends Component {
       if (this.context.subjktInfo.name)
         this.setState({ subjkt: this.context.subjktInfo.name })
     }
-    //console.log(this.context.subjktInfo)
     this.setState({ loading: false })
   }
 
@@ -114,28 +109,31 @@ export class Config extends Component {
   }
 
   // config subjkt
-
   subjkt_config = async () => {
     if (this.state.selectedFile) {
       const [file] = this.state.selectedFile
 
       const buffer = Buffer.from(await file.arrayBuffer())
-      console.log(buffer)
-      this.setState({ identicon: 'ipfs://' + (await ipfs.add(buffer)).path })
+      const picture_cid = await uploadFileToIPFSProxy({
+        blob: new Blob([buffer]),
+        path: file.name,
+      })
+      this.setState({ identicon: `ipfs://${picture_cid}` })
     }
 
-    console.log(this.state)
-    this.context.registry(
-      this.state.subjkt,
-      await ipfs.add(
+    const subjkt_meta_cid = await uploadFileToIPFSProxy({
+      blob: new Blob([
         Buffer.from(
           JSON.stringify({
             description: this.state.description,
             identicon: this.state.identicon,
           })
-        )
-      )
-    )
+        ),
+      ]),
+      path: 'profile_metadata.json',
+    })
+
+    this.context.registry(this.state.subjkt, subjkt_meta_cid)
   }
 
   // upload file
@@ -149,7 +147,11 @@ export class Config extends Component {
     const [file] = event.target.files
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    this.setState({ identicon: 'ipfs://' + (await ipfs.add(buffer)).path })
+    const picture_cid = await uploadFileToIPFSProxy({
+      blob: new Blob([buffer]),
+      path: file.name,
+    })
+    this.setState({ identicon: `ipfs://${picture_cid}` })
   }
 
   hDAO_operators = () => {
@@ -188,7 +190,6 @@ export class Config extends Component {
   */
 
   sign = () => {
-    console.log(this.context.addr)
     this.context.signStr({
       /*       payload : "05" + char2Bytes(this.state.str) */
       payload: this.state.str
@@ -210,9 +211,9 @@ export class Config extends Component {
         <Container>
           <Identicon address={this.state.address} logo={this.state.identicon} />
 
-          <div style={{ height: '20px' }}></div>
+          <div style={{ height: '20px' }} />
           <input type="file" onChange={this.onFileChange} />
-          <div style={{ height: '20px' }}></div>
+          <div style={{ height: '20px' }} />
           <Padding>
             <Input
               name="subjkt"
