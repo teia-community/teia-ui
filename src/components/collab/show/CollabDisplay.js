@@ -21,6 +21,7 @@ import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
 import axios from 'axios'
+import { CIDtoURL } from 'src/utils/index'
 // import QRCode from 'react-qr-code'
 
 export const CollabDisplay = () => {
@@ -89,9 +90,7 @@ export const CollabDisplay = () => {
 
       if (metadataFile) {
         axios
-          .get(
-            `https://cloudflare-ipfs.com/ipfs/${metadataFile.split('//')[1]}`
-          )
+          .get(CIDtoURL(metadataFile.split('//')[1], 'CLOUDFLARE'))
           .then(({ data }) => {
             setLogo(data.identicon)
           })
