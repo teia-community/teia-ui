@@ -25,7 +25,6 @@ export const CIDtoURL = (cid, type) => {
       return `https://gateway.pinata.cloud/ipfs/${cid}`
     case 'IPFS':
       return `https://ipfs.io/ipfs/${cid}`
-
     case 'DWEB':
       return `http://dweb.link/ipfs/${cid}`
     default:
@@ -52,14 +51,6 @@ export const HashToURL = (hash, type) => {
       return hash.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
     case 'IPFS':
       return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
-    case 'INFURA':
-      try {
-        const cidv1 = new CID(hash.replace('ipfs://', '')).toV1()
-        const subdomain = cidv1.toBaseEncodedString('base32')
-        return `https://${subdomain}.ipfs.infura-ipfs.io/`
-      } catch (err) {
-        return undefined
-      }
     case 'DWEB':
       return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
     default:
