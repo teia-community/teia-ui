@@ -120,18 +120,24 @@ export class Config extends Component {
       })
       this.setState({ identicon: `ipfs://${picture_cid}` })
     }
+    const meta = JSON.stringify({
+      description: this.state.description,
+      identicon: this.state.identicon,
+    })
+
+    console.debug('Uploading Meta file to IPFS', meta)
 
     const subjkt_meta_cid = await uploadFileToIPFSProxy({
-      blob: new Blob([
-        Buffer.from(
-          JSON.stringify({
-            description: this.state.description,
-            identicon: this.state.identicon,
-          })
-        ),
-      ]),
+      blob: new Blob([Buffer.from(meta)]),
       path: 'profile_metadata.json',
     })
+
+    if (subjkt_meta_cid == null) {
+      console.error('Error uploading meta file to IPFS')
+      return
+    }
+
+    console.debug('Uploaded Meta file to IPFS', subjkt_meta_cid)
 
     this.context.registry(this.state.subjkt, subjkt_meta_cid)
   }
