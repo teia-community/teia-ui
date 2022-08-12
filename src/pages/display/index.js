@@ -15,7 +15,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
 import { getWalletBlockList } from '@constants'
-import { IconCache } from '@utils/with-icon'
+import { IconCache, CIDToURL } from '@utils/with-icon'
 const axios = require('axios')
 
 const TAB_CREATIONS = 'creations'
@@ -237,10 +237,7 @@ export default class Display extends Component {
       try {
         if (res[0]) {
           const meta = await axios
-            .get(
-              'https://cloudflare-ipfs.com/ipfs/' +
-                res[0].metadata_file.split('//')[1]
-            )
+            .get(CIDToURL(res[0].metadata_file.split('//')[1], 'CLOUDFLARE'))
             .then((res) => res.data)
 
           if (meta.description) this.setState({ description: meta.description })
@@ -260,10 +257,7 @@ export default class Display extends Component {
       console.debug(res)
       if (res[0]?.metadata_file) {
         const meta = await axios
-          .get(
-            'https://cloudflare-ipfs.com/ipfs/' +
-              res[0].metadata_file.split('//')[1]
-          )
+          .get(CIDToURL(res[0].metadata_file.split('//')[1], 'CLOUDFLARE'))
           .then((res) => res.data)
         console.debug(meta)
         if (meta.description) this.setState({ description: meta.description })
