@@ -1,14 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
+    "target": "es2017",
     "jsx": "react",
+    "allowSyntheticDefaultImports": false,
     "paths": {
+      "@data": ["data"],
       "@data/*": ["data/*"],
       "@utils": ["utils"],
       "@utils/*": ["utils/*"],
       "@context/*": ["context/*"],
       "@constants": ["constants"],
-      "@components/*": ["components/*"],
+      "@components/*": ["components/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "docs"]
 }
