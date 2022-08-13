@@ -56,9 +56,17 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
 const GENERATE_DISPLAY_AND_THUMBNAIL = true
 
 export const Mint = () => {
-  const { mint, acc, setAccount, proxyAddress, setFeedback, syncTaquito } =
-    useContext(HicetnuncContext)
+  const {
+    mint,
+    acc,
+    setAccount,
+    getBalance,
+    proxyAddress,
+    setFeedback,
+    syncTaquito,
+  } = useContext(HicetnuncContext)
 
+  const [balance, setBalance] = useState(0.0)
   // const history = useHistory()
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState()
@@ -94,6 +102,11 @@ export const Mint = () => {
       }
     })
     if (hasStoredFields()) restoreFields()
+    if (acc?.address) {
+      getBalance(acc.address).then((bal) => {
+        setBalance(bal)
+      })
+    }
     updateName()
   }, [acc]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -641,6 +654,18 @@ export const Mint = () => {
           )}
 
           {selectCollab && <CollabContractsOverview showAdminOnly={true} />}
+
+          {balance < 0.15 && (
+            <Container>
+              <Padding>
+                <div className={styles.fundsWarning}>
+                  <p>
+                    {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
+                  </p>
+                </div>
+              </Padding>
+            </Container>
+          )}
 
           <Container>
             <Padding>

@@ -5,6 +5,18 @@
   display: block;
   border-bottom: 1px solid var(--gray-20);
 }
+.fundsWarning {
+  font-weight: 500;
+  border: var(--text-color) 0.1em solid;
+  padding: 1em;
+  // background: repeating-linear-gradient(
+  //   45deg,
+  //   #606dbc,
+  //   #606dbc 10px,
+  //   #465298 10px,
+  //   #465298 20px
+  // );
+}
 
 ::selection {
   background: var(--text-color);
