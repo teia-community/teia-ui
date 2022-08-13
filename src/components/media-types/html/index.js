@@ -75,6 +75,7 @@ export const HTMLComponent = (props) => {
 
       unpacking.current = false
     } catch (e) {
+      context.showFeedback(`Couldn't unpack ZIP file: ${e}`)
       console.error(e)
       return
     }
