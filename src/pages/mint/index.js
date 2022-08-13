@@ -67,7 +67,7 @@ export const Mint = () => {
     syncTaquito,
   } = useContext(HicetnuncContext)
 
-  const [balance, setBalance] = useState(0.0)
+  const [balance, setBalance] = useState(-1.0)
   // const history = useHistory()
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState()
@@ -626,7 +626,7 @@ export const Mint = () => {
 
           {selectCollab && <CollabContractsOverview showAdminOnly={true} />}
 
-          {balance < 0.15 && (
+          {balance > 0 && balance < 0.15 && (
             <Container>
               <Padding>
                 <div className={styles.fundsWarning}>
