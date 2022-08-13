@@ -10,6 +10,14 @@ export function shuffle(a) {
   return a
 }
 
+export const fetchJSON = async (url) => {
+  try {
+    return await fetch(url).then(async (res) => await res.json())
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const CIDToURL = (
   cid,
   type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
