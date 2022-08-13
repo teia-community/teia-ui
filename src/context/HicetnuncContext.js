@@ -516,9 +516,10 @@ class HicetnuncContextProviderClass extends Component {
         this.state.setFeedback({
           message,
           progress: false,
+          visible: true,
           confirm: true,
           confirmCallback: () => {
-            this.setFeedback({
+            this.state.setFeedback({
               visible: false,
             })
           },

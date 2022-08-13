@@ -63,6 +63,7 @@ export const Mint = () => {
     getBalance,
     proxyAddress,
     setFeedback,
+    showFeedback,
     syncTaquito,
   } = useContext(HicetnuncContext)
 
@@ -101,7 +102,7 @@ export const Mint = () => {
         setCollabs(managedCollabs || [])
       }
     })
-    if (hasStoredFields()) restoreFields()
+    if (acc && hasStoredFields()) restoreFields()
     if (acc?.address) {
       getBalance(acc.address).then((bal) => {
         setBalance(bal)
@@ -143,170 +144,156 @@ export const Mint = () => {
       setFeedback({
         visible: false,
       })
-    } else {
-      await setAccount()
+      return
+    }
+    await setAccount()
 
-      // check mime type
-      if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
-        setFeedback({
-          visible: true,
-          message: `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`,
-          progress: false,
-          confirm: true,
-          confirmCallback: () => {
-            setFeedback({ visible: false })
-          },
-        })
+    // check mime type
+    if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
+      showFeedback(
+        `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`
+      )
+      return
+    }
 
-        return
-      }
+    // check file size
+    const filesize = (file.file.size / 1024 / 1024).toFixed(4)
+    if (filesize > MINT_FILESIZE) {
+      showFeedback(
+        `Max file size (${filesize}). Limit is currently ${MINT_FILESIZE}MB`
+      )
+      return
+    }
 
-      // check file size
-      const filesize = (file.file.size / 1024 / 1024).toFixed(4)
-      if (filesize > MINT_FILESIZE) {
-        setFeedback({
-          visible: true,
-          message: `Max file size (${filesize}). Limit is currently ${MINT_FILESIZE}MB`,
-          progress: false,
-          confirm: true,
-          confirmCallback: () => {
-            setFeedback({ visible: false })
-          },
-        })
+    // file about to be minted, change to the mint screen
+    setStep(2)
 
-        return
-      }
+    setFeedback({
+      visible: true,
+      message: 'Preparing OBJKT',
+      progress: true,
+      confirm: false,
+    })
 
-      // file about to be minted, change to the mint screen
-      setStep(2)
+    // if proxyContract is selected, using it as a the minterAddress:
+    const minterAddress = proxyAddress || acc.address
+    // ztepler: I have not understand the difference between acc.address and getAuth here
+    //    so I am using acc.address (minterAddress) in both nftCid.address and in mint call
 
-      setFeedback({
-        visible: true,
-        message: 'Preparing OBJKT',
-        progress: true,
-        confirm: false,
-      })
+    console.debug({ minterAddress })
 
-      // if proxyContract is selected, using it as a the minterAddress:
-      const minterAddress = proxyAddress || acc.address
-      // ztepler: I have not understand the difference between acc.address and getAuth here
-      //    so I am using acc.address (minterAddress) in both nftCid.address and in mint call
+    // Metadata accessibility
+    const accessibility = photosensitiveSeizureWarning
+      ? {
+          hazards: ['flashing'],
+        }
+      : null
 
-      console.debug({ minterAddress })
+    const contentRating = nsfw ? 'mature' : null
 
-      // Metadata accessibility
-      const accessibility = photosensitiveSeizureWarning
-        ? {
-            hazards: ['flashing'],
+    const getImageDimensions = async (file) => {
+      return await new Promise((resolve, reject) => {
+        if (file) {
+          const image = new Image()
+          image.src = file.reader
+          image.onload = function () {
+            resolve({ imageWidth: this.width, imageHeight: this.height })
           }
-        : null
-
-      const contentRating = nsfw ? 'mature' : null
-
-      const getImageDimensions = async (file) => {
-        return await new Promise((resolve, reject) => {
-          if (file) {
-            const image = new Image()
-            image.src = file.reader
-            image.onload = function () {
-              resolve({ imageWidth: this.width, imageHeight: this.height })
-            }
-            image.onerror = function (e) {
-              resolve({ imageWidth: 0, imageHeight: 0 })
-            }
-          } else {
+          image.onerror = function (e) {
             resolve({ imageWidth: 0, imageHeight: 0 })
           }
-        })
-      }
-      const { imageWidth, imageHeight } = await getImageDimensions(file)
-
-      const isDirectory = [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(
-        file.mimeType
-      )
-      const formats = []
-      if (file.mimeType.indexOf('image') === 0) {
-        let format = {
-          mimeType: file.mimeType,
-          fileSize: file.file.size,
-          fileName: file.file.name,
+        } else {
+          resolve({ imageWidth: 0, imageHeight: 0 })
         }
-        if (imageWidth && imageHeight) {
-          format.dimensions = {
+      })
+    }
+    const { imageWidth, imageHeight } = await getImageDimensions(file)
+
+    const isDirectory = [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(
+      file.mimeType
+    )
+    const formats = []
+    if (file.mimeType.indexOf('image') === 0) {
+      const format = {
+        mimeType: file.mimeType,
+        fileSize: file.file.size,
+        fileName: file.file.name,
+      }
+      if (imageWidth && imageHeight) {
+        format.dimensions = {
+          value: `${imageWidth}x${imageHeight}`,
+          unit: 'px',
+        }
+      }
+      formats.push(format)
+    } else if (isDirectory) {
+      formats.push({
+        fileSize: file.file.size,
+        fileName: file.file.name,
+        mimeType: MIMETYPE.IPFS_DIRECTORY,
+      })
+    } else {
+      formats.push({
+        fileSize: file.file.size,
+        fileName: file.file.name,
+        mimeType: file.mimeType,
+      })
+    }
+
+    const removeExtension = (name) => {
+      return name.split('.').slice(0, -1).join('.')
+    }
+
+    const extensionFromMimetype = (mime) => {
+      switch (mime) {
+        case MIMETYPE.JPEG:
+          return 'jpg'
+        case MIMETYPE.PNG:
+          return 'png'
+        case MIMETYPE.GIF:
+          return 'gif'
+        default:
+          return 'jpg'
+      }
+    }
+
+    // TMP: skip GIFs to avoid making static
+    if (file.mimeType !== MIMETYPE.GIF) {
+      let coverIsGif = false
+      if (cover) {
+        coverIsGif = cover.mimeType === MIMETYPE.GIF
+        const { imageWidth, imageHeight } = await getImageDimensions(cover)
+        cover.format = {
+          mimeType: cover.mimeType,
+          fileSize: cover.buffer.byteLength,
+          fileName: `${removeExtension(file.file.name)}.${
+            coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+          }`,
+          dimensions: {
             value: `${imageWidth}x${imageHeight}`,
             unit: 'px',
-          }
-        }
-        formats.push(format)
-      } else if (isDirectory) {
-        formats.push({
-          fileSize: file.file.size,
-          fileName: file.file.name,
-          mimeType: MIMETYPE.IPFS_DIRECTORY,
-        })
-      } else {
-        formats.push({
-          fileSize: file.file.size,
-          fileName: file.file.name,
-          mimeType: file.mimeType,
-        })
-      }
-
-      const removeExtension = (name) => {
-        return name.split('.').slice(0, -1).join('.')
-      }
-
-      const extensionFromMimetype = (mime) => {
-        switch (mime) {
-          case MIMETYPE.JPEG:
-            return 'jpg'
-          case MIMETYPE.PNG:
-            return 'png'
-          case MIMETYPE.GIF:
-            return 'gif'
-          default:
-            return 'jpg'
+          },
         }
       }
-
-      // TMP: skip GIFs to avoid making static
-      if (file.mimeType !== MIMETYPE.GIF) {
-        let coverIsGif = false
-        if (cover) {
-          coverIsGif = cover.mimeType === MIMETYPE.GIF
-          const { imageWidth, imageHeight } = await getImageDimensions(cover)
-          cover.format = {
-            mimeType: cover.mimeType,
-            fileSize: cover.buffer.byteLength,
-            fileName: `${removeExtension(file.file.name)}.${
-              coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
-            }`,
-            dimensions: {
-              value: `${imageWidth}x${imageHeight}`,
-              unit: 'px',
-            },
-          }
-        }
-        if (thumbnail && !coverIsGif) {
-          const { imageWidth, imageHeight } = await getImageDimensions(
-            thumbnail
-          )
-          thumbnail.format = {
-            mimeType: thumbnail.mimeType,
-            fileSize: thumbnail.buffer.byteLength,
-            fileName: `${removeExtension(
-              file.file.name
-            )}.${extensionFromMimetype(thumbnail.mimeType)}`,
-            dimensions: {
-              value: `${imageWidth}x${imageHeight}`,
-              unit: 'px',
-            },
-          }
+      if (thumbnail && !coverIsGif) {
+        const { imageWidth, imageHeight } = await getImageDimensions(thumbnail)
+        thumbnail.format = {
+          mimeType: thumbnail.mimeType,
+          fileSize: thumbnail.buffer.byteLength,
+          fileName: `${removeExtension(file.file.name)}.${extensionFromMimetype(
+            thumbnail.mimeType
+          )}`,
+          dimensions: {
+            value: `${imageWidth}x${imageHeight}`,
+            unit: 'px',
+          },
         }
       }
+    }
 
-      // upload file(s)
-      let nftCid
+    // upload file(s)
+    let nftCid
+    try {
       if (isDirectory) {
         const files = await prepareFilesFromZIP(file.buffer)
 
@@ -358,6 +345,9 @@ export const Mint = () => {
         clearFields(true)
       }
       setStep(0)
+    } catch (e) {
+      showFeedback(`Can't mint: ${e}`)
+      setStep(0)
     }
   }
 
@@ -376,15 +366,7 @@ export const Mint = () => {
     })
 
     if (errors) {
-      setFeedback({
-        visible: true,
-        message: `GraphQL Error: ${JSON.stringify(errors)}`,
-        progress: false,
-        confirm: true,
-        confirmCallback: () => {
-          setFeedback({ visible: false })
-        },
-      })
+      showFeedback(`GraphQL Error: ${JSON.stringify(errors)}`)
       return true
     } else if (data) {
       const areAllTokensBurned = (data.token || []).every(
@@ -396,15 +378,9 @@ export const Mint = () => {
         return false
       }
 
-      setFeedback({
-        visible: true,
-        message: `Duplicate mint detected: #${data.token[0].id} is already minted`,
-        progress: false,
-        confirm: true,
-        confirmCallback: () => {
-          setFeedback({ visible: false })
-        },
-      })
+      showFeedback(
+        `Duplicate mint detected: #${data.token[0].id} is already minted`
+      )
 
       return true
     }
@@ -455,7 +431,7 @@ export const Mint = () => {
 
   const blobToDataURL = async (blob) => {
     return new Promise((resolve, reject) => {
-      let reader = new FileReader()
+      const reader = new FileReader()
       reader.onerror = reject
       reader.onload = (e) => resolve(reader.result)
       reader.readAsDataURL(blob)
@@ -495,10 +471,8 @@ export const Mint = () => {
     const urlR =
       '^(http|ipf)s?://(?:www.)?([-a-zA-Z0-9@:%._+~#=]{1,256}.?[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))?'
     if (rights && rights.value === 'custom') {
-      if (rightUri) {
-        if (rightUri.match(urlR)) {
-          return true
-        }
+      if (rightUri?.match(urlR)) {
+        return true
       }
       return false
     } else {
@@ -561,22 +535,19 @@ export const Mint = () => {
       const photoSeizureWarning =
         window.localStorage.getItem('objkt::photosensitive_seizure_warning') ===
         'true'
-          ? true
-          : false
 
-      console.debug(`
-      Restoring fields from localStorage:
-        title = ${title}
-        description = ${description}
-        tags = ${tags}
-        edition_count = ${edition_count}
-        royalties = ${royalties}
-        rights = ${JSON.stringify(rights)}
-        rights_uri = ${rights_uri}
-        language = ${JSON.stringify(language)}
-        nsfw = ${nsfw}
-        photosensitive_seizure_warning = ${photoSeizureWarning}
-      `)
+      console.debug('Restoring fields from localStorage', {
+        title,
+        description,
+        tags,
+        edition_count,
+        royalties,
+        rights,
+        rights_uri,
+        language,
+        nsfw,
+        photoSeizureWarning,
+      })
 
       setTitle(title)
       setDescription(description)
