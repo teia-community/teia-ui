@@ -622,7 +622,7 @@ class HicetnuncContextProviderClass extends Component {
       mint: async (tz, amount, cid, royalties) => {
         // show feedback component with followind message and progress indicator
 
-        console.debug(cid)
+        console.debug('CID', cid)
 
         this.state.setFeedback({
           visible: true,

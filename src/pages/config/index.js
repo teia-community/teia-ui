@@ -184,7 +184,7 @@ export class Config extends Component {
       message: 'uploading metadatas',
     })
 
-    console.debug('Uploading metadatas file to IPFS', meta)
+    console.debug('Uploading metadatas file to IPFS', JSON.parse(meta))
 
     const subjkt_meta_cid = await uploadFileToIPFSProxy({
       blob: new Blob([Buffer.from(meta)]),

@@ -51,19 +51,15 @@ export async function unzipBuffer(buffer) {
   // Find root dir
   let rootDir = null
   for (const entry of entries) {
-    const parts = entry.path.split('/')
-    const filename = parts[parts.length - 1]
+    const filename = entry.path.replace(/^.*[\\/]/, '')
     if (filename === 'index.html') {
-      const parts = entry.path.split('/')
-      parts.pop()
-      rootDir = parts.join('/')
+      rootDir = entry.path.match(/.*\//) || '/'
       break
     }
   }
 
   if (rootDir === null) {
     const msg = 'No index.html file found!'
-    window.alert(msg)
     throw new Error(msg)
   }
 

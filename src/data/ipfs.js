@@ -144,7 +144,7 @@ export const prepareFile = async ({
     formats,
   })
 
-  console.debug('Uploading metadata file:', metadata)
+  console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
@@ -238,7 +238,7 @@ export const prepareDirectory = async ({
     formats,
   })
 
-  console.debug('Uploading metadata file:', metadata)
+  console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),

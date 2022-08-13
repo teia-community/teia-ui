@@ -54,24 +54,30 @@ export const HTMLComponent = (props) => {
     unpacking.current = true
 
     const buffer = dataRUIToBuffer(previewUri)
-    const filesArr = await prepareFilesFromZIP(buffer)
-    const files = {}
-    filesArr.forEach((f) => {
-      files[f.path] = f.blob
-    })
 
-    unpackedFiles.current = files
+    try {
+      const filesArr = await prepareFilesFromZIP(buffer)
+      const files = {}
+      filesArr.forEach((f) => {
+        files[f.path] = f.blob
+      })
 
-    const result = await validateFiles(unpackedFiles.current)
-    if (result.error) {
-      console.error(result.error)
-      setValidationError(result.error)
-    } else {
-      setValidationError(null)
+      unpackedFiles.current = files
+
+      const result = await validateFiles(unpackedFiles.current)
+      if (result.error) {
+        console.error(result.error)
+        setValidationError(result.error)
+      } else {
+        setValidationError(null)
+      }
+      setValidHTML(result.valid)
+
+      unpacking.current = false
+    } catch (e) {
+      console.error(e)
+      return
     }
-    setValidHTML(result.valid)
-
-    unpacking.current = false
   }
 
   if (preview && !unpackedFiles.current && !unpacking.current) {
