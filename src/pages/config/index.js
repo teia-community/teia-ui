@@ -29,6 +29,14 @@ query addressQuery($address: String!) {
 }
 `
 
+const query_name_exist = `
+query nameExists($name: String!) {
+  holder(where: { name: {_eq: $name}}) {
+    address
+  }
+}
+`
+
 async function fetchTz(addr) {
   const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
     address: addr,
@@ -106,10 +114,60 @@ export class Config extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  // config subjkt
+  name_exists = async () => {
+    if (!this.state.subjkt) return false
+
+    const { errors, data } = await fetchGraphQL(
+      query_name_exist,
+      'nameExists',
+      {
+        name: this.state.subjkt,
+      }
+    )
+    if (errors) {
+      console.error(errors)
+      return false
+    }
+    if (data.holder.length == 0) return false
+
+    const holder = data.holder[0]
+
+    if (holder.address == this.state.address) return false
+
+    console.error(`name exists and is registered to ${holder.address}`)
+
+    this.context.setFeedback({
+      visible: true,
+      message: `The provided name is already registered by ${holder.address}`,
+      progress: false,
+      confirm: true,
+      confirmCallback: () => {
+        this.context.setFeedback({ visible: false })
+      },
+    })
+
+    return true
+  }
+
+  // upload to profile pic + subjkt meta to IPFS & call the SUBJKT registry
   subjkt_config = async () => {
+    if (await this.name_exists()) {
+      return
+    }
+
+    this.context.setFeedback({
+      visible: true,
+      message: 'uploading SUBJKT',
+      progress: true,
+      confirm: false,
+    })
+
     if (this.state.selectedFile) {
       const [file] = this.state.selectedFile
+
+      this.context.setFeedback({
+        message: 'uploading indenticon',
+      })
 
       const buffer = Buffer.from(await file.arrayBuffer())
       const picture_cid = await uploadFileToIPFSProxy({
@@ -122,8 +180,11 @@ export class Config extends Component {
       description: this.state.description,
       identicon: this.state.identicon,
     })
+    this.context.setFeedback({
+      message: 'uploading metadatas',
+    })
 
-    console.debug('Uploading Meta file to IPFS', meta)
+    console.debug('Uploading metadatas file to IPFS', meta)
 
     const subjkt_meta_cid = await uploadFileToIPFSProxy({
       blob: new Blob([Buffer.from(meta)]),
@@ -131,13 +192,34 @@ export class Config extends Component {
     })
 
     if (subjkt_meta_cid == null) {
-      console.error('Error uploading meta file to IPFS')
+      this.context.setFeedback({
+        confirm: true,
+        message: 'Error uploading metadatas',
+        confirmCallback: () => {
+          this.context.setFeedback({ visible: false })
+        },
+      })
+      console.error('Error uploading metadatas file to IPFS')
       return
     }
+    console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
-    console.debug('Uploaded Meta file to IPFS', subjkt_meta_cid)
+    this.context.setFeedback({
+      message: 'minting SUBJKT',
+      progress: true,
+      confirm: false,
+    })
 
-    this.context.registry(this.state.subjkt, subjkt_meta_cid)
+    await this.context.registry(this.state.subjkt, subjkt_meta_cid)
+
+    this.context.setFeedback({
+      message: 'SUBJKT Minted',
+      progress: false,
+      confirm: true,
+      confirmCallback: () => {
+        this.context.setFeedback({ visible: false })
+      },
+    })
   }
 
   // upload file
