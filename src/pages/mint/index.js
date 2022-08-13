@@ -675,7 +675,7 @@ export const Mint = () => {
                   setTitle(e.target.value)
                   window.localStorage.setItem('objkt::title', e.target.value)
                 }}
-                placeholder="Max 500 characters"
+                placeholder="Max 500 characters (optional)"
                 label="Title"
                 value={title}
               >
@@ -692,7 +692,7 @@ export const Mint = () => {
                     e.target.value
                   )
                 }}
-                placeholder="Max 5000 characters"
+                placeholder="Max 5000 characters (optional)"
                 label="Description"
                 value={description}
               >
@@ -713,7 +713,7 @@ export const Mint = () => {
                   setTags(tags)
                   window.localStorage.setItem('objkt::tags', tags)
                 }}
-                placeholder="Comma separated. example: illustration, digital"
+                placeholder="Comma separated. example: illustration, digital (optional)"
                 label="Tags"
                 value={tags}
               >
@@ -946,6 +946,7 @@ export const Mint = () => {
           </Button>
         </Padding>
       </Container>
+      <hr />
       {/*       <BottomBanner>
       Collecting has been temporarily disabled. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
       </BottomBanner> */}
