@@ -10,10 +10,10 @@ import { Upload } from '@components/upload'
 import { Identicon } from '@components/identicons'
 import { SigningType } from '@airgap/beacon-sdk'
 import { char2Bytes } from '@taquito/utils'
-import { CIDToURL } from '@utils'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 import styles from './styles.module.scss'
 import axios from 'axios'
+import { HashToURL } from '@utils'
 
 const ls = require('local-storage')
 
@@ -91,16 +91,30 @@ export class Config extends Component {
     console.debug('Subjkt Infos:', this.context.subjktInfo)
 
     if (this.context.subjktInfo) {
-      const cid = await axios
-        .get(CIDToURL(this.context.subjktInfo.metadata_file.split('//')[1]))
-        .then((res) => res.data)
+      let { metadata, name, metadata_file } = this.context.subjktInfo
 
-      // this.context.subjktInfo.gravatar = cid
+      if (name) this.setState({ subjkt: name })
 
-      if (cid.description) this.setState({ description: cid.description })
-      if (cid.identicon) this.setState({ identicon: cid.identicon })
-      if (this.context.subjktInfo.name)
-        this.setState({ subjkt: this.context.subjktInfo.name })
+      // FOR V6
+      if (metadata && !_.isEmpty(metadata)) {
+        if (metadata.description)
+          this.setState({ description: metadata.description })
+        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
+      }
+      // FALLBACK FOR V5
+      else if (metadata_file) {
+        const metadata_uri = HashToURL(metadata_file)
+        metadata = await axios
+          .get(metadata_uri)
+          .then((res) => res.data)
+          .catch((err) => {
+            console.error(err)
+          })
+
+        if (metadata.description)
+          this.setState({ description: metadata.description })
+        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
+      }
     }
     this.setState({ loading: false })
   }
