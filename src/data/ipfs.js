@@ -47,7 +47,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
     console.debug(`uploading ${file.path} as ${file_type}`)
     form.append(
       'assets',
-      new File([file.blob], encodeURIComponent(file.path), { type: file_type })
+      new File([file.blob], encodeURI(file.path), { type: file_type })
     )
   })
 

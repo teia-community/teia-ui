@@ -36,10 +36,6 @@ export const MD = ({
     }
   }, [artifactUri, previewUri, displayView, displayUri, preview])
 
-  console.log('displayView', displayView)
-  console.log('displayUri', displayUri)
-  console.log('artifactUri', artifactUri)
-  console.log('previewUri', previewUri)
   return displayView ? (
     <div className={styles.container}>
       <div className={styles.preview}>
