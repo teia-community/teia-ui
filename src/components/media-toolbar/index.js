@@ -14,7 +14,7 @@ export const MediaToolbar = (props) => {
     setOpen(!open)
   }
 
-  const isHtml = props.mimeType === MIMETYPE.IPFS_DIRECTORY
+  const isHtml = props.mimeType === MIMETYPE.DIRECTORY
 
   if (isHtml) {
     const alerted = window.localStorage.getItem(IFRAME_PERMISSIONS_ALERT_KEY)

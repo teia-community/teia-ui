@@ -135,7 +135,7 @@ export const ObjktDisplay = () => {
     }
 
     if (
-      nft.mime === MIMETYPE.IPFS_DIRECTORY ||
+      nft.mime === MIMETYPE.DIRECTORY ||
       nft.mime === MIMETYPE.SVG
       // nft.mime === MIMETYPE.MD
     ) {

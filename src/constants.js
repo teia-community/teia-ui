@@ -94,7 +94,7 @@ export const MIMETYPE = {
   GIF: 'image/gif',
   GLB: 'model/gltf-binary',
   GLTF: 'model/gltf+json',
-  IPFS_DIRECTORY: 'application/x-directory',
+  DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
   MP3: 'audio/mpeg',

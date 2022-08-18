@@ -57,10 +57,10 @@ export const HTMLComponent = (props) => {
 
     try {
       const filesArr = await prepareFilesFromZIP(buffer)
-      const files = {}
-      filesArr.forEach((f) => {
-        files[f.path] = f.blob
-      })
+      const files = filesArr.reduce(
+        (memo, f) => ({ ...memo, [f.path]: f.blob }),
+        {}
+      )
 
       unpackedFiles.current = files
 

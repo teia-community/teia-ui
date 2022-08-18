@@ -89,9 +89,8 @@ export const CollabDisplay = () => {
       const metadataFile = res[0] ? res[0].metadata_file : false
 
       if (metadataFile) {
-        axios.get(HashToURL(metadataFile)).then(({ data }) => {
-          setLogo(data.identicon)
-        })
+        const data = await axios.get(HashToURL(metadataFile))
+        setLogo(data.identicon)
       }
     }
 

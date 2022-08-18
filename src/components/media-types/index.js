@@ -100,7 +100,7 @@ export const renderMediaType = ({
       )
 
     /* HTML ZIP */
-    case MIMETYPE.IPFS_DIRECTORY:
+    case MIMETYPE.DIRECTORY:
     case MIMETYPE.ZIP:
     case MIMETYPE.ZIP1:
     case MIMETYPE.ZIP2:

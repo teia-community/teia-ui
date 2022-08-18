@@ -62,18 +62,16 @@ export const VideoComponent = ({
       />
     </div>
   ) : (
-    <>
-      <video
-        ref={domElement}
-        className={styles.video}
-        autoPlay={inView}
-        playsInline
-        muted
-        loop
-        controls={interactive}
-        src={preview ? previewUri : artifactUri}
-        poster={displayUri}
-      />
-    </>
+    <video
+      ref={domElement}
+      className={styles.video}
+      autoPlay={inView}
+      playsInline
+      muted
+      loop
+      controls={interactive}
+      src={preview ? previewUri : artifactUri}
+      poster={displayUri}
+    />
   )
 }

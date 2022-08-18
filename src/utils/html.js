@@ -71,7 +71,7 @@ export async function unzipBuffer(buffer) {
     console.debug('Entry relPath: ', relPath)
     let type
     if (entry.buffer.length === 0 && entry.path.endsWith('/')) {
-      type = MIMETYPE.IPFS_DIRECTORY
+      type = MIMETYPE.DIRECTORY
     } else {
       type = mime.lookup(entry.path)
     }

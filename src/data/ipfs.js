@@ -252,7 +252,7 @@ export const prepareDirectory = async ({
  * @returns {boolean}
  */
 function not_directory(file) {
-  return file.blob.type !== MIMETYPE.IPFS_DIRECTORY
+  return file.blob.type !== MIMETYPE.DIRECTORY
 }
 
 /**

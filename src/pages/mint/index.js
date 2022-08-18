@@ -230,7 +230,7 @@ export const Mint = () => {
       formats.push({
         fileSize: file.file.size,
         fileName: file.file.name,
-        mimeType: MIMETYPE.IPFS_DIRECTORY,
+        mimeType: MIMETYPE.DIRECTORY,
       })
     } else {
       formats.push({
