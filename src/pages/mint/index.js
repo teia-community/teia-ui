@@ -26,6 +26,7 @@ import {
   THUMBNAIL_COMPRESSOR_OPTIONS,
   LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
+  getIgnoreUriList,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -360,6 +361,13 @@ export const Mint = () => {
 
     const uri0 = `ipfs://${hashv0}`
     const uri1 = `ipfs://${hashv1}`
+
+    // Ignore IPFS URI's that are in the ignore list; they can be minted multiple times
+    const ignoreUriList = getIgnoreUriList()
+    if (ignoreUriList.includes(uri0) || ignoreUriList.includes(uri1)) {
+      return false
+    }
+
     const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
       address: proxyAddress || acc.address,
       ids: [uri0, uri1],

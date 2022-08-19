@@ -6,13 +6,19 @@ import { ItemInfo } from '../item-info'
 import { renderMediaType } from '../media-types'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
+import { getNsfwList } from '@constants'
 
 export const FeedItem = (props) => {
+  const nsfwList = getNsfwList()
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${props.id}`}>
-        <VisuallyHidden>{`Go to OBJKT: ${props.title}`}</VisuallyHidden>
-        <div className={styles.container}>
+        <VisuallyHidden>{`Go to OBJKT: ${props.id}`}</VisuallyHidden>
+        <div
+          className={`${styles.container} ${
+            nsfwList.includes(props.id.toString()) ? styles.blur : ''
+          }`}
+        >
           {renderMediaType({
             mimeType: props.mime,
             artifactUri: props.artifact_uri,

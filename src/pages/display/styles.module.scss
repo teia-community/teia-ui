@@ -1,15 +1,12 @@
 @import '../../styles/layout.scss';
 @import '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
-
 .profile {
   display: flex;
-
   .info {
     display: flex;
     flex-direction: column;
     margin-left: 20px;
-
     p {
       margin-bottom: 8px;
     }
@@ -20,7 +17,6 @@
   padding: 6px 0;
   border-bottom: 1px solid var(--border-color);
   transition: border-color #{$theme-duration} ease-out;
-
   & > * {
     margin-right: 1em;
   }
@@ -42,7 +38,6 @@
 .filter {
   display: inline;
   float: right;
-
   svg {
     position: relative;
     top: 2px;
@@ -61,7 +56,6 @@
   width: 100%;
   height: 30%;
   min-height: 150px;
-
   background-color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out, opacity ease-out #{$theme-duration};
@@ -79,7 +73,6 @@
   margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
-
   overflow: hidden;
   white-space: nowrap;
 }
@@ -100,7 +93,6 @@
   margin-bottom: 20px;
   margin-left: 20px;
   margin-right: 20px;
-
   .cardCollectPrice {
     color: var(--background-color);
   }
@@ -129,7 +121,6 @@ span[data-tooltip].top {
   &:after {
     transform: translate(-50%, 10px);
   }
-
   &:hover:after,
   &:hover:before {
     transform: translate(-50%, 0px);
@@ -138,7 +129,6 @@ span[data-tooltip].top {
 
 span[data-tooltip] {
   position: relative;
-
   &:after,
   &:before {
     position: absolute;
@@ -147,7 +137,6 @@ span[data-tooltip] {
     transition: transform 200ms ease, opacity 200ms;
     z-index: 99;
   }
-
   &:before {
     content: attr(data-tooltip);
     background-color: var(--text-color);
@@ -160,7 +149,6 @@ span[data-tooltip] {
     text-decoration: none;
     letter-spacing: 1px;
   }
-
   &:after {
     width: 0;
     height: 0;
@@ -168,7 +156,6 @@ span[data-tooltip] {
     border: 6px solid transparent;
     content: '';
   }
-
   &:hover:after,
   &:hover:before {
     visibility: visible;
@@ -188,4 +175,16 @@ span[data-tooltip][data-position='top']:after {
   border-bottom: none;
   bottom: 101%;
   margin-bottom: 4px;
+}
+
+.restricted,
+.restricted > * {
+  color: var(--background-color);
+  background: var(--text-color);
+  text-align: center;
+  font-size: 20px;
+}
+
+.blur {
+  filter: blur(2rem);
 }

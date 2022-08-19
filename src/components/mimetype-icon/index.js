@@ -1,5 +1,5 @@
 import React from 'react'
-import { MIMETYPE } from '../../constants'
+import { MIMETYPE } from '@constants'
 import styles from './styles.module.scss'
 
 export const MimeTypeIcon = ({ mimeType }) => {

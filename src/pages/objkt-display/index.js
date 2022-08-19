@@ -6,9 +6,10 @@ import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import {
-  MIMETYPE,
   getWalletBlockList,
+  getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
+  MIMETYPE,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
@@ -41,6 +42,7 @@ export const ObjktDisplay = () => {
   const [nft, setNFT] = useState()
   const [error] = useState(false)
   const [restricted, setRestricted] = useState(false)
+  const [underReview, setUnderReview] = useState(false)
 
   const address = context.acc?.address
   const proxy = context.getProxy()
@@ -84,6 +86,12 @@ export const ObjktDisplay = () => {
       objkt.restricted = true
     } else {
       objkt.restricted = false
+
+      const underReviewList = getUnderReviewList()
+      if (underReviewList.includes(objkt.creator.address)) {
+        setUnderReview(true)
+        objkt.underReview = true
+      }
       // filter swaps from banned account
       if (objkt.swaps && objkt.ban)
         objkt.swaps = objkt.swaps.filter(
@@ -188,14 +196,37 @@ export const ObjktDisplay = () => {
             <Container>
               <Padding>
                 {restricted && (
-                  <div
-                    style={{
-                      color: 'white',
-                      background: 'black',
-                      textAlign: 'center',
-                    }}
-                  >
-                    Restricted OBJKT
+                  <div className={styles.restricted}>
+                    Restricted OBJKT. Contact the Teia moderators on{' '}
+                    <a
+                      href="https://discord.gg/TKeybhYhNe"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Discord
+                    </a>{' '}
+                    to resolve the status. See the{' '}
+                    <a
+                      href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Teia Terms and Conditions
+                    </a>
+                    .
+                  </div>
+                )}
+                {underReview && (
+                  <div className={styles.restricted}>
+                    OBJKT under review. Contact the Teia moderators on{' '}
+                    <a
+                      href="https://discord.gg/TKeybhYhNe"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Discord
+                    </a>{' '}
+                    to resolve the status.
                   </div>
                 )}
               </Padding>
