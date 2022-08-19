@@ -189,6 +189,10 @@ span[data-tooltip][data-position='top']:after {
   background: var(--text-color);
 }
 
+.restricted a {
+  padding: 0em;
+}
+
 .blur {
   filter: blur(1.1rem);
 }
