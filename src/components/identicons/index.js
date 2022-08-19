@@ -1,7 +1,7 @@
 import React from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -41,8 +41,10 @@ function avatar(address) {
     xsb.push({ x, y, n })
   }
 
-  let path = 'M '
+  let path = ''
   let disk = false
+  if (xsb.length > 0) path += 'M '
+
   for (let i = 0; i < xsb.length; i++) {
     const n = xsb[i]
     if (newPath(path)) {
@@ -79,12 +81,13 @@ function avatar(address) {
           path += ` ${xsb[i + 2].x},${xsb[i + 2].y}`
         }
       }
-    } else if (!disk) {
-      path += ` ${n.x},${n.y}`
-      disk = false
     } else {
-      path += ` M ${n.x},${n.y}`
-      path += ` L ${n.x},${n.y}`
+      if (!disk) {
+        path += ` ${n.x},${n.y}`
+      } else {
+        path += ` M ${n.x},${n.y}`
+        path += ` L ${n.x},${n.y}`
+      }
       disk = false
     }
   }
@@ -292,7 +295,7 @@ export const Identicon = ({ address = '', logo }) => {
   if (logo) {
     return (
       <div className={styles.identicon}>
-        <img src={CIDToURL(logo.split('//')[1])} alt="identicon" />
+        <img src={HashToURL(logo)} alt="identicon" />
       </div>
     )
   }

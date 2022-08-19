@@ -16,7 +16,7 @@ import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
 import { getWalletBlockList, getUnderReviewList, getNsfwList } from '@constants'
 import { IconCache } from '@utils/with-icon'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 const axios = require('axios')
 
 const urlParameters = new URLSearchParams(window.location.search)
@@ -241,7 +241,7 @@ export default class Display extends Component {
       try {
         if (res[0]) {
           const meta = await axios
-            .get(CIDToURL(res[0].metadata_file.split('//')[1]))
+            .get(HashToURL(res[0].metadata_file))
             .then((res) => res.data)
 
           if (meta.description) this.setState({ description: meta.description })
@@ -257,13 +257,11 @@ export default class Display extends Component {
       const res = await fetchSubjkts(
         decodeURI(window.location.pathname.split('/')[1])
       )
-      // console.log(decodeURI(window.location.pathname.split('/')[1]))
-      console.debug(res)
       if (res[0]?.metadata_file) {
         const meta = await axios
-          .get(CIDToURL(res[0].metadata_file.split('//')[1]))
+          .get(HashToURL(res[0].metadata_file))
           .then((res) => res.data)
-        console.debug(meta)
+
         if (meta.description) this.setState({ description: meta.description })
         if (meta.identicon) this.setState({ identicon: meta.identicon })
       }
@@ -290,7 +288,7 @@ export default class Display extends Component {
       })
     }
     this.onReady()
-    console.debug(await fetchBalance(this.state.wallet))
+
     this.setState({ claim: await fetchBalance(this.state.wallet) })
     //.reduce((a, b) => a + b, 0)
   }
