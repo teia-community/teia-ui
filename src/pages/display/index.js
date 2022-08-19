@@ -1007,7 +1007,7 @@ export default class Display extends Component {
                             <div
                               className={`${styles.container} ${
                                 !urlParameters.has('show') &&
-                                nsfwList.includes(nft.id.toString())
+                                nsfwList.includes(nft.id)
                                   ? styles.blur
                                   : ''
                               }`}
@@ -1181,9 +1181,7 @@ export default class Display extends Component {
                                   artifactUri: nft.token.artifact_uri,
                                   displayUri: nft.token.display_uri,
                                   displayView: true,
-                                  nsfw: nsfwList.includes(
-                                    nft.token.id.toString()
-                                  ),
+                                  nsfw: nsfwList.includes(nft.token.id),
                                 })}
                               </div>
                             </Button>
