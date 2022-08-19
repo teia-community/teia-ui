@@ -1,10 +1,9 @@
 @import '../../styles/variables.scss';
 @import '../../styles/layout.scss';
-
 .container {
-  position: relative;
+    position: relative;
 }
 
 .blur {
-  filter: blur(2rem);
+    filter: blur(1rem);
 }
