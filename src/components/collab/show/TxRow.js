@@ -1,4 +1,4 @@
-import { Input } from '../../input'
+import { Input } from '@components/input'
 import styles from '../../collab/styles.module.scss'
 import { Button, Purchase, Secondary } from '../../button'
 import { CloseIcon } from '..'

@@ -38,6 +38,7 @@ export const Input = ({
         onWheel={onWheel}
         onKeyPress={onKeyPress}
         autoFocus={autoFocus}
+        data-form-type="other"
       />
     </label>
     {children}
