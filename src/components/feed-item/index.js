@@ -16,7 +16,10 @@ export const FeedItem = (props) => {
         <VisuallyHidden>{`Go to OBJKT: ${props.id}`}</VisuallyHidden>
         <div
           className={`${styles.container} ${
-            nsfwList.includes(props.id.toString()) ? styles.blur : ''
+            nsfwList.includes(props.id) ||
+            (props.content_rating && props.content_rating === 'mature')
+              ? styles.blur
+              : ''
           }`}
         >
           {renderMediaType({
