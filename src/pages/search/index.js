@@ -314,7 +314,6 @@ export class Search extends Component {
     ],
     select: [],
     mouse: false,
-    hasMore: true,
     offset: 0,
   }
 
@@ -344,7 +343,7 @@ export class Search extends Component {
   }
 
   update = async (e, reset) => {
-    let arr = getWalletBlockList()
+    const arr = getWalletBlockList()
 
     this.setState({ select: e })
     if (reset) {
@@ -409,7 +408,7 @@ export class Search extends Component {
     }
 
     if (e === '🇺🇦 ukraine') {
-      let ukr = await getObjktsByShare(
+      const ukr = await getObjktsByShare(
         ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
         '50'
       )
@@ -555,7 +554,7 @@ export class Search extends Component {
               <InfiniteScroll
                 dataLength={this.state.feed.length}
                 next={this.loadMore}
-                hasMore={this.state.hasMore}
+                hasMore={true}
                 loader={undefined}
                 endMessage={undefined}
               >
