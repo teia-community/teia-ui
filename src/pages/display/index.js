@@ -1185,9 +1185,7 @@ export default class Display extends Component {
                                   artifactUri: nft.token.artifact_uri,
                                   displayUri: nft.token.display_uri,
                                   displayView: true,
-                                  nsfw: nsfwList.includes(
-                                    nft.token.id.toString()
-                                  ),
+                                  nsfw: nsfwList.includes(nft.token.id),
                                 })}
                               </div>
                             </Button>

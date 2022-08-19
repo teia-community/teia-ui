@@ -180,9 +180,12 @@ span[data-tooltip][data-position='top']:after {
 .restricted,
 .restricted > * {
   color: var(--background-color);
-  background: var(--text-color);
   text-align: center;
-  font-size: 20px;
+  font-size: 1em;
+  padding: 0.75em;
+}
+.restricted {
+  background: var(--text-color);
 }
 
 .blur {
