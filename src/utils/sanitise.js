@@ -31,7 +31,7 @@ export const getMimeType = (file) => {
     filereader.onloadend = function (e) {
       if (e.target.readyState === FileReader.DONE) {
         const uint = new Uint8Array(e.target.result)
-        let bytes = []
+        const bytes = []
         uint.forEach((byte) => {
           bytes.push(byte.toString(16))
         })
@@ -72,7 +72,7 @@ export const getTotalSales = ({ owners, creators }) => {
     // not the platform or the creator
     if (ownerID !== MARKETPLACE_CONTRACT_V1 && !creators.includes(ownerID)) {
       // add the count of market owned editions
-      edition = edition + Number(owners[ownerID])
+      return edition + Number(owners[ownerID])
     }
     return edition
   }, 0)
@@ -91,20 +91,5 @@ export const formatBytes = (bytes, decimals = 2) => {
 
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`
 }
-
-/*
-Instead of having to swap ipfs hash to ipfs link everywhere, this util function should do that.
-*/
-// export const GetIPFSLink = (hash) => {
-//   const CLOUDFLARE = 'https://cloudflare-ipfs.com/ipfs/'
-//   // const PINATA = 'https://gateway.pinata.cloud/ipfs/'
-//   const IPFS = 'https://ipfs.io/ipfs/'
-
-//   function getInfuraUrl(hash) {
-//     const cidv1 = new ipfsClient.CID(hash).toV1()
-//     const subomain = cidv1.toString()
-//     return `https://${subomain}.ipfs.infura-ipfs.io/`
-//   }
-// }

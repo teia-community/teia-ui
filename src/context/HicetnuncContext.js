@@ -16,6 +16,7 @@ import {
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import { setItem } from '@utils/storage'
+import { fetchJSON } from '@utils'
 
 import {
   HEN_CONTRACT_FA2,
@@ -354,9 +355,9 @@ class HicetnuncContextProviderClass extends Component {
 
       reswap: async (price, swap) => {
         // TODO: this function currently does not take collab contracts to account
-        let objkt_id = swap.token.id
-        let creator = swap.token.creator_id
-        let from = swap.creator_id
+        const objkt_id = swap.token.id
+        const creator = swap.token.creator_id
+        const from = swap.creator_id
 
         if (this.state.proxyAddress) {
           this.state.setFeedback({
@@ -381,7 +382,7 @@ class HicetnuncContextProviderClass extends Component {
             Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
           ])
 
-        let list = [
+        const list = [
           // cancel current swap
           {
             kind: OpKind.TRANSACTION,
@@ -405,13 +406,13 @@ class HicetnuncContextProviderClass extends Component {
           ),
         ]
 
-        console.log(list)
-        let batch = await Tezos.wallet.batch(list)
+        console.debug(list)
+        const batch = await Tezos.wallet.batch(list)
         return await batch.send()
       },
 
       batch_cancelv1: async (arr) => {
-        let v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACT_V1)
+        const v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACT_V1)
 
         /*         const batch = await arr
                   .map((e) => parseInt(e.id))
@@ -440,7 +441,7 @@ class HicetnuncContextProviderClass extends Component {
       // theme, DO NO CHANGE!
       theme: 'unset',
       setTheme: (theme) => {
-        let root = document.documentElement
+        const root = document.documentElement
 
         const light = theme === 'light'
 
@@ -511,6 +512,19 @@ class HicetnuncContextProviderClass extends Component {
       setFeedback: (props) =>
         this.setState({ feedback: { ...this.state.feedback, ...props } }),
 
+      showFeedback: (message) => {
+        this.state.setFeedback({
+          message,
+          progress: false,
+          visible: true,
+          confirm: true,
+          confirmCallback: () => {
+            this.state.setFeedback({
+              visible: false,
+            })
+          },
+        })
+      },
       progress: undefined,
       setProgress: (bool) => this.setState({ progress: bool }),
       message: undefined,
@@ -526,8 +540,9 @@ class HicetnuncContextProviderClass extends Component {
 
       contract: '',
 
-      setAddress: (address) => this.setState({ address: address }),
+      setAddress: (address) => this.setState({ address }),
 
+      // Local storage auth
       setAuth: (address) => {
         ls.set('auth', address)
       },
@@ -607,7 +622,7 @@ class HicetnuncContextProviderClass extends Component {
       mint: async (tz, amount, cid, royalties) => {
         // show feedback component with followind message and progress indicator
 
-        console.log(cid)
+        console.debug('CID', cid)
 
         this.state.setFeedback({
           visible: true,
@@ -616,28 +631,17 @@ class HicetnuncContextProviderClass extends Component {
           confirm: false,
         })
 
-        const showFeedback = (message) => {
-          this.state.setFeedback({
-            message: message,
-            progress: false,
-            confirm: true,
-            confirmCallback: () => {
-              this.state.setFeedback({
-                visible: false,
-              })
-            },
-          })
-        }
-
         const handleOpStatus = async (op) => {
           try {
             const status = await op.status()
-            console.log('op', status)
+            console.debug('op', status)
             if (status === 'applied') {
-              showFeedback('OBJKT minted successfully')
+              this.state.showFeedback('OBJKT minted successfully')
               return { handled: true, error: false }
             } else if (status === 'backtracked') {
-              showFeedback('the transaction was backtracked. try minting again')
+              this.state.showFeedback(
+                'the transaction was backtracked. try minting again'
+              )
               return { handled: true, error: true }
             }
           } catch (error) {
@@ -679,7 +683,7 @@ class HicetnuncContextProviderClass extends Component {
               .then(async () => {
                 const { handled, error } = await handleOpStatus(op)
                 if (!handled) {
-                  showFeedback(DEFAULT_ERROR_MESSAGE)
+                  this.state.showFeedback(DEFAULT_ERROR_MESSAGE)
                   return !error
                 } else {
                   return !error
@@ -695,7 +699,7 @@ class HicetnuncContextProviderClass extends Component {
                     message =
                       'a timeout occurred, but the mint might have succeeded'
                   }
-                  showFeedback(message)
+                  this.state.showFeedback(message)
                   return !error
                 }
                 return false
@@ -703,7 +707,7 @@ class HicetnuncContextProviderClass extends Component {
           })
           .catch((error) => {
             console.error(error)
-            showFeedback(DEFAULT_ERROR_MESSAGE)
+            this.state.showFeedback(DEFAULT_ERROR_MESSAGE)
             return false
           })
       },
@@ -891,6 +895,12 @@ class HicetnuncContextProviderClass extends Component {
         // console.log(r)
       },
 
+      /**
+       * Call the SUBJKT Contract Registry
+       * @param {str} alias
+       * @param {str} metadataCID
+       * @returns {any}
+       * */
       registry: async (alias, metadata) => {
         // console.log(metadata)
         const subjktAddressOrProxy =
@@ -899,7 +909,7 @@ class HicetnuncContextProviderClass extends Component {
         return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
           c.methods
             .registry(
-              ('ipfs://' + metadata.path)
+              `ipfs://${metadata}`
                 .split('')
                 .reduce(
                   (hex, c) =>
@@ -1027,21 +1037,18 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       balance: 0,
-
-      getBalance: (address) => {
-        axios
-          .get(`https://api.tzkt.io/v1/accounts/${address}/balance_history`, {
-            params: {
-              address: address,
-            },
-          })
-          .then((res) => {
-            console.log(
-              'balance',
-              parseFloat(res.data[res.data.length - 1].balance / 1000000)
-            )
-          })
-          .catch((e) => console.error('balance error', e))
+      /**
+       *
+       * @param {str} address The tezos address to check the balance of
+       * @returns {float} The balance of the address in mutez
+       */
+      getBalance: async (address) => {
+        const res = await fetchJSON(
+          `https://api.tzkt.io/v1/accounts/${address}`
+        )
+        if (res?.balance) {
+          return parseFloat(res.balance) / 1e6
+        }
       },
 
       collapsed: true,

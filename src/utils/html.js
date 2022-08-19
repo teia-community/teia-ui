@@ -1,8 +1,9 @@
 import * as fflate from 'fflate'
 import mime from 'mime-types'
-import { IPFS_DIRECTORY_MIMETYPE } from '../constants'
+import { MIMETYPE } from '../constants'
 
 export async function prepareFilesFromZIP(buffer) {
+  console.debug('Preparing files from ZIP')
   // unzip files
   let files = await unzipBuffer(buffer)
 
@@ -23,6 +24,7 @@ export async function prepareFilesFromZIP(buffer) {
 
   // reformat
   files = Object.entries(files).map((file) => {
+    console.debug('Entry: ', file)
     return {
       path: file[0],
       blob: file[1],
@@ -36,8 +38,10 @@ export async function prepareFilesFromZIP(buffer) {
 }
 
 export async function unzipBuffer(buffer) {
+  console.debug('Unzipping buffer')
   let entries = fflate.unzipSync(buffer)
   entries = Object.entries(entries).map((entry) => {
+    console.debug('Entry: ', entry)
     return {
       path: entry[0],
       buffer: entry[1],
@@ -46,30 +50,28 @@ export async function unzipBuffer(buffer) {
 
   // Find root dir
   let rootDir = null
-  for (let i = 0; i < entries.length; i++) {
-    const parts = entries[i].path.split('/')
-    const filename = parts[parts.length - 1]
+  for (const entry of entries) {
+    const filename = entry.path.replace(/^.*[\\/]/, '')
     if (filename === 'index.html') {
-      const parts = entries[i].path.split('/')
-      parts.pop()
-      rootDir = parts.join('/')
+      rootDir = entry.path.match(/.*\//) || '/'
       break
     }
   }
 
   if (rootDir === null) {
     const msg = 'No index.html file found!'
-    window.alert(msg)
     throw new Error(msg)
   }
 
+  console.debug('Creating file map')
   // Create files map
   const files = {}
   entries.forEach((entry, index) => {
     const relPath = entry.path.replace(`${rootDir}/`, '')
+    console.debug('Entry relPath: ', relPath)
     let type
     if (entry.buffer.length === 0 && entry.path.endsWith('/')) {
-      type = IPFS_DIRECTORY_MIMETYPE
+      type = MIMETYPE.DIRECTORY
     } else {
       type = mime.lookup(entry.path)
     }
@@ -116,8 +118,8 @@ export function injectCSPMetaTagIntoHTML(html) {
     'meta[http-equiv="Content-Security-Policy"]'
   )
   if (existing.length) {
-    for (let i = 0; i < existing.length; i++) {
-      existing[i].remove()
+    for (const element of existing) {
+      element.remove()
     }
   }
 
@@ -155,8 +157,6 @@ export function injectCSPMetaTagIntoHTML(html) {
       data:
       blob:
       https://services.tzkt.io
-      https://ipfs.infura.io
-      https://*.infura-ipfs.io
       https://cloudflare-ipfs.com/
       https://ipfs.io/
       https://templewallet.com/logo.png
@@ -164,8 +164,6 @@ export function injectCSPMetaTagIntoHTML(html) {
     font-src
       'self'
       data:
-      https://ipfs.infura.io
-      https://*.infura-ipfs.io
       https://cloudflare-ipfs.com/
       https://fonts.googleapis.com/
       https://ipfs.io/
@@ -176,9 +174,6 @@ export function injectCSPMetaTagIntoHTML(html) {
       https://*.better-call.dev
       https://*.cryptonomic-infra.tech
       https://cryptonomic-infra.tech
-      https://*.infura.io
-      https://*.infura-ipfs.io
-      https://infura.io
       blob:
       data:
       ws:
@@ -215,15 +210,11 @@ export function injectCSPMetaTagIntoHTML(html) {
       'unsafe-inline'
       data:
       blob:
-      https://ipfs.infura.io
-      https://*.infura-ipfs.io
       https://cloudflare-ipfs.com/
       https://ipfs.io/
       https://gateway.pinata.cloud/;
     prefetch-src
       'self'
-      https://ipfs.infura.io
-      https://*.infura-ipfs.io
       https://cloudflare-ipfs.com/
       https://fonts.googleapis.com/
       https://ipfs.io/

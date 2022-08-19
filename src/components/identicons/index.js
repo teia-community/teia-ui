@@ -1,6 +1,7 @@
 import React from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
+import { CIDToURL } from '@utils'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -24,7 +25,6 @@ function newPath(path) {
 }
 
 function avatar(address) {
-  console.log('trim', address)
   const decoded = base58.decode(address.trim().substr(3))
   const hex = decoded.toString('hex')
   const check = hex.split('').reduce((sum, x) => sum + parseInt(x, 16), 0)
@@ -292,10 +292,7 @@ export const Identicon = ({ address = '', logo }) => {
   if (logo) {
     return (
       <div className={styles.identicon}>
-        <img
-          src={'https://dweb.link/ipfs/' + logo.split('//')[1]}
-          alt="identicon"
-        />
+        <img src={CIDToURL(logo.split('//')[1])} alt="identicon" />
       </div>
     )
   }

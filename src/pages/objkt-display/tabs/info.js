@@ -3,6 +3,7 @@ import { Container, Padding } from '@components/layout'
 import { Tags } from '@components/tags'
 import styles from '../styles.module.scss'
 import '../style.css'
+import { HashToURL } from '@utils'
 
 export const Info = (token_info) => {
   const {
@@ -16,10 +17,7 @@ export const Info = (token_info) => {
     mime,
     artifact_uri,
   } = token_info
-  console.log(token_info)
-  // cloudflare isn't useful in this case. they don't allow video streaming...
-  // const CLOUDFLARE = 'https://cloudflare-ipfs.com/ipfs/'
-  const IPFS = 'https://ipfs.io/ipfs/'
+
   const tag = {
     '&:hover': {
       textDecoration: 'underline',
@@ -63,14 +61,14 @@ export const Info = (token_info) => {
           </div>
           <Padding className="tag">
             <div style={{ fontWeight: 'bold' }}>
-              <a style={tag} href={metadata.replace('ipfs://', IPFS)}>
+              <a style={tag} href={HashToURL(metadata)}>
                 Metadata
               </a>
               &nbsp;//&nbsp;
               <a
                 style={tag}
                 href={
-                  artifact_uri.replace('ipfs://', IPFS) +
+                  HashToURL(artifact_uri) +
                   `/?creator=${creator.address}&viewer=${
                     address || ''
                   }&objkt=${id}`

@@ -10,11 +10,10 @@ import { Upload } from '@components/upload'
 import { Identicon } from '@components/identicons'
 import { SigningType } from '@airgap/beacon-sdk'
 import { char2Bytes } from '@taquito/utils'
+import { uploadFileToIPFSProxy } from '@data/ipfs'
 import styles from './styles.module.scss'
 import axios from 'axios'
-const { create } = require('ipfs-http-client')
-const infuraUrl = 'https://ipfs.infura.io:5001'
-const ipfs = create(infuraUrl)
+import { HashToURL } from '@utils'
 
 const ls = require('local-storage')
 
@@ -30,6 +29,14 @@ query addressQuery($address: String!) {
 }
 `
 
+const query_name_exist = `
+query nameExists($name: String!) {
+  holder(where: { name: {_eq: $name}}) {
+    address
+  }
+}
+`
+
 async function fetchTz(addr) {
   const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
     address: addr,
@@ -37,18 +44,16 @@ async function fetchTz(addr) {
   if (errors) {
     console.error(errors)
   }
-  const result = data.holder
-  // console.log({ result })
-  return result
+  return data.holder
 }
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
+      variables,
+      operationName,
     }),
   })
   return await result.json()
@@ -80,27 +85,37 @@ export class Config extends Component {
     const address = proxyAddress || acc.address
 
     this.setState({ address })
-    let res = await fetchTz(address)
+    const res = await fetchTz(address)
 
     this.context.subjktInfo = res[0]
-    console.log(this.context.subjktInfo)
+    console.debug('Subjkt Infos:', this.context.subjktInfo)
 
     if (this.context.subjktInfo) {
-      let cid = await axios
-        .get(
-          'https://ipfs.io/ipfs/' +
-            this.context.subjktInfo.metadata_file.split('//')[1]
-        )
-        .then((res) => res.data)
+      let { metadata, name, metadata_file } = this.context.subjktInfo
 
-      this.context.subjktInfo.gravatar = cid
+      if (name) this.setState({ subjkt: name })
 
-      if (cid.description) this.setState({ description: cid.description })
-      if (cid.identicon) this.setState({ identicon: cid.identicon })
-      if (this.context.subjktInfo.name)
-        this.setState({ subjkt: this.context.subjktInfo.name })
+      // FOR V6
+      if (metadata && !_.isEmpty(metadata)) {
+        if (metadata.description)
+          this.setState({ description: metadata.description })
+        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
+      }
+      // FALLBACK FOR V5
+      else if (metadata_file) {
+        const metadata_uri = HashToURL(metadata_file)
+        metadata = await axios
+          .get(metadata_uri)
+          .then((res) => res.data)
+          .catch((err) => {
+            console.error(err)
+          })
+
+        if (metadata.description)
+          this.setState({ description: metadata.description })
+        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
+      }
     }
-    //console.log(this.context.subjktInfo)
     this.setState({ loading: false })
   }
 
@@ -113,29 +128,112 @@ export class Config extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  // config subjkt
+  name_exists = async () => {
+    if (!this.state.subjkt) return false
 
+    const { errors, data } = await fetchGraphQL(
+      query_name_exist,
+      'nameExists',
+      {
+        name: this.state.subjkt,
+      }
+    )
+    if (errors) {
+      console.error(errors)
+      return false
+    }
+    if (data.holder.length == 0) return false
+
+    const holder = data.holder[0]
+
+    if (holder.address == this.state.address) return false
+
+    console.error(`name exists and is registered to ${holder.address}`)
+
+    this.context.setFeedback({
+      visible: true,
+      message: `The provided name is already registered by ${holder.address}`,
+      progress: false,
+      confirm: true,
+      confirmCallback: () => {
+        this.context.setFeedback({ visible: false })
+      },
+    })
+
+    return true
+  }
+
+  // upload to profile pic + subjkt meta to IPFS & call the SUBJKT registry
   subjkt_config = async () => {
+    if (await this.name_exists()) {
+      return
+    }
+
+    this.context.setFeedback({
+      visible: true,
+      message: 'uploading SUBJKT',
+      progress: true,
+      confirm: false,
+    })
+
     if (this.state.selectedFile) {
       const [file] = this.state.selectedFile
 
-      const buffer = Buffer.from(await file.arrayBuffer())
-      console.log(buffer)
-      this.setState({ identicon: 'ipfs://' + (await ipfs.add(buffer)).path })
-    }
+      this.context.setFeedback({
+        message: 'uploading indenticon',
+      })
 
-    console.log(this.state)
-    this.context.registry(
-      this.state.subjkt,
-      await ipfs.add(
-        Buffer.from(
-          JSON.stringify({
-            description: this.state.description,
-            identicon: this.state.identicon,
-          })
-        )
-      )
-    )
+      const buffer = Buffer.from(await file.arrayBuffer())
+      const picture_cid = await uploadFileToIPFSProxy({
+        blob: new Blob([buffer]),
+        path: file.name,
+      })
+      this.setState({ identicon: `ipfs://${picture_cid}` })
+    }
+    const meta = JSON.stringify({
+      description: this.state.description,
+      identicon: this.state.identicon,
+    })
+    this.context.setFeedback({
+      message: 'uploading metadatas',
+    })
+
+    console.debug('Uploading metadatas file to IPFS', JSON.parse(meta))
+
+    const subjkt_meta_cid = await uploadFileToIPFSProxy({
+      blob: new Blob([Buffer.from(meta)]),
+      path: 'profile_metadata.json',
+    })
+
+    if (subjkt_meta_cid == null) {
+      this.context.setFeedback({
+        confirm: true,
+        message: 'Error uploading metadatas',
+        confirmCallback: () => {
+          this.context.setFeedback({ visible: false })
+        },
+      })
+      console.error('Error uploading metadatas file to IPFS')
+      return
+    }
+    console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
+
+    this.context.setFeedback({
+      message: 'minting SUBJKT',
+      progress: true,
+      confirm: false,
+    })
+
+    await this.context.registry(this.state.subjkt, subjkt_meta_cid)
+
+    this.context.setFeedback({
+      message: 'SUBJKT Minted',
+      progress: false,
+      confirm: true,
+      confirmCallback: () => {
+        this.context.setFeedback({ visible: false })
+      },
+    })
   }
 
   // upload file
@@ -149,7 +247,11 @@ export class Config extends Component {
     const [file] = event.target.files
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    this.setState({ identicon: 'ipfs://' + (await ipfs.add(buffer)).path })
+    const picture_cid = await uploadFileToIPFSProxy({
+      blob: new Blob([buffer]),
+      path: file.name,
+    })
+    this.setState({ identicon: `ipfs://${picture_cid}` })
   }
 
   hDAO_operators = () => {
@@ -188,7 +290,6 @@ export class Config extends Component {
   */
 
   sign = () => {
-    console.log(this.context.addr)
     this.context.signStr({
       /*       payload : "05" + char2Bytes(this.state.str) */
       payload: this.state.str
@@ -210,9 +311,9 @@ export class Config extends Component {
         <Container>
           <Identicon address={this.state.address} logo={this.state.identicon} />
 
-          <div style={{ height: '20px' }}></div>
+          <div style={{ height: '20px' }} />
           <input type="file" onChange={this.onFileChange} />
-          <div style={{ height: '20px' }}></div>
+          <div style={{ height: '20px' }} />
           <Padding>
             <Input
               name="subjkt"

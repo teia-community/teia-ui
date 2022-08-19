@@ -1,0 +1,76 @@
+@import '../../../styles/layout.scss';
+@import '../../../styles/mixins.scss';
+
+// .html {
+//   @include embedObjktViewSizes;
+// }
+
+.container {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: scroll;
+
+  &:after {
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+  }
+
+  .preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    .button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .gradient {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateY(50%) translateY(-50%);
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 0, 0, 0) 70%,
+          rgba(255, 255, 255, 0.2) 100%
+        );
+      }
+
+      svg {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        display: flex;
+        width: 30px;
+        height: auto;
+        margin: 0 auto;
+        z-index: 1;
+      }
+    }
+  }
+}
