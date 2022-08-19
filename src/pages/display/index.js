@@ -215,7 +215,7 @@ export default class Display extends Component {
     claim: [],
   }
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     const id = window.location.pathname.split('/')[1]
     // console.log(window.location.pathname.split('/'))
 
