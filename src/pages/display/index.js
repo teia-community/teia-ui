@@ -272,7 +272,6 @@ export default class Display extends Component {
           subjkt: window.location.pathname.split('/')[1],
         })
         const resTz = await fetchTz(this.state.wallet)
-        console.debug(resTz)
         this.setState({ hdao: Math.floor(resTz[0].hdao_balance / 1000000) })
       } else {
         this.props.history.push('/')
