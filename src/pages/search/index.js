@@ -206,7 +206,7 @@ async function fetchSales(offset) {
   )
 
   if (errors) {
-    console.log(errors)
+    console.error(errors)
   }
 
   let result = []
@@ -219,7 +219,6 @@ async function fetchSales(offset) {
 }
 
 async function fetchSubjkts(subjkt) {
-  //console.log(subjkt)
   const { errors, data } = await fetchGraphQL(
     `
   query subjktsQuery {
@@ -434,10 +433,6 @@ export class Search extends Component {
       })
     }
 
-    if (e === 'illustration') {
-      console.log(await fetchTag('illustration'))
-    }
-
     if (e === 'tag') {
       let res = await fetchTag(
         this.state.search,
@@ -478,8 +473,6 @@ export class Search extends Component {
   }
 
   search = async (e) => {
-    console.log(e)
-
     this.setState({ items: [], feed: [], search: e })
     this.setState({ subjkt: await fetchSubjkts(this.state.search) })
 
@@ -497,8 +490,6 @@ export class Search extends Component {
         select: 'tag',
       })
     }
-
-    console.log(this.state.feed)
   }
 
   hoverState = (bool) => this.setState({ mouse: bool })
@@ -506,12 +497,12 @@ export class Search extends Component {
   select = (id) => this.setState({ select: [...this.state.select, id] })
 
   loadMore = () => {
-    this.setState({ offset: this.state.offset + 15 })
+    this.setState({ offset: this.state.offset + 30 })
     this.update(this.state.select, false)
   }
 
   handleKey = (e) => {
-    console.log(this.state.search)
+    console.debug('Searching for', this.state.search)
     if (e.key === 'Enter') this.search(this.state.search)
   }
 

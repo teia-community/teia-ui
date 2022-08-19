@@ -1,5 +1,5 @@
 import React from 'react'
-import { MIMETYPE, IPFS_DIRECTORY_MIMETYPE } from '../../constants'
+import { MIMETYPE } from '@constants'
 import styles from './styles.module.scss'
 
 export const MimeTypeIcon = ({ mimeType }) => {
@@ -27,7 +27,7 @@ export const MimeTypeIcon = ({ mimeType }) => {
           </svg>
         )
       /* HTML ZIP */
-      case IPFS_DIRECTORY_MIMETYPE:
+      case MIMETYPE.DIRECTORY:
       case MIMETYPE.ZIP:
       case MIMETYPE.ZIP1:
       case MIMETYPE.ZIP2:

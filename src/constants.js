@@ -102,31 +102,30 @@ export const MINT_FILESIZE = 100
 
 export const MIMETYPE = {
   BMP: 'image/bmp',
+  FLAC: 'audio/flac',
   GIF: 'image/gif',
-  JPEG: 'image/jpeg',
-  PNG: 'image/png',
-  SVG: 'image/svg+xml',
-  TIFF: 'image/tiff',
-  WEBP: 'image/webp',
-  MP4: 'video/mp4',
-  OGV: 'video/ogg',
-  QUICKTIME: 'video/quicktime',
-  WEBM: 'video/webm',
   GLB: 'model/gltf-binary',
   GLTF: 'model/gltf+json',
+  DIRECTORY: 'application/x-directory',
+  JPEG: 'image/jpeg',
+  MD: 'text/markdown',
   MP3: 'audio/mpeg',
+  MP4: 'video/mp4',
   OGA: 'audio/ogg',
-  WAV: 'audio/wav',
-  XWAV: 'audio/x-wav',
-  FLAC: 'audio/flac',
+  OGV: 'video/ogg',
   PDF: 'application/pdf',
+  PNG: 'image/png',
+  QUICKTIME: 'video/quicktime',
+  SVG: 'image/svg+xml',
+  TIFF: 'image/tiff',
+  WAV: 'audio/wav',
+  WEBM: 'video/webm',
+  WEBP: 'image/webp',
+  XWAV: 'audio/x-wav',
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
-  MD: 'text/markdown',
 }
-
-export const IPFS_DIRECTORY_MIMETYPE = 'application/x-directory'
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])

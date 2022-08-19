@@ -1,7 +1,4 @@
-import {
-  IPFS_DIRECTORY_MIMETYPE,
-  IPFS_DEFAULT_THUMBNAIL_URI,
-} from '../constants'
+import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 
 import mime from 'mime-types'
 const { Buffer } = require('buffer')
@@ -50,7 +47,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
     console.debug(`uploading ${file.path} as ${file_type}`)
     form.append(
       'assets',
-      new File([file.blob], encodeURIComponent(file.path), { type: file_type })
+      new File([file.blob], encodeURI(file.path), { type: file_type })
     )
   })
 
@@ -147,7 +144,7 @@ export const prepareFile = async ({
     formats,
   })
 
-  console.debug('Uploading metadata file:', metadata)
+  console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
@@ -241,7 +238,7 @@ export const prepareDirectory = async ({
     formats,
   })
 
-  console.debug('Uploading metadata file:', metadata)
+  console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
@@ -255,7 +252,7 @@ export const prepareDirectory = async ({
  * @returns {boolean}
  */
 function not_directory(file) {
-  return file.blob.type !== IPFS_DIRECTORY_MIMETYPE
+  return file.blob.type !== MIMETYPE.DIRECTORY
 }
 
 /**

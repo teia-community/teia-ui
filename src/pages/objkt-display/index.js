@@ -5,7 +5,12 @@ import { useParams } from 'react-router-dom'
 import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { getWalletBlockList, getUnderReviewList, SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import {
+  getWalletBlockList,
+  getUnderReviewList,
+  SUPPORTED_MARKETPLACE_CONTRACTS,
+  MIMETYPE,
+} from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
 import { Loading } from '@components/loading'
@@ -79,8 +84,6 @@ export const ObjktDisplay = () => {
     if (objkt.ban.includes(objkt.creator.address)) {
       setRestricted(true)
       objkt.restricted = true
-
-      setNFT(objkt)
     } else {
       objkt.restricted = false
 
@@ -94,8 +97,8 @@ export const ObjktDisplay = () => {
         objkt.swaps = objkt.swaps.filter(
           (s) => s.status > 0 || !objkt.ban.includes(s.creator_id)
         )
-      setNFT(objkt)
     }
+    setNFT(objkt)
     setLoading(false)
     /*     GetOBJKT({ id })
       .then(async (objkt) => {
@@ -132,6 +135,36 @@ export const ObjktDisplay = () => {
   }, [])
 
   const Tab = TABS[tabIndex].component
+
+  const objkt_classes = []
+  useEffect(() => {
+    if (!nft) {
+      return
+    }
+
+    if (
+      nft.mime === MIMETYPE.DIRECTORY ||
+      nft.mime === MIMETYPE.SVG
+      // nft.mime === MIMETYPE.MD
+    ) {
+      objkt_classes.push('objktview-zipembed')
+      objkt_classes.push('objktview')
+      objkt_classes.push(styles.objktview)
+    } else if (
+      [
+        MIMETYPE.MP4,
+        MIMETYPE.OGV,
+        MIMETYPE.QUICKTIME,
+        MIMETYPE.WEBM,
+        MIMETYPE.PDF,
+      ].includes(nft.mime)
+    ) {
+      objkt_classes.push('no-fullscreen')
+    } else {
+      objkt_classes.push('objktview')
+      objkt_classes.push(styles.objktview)
+    }
+  }, [nft])
   return (
     <Page title={nft?.title}>
       {loading && (
@@ -164,12 +197,36 @@ export const ObjktDisplay = () => {
               <Padding>
                 {restricted && (
                   <div className={styles.restricted}>
-                    Restricted OBJKT. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status. See the <a href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions" target="_blank" rel="noreferrer">Teia Terms and Conditions</a>.
+                    Restricted OBJKT. Contact the Teia moderators on{' '}
+                    <a
+                      href="https://discord.gg/TKeybhYhNe"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Discord
+                    </a>{' '}
+                    to resolve the status. See the{' '}
+                    <a
+                      href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Teia Terms and Conditions
+                    </a>
+                    .
                   </div>
                 )}
                 {underReview && (
                   <div className={styles.restricted}>
-                    OBJKT under review. Contact the Teia moderators on <a href="https://discord.gg/TKeybhYhNe" target="_blank" rel="noreferrer">Discord</a> to resolve the status.
+                    OBJKT under review. Contact the Teia moderators on{' '}
+                    <a
+                      href="https://discord.gg/TKeybhYhNe"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Discord
+                    </a>{' '}
+                    to resolve the status.
                   </div>
                 )}
               </Padding>
@@ -182,22 +239,7 @@ export const ObjktDisplay = () => {
               }}
               className="objkt-display"
             >
-              <div
-                className={
-                  nft.mime === 'application/x-directory' ||
-                    nft.mime === 'image/svg+xml'
-                    ? 'objktview-zipembed objktview ' + styles.objktview
-                    : [
-                      nft.mime === 'video/mp4' ||
-                        nft.mime === 'video/ogv' ||
-                        nft.mime === 'video/quicktime' ||
-                        nft.mime === 'video/webm' ||
-                        nft.mime === 'application/pdf'
-                        ? 'no-fullscreen'
-                        : 'objktview ' + styles.objktview,
-                    ]
-                }
-              >
+              <div className={objkt_classes}>
                 {renderMediaType({
                   mimeType: nft.mime,
                   artifactUri: nft.artifact_uri,
