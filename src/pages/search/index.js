@@ -345,8 +345,11 @@ export class Search extends Component {
   }
 
   update = async (e, reset) => {
-    const arr = getWalletBlockList()
+    const bans = getWalletBlockList()
 
+    const filterBan = (e) => {
+      return !bans.includes(e.creator_id)
+    }
     this.setState({ select: e })
     if (reset) {
       this.setState({
@@ -360,7 +363,7 @@ export class Search extends Component {
       let res = await fetchFeed(
         Number(this.state.search) + 1 - this.state.offset
       )
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(filterBan)
       this.setState({
         feed: [...this.state.feed, ...res],
       })
@@ -395,7 +398,7 @@ export class Search extends Component {
 
     if (e === '🏳️‍🌈 tezospride') {
       let res = await fetchTag('tezospride', this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(filterBan)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
@@ -403,7 +406,7 @@ export class Search extends Component {
 
     if (e === 'html/svg') {
       let res = await fetchInteractive(this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(filterBan)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
@@ -421,7 +424,7 @@ export class Search extends Component {
     }
     if (e === 'random') {
       let res = await fetchRandomObjkts(15)
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(filterBan)
       this.setState({ feed: [...this.state.feed, ...res] })
     }
 
@@ -439,7 +442,7 @@ export class Search extends Component {
         this.state.search,
         this.state.feed[this.state.feed.length - 1].id
       )
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(filterBan)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
@@ -448,7 +451,7 @@ export class Search extends Component {
     if (e === 'recent sales') {
       let tokens = await fetchSales(this.state.offset)
       tokens = tokens.map((e) => e.token)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+      tokens = tokens.filter(filterBan)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...tokens], 'id'),
       })
@@ -456,12 +459,9 @@ export class Search extends Component {
 
     if (e === 'new OBJKTs') {
       let tokens = await fetchFeed(this.state.lastId, this.state.offset)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+      tokens = tokens.filter(filterBan)
       this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
+        feed: [...this.state.feed, ...tokens],
       })
     }
 
