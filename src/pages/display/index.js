@@ -45,6 +45,7 @@ query collectorGallery($address: String!) {
         address
         name
       }
+      content_rating
     }
   }
 }
@@ -84,6 +85,7 @@ query creatorGallery($address: String!) {
     title
     description
     supply
+    content_rating
     swaps(order_by: {price: asc}, limit: 1, where: {amount_left: {_gte: "1"}, status: {_eq: "0"}}) {
       id
       status
@@ -1007,7 +1009,9 @@ export default class Display extends Component {
                             <div
                               className={`${styles.container} ${
                                 !urlParameters.has('show') &&
-                                nsfwList.includes(nft.id)
+                                (nsfwList.includes(nft.id) ||
+                                  (nft.content_rating &&
+                                    nft.content_rating === 'mature'))
                                   ? styles.blur
                                   : ''
                               }`}
