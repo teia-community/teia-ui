@@ -14,11 +14,13 @@ import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
 const _ = require('lodash')
 
+const FETCH_BATCH = 45
+
 async function fetchFeed(lastId, offset) {
   const { errors, data } = await fetchGraphQL(
     `
 query LatestFeed {
-  token(order_by: {id: desc}, limit: 15, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
+  token(order_by: {id: desc}, limit: ${FETCH_BATCH}, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
     display_uri
     creator_id
@@ -47,7 +49,7 @@ async function fetchGLB(offset) {
   const { data } = await fetchGraphQL(
     `
   query GLBObjkts {
-    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : ${FETCH_BATCH}, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -74,7 +76,7 @@ async function fetchInteractive(offset) {
   const { data } = await fetchGraphQL(
     `
     query InteractiveObjkts {
-      token(where: { mime: {_in : [ "application/x-directory", "image/svg+xml" ]}, supply : { _neq : 0 } }, limit : 30, offset : ${offset}, order_by: {id: desc}) {
+      token(where: { mime: {_in : [ "application/x-directory", "image/svg+xml" ]}, supply : { _neq : 0 } }, limit : ${FETCH_BATCH}, offset : ${offset}, order_by: {id: desc}) {
         id
         artifact_uri
         display_uri
@@ -101,7 +103,7 @@ async function fetchVideo(offset) {
   const { data } = await fetchGraphQL(
     `
   query Videos {
-    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : ${FETCH_BATCH}, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -127,7 +129,7 @@ async function fetchGifs(offset) {
   const { data } = await fetchGraphQL(
     `
     query Gifs ($offset: Int = 0) {
-      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
+      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: ${FETCH_BATCH}, offset: ${offset}) {
         id
         artifact_uri
         display_uri
@@ -155,7 +157,7 @@ async function fetchMusic(offset) {
   const { data } = await fetchGraphQL(
     `
   query AudioObjkts {
-    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : ${FETCH_BATCH}, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -183,7 +185,7 @@ async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
   query sales {
-    trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
+    trade(order_by: {timestamp: desc}, limit : ${FETCH_BATCH}, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
       swap {
         price
@@ -249,7 +251,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 15, order_by: {id: desc}) {
+  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: ${FETCH_BATCH}, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -317,8 +319,9 @@ export class Search extends Component {
     offset: 0,
   }
 
-  componentWillMount = async () => {
-    let arr = getWalletBlockList()
+  //componentWillMount =
+  componentDidMount = async () => {
+    const arr = getWalletBlockList()
     this.setState({ select: 'recent sales' })
     let tokens = await fetchSales(this.state.offset)
     tokens = tokens.map((e) => e.token)
@@ -329,8 +332,7 @@ export class Search extends Component {
         'creator_id'
       ),
     })
-  }
-  componentDidMount = () => {
+
     window.twemoji.parse(
       document.body,
       { folder: 'svg', ext: '.svg' } // This is to specify to Twemoji to use SVGs and not PNGs
@@ -448,10 +450,7 @@ export class Search extends Component {
       tokens = tokens.map((e) => e.token)
       tokens = tokens.filter((e) => !arr.includes(e.creator_id))
       this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
+        feed: _.uniqBy([...this.state.feed, ...tokens], 'id'),
       })
     }
 
@@ -496,6 +495,7 @@ export class Search extends Component {
   select = (id) => this.setState({ select: [...this.state.select, id] })
 
   loadMore = () => {
+    console.debug(`Load more: ${this.state.feed.length}`)
     this.setState({ offset: this.state.offset + 30 })
     this.update(this.state.select, false)
   }
