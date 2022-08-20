@@ -326,7 +326,7 @@ class HicetnuncContextProviderClass extends Component {
             ),
           ]
 
-          let batch = await Tezos.wallet.batch(operations)
+          const batch = await Tezos.wallet.batch(operations)
           return await batch.send()
         }
         const objktsAddress = this.state.objkts
@@ -349,7 +349,7 @@ class HicetnuncContextProviderClass extends Component {
           MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
         )
 
-        let batch = await Tezos.wallet.batch(operations)
+        const batch = await Tezos.wallet.batch(operations)
         return await batch.send()
       },
 
