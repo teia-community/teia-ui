@@ -33,6 +33,7 @@ query frensGallery($wallets: [String!], $lastId: bigint!) {
       name
       address
     }
+    content_rating
   }
 }
 `
