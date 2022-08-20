@@ -26,6 +26,7 @@ export const Swap = ({
     setProgress,
     proxyAddress,
     message,
+    showFeedback,
     setMessage,
   } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState()
@@ -39,7 +40,7 @@ export const Swap = ({
     if (value <= 0.1) {
       setPrice(value)
       setMessage(
-        'please note that items intended to be giveaways can be collected in multiple editions and resold in large quantities. please ensure you are happy with the quantity and price chosen before swapping'
+        'Please note that items intended to be giveaways can be collected in multiple editions and resold in large quantities. please ensure you are happy with the quantity and price chosen before swapping'
       )
       return
     }
@@ -61,46 +62,52 @@ export const Swap = ({
     totalOwned = found.quantity
   }
 
-  const handleSubmit = () => {
-    console.log(currency)
-
-    if (!amount || amount === '' || !price || price === '') {
-      // simple validation for now
-      alert('invalid input')
-    } else {
-      //setProgress(true)
-      setProgress(true)
-      setMessage('preparing swap')
-      // swap is valid call API
-      console.log(
-        acc.address,
-        royalties,
-        parseFloat(price) * 1000000,
-        id,
-        creator.address,
-        parseFloat(amount)
+  const handleSubmit = async () => {
+    console.debug({ amount, price })
+    if (!amount) {
+      showFeedback(
+        `Please enter an OBJKT quantity to swap (current value: ${amount})`
       )
+      return
+    }
 
-      if (currency === 'tez') {
-        swap(
+    if (price == null || price < 0) {
+      // simple validation for now
+      // alert('invalid input')
+      showFeedback(
+        `Please enter a price for the swap (current value: ${price})`
+      )
+      return
+    }
+    //setProgress(true)
+    setProgress(true)
+    setMessage('Preparing swap')
+    // swap is valid call API
+    console.debug(
+      acc.address,
+      royalties,
+      parseFloat(price) * 1000000,
+      id,
+      creator.address,
+      parseFloat(amount)
+    )
+
+    if (currency === 'tez') {
+      try {
+        // when taquito returns a success/fail message
+        const answer = await swap(
           acc.address,
           royalties,
-          parseFloat(price) * 1000000,
+          parseFloat(price) * 1e6,
           id,
           creator.address,
           parseFloat(amount)
         )
-          //swap(parseFloat(amount), id, parseFloat(price) * 1000000)
-          .then((e) => {
-            // when taquito returns a success/fail message
-            //setProgress(false)
-            setProgress(false)
-            setMessage(e.description)
-          })
-          .catch((e) => {
-            setProgress(false)
-            setMessage('error')
-          })
+        setProgress(false)
+        setMessage(answer.description)
+      } catch (e) {
+        setProgress(false)
+        setMessage(`Error: ${e}`)
       }
     }
   }
