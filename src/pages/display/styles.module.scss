@@ -183,6 +183,7 @@ span[data-tooltip][data-position='top']:after {
   text-align: center;
   font-size: 1em;
   padding: 0.75em;
+  cursor: default;
 }
 
 .restricted {
@@ -191,6 +192,7 @@ span[data-tooltip][data-position='top']:after {
 
 .restricted a {
   padding: 0em;
+  cursor: pointer;
 }
 
 .blur {
