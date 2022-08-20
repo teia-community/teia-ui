@@ -207,7 +207,7 @@ export const ObjktDisplay = () => {
                     </a>{' '}
                     to resolve the status. See the{' '}
                     <a
-                      href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions"
+                      href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
                       target="_blank"
                       rel="noreferrer"
                     >
