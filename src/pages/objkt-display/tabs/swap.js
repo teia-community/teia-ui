@@ -161,6 +161,9 @@ export const Swap = ({
                         if (parseFloat(e.target.value) > 10000) {
                           setPrice(10000)
                         }
+                        if (parseFloat(e.target.value) < 0) {
+                          setPrice(0)
+                        }
                       }}
                       onWheel={(e) => e.target.blur()}
                       disabled={progress}
