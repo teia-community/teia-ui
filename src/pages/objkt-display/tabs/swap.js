@@ -37,16 +37,12 @@ export const Swap = ({
   const onChange = (e) => setCurrency(e.target.value)
 
   const checkPrice = (value) => {
+    console.debug(value)
     if (value <= 0.1) {
-      setPrice(value)
-      setMessage(
-        'Please note that items intended to be giveaways can be collected in multiple editions and resold in large quantities. please ensure you are happy with the quantity and price chosen before swapping'
+      showFeedback(
+        `Price is really low (${value}ꜩ), for giveaways checkout hicetdono (dono.xtz.tools)`
       )
-      return
     }
-
-    setPrice(value)
-    setMessage('')
   }
 
   const proxyAdminAddress = creator.is_split
@@ -72,14 +68,11 @@ export const Swap = ({
     }
 
     if (price == null || price < 0) {
-      // simple validation for now
-      // alert('invalid input')
       showFeedback(
         `Please enter a price for the swap (current value: ${price})`
       )
       return
     }
-    //setProgress(true)
     setProgress(true)
     setMessage('Preparing swap')
     // swap is valid call API
@@ -156,14 +149,15 @@ export const Swap = ({
                       type="number"
                       placeholder="Price per OBJKT"
                       value={price}
-                      onChange={(e) => checkPrice(parseFloat(e.target.value))}
+                      onChange={(e) => setPrice(e.target.value)}
                       onBlur={(e) => {
-                        if (parseFloat(e.target.value) > 10000) {
-                          setPrice(10000)
-                        }
-                        if (parseFloat(e.target.value) < 0) {
+                        const val = parseFloat(e.target.value)
+                        if (val > 1e4) {
+                          setPrice(1e4)
+                        } else if (val < 0) {
                           setPrice(0)
                         }
+                        checkPrice(val)
                       }}
                       onWheel={(e) => e.target.blur()}
                       disabled={progress}
