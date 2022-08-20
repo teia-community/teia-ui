@@ -33,6 +33,7 @@ query LatestFeed {
       name
       address
     }
+    content_rating
   }
 }`,
     'LatestFeed',
@@ -59,6 +60,7 @@ async function fetchGLB(offset) {
         address
         name
       }
+      content_rating
     }
   }
   `,
@@ -86,6 +88,7 @@ async function fetchInteractive(offset) {
           name
           address
         }
+        content_rating
       }
     }
   `,
@@ -113,6 +116,7 @@ async function fetchVideo(offset) {
         address
         name
       }
+      content_rating
     }
   }
   `,
@@ -139,6 +143,7 @@ async function fetchGifs(offset) {
           name
           address
         }
+        content_rating
       }
     }
   `,
@@ -167,6 +172,7 @@ async function fetchMusic(offset) {
         address
         name
       }
+      content_rating
     }
   }
   `,
@@ -200,6 +206,7 @@ async function fetchSales(offset) {
           name
           address
         }
+        content_rating
       }
     }
   }`,
@@ -266,6 +273,7 @@ async function fetchTag(tag, offset) {
       address
       name
     }
+    content_rating
   }
 }`,
     'ObjktsByTag',

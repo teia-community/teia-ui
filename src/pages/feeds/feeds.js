@@ -45,6 +45,7 @@ query LatestFeed($lastId: bigint = 99999999) {
       name
       address
     }
+    content_rating
   }
 }`
 
@@ -261,7 +262,6 @@ export const Feeds = ({ type }) => {
               </Padding>
             </Container>
           </InfiniteScroll>
-           
         </Container>
       ) : (
         <Container>
