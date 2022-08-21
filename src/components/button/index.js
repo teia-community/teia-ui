@@ -77,8 +77,8 @@ export const Purchase = ({ listing = null, children = null, selected }) => {
     <div className={classes}>
       {children}
       {listing &&
-        (listing.type === 'donation'
-          ? `Claim`
+        (listing.type === 'giveaway'
+          ? `Claim Giveaway`
           : `Collect for ${parseFloat(listing.price / 1e6)} tez`)}
     </div>
   )

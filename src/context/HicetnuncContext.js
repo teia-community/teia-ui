@@ -721,7 +721,7 @@ class HicetnuncContextProviderClass extends Component {
           .catch((e) => e)
       },
       // Waiting for deep linking on dono's side
-      claimDonation: async () => {
+      claimGiveaway: async () => {
         window.open('https://dono.xtz.tools/', '_blank', 'noopener,noreferrer')
       },
 

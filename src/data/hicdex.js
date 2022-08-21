@@ -507,7 +507,7 @@ export async function fetchObjktDetails(id) {
       result.token_holders.map((holder) => {
         if (holder.holder_id === MARKETPLACE_CONTRACTS.DONO) {
           result.swaps.push({
-            type: 'donation',
+            type: 'giveaway',
             is_valid: true,
             contract_address: MARKETPLACE_CONTRACTS.DONO,
             creator: result.creator,

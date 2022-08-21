@@ -29,7 +29,7 @@ export const ItemInfo = ({
     syncTaquito,
     collect,
     fulfillObjktcomAsk,
-    claimDonation,
+    claimGiveaway,
     curate,
     acc,
   } = useContext(HicetnuncContext)
@@ -67,7 +67,7 @@ export const ItemInfo = ({
 
           <Button
             onClick={() => {
-              if (acc == null && cheapestListing.type !== 'donation') {
+              if (acc == null && cheapestListing.type !== 'giveaway') {
                 syncTaquito()
               } else {
                 switch (cheapestListing.type) {
@@ -81,8 +81,8 @@ export const ItemInfo = ({
                   case 'objktcom_ask':
                     fulfillObjktcomAsk(cheapestListing)
                     break
-                  case 'donation':
-                    claimDonation(cheapestListing)
+                  case 'giveaway':
+                    claimGiveaway(cheapestListing)
                     break
                   default:
                     console.error(

@@ -185,7 +185,7 @@ export const Listings = ({
                 cancel={cancel}
               />
             )
-          case 'donation':
+          case 'giveaway':
             return (
               <DonoClaimRow
                 id={id}
