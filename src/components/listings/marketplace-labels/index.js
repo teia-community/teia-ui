@@ -27,7 +27,7 @@ export const CollabLabel = () => (
 )
 export const DonoLabel = () => (
   <span className={styles.swapLabel} title="This swap is claimable on dono.xyz">
-    Dono.xtz
+    dono.xtz
   </span>
 )
 
