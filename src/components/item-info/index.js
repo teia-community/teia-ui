@@ -30,6 +30,10 @@ export const ItemInfo = ({
 
   const [showSignStatus, setShowSignStatus] = useState(false)
 
+  const claimDonation = async () => {
+    window.open('https://dono.xtz.tools/', '_blank', 'noopener,noreferrer')
+  }
+
   if (isDetailView) {
     // TODO: subtract burned pieces from total
     const total = supply
@@ -64,21 +68,34 @@ export const ItemInfo = ({
               if (acc == null) {
                 syncTaquito()
               } else {
-                if (cheapestListing.type === 'swap') {
-                  collect(
-                    cheapestListing.contract_address,
-                    cheapestListing.id,
-                    cheapestListing.price * 1
-                  )
-                } else {
-                  fulfillObjktcomAsk(cheapestListing)
+                switch (cheapestListing.type) {
+                  case 'swap':
+                    collect(
+                      cheapestListing.contract_address,
+                      cheapestListing.id,
+                      cheapestListing.price * 1
+                    )
+                    break
+                  case 'objktcom_ask':
+                    fulfillObjktcomAsk(cheapestListing)
+                    break
+                  case 'donation':
+                    claimDonation(cheapestListing)
+                    break
+                  default:
+                    console.error(
+                      'Unknown listing type: ',
+                      cheapestListing.type
+                    )
                 }
               }
             }}
             full
           >
             <Purchase>
-              Collect for {Number(cheapestListing.price) / 1000000} tez
+              {cheapestListing.type === 'donation'
+                ? `Claim`
+                : `Collect for ${parseFloat(cheapestListing.price / 1e6)} tez`}
             </Purchase>
           </Button>
         </div>

@@ -501,6 +501,29 @@ export async function fetchObjktDetails(id) {
 
   const result = data.token_by_pk
 
+  if (result.token_holders) {
+    // Resolve Smart contracts in holders
+    const holders = _.compact(
+      result.token_holders.map((holder) => {
+        if (holder.holder_id === MARKETPLACE_CONTRACTS.DONO) {
+          result.swaps.push({
+            type: 'donation',
+            is_valid: true,
+            contract_address: MARKETPLACE_CONTRACTS.DONO,
+            creator: result.creator,
+            id: -1,
+            amount_left: holder.quantity,
+            price: 0,
+            status: 0,
+          })
+          return null
+        }
+        return holder
+      })
+    )
+    result.token_holders = holders
+  }
+
   // Fetch burn transfers
   // we want to use SUBJKT to resolve aliases not tzkt.
   const addressesToResolve = []

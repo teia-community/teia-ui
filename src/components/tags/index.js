@@ -7,7 +7,6 @@ import styles from './styles.module.scss'
 export const Tags = ({ token_tags, preview }) => {
   const context = useContext(HicetnuncContext)
 
-  console.debug(token_tags)
   if (preview) {
     return (
       <div className={styles.container}>

@@ -25,6 +25,12 @@ export const CollabLabel = () => (
     Collab
   </span>
 )
+export const DonoLabel = () => (
+  <span className={styles.swapLabel} title="This swap is claimable on dono.xyz">
+    Dono.xtz
+  </span>
+)
+
 export const OBJKTLabel = () => (
   <span className={styles.swapLabel} title="This swap is through OBJKT.com">
     Objkt.com
@@ -55,6 +61,9 @@ export const MarketplaceLabel = ({ swap }) => {
     swap.contract_address === MARKETPLACE_CONTRACTS.V2
   ) {
     return <HENLabel />
+  }
+  if (swap.contract_address === MARKETPLACE_CONTRACTS.DONO) {
+    return <DonoLabel />
   }
   if (
     swap.contract_address === MARKETPLACE_CONTRACTS.OBJKTCOM_V1 ||

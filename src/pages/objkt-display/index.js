@@ -52,7 +52,6 @@ export const ObjktDisplay = () => {
       fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
-
     const listings = sortBy(
       [
         ...objkt.swaps
@@ -66,7 +65,6 @@ export const ObjktDisplay = () => {
             ...swap,
             token: { id: id, creator_id: objkt.creator.address },
             key: `${swap.contract_address}-${swap.id}`,
-            type: 'swap',
           })),
         ...objktcomAsks.map((ask) => ({
           ...ask,

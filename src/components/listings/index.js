@@ -53,7 +53,9 @@ function TeiaOrHenSwapRow({
             }
           >
             <Purchase>
-              Collect for {parseFloat(swap.price / 1000000)} tez
+              {swap.type === 'donation'
+                ? `Claim`
+                : `Collect for ${parseFloat(swap.price / 1e6)} tez`}
             </Purchase>
           </Button>
         )}
@@ -121,7 +123,9 @@ function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
         {!restricted && !ban.includes(swap.creator_id) && (
           <Button onClick={() => onCollectClick()}>
             <Purchase>
-              Collect for {parseFloat(ask.price / 1000000)} tez
+              {ask.type === 'donation'
+                ? `Claim`
+                : `Collect for ${parseFloat(ask.price / 1e6)} tez`}
             </Purchase>
           </Button>
         )}
