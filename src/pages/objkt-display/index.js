@@ -65,6 +65,7 @@ export const ObjktDisplay = () => {
             ...swap,
             token: { id: id, creator_id: objkt.creator.address },
             key: `${swap.contract_address}-${swap.id}`,
+            type: swap.type || 'swap',
           })),
         ...objktcomAsks.map((ask) => ({
           ...ask,

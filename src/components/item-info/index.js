@@ -25,14 +25,16 @@ export const ItemInfo = ({
   restricted,
   ban,
 }) => {
-  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
-    useContext(HicetnuncContext)
+  const {
+    syncTaquito,
+    collect,
+    fulfillObjktcomAsk,
+    claimDonation,
+    curate,
+    acc,
+  } = useContext(HicetnuncContext)
 
   const [showSignStatus, setShowSignStatus] = useState(false)
-
-  const claimDonation = async () => {
-    window.open('https://dono.xtz.tools/', '_blank', 'noopener,noreferrer')
-  }
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total

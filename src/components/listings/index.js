@@ -7,6 +7,7 @@ import { HicetnuncContext } from '../../context/HicetnuncContext'
 import {
   MarketplaceLabel,
   OBJKTLabel,
+  DonoLabel,
   RestrictedLabel,
 } from './marketplace-labels'
 
@@ -101,14 +102,36 @@ function TeiaOrHenSwapRow({
   )
 }
 
-function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
+function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
-        {ask.amount_left} ed.&nbsp;
-        <Button to={`/tz/${ask.seller.address}`}>
+        {swap.amount_left} ed.&nbsp;
+        <Button to={`https://dono.xtz.tools`}>
+          <Primary>dono.xtz</Primary>
+        </Button>
+      </div>
+
+      <div className={styles.buttons}>
+        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
+        <DonoLabel />
+        {!restricted && !ban.includes(swap.creator_id) && (
+          <Button onClick={() => onCollectClick()}>
+            <Purchase listing={swap} />
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
+function ObjktcomAskRow({ id, swap, restricted, ban, onCollectClick }) {
+  return (
+    <div className={styles.swap}>
+      <div className={styles.issuer}>
+        {swap.amount_left} ed.&nbsp;
+        <Button to={`/tz/${swap.seller.address}`}>
           <Primary>
-            {ask.seller.alias || walletPreview(ask.seller.address)}
+            {swap.seller.alias || walletPreview(swap.seller.address)}
           </Primary>
         </Button>
       </div>
@@ -143,41 +166,56 @@ export const Listings = ({
   return (
     <div className={styles.container}>
       {listings.map((listing) => {
-        if (listing.type === 'swap') {
-          return (
-            <TeiaOrHenSwapRow
-              key={listing.key}
-              rowId={listing.key}
-              swap={listing}
-              acc={acc}
-              proxyAdminAddress={proxyAdminAddress}
-              proxyAddress={proxyAddress}
-              restricted={restricted}
-              ban={ban}
-              reswapPrices={reswapPrices}
-              handleCollect={handleCollect}
-              setReswapPrices={setReswapPrices}
-              reswap={reswap}
-              cancel={cancel}
-            />
-          )
-        } else {
-          return (
-            <ObjktcomAskRow
-              id={id}
-              key={listing.key}
-              ask={listing}
-              swap={listing}
-              restricted={restricted}
-              ban={ban}
-              onCollectClick={() => {
-                handleCollectObjktcomAsk(listing)
-              }}
-            />
-          )
+        switch (listing.type) {
+          case 'swap':
+            return (
+              <TeiaOrHenSwapRow
+                key={listing.key}
+                rowId={listing.key}
+                swap={listing}
+                acc={acc}
+                proxyAdminAddress={proxyAdminAddress}
+                proxyAddress={proxyAddress}
+                restricted={restricted}
+                ban={ban}
+                reswapPrices={reswapPrices}
+                handleCollect={handleCollect}
+                setReswapPrices={setReswapPrices}
+                reswap={reswap}
+                cancel={cancel}
+              />
+            )
+          case 'donation':
+            return (
+              <DonoClaimRow
+                id={id}
+                key={listing.key}
+                swap={listing}
+                restricted={restricted}
+                ban={ban}
+                onCollectClick={() => {
+                  handleCollectObjktcomAsk(listing)
+                }}
+              />
+            )
+          case 'objktcom_ask':
+            return (
+              <ObjktcomAskRow
+                id={id}
+                key={listing.key}
+                swap={listing}
+                restricted={restricted}
+                ban={ban}
+                onCollectClick={() => {
+                  handleCollectObjktcomAsk(listing)
+                }}
+              />
+            )
+          default:
+            return null
         }
       })}
-      <hr className={styles.nomobile}></hr>
+      <hr className={styles.nomobile} />
     </div>
   )
 }
