@@ -92,11 +92,7 @@ export const ItemInfo = ({
             }}
             full
           >
-            <Purchase>
-              {cheapestListing.type === 'donation'
-                ? `Claim`
-                : `Collect for ${parseFloat(cheapestListing.price / 1e6)} tez`}
-            </Purchase>
+            <Purchase listing={cheapestListing} />
           </Button>
         </div>
       )

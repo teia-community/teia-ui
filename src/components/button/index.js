@@ -65,7 +65,7 @@ export const Secondary = ({ children = null, selected }) => {
   return <div className={classes}>{children}</div>
 }
 
-export const Purchase = ({ children = null, selected }) => {
+export const Purchase = ({ listing = null, children = null, selected }) => {
   const context = useContext(HicetnuncContext)
 
   const classes = classnames({
@@ -73,7 +73,15 @@ export const Purchase = ({ children = null, selected }) => {
     [styles.selected]: selected,
     [styles.dark]: context.theme === 'dark',
   })
-  return <div className={classes}>{children}</div>
+  return (
+    <div className={classes}>
+      {children}
+      {listing &&
+        (listing.type === 'donation'
+          ? `Claim`
+          : `Collect for ${parseFloat(listing.price / 1e6)} tez`)}
+    </div>
+  )
 }
 
 export const Curate = ({ children = null, selected }) => {

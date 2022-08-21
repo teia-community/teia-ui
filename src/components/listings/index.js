@@ -52,11 +52,7 @@ function TeiaOrHenSwapRow({
               handleCollect(swap.contract_address, swap.id, swap.price)
             }
           >
-            <Purchase>
-              {swap.type === 'donation'
-                ? `Claim`
-                : `Collect for ${parseFloat(swap.price / 1e6)} tez`}
-            </Purchase>
+            <Purchase listing={swap} />
           </Button>
         )}
         {isOwnSwap && (
@@ -122,11 +118,7 @@ function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
         <OBJKTLabel />
         {!restricted && !ban.includes(swap.creator_id) && (
           <Button onClick={() => onCollectClick()}>
-            <Purchase>
-              {ask.type === 'donation'
-                ? `Claim`
-                : `Collect for ${parseFloat(ask.price / 1e6)} tez`}
-            </Purchase>
+            <Purchase listing={swap} />
           </Button>
         )}
       </div>
