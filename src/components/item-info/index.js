@@ -65,7 +65,7 @@ export const ItemInfo = ({
 
           <Button
             onClick={() => {
-              if (acc == null) {
+              if (acc == null && cheapestListing.type !== 'donation') {
                 syncTaquito()
               } else {
                 switch (cheapestListing.type) {
