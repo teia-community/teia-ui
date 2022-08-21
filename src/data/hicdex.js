@@ -1,6 +1,6 @@
 import { rnd } from '../utils'
 import {
-  MARKETPLACE_CONTRACT_V1,
+  MARKETPLACE_CONTRACTS,
   HEN_CONTRACT_FA2,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   BURN_ADDRESS,
@@ -308,7 +308,7 @@ trades(order_by: {timestamp: asc}) {
 
 const query_v1_swaps = `
 query querySwaps($address: String!) {
-  swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACT_V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
+  swap(where: {contract_address: {_eq: "${MARKETPLACE_CONTRACTS.V1}"}, creator_id: {_eq: $address}, status: {_eq: "0"}}) {
     token {
       id
       title

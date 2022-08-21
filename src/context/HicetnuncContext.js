@@ -20,11 +20,7 @@ import { fetchJSON } from '@utils'
 
 import {
   HEN_CONTRACT_FA2,
-  MARKETPLACE_CONTRACT_V1,
-  MARKETPLACE_CONTRACT_V2,
-  MARKETPLACE_CONTRACT_TEIA,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
+  MARKETPLACE_CONTRACTS,
   MAIN_MARKETPLACE_CONTRACT,
   MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
   SWAP_TYPE_TEIA,
@@ -269,9 +265,9 @@ class HicetnuncContextProviderClass extends Component {
       // TODO: move these into constants.js?
       hDAO: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
       subjkt: 'KT1My1wDZHDGweCrJnQJi3wcFaS67iksirvj',
-      v1: MARKETPLACE_CONTRACT_V1,
+      v1: MARKETPLACE_CONTRACTS.V1,
       unregistry: 'KT18xby6bb1ur1dKe7i6YVrBaksP4AgtuLES',
-      v2: MARKETPLACE_CONTRACT_V2,
+      v2: MARKETPLACE_CONTRACTS.V2,
       objkts: HEN_CONTRACT_FA2,
       hDAO_curation: 'KT1TybhR7XraG75JFYKSrh7KnxukMBT5dor6',
       hDAO_marketplace: 'KT1QPvv7sWVaT9PcPiC4fN9BgfX8NB2d5WzL',
@@ -412,7 +408,7 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       batch_cancelv1: async (arr) => {
-        const v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACT_V1)
+        const v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACTS.V1)
 
         /*         const batch = await arr
                   .map((e) => parseInt(e.id))
@@ -617,7 +613,7 @@ class HicetnuncContextProviderClass extends Component {
       // Do we need this? proxyAddress will push to UI via context
       getProxy: () => this.state.proxyAddress,
 
-      objkt: MARKETPLACE_CONTRACT_V1,
+      objkt: MARKETPLACE_CONTRACTS.V1,
 
       mint: async (tz, amount, cid, royalties) => {
         // show feedback component with followind message and progress indicator
@@ -729,9 +725,9 @@ class HicetnuncContextProviderClass extends Component {
         let contractAddress
 
         if (ask.contract_version === 1) {
-          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V1
+          contractAddress = MARKETPLACE_CONTRACTS.OBJKTCOM_V1
         } else if (ask.contract_version === 4) {
-          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V4
+          contractAddress = MARKETPLACE_CONTRACTS.OBJKTCOM_V4
         } else {
           throw new Error('unsupported objkt.com marketplace contract')
         }
@@ -834,7 +830,7 @@ class HicetnuncContextProviderClass extends Component {
 
       cancelv1: async (swap_id) => {
         return await Tezos.wallet
-          .at(MARKETPLACE_CONTRACT_V1)
+          .at(MARKETPLACE_CONTRACTS.V1)
           .then((c) =>
             c.methods
               .cancel_swap(parseFloat(swap_id))
@@ -844,7 +840,7 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       cancel: async (contract_address, swap_id) => {
-        const isSwapTeia = contract_address === MARKETPLACE_CONTRACT_TEIA
+        const isSwapTeia = contract_address === MARKETPLACE_CONTRACTS.TEIA
         if (this.state.proxyAddress && isSwapTeia) {
           /* collab contract cancel swap for Teia Marketplace case */
           const data = {

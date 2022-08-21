@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Primary } from '../button'
 import {
-  MARKETPLACE_CONTRACT_V1,
+  MARKETPLACE_CONTRACTS,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   BURN_ADDRESS,
 } from '../../constants'
@@ -23,7 +23,7 @@ export const OwnerList = ({ owners }) => {
             <Button to={`/tz/${holder_id}`}>
               <Primary>{encodeURI(holder.name)}</Primary>
             </Button>
-          ) : holder_id !== MARKETPLACE_CONTRACT_V1 ? (
+          ) : holder_id !== MARKETPLACE_CONTRACTS.V1 ? (
             <Button to={`/tz/${holder_id}`}>
               <Primary>{walletPreview(holder_id)}</Primary>
             </Button>
