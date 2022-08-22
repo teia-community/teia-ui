@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
@@ -13,6 +13,9 @@ import { walletPreview } from '../../utils/string'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
+import { EventBanner } from '@components/event-banner/index'
+
+import { useWindowScroll } from 'react-use'
 /* import { BeaconWallet } from '@taquito/beacon-wallet'
 
 const wallet = new BeaconWallet({
@@ -23,14 +26,29 @@ const wallet = new BeaconWallet({
 export const Header = () => {
   const history = useHistory()
   const context = useContext(HicetnuncContext)
+
+  // const [scroll, setScroll] = useState(0.0)
+
+  const { y } = useWindowScroll()
+
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
     context.setLogo()
+
+    // Scroll
+    // updateDimensions();
+    // window.addEventListener('scroll', updateDimensions);
+
+    // return () =>{
+    //   window.removeEventListener('scroll', updateDimensions);
+    // }
   }, [])
 
   // we assume user isn't connected
   let button = 'Sync'
+
+  const banner = React.createRef()
 
   // but if they are
   if (context.acc?.address) {
@@ -63,9 +81,25 @@ export const Header = () => {
     }
   }
 
+  const isBannerVisible = () => {
+    console.log(banner)
+    return true
+  }
+
   return (
     <>
-      <header className={styles.container}>
+      <EventBanner
+        ref={(r) => {
+          console.log('received ref', r)
+          this.banner = r
+        }}
+      />
+      <h1 style={{ color: 'black', zIndex: 9999 }}> {y}</h1>
+      <header
+        className={`${styles.container} ${
+          isBannerVisible() ? styles.banner_on : ''
+        }`}
+      >
         <div className={styles.content}>
           <Button onClick={() => handleRoute('/')}>
             <div className={styles.logo}>

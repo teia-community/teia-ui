@@ -4,12 +4,16 @@
 .outer__container {
 }
 
+.banner_on {
+  padding-top: 5em;
+}
 .container {
   position: fixed;
   width: 100%;
-  z-index: 1000;
-  height: 60px;
-  padding: 0 #{$mobile-padding};
+  z-index: 200;
+  // height: 3em;
+  padding-bottom: 1em;
+  // padding: 0 #{$mobile-padding};
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
@@ -19,7 +23,7 @@
   justify-content: center;
 
   @include respond-to('desktop') {
-    padding: 0;
+    // padding: 0;
   }
 
   .content {
@@ -86,7 +90,7 @@
   color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
-  z-index: 900;
+  z-index: 400;
 
   .content {
     margin-top: 75px;

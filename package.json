@@ -37,6 +37,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.0",
     "react-select": "^5.3.2",
+    "react-use": "^17.4.0",
     "read-json-lines-sync": "^2.1.7",
     "screenfull": "^5.1.0"
   },

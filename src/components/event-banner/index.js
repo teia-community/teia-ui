@@ -1,11 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './styles.module.scss'
+import { BANNER_URL } from '@constants'
+import Markdown from 'markdown-to-jsx'
 
-export const EventBanner = () => {
+export const EventBanner = React.forwardRef((props, ref) => {
+  const [banner, setBanner] = useState(null)
+
+  useEffect(() => {
+    async function getBanner() {
+      const response = await fetch(BANNER_URL)
+      const text = await response.text()
+      setBanner(text)
+    }
+    getBanner()
+  }, [])
   return (
-    <div className={styles.event__banner}>
+    <div ref={ref} className={styles.event__banner}>
       <div className={styles.content}>
-        <h1>
+        <Markdown
+          options={{
+            overrides: {
+              hr: {
+                props: {
+                  className: styles.spacer,
+                },
+              },
+            },
+          }}
+          className={styles.content}
+        >
+          {banner || ''}
+        </Markdown>
+        {/* <h1>
           The TEIA community has moved to teia.art!{' '}
           <a
             className={styles.desktop__link}
@@ -13,11 +39,8 @@ export const EventBanner = () => {
           >
             Learn more
           </a>
-        </h1>
-        <a href="https://teia.art/" className={styles.content__button}>
-          teia.art
-        </a>
+        </h1> */}
       </div>
     </div>
   )
-}
+})
