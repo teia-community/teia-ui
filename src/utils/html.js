@@ -55,6 +55,7 @@ export async function unzipBuffer(buffer) {
     if (filename === 'index.html') {
       const matchRoot = entry.path.match(/.*\//) || '/'
       if (matchRoot.length > 0) {
+        console.debug('Found root dir: ', matchRoot[0])
         rootDir = matchRoot[0]
       }
       break
@@ -70,10 +71,14 @@ export async function unzipBuffer(buffer) {
   // Create files map
   const files = {}
   entries.forEach((entry, index) => {
-    const relPath = entry.path.replace(`${rootDir}`, '')
+    const relPath =
+      rootDir === '/' ? entry.path : entry.path.replace(`${rootDir}`, '')
     console.debug('Entry relPath: ', relPath)
     let type
-    if (entry.buffer.length === 0 && entry.path.endsWith('/')) {
+    if (
+      entry.buffer.length === 0 &&
+      (entry.path.endsWith('/') || !entry.path)
+    ) {
       type = MIMETYPE.DIRECTORY
     } else {
       type = mime.lookup(entry.path)
