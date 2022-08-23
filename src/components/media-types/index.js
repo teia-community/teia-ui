@@ -61,6 +61,11 @@ export const renderMediaType = ({
 }) => {
   const parsedArtifactUri = artifactUri ? HashToURL(artifactUri) : ''
   const parsedDisplayUri = displayUri ? HashToURL(displayUri) : ''
+  const parsedArtifactHtmlUri = artifactUri
+    ? HashToURL(artifactUri, 'IPFS')
+    : ''
+  const parsedDisplayHtmlUri = displayUri ? HashToURL(displayUri, 'IPFS') : ''
+
   switch (mimeType) {
     /* IMAGES */
     case MIMETYPE.BMP:
@@ -87,8 +92,8 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <VectorComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
+            artifactUri={parsedArtifactHtmlUri}
+            displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
             preview={preview}
             creator={creator}
@@ -107,8 +112,8 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <HTMLComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
+            artifactUri={parsedArtifactHtmlUri}
+            displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
             creator={creator}
             objkt={objkt}
