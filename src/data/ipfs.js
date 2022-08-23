@@ -323,6 +323,7 @@ async function buildMetadataFile({
     shouldPreferSymbol: false,
     rights,
     date: new Date().toISOString(),
+    mintingTool: 'https://teia.art/mint',
   }
   if (accessibility) metadata.accessibility = accessibility
   if (contentRating) metadata.contentRating = contentRating
