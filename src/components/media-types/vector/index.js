@@ -47,7 +47,7 @@ export const VectorComponent = ({
     return (
       <div className={classes}>
         <iframe
-          title="teia SVG renderer"
+          title={`SVG object ${objkt}`}
           src={path}
           sandbox="allow-scripts"
           scrolling="no"
@@ -59,8 +59,7 @@ export const VectorComponent = ({
       <div className={styles.container + ' vector-container'}>
         <iframe
           className={styles.vector + ' vector'}
-          title="teia SVG renderer"
-          src={path}
+          title={`SVG object ${objkt}`}
           sandbox="allow-scripts"
           scrolling="no"
           onLoad={

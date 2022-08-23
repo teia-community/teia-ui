@@ -14,7 +14,9 @@ export const Page = ({ title = '', children = null, large }) => {
       <Helmet>
         {title !== '' ? <title>{title} - teia</title> : <title>teia</title>}
       </Helmet>
-      <VisuallyHidden as="h1">{title}</VisuallyHidden>
+      <VisuallyHidden as="h1">
+        {title !== '' ? `${title} - teia` : 'teia'}
+      </VisuallyHidden>
       {children}
     </main>
   )

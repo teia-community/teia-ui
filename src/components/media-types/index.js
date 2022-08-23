@@ -83,6 +83,7 @@ export const renderMediaType = ({
             onDetailView={interactive || mimeType === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
+            objkt={objkt}
           />
         </Container>
       )
@@ -137,6 +138,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            objkt={objkt}
           />
         </Container>
       )
@@ -152,6 +154,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            objkt={objkt}
           />
         </Container>
       )
@@ -170,6 +173,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            objkt={objkt}
           />
         </Container>
       )
@@ -184,6 +188,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
+            objkt={objkt}
           />
         </Container>
       )
@@ -196,6 +201,7 @@ export const renderMediaType = ({
           artifactUri={parsedArtifactUri}
           displayUri={parsedDisplayUri}
           displayView={displayView}
+          objkt={objkt}
         />
       )
 

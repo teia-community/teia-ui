@@ -59,6 +59,7 @@ async function fetchGLB(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -87,6 +88,7 @@ async function fetchInteractive(offset) {
           address
         }
         content_rating
+        title
       }
     }
   `,
@@ -115,6 +117,7 @@ async function fetchVideo(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -142,6 +145,7 @@ async function fetchGifs(offset) {
           address
         }
         content_rating
+        title
       }
     }
   `,
@@ -171,6 +175,7 @@ async function fetchMusic(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -205,6 +210,7 @@ async function fetchSales(offset) {
           address
         }
         content_rating
+        title
       }
     }
   }`,
@@ -272,6 +278,7 @@ async function fetchTag(tag, offset) {
       name
     }
     content_rating
+    title
   }
 }`,
     'ObjktsByTag',

@@ -13,7 +13,6 @@ export const FeedItem = (props) => {
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${props.id}`}>
-        <VisuallyHidden>{`Go to OBJKT: ${props.id}`}</VisuallyHidden>
         <div
           className={`${styles.container} ${
             nsfwList.includes(props.id) ||
@@ -28,6 +27,7 @@ export const FeedItem = (props) => {
             displayUri: props.display_uri,
             creator: props.creator_id,
             objkt: String(props.id),
+            title: props.title,
             displayView: true,
           })}
         </div>
