@@ -101,6 +101,7 @@ export const Container = ({
             onKeyPress={toggleFullScreen}
             tabIndex="0"
             role="button"
+            aria-label="fullscreen"
           >
             {context.fullscreen ? (
               <svg viewBox="0 0 14 14">
