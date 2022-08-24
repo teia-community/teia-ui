@@ -26,7 +26,7 @@ export const FeedItem = (props) => {
             artifactUri: props.artifact_uri,
             displayUri: props.display_uri,
             creator: props.creator_id,
-            objkt: String(props.id),
+            objktID: String(props.id),
             title: props.title,
             displayView: true,
           })}

@@ -49,7 +49,7 @@ export const renderMediaType = ({
   creator,
 
   // the objkt id so interactive NFT's can call API's
-  objkt,
+  objktID,
 
   // if the NFT is on the objkt detail page this value is true. otherwise is false
   interactive = false,
@@ -83,7 +83,7 @@ export const renderMediaType = ({
             onDetailView={interactive || mimeType === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
-            objkt={objkt}
+            objktID={objktID}
           />
         </Container>
       )
@@ -98,7 +98,7 @@ export const renderMediaType = ({
             previewUri={previewUri}
             preview={preview}
             creator={creator}
-            objkt={objkt}
+            objktID={objktID}
             onDetailView={interactive}
             displayView={displayView}
           />
@@ -117,7 +117,7 @@ export const renderMediaType = ({
             displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
             creator={creator}
-            objkt={objkt}
+            objktID={objktID}
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
@@ -138,7 +138,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objkt={objkt}
+            objktID={objktID}
           />
         </Container>
       )
@@ -154,7 +154,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objkt={objkt}
+            objktID={objktID}
           />
         </Container>
       )
@@ -173,7 +173,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objkt={objkt}
+            objktID={objktID}
           />
         </Container>
       )
@@ -188,7 +188,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objkt={objkt}
+            objktID={objktID}
           />
         </Container>
       )
@@ -201,7 +201,7 @@ export const renderMediaType = ({
           artifactUri={parsedArtifactUri}
           displayUri={parsedDisplayUri}
           displayView={displayView}
-          objkt={objkt}
+          objktID={objktID}
         />
       )
 

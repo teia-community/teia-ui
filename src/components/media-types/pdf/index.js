@@ -11,7 +11,7 @@ export const PdfComponent = ({
   previewUri,
   preview,
   onDetailView,
-  objkt,
+  objktID,
 }) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
@@ -42,7 +42,7 @@ export const PdfComponent = ({
         file={preview ? previewUri : artifactUri}
         onLoadSuccess={onDocumentLoadSuccess}
         onItemClick={onItemClick}
-        title={`PDF object ${objkt}`}
+        title={`PDF object ${objktID}`}
       >
         <Page pageNumber={pageNumber} />
         {onDetailView && (

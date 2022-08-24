@@ -8,7 +8,7 @@ export const VectorComponent = ({
   artifactUri,
   previewUri,
   creator,
-  objkt,
+  objktID,
   onDetailView,
   preview,
   displayView,
@@ -31,8 +31,8 @@ export const VectorComponent = ({
     _viewer_ = context.address.address
   }
 
-  if (objkt) {
-    _objkt_ = objkt
+  if (objktID) {
+    _objkt_ = objktID
   }
 
   let path
@@ -47,7 +47,7 @@ export const VectorComponent = ({
     return (
       <div className={classes}>
         <iframe
-          title={`SVG object ${objkt}`}
+          title={`SVG object ${objktID}`}
           src={path}
           sandbox="allow-scripts"
           scrolling="no"
@@ -59,7 +59,7 @@ export const VectorComponent = ({
       <div className={styles.container + ' vector-container'}>
         <iframe
           className={styles.vector + ' vector'}
-          title={`SVG object ${objkt}`}
+          title={`SVG object ${objktID}`}
           sandbox="allow-scripts"
           scrolling="no"
           onLoad={

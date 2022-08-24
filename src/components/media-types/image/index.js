@@ -9,7 +9,7 @@ export const ImageComponent = ({
   onDetailView,
   preview,
   displayView,
-  objkt,
+  objktID,
 }) => {
   let src = onDetailView ? artifactUri : displayUri || artifactUri
 
@@ -22,7 +22,7 @@ export const ImageComponent = ({
       <LazyLoadImage
         className={styles.image}
         src={src}
-        alt={`object ${objkt} image`}
+        alt={`object ${objktID} image`}
       />
     </div>
   ) : (
@@ -31,7 +31,7 @@ export const ImageComponent = ({
         <LazyLoadImage
           className={styles.style}
           src={src}
-          alt={`object ${objkt} image`}
+          alt={`object ${objktID} image`}
         />
       </div>
     </div>

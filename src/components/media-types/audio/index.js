@@ -10,7 +10,7 @@ export const AudioComponent = ({
   previewUri,
   preview,
   displayView,
-  objkt,
+  objktID,
 }) => {
   const visualiser = useRef()
   const [userTouched, setUserTouched] = useState(false)
@@ -46,7 +46,7 @@ export const AudioComponent = ({
         <div>
           <img
             style={{ height: '50vh', display: 'block', margin: '0 auto' }}
-            alt={`cover for audio object ${objkt}`}
+            alt={`cover for audio object ${objktID}`}
             src={displayUri}
           />
           <br />
@@ -80,7 +80,7 @@ export const AudioComponent = ({
             <img
               style={{ width: '100%' }}
               src={displayUri}
-              alt={`cover for audio object ${objkt}`}
+              alt={`cover for audio object ${objktID}`}
             />
             <br />
             <audio

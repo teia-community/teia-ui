@@ -7,7 +7,7 @@ export const GLBComponent = ({
   preview,
   onDetailView,
   displayView,
-  objkt,
+  objktID,
 }) => {
   const ref = useRef()
   const [width, setWidth] = useState('100px')
@@ -49,7 +49,7 @@ export const GLBComponent = ({
         <model-viewer
           {...props}
           style={{ width, height }}
-          title={`GLB object ${objkt}`}
+          title={`GLB object ${objktID}`}
         >
           <button slot="ar-button" className={styles.arButton}>
             AR
@@ -60,7 +60,7 @@ export const GLBComponent = ({
   } else {
     return (
       <div>
-        <model-viewer {...props} title={`GLB object ${objkt}`}>
+        <model-viewer {...props} title={`GLB object ${objktID}`}>
           <button slot="ar-button" className={styles.arButton}>
             AR
           </button>

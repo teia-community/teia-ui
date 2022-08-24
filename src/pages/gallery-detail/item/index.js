@@ -96,7 +96,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
                     artifactUri: data.token_info.artifactUri,
                     displayUri: data.token_info.displayUri,
                     creator: data.token_info.creators[0],
-                    objkt: data.token_id,
+                    objktID: data.token_id,
                     displayView: true,
                   })}
                   {/* <div className={styles.number}>OBJKT#{objkt}</div> */}

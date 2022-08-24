@@ -134,7 +134,7 @@ export const GalleryDetail = () => {
                             artifactUri: e.artifact_uri,
                             displayUri: e.display_uri,
                             creator: '',
-                            objkt: e.id,
+                            objktID: e.id,
                             interactive: false,
                             displayView: true,
                           })}
