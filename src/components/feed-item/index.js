@@ -4,9 +4,8 @@ import { Padding } from '../layout'
 import { Button } from '../button'
 import { ItemInfo } from '../item-info'
 import { renderMediaType } from '../media-types'
-import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
-import { getNsfwList } from '@constants'
+import { getNsfwList, METADATA_CONTENT_RATING_MATURE } from '@constants'
 
 export const FeedItem = (props) => {
   const nsfwList = getNsfwList()
@@ -16,7 +15,8 @@ export const FeedItem = (props) => {
         <div
           className={`${styles.container} ${
             nsfwList.includes(props.id) ||
-            (props.content_rating && props.content_rating === 'mature')
+            (props.content_rating &&
+              props.content_rating === METADATA_CONTENT_RATING_MATURE)
               ? styles.blur
               : ''
           }`}

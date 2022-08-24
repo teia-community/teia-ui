@@ -357,3 +357,5 @@ export const LANGUAGES_OPTIONS = Object.keys(LANGUAGES).map((k) => {
     value: k,
   }
 })
+
+export const METADATA_CONTENT_RATING_MATURE = 'mature'

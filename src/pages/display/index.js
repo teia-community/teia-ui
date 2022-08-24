@@ -638,6 +638,11 @@ export default class Display extends Component {
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     <a
                       onClick={() => this.context.batch_claim(this.state.claim)}
+                      onKeyPress={() =>
+                        this.context.batch_claim(this.state.claim)
+                      }
+                      role="button"
+                      tabIndex="0"
                     >
                       <Primary>
                         {this.state.hdao +

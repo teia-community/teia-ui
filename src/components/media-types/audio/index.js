@@ -60,7 +60,13 @@ export const AudioComponent = ({
     <img src={displayUri} alt="album cover" /> */}
         {false && <Visualiser ref={visualiser} src={artifactUri} />}
         {false && (
-          <div className={styles.icons} onClick={togglePlay}>
+          <div
+            className={styles.icons}
+            onClick={togglePlay}
+            onKeyPress={togglePlay}
+            tabIndex="0"
+            role="button"
+          >
             {play ? <PauseIcon /> : <PlayIcon />}
           </div>
         )}
@@ -87,7 +93,13 @@ export const AudioComponent = ({
         <img src={displayUri} alt="album cover" /> */}
           {false && <Visualiser ref={visualiser} src={artifactUri} />}
           {false && (
-            <div className={styles.icons} onClick={togglePlay}>
+            <div
+              className={styles.icons}
+              onClick={togglePlay}
+              onKeyPress={togglePlay}
+              tabIndex="0"
+              role="button"
+            >
               {play ? <PauseIcon /> : <PlayIcon />}
             </div>
           )}

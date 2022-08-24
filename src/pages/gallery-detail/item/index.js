@@ -81,7 +81,13 @@ export const Item = ({ objkt, onClick, minimal }) => {
     <div className={styles.container} ref={ref}>
       <>
         {data ? (
-          <div key={`item-${objkt}`} onClick={() => onClick(data)}>
+          <div
+            key={`item-${objkt}`}
+            onClick={() => onClick(data)}
+            onKeyPress={() => onClick(data)}
+            role="button"
+            tabIndex="0"
+          >
             {(inView || shown) && (
               <>
                 <div className={styles.image} style={{ pointerEvents: 'none' }}>

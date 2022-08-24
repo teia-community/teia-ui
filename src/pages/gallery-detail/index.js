@@ -153,9 +153,18 @@ export const GalleryDetail = () => {
                 <div
                   className={styles.background}
                   onClick={() => showModal(false)}
+                  onKeyPress={() => showModal(false)}
+                  role="button"
+                  tabIndex="0"
                 />
                 <ItemModal info={modal} />
-                <div className={styles.close} onClick={() => showModal(false)}>
+                <div
+                  className={styles.close}
+                  onClick={() => showModal(false)}
+                  onKeyPress={() => showModal(false)}
+                  role="button"
+                  tabIndex="0"
+                >
                   CLOSE X
                 </div>
               </div>
