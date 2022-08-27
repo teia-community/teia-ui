@@ -14,6 +14,11 @@ import GenerativeIcon from '@icons/generative'
 
 const uid = Math.round(Math.random() * 100000000).toString()
 
+const allowed_features =
+  'accelerometer; camera; fullscreen; gyroscope; microphone; midi *; xr-spatial-tracking;'
+const sandbox_features =
+  'allow-scripts allow-same-origin allow-modals allow-pointer-lock'
+
 export const HTMLComponent = (props) => {
   const {
     artifactUri,
@@ -121,8 +126,8 @@ export const HTMLComponent = (props) => {
             ref={iframeRef}
             title={`interactive object ${objktID}`}
             src={`https://teia-community.github.io/teia-ui/gh-pages/html-preview/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin allow-modals allow-pointer-lock"
-            allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+            sandbox={sandbox_features}
+            allow={allowed_features}
           />
         </div>
       )
@@ -157,8 +162,8 @@ export const HTMLComponent = (props) => {
             className={styles.html + ' zip-embed'}
             title={`interactive object ${objktID}`}
             src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-            allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+            sandbox={sandbox_features}
+            allow={allowed_features}
           />
         </div>
       )
@@ -172,8 +177,8 @@ export const HTMLComponent = (props) => {
           className={styles.html}
           title={`interactive object ${objktID}`}
           src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-          allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+          sandbox={sandbox_features}
+          allow={allowed_features}
         />
       </div>
     )
