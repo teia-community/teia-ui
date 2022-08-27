@@ -30,7 +30,13 @@ export const MediaToolbar = (props) => {
     <div className={styles.container}>
       {isHtml && (
         <div>
-          <div className={styles.button} onClick={toggle}>
+          <div
+            className={styles.button}
+            onClick={toggle}
+            onKeyPress={toggle}
+            role="button"
+            tabIndex="0"
+          >
             i
           </div>
 

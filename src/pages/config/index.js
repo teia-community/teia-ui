@@ -312,7 +312,7 @@ export class Config extends Component {
           <Identicon address={this.state.address} logo={this.state.identicon} />
 
           <div style={{ height: '20px' }} />
-          <input type="file" onChange={this.onFileChange} />
+          <input type="file" onChange={this.onFileChange} title="avatar file" />
           <div style={{ height: '20px' }} />
           <Padding>
             <Input

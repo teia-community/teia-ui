@@ -245,7 +245,7 @@ export const ObjktDisplay = () => {
                   artifactUri: nft.artifact_uri,
                   displayUri: nft.display_uri,
                   creator: nft.creator,
-                  objkt: nft.id,
+                  objktID: nft.id,
                   interactive: true,
                   displayView: false,
                 })}

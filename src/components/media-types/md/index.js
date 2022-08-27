@@ -12,6 +12,7 @@ export const MD = ({
   artifactUri,
   previewUri,
   preview,
+  objktID,
 }) => {
   const [content, setContent] = React.useState('')
 
@@ -39,7 +40,7 @@ export const MD = ({
   return displayView ? (
     <div className={styles.container}>
       <div className={styles.preview}>
-        <img src={displayUri} alt="display" />
+        <img src={displayUri} alt={`cover for markdown object ${objktID}`} />
         <div className={styles.button}>
           <Button>
             <VisuallyHidden>View</VisuallyHidden>
