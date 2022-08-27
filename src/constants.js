@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 export const BANNER_URL =
-  'https://raw.githubusercontent.com/teia-community/teia-status/main/banner.md'
+  'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
 let LANGUAGE = {}
 export const setLanguage = (data) => (LANGUAGE = data)
