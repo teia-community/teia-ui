@@ -326,9 +326,6 @@ export class Config extends Component {
                 onChange={this.handleChange}
                 placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
                 label="Username"
-                defaultValue={
-                  this.context.subjktInfo ? this.context.subjktInfo.name : ''
-                }
                 pattern="^[a-z0-9-._]*$"
               />
               <Input
