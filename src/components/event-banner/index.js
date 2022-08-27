@@ -16,22 +16,22 @@ export const EventBanner = React.forwardRef((props, ref) => {
   }, [])
   return (
     <div ref={ref} className={styles.event__banner}>
-      <div className={styles.content}>
-        <Markdown
-          options={{
-            overrides: {
-              hr: {
-                props: {
-                  className: styles.spacer,
-                },
+      <Markdown
+        options={{
+          forceBlock: true,
+          overrides: {
+            hr: {
+              props: {
+                className: styles.spacer,
               },
             },
-          }}
-          className={styles.content}
-        >
-          {banner || ''}
-        </Markdown>
-        {/* <h1>
+          },
+        }}
+        className={styles.content}
+      >
+        {banner || ''}
+      </Markdown>
+      {/* <h1>
           The TEIA community has moved to teia.art!{' '}
           <a
             className={styles.desktop__link}
@@ -40,7 +40,6 @@ export const EventBanner = React.forwardRef((props, ref) => {
             Learn more
           </a>
         </h1> */}
-      </div>
     </div>
   )
 })

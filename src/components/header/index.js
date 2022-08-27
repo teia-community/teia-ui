@@ -48,8 +48,6 @@ export const Header = () => {
   // we assume user isn't connected
   let button = 'Sync'
 
-  const banner = React.createRef()
-
   // but if they are
   if (context.acc?.address) {
     // is menu closed?
@@ -82,19 +80,16 @@ export const Header = () => {
   }
 
   const isBannerVisible = () => {
-    console.log(banner)
+    if (y > 50) {
+      return false
+    }
     return true
   }
 
   return (
     <>
-      <EventBanner
-        ref={(r) => {
-          console.log('received ref', r)
-          this.banner = r
-        }}
-      />
-      <h1 style={{ color: 'black', zIndex: 9999 }}> {y}</h1>
+      <EventBanner />
+
       <header
         className={`${styles.container} ${
           isBannerVisible() ? styles.banner_on : ''
