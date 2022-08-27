@@ -116,7 +116,6 @@ export const CollaboratorRow = ({
               onChange={(event) => _update('address', event.target.value)}
               placeholder={placeholderText}
               value={address || ''}
-              autoFocus={!address}
             />
           </label>
         </div>
