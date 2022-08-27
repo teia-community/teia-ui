@@ -196,7 +196,7 @@ async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
   query sales {
-    trade(order_by: {timestamp: desc}, limit : ${FETCH_BATCH}, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
+    trade(order_by: {timestamp: desc}, limit : ${FETCH_BATCH}, offset : ${offset}) {
       timestamp
       swap {
         price
