@@ -81,7 +81,13 @@ export const Item = ({ objkt, onClick, minimal }) => {
     <div className={styles.container} ref={ref}>
       <>
         {data ? (
-          <div key={`item-${objkt}`} onClick={() => onClick(data)}>
+          <div
+            key={`item-${objkt}`}
+            onClick={() => onClick(data)}
+            onKeyPress={() => onClick(data)}
+            role="button"
+            tabIndex="0"
+          >
             {(inView || shown) && (
               <>
                 <div className={styles.image} style={{ pointerEvents: 'none' }}>
@@ -90,7 +96,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
                     artifactUri: data.token_info.artifactUri,
                     displayUri: data.token_info.displayUri,
                     creator: data.token_info.creators[0],
-                    objkt: data.token_id,
+                    objktID: data.token_id,
                     displayView: true,
                   })}
                   {/* <div className={styles.number}>OBJKT#{objkt}</div> */}

@@ -61,6 +61,7 @@ async function fetchGLB(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -89,6 +90,7 @@ async function fetchInteractive(offset) {
           address
         }
         content_rating
+        title
       }
     }
   `,
@@ -117,6 +119,7 @@ async function fetchVideo(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -144,6 +147,7 @@ async function fetchGifs(offset) {
           address
         }
         content_rating
+        title
       }
     }
   `,
@@ -173,6 +177,7 @@ async function fetchMusic(offset) {
         name
       }
       content_rating
+      title
     }
   }
   `,
@@ -207,6 +212,7 @@ async function fetchSales(offset) {
           address
         }
         content_rating
+        title
       }
     }
   }`,
@@ -274,6 +280,7 @@ async function fetchTag(tag, offset) {
       name
     }
     content_rating
+    title
   }
 }`,
     'ObjktsByTag',
@@ -311,15 +318,15 @@ export class Search extends Component {
     flag: false,
     lastId: undefined,
     tags: [
-      { id: 11, value: '🇺🇦 ukraine' },
-      { id: 12, value: '🏳️‍🌈 tezospride' },
+      { id: 11, value: '🇺🇦 ukraine', label: 'ukraine' },
+      { id: 12, value: '🏳️‍🌈 tezospride', label: 'tezos pride' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
       { id: 3, value: 'music' },
       { id: 12, value: 'video' },
-      { id: 4, value: 'html/svg' }, // algorithimc?
+      { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
       { id: 5, value: 'gif' },
-      { id: 6, value: 'new OBJKTs' },
+      { id: 6, value: 'new OBJKTs', label: 'new objects' },
       { id: 7, value: 'recent sales' },
     ],
     select: [],
@@ -539,6 +546,7 @@ export class Search extends Component {
                       onClick={() => {
                         this.update(e.value, true)
                       }}
+                      aria-label={e.label ? e.label : e.value}
                     >
                       {e.value}{' '}
                     </a>

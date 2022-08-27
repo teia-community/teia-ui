@@ -31,6 +31,7 @@ export const Header = () => {
 
   // we assume user isn't connected
   let button = 'Sync'
+  let accountPreview = ''
 
   // but if they are
   if (context.acc?.address) {
@@ -40,6 +41,10 @@ export const Header = () => {
         ? ` (${context.proxyName || walletPreview(context.proxyAddress)})`
         : ''
       button = walletPreview(context.acc.address) + proxyAddress
+      accountPreview = button
+        .slice(button.length - 5, button.length)
+        .split('')
+        .join(' ')
     } else {
       // menu is open
       button = 'Unsync'
@@ -95,7 +100,10 @@ export const Header = () => {
             )}
 
             <Button onClick={handleSyncUnsync} secondary>
-              <Primary>{button}</Primary> {/* Main address display here */}
+              <Primary label={`wallet account ending in ${accountPreview}`}>
+                {button}
+              </Primary>{' '}
+              {/* Main address display here */}
             </Button>
             <Status />
             <Button onClick={context.toogleNavbar} secondary>

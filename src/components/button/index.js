@@ -47,22 +47,31 @@ export const Button = ({
   )
 }
 
-export const Primary = ({ children = null, selected, menu, left }) => {
+export const Primary = (props) => {
+  //{ children = null, selected, menu, left, label = '' }) => {
   const classes = classnames({
     [styles.primary]: true,
-    [styles.selected]: selected,
-    [styles.menu]: menu,
-    [styles.left]: left,
+    [styles.selected]: props.selected,
+    [styles.menu]: props.menu,
+    [styles.left]: props.left,
   })
-  return <div className={classes}>{children}</div>
+  return (
+    <div className={classes} role="button" aria-label={props.label}>
+      {props.children}
+    </div>
+  )
 }
 
-export const Secondary = ({ children = null, selected }) => {
+export const Secondary = ({ children = null, selected, label = '' }) => {
   const classes = classnames({
     [styles.secondary]: true,
     [styles.selected]: selected,
   })
-  return <div className={classes}>{children}</div>
+  return (
+    <div className={classes} role="button" aria-label={label}>
+      {children}
+    </div>
+  )
 }
 
 export const Purchase = ({ children = null, selected }) => {

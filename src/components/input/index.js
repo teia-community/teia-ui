@@ -18,7 +18,6 @@ export const Input = ({
   defaultValue,
   pattern,
   onKeyPress,
-  autoFocus = false,
 }) => (
   <div className={styles.container}>
     <label htmlFor={name}>
@@ -37,7 +36,6 @@ export const Input = ({
         pattern={pattern}
         onWheel={onWheel}
         onKeyPress={onKeyPress}
-        autoFocus={autoFocus}
         data-form-type="other"
       />
     </label>
@@ -63,7 +61,6 @@ export const Checkbox = ({
       onChange={onChange}
       onBlur={onBlur}
       onWheel={onWheel}
-      autoFocus={autoFocus}
       checked={
         checked === null ? false : checked === undefined ? false : checked
       }
