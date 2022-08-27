@@ -1,3 +1,6 @@
+@import '../../styles/variables.scss';
+@import '../../styles/layout.scss';
+
 .event__banner {
   display: flex;
   justify-content: center;
@@ -29,7 +32,12 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  width: 50%;
+  width: 100%;
+
+  @include respond-to('desktop') {
+    width: 50%;
+    margin: 0 auto;
+  }
 
   a {
     color: #fff;

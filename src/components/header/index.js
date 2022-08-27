@@ -123,7 +123,12 @@ export const Header = () => {
 
       <AnimatePresence>
         {!context.collapsed && (
-          <motion.div className={styles.menu} {...fadeIn()}>
+          <motion.div
+            className={`${styles.menu} ${
+              isBannerVisible() ? styles.banner_on : ''
+            }`}
+            {...fadeIn()}
+          >
             <Container>
               <Padding>
                 <nav className={styles.content}>
