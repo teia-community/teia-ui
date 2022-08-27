@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
@@ -16,18 +16,10 @@ import { getItem, setItem } from '../../utils/storage'
 import { EventBanner } from '@components/event-banner/index'
 
 import { useWindowScroll } from 'react-use'
-/* import { BeaconWallet } from '@taquito/beacon-wallet'
-
-const wallet = new BeaconWallet({
-  name: 'hicetnunc.xyz',
-  preferredNetwork: 'mainnet',
-}) */
 
 export const Header = () => {
   const history = useHistory()
   const context = useContext(HicetnuncContext)
-
-  // const [scroll, setScroll] = useState(0.0)
 
   const { y } = useWindowScroll()
 
@@ -35,14 +27,6 @@ export const Header = () => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
     context.setLogo()
-
-    // Scroll
-    // updateDimensions();
-    // window.addEventListener('scroll', updateDimensions);
-
-    // return () =>{
-    //   window.removeEventListener('scroll', updateDimensions);
-    // }
   }, [])
 
   // we assume user isn't connected
@@ -102,12 +86,12 @@ export const Header = () => {
               {true && context.theme !== 'unset' && (
                 <img
                   src={`${process.env.REACT_APP_LOGOS}/logos${
-                    context.logo.themable ? '/' + context.theme : ''
+                    context.logo.themable ? `/${context.theme}` : ''
                   }${
-                    context.logo.collection ? '/' + context.logo.collection : ''
+                    context.logo.collection ? `/${context.logo.collection}` : ''
                   }/${context.logo.name}`}
                   alt="teia-logo"
-                ></img>
+                />
               )}
               {/* PRIDE LOGO */}
               {false && <img src="/hen-pride.gif" alt="pride 2021" />}
