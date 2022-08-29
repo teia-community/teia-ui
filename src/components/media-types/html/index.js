@@ -14,13 +14,18 @@ import GenerativeIcon from '@icons/generative'
 
 const uid = Math.round(Math.random() * 100000000).toString()
 
+const allowed_features =
+  'accelerometer; camera; fullscreen; gyroscope; microphone; midi *; xr-spatial-tracking;'
+const sandbox_features =
+  'allow-scripts allow-same-origin allow-modals allow-pointer-lock'
+
 export const HTMLComponent = (props) => {
   const {
     artifactUri,
     displayUri,
     previewUri,
     creator,
-    objkt,
+    objktID,
     onDetailView,
     preview,
     displayView,
@@ -39,8 +44,8 @@ export const HTMLComponent = (props) => {
     _viewer_ = context.address.address
   }
 
-  if (objkt) {
-    _objectId_ = String(objkt)
+  if (objktID) {
+    _objectId_ = String(objktID)
   }
 
   // preview
@@ -119,10 +124,10 @@ export const HTMLComponent = (props) => {
         <div className={classes}>
           <iframe
             ref={iframeRef}
-            title="html-zip-embed"
+            title={`interactive object ${objktID}`}
             src={`https://teia-community.github.io/teia-ui/gh-pages/html-preview/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin allow-modals allow-pointer-lock"
-            allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+            sandbox={sandbox_features}
+            allow={allowed_features}
           />
         </div>
       )
@@ -137,7 +142,7 @@ export const HTMLComponent = (props) => {
     return (
       <div className={classes}>
         <div className={styles.preview}>
-          <img src={displayUri} alt="display" />
+          <img src={displayUri} alt={`interactive object ${objktID}`} />
           <div className={styles.button}>
             <Button>
               <VisuallyHidden>View</VisuallyHidden>
@@ -155,10 +160,10 @@ export const HTMLComponent = (props) => {
         <div>
           <iframe
             className={styles.html + ' zip-embed'}
-            title="html-embed"
+            title={`interactive object ${objktID}`}
             src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-            allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+            sandbox={sandbox_features}
+            allow={allowed_features}
           />
         </div>
       )
@@ -170,10 +175,10 @@ export const HTMLComponent = (props) => {
       <div>
         <iframe
           className={styles.html}
-          title="html-embed"
+          title={`interactive object ${objktID}`}
           src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-          allow="accelerometer; camera; gyroscope; microphone; xr-spatial-tracking;"
+          sandbox={sandbox_features}
+          allow={allowed_features}
         />
       </div>
     )

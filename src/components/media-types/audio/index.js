@@ -10,6 +10,7 @@ export const AudioComponent = ({
   previewUri,
   preview,
   displayView,
+  objktID,
 }) => {
   const visualiser = useRef()
   const [userTouched, setUserTouched] = useState(false)
@@ -45,7 +46,7 @@ export const AudioComponent = ({
         <div>
           <img
             style={{ height: '50vh', display: 'block', margin: '0 auto' }}
-            alt=""
+            alt={`cover for audio object ${objktID}`}
             src={displayUri}
           />
           <br />
@@ -59,7 +60,13 @@ export const AudioComponent = ({
     <img src={displayUri} alt="album cover" /> */}
         {false && <Visualiser ref={visualiser} src={artifactUri} />}
         {false && (
-          <div className={styles.icons} onClick={togglePlay}>
+          <div
+            className={styles.icons}
+            onClick={togglePlay}
+            onKeyPress={togglePlay}
+            tabIndex="0"
+            role="button"
+          >
             {play ? <PauseIcon /> : <PlayIcon />}
           </div>
         )}
@@ -70,7 +77,11 @@ export const AudioComponent = ({
       <>
         <div>
           <span>
-            <img style={{ width: '100%' }} src={displayUri} alt="" />
+            <img
+              style={{ width: '100%' }}
+              src={displayUri}
+              alt={`cover for audio object ${objktID}`}
+            />
             <br />
             <audio
               style={{ width: '100%' }}
@@ -82,7 +93,13 @@ export const AudioComponent = ({
         <img src={displayUri} alt="album cover" /> */}
           {false && <Visualiser ref={visualiser} src={artifactUri} />}
           {false && (
-            <div className={styles.icons} onClick={togglePlay}>
+            <div
+              className={styles.icons}
+              onClick={togglePlay}
+              onKeyPress={togglePlay}
+              tabIndex="0"
+              role="button"
+            >
               {play ? <PauseIcon /> : <PlayIcon />}
             </div>
           )}

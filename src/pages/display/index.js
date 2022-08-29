@@ -14,7 +14,12 @@ import { ResponsiveMasonry } from '@components/responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
-import { getWalletBlockList, getUnderReviewList, getNsfwList } from '@constants'
+import {
+  getWalletBlockList,
+  getUnderReviewList,
+  getNsfwList,
+  METADATA_CONTENT_RATING_MATURE,
+} from '@constants'
 import { IconCache } from '@utils/with-icon'
 import { CIDToURL } from '@utils'
 const axios = require('axios')
@@ -638,6 +643,11 @@ export default class Display extends Component {
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     <a
                       onClick={() => this.context.batch_claim(this.state.claim)}
+                      onKeyPress={() =>
+                        this.context.batch_claim(this.state.claim)
+                      }
+                      role="button"
+                      tabIndex="0"
                     >
                       <Primary>
                         {this.state.hdao +
@@ -1011,7 +1021,8 @@ export default class Display extends Component {
                                 !urlParameters.has('show') &&
                                 (nsfwList.includes(nft.id) ||
                                   (nft.content_rating &&
-                                    nft.content_rating === 'mature'))
+                                    nft.content_rating ===
+                                      METADATA_CONTENT_RATING_MATURE))
                                   ? styles.blur
                                   : ''
                               }`}

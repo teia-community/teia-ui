@@ -21,7 +21,9 @@ export const CollabIssuerInfo = ({ creator }) => {
         className={styles.issuerBtn}
         href={path}
         onMouseOver={() => setShowCollabSummary(true)}
+        onFocus={() => setShowCollabSummary(true)}
         onMouseOut={() => setShowCollabSummary(false)}
+        onBlur={() => setShowCollabSummary(false)}
       >
         <Primary>{name !== '' ? name : walletPreview(address)}</Primary>
       </a>

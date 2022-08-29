@@ -27,6 +27,7 @@ import {
   LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
   getIgnoreUriList,
+  METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -190,7 +191,7 @@ export const Mint = () => {
         }
       : null
 
-    const contentRating = nsfw ? 'mature' : null
+    const contentRating = nsfw ? METADATA_CONTENT_RATING_MATURE : null
 
     const getImageDimensions = async (file) => {
       return await new Promise((resolve, reject) => {

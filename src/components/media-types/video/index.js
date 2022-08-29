@@ -11,6 +11,7 @@ export const VideoComponent = ({
   interactive,
   inView,
   displayView,
+  objktID,
 }) => {
   const domElement = useRef()
 
@@ -59,6 +60,7 @@ export const VideoComponent = ({
         controls={interactive}
         src={preview ? previewUri : artifactUri}
         poster={displayUri}
+        title={`video object ${objktID}`}
       />
     </div>
   ) : (
@@ -72,6 +74,7 @@ export const VideoComponent = ({
       controls={interactive}
       src={preview ? previewUri : artifactUri}
       poster={displayUri}
+      title={`video object ${objktID}`}
     />
   )
 }
