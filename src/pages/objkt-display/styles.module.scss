@@ -96,6 +96,8 @@
 .history__ed,
 .history__price,
 .history__date {
+  user-select: none;
+  cursor: default;
   margin-bottom: 7px;
   height: 20px;
   white-space: nowrap;

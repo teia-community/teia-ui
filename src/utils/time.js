@@ -1,26 +1,35 @@
 export function toHHMMSS(sec) {
-  var hours = Math.floor(sec / 3600)
-  var minutes = Math.floor((sec - hours * 3600) / 60)
-  var seconds = sec - hours * 3600 - minutes * 60
+  let hours = Math.floor(sec / 3600)
+  let minutes = Math.floor((sec - hours * 3600) / 60)
+  let seconds = sec - hours * 3600 - minutes * 60
 
   if (hours < 10) {
-    hours = '0' + hours
+    hours = `0${hours}`
   }
   if (minutes < 10) {
-    minutes = '0' + minutes
+    minutes = `0${minutes}`
   }
   if (seconds < 10) {
-    seconds = '0' + seconds
+    seconds = `0${seconds}`
   }
-  return hours + ':' + minutes + ':' + seconds
+  return `${hours}:${minutes}:${seconds}`
 }
 
-export const getTimeAgo = (props) => {
-  let stamp = Math.round(new Date(props).getTime() / 1000)
-  let now = Math.round(new Date().getTime() / 1000)
+export const getSimpleDate = (timestamp) => {
+  const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s)
+  const d = new Date(timestamp)
+  return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate()
+  )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
 
-  let difference = now - stamp
-  let unit, value
+export const getTimeAgo = (timestamp) => {
+  const stamp = Math.round(new Date(timestamp).getTime() / 1000)
+  const now = Math.round(new Date().getTime() / 1000)
+
+  const difference = now - stamp
+  let unit
+  let value
 
   if (difference / 60 < 60) {
     unit = 'minutes'
@@ -45,6 +54,5 @@ export const getTimeAgo = (props) => {
     }
   }
 
-  // console.log(unit, value)
   return `${value} ${unit} ago`
 }

@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
-import { getTimeAgo } from '@utils/time'
+import { getTimeAgo, getSimpleDate } from '@utils/time'
 import styles from '../styles.module.scss'
 import { BURN_ADDRESS } from '@constants'
 
@@ -16,17 +16,19 @@ const OPERATION_TRANSFER = 'TRANSFER'
 const OPERATION_TRADE = 'TRADE'
 
 export const History = (token_info) => {
-  let trades = token_info.trades.map((e) => ({
+  const trades = token_info.trades.map((e) => ({
     ...e,
     type: OPERATION_TRADE,
   }))
-  let swaps = token_info.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-  let transfers = token_info.transfers.map((e) => ({
+  const swaps = token_info.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
+  const transfers = token_info.transfers.map((e) => ({
     ...e,
     type: OPERATION_TRANSFER,
   }))
 
-  let history = [...trades, ...swaps, ...transfers]
+  const [ago, setAgo] = useState(true)
+
+  const history = [...trades, ...swaps, ...transfers]
     .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
     .reverse()
 
@@ -47,9 +49,18 @@ export const History = (token_info) => {
                 <div className={styles.history__to}>To</div>
                 <div className={styles.history__ed}>Ed.</div>
                 <div className={styles.history__price}>Price</div>
-                <div className={styles.history__date}>Time</div>
+                <div
+                  onClick={() => setAgo(!ago)}
+                  className={styles.history__date}
+                >
+                  Time
+                </div>
               </div>
               {history.map((e) => {
+                const opTime = ago
+                  ? getTimeAgo(e.timestamp)
+                  : getSimpleDate(e.timestamp)
+
                 if (e.type === OPERATION_TRADE) {
                   return (
                     <div className={`${styles.history}`} key={`t-${e.id}`}>
@@ -73,7 +84,7 @@ export const History = (token_info) => {
                         {e.seller.name ? (
                           <span>
                             <a
-                              href={`/tz/${encodeURI(e.seller.address)}`}
+                              href={`/${encodeURI(e.seller.name)}`}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -134,7 +145,7 @@ export const History = (token_info) => {
                         className={`${styles.history__date} ${styles.history__desktop}`}
                         title={e.timestamp}
                       >
-                        {getTimeAgo(e.timestamp)}
+                        {opTime}
                       </div>
 
                       <div className={styles.history__inner__mobile}>
@@ -142,7 +153,7 @@ export const History = (token_info) => {
                           className={styles.history__date}
                           title={e.timestamp}
                         >
-                          {getTimeAgo(e.timestamp)}
+                          {opTime}
                         </div>
 
                         <div className={styles.history__ed}>ed. {e.amount}</div>
@@ -177,7 +188,7 @@ export const History = (token_info) => {
                         {e.creator.name ? (
                           <span>
                             <a
-                              href={`/tz/${encodeURI(e.creator.address)}`}
+                              href={`/${encodeURI(e.creator.name)}`}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -203,7 +214,7 @@ export const History = (token_info) => {
                       </div>
 
                       <div className={styles.history__date} title={e.timestamp}>
-                        {getTimeAgo(e.timestamp)}
+                        {opTime}
                       </div>
 
                       <div className={styles.history__inner__mobile}>
@@ -211,7 +222,7 @@ export const History = (token_info) => {
                           className={styles.history__date}
                           title={e.timestamp}
                         >
-                          {getTimeAgo(e.timestamp)}
+                          {opTime}
                         </div>
 
                         <div className={styles.history__ed}>ed. {e.amount}</div>
@@ -246,7 +257,7 @@ export const History = (token_info) => {
                         {e.sender.name ? (
                           <span>
                             <a
-                              href={`/tz/${encodeURI(e.sender.address)}`}
+                              href={`/${encodeURI(e.sender.name)}`}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -297,7 +308,7 @@ export const History = (token_info) => {
                         className={`${styles.history__date} ${styles.history__desktop}`}
                         title={e.timestamp}
                       >
-                        {getTimeAgo(e.timestamp)}
+                        {opTime}
                       </div>
 
                       <div className={styles.history__inner__mobile}>
@@ -305,7 +316,7 @@ export const History = (token_info) => {
                           className={styles.history__date}
                           title={e.timestamp}
                         >
-                          {getTimeAgo(e.timestamp)}
+                          {opTime}
                         </div>
 
                         <div className={styles.history__ed}>ed. {e.amount}</div>
@@ -329,7 +340,7 @@ export const History = (token_info) => {
                   {token_info.creator.name ? (
                     <span>
                       <a
-                        href={`/tz/${encodeURI(token_info.creator.address)}`}
+                        href={`/${encodeURI(token_info.creator.name)}`}
                         target="_blank"
                         rel="noreferrer"
                       >
