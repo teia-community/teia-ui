@@ -51,6 +51,7 @@ export const History = (token_info) => {
                 <div className={styles.history__price}>Price</div>
                 <div
                   onClick={() => setAgo(!ago)}
+                  aria-hidden="true"
                   className={styles.history__date}
                 >
                   Time
