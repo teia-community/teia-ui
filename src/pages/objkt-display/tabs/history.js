@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
-import { getTimeAgo, getSimpleDate } from '@utils/time'
+import { getTimeAgo, getWordDate } from '@utils/time'
 import styles from '../styles.module.scss'
 import { BURN_ADDRESS } from '@constants'
 
@@ -60,7 +60,7 @@ export const History = (token_info) => {
               {history.map((e) => {
                 const opTime = ago
                   ? getTimeAgo(e.timestamp)
-                  : getSimpleDate(e.timestamp)
+                  : getWordDate(e.timestamp)
 
                 if (e.type === OPERATION_TRADE) {
                   return (
