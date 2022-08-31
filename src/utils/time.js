@@ -33,7 +33,8 @@ export const getWordDate = (timestamp) => {
     minute: 'numeric',
   }
 
-  return date.toLocaleString('en-us', options)
+  // return date.toLocaleString('en-GB', options)
+  return date.toLocaleString(navigator.language, options)
 }
 
 export const getTimeAgo = (timestamp) => {
