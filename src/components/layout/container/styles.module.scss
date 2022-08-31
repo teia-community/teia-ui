@@ -8,7 +8,8 @@
   word-break: break-word;
 
   @include respond-to('desktop') {
-    width: 50%;
+    min-width: 700px;
+    width: 70%;
   }
 
   &.large {

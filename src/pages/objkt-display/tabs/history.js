@@ -8,6 +8,7 @@ import { BURN_ADDRESS } from '@constants'
 
 import { IconCache } from '@utils/with-icon'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
+import { Checkbox } from '@components/input/index'
 // import MintedIcon from '@icons/minted'
 // import SwapIcon from '@icons/swap'
 
@@ -49,18 +50,23 @@ export const History = (token_info) => {
                 <div className={styles.history__to}>To</div>
                 <div className={styles.history__ed}>Ed.</div>
                 <div className={styles.history__price}>Price</div>
-                <div
-                  onClick={() => setAgo(!ago)}
-                  aria-hidden="true"
-                  className={styles.history__date}
-                >
-                  Time
+
+                <div className={styles.history__date}>
+                  <Checkbox
+                    label="Time"
+                    checked={ago}
+                    onChange={(e) => {
+                      setAgo(e.target.checked)
+                    }}
+                    name="date-format"
+                  />
                 </div>
               </div>
               {history.map((e) => {
                 const opTime = ago
                   ? getTimeAgo(e.timestamp)
                   : getWordDate(e.timestamp)
+                // : getISODate(e.timestamp)
 
                 if (e.type === OPERATION_TRADE) {
                   return (
