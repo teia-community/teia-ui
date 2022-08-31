@@ -86,7 +86,7 @@
   width: fit-content;
   @include respond-to('desktop') {
     margin-bottom: 0;
-    width: calc(7% + 35px);
+    width: calc(7% + 15px);
   }
 }
 
@@ -122,14 +122,14 @@
 .history__to {
   @include respond-to('desktop') {
     text-overflow: ellipsis;
-    width: calc(20.833333333%);
+    width: 15%;
   }
 }
 
 .history__ed {
   @include respond-to('desktop') {
     text-align: center;
-    width: calc(6.944444444%);
+    width: 5%;
   }
 }
 
@@ -153,6 +153,11 @@
     width: 33.333333333%;
     border-top: 1px solid var(--border-color);
   }
+}
+
+.history__price {
+  text-align: right;
+  width: 23%;
 }
 
 .history__secondary {
