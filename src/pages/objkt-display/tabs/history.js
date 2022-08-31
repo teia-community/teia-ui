@@ -42,14 +42,6 @@ export const History = (token_info) => {
       <IconCache.Provider value={{}}>
         <Container>
           <Padding>
-            <Checkbox
-              label="Display time ago"
-              checked={ago}
-              onChange={(e) => {
-                setAgo(e.target.checked)
-              }}
-              name="date-format"
-            />
             <div className={styles.history__container}>
               <div className={styles.history__labels}>
                 <div
@@ -392,6 +384,16 @@ export const History = (token_info) => {
 
                   <div className={styles.history__price} />
                 </div>
+              </div>
+              <div className={styles.history__buttons}>
+                <Checkbox
+                  label="Display time ago"
+                  checked={ago}
+                  onChange={(e) => {
+                    setAgo(e.target.checked)
+                  }}
+                  name="date-format"
+                />
               </div>
 
               <div className={styles.history__royalties}>
