@@ -16,6 +16,10 @@ const OPERATION_SWAP = 'SWAP'
 const OPERATION_TRANSFER = 'TRANSFER'
 const OPERATION_TRADE = 'TRADE'
 
+const getTime = (use_ago, timestamp) => {
+  return use_ago ? getTimeAgo(timestamp) : getWordDate(timestamp)
+  // : getISODate(e.timestamp)
+}
 export const History = (token_info) => {
   const trades = token_info.trades.map((e) => ({
     ...e,
@@ -62,10 +66,7 @@ export const History = (token_info) => {
                 <div className={styles.history__date}>Time</div>
               </div>
               {history.map((e) => {
-                const opTime = ago
-                  ? getTimeAgo(e.timestamp)
-                  : getWordDate(e.timestamp)
-                // : getISODate(e.timestamp)
+                const opTime = getTime(ago, e.timestamp)
 
                 if (e.type === OPERATION_TRADE) {
                   return (
@@ -374,7 +375,7 @@ export const History = (token_info) => {
                   className={styles.history__date}
                   title={token_info.timestamp}
                 >
-                  {getTimeAgo(token_info.timestamp)}
+                  {getTime(ago, token_info.timestamp)}
                 </div>
 
                 <div className={styles.history__inner__mobile}>
@@ -382,7 +383,7 @@ export const History = (token_info) => {
                     className={styles.history__date}
                     title={token_info.timestamp}
                   >
-                    {getTimeAgo(token_info.timestamp)}
+                    {getTime(ago, token_info.timestamp)}
                   </div>
 
                   <div className={styles.history__ed}>
