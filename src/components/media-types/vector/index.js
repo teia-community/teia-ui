@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import classnames from 'classnames'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
 import styles from './styles.module.scss'
@@ -18,12 +18,6 @@ export const VectorComponent = ({
     [styles.container]: true,
     [styles.interactive]: onDetailView,
   })
-
-  useEffect(() => {
-    iframe_ref.current.onLoad = () => {
-      console.log('LOADED')
-    }
-  }, [])
 
   const iframe_ref = useRef()
   let _creator_ = false
@@ -71,6 +65,10 @@ export const VectorComponent = ({
           sandbox="allow-scripts"
           scrolling="no"
           ref={iframe_ref}
+          // onLoad={(o)=>{
+          //   console.log(o)
+          //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
+          // }}
           // onLoad={
           // eslint-disable-next-line no-script-url
           // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
