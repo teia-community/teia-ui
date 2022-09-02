@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext } from 'react'
 import classnames from 'classnames'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
 import styles from './styles.module.scss'
@@ -19,7 +19,6 @@ export const VectorComponent = ({
     [styles.interactive]: onDetailView,
   })
 
-  const iframe_ref = useRef()
   let _creator_ = false
   let _viewer_ = false
   let _objkt_ = false
@@ -64,7 +63,6 @@ export const VectorComponent = ({
           src={path}
           sandbox="allow-scripts"
           scrolling="no"
-          ref={iframe_ref}
           // onLoad={(o)=>{
           //   console.log(o)
           //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
