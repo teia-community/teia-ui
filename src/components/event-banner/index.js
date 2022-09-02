@@ -4,6 +4,13 @@ import { BANNER_URL } from '@constants'
 import Markdown from 'markdown-to-jsx'
 import JSON5 from 'json5'
 
+function LinkRenderer(props: any) {
+  return (
+    <a href={props.href} target="_blank" rel="noreferrer">
+      {props.children}
+    </a>
+  )
+}
 export const EventBanner = React.forwardRef((props, ref) => {
   const [banner, setBanner] = useState(null)
   const [bannerColor, setBannerColor] = useState(null)
@@ -38,6 +45,9 @@ export const EventBanner = React.forwardRef((props, ref) => {
           options={{
             forceBlock: true,
             overrides: {
+              a: {
+                component: LinkRenderer,
+              },
               hr: {
                 props: {
                   className: styles.spacer,
