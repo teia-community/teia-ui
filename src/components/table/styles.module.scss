@@ -1,0 +1,42 @@
+@import '../../styles/layout.scss';
+@import '../../styles/variables.scss';
+
+.table {
+  width: calc(100% - 1em);
+  border-spacing: 0;
+  font-size: $font-small-mobile;
+  margin: 0 1em;
+  @include respond-to('desktop') {
+    font-size: $font-small;
+  }
+
+  svg {
+    margin: auto 0;
+    margin-right: 5px;
+    fill: var(--text-color);
+    line,
+    path {
+      stroke: var(--text-color);
+    }
+  }
+  tr {
+    height: 2em;
+  }
+
+  th {
+    color: var(--gray-60);
+    // padding: 8px 10px;
+    // border-bottom: 1px solid var(--text-color);
+    text-align: left;
+    min-width: 6em;
+  }
+  th.up {
+    background-image: url('./images/up_arrow.png');
+  }
+  th.down {
+    background-image: url('./images/down_arrow.png');
+  }
+  th.default {
+    background-image: url('./images/default.png');
+  }
+}

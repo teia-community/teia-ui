@@ -9,7 +9,7 @@
 
   @include respond-to('desktop') {
     min-width: 700px;
-    width: 70%;
+    width: 50%;
   }
 
   &.large {

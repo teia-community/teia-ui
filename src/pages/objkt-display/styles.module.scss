@@ -13,6 +13,11 @@
   }
 }
 
+.event {
+  min-width: 8em;
+  display: flex;
+  flex-direction: row;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -142,6 +147,7 @@
 }
 .history__buttons {
   font-size: $font-small-mobile;
+  margin: 0 1em;
 }
 
 .history__royalties {
