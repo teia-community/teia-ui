@@ -10,14 +10,16 @@ export const EventBanner = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     async function getBanner() {
-      const md_response = await fetch(`${BANNER_URL}/banner.md`)
-      const md_text = await md_response.text()
-      setBanner(md_text)
-
       const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
       const config_text = await config_response.text()
       const config = JSON5.parse(config_text)
-      setBannerColor(config.color)
+
+      if (config.enable > 0) {
+        setBannerColor(config.color)
+        const md_response = await fetch(`${BANNER_URL}/banner.md`)
+        const md_text = await md_response.text()
+        setBanner(md_text)
+      }
     }
     try {
       getBanner()
