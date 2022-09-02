@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import classnames from 'classnames'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
 import styles from './styles.module.scss'
@@ -19,6 +19,13 @@ export const VectorComponent = ({
     [styles.interactive]: onDetailView,
   })
 
+  useEffect(() => {
+    iframe_ref.current.onLoad = () => {
+      console.log('LOADED')
+    }
+  }, [])
+
+  const iframe_ref = useRef()
   let _creator_ = false
   let _viewer_ = false
   let _objkt_ = false
@@ -60,12 +67,14 @@ export const VectorComponent = ({
         <iframe
           className={styles.vector + ' vector'}
           title={`SVG object ${objktID}`}
+          src={path}
           sandbox="allow-scripts"
           scrolling="no"
-          onLoad={
-            // eslint-disable-next-line no-script-url
-            'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-          }
+          ref={iframe_ref}
+          // onLoad={
+          // eslint-disable-next-line no-script-url
+          // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
+          // }
         />
       </div>
     )
