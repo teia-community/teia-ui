@@ -75,7 +75,11 @@ export const History = (token_info) => {
   }
 
   const getTezFromMutez = (accessor, e) => {
-    return e.price ? `${parseFloat(e.price) / 1e6}ꜩ` : NO_VALUE
+    return e.swap?.price
+      ? `${parseFloat(e.swap.price) / 1e6}ꜩ`
+      : e.price
+      ? `${parseFloat(e.price) / 1e6}ꜩ`
+      : NO_VALUE
   }
 
   const getEvent = (accessor, e) => {
@@ -169,7 +173,7 @@ export const History = (token_info) => {
     },
   ]
 
-  let history = [...trades, ...swaps, ...transfers]
+  let history = _.uniqBy([...trades, ...swaps, ...transfers], 'ophash')
 
   history.push({
     type: 'MINT',
@@ -210,7 +214,8 @@ export const History = (token_info) => {
               />
             </div>
             <Table
-              keyAccessor="timestamp"
+              keyAccessor="ophash"
+              defaultSort="timestamp"
               caption="History"
               data={history_ref.current}
               columns={columns}

@@ -25,9 +25,9 @@ function getDefaultSorting(defaultTableData, columns, keyAccessor) {
   })
 }
 
-export const useSortableTable = (data, columns, keyAccessor) => {
+export const useSortableTable = (data, columns, keyAccessor, defaultSort) => {
   const [tableData, setTableData] = useState(
-    getDefaultSorting(data, columns, keyAccessor)
+    getDefaultSorting(data, columns, defaultSort)
   )
 
   const handleSorting = (sortField, sortOrder) => {
