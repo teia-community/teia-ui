@@ -308,7 +308,7 @@ export class Config extends Component {
   render() {
     return (
       !this.state.loading && (
-        <Page>
+        <Page large={this.context.banner != null}>
           <Container>
             <Identicon
               address={this.state.address}

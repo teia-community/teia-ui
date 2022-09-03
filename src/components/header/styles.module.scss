@@ -7,12 +7,10 @@
   margin-top: 3em;
 }
 .container {
-  transition: 20s linear all;
   position: fixed;
   width: 100%;
   z-index: 200;
   height: 60px;
-  //padding-bottom: 1em;
   padding: 0 #{$mobile-padding};
   background-color: var(--background-color);
   color: var(--text-color);

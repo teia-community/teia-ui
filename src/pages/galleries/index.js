@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button, Primary } from '@components/button'
 import { Page, Container, Padding } from '@components/layout'
 import { renderMediaType } from '@components/media-types'
@@ -6,25 +6,28 @@ import { PATH } from '@constants'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
 import styles from './styles.module.scss'
 import { fetchObjkts } from '@data/hicdex'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 const _ = require('lodash')
 
 export const Galleries = () => {
   const [data, setData] = useState([])
+
+  const { banner } = useContext(HicetnuncContext)
 
   useEffect(() => {
     // loads gallery to check endpoint file
     fetch('/galleries/galleries.json')
       .then((e) => e.json())
       .then(async (galleries) => {
-        console.log(galleries)
-        let res = await fetchObjkts(galleries.map((e) => e.id))
+        console.debug(galleries)
+        const res = await fetchObjkts(galleries.map((e) => e.id))
 
-        let merged = _.merge(
+        const merged = _.merge(
           _.keyBy(galleries, 'id'),
           _.merge(_.keyBy(res, 'id'))
         )
 
-        let values = _.values(merged)
+        const values = _.values(merged)
 
         setData(values.reverse())
       })
@@ -35,7 +38,7 @@ export const Galleries = () => {
   }, [])
 
   return (
-    <Page title="Galleries">
+    <Page title="Galleries" large={banner != null}>
       <Container xlarge>
         <Padding>
           <ResponsiveMasonry>

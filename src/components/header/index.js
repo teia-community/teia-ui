@@ -2,6 +2,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 
+import { BANNER_URL } from '@constants'
+import JSON5 from 'json5'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
@@ -22,10 +24,32 @@ export const Header = () => {
   const context = useContext(HicetnuncContext)
   const [displayBanner, setDisplayBanner] = useState(false)
 
+  const { y } = useWindowScroll()
+
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
     context.setLogo()
+  }, [])
+
+  useEffect(() => {
+    async function getBanner() {
+      const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
+      const config_text = await config_response.text()
+      const config = JSON5.parse(config_text)
+
+      if (config.enable > 0) {
+        context.setBannerColor(config.color)
+        const md_response = await fetch(`${BANNER_URL}/banner.md`)
+        const md_text = await md_response.text()
+        context.setBanner(md_text)
+      }
+    }
+    try {
+      getBanner()
+    } catch (e) {
+      console.error(e)
+    }
   }, [])
 
   // we assume user isn't connected
@@ -67,18 +91,21 @@ export const Header = () => {
     }
   }
 
-  const { y } = useWindowScroll()
   useEffect(() => {
     setDisplayBanner(y < 50)
   }, [y])
 
   return (
     <>
-      <EventBanner visible={displayBanner} />
+      <EventBanner
+        banner={context.banner}
+        bannerColor={context.bannerColor}
+        visible={displayBanner}
+      />
 
       <header
         className={`${styles.container} ${
-          displayBanner ? styles.banner_on : ''
+          displayBanner && context.banner ? styles.banner_on : ''
         }`}
       >
         <div className={styles.content}>
@@ -95,8 +122,6 @@ export const Header = () => {
                   alt="teia-logo"
                 />
               )}
-              {/* PRIDE LOGO */}
-              {false && <img src="/hen-pride.gif" alt="pride 2021" />}
             </div>
           </Button>
 
@@ -130,7 +155,7 @@ export const Header = () => {
         {!context.collapsed && (
           <motion.div
             className={`${styles.menu} ${
-              displayBanner ? styles.banner_on : ''
+              displayBanner && context.banner ? styles.banner_on : ''
             }`}
             {...fadeIn()}
           >

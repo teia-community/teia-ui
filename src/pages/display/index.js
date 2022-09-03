@@ -612,7 +612,7 @@ export default class Display extends Component {
   render() {
     const nsfwList = getNsfwList()
     return (
-      <Page title={this.state.alias}>
+      <Page title={this.state.alias} large={this.context.banner != null}>
         <IconCache.Provider value={{}}>
           <Container>
             <Padding>
