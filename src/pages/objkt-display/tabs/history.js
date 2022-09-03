@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
@@ -31,21 +31,10 @@ export const History = (token_info) => {
   }))
 
   const [fullDate, setFullDate] = useState(true)
-  const getTime = useCallback((e, fullDate) => {
-    return fullDate ? getTimeAgo(e.timestamp) : getWordDate(e.timestamp)
-    //   // : getISODate(e.timestamp)
-  }, [])
 
   useEffect(() => {
     setFullDate(false)
   }, [])
-
-  useEffect(() => {
-    history_ref.current = history_ref.current.map((e) => {
-      e.optime = getTime(e, fullDate)
-      return e
-    })
-  }, [getTime, fullDate])
 
   const getNameOrAddress = (accessor, e) => {
     const name = _.get(e, `${accessor}.name`)
@@ -171,16 +160,16 @@ export const History = (token_info) => {
     },
   ]
 
-  let history = _.uniqBy([...trades, ...swaps, ...transfers], 'ophash')
+  let _history = _.uniqBy([...trades, ...swaps, ...transfers], 'ophash')
 
-  history.push({
+  _history.push({
     type: 'MINT',
     from: token_info.creator,
     amount: token_info.supply,
     timestamp: token_info.timestamp,
     ophash: 909,
   })
-  history = history.map((e) => {
+  _history = _history.map((e) => {
     // for swaps and burns
     e.from = e.seller || e.creator || e.sender
     e.to = e.buyer || e.receiver
@@ -191,10 +180,19 @@ export const History = (token_info) => {
         _.set(e, c.accessor, c.transform(c.accessor, e))
       }
     }
-    return { ...e, price: e.price || e.swap.price, optime: getTime(e) }
+    return { ...e, price: e.price || e.swap.price }
   })
 
-  const history_ref = useRef(history)
+  const history_ref = useRef(_history)
+
+  const history = useMemo(() => {
+    return history_ref.current.map((e) => {
+      e.optime = fullDate ? getWordDate(e.timestamp) : getTimeAgo(e.timestamp)
+      return e
+    })
+
+    //   // : getISODate(e.timestamp)
+  }, [fullDate])
 
   return (
     <div>
@@ -214,8 +212,8 @@ export const History = (token_info) => {
             <Table
               keyAccessor="ophash"
               defaultSort="timestamp"
-              caption="History"
-              data={history_ref.current}
+              caption=""
+              data={history}
               columns={columns}
             />
             <div className={styles.history__royalties}>
