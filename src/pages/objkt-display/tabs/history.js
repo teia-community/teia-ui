@@ -143,7 +143,7 @@ export const History = (token_info) => {
 
   const columns = [
     // { label: "ID", accessor: "id", sortable: false },
-    { label: 'Event', accessor: 'type', sortable: true, transform: getEvent },
+    { label: 'Event', accessor: 'type', sortable: false, transform: getEvent },
     {
       label: 'From',
       accessor: 'from',
@@ -153,7 +153,7 @@ export const History = (token_info) => {
     {
       label: 'To',
       accessor: 'to',
-      sortable: true,
+      sortable: false,
       transform: getNameOrAddress,
     },
     { label: 'Ed.', accessor: 'amount', sortable: true },
