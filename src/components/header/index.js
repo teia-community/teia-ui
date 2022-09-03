@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
@@ -15,13 +16,10 @@ import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
 import { EventBanner } from '@components/event-banner/index'
 
-import { useWindowScroll } from 'react-use'
-
 export const Header = () => {
   const history = useHistory()
   const context = useContext(HicetnuncContext)
-
-  const { y } = useWindowScroll()
+  const [displayBanner, setDisplayBanner] = useState(false)
 
   useEffect(() => {
     context.setAccount()
@@ -68,20 +66,13 @@ export const Header = () => {
     }
   }
 
-  const isBannerVisible = () => {
-    if (y > 50) {
-      return false
-    }
-    return true
-  }
-
   return (
     <>
-      <EventBanner />
+      <EventBanner onHide={setDisplayBanner} />
 
       <header
         className={`${styles.container} ${
-          isBannerVisible() ? styles.banner_on : ''
+          displayBanner ? styles.banner_on : ''
         }`}
       >
         <div className={styles.content}>
@@ -133,7 +124,7 @@ export const Header = () => {
         {!context.collapsed && (
           <motion.div
             className={`${styles.menu} ${
-              isBannerVisible() ? styles.banner_on : ''
+              displayBanner ? styles.banner_on : ''
             }`}
             {...fadeIn()}
           >

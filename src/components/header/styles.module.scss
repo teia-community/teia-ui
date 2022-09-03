@@ -11,9 +11,9 @@
   position: fixed;
   width: 100%;
   z-index: 200;
-  // height: 3em;
-  padding-bottom: 1em;
-  // padding: 0 #{$mobile-padding};
+  height: 60px;
+  //padding-bottom: 1em;
+  padding: 0 #{$mobile-padding};
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
@@ -23,7 +23,7 @@
   justify-content: center;
 
   @include respond-to('desktop') {
-    // padding: 0;
+    padding: 0;
   }
 
   .content {
