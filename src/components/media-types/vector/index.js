@@ -60,12 +60,17 @@ export const VectorComponent = ({
         <iframe
           className={styles.vector + ' vector'}
           title={`SVG object ${objktID}`}
+          src={path}
           sandbox="allow-scripts"
           scrolling="no"
-          onLoad={
-            // eslint-disable-next-line no-script-url
-            'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-          }
+          // onLoad={(o)=>{
+          //   console.log(o)
+          //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
+          // }}
+          // onLoad={
+          // eslint-disable-next-line no-script-url
+          // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
+          // }
         />
       </div>
     )
