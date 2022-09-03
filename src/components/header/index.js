@@ -15,6 +15,7 @@ import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
 import { EventBanner } from '@components/event-banner/index'
+import { useWindowScroll } from 'react-use'
 
 export const Header = () => {
   const history = useHistory()
@@ -66,9 +67,14 @@ export const Header = () => {
     }
   }
 
+  const { y } = useWindowScroll()
+  useEffect(() => {
+    setDisplayBanner(y < 50)
+  }, [y])
+
   return (
     <>
-      <EventBanner onHide={setDisplayBanner} />
+      <EventBanner visible={displayBanner} />
 
       <header
         className={`${styles.container} ${

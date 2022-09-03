@@ -1060,11 +1060,15 @@ class HicetnuncContextProviderClass extends Component {
       setFeed: (arr) => this.setState({ feed: arr }),
 
       toogleNavbar: () => {
+        document.body.style.overflow = this.state.collapsed
+          ? 'hidden'
+          : 'scroll'
         this.setState({ collapsed: !this.state.collapsed })
       },
 
       setMenu: (collapsed) => {
         this.setState({ collapsed })
+        document.body.style.overflow = collapsed ? 'scroll' : 'hidden'
       },
 
       getStyle: (style) =>

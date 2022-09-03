@@ -4,7 +4,6 @@ import { BANNER_URL } from '@constants'
 import Markdown from 'markdown-to-jsx'
 import JSON5 from 'json5'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useWindowScroll } from 'react-use'
 
 function LinkRenderer(props: any) {
   return (
@@ -13,11 +12,9 @@ function LinkRenderer(props: any) {
     </a>
   )
 }
-export const EventBanner = React.forwardRef((props, ref) => {
+export const EventBanner = ({ visible }) => {
   const [banner, setBanner] = useState(null)
   const [bannerColor, setBannerColor] = useState(null)
-
-  const { y } = useWindowScroll()
 
   useEffect(() => {
     async function getBanner() {
@@ -39,23 +36,13 @@ export const EventBanner = React.forwardRef((props, ref) => {
     }
   }, [])
 
-  const isBannerVisible = () => {
-    if (y > 50) {
-      props.onHide(false)
-      return false
-    }
-    props.onHide(true)
-    return true
-  }
-
   return (
     <AnimatePresence>
-      {banner && isBannerVisible() && (
+      {banner && visible && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          ref={ref}
           style={{ backgroundColor: bannerColor }}
           className={styles.event__banner}
         >
@@ -90,4 +77,4 @@ export const EventBanner = React.forwardRef((props, ref) => {
       )}
     </AnimatePresence>
   )
-})
+}
