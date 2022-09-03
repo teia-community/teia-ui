@@ -30,24 +30,22 @@ export const History = (token_info) => {
     type: OPERATION_TRANSFER,
   }))
 
-  const [ago, setAgo] = useState(false)
-  const getTime = useCallback(
-    (e) => {
-      return ago ? getWordDate(e.timestamp) : getTimeAgo(e.timestamp)
-      //   // : getISODate(e.timestamp)
-    },
-    [ago]
-  )
-  useEffect(() => {
-    history_ref.current = history_ref.current.map((e) => {
-      e.optime = getTime(e)
-      return e
-    })
-  }, [getTime, ago])
+  const [fullDate, setFullDate] = useState(true)
+  const getTime = useCallback((e, fullDate) => {
+    return fullDate ? getTimeAgo(e.timestamp) : getWordDate(e.timestamp)
+    //   // : getISODate(e.timestamp)
+  }, [])
 
   useEffect(() => {
-    setAgo(true)
+    setFullDate(false)
   }, [])
+
+  useEffect(() => {
+    history_ref.current = history_ref.current.map((e) => {
+      e.optime = getTime(e, fullDate)
+      return e
+    })
+  }, [getTime, fullDate])
 
   const getNameOrAddress = (accessor, e) => {
     const name = _.get(e, `${accessor}.name`)
@@ -206,9 +204,9 @@ export const History = (token_info) => {
             <div className={styles.history__buttons}>
               <Checkbox
                 label="Display full date"
-                checked={ago}
+                checked={fullDate}
                 onChange={(e) => {
-                  setAgo(e.target.checked)
+                  setFullDate(e.target.checked)
                 }}
                 name="date-format"
               />
