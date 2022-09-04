@@ -182,7 +182,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <AudioComponent
-            artifactUri={parsedArtifactUri}
+            artifactUri={parsedArtifactRawUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
