@@ -59,12 +59,23 @@ export const renderMediaType = ({
 
   displayView,
 }) => {
-  const parsedArtifactUri = artifactUri ? HashToURL(artifactUri) : ''
-  const parsedDisplayUri = displayUri ? HashToURL(displayUri) : ''
+  const size = interactive ? 'gallery' : 'medium'
+
+  const parsedArtifactUri = artifactUri
+    ? HashToURL(artifactUri, 'CDN', { size })
+    : ''
+  const parsedDisplayUri = displayUri
+    ? HashToURL(displayUri, 'CDN', { size })
+    : ''
+
+  // Due to issues for generative tokens on NFTStorage.link gateway
+  // we use ipfs.io only for these
   const parsedArtifactHtmlUri = artifactUri
     ? HashToURL(artifactUri, 'IPFS')
     : ''
-  const parsedDisplayHtmlUri = displayUri ? HashToURL(displayUri, 'IPFS') : ''
+  const parsedDisplayHtmlUri = displayUri
+    ? HashToURL(displayUri, 'CDN', { size })
+    : ''
 
   switch (mimeType) {
     /* IMAGES */

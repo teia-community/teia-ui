@@ -54,42 +54,38 @@ export const ItemInfo = ({
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such
 
-    if (cheapestListing) {
-      purchaseButton = (
-        <div className={styles.main_swap}>
-          <MarketplaceLabel swap={cheapestListing} />
+    purchaseButton = cheapestListing ? (
+      <div className={styles.main_swap}>
+        <MarketplaceLabel swap={cheapestListing} />
 
-          <Button
-            onClick={() => {
-              if (acc == null) {
-                syncTaquito()
+        <Button
+          onClick={() => {
+            if (acc == null) {
+              syncTaquito()
+            } else {
+              if (cheapestListing.type === 'swap') {
+                collect(
+                  cheapestListing.contract_address,
+                  cheapestListing.id,
+                  cheapestListing.price * 1
+                )
               } else {
-                if (cheapestListing.type === 'swap') {
-                  collect(
-                    cheapestListing.contract_address,
-                    cheapestListing.id,
-                    cheapestListing.price * 1
-                  )
-                } else {
-                  fulfillObjktcomAsk(cheapestListing)
-                }
+                fulfillObjktcomAsk(cheapestListing)
               }
-            }}
-            full
-          >
-            <Purchase>
-              Collect for {Number(cheapestListing.price) / 1000000} tez
-            </Purchase>
-          </Button>
-        </div>
-      )
-    } else {
-      purchaseButton = (
-        <Button full>
-          <Purchase>Not for sale</Purchase>
+            }
+          }}
+          full
+        >
+          <Purchase>
+            Collect for {Number(cheapestListing.price) / 1000000} tez
+          </Purchase>
         </Button>
-      )
-    }
+      </div>
+    ) : (
+      <Button full>
+        <Purchase>Not for sale</Purchase>
+      </Button>
+    )
 
     // Check collab status
     const isCollab = creator.is_split
@@ -116,7 +112,8 @@ export const ItemInfo = ({
 
     return (
       <>
-        <div style={{ height: '30px' }}></div>
+        {/* Not sure what this is 😅 */}
+        <div style={{ height: '30px' }} />
         <div className={styles.container}>
           <div className={styles.edition}>
             <div className={collabStyles.relative}>
