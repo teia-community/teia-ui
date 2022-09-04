@@ -19,9 +19,23 @@ export const ImageComponent = ({
   }
 
   const [isVideo, setIsVideo] = useState(false)
-  const onError = (e) => {
-    console.debug(`image from ${artifactUri} is actually a video`)
-    setIsVideo(true)
+  const onError = async (e, _f) => {
+    // I hope there is a better way 🥹
+    const http = new XMLHttpRequest()
+    http.open('HEAD', e.target.src)
+    http.onreadystatechange = function () {
+      if (this.readyState === this.DONE) {
+        if (this.status === 200) {
+          console.debug(`image from ${artifactUri} is actually a video`)
+          setIsVideo(true)
+        } else {
+          console.error(
+            `Error loading image from cache: ${this.status} -> ${this.statusText}`
+          )
+        }
+      }
+    }
+    http.send()
   }
   return isVideo ? (
     <VideoComponent
