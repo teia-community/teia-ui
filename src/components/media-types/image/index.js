@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from './styles.module.scss'
 import { VideoComponent } from '../video'
+import axios from 'axios'
 
 export const ImageComponent = ({
   artifactUri,
@@ -14,30 +15,31 @@ export const ImageComponent = ({
 }) => {
   let src = onDetailView ? artifactUri : displayUri || artifactUri
 
+  const [isVideo, setIsVideo] = useState(false)
+  const [ready, setReady] = useState(false)
+
   if (preview) {
     src = previewUri
   }
 
-  const [isVideo, setIsVideo] = useState(false)
-  const onError = async (e, _f) => {
-    // I hope there is a better way 🥹
-    const http = new XMLHttpRequest()
-    http.open('HEAD', e.target.src)
-    http.onreadystatechange = function () {
-      if (this.readyState === this.DONE) {
-        if (this.status === 200) {
-          console.debug(`image from ${artifactUri} is actually a video`)
-          setIsVideo(true)
-        } else {
-          console.error(
-            `Error loading image from cache: ${this.status} -> ${this.statusText}`
-          )
-        }
-      }
-    }
-    http.send()
-  }
-  return isVideo ? (
+  useEffect(() => {
+    axios
+      .head(src)
+      .then((x) => {
+        const type = x.headers['content-type']
+        console.debug(`Detected type: ${type}`)
+        setIsVideo(type.split('/')[0].trim() === 'video')
+      })
+      .catch((e) => {
+        // happens too often
+        //console.error(e)
+      })
+      .finally(() => {
+        setReady(true)
+      })
+  }, [src])
+
+  return ready && isVideo ? (
     <VideoComponent
       artifactUri={artifactUri}
       displayUri={displayUri}
@@ -54,7 +56,6 @@ export const ImageComponent = ({
         className={styles.image}
         src={src}
         alt={`object ${objktID} image`}
-        onError={onError}
       />
     </div>
   ) : (
@@ -64,7 +65,6 @@ export const ImageComponent = ({
           className={styles.style}
           src={src}
           alt={`object ${objktID} image`}
-          onError={onError}
         />
       </div>
     </div>
