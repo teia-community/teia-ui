@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from './styles.module.scss'
 import { VideoComponent } from '../video'
-import axios from 'axios'
+import { MIMETYPE } from '@constants'
 
 export const ImageComponent = ({
   artifactUri,
@@ -11,35 +11,39 @@ export const ImageComponent = ({
   onDetailView,
   preview,
   displayView,
-  objktID,
+  objkt,
 }) => {
   let src = onDetailView ? artifactUri : displayUri || artifactUri
 
   const [isVideo, setIsVideo] = useState(false)
-  const [ready, setReady] = useState(false)
 
   if (preview) {
     src = previewUri
   }
 
-  useEffect(() => {
-    axios
-      .head(src)
-      .then((x) => {
-        const type = x.headers['content-type']
-        console.debug(`Detected type: ${type}`)
-        setIsVideo(type.split('/')[0].trim() === 'video')
-      })
-      .catch((e) => {
-        // happens too often
-        //console.error(e)
-      })
-      .finally(() => {
-        setReady(true)
-      })
-  }, [src])
+  const onError = (error) => {
+    if (objkt.mimeType === MIMETYPE.GIF) {
+      setIsVideo(true)
+    }
+  }
+  // useEffect(() => {
+  //   axios
+  //     .head(src)
+  //     .then((x) => {
+  //       const type = x.headers['content-type']
+  //       console.debug(`Detected type: ${type}`)
+  //       setIsVideo(type.split('/')[0].trim() === 'video')
+  //     })
+  //     .catch((e) => {
+  //       // happens too often
+  //       //console.error(e)
+  //     })
+  //     .finally(() => {
+  //       setReady(true)
+  //     })
+  // }, [src])
 
-  return ready && isVideo ? (
+  return isVideo ? (
     <VideoComponent
       artifactUri={artifactUri}
       displayUri={displayUri}
@@ -48,14 +52,15 @@ export const ImageComponent = ({
       onDetailView={onDetailView}
       displayView={displayView}
       inView={!displayView}
-      objktID={objktID}
+      objktID={objkt.id}
     />
   ) : displayView ? (
     <div className={styles.container}>
       <LazyLoadImage
         className={styles.image}
         src={src}
-        alt={`object ${objktID} image`}
+        alt={`object ${objkt.id} image`}
+        onError={onError}
       />
     </div>
   ) : (
@@ -64,7 +69,8 @@ export const ImageComponent = ({
         <LazyLoadImage
           className={styles.style}
           src={src}
-          alt={`object ${objktID} image`}
+          alt={`object ${objkt.id} image`}
+          onError={onError}
         />
       </div>
     </div>

@@ -101,7 +101,10 @@ export const renderMediaType = ({
             onDetailView={interactive || mimeType === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
-            objktID={objktID}
+            objkt={{
+              id: objktID,
+              mimeType,
+            }}
           />
         </Container>
       )
