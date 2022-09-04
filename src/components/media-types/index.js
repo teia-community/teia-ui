@@ -197,7 +197,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <PdfComponent
-            artifactUri={parsedArtifactUri}
+            artifactUri={parsedArtifactRawUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
