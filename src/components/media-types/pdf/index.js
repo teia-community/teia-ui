@@ -5,6 +5,7 @@ import { ImageComponent } from '../image'
 import { Button, Primary } from '../../button'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { HicetnuncContext } from '@context/HicetnuncContext'
+import { AnimatePresence } from 'framer-motion'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 export const PdfComponent = ({
@@ -19,17 +20,19 @@ export const PdfComponent = ({
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [failed, setFailed] = useState(false)
+  const [loading, setLoading] = useState(true)
   const context = useContext(HicetnuncContext)
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages)
+    setLoading(false)
   }
   function onDocumentLoadError(e) {
     console.error(e.message)
     context.showFeedback(`${e.message}
 
 see it on [IPFS](${fallbackUri})`)
-
+    setLoading(false)
     setFailed(true)
   }
 
@@ -49,16 +52,27 @@ see it on [IPFS](${fallbackUri})`)
     setPageNumber(item.pageNumber)
   }
 
-  return failed ? (
-    <ImageComponent
-      artifactUri={displayUri}
-      displayUri={displayUri}
-      previewUri={previewUri}
-      onDetailView={onDetailView}
-      preview={preview}
-      displayView={!onDetailView}
-      objktID={objktID}
-    />
+  return failed || loading ? (
+    <AnimatePresence>
+      <ImageComponent
+        key={`img-${objktID}`}
+        artifactUri={displayUri}
+        displayUri={displayUri}
+        previewUri={previewUri}
+        onDetailView={onDetailView}
+        preview={preview}
+        displayView={!onDetailView}
+        objktID={objktID}
+      />
+      {loading && (
+        <p
+          key={`loading-${objktID}`}
+          style={{ textAlign: 'center', margin: '1em' }}
+        >
+          Loading PDF...
+        </p>
+      )}
+    </AnimatePresence>
   ) : (
     <div className={styles.container}>
       <Document
