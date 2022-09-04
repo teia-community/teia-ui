@@ -35,8 +35,15 @@ const CIDToURL = (
   if (cid == null) {
     return ''
   }
+  if (type !== 'CDN' && !_.isEmpty(options)) {
+    console.warn('Using options for IPFS Gateways does nothing')
+  }
 
   switch (type) {
+    case 'CDN':
+      return `https://cache.teia.rocks/media/${
+        options.size || 'gallery'
+      }/ipfs/${cid}`
     case 'HIC':
       return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
     case 'CLOUDFLARE':
