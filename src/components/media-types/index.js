@@ -77,6 +77,10 @@ export const renderMediaType = ({
     ? HashToURL(displayUri, 'CDN', { size })
     : ''
 
+  const parsedArtifactRawUri = artifactUri
+    ? HashToURL(artifactUri, 'CDN', { size: 'raw' })
+    : ''
+
   switch (mimeType) {
     /* IMAGES */
     case MIMETYPE.BMP:
@@ -159,7 +163,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <GLBComponent
-            artifactUri={parsedArtifactUri}
+            artifactUri={parsedArtifactRawUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
