@@ -290,7 +290,7 @@ const identicons = [
 
 export const Identicon = ({ address = '', logo }) => {
   const resolvedLogo = useMemo(() => {
-    return logo ? HashToURL(logo) : ''
+    return logo ? HashToURL(logo, 'CDN', { size: 'medium' }) : ''
   }, [logo])
 
   if (resolvedLogo) {
