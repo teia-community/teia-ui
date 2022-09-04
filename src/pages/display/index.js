@@ -21,7 +21,7 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { IconCache } from '@utils/with-icon'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 const axios = require('axios')
 
 const urlParameters = new URLSearchParams(window.location.search)
@@ -248,7 +248,7 @@ export default class Display extends Component {
       try {
         if (res[0]) {
           const meta = await axios
-            .get(CIDToURL(res[0].metadata_file.split('//')[1]))
+            .get(HashToURL(res[0].metadata_file))
             .then((res) => res.data)
 
           if (meta.description) this.setState({ description: meta.description })
@@ -268,7 +268,7 @@ export default class Display extends Component {
       console.debug(res)
       if (res[0]?.metadata_file) {
         const meta = await axios
-          .get(CIDToURL(res[0].metadata_file.split('//')[1]))
+          .get(HashToURL(res[0].metadata_file))
           .then((res) => res.data)
         console.debug(meta)
         if (meta.description) this.setState({ description: meta.description })

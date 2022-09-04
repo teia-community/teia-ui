@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -289,10 +289,14 @@ const identicons = [
 ]
 
 export const Identicon = ({ address = '', logo }) => {
-  if (logo) {
+  const resolvedLogo = useMemo(() => {
+    return logo ? HashToURL(logo) : ''
+  }, [logo])
+
+  if (resolvedLogo) {
     return (
       <div className={styles.identicon}>
-        <img src={CIDToURL(logo.split('//')[1])} alt="identicon" />
+        <img src={resolvedLogo} alt="identicon" />
       </div>
     )
   }
