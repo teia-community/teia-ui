@@ -1,3 +1,5 @@
+import * as _ from 'lodash'
+
 export function rnd(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -18,13 +20,22 @@ export const fetchJSON = async (url) => {
   }
 }
 
-export const CIDToURL = (
+/**
+ * Converts an ipfs hash to ipfs url
+ * @param {string} hash
+ * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {HashToURLOptions} options
+ * @returns {string}
+ */
+const CIDToURL = (
   cid,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  options
 ) => {
   if (cid == null) {
     return ''
   }
+
   switch (type) {
     case 'HIC':
       return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
@@ -45,10 +56,21 @@ export const CIDToURL = (
   }
 }
 
-// converts an ipfs hash to ipfs url
+/**
+ * @typedef { {size: string?} } HashToURLOptions
+ */
+
+/**
+ * Converts an ipfs hash to ipfs url
+ * @param {string} hash
+ * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {HashToURLOptions} options
+ * @returns {string}
+ */
 export const HashToURL = (
   hash,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  options
 ) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
@@ -58,5 +80,5 @@ export const HashToURL = (
   }
 
   const CID = hash.split('ipfs://')[1]
-  return CIDToURL(CID, type)
+  return CIDToURL(CID, type, options)
 }
