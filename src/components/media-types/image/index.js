@@ -52,7 +52,7 @@ export const ImageComponent = ({
       onDetailView={onDetailView}
       displayView={displayView}
       inView={true}
-      objktID={nft.id}
+      nft={nft}
     />
   ) : displayView ? (
     <div className={styles.container}>

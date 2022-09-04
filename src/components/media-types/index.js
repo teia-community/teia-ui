@@ -102,7 +102,7 @@ export const renderMediaType = ({
             displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
             preview={preview}
-            creator={nft.creator.address}
+            creator={nft.creator}
             objktID={nft.id}
             onDetailView={interactive}
             displayView={displayView}
@@ -121,7 +121,7 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactHtmlUri}
             displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
-            creator={nft.creator.address}
+            creator={nft.creator}
             objktID={nft.id}
             preview={preview}
             onDetailView={interactive}
@@ -143,7 +143,6 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={nft.id}
             nft={nft}
           />
         </Container>

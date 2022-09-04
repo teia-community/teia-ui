@@ -149,6 +149,7 @@ async function fetchCreations(addr) {
   if (errors) {
     console.error(errors)
   }
+  data.token.creator = addr
   return data.token
 }
 
