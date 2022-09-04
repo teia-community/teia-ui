@@ -10,7 +10,7 @@ import { PdfComponent } from './pdf'
 import { MIMETYPE } from '@constants'
 import { Container } from './container'
 import { MD } from './md'
-import { HashToURL } from '@utils'
+import { HashToURL } from 'utils/index'
 
 /*
 
@@ -68,6 +68,9 @@ export const renderMediaType = ({
     ? HashToURL(displayUri, 'CDN', { size })
     : ''
 
+  const parsedArtifactGatewayUri = artifactUri
+    ? HashToURL(artifactUri, 'NFTSTORAGE')
+    : ''
   // Due to issues for generative tokens on NFTStorage.link gateway
   // we use ipfs.io only for these
   const parsedArtifactHtmlUri = artifactUri
@@ -198,6 +201,7 @@ export const renderMediaType = ({
         <Container interactive={interactive}>
           <PdfComponent
             artifactUri={parsedArtifactRawUri}
+            fallbackUri={parsedArtifactGatewayUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
