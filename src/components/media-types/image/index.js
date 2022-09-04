@@ -11,7 +11,7 @@ export const ImageComponent = ({
   onDetailView,
   preview,
   displayView,
-  objkt,
+  nft,
 }) => {
   let src = onDetailView ? artifactUri : displayUri || artifactUri
 
@@ -22,7 +22,7 @@ export const ImageComponent = ({
   }
 
   const onError = (error) => {
-    if (objkt.mimeType === MIMETYPE.GIF) {
+    if (nft.mime === MIMETYPE.GIF) {
       setIsVideo(true)
     }
   }
@@ -51,15 +51,15 @@ export const ImageComponent = ({
       preview={preview}
       onDetailView={onDetailView}
       displayView={displayView}
-      inView={!displayView}
-      objktID={objkt.id}
+      inView={true}
+      objktID={nft.id}
     />
   ) : displayView ? (
     <div className={styles.container}>
       <LazyLoadImage
         className={styles.image}
         src={src}
-        alt={`object ${objkt.id} image`}
+        alt={`object ${nft.id} image`}
         onError={onError}
       />
     </div>
@@ -69,7 +69,7 @@ export const ImageComponent = ({
         <LazyLoadImage
           className={styles.style}
           src={src}
-          alt={`object ${objkt.id} image`}
+          alt={`object ${nft.id} image`}
           onError={onError}
         />
       </div>

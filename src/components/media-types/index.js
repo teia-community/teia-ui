@@ -12,79 +12,66 @@ import { Container } from './container'
 import { MD } from './md'
 import { HashToURL } from 'utils/index'
 
-/*
-
-README:
-renderMediaType requires the following props being passed individually.
-Once all API have the same structure we can pass the whole object, but right now
-there's a mix of GraphQL and API and they have different structures, so passing
-the props one by one helps avoid bugs
-
-MANDATORY FIELDS:
-- mimeType (mimetype)
-- artifactUri (ipfs link)
-- displayUri (ipfs link)
-
-OPTIONAL FIELDS:
-- creator (creator wallet)
-- objkt (objkt number)
-- interactive (boolean)
-- preview (boolean)
+/**
+ * @typedef {{address:string,name:string}} Wallet
  */
 
+/**
+ * @typedef {Object} NFT
+ * @property {number} [id] - the objkt id
+ * @property {string} [creator] - the creator tz address
+ * @property {string} mimeType - the mimetype of the token metadata
+ * @property {string} artifact_uri - the artifact IPFS URI
+ * @property {string} display_uri - the display IPFS URI a.k.a cover image
+ */
+
+/**
+ * Method that handles the rendering of any of the supported
+ * media types.
+ * @param {NFT} nft - The nft object
+ * @param {boolean} [preview=false] - True if we are on the mint preview page
+ * @param {boolean} [previewUri] - True if we are on the mint preview page
+ * @param {boolean} [interactive] - Unsure?
+ * @param {boolean} [displayView] - Unsure?
+ */
 export const renderMediaType = ({
-  // the objkt mimeType (used to choose what renderer to use)
-  mimeType,
-
-  // artifactUri holds the file the user uploaded
-  artifactUri,
-
-  // displayUri might be sometimes undefined or '', but when present its a lower resolution of the artifactUri for faster loading
-  displayUri,
-
-  // previewUri is used when previewing on mint page
-  previewUri,
-
-  // the wallet id of the creator
-  creator,
-
-  // the objkt id so interactive NFT's can call API's
-  objktID,
-
-  // if the NFT is on the objkt detail page this value is true. otherwise is false
-  interactive = false,
-
-  // when previewing during mint process
+  nft,
   preview = false,
-
+  previewUri,
+  interactive = false,
   displayView,
 }) => {
+  if (!nft) {
+    console.error('No nft to render')
+    return
+  }
+
   const size = interactive ? 'gallery' : 'medium'
 
-  const parsedArtifactUri = artifactUri
-    ? HashToURL(artifactUri, 'CDN', { size })
+  const parsedArtifactUri = nft.artifact_uri
+    ? HashToURL(nft.artifact_uri, 'CDN', { size })
     : ''
-  const parsedDisplayUri = displayUri
-    ? HashToURL(displayUri, 'CDN', { size })
+  const parsedDisplayUri = nft.display_uri
+    ? HashToURL(nft.display_uri, 'CDN', { size })
     : ''
 
-  const parsedArtifactGatewayUri = artifactUri
-    ? HashToURL(artifactUri, 'NFTSTORAGE')
+  const parsedArtifactGatewayUri = nft.artifact_uri
+    ? HashToURL(nft.artifact_uri, 'NFTSTORAGE')
     : ''
   // Due to issues for generative tokens on NFTStorage.link gateway
   // we use ipfs.io only for these
-  const parsedArtifactHtmlUri = artifactUri
-    ? HashToURL(artifactUri, 'IPFS')
+  const parsedArtifactHtmlUri = nft.artifact_uri
+    ? HashToURL(nft.artifact_uri, 'IPFS')
     : ''
-  const parsedDisplayHtmlUri = displayUri
-    ? HashToURL(displayUri, 'CDN', { size })
-    : ''
-
-  const parsedArtifactRawUri = artifactUri
-    ? HashToURL(artifactUri, 'CDN', { size: 'raw' })
+  const parsedDisplayHtmlUri = nft.display_uri
+    ? HashToURL(nft.display_uri, 'CDN', { size })
     : ''
 
-  switch (mimeType) {
+  const parsedArtifactRawUri = nft.artifact_uri
+    ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
+    : ''
+
+  switch (nft.mime) {
     /* IMAGES */
     case MIMETYPE.BMP:
     case MIMETYPE.GIF:
@@ -98,13 +85,10 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
-            onDetailView={interactive || mimeType === MIMETYPE.GIF}
+            onDetailView={interactive || nft.mimeType === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
-            objkt={{
-              id: objktID,
-              mimeType,
-            }}
+            nft={nft}
           />
         </Container>
       )
@@ -118,8 +102,8 @@ export const renderMediaType = ({
             displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
             preview={preview}
-            creator={creator}
-            objktID={objktID}
+            creator={nft.creator.address}
+            objktID={nft.id}
             onDetailView={interactive}
             displayView={displayView}
           />
@@ -137,8 +121,8 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactHtmlUri}
             displayUri={parsedDisplayHtmlUri}
             previewUri={previewUri}
-            creator={creator}
-            objktID={objktID}
+            creator={nft.creator.address}
+            objktID={nft.id}
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
@@ -159,7 +143,8 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={objktID}
+            objktID={nft.id}
+            nft={nft}
           />
         </Container>
       )
@@ -175,7 +160,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={objktID}
+            objktID={nft.id}
           />
         </Container>
       )
@@ -194,7 +179,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={objktID}
+            objktID={nft.id}
           />
         </Container>
       )
@@ -210,7 +195,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={objktID}
+            nft={nft}
           />
         </Container>
       )
@@ -223,11 +208,11 @@ export const renderMediaType = ({
           artifactUri={parsedArtifactUri}
           displayUri={parsedDisplayUri}
           displayView={displayView}
-          objktID={objktID}
+          objktID={nft.id}
         />
       )
 
     default:
-      return <UnknownComponent mimeType={mimeType} />
+      return <UnknownComponent mimeType={nft.mimeType} />
   }
 }

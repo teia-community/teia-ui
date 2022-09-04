@@ -578,7 +578,7 @@ export class Search extends Component {
                   <Padding>
                     {this.state.feed.map((item, index) => (
                       <div key={`${item.id}-${index}`}>
-                        <FeedItem {...item} />
+                        <FeedItem nft={item} />
                       </div>
                     ))}
                   </Padding>

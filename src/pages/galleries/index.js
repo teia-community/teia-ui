@@ -39,23 +39,18 @@ export const Galleries = () => {
       <Container xlarge>
         <Padding>
           <ResponsiveMasonry>
-            {data.map((e) => {
-              console.log(e)
+            {data.map((nft) => {
               return (
-                <Button key={e.uid} to={`${PATH.GALLERY}/${e.uid}`}>
+                <Button key={nft.id} to={`${PATH.GALLERY}/${nft.id}`}>
                   <div className={styles.item}>
                     {renderMediaType({
-                      mimeType: e.mime,
-                      artifactUri: e.artifact_uri,
-                      displayUri: e.display_uri,
-                      creator: '',
-                      objktID: e.id,
+                      nft,
                       interactive: false,
                       displayView: true,
                     })}
                     <Button>
                       <Primary>
-                        <div className={styles.number}>{e.name}</div>
+                        <div className={styles.number}>{nft.name}</div>
                       </Primary>
                     </Button>
                   </div>

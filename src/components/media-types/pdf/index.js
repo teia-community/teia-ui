@@ -15,7 +15,7 @@ export const PdfComponent = ({
   previewUri,
   preview,
   onDetailView,
-  objktID,
+  nft,
 }) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
@@ -55,18 +55,18 @@ see it on [IPFS](${fallbackUri})`)
   return failed || loading ? (
     <AnimatePresence>
       <ImageComponent
-        key={`img-${objktID}`}
+        key={`img-${nft.id}`}
         artifactUri={displayUri}
         displayUri={displayUri}
         previewUri={previewUri}
         onDetailView={onDetailView}
         preview={preview}
         displayView={!onDetailView}
-        objktID={objktID}
+        nft={nft}
       />
       {loading && (
         <p
-          key={`loading-${objktID}`}
+          key={`loading-${nft.id}`}
           style={{ textAlign: 'center', margin: '1em' }}
         >
           Loading PDF...
@@ -80,7 +80,7 @@ see it on [IPFS](${fallbackUri})`)
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={onDocumentLoadError}
         onItemClick={onItemClick}
-        title={`PDF object ${objktID}`}
+        title={`PDF object ${nft.id}`}
       >
         <Page pageNumber={pageNumber} />
         {onDetailView && (

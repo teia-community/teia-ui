@@ -1028,9 +1028,7 @@ export default class Display extends Component {
                               }`}
                             >
                               {renderMediaType({
-                                mimeType: nft.mime,
-                                artifactUri: nft.artifact_uri,
-                                displayUri: nft.display_uri,
+                                nft,
                                 displayView: true,
                               })}
                             </div>
@@ -1182,21 +1180,18 @@ export default class Display extends Component {
                     endMessage={<p></p>}
                   >
                     <ResponsiveMasonry>
-                      {this.state.items.map((nft) => {
+                      {this.state.items.map(({ token }) => {
                         return (
                           <div className={styles.cardContainer}>
                             <Button
                               style={{ position: 'relative' }}
-                              key={nft.token.id}
-                              to={`${PATH.OBJKT}/${nft.token.id}`}
+                              key={token.id}
+                              to={`${PATH.OBJKT}/${token.id}`}
                             >
                               <div className={styles.container}>
                                 {renderMediaType({
-                                  mimeType: nft.token.mime,
-                                  artifactUri: nft.token.artifact_uri,
-                                  displayUri: nft.token.display_uri,
+                                  nft: token,
                                   displayView: true,
-                                  nsfw: nsfwList.includes(nft.token.id),
                                 })}
                               </div>
                             </Button>

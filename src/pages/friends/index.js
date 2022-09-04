@@ -193,11 +193,7 @@ export class Friends extends Component {
                 <Container>
                   <Padding>
                     {this.state.creations.map((item, index) => (
-                      <FeedItem
-                        key={`${item.id}-${index}`}
-                        {...item}
-                        creator_id={item.creator.address}
-                      />
+                      <FeedItem key={`${item.id}-${index}`} nft={item} />
                     ))}
                   </Padding>
                 </Container>

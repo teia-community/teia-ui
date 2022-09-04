@@ -257,7 +257,7 @@ export const Feeds = ({ type }) => {
             <Container>
               <Padding>
                 {items.map((item, index) => (
-                  <FeedItem key={`${item.id}-${index}`} {...item} />
+                  <FeedItem key={`${item.id}-${index}`} nft={item} />
                 ))}
               </Padding>
             </Container>

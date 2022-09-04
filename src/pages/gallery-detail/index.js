@@ -125,16 +125,12 @@ export const GalleryDetail = () => {
                 endMessage={undefined}
               >
                 <ResponsiveMasonry>
-                  {context.feed.map((e) => {
+                  {context.feed.map((nft) => {
                     return (
-                      <Button key={e.id} to={`/objkt/${e.id}`}>
+                      <Button key={nft.id} to={`/objkt/${nft.id}`}>
                         <div className={styles.item}>
                           {renderMediaType({
-                            mimeType: e.mime,
-                            artifactUri: e.artifact_uri,
-                            displayUri: e.display_uri,
-                            creator: '',
-                            objktID: e.id,
+                            nft,
                             interactive: false,
                             displayView: true,
                           })}

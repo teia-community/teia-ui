@@ -241,11 +241,7 @@ export const ObjktDisplay = () => {
             >
               <div className={objkt_classes}>
                 {renderMediaType({
-                  mimeType: nft.mime,
-                  artifactUri: nft.artifact_uri,
-                  displayUri: nft.display_uri,
-                  creator: nft.creator,
-                  objktID: nft.id,
+                  nft,
                   interactive: true,
                   displayView: false,
                 })}
