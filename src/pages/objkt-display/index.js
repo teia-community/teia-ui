@@ -9,6 +9,8 @@ import {
   getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
+  getNsfwList,
+  METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
@@ -50,6 +52,7 @@ export const ObjktDisplay = () => {
       fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
+    const nsfwList = getNsfwList()
 
     const listings = sortBy(
       [
@@ -76,6 +79,10 @@ export const ObjktDisplay = () => {
     )
 
     objkt.listings = listings
+
+    if (nsfwList.includes(objkt.id)) {
+      objkt.content_rating = METADATA_CONTENT_RATING_MATURE
+    }
 
     await context.setAccount()
 

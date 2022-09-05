@@ -4,6 +4,11 @@ import { Tags } from '@components/tags'
 import styles from '../styles.module.scss'
 import '../style.css'
 import { HashToURL } from '@utils'
+import {
+  LANGUAGES,
+  LICENSE_TYPES,
+  METADATA_CONTENT_RATING_MATURE,
+} from '@constants'
 
 export const Info = ({ nft, viewer_address }) => {
   const tag = {
@@ -42,19 +47,49 @@ export const Info = ({ nft, viewer_address }) => {
       </Container>
 
       <Container>
-        <Padding>
-          <p>{JSON.stringify(nft)}</p>
-        </Padding>
-      </Container>
+        <div style={{ fontSize: '0.75em' }}>
+          <div style={{ margin: '0 1em' }}>
+            <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
+            <div style={{ display: 'flex' }}>
+              <div>
+                <div style={{ marginBottom: '0.5em' }}>
+                  <Padding>
+                    <strong>Mimetype</strong>: {nft.mime}
+                  </Padding>
+                </div>
+              </div>
+              {nft.language && (
+                <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
+                  <strong>Language:</strong>
+                  <p>{LANGUAGES[nft.language]}</p>
+                </div>
+              )}
 
-      <Container>
-        <div style={{ margin: '0 1em' }}>
-          <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
-          <div style={{ marginBottom: '0.5em' }}>
-            <Padding>Mimetype: {nft.mime}</Padding>
+              {nft.content_rating === METADATA_CONTENT_RATING_MATURE && (
+                <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
+                  <strong>Content Rating:</strong>
+                  <p>NSFW (Mature)</p>
+                </div>
+              )}
+
+              <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
+                <strong>Rights:</strong>
+                <p>
+                  {nft.rights ? LICENSE_TYPES[nft.rights] : LICENSE_TYPES.none}
+                </p>
+              </div>
+            </div>
           </div>
+          <div style={{ height: '2em' }} />
+
           <Padding className="tag">
-            <div style={{ fontWeight: 'bold' }}>
+            <div
+              style={{
+                fontWeight: 'bold',
+                whiteSpace: 'pre-wrap',
+                margin: '0 1em',
+              }}
+            >
               <a style={tag} href={HashToURL(nft.metadata)}>
                 Metadata
               </a>

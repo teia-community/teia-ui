@@ -238,11 +238,11 @@ export default class Display extends Component {
       await GetUserMetadata(wallet).then((data) => {
         const { twitter, tzprofile, discord, github, dns } = data.data
 
-        if (data.data.twitter) this.setState({ twitter })
-        if (data.data.tzprofile) this.setState({ tzprofile })
-        if (data.data.discord) this.setState({ discord, copied: false })
-        if (data.data.github) this.setState({ github })
-        if (data.data.dns) this.setState({ dns })
+        if (twitter) this.setState({ twitter })
+        if (tzprofile) this.setState({ tzprofile })
+        if (discord) this.setState({ discord, copied: false })
+        if (github) this.setState({ github })
+        if (dns) this.setState({ dns })
       })
       const res = await fetchTz(wallet)
       try {
@@ -289,11 +289,11 @@ export default class Display extends Component {
 
       await GetUserMetadata(this.state.wallet).then((data) => {
         const { dns, github, discord, twitter, tzprofile } = data.data
-        if (data.data.dns) this.setState({ dns })
-        if (data.data.github) this.setState({ github })
-        if (data.data.discord) this.setState({ discord })
-        if (data.data.twitter) this.setState({ twitter })
-        if (data.data.tzprofile) this.setState({ tzprofile })
+        if (dns) this.setState({ dns })
+        if (github) this.setState({ github })
+        if (discord) this.setState({ discord })
+        if (twitter) this.setState({ twitter })
+        if (tzprofile) this.setState({ tzprofile })
       })
     }
     this.onReady()
@@ -1005,6 +1005,7 @@ export default class Display extends Component {
                   <ResponsiveMasonry>
                     {this.state.items.map((nft) => {
                       // console.log('swaps ' + JSON.stringify(nft))
+
                       return (
                         <div key={nft.id} className={styles.cardContainer}>
                           <Button
