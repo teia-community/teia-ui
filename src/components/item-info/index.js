@@ -112,8 +112,6 @@ export const ItemInfo = ({
 
     return (
       <>
-        {/* Not sure what this is 😅 */}
-        <div style={{ height: '30px' }} />
         <div className={styles.container}>
           <div className={styles.edition}>
             <div className={collabStyles.relative}>
