@@ -11,7 +11,7 @@ import {
   setLogoList,
   setNsfwList,
   setUnderReviewList,
-  setIgnoreUriList
+  setIgnoreUriList,
 } from '../constants'
 
 const axios = require('axios')
@@ -33,18 +33,31 @@ export const getInitialData = () => {
     axios.get(process.env.REACT_APP_TEIA_NSFW_LIST), // Teia list of NSFW OBJKTs
     axios.get(process.env.REACT_APP_TEIA_UNDER_REVIEW_LIST), // Teia list of accounts under review
     axios.get(process.env.REACT_APP_TEIA_IGNORE_URI_LIST), // IPFS URIs to ignore for violations
-  ]).then((results) => {
-    setLanguage(results[0].data)
-    setObjktBlockList(results[1].data)
-    setLogoList([results[3].data, results[4].data])
-    setWalletBlockList([results[5].data], [results[6].data])
-    setBanBlockList(results[2].data)
-    setNsfwList(results[7].data)
-    setUnderReviewList(results[8].data)
-    setIgnoreUriList(results[9].data)
+  ]).then(
+    ([
+      lang,
+      objkt_block,
+      ban,
+      logos,
+      logos_pride,
+      restricted,
+      permitted,
+      nsfw,
+      under_review,
+      ipfs_ignore,
+    ]) => {
+      setLanguage(lang.data)
+      setObjktBlockList(objkt_block.data)
+      setLogoList([logos.data, logos_pride.data])
+      setWalletBlockList([restricted.data], [permitted.data])
+      setBanBlockList(ban.data)
+      setNsfwList(nsfw.data)
+      setUnderReviewList(under_review.data)
+      setIgnoreUriList(ipfs_ignore.data)
 
-    return true
-  })
+      return true
+    }
+  )
 }
 
 // filter all feeds to remove objkt and wallets that are blocked.
@@ -59,22 +72,6 @@ const filterFeeds = (original) => {
     // filter objkt's out if they're from flagged wallets
     .filter((i) => !wblock.includes(i.token_info.creators[0]))
   return filtered
-}
-
-/**
- * Gets Feed for homepage
- * filters it against a blocklist json
- */
-export const GetLatestFeed = async ({ counter, max_time }) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(process.env.REACT_APP_FEED, {
-        params: { counter: counter, max_time: max_time },
-      })
-      .then((res) => {
-        resolve(filterFeeds(res.data.result))
-      })
-  })
 }
 
 /**
@@ -108,21 +105,6 @@ export const GetFeaturedFeed = async ({ counter, max_time }) => {
 }
 
 /**
- * Get Random Feed
- */
-export const GetRandomFeed = async ({ counter }) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(process.env.REACT_APP_RANDOM, {
-        params: { counter: counter },
-      })
-      .then((res) => {
-        resolve(filterFeeds(res.data.result))
-      })
-  })
-}
-
-/**
  * Get OBJKT detail page
  */
 export const GetOBJKT = async ({ id }) => {
@@ -136,21 +118,6 @@ export const GetOBJKT = async ({ id }) => {
         resolve(res.data.result)
       })
       .catch((e) => reject(e))
-  })
-}
-
-/**
- * Get OBJKT detail page
- */
-export const GetTags = async ({ tag, counter }) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .post(process.env.REACT_APP_TAGS, { tag: tag, counter: counter })
-      .then((res) => {
-        // console.log(res.data)
-        resolve(res.data.result)
-      })
-      .catch((e) => reject(e)) // TODO: send error message to context. have an error component to display the error
   })
 }
 
@@ -169,37 +136,35 @@ const GetUserClaims = async (walletAddr) => {
  * Get User Metadata
  */
 export const GetUserMetadata = async (walletAddr) => {
-  let tzktData = {}
+  const tzktData = {}
 
-  let tzpData = {}
+  const tzpData = {}
   try {
-    let claims = await GetUserClaims(walletAddr)
+    const claims = await GetUserClaims(walletAddr)
     if (claims.data.data.tzprofiles_by_pk !== null)
       for (const claim of claims.data.data.tzprofiles_by_pk.valid_claims) {
-        let claimJSON = JSON.parse(claim[1])
+        const claimJSON = JSON.parse(claim[1])
         if (claimJSON.type.includes('TwitterVerification')) {
           if (!tzktData.data || !tzktData.data.twitter) {
-            tzpData['twitter'] = claimJSON.evidence.handle
+            tzpData.twitter = claimJSON.evidence.handle
           }
         } else if (claimJSON.type.includes('BasicProfile')) {
-          if (
-            claimJSON.credentialSubject.alias !== '' &&
-            !(tzktData.data && tzktData.data.alias)
-          )
-            tzpData['alias'] = claimJSON.credentialSubject.alias
-          tzpData['tzprofile'] = walletAddr
+          if (claimJSON.credentialSubject.alias !== '' && !tzktData.data?.alias)
+            tzpData.alias = claimJSON.credentialSubject.alias
+          tzpData.tzprofile = walletAddr
         } else if (claimJSON.type.includes('DiscordVerification')) {
           if (!tzktData.data) {
-            tzpData['discord'] = claimJSON.evidence.handle
+            tzpData.discord = claimJSON.evidence.handle
           }
         } else if (claimJSON.type.includes('GitHubVerification')) {
           if (!tzktData.data) {
-            tzpData['github'] = claimJSON.evidence.handle
+            tzpData.github = claimJSON.evidence.handle
           }
-        } else if (claimJSON.type.includes('DnsVerification')) {
-          if (!tzktData.data) {
-            tzpData['dns'] = claimJSON.credentialSubject.sameAs.slice(4)
-          }
+        } else if (
+          claimJSON.type.includes('DnsVerification') &&
+          !tzktData.data
+        ) {
+          tzpData.dns = claimJSON.credentialSubject.sameAs.slice(4)
         }
       }
   } catch (e) {

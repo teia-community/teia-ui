@@ -6,7 +6,6 @@ import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import {
-  getWalletBlockList,
   getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
@@ -77,10 +76,10 @@ export const ObjktDisplay = () => {
     )
 
     objkt.listings = listings
-    objkt.ban = getWalletBlockList()
+
     await context.setAccount()
 
-    if (objkt.ban.includes(objkt.creator.address)) {
+    if (context.block_list.includes(objkt.creator.address)) {
       setRestricted(true)
       objkt.restricted = true
     } else {
@@ -92,9 +91,9 @@ export const ObjktDisplay = () => {
         objkt.underReview = true
       }
       // filter swaps from banned account
-      if (objkt.swaps && objkt.ban)
+      if (objkt.swaps && context.block_list)
         objkt.swaps = objkt.swaps.filter(
-          (s) => s.status > 0 || !objkt.ban.includes(s.creator_id)
+          (s) => s.status > 0 || !context.block_list.includes(s.creator_id)
         )
     }
     setNFT(objkt)

@@ -31,6 +31,7 @@ import {
   SWAP_TYPE_HEN,
   BURN_ADDRESS,
   getLogoList,
+  getWalletBlockList,
 } from '@constants'
 const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
@@ -260,6 +261,13 @@ function createSwapCalls(
 }
 
 class HicetnuncContextProviderClass extends Component {
+  componentDidMount() {
+    console.debug('Getting the ban list from the context')
+    this.setState({
+      block_list: getWalletBlockList(),
+    })
+  }
+
   constructor(props) {
     super(props)
 
@@ -1177,6 +1185,8 @@ class HicetnuncContextProviderClass extends Component {
             }, 2000)
           })
       },
+
+      block_list: [],
 
       originateProxy: async (participantData) => {
         console.log('originateProxy', participantData)

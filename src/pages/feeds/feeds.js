@@ -1,17 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 // import { BottomBanner } from '@components/bottom-banner'
-import // GetLatestFeed,
-// GethDAOFeed,
-// GetRandomFeed,
-// GetFeaturedFeed,
-'@data/api'
 import { Page, Container, Padding } from '@components/layout'
 import { FeedItem } from '@components/feed-item'
 import { Loading } from '@components/loading'
-import { getWalletBlockList } from '@constants'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 // import { getLastObjktId } from '@data/hicdex'
 
 // const axios = require('axios')
@@ -134,6 +129,7 @@ const ONE_MINUTE_MILLIS = 60 * 1000
 
 export const Feeds = ({ type }) => {
   // const [error, setError] = useState(false)
+  const context = useContext(HicetnuncContext)
   const [items, setItems] = useState([])
   const [count, setCount] = useState(0)
   const [lastId, setId] = useState(999999)
@@ -143,10 +139,6 @@ export const Feeds = ({ type }) => {
   const startTime = customFloor(Date.now(), ONE_MINUTE_MILLIS)
 
   const loadMore = async () => {
-    /*     if (type === 1) {
-          await getHdaoFeed()
-        } */
-    //await getRandomFeed()
     await getLatest(
       Math.min.apply(
         Math,
@@ -156,46 +148,7 @@ export const Feeds = ({ type }) => {
   }
 
   useEffect(async () => {
-    // if (error) {
-    //   console.log('returning on error')
-    //   return
-    // }
-    /*     if (type === 0) {
-          GetLatestFeed({ counter: count, max_time: startTime })
-            .then((result) => {
-              const next = items.concat(result)
-              setItems(next)
-
-              // if original returns less than 10, then there's no more data coming from API
-              if (result.length < 10) {
-                setHasMore(false)
-              }
-            })
-            .catch((e) => {
-              setError(true)
-            })
-        } else if (type === 1) {
-          await getHdaoFeed()
-        } else if (type === 2) { */
-    //await getRandomFeed()
-    //} else if (type === 3) {
     await getLatest(lastId)
-
-    /*       GetFeaturedFeed({ counter: count, max_time: startTime })
-      .then((result) => {
-        // filtered isn't guaranteed to always be 10. if we're filtering they might be less.
-        const next = items.concat(result)
-        setItems(next)
-
-        // if original returns less than 10, then there's no more data coming from API
-        if (result.length < 10) {
-          setHasMore(false)
-        }
-      })
-      .catch((e) => {
-        setError(true)
-      }) */
-    //}
   }, [count, type])
 
   const getLatest = async (id) => {
@@ -207,34 +160,12 @@ export const Feeds = ({ type }) => {
     setCreators(creators.concat(result.map((e) => e.creator_id)))
     result = result.filter((e) => !creators.includes(e.creator_id))
 
-    let restricted = getWalletBlockList()
-    result = result.filter((e) => !restricted.includes(e.creator_id))
+    result = result.filter((e) => !context.block_list.includes(e.creator_id))
 
     //fetchProfiles(addrs)
     const next = items.concat(result)
     setItems(next)
   }
-
-  // const getHdaoFeed = async () => {
-  //   let result = await fetchHdao(offset)
-  //   setOffset(offset + 15)
-  //   const next = items.concat(result)
-  //   setItems(next)
-  // }
-
-  // const getRandomFeed = async () => {
-  //   let result = await fetchRandomObjkts()
-  //   setCreators([...creators, result.map((e) => e.creator_id)])
-
-  //   result = _.uniqBy(result, 'creator_id')
-  //   setCreators(creators.concat(result.map((e) => e.creator_id)))
-  //   result = result.filter((e) => !creators.includes(e.creator_id))
-
-  //   let restricted = getWalletBlockList()
-  //   result = result.filter((e) => !restricted.includes(e.creator_id))
-  //   const next = items.concat(result)
-  //   setItems(next)
-  // }
 
   return (
     <Page title="">

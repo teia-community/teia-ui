@@ -9,7 +9,6 @@ import { getNsfwList, METADATA_CONTENT_RATING_MATURE } from '@constants'
 
 export const FeedItem = ({ nft }) => {
   const nsfwList = getNsfwList()
-  console.log(nft)
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${nft.id}`}>

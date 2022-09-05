@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useParams } from 'react-router'
 import { Button } from '@components/button'
@@ -8,7 +8,7 @@ import { renderMediaType } from '@components/media-types'
 import { Page, Container } from '@components/layout'
 import { PATH } from '@constants'
 import styles from './styles.module.scss'
-import { getWalletBlockList } from '../../constants'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 
 const _ = require('lodash')
 
@@ -51,19 +51,21 @@ async function fetchTag(tag, offset) {
 }
 
 export const Tags = () => {
+  const context = useContext(HicetnuncContext)
   const { id } = useParams()
   const [feed, setFeed] = useState([])
   const [count, setCount] = useState(0)
   const [hasMore] = useState(true)
-  const [restricted, setRestricted] = useState([])
   const [offset, setOffset] = useState(0)
 
   const loadMore = async () => {
     setOffset(offset + 35)
-    let arr = await fetchTag(id, offset + 35)
+    const arr = await fetchTag(id, offset + 35)
     setFeed(
       _.uniqBy(
-        [...feed, ...arr].filter((e) => !restricted.includes(e.creator_id)),
+        [...feed, ...arr].filter(
+          (e) => !context.block_list.includes(e.creator_id)
+        ),
         'creator_id'
       )
     )
@@ -71,13 +73,11 @@ export const Tags = () => {
   }
 
   useEffect(async () => {
-    let arr = await fetchTag(id, offset)
-    let res = getWalletBlockList()
-    setRestricted(res)
-    console.log(arr)
+    const arr = await fetchTag(id, offset)
+
     setFeed(
       _.uniqBy(
-        arr.filter((e) => !res.includes(e.creator_id)),
+        arr.filter((e) => !context.block_list.includes(e.creator_id)),
         'creator_id'
       )
     )

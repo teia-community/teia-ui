@@ -15,7 +15,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import styles from './styles.module.scss'
 import {
-  getWalletBlockList,
   getUnderReviewList,
   getNsfwList,
   METADATA_CONTENT_RATING_MATURE,
@@ -321,8 +320,7 @@ export default class Display extends Component {
 
     this.reset()
 
-    let list = getWalletBlockList()
-    if (!list.includes(this.state.wallet)) {
+    if (!this.context.block_list.includes(this.state.wallet)) {
       const underReviewList = getUnderReviewList()
       this.setState({
         underReview: underReviewList.includes(this.state.wallet),
@@ -454,9 +452,7 @@ export default class Display extends Component {
 
     this.setState({ collectionType: 'notForSale' })
 
-    const list = getWalletBlockList()
-
-    if (!list.includes(this.state.wallet)) {
+    if (!this.context.block_list.includes(this.state.wallet)) {
       const underReviewList = getUnderReviewList()
       this.setState({
         underReview: underReviewList.includes(this.state.wallet),
@@ -500,9 +496,7 @@ export default class Display extends Component {
   }
 
   collabs = async () => {
-    const list = getWalletBlockList()
-
-    if (!list.includes(this.state.wallet)) {
+    if (!this.context.block_list.includes(this.state.wallet)) {
       this.setState({
         objkts: [],
         loading: true,

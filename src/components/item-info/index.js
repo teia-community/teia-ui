@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import sum from 'lodash/sum'
 import { PATH } from '../../constants'
@@ -22,13 +22,16 @@ export const ItemInfo = ({
   feed,
   supply,
   isDetailView,
-  restricted,
-  ban,
 }) => {
-  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
+  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc, block_list } =
     useContext(HicetnuncContext)
 
   const [showSignStatus, setShowSignStatus] = useState(false)
+  const [restricted, setRestricted] = useState(false)
+
+  useEffect(() => {
+    setRestricted(block_list.includes(creator.address))
+  }, [block_list, creator])
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
@@ -37,7 +40,7 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            !ban.includes(
+            !block_list.includes(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
@@ -49,7 +52,7 @@ export const ItemInfo = ({
     let purchaseButton = null
 
     const cheapestListing = listings.filter(
-      (listing) => !ban.includes(listing.creator_id)
+      (listing) => !block_list.includes(listing.creator_id)
     )[0]
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such

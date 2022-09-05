@@ -42,9 +42,9 @@ export const setLogoList = (data) => {
     )
   }
 
-  let currentIndex = logos.length,
-    temporaryValue,
-    randomIndex
+  let currentIndex = logos.length
+  let temporaryValue
+  let randomIndex
   const date = new Date(Date.now())
   let day =
     (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
@@ -53,14 +53,14 @@ export const setLogoList = (data) => {
     60 /
     60 /
     1000
-  let random = function () {
-    var x = Math.sin(day++) * 10000
+  const random = () => {
+    const x = Math.sin(day++) * 10000
     return x - Math.floor(x)
   }
 
   while (0 !== currentIndex) {
     randomIndex = Math.floor(random() * currentIndex)
-    currentIndex -= 1
+    currentIndex--
     //swap
     temporaryValue = logos[currentIndex]
     logos[currentIndex] = logos[randomIndex]
