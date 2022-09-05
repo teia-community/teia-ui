@@ -8,8 +8,10 @@ import { Button, Purchase } from '@components/button'
 
 export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
-  const { transfer, setProgress, acc, proxyAddress } =
+  const { transfer, setProgress, acc, proxyAddress, objkts } =
     useContext(HicetnuncContext)
+
+  const senderAddress = proxyAddress || acc?.address
 
   // See if the creator of this token is also the admin
   const proxyAdminAddress = nft.creator.is_split
@@ -18,10 +20,10 @@ export const Transfer = ({ nft }) => {
 
   // How many editions are held by the contract?
   const editionsHeld = nft.token_holders.find(
-    (e) => e.holder_id === proxyAddress && acc?.address === proxyAdminAddress
+    (e) =>
+      e.holder_id === senderAddress &&
+      (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
   )
-
-  console.log(nft.token_holders)
 
   // The basic schema for a transaction
   const txSchema = {
@@ -96,11 +98,7 @@ export const Transfer = ({ nft }) => {
       {tokenCount === 0 ? (
         <Padding>
           <div className={styles.container}>
-            <p>
-              No editions found to transfer. This tool is only for sending
-              OBJKTs from a collab contract to other tezos addresses, make sure
-              to be signed into a collab contract to use it.
-            </p>
+            <p>No editions found to transfer.</p>
           </div>
         </Padding>
       ) : (
@@ -111,26 +109,17 @@ export const Transfer = ({ nft }) => {
               each.
             </p>
             <p>You currently have {tokenCount} editions available.</p>
-
-            <table className={tableStyle}>
-              <thead>
-                <tr>
-                  <td>OBJKT quantity</td>
-                  <td colSpan={2}>to address (tz...)</td>
-                </tr>
-              </thead>
-              <tbody>
-                {txs.map((tx, index) => (
-                  <TxRow
-                    key={`transfer-${index}`}
-                    tx={tx}
-                    onUpdate={(tx) => _update(index, tx)}
-                    onAdd={_addTransfer}
-                    onRemove={index < txs.length - 1 ? _deleteTransfer : null}
-                  />
-                ))}
-              </tbody>
-            </table>
+            <div className={tableStyle}>
+              {txs.map((tx, index) => (
+                <TxRow
+                  key={`transfer-${index}`}
+                  tx={tx}
+                  onUpdate={(tx) => _update(index, tx)}
+                  onAdd={_addTransfer}
+                  onRemove={index < txs.length - 1 ? _deleteTransfer : null}
+                />
+              ))}
+            </div>
 
             {/* <div className={styles.upload_container}>
                     <label>
