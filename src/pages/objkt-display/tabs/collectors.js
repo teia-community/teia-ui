@@ -4,14 +4,7 @@ import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Listings } from '@components/listings'
 
-export const Collectors = ({
-  id,
-  creator,
-  listings,
-  token_holders,
-  restricted,
-  ban,
-}) => {
+export const Collectors = ({ nft }) => {
   const {
     syncTaquito,
     collect,
@@ -38,26 +31,26 @@ export const Collectors = ({
     }
   }
 
-  const proxyAdminAddress = creator.is_split
-    ? creator.shares[0].administrator
+  const proxyAdminAddress = nft.creator.is_split
+    ? nft.creator.shares[0].administrator
     : null
 
   return (
     <>
-      {listings.length > 0 && (
+      {nft.listings.length > 0 && (
         <Container>
           <Padding>
             <Listings
-              id={id}
-              listings={listings}
+              id={nft.id}
+              listings={nft.listings}
               handleCollect={handleCollect}
               handleCollectObjktcomAsk={handleCollectObjktcomAsk}
               acc={acc}
               proxyAdminAddress={proxyAdminAddress}
               cancel={cancel}
               cancelv1={cancelv1}
-              restricted={restricted}
-              ban={ban}
+              restricted={nft.restricted}
+              ban={nft.ban}
               reswap={reswap}
             />
           </Padding>
@@ -67,7 +60,7 @@ export const Collectors = ({
       {/* {filtered.length === 0 ? undefined : ( */}
       <Container>
         <Padding>
-          <OwnerList owners={token_holders} />
+          <OwnerList owners={nft.token_holders} />
         </Padding>
       </Container>
       {/* )} */}

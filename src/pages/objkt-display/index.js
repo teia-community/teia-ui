@@ -19,10 +19,9 @@ import { Page, Container, Padding } from '@components/layout'
 import { renderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
 import { Menu } from '@components/menu'
-import { Info, Collectors, Swap, Burn, History } from './tabs'
+import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from './styles.module.scss'
 import './style.css'
-import { Transfer } from '@components/collab/show/Transfer'
 
 const TABS = [
   { title: 'Info', component: Info }, // public tab
@@ -295,7 +294,7 @@ export const ObjktDisplay = () => {
                   </Padding>
                 </Container>
 
-                <Tab {...nft} address={address} />
+                <Tab nft={nft} viewer_address={address} />
               </div>
             </div>
           </>

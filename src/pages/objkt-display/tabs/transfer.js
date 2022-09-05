@@ -1,33 +1,33 @@
 import { useContext, useState } from 'react'
-import { Container, Padding } from '../../layout'
-import { TxRow } from './TxRow'
-import styles from '../../collab/styles.module.scss'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import { TxRow } from '@components/collab/show/TxRow'
+import styles from '@components/collab/styles.module.scss'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 import classNames from 'classnames'
-import { Button, Purchase } from '../../button'
+import { Button, Purchase } from '@components/button'
 
-export const Transfer = ({ id, creator, token_holders }) => {
+export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
   const { transfer, setProgress, acc, proxyAddress } =
     useContext(HicetnuncContext)
 
   // See if the creator of this token is also the admin
-  const proxyAdminAddress = creator.is_split
-    ? creator.shares[0].administrator
+  const proxyAdminAddress = nft.creator.is_split
+    ? nft.creator.shares[0].administrator
     : null
 
   // How many editions are held by the contract?
-  const editionsHeld = token_holders.find(
+  const editionsHeld = nft.token_holders.find(
     (e) => e.holder_id === proxyAddress && acc?.address === proxyAdminAddress
   )
 
-  console.log(token_holders)
+  console.log(nft.token_holders)
 
   // The basic schema for a transaction
   const txSchema = {
     to_: undefined,
     amount: undefined,
-    token_id: id,
+    token_id: nft.id,
   }
 
   const [txs, setTxs] = useState([
@@ -96,7 +96,11 @@ export const Transfer = ({ id, creator, token_holders }) => {
       {tokenCount === 0 ? (
         <Padding>
           <div className={styles.container}>
-            <p>No editions found to transfer. This tool is only for sending OBJKTs from a collab contract to other tezos addresses, make sure to be signed into a collab contract to use it.</p>
+            <p>
+              No editions found to transfer. This tool is only for sending
+              OBJKTs from a collab contract to other tezos addresses, make sure
+              to be signed into a collab contract to use it.
+            </p>
           </div>
         </Padding>
       ) : (

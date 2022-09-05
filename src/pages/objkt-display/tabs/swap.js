@@ -7,16 +7,13 @@ import { Input } from '@components/input'
 import { Button, Purchase } from '@components/button'
 import styles from '../styles.module.scss'
 
-export const Swap = ({
-  total_amount,
-  token_holders,
-  owners,
-  creator,
-  royalties,
-  token_info,
-  address,
-  restricted,
-}) => {
+/**
+ * The Swap Tab
+ * @function
+ * @param {import('@components/media-types/index').NFT} {nft}
+ * @returns {any}
+ */
+export const Swap = ({ nft }) => {
   let totalOwned = 0
   const { id } = useParams()
   const {
@@ -45,10 +42,10 @@ export const Swap = ({
     }
   }
 
-  const proxyAdminAddress = creator.is_split
-    ? creator.shares[0].administrator
+  const proxyAdminAddress = nft.creator.is_split
+    ? nft.creator.shares[0].administrator
     : null
-  const found = token_holders.find(
+  const found = nft.token_holders.find(
     (e) =>
       e.holder_id === acc?.address ||
       (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
@@ -78,10 +75,10 @@ export const Swap = ({
     // swap is valid call API
     console.debug(
       acc.address,
-      royalties,
+      nft.royalties,
       parseFloat(price) * 1000000,
       id,
-      creator.address,
+      nft.creator.address,
       parseFloat(amount)
     )
 
@@ -90,10 +87,10 @@ export const Swap = ({
         // when taquito returns a success/fail message
         const answer = await swap(
           acc.address,
-          royalties,
+          nft.royalties,
           parseFloat(price) * 1e6,
           id,
-          creator.address,
+          nft.creator.address,
           parseFloat(amount)
         )
         setProgress(false)

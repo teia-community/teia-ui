@@ -15,13 +15,13 @@ const OPERATION_SWAP = 'SWAP'
 const OPERATION_TRANSFER = 'TRANSFER'
 const OPERATION_TRADE = 'TRADE'
 
-export const History = (token_info) => {
-  let trades = token_info.trades.map((e) => ({
+export const History = ({ nft }) => {
+  let trades = nft.trades.map((e) => ({
     ...e,
     type: OPERATION_TRADE,
   }))
-  let swaps = token_info.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-  let transfers = token_info.transfers.map((e) => ({
+  let swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
+  let transfers = nft.transfers.map((e) => ({
     ...e,
     type: OPERATION_TRANSFER,
   }))
@@ -326,22 +326,20 @@ export const History = (token_info) => {
                 </div>
 
                 <div className={styles.history__from}>
-                  {token_info.creator.name ? (
+                  {nft.creator.name ? (
                     <span>
                       <a
-                        href={`/tz/${encodeURI(token_info.creator.address)}`}
+                        href={`/tz/${encodeURI(nft.creator.address)}`}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Primary>{token_info.creator.name}</Primary>
+                        <Primary>{nft.creator.name}</Primary>
                       </a>
                     </span>
                   ) : (
                     <span>
-                      <a href={`/tz/${token_info.creator.address}`}>
-                        <Primary>
-                          {walletPreview(token_info.creator.address)}
-                        </Primary>
+                      <a href={`/tz/${nft.creator.address}`}>
+                        <Primary>{walletPreview(nft.creator.address)}</Primary>
                       </a>
                     </span>
                   )}
@@ -349,35 +347,27 @@ export const History = (token_info) => {
 
                 <div className={styles.history__to} />
 
-                <div className={styles.history__ed}>{token_info.supply}</div>
+                <div className={styles.history__ed}>{nft.supply}</div>
 
                 <div className={styles.history__price} />
 
-                <div
-                  className={styles.history__date}
-                  title={token_info.timestamp}
-                >
-                  {getTimeAgo(token_info.timestamp)}
+                <div className={styles.history__date} title={nft.timestamp}>
+                  {getTimeAgo(nft.timestamp)}
                 </div>
 
                 <div className={styles.history__inner__mobile}>
-                  <div
-                    className={styles.history__date}
-                    title={token_info.timestamp}
-                  >
-                    {getTimeAgo(token_info.timestamp)}
+                  <div className={styles.history__date} title={nft.timestamp}>
+                    {getTimeAgo(nft.timestamp)}
                   </div>
 
-                  <div className={styles.history__ed}>
-                    ed. {token_info.supply}
-                  </div>
+                  <div className={styles.history__ed}>ed. {nft.supply}</div>
 
                   <div className={styles.history__price} />
                 </div>
               </div>
 
               <div className={styles.history__royalties}>
-                {token_info.royalties / 10}% Royalties
+                {nft.royalties / 10}% Royalties
               </div>
             </div>
           </Padding>
