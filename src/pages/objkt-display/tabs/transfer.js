@@ -8,7 +8,7 @@ import { Button, Purchase } from '@components/button'
 
 export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
-  const { transfer, setProgress, acc, proxyAddress, objkts } =
+  const { transfer, setFeedback, acc, proxyAddress } =
     useContext(HicetnuncContext)
 
   const senderAddress = proxyAddress || acc?.address
@@ -82,7 +82,12 @@ export const Transfer = ({ nft }) => {
     */
 
   const onClick = () => {
-    setProgress(true)
+    setFeedback({
+      message: 'Transfering tokens',
+      progress: true,
+      confirm: false,
+      visible: true,
+    })
     const validTxs = txs.filter((tx) => tx.to_ && tx.amount)
     transfer(validTxs)
   }

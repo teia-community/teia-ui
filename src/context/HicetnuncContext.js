@@ -805,6 +805,11 @@ class HicetnuncContextProviderClass extends Component {
             ])
             .send()
         )
+
+        this.state.setFeedback({
+          progress: false,
+          visible: false,
+        })
       },
 
       burn: async (objkt_id, amount) => {
