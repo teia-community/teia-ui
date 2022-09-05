@@ -54,7 +54,7 @@ export const Info = ({ nft, viewer_address }) => {
               <div>
                 <div style={{ marginBottom: '0.5em' }}>
                   <Padding>
-                    <strong>Mimetype</strong>: {nft.mime}
+                    <strong>Mimetype</strong>:<p>{nft.mime}</p>
                   </Padding>
                 </div>
               </div>
@@ -75,7 +75,17 @@ export const Info = ({ nft, viewer_address }) => {
               <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
                 <strong>Rights:</strong>
                 <p>
-                  {nft.rights ? LICENSE_TYPES[nft.rights] : LICENSE_TYPES.none}
+                  {nft.rights ? (
+                    nft.rights === 'custom' ? (
+                      <a target="_blank" href={nft.right_uri} rel="noreferrer">
+                        Custom
+                      </a>
+                    ) : (
+                      LICENSE_TYPES[nft.rights]
+                    )
+                  ) : (
+                    LICENSE_TYPES.none
+                  )}
                 </p>
               </div>
             </div>
