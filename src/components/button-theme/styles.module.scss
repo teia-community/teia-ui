@@ -8,6 +8,6 @@
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
-  z-index: 1000;
+  z-index: 200;
   cursor: pointer;
 }

@@ -1,6 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
+
+import { BANNER_URL } from '@constants'
+import JSON5 from 'json5'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
@@ -13,20 +16,40 @@ import { walletPreview } from '../../utils/string'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
-/* import { BeaconWallet } from '@taquito/beacon-wallet'
-
-const wallet = new BeaconWallet({
-  name: 'hicetnunc.xyz',
-  preferredNetwork: 'mainnet',
-}) */
+import { EventBanner } from '@components/event-banner/index'
+import { useWindowScroll } from 'react-use'
 
 export const Header = () => {
   const history = useHistory()
   const context = useContext(HicetnuncContext)
+  const [displayBanner, setDisplayBanner] = useState(false)
+
+  const { y } = useWindowScroll()
+
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
     context.setLogo()
+  }, [])
+
+  useEffect(() => {
+    async function getBanner() {
+      const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
+      const config_text = await config_response.text()
+      const config = JSON5.parse(config_text)
+
+      if (config.enable > 0) {
+        context.setBannerColor(config.color)
+        const md_response = await fetch(`${BANNER_URL}/banner.md`)
+        const md_text = await md_response.text()
+        context.setBanner(md_text)
+      }
+    }
+    try {
+      getBanner()
+    } catch (e) {
+      console.error(e)
+    }
   }, [])
 
   // we assume user isn't connected
@@ -68,9 +91,23 @@ export const Header = () => {
     }
   }
 
+  useEffect(() => {
+    setDisplayBanner(y < 50)
+  }, [y])
+
   return (
     <>
-      <header className={styles.container}>
+      <EventBanner
+        banner={context.banner}
+        bannerColor={context.bannerColor}
+        visible={displayBanner}
+      />
+
+      <header
+        className={`${styles.container} ${
+          displayBanner && context.banner ? styles.banner_on : ''
+        }`}
+      >
         <div className={styles.content}>
           <Button onClick={() => handleRoute('/')}>
             <div className={styles.logo}>
@@ -78,15 +115,13 @@ export const Header = () => {
               {true && context.theme !== 'unset' && (
                 <img
                   src={`${process.env.REACT_APP_LOGOS}/logos${
-                    context.logo.themable ? '/' + context.theme : ''
+                    context.logo.themable ? `/${context.theme}` : ''
                   }${
-                    context.logo.collection ? '/' + context.logo.collection : ''
+                    context.logo.collection ? `/${context.logo.collection}` : ''
                   }/${context.logo.name}`}
                   alt="teia-logo"
-                ></img>
+                />
               )}
-              {/* PRIDE LOGO */}
-              {false && <img src="/hen-pride.gif" alt="pride 2021" />}
             </div>
           </Button>
 
@@ -118,7 +153,12 @@ export const Header = () => {
 
       <AnimatePresence>
         {!context.collapsed && (
-          <motion.div className={styles.menu} {...fadeIn()}>
+          <motion.div
+            className={`${styles.menu} ${
+              displayBanner && context.banner ? styles.banner_on : ''
+            }`}
+            {...fadeIn()}
+          >
             <Container>
               <Padding>
                 <nav className={styles.content}>

@@ -16,13 +16,11 @@ export default class Sync extends Component {
 
   static contextType = HicetnuncContext
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     if (this.context.acc == null) {
       await this.context.syncTaquito()
-      await this.context.setAccount()
-    } else {
-      await this.context.setAccount()
     }
+    await this.context.setAccount()
   }
 
   render() {

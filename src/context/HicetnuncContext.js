@@ -1051,20 +1051,30 @@ class HicetnuncContextProviderClass extends Component {
         }
       },
 
-      collapsed: true,
-
       feed: [],
 
       offset: 0,
 
       setFeed: (arr) => this.setState({ feed: arr }),
 
+      // Event banner
+      banner: null,
+      setBanner: (banner) => this.setState({ banner }),
+      bannerColor: null,
+      setBannerColor: (bannerColor) => this.setState({ bannerColor }),
+
+      collapsed: true,
+
       toogleNavbar: () => {
+        document.body.style.overflow = this.state.collapsed
+          ? 'hidden'
+          : 'scroll'
         this.setState({ collapsed: !this.state.collapsed })
       },
 
       setMenu: (collapsed) => {
         this.setState({ collapsed })
+        document.body.style.overflow = collapsed ? 'scroll' : 'hidden'
       },
 
       getStyle: (style) =>

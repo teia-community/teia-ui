@@ -8,7 +8,7 @@
   bottom: 0;
   left: 0;
   overflow-y: auto;
-  z-index: 2;
+  z-index: 10;
 
   @supports (padding: unquote('max(0px)')) {
     padding-top: unquote('max(0px, env(safe-area-inset-top))');
