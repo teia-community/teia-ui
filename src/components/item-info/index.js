@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import classNames from 'classnames'
 import sum from 'lodash/sum'
-import { PATH } from '../../constants'
+import { PATH, SWAP_STATUS } from '../../constants'
 import { Button, Primary, Purchase, Secondary } from '../button'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { walletPreview } from '../../utils/string'
@@ -30,6 +30,7 @@ export const ItemInfo = ({
     collect,
     fulfillObjktcomAsk,
     claimGiveaway,
+    showFeedback,
     curate,
     acc,
   } = useContext(HicetnuncContext)
@@ -82,7 +83,9 @@ export const ItemInfo = ({
                     fulfillObjktcomAsk(cheapestListing)
                     break
                   case 'giveaway':
-                    claimGiveaway(cheapestListing)
+                    cheapestListing.status === SWAP_STATUS.claimed
+                      ? showFeedback(`Dono listings can only be claimed once.`)
+                      : claimGiveaway(cheapestListing)
                     break
                   default:
                     console.error(

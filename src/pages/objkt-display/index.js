@@ -10,6 +10,7 @@ import {
   getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
+  SWAP_STATUS,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
@@ -44,12 +45,18 @@ export const ObjktDisplay = () => {
   const [restricted, setRestricted] = useState(false)
   const [underReview, setUnderReview] = useState(false)
 
-  const address = context.acc?.address
-  const proxy = context.getProxy()
+  const [address, setAddress] = useState(null)
+  const [proxy, setProxy] = useState('')
 
+  useEffect(() => {
+    setAddress(context.acc?.address)
+    setProxy(context.getProxy())
+  })
   useEffect(async () => {
+    if (!context.acc) return
+
     const [objkt, objktcomAsks] = await Promise.all([
-      fetchObjktDetails(id),
+      fetchObjktDetails(id, address),
       fetchObjktcomAsks(id),
     ])
     const listings = sortBy(
@@ -58,7 +65,8 @@ export const ObjktDisplay = () => {
           .filter(
             (swap) =>
               SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) &&
-              parseInt(swap.status) === 0 &&
+              parseInt(swap.status) ===
+                (SWAP_STATUS.active || SWAP_STATUS.claimed) &&
               swap.is_valid
           )
           .map((swap) => ({
@@ -78,7 +86,6 @@ export const ObjktDisplay = () => {
 
     objkt.listings = listings
     objkt.ban = getWalletBlockList()
-    await context.setAccount()
 
     if (objkt.ban.includes(objkt.creator.address)) {
       setRestricted(true)
@@ -131,7 +138,7 @@ export const ObjktDisplay = () => {
         }
         setLoading(false)
       }) */
-  }, [])
+  }, [address])
 
   const Tab = TABS[tabIndex].component
 

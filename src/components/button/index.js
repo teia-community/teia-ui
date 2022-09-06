@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
 import classnames from 'classnames'
 import styles from './styles.module.scss'
+import { SWAP_STATUS } from '@constants'
 
 export const Button = ({
   to = null,
@@ -77,17 +78,21 @@ export const Secondary = ({ children = null, selected, label = '' }) => {
 export const Purchase = ({ listing = null, children = null, selected }) => {
   const context = useContext(HicetnuncContext)
 
+  const isClaimed = listing ? listing.status === SWAP_STATUS.claimed : false
   const classes = classnames({
     [styles.purchase]: true,
     [styles.selected]: selected,
     [styles.dark]: context.theme === 'dark',
+    [styles.claimed]: isClaimed,
   })
   return (
     <div className={classes}>
       {children}
       {listing &&
         (listing.type === 'giveaway'
-          ? `Claim Giveaway`
+          ? isClaimed
+            ? `Already Claimed`
+            : `Claim Giveaway`
           : `Collect for ${parseFloat(listing.price / 1e6)} tez`)}
     </div>
   )

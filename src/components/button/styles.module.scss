@@ -120,3 +120,13 @@
 .left {
   text-align: left;
 }
+
+.claimed {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--gray-15),
+    var(--gray-15) 10px,
+    var(--gray-50) 10px,
+    var(--gray-50) 20px
+  );
+}

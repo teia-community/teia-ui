@@ -960,12 +960,13 @@ class HicetnuncContextProviderClass extends Component {
       updateMessage: (message) => this.setState({ message: message }),
 
       setAccount: async () => {
+        // Keeping as I did not check what relied on this
+        // but can be deduped...
+        const address =
+          Tezos !== null ? await wallet.client.getActiveAccount() : null
         this.setState({
-          acc:
-            Tezos !== undefined
-              ? await wallet.client.getActiveAccount()
-              : undefined,
-          address: await wallet.client.getActiveAccount(),
+          acc: address,
+          address: address,
         })
       },
 

@@ -5,6 +5,7 @@ import {
   SUPPORTED_MARKETPLACE_CONTRACTS,
   BURN_ADDRESS,
 } from '@constants'
+import axios from 'axios'
 const _ = require('lodash')
 
 export const getDipdupState = `query {
@@ -493,7 +494,7 @@ async function fetchSubjktNames(addresses) {
   return data.holder
 }
 
-export async function fetchObjktDetails(id) {
+export async function fetchObjktDetails(id, viewer_address = null) {
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
     console.error(errors)
@@ -504,22 +505,38 @@ export async function fetchObjktDetails(id) {
   if (result.token_holders) {
     // Resolve Smart contracts in holders
     const holders = _.compact(
-      result.token_holders.map((holder) => {
-        if (holder.holder_id === MARKETPLACE_CONTRACTS.DONO) {
-          result.swaps.push({
-            type: 'giveaway',
-            is_valid: true,
-            contract_address: MARKETPLACE_CONTRACTS.DONO,
-            creator: result.creator,
-            id: -1,
-            amount_left: holder.quantity,
-            price: 0,
-            status: 0,
-          })
-          return null
-        }
-        return holder
-      })
+      await Promise.all(
+        result.token_holders.map(async (holder) => {
+          if (holder.holder_id === MARKETPLACE_CONTRACTS.DONO) {
+            console.debug(viewer_address)
+            let status = 0
+            if (viewer_address) {
+              // check the claim status
+              const dono_claim_bigmap = 67548
+              const url = `https://api.tzkt.io/v1/bigmaps/${dono_claim_bigmap}/keys/?key.offer_origin=${result.creator.address}&key.offer_fa2=${HEN_CONTRACT_FA2}&key.offer_fa2_id=${result.id}&select=value`
+
+              const claim_data = await axios.get(url)
+              const holders = claim_data.data[0]
+
+              status = holders.includes(viewer_address) ? 2 : 0 //claim_data.data[0]
+              console.debug(`Dono Claim "Holders"`, holders)
+            }
+
+            result.swaps.push({
+              type: 'giveaway',
+              is_valid: true,
+              contract_address: MARKETPLACE_CONTRACTS.DONO,
+              creator: result.creator,
+              id: -1,
+              amount_left: holder.quantity,
+              price: 0,
+              status,
+            })
+            return null
+          }
+          return holder
+        })
+      )
     )
     result.token_holders = holders
   }

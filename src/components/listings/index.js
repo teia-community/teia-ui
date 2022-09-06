@@ -10,6 +10,7 @@ import {
   DonoLabel,
   RestrictedLabel,
 } from './marketplace-labels'
+import { SWAP_STATUS } from '@constants'
 
 function TeiaOrHenSwapRow({
   rowId,
@@ -103,6 +104,7 @@ function TeiaOrHenSwapRow({
 }
 
 function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
+  const banned = restricted || ban.includes(swap.creator_id)
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -113,9 +115,9 @@ function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
+        {banned && <RestrictedLabel />}
         <DonoLabel />
-        {!restricted && !ban.includes(swap.creator_id) && (
+        {!banned && (
           <Button onClick={() => onCollectClick()}>
             <Purchase listing={swap} />
           </Button>
@@ -154,6 +156,7 @@ export const Listings = ({
   listings,
   handleCollect,
   handleCollectObjktcomAsk,
+  claimGiveaway,
   cancel,
   proxyAdminAddress,
   restricted,
@@ -194,7 +197,7 @@ export const Listings = ({
                 restricted={restricted}
                 ban={ban}
                 onCollectClick={() => {
-                  handleCollectObjktcomAsk(listing)
+                  claimGiveaway(listing)
                 }}
               />
             )
