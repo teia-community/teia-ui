@@ -11,7 +11,7 @@ import {
   setLogoList,
   setNsfwList,
   setUnderReviewList,
-  setIgnoreUriList
+  setIgnoreUriList,
 } from '../constants'
 
 const axios = require('axios')

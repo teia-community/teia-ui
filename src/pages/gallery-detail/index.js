@@ -35,7 +35,7 @@ export const GalleryDetail = () => {
 
   useEffect(() => {
     // loads gallery to check endpoint file
-    fetch('/galleries/galleries.json')
+    fetch('/_galleries/galleries.json')
       .then((e) => e.json())
       .then((galleries) => {
         const found = galleries.find((e) => e.uid === id)
