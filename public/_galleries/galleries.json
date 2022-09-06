@@ -2,13 +2,13 @@
   {
     "uid": "pupiladilatada",
     "name": "Pupila Dilatada",
-    "endpoint": "/galleries/pupiladilatada.json",
+    "endpoint": "/_galleries/pupiladilatada.json",
     "id": "833"
   },
   {
     "uid": "objkt4objkt",
     "name": "OBJKT4OBJKT",
-    "endpoint": "/galleries/objkt4objkt.json",
+    "endpoint": "/_galleries/objkt4objkt.json",
     "id": "12077"
   },
   {

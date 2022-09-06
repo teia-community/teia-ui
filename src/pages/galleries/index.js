@@ -16,7 +16,7 @@ export const Galleries = () => {
 
   useEffect(() => {
     // loads gallery to check endpoint file
-    fetch('/galleries/galleries.json')
+    fetch('/_galleries/galleries.json')
       .then((e) => e.json())
       .then(async (galleries) => {
         console.debug(galleries)
