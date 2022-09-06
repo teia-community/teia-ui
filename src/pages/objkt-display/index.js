@@ -65,8 +65,9 @@ export const ObjktDisplay = () => {
           .filter(
             (swap) =>
               SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) &&
-              parseInt(swap.status) ===
-                (SWAP_STATUS.active || SWAP_STATUS.claimed) &&
+              [SWAP_STATUS.primary, SWAP_STATUS.claimed].includes(
+                parseInt(swap.status)
+              ) &&
               swap.is_valid
           )
           .map((swap) => ({

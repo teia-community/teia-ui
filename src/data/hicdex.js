@@ -518,7 +518,7 @@ export async function fetchObjktDetails(id, viewer_address = null) {
               const claim_data = await axios.get(url)
               const holders = claim_data.data[0]
 
-              status = holders.includes(viewer_address) ? 2 : 0 //claim_data.data[0]
+              status = holders.includes(viewer_address) ? 3 : 0
               console.debug(`Dono Claim "Holders"`, holders)
             }
 

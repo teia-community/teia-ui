@@ -10,7 +10,6 @@ import {
   DonoLabel,
   RestrictedLabel,
 } from './marketplace-labels'
-import { SWAP_STATUS } from '@constants'
 
 function TeiaOrHenSwapRow({
   rowId,

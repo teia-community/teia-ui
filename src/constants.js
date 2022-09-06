@@ -189,9 +189,10 @@ export const SUPPORTED_MARKETPLACE_CONTRACTS = [
 // Trying to make sense of what this refers too
 // The code refers to swap as listing interchangibly without much sense.
 export const SWAP_STATUS = {
-  active: 0,
+  primary: 0,
   inactive: 1,
-  claimed: 2,
+  secondary: 2,
+  claimed: 3,
 }
 
 export const SWAP_TYPE_TEIA = 'TEIA'
