@@ -53,8 +53,6 @@ export const ObjktDisplay = () => {
     setProxy(context.getProxy())
   })
   useEffect(async () => {
-    if (!context.acc) return
-
     const [objkt, objktcomAsks] = await Promise.all([
       fetchObjktDetails(id, address),
       fetchObjktcomAsks(id),

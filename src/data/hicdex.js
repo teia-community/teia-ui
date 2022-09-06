@@ -508,7 +508,6 @@ export async function fetchObjktDetails(id, viewer_address = null) {
       await Promise.all(
         result.token_holders.map(async (holder) => {
           if (holder.holder_id === MARKETPLACE_CONTRACTS.DONO) {
-            console.debug(viewer_address)
             let status = 0
             if (viewer_address) {
               // check the claim status
