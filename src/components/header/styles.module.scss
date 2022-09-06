@@ -3,11 +3,13 @@
 
 .outer__container {
 }
-
+.banner_on {
+  margin-top: 3em;
+}
 .container {
   position: fixed;
   width: 100%;
-  z-index: 1000;
+  z-index: 200;
   height: 60px;
   padding: 0 #{$mobile-padding};
   background-color: var(--background-color);
@@ -78,7 +80,7 @@
 
 .menu {
   position: fixed;
-  top: 60px;
+  top: 50px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -86,7 +88,7 @@
   color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
-  z-index: 900;
+  z-index: 400;
 
   .content {
     margin-top: 75px;

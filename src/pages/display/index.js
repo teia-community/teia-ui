@@ -458,7 +458,6 @@ export default class Display extends Component {
         underReview: underReviewList.includes(this.state.wallet),
       })
 
-      this.setState({ loading: false, items: [] })
       const collection = await fetchCollection(this.state.wallet)
       const swaps = await fetchV2Swaps(this.state.wallet)
 
@@ -466,6 +465,7 @@ export default class Display extends Component {
       this.sortCollection(combinedCollection)
       console.debug(combinedCollection)
       this.setState({ collection: combinedCollection })
+      this.setState({ loading: false, items: [] })
       this.setState({ marketV1: await fetchV1Swaps(this.state.wallet) })
     } else {
       // The 'show' parameter display OBJKTs for restricted accounts
@@ -607,7 +607,7 @@ export default class Display extends Component {
   render() {
     const nsfwList = getNsfwList()
     return (
-      <Page title={this.state.alias}>
+      <Page title={this.state.alias} large={this.context.banner != null}>
         <IconCache.Provider value={{}}>
           <Container>
             <Padding>
