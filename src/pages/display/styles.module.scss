@@ -59,7 +59,7 @@
   background-color: var(--text-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out, opacity ease-out #{$theme-duration};
-  z-index: 100;
+  z-index: 200;
   opacity: 0;
 }
 
@@ -135,7 +135,7 @@ span[data-tooltip] {
     visibility: hidden;
     opacity: 1;
     transition: transform 200ms ease, opacity 200ms;
-    z-index: 99;
+    z-index: 100;
   }
   &:before {
     content: attr(data-tooltip);
@@ -183,6 +183,7 @@ span[data-tooltip][data-position='top']:after {
   text-align: center;
   font-size: 1em;
   padding: 0.75em;
+  cursor: default;
 }
 
 .restricted {
@@ -191,6 +192,7 @@ span[data-tooltip][data-position='top']:after {
 
 .restricted a {
   padding: 0em;
+  cursor: pointer;
 }
 
 .blur {

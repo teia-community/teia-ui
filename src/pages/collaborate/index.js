@@ -18,7 +18,7 @@ const Collaborate = () => {
   const Tab = TABS[tabIndex].component
 
   // We watch for this being created so we can change from create to manage
-  const { originationOpHash } = useContext(HicetnuncContext)
+  const { originationOpHash, banner } = useContext(HicetnuncContext)
 
   const { action } = useParams()
 
@@ -36,7 +36,7 @@ const Collaborate = () => {
   }, [originationOpHash])
 
   return (
-    <Page title="proxy">
+    <Page title="proxy" large={banner != null}>
       <Container>
         <Padding>
           <Menu>

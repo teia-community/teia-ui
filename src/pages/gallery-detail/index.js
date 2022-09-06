@@ -35,7 +35,7 @@ export const GalleryDetail = () => {
 
   useEffect(() => {
     // loads gallery to check endpoint file
-    fetch('/galleries/galleries.json')
+    fetch('/_galleries/galleries.json')
       .then((e) => e.json())
       .then((galleries) => {
         const found = galleries.find((e) => e.uid === id)
@@ -134,7 +134,7 @@ export const GalleryDetail = () => {
                             artifactUri: e.artifact_uri,
                             displayUri: e.display_uri,
                             creator: '',
-                            objkt: e.id,
+                            objktID: e.id,
                             interactive: false,
                             displayView: true,
                           })}
@@ -153,9 +153,18 @@ export const GalleryDetail = () => {
                 <div
                   className={styles.background}
                   onClick={() => showModal(false)}
+                  onKeyPress={() => showModal(false)}
+                  role="button"
+                  tabIndex="0"
                 />
                 <ItemModal info={modal} />
-                <div className={styles.close} onClick={() => showModal(false)}>
+                <div
+                  className={styles.close}
+                  onClick={() => showModal(false)}
+                  onKeyPress={() => showModal(false)}
+                  role="button"
+                  tabIndex="0"
+                >
                   CLOSE X
                 </div>
               </div>

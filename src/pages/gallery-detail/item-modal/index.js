@@ -41,7 +41,7 @@ export const ItemModal = ({ info }) => {
           artifactUri: info.token_info.artifactUri,
           displayUri: info.token_info.displayUri,
           creator: info.token_info.creators[0],
-          objkt: info.token_id,
+          objktID: info.token_id,
           interactive: true,
         })}
       </div>

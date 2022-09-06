@@ -110,7 +110,7 @@ span[data-tooltip] {
     visibility: hidden;
     opacity: 1;
     transition: transform 200ms ease, opacity 200ms;
-    z-index: 99;
+    z-index: 100;
   }
 
   &:before {

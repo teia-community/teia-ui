@@ -142,7 +142,7 @@ export class Friends extends Component {
 
   render() {
     return (
-      <Page title={this.state.alias}>
+      <Page title={this.state.alias} large={this.context.banner != null}>
         <IconCache.Provider value={{}}>
           {this.state.loading && (
             <Container>

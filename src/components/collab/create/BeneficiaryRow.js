@@ -90,7 +90,6 @@ export const BeneficiaryRow = ({
               value={address || ''}
               className={styles.textInput}
               placeholder={placeholderText}
-              autoFocus={!address || address === ''}
               onChange={(event) => _update('address', event.target.value)}
             />
           </label>
@@ -106,7 +105,6 @@ export const BeneficiaryRow = ({
               placeholder="(proportional)"
               value={shares || ''}
               onKeyDown={_onKeyDown}
-              autoFocus={Boolean(address)}
               onChange={(event) => _update('shares', event.target.value)}
             />
           </label>

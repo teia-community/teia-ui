@@ -76,7 +76,7 @@ export class Config extends Component {
     toogled: false,
   }
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     await this.context.syncTaquito()
 
     const { acc, proxyAddress } = this.context
@@ -307,92 +307,60 @@ export class Config extends Component {
 
   render() {
     return (
-      <Page>
-        <Container>
-          <Identicon address={this.state.address} logo={this.state.identicon} />
-
-          <div style={{ height: '20px' }} />
-          <input type="file" onChange={this.onFileChange} />
-          <div style={{ height: '20px' }} />
-          <Padding>
-            <Input
-              name="subjkt"
-              value={this.state.subjkt}
-              onChange={this.handleChange}
-              placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
-              label="Username"
-              defaultValue={
-                this.context.subjktInfo ? this.context.subjktInfo.name : ''
-              }
-              pattern="^[a-z0-9-._]*$"
-            />
-            <Input
-              name="description"
-              onChange={this.handleChange}
-              placeholder="(Max length 500 characters)"
-              label="Description"
-              value={this.state.description}
-            />
-            <Button onClick={this.subjkt_config}>
-              <Purchase>Save Profile</Purchase>
-            </Button>
-          </Padding>
-          <div style={{ display: 'inline' }}>
-            <p style={{ paddingTop: '7.5px' }}>
-              <span>Link your Twitter, Discord, GitHub, and website with </span>
-              <span>
-                <a
-                  style={{ fontWeight: 'bold' }}
-                  target="_blank"
-                  href="https://tzprofiles.com"
-                >
-                  Tezos Profiles
-                </a>
-              </span>
-            </p>
-          </div>
-        </Container>
-
-        {/* <Container>
-          <Padding>
-            <div onClick={this.toggle}>
-              <Primary>+ Advanced</Primary>
-            </div>
-          </Padding>
-        </Container> */}
-        {/* {this.state.toogled ? (
+      !this.state.loading && (
+        <Page large={this.context.banner != null}>
           <Container>
+            <Identicon
+              address={this.state.address}
+              logo={this.state.identicon}
+            />
+            <input
+              type="file"
+              onChange={this.onFileChange}
+              title="avatar file"
+            />
             <Padding>
               <Input
-                name="vote"
+                name="subjkt"
+                value={this.state.subjkt}
                 onChange={this.handleChange}
-                placeholder="hDAO Curation"
-                label="hDAO Curation"
-                // defaultValue={undefined}
+                placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+                label="Username"
+                pattern="^[a-z0-9-._]*$"
               />
-
-              <Button onClick={this.hDAO_config}>
-                <Purchase>Save ○</Purchase>
+              <Input
+                name="description"
+                onChange={this.handleChange}
+                placeholder="(Max length 500 characters)"
+                label="Description"
+                value={this.state.description}
+              />
+              <Button onClick={this.subjkt_config}>
+                <Purchase>Save Profile</Purchase>
               </Button>
-
-              <p style={{ marginTop: '7.5px' }}>
-                hic et nunc DAO ○ curation parameter
-              </p>
             </Padding>
+            <div style={{ display: 'inline' }}>
+              <p style={{ paddingTop: '7.5px' }}>
+                <span>
+                  Link your Twitter, Discord, GitHub, and website with{' '}
+                </span>
+                <span>
+                  <a
+                    style={{ fontWeight: 'bold' }}
+                    target="_blank"
+                    href="https://tzprofiles.com"
+                  >
+                    Tezos Profiles
+                  </a>
+                </span>
+              </p>
+            </div>
           </Container>
-        ) : undefined} */}
-
-        {/*         <Container>
-          <Padding>
-            <Button onClick={this.unregister}>
-              <Curate>Unregister</Curate>
-            </Button>
-          </Padding>
-        </Container> */}
-        {/*         <BottomBanner>
+          {/*         <BottomBanner>
           The dApp has been temporarily disabled for a contract migration. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
         </BottomBanner> */}
-      </Page>
+        </Page>
+      )
     )
   }
 }
