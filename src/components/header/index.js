@@ -19,12 +19,6 @@ import { getItem, setItem } from '../../utils/storage'
 import { EventBanner } from '@components/event-banner/index'
 import { useWindowScroll } from 'react-use'
 import useSettings from '@hooks/use-settings'
-/* import { BeaconWallet } from '@taquito/beacon-wallet'
-
-const wallet = new BeaconWallet({
-  name: 'hicetnunc.xyz',
-  preferredNetwork: 'mainnet',
-}) */
 
 export const Header = () => {
   const navigate = useNavigate()
@@ -45,7 +39,6 @@ export const Header = () => {
   useEffect(() => {
     context.setAccount()
     context.setTheme(getItem('theme') || setItem('theme', 'dark'))
-    //context.setLogo()
   }, [])
 
   useEffect(() => {
