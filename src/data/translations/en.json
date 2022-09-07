@@ -1,0 +1,19 @@
+{
+  "footer": {
+    "mint": "This open-source, experimental dApp is developed and maintained by the Teia Community and powered by the Tezos blockchain.",
+    "warning": "use it consciously. visit artists profiles. be careful with copy minters."
+  },
+  "mint": {
+    "supports": "Supports"
+  },
+  "about": {
+    "paragraphs": [
+      "a collaborative artwork made of artworks, a place for ideas and creative works.",
+      "a non-profit, open-source online platform for trading digital assets as OBJKT NFTs.",
+      "a collective, aligning under the values of sustainability, accessibility, and equity.",
+      "owned and maintained by its community, built and improved by its participants.",
+      "Teia is and always will be a work-in-progress.",
+      "If you're having trouble with the website, please report an %ISSUE%"
+    ]
+  }
+}
