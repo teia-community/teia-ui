@@ -215,13 +215,6 @@ function createSwapCalls(
 }
 
 class HicetnuncContextProviderClass extends Component {
-  componentDidMount() {
-    console.debug('Getting the ban list from the context')
-    this.setState({
-      block_list: getWalletBlockList(),
-    })
-  }
-
   constructor(props) {
     super(props)
 
@@ -1121,8 +1114,6 @@ class HicetnuncContextProviderClass extends Component {
             }, 2000)
           })
       },
-
-      block_list: [],
 
       originateProxy: async (participantData) => {
         console.log('originateProxy', participantData)

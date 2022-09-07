@@ -9,6 +9,7 @@ import {
   OBJKTLabel,
   RestrictedLabel,
 } from './marketplace-labels'
+import useSettings from 'hooks/use-settings'
 
 function TeiaOrHenSwapRow({
   rowId,
@@ -17,13 +18,14 @@ function TeiaOrHenSwapRow({
   proxyAdminAddress,
   proxyAddress,
   restricted,
-  ban,
   reswapPrices,
   handleCollect,
   setReswapPrices,
   reswap,
   cancel,
 }) {
+  const { walletBlockList } = useSettings()
+
   const isOwnSwap =
     swap.creator.address === acc?.address ||
     (proxyAdminAddress === acc?.address &&
@@ -44,19 +46,23 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
-        <MarketplaceLabel swap={swap} />
-        {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
-          <Button
-            onClick={() =>
-              handleCollect(swap.contract_address, swap.id, swap.price)
-            }
-          >
-            <Purchase>
-              Collect for {parseFloat(swap.price / 1000000)} tez
-            </Purchase>
-          </Button>
+        {(restricted || walletBlockList.includes(swap.creator_id)) && (
+          <RestrictedLabel />
         )}
+        <MarketplaceLabel swap={swap} />
+        {!restricted &&
+          !walletBlockList.includes(swap.creator_id) &&
+          !isOwnSwap && (
+            <Button
+              onClick={() =>
+                handleCollect(swap.contract_address, swap.id, swap.price)
+              }
+            >
+              <Purchase>
+                Collect for {parseFloat(swap.price / 1000000)} tez
+              </Purchase>
+            </Button>
+          )}
         {isOwnSwap && (
           <>
             <div className={styles.break}></div>
@@ -103,7 +109,9 @@ function TeiaOrHenSwapRow({
   )
 }
 
-function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
+function ObjktcomAskRow({ id, ask, swap, restricted, onCollectClick }) {
+  const { walletBlockList } = useSettings()
+
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -116,9 +124,11 @@ function ObjktcomAskRow({ id, ask, swap, restricted, ban, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
+        {(restricted || walletBlockList.includes(swap.creator_id)) && (
+          <RestrictedLabel />
+        )}
         <OBJKTLabel />
-        {!restricted && !ban.includes(swap.creator_id) && (
+        {!restricted && !walletBlockList.includes(swap.creator_id) && (
           <Button onClick={() => onCollectClick()}>
             <Purchase>
               Collect for {parseFloat(ask.price / 1000000)} tez
@@ -138,7 +148,6 @@ export const Listings = ({
   cancel,
   proxyAdminAddress,
   restricted,
-  ban,
   reswap,
 }) => {
   const { acc, proxyAddress } = useContext(HicetnuncContext)
@@ -157,7 +166,6 @@ export const Listings = ({
               proxyAdminAddress={proxyAdminAddress}
               proxyAddress={proxyAddress}
               restricted={restricted}
-              ban={ban}
               reswapPrices={reswapPrices}
               handleCollect={handleCollect}
               setReswapPrices={setReswapPrices}
@@ -173,7 +181,6 @@ export const Listings = ({
               ask={listing}
               swap={listing}
               restricted={restricted}
-              ban={ban}
               onCollectClick={() => {
                 handleCollectObjktcomAsk(listing)
               }}

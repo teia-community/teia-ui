@@ -49,6 +49,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "test-build": "CI=true npm run build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",

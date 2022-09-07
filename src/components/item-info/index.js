@@ -12,6 +12,7 @@ import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 import { MarketplaceLabel } from '../listings/marketplace-labels'
+import useSettings from 'hooks/use-settings'
 
 export const ItemInfo = ({
   id,
@@ -23,15 +24,17 @@ export const ItemInfo = ({
   supply,
   isDetailView,
 }) => {
-  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc, block_list } =
+  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
     useContext(HicetnuncContext)
+
+  const { walletBlockList } = useSettings()
 
   const [showSignStatus, setShowSignStatus] = useState(false)
   const [restricted, setRestricted] = useState(false)
 
   useEffect(() => {
-    setRestricted(block_list.includes(creator.address))
-  }, [block_list, creator])
+    setRestricted(walletBlockList.includes(creator.address))
+  }, [walletBlockList, creator])
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
@@ -40,7 +43,7 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            !block_list.includes(
+            !walletBlockList.includes(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
@@ -52,7 +55,7 @@ export const ItemInfo = ({
     let purchaseButton = null
 
     const cheapestListing = listings.filter(
-      (listing) => !block_list.includes(listing.creator_id)
+      (listing) => !walletBlockList.includes(listing.creator_id)
     )[0]
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such

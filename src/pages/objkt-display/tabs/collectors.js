@@ -13,7 +13,6 @@ export const Collectors = ({ nft }) => {
     cancel,
     cancelv1,
     reswap,
-    block_list,
   } = useContext(HicetnuncContext)
 
   const handleCollect = (contract_address, swap_id, price) => {
@@ -51,7 +50,6 @@ export const Collectors = ({ nft }) => {
               cancel={cancel}
               cancelv1={cancelv1}
               restricted={nft.restricted}
-              ban={block_list}
               reswap={reswap}
             />
           </Padding>

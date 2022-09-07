@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useParams } from 'react-router'
 import { Button } from '@components/button'
@@ -8,7 +8,7 @@ import { renderMediaType } from '@components/media-types'
 import { Page, Container } from '@components/layout'
 import { PATH } from '@constants'
 import styles from './styles.module.scss'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import useSettings from 'hooks/use-settings'
 
 const _ = require('lodash')
 
@@ -51,7 +51,8 @@ async function fetchTag(tag, offset) {
 }
 
 export const Tags = () => {
-  const context = useContext(HicetnuncContext)
+  const { walletBlockList } = useSettings()
+
   const { id } = useParams()
   const [feed, setFeed] = useState([])
   const [count, setCount] = useState(0)
@@ -64,7 +65,7 @@ export const Tags = () => {
     setFeed(
       _.uniqBy(
         [...feed, ...arr].filter(
-          (e) => !context.block_list.includes(e.creator_id)
+          (e) => !walletBlockList.includes(e.creator_id)
         ),
         'creator_id'
       )
@@ -77,7 +78,7 @@ export const Tags = () => {
 
     setFeed(
       _.uniqBy(
-        arr.filter((e) => !context.block_list.includes(e.creator_id)),
+        arr.filter((e) => !walletBlockList.includes(e.creator_id)),
         'creator_id'
       )
     )

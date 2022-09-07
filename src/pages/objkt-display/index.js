@@ -23,6 +23,7 @@ import { Menu } from '@components/menu'
 import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from './styles.module.scss'
 import './style.css'
+import useSettings from 'hooks/use-settings'
 
 const TABS = [
   { title: 'Info', component: Info }, // public tab
@@ -36,6 +37,7 @@ const TABS = [
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
+  const { walletBlockList } = useSettings()
 
   const [loading, setLoading] = useState(true)
   const [tabIndex, setTabIndex] = useState(0)
@@ -86,7 +88,7 @@ export const ObjktDisplay = () => {
 
     await context.setAccount()
 
-    if (context.block_list.includes(objkt.creator.address)) {
+    if (walletBlockList.includes(objkt.creator.address)) {
       setRestricted(true)
       objkt.restricted = true
     } else {
@@ -98,9 +100,9 @@ export const ObjktDisplay = () => {
         objkt.underReview = true
       }
       // filter swaps from banned account
-      if (objkt.swaps && context.block_list)
+      if (objkt.swaps && walletBlockList)
         objkt.swaps = objkt.swaps.filter(
-          (s) => s.status > 0 || !context.block_list.includes(s.creator_id)
+          (s) => s.status > 0 || !walletBlockList.includes(s.creator_id)
         )
     }
     setNFT(objkt)
