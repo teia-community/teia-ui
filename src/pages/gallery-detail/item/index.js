@@ -92,11 +92,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
               <>
                 <div className={styles.image} style={{ pointerEvents: 'none' }}>
                   {renderMediaType({
-                    mimeType: nft.mimeType,
-                    artifactUri: nft.token_info.artifactUri,
-                    displayUri: nft.token_info.displayUri,
-                    creator: nft.token_info.creators[0],
-                    objktID: nft.token_id,
+                    nft: nft.token_info,
                     displayView: true,
                   })}
                   {/* <div className={styles.number}>OBJKT#{objkt}</div> */}
