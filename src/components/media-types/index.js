@@ -49,10 +49,10 @@ export const renderMediaType = ({
   const size = interactive ? 'gallery' : 'medium'
 
   const parsedArtifactUri = nft.artifact_uri
-    ? HashToURL(nft.artifact_uri, 'CDN', { size })
+    ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     : ''
   const parsedDisplayUri = nft.display_uri
-    ? HashToURL(nft.display_uri, 'CDN', { size })
+    ? HashToURL(nft.display_uri, 'CDN', { size: 'medium' })
     : ''
 
   const parsedArtifactGatewayUri = nft.artifact_uri
@@ -62,13 +62,6 @@ export const renderMediaType = ({
   // we use ipfs.io only for these
   const parsedArtifactHtmlUri = nft.artifact_uri
     ? HashToURL(nft.artifact_uri, 'IPFS')
-    : ''
-  const parsedDisplayHtmlUri = nft.display_uri
-    ? HashToURL(nft.display_uri, 'CDN', { size })
-    : ''
-
-  const parsedArtifactRawUri = nft.artifact_uri
-    ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     : ''
 
   switch (nft.mime) {
@@ -99,7 +92,7 @@ export const renderMediaType = ({
         <Container interactive={interactive}>
           <VectorComponent
             artifactUri={parsedArtifactHtmlUri}
-            displayUri={parsedDisplayHtmlUri}
+            displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
             creator={nft.creator}
@@ -119,7 +112,7 @@ export const renderMediaType = ({
         <Container interactive={interactive}>
           <HTMLComponent
             artifactUri={parsedArtifactHtmlUri}
-            displayUri={parsedDisplayHtmlUri}
+            displayUri={parsedDisplayUri}
             previewUri={previewUri}
             creator={nft.creator}
             objktID={nft.id}
@@ -153,7 +146,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <GLBComponent
-            artifactUri={parsedArtifactRawUri}
+            artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
@@ -172,7 +165,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <AudioComponent
-            artifactUri={parsedArtifactRawUri}
+            artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}

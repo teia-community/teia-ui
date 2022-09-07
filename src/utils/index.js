@@ -42,7 +42,7 @@ const CIDToURL = (
   switch (type) {
     case 'CDN':
       return `https://cache.teia.rocks/media/${
-        options.size || 'gallery'
+        options.size || 'raw'
       }/ipfs/${cid}`
     case 'HIC':
       return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
