@@ -108,7 +108,7 @@ function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
     <div className={styles.swap}>
       <div className={styles.issuer}>
         {swap.amount_left} ed.&nbsp;
-        <Button to={`https://dono.xtz.tools`}>
+        <Button href={`https://dono.xtz.tools`}>
           <Primary>dono.xtz</Primary>
         </Button>
       </div>
