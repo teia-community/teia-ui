@@ -22,9 +22,9 @@ export const fetchJSON = async (url) => {
 
 /**
  * Converts an ipfs hash to ipfs url
- * @param {string} hash
+ * @param {string} cid
  * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
- * @param {HashToURLOptions} options
+ * @param {HashToURLOptions} [options]
  * @returns {string}
  */
 const CIDToURL = (
@@ -64,14 +64,14 @@ const CIDToURL = (
 }
 
 /**
- * @typedef { {size: string?} } HashToURLOptions
+ * @typedef { {size?: string} } HashToURLOptions
  */
 
 /**
  * Converts an ipfs hash to ipfs url
  * @param {string} hash
  * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
- * @param {HashToURLOptions} options
+ * @param {HashToURLOptions} [options]
  * @returns {string}
  */
 export const HashToURL = (
