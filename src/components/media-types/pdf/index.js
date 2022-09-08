@@ -26,7 +26,7 @@ export const PdfComponent = ({
 }) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(onDetailView)
   const context = useContext(HicetnuncContext)
 
   function onDocumentLoadSuccess({ numPages }) {
@@ -59,18 +59,19 @@ see it on [IPFS](${fallbackUri})`)
 
   return (
     <>
-      <div className={styles.container}>
-        <Document
-          file={preview ? previewUri : artifactUri}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={onDocumentLoadError}
-          onItemClick={onItemClick}
-          title={`PDF object ${nft.id}`}
-          className={`${loading && styles.hidden}`}
-          options={options}
-        >
-          <Page pageNumber={pageNumber} />
-          {onDetailView && (
+      {onDetailView && (
+        <div className={styles.container}>
+          <Document
+            file={preview ? previewUri : artifactUri}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={onDocumentLoadError}
+            onItemClick={onItemClick}
+            title={`PDF object ${nft.id}`}
+            className={`${loading && styles.hidden}`}
+            options={options}
+          >
+            <Page pageNumber={pageNumber} />
+
             <div className={styles.pdfNav}>
               <Button disabled={pageNumber <= 1} onClick={previousPage}>
                 <Primary>Prev «</Primary>
@@ -82,10 +83,10 @@ see it on [IPFS](${fallbackUri})`)
                 <Primary>» Next</Primary>
               </Button>
             </div>
-          )}
-        </Document>
-      </div>
-      {loading && (
+          </Document>
+        </div>
+      )}
+      {(!onDetailView || loading) && (
         <AnimatePresence>
           <ImageComponent
             key={`img-${nft.id}`}
@@ -97,12 +98,14 @@ see it on [IPFS](${fallbackUri})`)
             displayView={!onDetailView}
             nft={nft}
           />
-          <p
-            key={`loading-${nft.id}`}
-            style={{ textAlign: 'center', margin: '1em' }}
-          >
-            Loading PDF...
-          </p>
+          {loading && (
+            <p
+              key={`loading-${nft.id}`}
+              style={{ textAlign: 'center', margin: '1em' }}
+            >
+              Loading PDF...
+            </p>
+          )}
         </AnimatePresence>
       )}
     </>
