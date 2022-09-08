@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import sum from 'lodash/sum'
 import { PATH } from '../../constants'
@@ -12,6 +12,7 @@ import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 import { MarketplaceLabel } from '../listings/marketplace-labels'
+import useSettings from 'hooks/use-settings'
 
 export const ItemInfo = ({
   id,
@@ -22,13 +23,17 @@ export const ItemInfo = ({
   feed,
   supply,
   isDetailView,
-  restricted,
-  ban,
 }) => {
   const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
     useContext(HicetnuncContext)
 
+  const { walletBlockList } = useSettings()
+
   const [showSignStatus, setShowSignStatus] = useState(false)
+  const restricted = useMemo(
+    () => walletBlockList.get(creator.address) === 1,
+    [walletBlockList, creator]
+  )
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
@@ -37,11 +42,11 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            !ban.includes(
+            walletBlockList.get(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
-            )
+            ) !== 1
         )
         .map(({ amount_left }) => amount_left)
     )
@@ -49,47 +54,43 @@ export const ItemInfo = ({
     let purchaseButton = null
 
     const cheapestListing = listings.filter(
-      (listing) => !ban.includes(listing.creator_id)
+      (listing) => walletBlockList.get(listing.creator_id) !== 1
     )[0]
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such
 
-    if (cheapestListing) {
-      purchaseButton = (
-        <div className={styles.main_swap}>
-          <MarketplaceLabel swap={cheapestListing} />
+    purchaseButton = cheapestListing ? (
+      <div className={styles.main_swap}>
+        <MarketplaceLabel swap={cheapestListing} />
 
-          <Button
-            onClick={() => {
-              if (acc == null) {
-                syncTaquito()
+        <Button
+          onClick={() => {
+            if (acc == null) {
+              syncTaquito()
+            } else {
+              if (cheapestListing.type === 'swap') {
+                collect(
+                  cheapestListing.contract_address,
+                  cheapestListing.id,
+                  cheapestListing.price * 1
+                )
               } else {
-                if (cheapestListing.type === 'swap') {
-                  collect(
-                    cheapestListing.contract_address,
-                    cheapestListing.id,
-                    cheapestListing.price * 1
-                  )
-                } else {
-                  fulfillObjktcomAsk(cheapestListing)
-                }
+                fulfillObjktcomAsk(cheapestListing)
               }
-            }}
-            full
-          >
-            <Purchase>
-              Collect for {Number(cheapestListing.price) / 1000000} tez
-            </Purchase>
-          </Button>
-        </div>
-      )
-    } else {
-      purchaseButton = (
-        <Button full>
-          <Purchase>Not for sale</Purchase>
+            }
+          }}
+          full
+        >
+          <Purchase>
+            Collect for {Number(cheapestListing.price) / 1000000} tez
+          </Purchase>
         </Button>
-      )
-    }
+      </div>
+    ) : (
+      <Button full>
+        <Purchase>Not for sale</Purchase>
+      </Button>
+    )
 
     // Check collab status
     const isCollab = creator.is_split
@@ -116,7 +117,6 @@ export const ItemInfo = ({
 
     return (
       <>
-        <div style={{ height: '30px' }}></div>
         <div className={styles.container}>
           <div className={styles.edition}>
             <div className={collabStyles.relative}>

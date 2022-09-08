@@ -26,7 +26,7 @@ export const GetOBJKTStubbornly = async ({ id, tries = 3 }) => {
 }
 
 export const Item = ({ objkt, onClick, minimal }) => {
-  const [data, setData] = useState()
+  const [nft, setNft] = useState()
   const { ref, inView } = useInView({
     rootMargin: '0px 0px 50% 0px',
   })
@@ -61,7 +61,7 @@ export const Item = ({ objkt, onClick, minimal }) => {
         } catch {
           edition = false
         }
-        setData({
+        setNft({
           ...e,
           mimeType,
           uri: uri.split('//')[1],
@@ -80,11 +80,11 @@ export const Item = ({ objkt, onClick, minimal }) => {
   return (
     <div className={styles.container} ref={ref}>
       <>
-        {data ? (
+        {nft ? (
           <div
             key={`item-${objkt}`}
-            onClick={() => onClick(data)}
-            onKeyPress={() => onClick(data)}
+            onClick={() => onClick(nft)}
+            onKeyPress={() => onClick(nft)}
             role="button"
             tabIndex="0"
           >
@@ -92,24 +92,20 @@ export const Item = ({ objkt, onClick, minimal }) => {
               <>
                 <div className={styles.image} style={{ pointerEvents: 'none' }}>
                   {renderMediaType({
-                    mimeType: data.mimeType,
-                    artifactUri: data.token_info.artifactUri,
-                    displayUri: data.token_info.displayUri,
-                    creator: data.token_info.creators[0],
-                    objktID: data.token_id,
+                    nft: nft.token_info,
                     displayView: true,
                   })}
                   {/* <div className={styles.number}>OBJKT#{objkt}</div> */}
                 </div>
                 {minimal !== true && (
                   <div className={styles.info}>
-                    {data.edition !== false && <p>{data.edition}</p>}
+                    {nft.edition !== false && <p>{nft.edition}</p>}
                     {/*                     <p
                       style={{
-                        opacity: data.price === nfs ? 0.5 : 1,
+                        opacity: nft.price === nfs ? 0.5 : 1,
                       }}
                     >
-                      {data.price}
+                      {nft.price}
                     </p> */}
                   </div>
                 )}

@@ -37,9 +37,14 @@ function filterWalletBlockList(restrictedLists, permittedLists) {
   const walletAllowList = flatten(permittedLists)
 
   // Override with permitted list
-  return flatten(restrictedLists).filter(
+  const overiddenList = flatten(restrictedLists).filter(
     (account) => !walletAllowList.includes(account)
   )
+  const walletBlockList = new Map()
+  overiddenList.forEach((e) => {
+    walletBlockList.set(e, 1)
+  })
+  return walletBlockList
 }
 
 async function fetchSettings() {
@@ -69,9 +74,19 @@ async function fetchSettings() {
     }))
   )
 
+  const objktBlockList = new Map()
+  objktBlockListResponse.data.forEach((element) => {
+    objktBlockList.set(element, 1)
+  })
+
+  const banBlockList = new Map()
+  banBlockListResponse.data.forEach((e) => {
+    banBlockList.set(e, 1)
+  })
+
   return {
-    objktBlockList: objktBlockListResponse.data,
-    banBlockList: banBlockListResponse.data,
+    objktBlockList,
+    banBlockList,
     logos: shuffleLogos(logos),
     walletBlockList: filterWalletBlockList(
       [teiaRestrictedListResponse.data],

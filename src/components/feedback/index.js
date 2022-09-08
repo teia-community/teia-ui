@@ -5,6 +5,7 @@ import { Loading } from '../loading'
 import { Button, Purchase } from '../button'
 import { fadeIn } from '../../utils/motion'
 import styles from './styles.module.scss'
+import Markdown from 'markdown-to-jsx'
 
 export const FeedbackComponent = () => {
   const context = useContext(HicetnuncContext)
@@ -17,8 +18,7 @@ export const FeedbackComponent = () => {
         <motion.div className={styles.container} {...fadeIn()}>
           <div className={styles.content}>
             {progress && <Loading />}
-            <div className={styles.message}>{message}</div>
-
+            <Markdown className={styles.message}>{message}</Markdown>
             {confirm && (
               <div className={styles.buttons}>
                 <Button onClick={() => confirmCallback()}>

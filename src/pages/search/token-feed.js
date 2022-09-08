@@ -91,7 +91,7 @@ function TokenFeed({
       <Padding>
         {tokens.map((token) => (
           <div key={token.key}>
-            <FeedItem {...token} />
+            <FeedItem nft={token} />
           </div>
         ))}
       </Padding>

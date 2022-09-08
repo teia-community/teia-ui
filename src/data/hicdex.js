@@ -204,6 +204,10 @@ description
 artifact_uri
 is_signed
 metadata
+content_rating
+language
+rights
+right_uri
 creator {
   address
   name
