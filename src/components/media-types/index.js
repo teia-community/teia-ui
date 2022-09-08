@@ -53,9 +53,6 @@ export const renderMediaType = ({
     ? HashToURL(nft.display_uri, 'CDN', { size: 'medium' })
     : ''
 
-  const parsedArtifactGatewayUri = nft.artifact_uri
-    ? HashToURL(nft.artifact_uri, 'NFTSTORAGE')
-    : ''
   // Due to issues for generative tokens on NFTStorage.link gateway
   // we use ipfs.io only for these
   const parsedArtifactHtmlUri = nft.artifact_uri
@@ -178,7 +175,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <PdfComponent
-            artifactUri={parsedArtifactGatewayUri}
+            artifactUri={parsedArtifactUri}
             fallbackUri={parsedArtifactHtmlUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
