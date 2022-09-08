@@ -4,6 +4,12 @@ import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Listings } from '@components/listings'
 
+/**
+ * The Collectors (listings) Tab
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
 export const Collectors = ({ nft }) => {
   const {
     syncTaquito,

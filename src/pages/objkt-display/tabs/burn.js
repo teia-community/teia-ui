@@ -6,6 +6,12 @@ import { Input } from '@components/input'
 import { Loading } from '@components/loading'
 import styles from '../styles.module.scss'
 
+/**
+ * The Burn Tab
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
 export const Burn = ({ nft }) => {
   const {
     burn,

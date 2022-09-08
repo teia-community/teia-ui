@@ -6,6 +6,13 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 import classNames from 'classnames'
 import { Button, Purchase } from '@components/button'
 
+/**
+ * The Transfer Tab
+ * This allow the user to send tokens to a specific address.
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
 export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
   const { transfer, setFeedback, acc, proxyAddress } =

@@ -15,18 +15,24 @@ const OPERATION_SWAP = 'SWAP'
 const OPERATION_TRANSFER = 'TRANSFER'
 const OPERATION_TRADE = 'TRADE'
 
+/**
+ * The History Tab
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
 export const History = ({ nft }) => {
-  let trades = nft.trades.map((e) => ({
+  const trades = nft.trades.map((e) => ({
     ...e,
     type: OPERATION_TRADE,
   }))
-  let swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-  let transfers = nft.transfers.map((e) => ({
+  const swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
+  const transfers = nft.transfers.map((e) => ({
     ...e,
     type: OPERATION_TRANSFER,
   }))
 
-  let history = [...trades, ...swaps, ...transfers]
+  const history = [...trades, ...swaps, ...transfers]
     .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
     .reverse()
 

@@ -10,6 +10,13 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 
+/**
+ * The Info Tab
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {string} viewer_address - The current viewer if logged in.
+ * @returns {any}
+ */
 export const Info = ({ nft, viewer_address }) => {
   const tag = {
     '&:hover': {

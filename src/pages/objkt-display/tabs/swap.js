@@ -10,7 +10,7 @@ import styles from '../styles.module.scss'
 /**
  * The Swap Tab
  * @function
- * @param {import('@components/media-types/index').NFT} {nft}
+ * @param {{nft:import('@components/media-types/index').NFT}} props
  * @returns {any}
  */
 export const Swap = ({ nft }) => {
