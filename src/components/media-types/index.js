@@ -50,7 +50,7 @@ export const renderMediaType = ({
     ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     : ''
   const parsedDisplayUri = nft.display_uri
-    ? HashToURL(nft.display_uri, 'CDN', { size: 'medium' })
+    ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
     : ''
 
   // // Due to issues for generative tokens on NFTStorage.link gateway
