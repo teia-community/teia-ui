@@ -8,7 +8,7 @@ import { renderMediaType } from '@components/media-types'
 import { Page, Container } from '@components/layout'
 import { PATH } from '@constants'
 import styles from './styles.module.scss'
-import useSettings from 'hooks/use-settings'
+import useSettings from '@hooks/use-settings'
 
 const _ = require('lodash')
 

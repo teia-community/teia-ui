@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import sum from 'lodash/sum'
 import { PATH } from '../../constants'
@@ -30,11 +30,10 @@ export const ItemInfo = ({
   const { walletBlockList } = useSettings()
 
   const [showSignStatus, setShowSignStatus] = useState(false)
-  const [restricted, setRestricted] = useState(false)
-
-  useEffect(() => {
-    setRestricted(walletBlockList.includes(creator.address))
-  }, [walletBlockList, creator])
+  const restricted = useMemo(
+    () => walletBlockList.includes(creator.address),
+    [walletBlockList, creator]
+  )
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total

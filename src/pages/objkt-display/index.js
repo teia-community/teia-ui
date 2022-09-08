@@ -23,7 +23,7 @@ import { Menu } from '@components/menu'
 import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from './styles.module.scss'
 import './style.css'
-import useSettings from 'hooks/use-settings'
+import useSettings from '@hooks/use-settings'
 
 const TABS = [
   { title: 'Info', component: Info }, // public tab
