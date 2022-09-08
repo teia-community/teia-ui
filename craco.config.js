@@ -7,6 +7,7 @@ const commitHash = require('child_process')
   .toString()
   .trim()
 
+// react-pdf
 const cMapsDir = path.join(
   path.dirname(require.resolve('pdfjs-dist/package.json')),
   'cmaps'
@@ -15,6 +16,8 @@ const standardFontsDir = path.join(
   path.dirname(require.resolve('pdfjs-dist/package.json')),
   'standard_fonts'
 )
+const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'))
+const pdfWorkerPath = path.join(pdfjsDistPath, 'build', 'pdf.worker.min.js')
 
 process.env['REACT_APP_BUILD_COMMIT'] = commitHash
 
@@ -45,6 +48,7 @@ module.exports = {
         }),
         new CopyWebpackPlugin({
           patterns: [
+            { from: pdfWorkerPath },
             { from: cMapsDir, to: 'cmaps/' },
             { from: standardFontsDir, to: 'standard_fonts/' },
           ],

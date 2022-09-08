@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import styles from './styles.module.scss'
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack5'
+import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack5'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
@@ -8,7 +8,7 @@ import { Button, Primary } from '../../button'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { AnimatePresence } from 'framer-motion'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-
+pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
 const options = {
   cMapUrl: 'cmaps/',
   cMapPacked: true,
