@@ -46,8 +46,6 @@ export const renderMediaType = ({
     return
   }
 
-  const size = interactive ? 'gallery' : 'medium'
-
   const parsedArtifactUri = nft.artifact_uri
     ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     : ''

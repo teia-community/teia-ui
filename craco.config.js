@@ -1,10 +1,20 @@
 const webpack = require('webpack')
 const path = require('path')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const commitHash = require('child_process')
   .execSync('git rev-parse HEAD')
   .toString()
   .trim()
+
+const cMapsDir = path.join(
+  path.dirname(require.resolve('pdfjs-dist/package.json')),
+  'cmaps'
+)
+const standardFontsDir = path.join(
+  path.dirname(require.resolve('pdfjs-dist/package.json')),
+  'standard_fonts'
+)
 
 process.env['REACT_APP_BUILD_COMMIT'] = commitHash
 
@@ -32,6 +42,12 @@ module.exports = {
         new webpack.ProvidePlugin({
           Buffer: ['buffer', 'Buffer'],
           process: 'process/browser',
+        }),
+        new CopyWebpackPlugin({
+          patterns: [
+            { from: cMapsDir, to: 'cmaps/' },
+            { from: standardFontsDir, to: 'standard_fonts/' },
+          ],
         }),
       ],
     },
