@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
 import { HashToURL } from '@utils'
@@ -293,10 +293,20 @@ export const Identicon = ({ address = '', logo }) => {
     return logo ? HashToURL(logo, 'CDN', { size: 'medium' }) : ''
   }, [logo])
 
+  const [isVideo, setIsVideo] = useState(false)
+
   if (resolvedLogo) {
-    return (
+    return isVideo ? (
       <div className={styles.identicon}>
-        <img src={resolvedLogo} alt="identicon" />
+        <video alt="identicon" src={resolvedLogo} />
+      </div>
+    ) : (
+      <div className={styles.identicon}>
+        <img
+          src={resolvedLogo}
+          alt="identicon"
+          onError={() => setIsVideo(true)}
+        />
       </div>
     )
   }
