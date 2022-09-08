@@ -48,7 +48,7 @@ async function fetchSettings() {
     banBlockListResponse,
     logosResponse,
     logosPrideResponse,
-    reiaRestrictedListResponse,
+    teiaRestrictedListResponse,
     teiaPermittedListResponse,
   ] = await Promise.all([
     axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
@@ -74,7 +74,7 @@ async function fetchSettings() {
     banBlockList: banBlockListResponse.data,
     logos: shuffleLogos(logos),
     walletBlockList: filterWalletBlockList(
-      [reiaRestrictedListResponse.data],
+      [teiaRestrictedListResponse.data],
       [teiaPermittedListResponse.data]
     ),
   }

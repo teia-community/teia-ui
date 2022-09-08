@@ -51,6 +51,7 @@ function Tab({ children, to }) {
       }
       className="tag"
       to={to}
+      end
     >
       {children}
     </NavLink>
