@@ -31,7 +31,7 @@ export const ItemInfo = ({
 
   const [showSignStatus, setShowSignStatus] = useState(false)
   const restricted = useMemo(
-    () => walletBlockList.includes(creator.address),
+    () => walletBlockList.get(creator.address) === 1,
     [walletBlockList, creator]
   )
 
@@ -42,11 +42,11 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            !walletBlockList.includes(
+            walletBlockList.get(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
-            )
+            ) !== 1
         )
         .map(({ amount_left }) => amount_left)
     )
@@ -54,7 +54,7 @@ export const ItemInfo = ({
     let purchaseButton = null
 
     const cheapestListing = listings.filter(
-      (listing) => !walletBlockList.includes(listing.creator_id)
+      (listing) => walletBlockList.get(listing.creator_id) !== 1
     )[0]
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such

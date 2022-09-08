@@ -46,12 +46,12 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {(restricted || walletBlockList.includes(swap.creator_id)) && (
+        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
           <RestrictedLabel />
         )}
         <MarketplaceLabel swap={swap} />
         {!restricted &&
-          !walletBlockList.includes(swap.creator_id) &&
+          walletBlockList.get(swap.creator_id) !== 1 &&
           !isOwnSwap && (
             <Button
               onClick={() =>
@@ -124,11 +124,11 @@ function ObjktcomAskRow({ id, ask, swap, restricted, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || walletBlockList.includes(swap.creator_id)) && (
+        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
           <RestrictedLabel />
         )}
         <OBJKTLabel />
-        {!restricted && !walletBlockList.includes(swap.creator_id) && (
+        {!restricted && walletBlockList.get(swap.creator_id) !== 1 && (
           <Button onClick={() => onCollectClick()}>
             <Purchase>
               Collect for {parseFloat(ask.price / 1000000)} tez

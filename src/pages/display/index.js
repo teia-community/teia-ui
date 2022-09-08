@@ -95,7 +95,7 @@ export default function Display() {
   const { address, subjkt } = useParams()
   const { walletBlockList } = useSettings()
   const isRestrictedUser = useMemo(
-    () => walletBlockList.includes(address),
+    () => walletBlockList.get(address) === 1,
     [address, walletBlockList]
   )
   const [showFilters, setShowFilters] = useState(false)

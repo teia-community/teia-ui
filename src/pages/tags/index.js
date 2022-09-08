@@ -65,7 +65,7 @@ export const Tags = () => {
     setFeed(
       _.uniqBy(
         [...feed, ...arr].filter(
-          (e) => !walletBlockList.includes(e.creator_id)
+          (e) => walletBlockList.get(e.creator_id) !== 1
         ),
         'creator_id'
       )
@@ -78,7 +78,7 @@ export const Tags = () => {
 
     setFeed(
       _.uniqBy(
-        arr.filter((e) => !walletBlockList.includes(e.creator_id)),
+        arr.filter((e) => walletBlockList.get(e.creator_id) !== 1),
         'creator_id'
       )
     )
