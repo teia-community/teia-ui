@@ -7,6 +7,7 @@ import { ImageComponent } from '../image'
 import { Button, Primary } from '../../button'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { AnimatePresence } from 'framer-motion'
+import { HashToURL } from '@utils'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
 const options = {
@@ -17,7 +18,6 @@ const options = {
 
 export const PdfComponent = ({
   artifactUri,
-  fallbackUri,
   displayUri,
   previewUri,
   preview,
@@ -37,7 +37,7 @@ export const PdfComponent = ({
     console.error(e.message)
     context.showFeedback(`${e.message}
 
-see it on [IPFS](${fallbackUri})`)
+see it on [IPFS](${HashToURL(nft.artifactUri)})`)
     setLoading(false)
   }
 

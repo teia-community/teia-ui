@@ -53,11 +53,11 @@ export const renderMediaType = ({
     ? HashToURL(nft.display_uri, 'CDN', { size: 'medium' })
     : ''
 
-  // Due to issues for generative tokens on NFTStorage.link gateway
-  // we use ipfs.io only for these
-  const parsedArtifactHtmlUri = nft.artifact_uri
-    ? HashToURL(nft.artifact_uri, 'IPFS')
-    : ''
+  // // Due to issues for generative tokens on NFTStorage.link gateway
+  // // we use ipfs.io only for these
+  // const parsedArtifactHtmlUri = nft.artifact_uri
+  //   ? HashToURL(nft.artifact_uri, 'IPFS')
+  //   : ''
 
   switch (nft.mime) {
     /* IMAGES */
@@ -86,7 +86,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <VectorComponent
-            artifactUri={parsedArtifactHtmlUri}
+            artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
@@ -106,7 +106,7 @@ export const renderMediaType = ({
       return (
         <Container interactive={interactive}>
           <HTMLComponent
-            artifactUri={parsedArtifactHtmlUri}
+            artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             creator={nft.creator}
@@ -176,7 +176,6 @@ export const renderMediaType = ({
         <Container interactive={interactive}>
           <PdfComponent
             artifactUri={parsedArtifactUri}
-            fallbackUri={parsedArtifactHtmlUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
