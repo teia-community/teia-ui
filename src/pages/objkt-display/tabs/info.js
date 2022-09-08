@@ -62,19 +62,16 @@ export const Info = ({ nft, viewer_address }) => {
           <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
           <div className={styles.infos_attributes_flex}>
             <div className={styles.info_attributes}>
-              <strong>Mimetype:</strong>
-              <p>{nft.mime}</p>
+              Mimetype:<p>{nft.mime}</p>
             </div>
             {nft.language && (
               <div className={styles.info_attributes}>
-                <strong>Language:</strong>
-                <p>{LANGUAGES[nft.language]}</p>
+                Language:<p>{LANGUAGES[nft.language]}</p>
               </div>
             )}
-
             {nft.content_rating && (
               <div className={styles.info_attributes}>
-                <strong>Content Rating:</strong>
+                Content Rating:
                 {nft.content_rating === METADATA_CONTENT_RATING_MATURE ? (
                   <p>NSFW (Mature)</p>
                 ) : (
@@ -84,7 +81,7 @@ export const Info = ({ nft, viewer_address }) => {
             )}
 
             <div className={styles.info_attributes}>
-              <strong>Rights:</strong>
+              Rights:
               <p>
                 {nft.rights ? (
                   nft.rights === 'custom' ? (
