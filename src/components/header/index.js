@@ -16,7 +16,7 @@ import { walletPreview } from '../../utils/string'
 import { VisuallyHidden } from '../visually-hidden'
 import styles from './styles.module.scss'
 import { getItem, setItem } from '../../utils/storage'
-import { EventBanner } from '@components/event-banner/index'
+import { EventBanner } from '@components/event-banner'
 import { useWindowScroll } from 'react-use'
 import useSettings from '@hooks/use-settings'
 

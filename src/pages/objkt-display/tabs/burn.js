@@ -6,9 +6,13 @@ import { Input } from '@components/input'
 import { Loading } from '@components/loading'
 import styles from '../styles.module.scss'
 
-export const Burn = (props) => {
-  console.debug('BURN', props)
-  const { token_holders, id } = props
+/**
+ * The Burn Tab
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
+export const Burn = ({ nft }) => {
   const {
     burn,
     acc,
@@ -22,11 +26,11 @@ export const Burn = (props) => {
 
   let totalOwned = 0
 
-  const proxyAdminAddress = props.creator.is_split
-    ? props.creator.shares[0].administrator
+  const proxyAdminAddress = nft.creator.is_split
+    ? nft.creator.shares[0].administrator
     : null
 
-  const found = token_holders.find(
+  const found = nft.token_holders.find(
     (e) =>
       e.holder_id === acc?.address ||
       (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
@@ -55,7 +59,7 @@ export const Burn = (props) => {
     if (r) {
       setProgress(true)
       setMessage('Burning OBJKT')
-      burn(id, amount)
+      burn(nft.id, amount)
     }
   }
 
@@ -67,7 +71,7 @@ export const Burn = (props) => {
             <Padding>
               <div className={styles.container}>
                 <p>
-                  You own {totalOwned} editions of OBJKT#{props.id}. How many
+                  You own {totalOwned} editions of OBJKT#{nft.id}. How many
                   would you like to burn?
                 </p>
               </div>

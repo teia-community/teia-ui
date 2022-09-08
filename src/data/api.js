@@ -18,21 +18,6 @@ export const GetOBJKT = async ({ id }) => {
 }
 
 /**
- * Get OBJKT detail page
- */
-export const GetTags = async ({ tag, counter }) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .post(process.env.REACT_APP_TAGS, { tag: tag, counter: counter })
-      .then((res) => {
-        // console.log(res.data)
-        resolve(res.data.result)
-      })
-      .catch((e) => reject(e)) // TODO: send error message to context. have an error component to display the error
-  })
-}
-
-/**
  * Get User claims from their tzprofile
  */
 const GetUserClaims = async (walletAddr) => {
@@ -47,37 +32,35 @@ const GetUserClaims = async (walletAddr) => {
  * Get User Metadata
  */
 export const GetUserMetadata = async (walletAddr) => {
-  let tzktData = {}
+  const tzktData = {}
 
-  let tzpData = {}
+  const tzpData = {}
   try {
-    let claims = await GetUserClaims(walletAddr)
+    const claims = await GetUserClaims(walletAddr)
     if (claims.data.data.tzprofiles_by_pk !== null)
       for (const claim of claims.data.data.tzprofiles_by_pk.valid_claims) {
-        let claimJSON = JSON.parse(claim[1])
+        const claimJSON = JSON.parse(claim[1])
         if (claimJSON.type.includes('TwitterVerification')) {
           if (!tzktData.data || !tzktData.data.twitter) {
-            tzpData['twitter'] = claimJSON.evidence.handle
+            tzpData.twitter = claimJSON.evidence.handle
           }
         } else if (claimJSON.type.includes('BasicProfile')) {
-          if (
-            claimJSON.credentialSubject.alias !== '' &&
-            !(tzktData.data && tzktData.data.alias)
-          )
-            tzpData['alias'] = claimJSON.credentialSubject.alias
-          tzpData['tzprofile'] = walletAddr
+          if (claimJSON.credentialSubject.alias !== '' && !tzktData.data?.alias)
+            tzpData.alias = claimJSON.credentialSubject.alias
+          tzpData.tzprofile = walletAddr
         } else if (claimJSON.type.includes('DiscordVerification')) {
           if (!tzktData.data) {
-            tzpData['discord'] = claimJSON.evidence.handle
+            tzpData.discord = claimJSON.evidence.handle
           }
         } else if (claimJSON.type.includes('GitHubVerification')) {
           if (!tzktData.data) {
-            tzpData['github'] = claimJSON.evidence.handle
+            tzpData.github = claimJSON.evidence.handle
           }
-        } else if (claimJSON.type.includes('DnsVerification')) {
-          if (!tzktData.data) {
-            tzpData['dns'] = claimJSON.credentialSubject.sameAs.slice(4)
-          }
+        } else if (
+          claimJSON.type.includes('DnsVerification') &&
+          !tzktData.data
+        ) {
+          tzpData.dns = claimJSON.credentialSubject.sameAs.slice(4)
         }
       }
   } catch (e) {

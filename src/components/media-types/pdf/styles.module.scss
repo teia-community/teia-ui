@@ -1,5 +1,9 @@
 @import '../../../styles/layout.scss';
 
+.hidden {
+  opacity: 0;
+  transition: opacity 1s;
+}
 .container {
   position: relative;
   display: block;

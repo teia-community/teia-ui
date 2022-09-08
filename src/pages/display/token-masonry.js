@@ -94,9 +94,7 @@ function TokenMasonry({
           >
             <div className={styles.container}>
               {renderMediaType({
-                mimeType: token.mime,
-                artifactUri: token.artifact_uri,
-                displayUri: token.display_uri,
+                nft: token,
                 displayView: true,
               })}
             </div>

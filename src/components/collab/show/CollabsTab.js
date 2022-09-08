@@ -114,9 +114,7 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
             return (
               <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
                 {renderMediaType({
-                  mimeType: nft.mime,
-                  artifactUri: nft.artifact_uri,
-                  displayUri: nft.display_uri,
+                  nft,
                   displayView: true,
                 })}
               </Button>

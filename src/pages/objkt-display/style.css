@@ -3,8 +3,8 @@
 .objktview-zipembed.objktview {
   position: relative;
   display: block;
-  margin: 0 auto; 
-  border : none;
+  margin: 0 auto;
+  border: none;
   width: 100vw;
   height: 100vw;
 }
@@ -35,7 +35,6 @@
 
 a {
   color: var(--text-color);
-  font-size: 16px;
 }
 
 a:hover {

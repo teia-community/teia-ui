@@ -6,10 +6,11 @@ import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import {
-  getWalletBlockList,
   getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
+  getNsfwList,
+  METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
 import { fetchObjktcomAsks } from '@data/objktcom'
@@ -19,10 +20,10 @@ import { Page, Container, Padding } from '@components/layout'
 import { renderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
 import { Menu } from '@components/menu'
-import { Info, Collectors, Swap, Burn, History } from './tabs'
+import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from './styles.module.scss'
 import './style.css'
-import { Transfer } from '@components/collab/show/Transfer'
+import useSettings from '@hooks/use-settings'
 
 const TABS = [
   { title: 'Info', component: Info }, // public tab
@@ -36,6 +37,7 @@ const TABS = [
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
+  const { walletBlockList } = useSettings()
 
   const [loading, setLoading] = useState(true)
   const [tabIndex, setTabIndex] = useState(0)
@@ -52,6 +54,7 @@ export const ObjktDisplay = () => {
       fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
+    const nsfwList = getNsfwList()
 
     const listings = sortBy(
       [
@@ -78,10 +81,14 @@ export const ObjktDisplay = () => {
     )
 
     objkt.listings = listings
-    objkt.ban = getWalletBlockList()
+
+    if (nsfwList.includes(objkt.id)) {
+      objkt.content_rating = METADATA_CONTENT_RATING_MATURE
+    }
+
     await context.setAccount()
 
-    if (objkt.ban.includes(objkt.creator.address)) {
+    if (walletBlockList.get(objkt.creator.address) === 1) {
       setRestricted(true)
       objkt.restricted = true
     } else {
@@ -93,9 +100,9 @@ export const ObjktDisplay = () => {
         objkt.underReview = true
       }
       // filter swaps from banned account
-      if (objkt.swaps && objkt.ban)
+      if (objkt.swaps && walletBlockList)
         objkt.swaps = objkt.swaps.filter(
-          (s) => s.status > 0 || !objkt.ban.includes(s.creator_id)
+          (s) => s.status > 0 || walletBlockList.get(s.creator_id) !== 1
         )
     }
     setNFT(objkt)
@@ -241,11 +248,7 @@ export const ObjktDisplay = () => {
             >
               <div className={objkt_classes}>
                 {renderMediaType({
-                  mimeType: nft.mime,
-                  artifactUri: nft.artifact_uri,
-                  displayUri: nft.display_uri,
-                  creator: nft.creator,
-                  objktID: nft.id,
+                  nft,
                   interactive: true,
                   displayView: false,
                 })}
@@ -299,7 +302,7 @@ export const ObjktDisplay = () => {
                   </Padding>
                 </Container>
 
-                <Tab {...nft} address={address} />
+                <Tab nft={nft} viewer_address={address} />
               </div>
             </div>
           </>

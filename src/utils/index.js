@@ -1,3 +1,5 @@
+import * as _ from 'lodash'
+
 export function rnd(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -18,14 +20,30 @@ export const fetchJSON = async (url) => {
   }
 }
 
-export const CIDToURL = (
+/**
+ * Converts an ipfs hash to ipfs url
+ * @param {string} cid
+ * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {HashToURLOptions} [options]
+ * @returns {string}
+ */
+const CIDToURL = (
   cid,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  options
 ) => {
   if (cid == null) {
     return ''
   }
+  if (type !== 'CDN' && !_.isEmpty(options)) {
+    console.warn('Using options for IPFS Gateways does nothing')
+  }
+
   switch (type) {
+    case 'CDN':
+      return `https://cache.teia.rocks/media/${
+        options.size || 'raw'
+      }/ipfs/${cid}`
     case 'HIC':
       return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
     case 'CLOUDFLARE':
@@ -45,10 +63,21 @@ export const CIDToURL = (
   }
 }
 
-// converts an ipfs hash to ipfs url
+/**
+ * @typedef { {size?: string} } HashToURLOptions
+ */
+
+/**
+ * Converts an ipfs hash to ipfs url
+ * @param {string} hash
+ * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {HashToURLOptions} [options]
+ * @returns {string}
+ */
 export const HashToURL = (
   hash,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY
+  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  options
 ) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
@@ -57,22 +86,6 @@ export const HashToURL = (
     return ''
   }
 
-  switch (type) {
-    case 'HIC':
-      return hash.replace('ipfs://', 'https://pinata.hicetnunc.xyz/ipfs/')
-    case 'CLOUDFLARE':
-      return hash.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
-    case 'PINATA':
-      return hash.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
-    case 'IPFS':
-      return hash.replace('ipfs://', 'https://ipfs.io/ipfs/')
-    case 'DWEB':
-      return hash.replace('ipfs://', 'http://dweb.link/ipfs/')
-    case 'NFTSTORAGE':
-      return hash.replace('ipfs://', 'https://nftstorage.link/ipfs/')
-
-    default:
-      console.error('please specify type')
-      return hash
-  }
+  const CID = hash.split('ipfs://')[1]
+  return CIDToURL(CID, type, options)
 }
