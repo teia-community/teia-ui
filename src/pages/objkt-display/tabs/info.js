@@ -57,29 +57,28 @@ export const Info = ({ nft, viewer_address }) => {
         <div style={{ fontSize: '0.75em' }}>
           <div style={{ margin: '0 1em' }}>
             <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
-            <div style={{ display: 'flex' }}>
-              <div>
-                <div style={{ marginBottom: '0.5em' }}>
-                  <Padding>
-                    <strong>Mimetype</strong>:<p>{nft.mime}</p>
-                  </Padding>
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className={styles.info_attributes}>
+                <strong>Mimetype:</strong>
+                <p>{nft.mime}</p>
               </div>
               {nft.language && (
-                <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
+                <div className={styles.info_attributes}>
                   <strong>Language:</strong>
                   <p>{LANGUAGES[nft.language]}</p>
                 </div>
               )}
 
-              {nft.content_rating === METADATA_CONTENT_RATING_MATURE && (
+              {nft.content_rating && (
                 <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
                   <strong>Content Rating:</strong>
-                  <p>NSFW (Mature)</p>
+                  {nft.content_rating === METADATA_CONTENT_RATING_MATURE && (
+                    <p>NSFW (Mature)</p>
+                  )}
                 </div>
               )}
 
-              <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
+              <div className={styles.info_attributes}>
                 <strong>Rights:</strong>
                 <p>
                   {nft.rights ? (
