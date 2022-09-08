@@ -13,14 +13,39 @@
   }
 }
 
-.info_attributes {
+.info_ipfs {
+  font-weight: bold;
+  white-space: pre-wrap;
+  margin: 0 1em;
+
+  a {
+    color: var(--gray-80);
+
+    &:hover {
+      textdecoration: underline;
+    }
+  }
+}
+
+.info_attributes,
+.info_ipfs {
   width: 100%;
   display: flex;
   flex-direction: row;
   white-space: pre-wrap;
+  margin: 0 1em;
   p {
     margin: 0 1em;
   }
+}
+
+.infos_attributes_container {
+  font-size: 0.75em;
+  margin: 0 1em;
+}
+.infos_attributes_flex {
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
