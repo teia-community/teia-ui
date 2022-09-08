@@ -18,7 +18,7 @@ import {
  * @returns {any}
  */
 export const Info = ({ nft, viewer_address }) => {
-  const ipfs_url = useMemo(
+  const artifact_ipfs_url = useMemo(
     () =>
       HashToURL(nft.artifact_uri) +
       `/?creator=${nft.creator.address}&viewer=${viewer_address || ''}&objkt=${
@@ -26,6 +26,7 @@ export const Info = ({ nft, viewer_address }) => {
       }`,
     [nft, viewer_address]
   )
+  const metadata_ipfs_url = useMemo(() => HashToURL(nft.metadata), [nft])
 
   return (
     <>
@@ -103,9 +104,9 @@ export const Info = ({ nft, viewer_address }) => {
 
           <Padding>
             <div className={styles.info_ipfs}>
-              <a href={HashToURL(nft.metadata)}>Metadata</a>
-              &nbsp;//&nbsp;
-              <a href={ipfs_url}>View on ipfs</a>
+              <a href={metadata_ipfs_url}>Metadata</a>
+              {' // '}
+              <a href={artifact_ipfs_url}>View on ipfs</a>
             </div>
           </Padding>
         </div>
