@@ -13,8 +13,6 @@ const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 export default function Collections({ showFilters, address }) {
   const [filter, setFilter] = useState(FILTER_ALL)
 
-  console.log('filter', filter)
-
   return (
     <div>
       {showFilters && (
@@ -32,6 +30,7 @@ export default function Collections({ showFilters, address }) {
         {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
         <TokenMasonry
           namespace="collections"
+          swrParams={[address]}
           variables={{ address }}
           emptyMessage="no collections"
           postProcessTokens={(tokens) => {
