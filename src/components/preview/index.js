@@ -37,7 +37,9 @@ export const Preview = ({
       {isHTML(mimeType) && <HTMLWarning />}
       <div className={styles.media}>
         {renderMediaType({
-          mimeType,
+          nft: {
+            mime: mimeType,
+          },
           previewUri,
           interactive: true,
           preview: true,

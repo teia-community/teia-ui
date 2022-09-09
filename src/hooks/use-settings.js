@@ -37,9 +37,14 @@ function filterWalletBlockList(restrictedLists, permittedLists) {
   const walletAllowList = flatten(permittedLists)
 
   // Override with permitted list
-  return flatten(restrictedLists).filter(
+  const overiddenList = flatten(restrictedLists).filter(
     (account) => !walletAllowList.includes(account)
   )
+  const walletBlockList = new Map()
+  overiddenList.forEach((e) => {
+    walletBlockList.set(e, 1)
+  })
+  return walletBlockList
 }
 
 async function fetchSettings() {
@@ -48,7 +53,7 @@ async function fetchSettings() {
     banBlockListResponse,
     logosResponse,
     logosPrideResponse,
-    reiaRestrictedListResponse,
+    teiaRestrictedListResponse,
     teiaPermittedListResponse,
   ] = await Promise.all([
     axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
@@ -69,12 +74,22 @@ async function fetchSettings() {
     }))
   )
 
+  const objktBlockList = new Map()
+  objktBlockListResponse.data.forEach((element) => {
+    objktBlockList.set(element, 1)
+  })
+
+  const banBlockList = new Map()
+  banBlockListResponse.data.forEach((e) => {
+    banBlockList.set(e, 1)
+  })
+
   return {
-    objktBlockList: objktBlockListResponse.data,
-    banBlockList: banBlockListResponse.data,
+    objktBlockList,
+    banBlockList,
     logos: shuffleLogos(logos),
     walletBlockList: filterWalletBlockList(
-      [reiaRestrictedListResponse.data],
+      [teiaRestrictedListResponse.data],
       [teiaPermittedListResponse.data]
     ),
   }

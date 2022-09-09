@@ -48,7 +48,6 @@ const App = () => {
         <Route path="/config" element={<Config />} />
         <Route path="/tags/:id" element={<Tags />} />
         <Route path="/:id/:collection?" element={<Display />} />
-        <Route path="/:subjkt" element={<Display />} />
         <Route path="/:subjkt/*" element={<Display />} />
       </Routes>
     </HicetnuncContextProvider>

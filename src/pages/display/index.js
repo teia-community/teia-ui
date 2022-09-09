@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import { fetchGraphQL } from '@data/hicdex'
 import { GetUserMetadata } from '@data/api'
 import { IconCache } from '@utils/with-icon'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 import useSettings from '@hooks/use-settings'
 import Profile from './profile'
 import Creations from './creations'
@@ -51,6 +51,7 @@ function Tab({ children, to }) {
       }
       className="tag"
       to={to}
+      end
     >
       {children}
     </NavLink>
@@ -71,10 +72,9 @@ async function fetchUserInfo(addressOrSubjkt, type = 'address') {
 
   user.address = holder.address
 
-  const meta = (await axios.get(CIDToURL(holder.metadata_file.split('//')[1])))
-    .data
+  const meta = (await axios.get(HashToURL(holder.metadata_file))).data
 
-  console.log('meta', meta)
+  console.debug('meta', meta)
 
   if (meta.description) {
     user.description = meta.description
@@ -95,7 +95,7 @@ export default function Display() {
   const { address, subjkt } = useParams()
   const { walletBlockList } = useSettings()
   const isRestrictedUser = useMemo(
-    () => walletBlockList.includes(address),
+    () => walletBlockList.get(address) === 1,
     [address, walletBlockList]
   )
   const [showFilters, setShowFilters] = useState(false)

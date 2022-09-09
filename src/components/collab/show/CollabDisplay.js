@@ -210,14 +210,12 @@ export const CollabDisplay = () => {
             endMessage={undefined}
           >
             <ResponsiveMasonry>
-              {items.map(({ id, mime, artifact_uri, display_uri }) => {
+              {items.map((nft) => {
                 return (
                   <Button key={id} to={`${PATH.OBJKT}/${id}`}>
                     <div className={styles.container}>
                       {renderMediaType({
-                        mimeType: mime,
-                        artifactUri: artifact_uri,
-                        displayUri: display_uri,
+                        nft,
                         displayView: true,
                       })}
                     </div>

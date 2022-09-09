@@ -25,6 +25,8 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
       <td style={{ width: '200px' }}>
         <Input
           type="text"
+          name="transfer-quantity"
+          label="Quantity"
           placeholder="OBJKT quantity"
           min={1}
           value={tx.amount}
@@ -35,6 +37,7 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
       <td>
         <Input
           type="text"
+          label="Recipient"
           placeholder="to address (tz...)"
           value={tx.to_}
           onChange={(event) => _update('to_', event.target.value)}

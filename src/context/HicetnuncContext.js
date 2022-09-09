@@ -718,18 +718,25 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       transfer: async (txs) => {
-        const { proxyAddress } = this.state
+        const { proxyAddress, objkts, acc } = this.state
 
-        await Tezos.wallet.at(proxyAddress).then(async (c) =>
+        const contract = proxyAddress || objkts
+
+        await Tezos.wallet.at(contract).then(async (c) =>
           c.methods
             .transfer([
               {
-                from_: proxyAddress,
+                from_: proxyAddress || acc?.address,
                 txs,
               },
             ])
             .send()
         )
+
+        this.state.setFeedback({
+          progress: false,
+          visible: false,
+        })
       },
 
       burn: async (objkt_id, amount) => {

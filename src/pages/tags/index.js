@@ -8,7 +8,7 @@ import { renderMediaType } from '@components/media-types'
 import { Page, Container } from '@components/layout'
 import { PATH } from '@constants'
 import styles from './styles.module.scss'
-import { getWalletBlockList } from '../../constants'
+import useSettings from '@hooks/use-settings'
 
 const _ = require('lodash')
 
@@ -51,19 +51,22 @@ async function fetchTag(tag, offset) {
 }
 
 export const Tags = () => {
+  const { walletBlockList } = useSettings()
+
   const { id } = useParams()
   const [feed, setFeed] = useState([])
   const [count, setCount] = useState(0)
   const [hasMore] = useState(true)
-  const [restricted, setRestricted] = useState([])
   const [offset, setOffset] = useState(0)
 
   const loadMore = async () => {
     setOffset(offset + 35)
-    let arr = await fetchTag(id, offset + 35)
+    const arr = await fetchTag(id, offset + 35)
     setFeed(
       _.uniqBy(
-        [...feed, ...arr].filter((e) => !restricted.includes(e.creator_id)),
+        [...feed, ...arr].filter(
+          (e) => walletBlockList.get(e.creator_id) !== 1
+        ),
         'creator_id'
       )
     )
@@ -71,13 +74,11 @@ export const Tags = () => {
   }
 
   useEffect(async () => {
-    let arr = await fetchTag(id, offset)
-    let res = getWalletBlockList()
-    setRestricted(res)
-    console.log(arr)
+    const arr = await fetchTag(id, offset)
+
     setFeed(
       _.uniqBy(
-        arr.filter((e) => !res.includes(e.creator_id)),
+        arr.filter((e) => walletBlockList.get(e.creator_id) !== 1),
         'creator_id'
       )
     )
@@ -103,9 +104,8 @@ export const Tags = () => {
                     >
                       <div className={styles.container}>
                         {renderMediaType({
-                          mimeType: nft.mime,
-                          artifactUri: nft.artifact_uri,
-                          displayUri: nft.display_uri,
+                          nft,
+                          displayView: true,
                         })}
                       </div>
                     </Button>

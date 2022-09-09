@@ -1,33 +1,42 @@
 import { useContext, useState } from 'react'
-import { Container, Padding } from '../../layout'
-import { TxRow } from './TxRow'
-import styles from '../../collab/styles.module.scss'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { Container, Padding } from '@components/layout'
+import { TxRow } from '@components/collab/show/TxRow'
+import styles from '@components/collab/styles.module.scss'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 import classNames from 'classnames'
-import { Button, Purchase } from '../../button'
+import { Button, Purchase } from '@components/button'
 
-export const Transfer = ({ id, creator, token_holders }) => {
+/**
+ * The Transfer Tab
+ * This allow the user to send tokens to a specific address.
+ * @function
+ * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @returns {any}
+ */
+export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
-  const { transfer, setProgress, acc, proxyAddress } =
+  const { transfer, setFeedback, acc, proxyAddress } =
     useContext(HicetnuncContext)
 
+  const senderAddress = proxyAddress || acc?.address
+
   // See if the creator of this token is also the admin
-  const proxyAdminAddress = creator.is_split
-    ? creator.shares[0].administrator
+  const proxyAdminAddress = nft.creator.is_split
+    ? nft.creator.shares[0].administrator
     : null
 
   // How many editions are held by the contract?
-  const editionsHeld = token_holders.find(
-    (e) => e.holder_id === proxyAddress && acc?.address === proxyAdminAddress
+  const editionsHeld = nft.token_holders.find(
+    (e) =>
+      e.holder_id === senderAddress &&
+      (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
   )
-
-  console.log(token_holders)
 
   // The basic schema for a transaction
   const txSchema = {
     to_: undefined,
     amount: undefined,
-    token_id: id,
+    token_id: nft.id,
   }
 
   const [txs, setTxs] = useState([
@@ -80,7 +89,12 @@ export const Transfer = ({ id, creator, token_holders }) => {
     */
 
   const onClick = () => {
-    setProgress(true)
+    setFeedback({
+      message: 'Transfering tokens',
+      progress: true,
+      confirm: false,
+      visible: true,
+    })
     const validTxs = txs.filter((tx) => tx.to_ && tx.amount)
     transfer(validTxs)
   }
@@ -96,11 +110,7 @@ export const Transfer = ({ id, creator, token_holders }) => {
       {tokenCount === 0 ? (
         <Padding>
           <div className={styles.container}>
-            <p>
-              No editions found to transfer. This tool is only for sending
-              OBJKTs from a collab contract to other tezos addresses, make sure
-              to be signed into a collab contract to use it.
-            </p>
+            <p>No editions found to transfer.</p>
           </div>
         </Padding>
       ) : (
@@ -111,26 +121,17 @@ export const Transfer = ({ id, creator, token_holders }) => {
               each.
             </p>
             <p>You currently have {tokenCount} editions available.</p>
-
-            <table className={tableStyle}>
-              <thead>
-                <tr>
-                  <td>OBJKT quantity</td>
-                  <td colSpan={2}>to address (tz...)</td>
-                </tr>
-              </thead>
-              <tbody>
-                {txs.map((tx, index) => (
-                  <TxRow
-                    key={`transfer-${index}`}
-                    tx={tx}
-                    onUpdate={(tx) => _update(index, tx)}
-                    onAdd={_addTransfer}
-                    onRemove={index < txs.length - 1 ? _deleteTransfer : null}
-                  />
-                ))}
-              </tbody>
-            </table>
+            <div className={tableStyle}>
+              {txs.map((tx, index) => (
+                <TxRow
+                  key={`transfer-${index}`}
+                  tx={tx}
+                  onUpdate={(tx) => _update(index, tx)}
+                  onAdd={_addTransfer}
+                  onRemove={index < txs.length - 1 ? _deleteTransfer : null}
+                />
+              ))}
+            </div>
 
             {/* <div className={styles.upload_container}>
                     <label>

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import base from 'base-x'
 import styles from './styles.module.scss'
-import { CIDToURL } from '@utils'
+import { HashToURL } from '@utils'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -289,10 +289,24 @@ const identicons = [
 ]
 
 export const Identicon = ({ address = '', logo }) => {
-  if (logo) {
-    return (
+  const resolvedLogo = useMemo(() => {
+    return logo ? HashToURL(logo, 'CDN', { size: 'medium' }) : ''
+  }, [logo])
+
+  const [isVideo, setIsVideo] = useState(false)
+
+  if (resolvedLogo) {
+    return isVideo ? (
       <div className={styles.identicon}>
-        <img src={CIDToURL(logo.split('//')[1])} alt="identicon" />
+        <video alt="identicon" src={resolvedLogo} />
+      </div>
+    ) : (
+      <div className={styles.identicon}>
+        <img
+          src={resolvedLogo}
+          alt="identicon"
+          onError={() => setIsVideo(true)}
+        />
       </div>
     )
   }

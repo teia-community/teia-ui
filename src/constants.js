@@ -1,7 +1,7 @@
 export const BANNER_URL =
   'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
-// TODO sk: use use-settings hook instead
+// TODO xat: use use-settings hook instead
 export const getWalletBlockList = () => []
 
 let nsfwList = []

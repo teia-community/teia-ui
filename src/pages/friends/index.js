@@ -7,7 +7,7 @@ import { IconCache } from '@utils/with-icon'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-  let result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
@@ -20,7 +20,7 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
 
 const query_frenCreations = `
 query frensGallery($wallets: [String!], $lastId: bigint!) {
-  token(where: {creator_id: {_in: $wallets}, id: {_lt: $lastId}, artifact_uri: {_neq: ""}}, order_by: {id: desc}, limit: 20) {
+  token(where: {supply: {_gt:0}, creator_id: {_in: $wallets}, id: {_lt: $lastId}, artifact_uri: {_neq: ""}}, order_by: {id: desc}, limit: 20) {
     artifact_uri
     display_uri
     creator_id
@@ -85,7 +85,10 @@ export class Friends extends Component {
       }
     )
 
-    if (errors) console.error(errors)
+    if (errors) {
+      console.error(errors)
+      return
+    }
     const result = data.token
 
     let lastId = Math.min.apply(
@@ -190,11 +193,7 @@ export class Friends extends Component {
                 <Container>
                   <Padding>
                     {this.state.creations.map((item, index) => (
-                      <FeedItem
-                        key={`${item.id}-${index}`}
-                        {...item}
-                        creator_id={item.creator.address}
-                      />
+                      <FeedItem key={`${item.id}-${index}`} nft={item} />
                     ))}
                   </Padding>
                 </Container>

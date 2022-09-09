@@ -10,6 +10,7 @@ import {
   DonoLabel,
   RestrictedLabel,
 } from './marketplace-labels'
+import useSettings from 'hooks/use-settings'
 
 function TeiaOrHenSwapRow({
   rowId,
@@ -18,13 +19,14 @@ function TeiaOrHenSwapRow({
   proxyAdminAddress,
   proxyAddress,
   restricted,
-  ban,
   reswapPrices,
   handleCollect,
   setReswapPrices,
   reswap,
   cancel,
 }) {
+  const { walletBlockList } = useSettings()
+
   const isOwnSwap =
     swap.creator.address === acc?.address ||
     (proxyAdminAddress === acc?.address &&
@@ -45,17 +47,21 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
-        <MarketplaceLabel swap={swap} />
-        {!restricted && !ban.includes(swap.creator_id) && !isOwnSwap && (
-          <Button
-            onClick={() =>
-              handleCollect(swap.contract_address, swap.id, swap.price)
-            }
-          >
-            <Purchase listing={swap} />
-          </Button>
+        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
+          <RestrictedLabel />
         )}
+        <MarketplaceLabel swap={swap} />
+        {!restricted &&
+          walletBlockList.get(swap.creator_id) !== 1 &&
+          !isOwnSwap && (
+            <Button
+              onClick={() =>
+                handleCollect(swap.contract_address, swap.id, swap.price)
+              }
+            >
+              <Purchase listing={swap} />
+            </Button>
+          )}
         {isOwnSwap && (
           <>
             <div className={styles.break}></div>
@@ -103,7 +109,8 @@ function TeiaOrHenSwapRow({
 }
 
 function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
-  const banned = restricted || ban.includes(swap.creator_id)
+  const { walletBlockList } = useSettings()
+  const banned = walletBlockList.get(swap.creator_id) === 1 || restricted
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -125,7 +132,9 @@ function DonoClaimRow({ id, swap, restricted, ban, onCollectClick }) {
     </div>
   )
 }
-function ObjktcomAskRow({ id, swap, restricted, ban, onCollectClick }) {
+function ObjktcomAskRow({ id, swap, restricted, onCollectClick }) {
+  const { walletBlockList } = useSettings()
+  const banned = walletBlockList.get(swap.creator_id) === 1 || restricted
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -138,9 +147,9 @@ function ObjktcomAskRow({ id, swap, restricted, ban, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || ban.includes(swap.creator_id)) && <RestrictedLabel />}
+        {banned && <RestrictedLabel />}
         <OBJKTLabel />
-        {!restricted && !ban.includes(swap.creator_id) && (
+        {!banned && (
           <Button onClick={() => onCollectClick()}>
             <Purchase listing={swap} />
           </Button>
@@ -159,7 +168,6 @@ export const Listings = ({
   cancel,
   proxyAdminAddress,
   restricted,
-  ban,
   reswap,
 }) => {
   const { acc, proxyAddress } = useContext(HicetnuncContext)
@@ -179,7 +187,6 @@ export const Listings = ({
                 proxyAdminAddress={proxyAdminAddress}
                 proxyAddress={proxyAddress}
                 restricted={restricted}
-                ban={ban}
                 reswapPrices={reswapPrices}
                 handleCollect={handleCollect}
                 setReswapPrices={setReswapPrices}
@@ -194,7 +201,6 @@ export const Listings = ({
                 key={listing.key}
                 swap={listing}
                 restricted={restricted}
-                ban={ban}
                 onCollectClick={() => {
                   claimGiveaway(listing)
                 }}
@@ -207,7 +213,6 @@ export const Listings = ({
                 key={listing.key}
                 swap={listing}
                 restricted={restricted}
-                ban={ban}
                 onCollectClick={() => {
                   handleCollectObjktcomAsk(listing)
                 }}
