@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import sum from 'lodash/sum'
 import { PATH, SWAP_STATUS } from '../../constants'
@@ -12,6 +12,7 @@ import { SigningUI } from '../collab/sign/SigningUI'
 import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 import { MarketplaceLabel } from '../listings/marketplace-labels'
+import useSettings from 'hooks/use-settings'
 import useSettings from 'hooks/use-settings'
 
 export const ItemInfo = ({
@@ -41,6 +42,10 @@ export const ItemInfo = ({
     () => walletBlockList.get(creator.address) === 1,
     [walletBlockList, creator]
   )
+  const restricted = useMemo(
+    () => walletBlockList.get(creator.address) === 1,
+    [walletBlockList, creator]
+  )
 
   if (isDetailView) {
     // TODO: subtract burned pieces from total
@@ -49,11 +54,13 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            walletBlockList.get(
+            (walletBlockList.get(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
-            ) !== 1
+            ) !==
+              1) !==
+            1
         )
         .map(({ amount_left }) => amount_left)
     )
