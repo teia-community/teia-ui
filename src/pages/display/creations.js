@@ -31,6 +31,7 @@ export default function Creations({ showFilters, address }) {
         {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
         <TokenMasonry
           namespace="creations"
+          swrParams={[address]}
           variables={{ address }}
           emptyMessage="no creations"
           postProcessTokens={(tokens) => {
