@@ -40,6 +40,13 @@
   }
 }
 
+.info_attributes {
+  color: var(--gray-100);
+  p {
+    color: var(--gray-70);
+  }
+}
+
 .infos_attributes_container {
   font-size: 0.75em;
   margin: 0 1em;

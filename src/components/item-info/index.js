@@ -24,7 +24,7 @@ export const ItemInfo = ({
   supply,
   isDetailView,
 }) => {
-  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
+  const { syncTaquito, collect, fulfillObjktcomAsk, acc } =
     useContext(HicetnuncContext)
 
   const { walletBlockList } = useSettings()
@@ -200,19 +200,6 @@ export const ItemInfo = ({
             {purchaseButton}
           </div>
         )}
-        <div className={styles.spread}>
-          <Button onClick={() => curate(id)}>
-            <Primary label="curate">
-              <span
-                className={styles.top}
-                data-position={'top'}
-                data-tooltip={'curate'}
-              >
-                〇
-              </span>
-            </Primary>
-          </Button>
-        </div>
       </>
     )
   } else {
@@ -226,22 +213,6 @@ export const ItemInfo = ({
               ) : (
                 <Primary>{walletPreview(creator?.address)}</Primary>
               )}
-            </Button>
-          </div>
-          <div className={styles.objktContainer}>
-            <Button to={`${PATH.OBJKT}/${id}`}>
-              <Primary label={`object ${id}`}>OBJKT#{id}</Primary>
-            </Button>
-            <Button onClick={() => curate(id)}>
-              <Primary label="curate">
-                <span
-                  className={styles.top}
-                  data-position={'top'}
-                  data-tooltip={'curate'}
-                >
-                  〇
-                </span>
-              </Primary>
             </Button>
           </div>
         </div>
