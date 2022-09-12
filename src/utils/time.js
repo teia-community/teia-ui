@@ -15,8 +15,8 @@ export function toHHMMSS(sec) {
   return `${hours}:${minutes}:${seconds}`
 }
 
-export const getTimeAgo = (props) => {
-  const stamp = Math.round(new Date(props).getTime() / 1000)
+export const getTimeAgo = (timestamp) => {
+  const stamp = Math.round(new Date(timestamp).getTime() / 1000)
   const now = Math.round(new Date().getTime() / 1000)
 
   const difference = now - stamp
@@ -46,6 +46,27 @@ export const getTimeAgo = (props) => {
     }
   }
 
-  // console.log(unit, value)
   return `${value} ${unit} ago`
+}
+
+export const getISODate = (timestamp) => {
+  const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s)
+  const d = new Date(timestamp)
+  return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate()
+  )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
+export const getWordDate = (timestamp) => {
+  const date = new Date(timestamp)
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }
+
+  //return date.toLocaleString(navigator.language, options)
+  return date.toLocaleString('en-GB', options)
 }

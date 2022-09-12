@@ -9,6 +9,7 @@ import {
   LICENSE_TYPES,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
+import { getWordDate } from '@utils/time'
 
 /**
  * The Info Tab
@@ -96,7 +97,13 @@ export const Info = ({ nft, viewer_address }) => {
                 )}
               </p>
             </div>
+
+            <div className={styles.info_attributes}>
+              Mint date:
+              <p>{getWordDate(nft.timestamp)}</p>
+            </div>
           </div>
+
           <div style={{ height: '2em' }} />
 
           <Padding>
