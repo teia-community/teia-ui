@@ -23,6 +23,7 @@ export const Container = ({
   children = null,
   interactive,
   nofullscreen = false,
+  flex = false,
 }) => {
   const context = useContext(HicetnuncContext)
   const domElement = useRef()
@@ -78,6 +79,7 @@ export const Container = ({
   const classes = classnames({
     [styles.container]: true,
     [styles.fullscreen]: context.fullscreen,
+    [styles.flex]: interactive,
   })
 
   const childrenWithProps = React.Children.map(children, (child) => {
@@ -97,10 +99,16 @@ export const Container = ({
     >
       <IconCache.Provider value={{}}>
         <div ref={domElement} className={classes}>
+          {childrenWithProps}
+
           {interactive && !iOS && !nofullscreen && (
             <div
               onClick={toggleFullScreen}
-              className={styles.icon + ' svg-icon'}
+              className={
+                styles.icon +
+                ' svg-icon ' +
+                (context.fullscreen ? styles.icon_fullscreen : '')
+              }
               onKeyPress={toggleFullScreen}
               tabIndex="0"
               role="button"
@@ -109,7 +117,6 @@ export const Container = ({
               {context.fullscreen ? <FullScreenEnter /> : <FullScreenExit />}
             </div>
           )}
-          {childrenWithProps}
         </div>
       </IconCache.Provider>
     </div>
