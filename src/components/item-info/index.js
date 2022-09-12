@@ -215,6 +215,11 @@ export const ItemInfo = ({
               )}
             </Button>
           </div>
+          <div className={styles.objktContainer}>
+            <Button to={`${PATH.OBJKT}/${id}`}>
+              <Primary label={`object ${id}`}>OBJKT#{id}</Primary>
+            </Button>
+          </div>
         </div>
       </div>
     )
