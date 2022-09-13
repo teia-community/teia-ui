@@ -103,9 +103,6 @@ export const Info = ({ nft, viewer_address }) => {
               <p>{getWordDate(nft.timestamp)}</p>
             </div>
           </div>
-
-          {/* <div style={{ height: '2em' }} /> */}
-
           <Padding>
             <div className={styles.info_ipfs}>
               <a href={metadata_ipfs_url}>Metadata</a>
