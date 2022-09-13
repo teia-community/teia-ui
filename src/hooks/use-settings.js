@@ -54,8 +54,6 @@ const mapFromList = (input_list) => {
 }
 async function fetchSettings() {
   const [
-    objktBlockListResponse,
-    banBlockListResponse,
     logosResponse,
     logosPrideResponse,
     teiaRestrictedListResponse,
@@ -64,8 +62,6 @@ async function fetchSettings() {
     underReviewResponse,
     ignoreUriResponse,
   ] = await Promise.all([
-    axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
-    axios.get(process.env.REACT_APP_BLOCKLIST_BAN), // blocked wallets (dont allow to visualise in /tz/walletid)
     axios.get(`${process.env.REACT_APP_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(`${process.env.REACT_APP_LOGOS}/logos_pride.json`), // list of logos for the pride month
     axios.get(process.env.REACT_APP_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
@@ -85,15 +81,11 @@ async function fetchSettings() {
     }))
   )
 
-  const objktBlockMap = mapFromList(objktBlockListResponse.data)
-  const banBlockMap = mapFromList(banBlockListResponse.data)
   const nsfwMap = mapFromList(nsfwResponse.data)
   const underReviewMap = mapFromList(underReviewResponse.data)
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)
 
   return {
-    objktBlockMap,
-    banBlockMap,
     logos: shuffleLogos(logos),
     walletBlockMap: filterWalletBlockList(
       [teiaRestrictedListResponse.data],
