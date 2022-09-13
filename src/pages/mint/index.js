@@ -92,7 +92,7 @@ export const Mint = () => {
   const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
     useState(false) // Photosensitivity flag
 
-  const { ignoreUriList } = useSettings()
+  const { ignoreUriMap } = useSettings()
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -368,7 +368,7 @@ export const Mint = () => {
 
     // Ignore IPFS URI's that are in the ignore list; they can be minted multiple times
 
-    if (ignoreUriList.get(uri0) === 1 || ignoreUriList.get(uri1) === 1) {
+    if (ignoreUriMap.get(uri0) === 1 || ignoreUriMap.get(uri1) === 1) {
       return false
     }
 

@@ -9,14 +9,14 @@ import { METADATA_CONTENT_RATING_MATURE } from '@constants'
 import useSettings from 'hooks/use-settings'
 
 export const FeedItem = ({ nft }) => {
-  const { nsfwList } = useSettings()
+  const { nsfwMap } = useSettings()
 
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${nft.id}`}>
         <div
           className={`${styles.container} ${
-            nsfwList.get(nft.id) === 1 ||
+            nsfwMap.get(nft.id) === 1 ||
             (nft.content_rating &&
               nft.content_rating === METADATA_CONTENT_RATING_MATURE)
               ? styles.blur
