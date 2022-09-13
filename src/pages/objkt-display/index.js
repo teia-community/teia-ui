@@ -6,10 +6,8 @@ import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import {
-  getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
-  getNsfwList,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
@@ -49,12 +47,13 @@ export const ObjktDisplay = () => {
   const address = context.acc?.address
   const proxy = context.getProxy()
 
+  const { nsfwList, underReviewList } = useSettings()
+
   useEffect(async () => {
     const [objkt, objktcomAsks] = await Promise.all([
       fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
-    const nsfwList = getNsfwList()
 
     const listings = sortBy(
       [
@@ -82,7 +81,7 @@ export const ObjktDisplay = () => {
 
     objkt.listings = listings
 
-    if (nsfwList.includes(objkt.id)) {
+    if (nsfwList.get(objkt.id) === 1) {
       objkt.content_rating = METADATA_CONTENT_RATING_MATURE
     }
 
@@ -94,8 +93,7 @@ export const ObjktDisplay = () => {
     } else {
       objkt.restricted = false
 
-      const underReviewList = getUnderReviewList()
-      if (underReviewList.includes(objkt.creator.address)) {
+      if (underReviewList.get(objkt.creator.address) === 1) {
         setUnderReview(true)
         objkt.underReview = true
       }

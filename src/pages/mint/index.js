@@ -26,7 +26,6 @@ import {
   THUMBNAIL_COMPRESSOR_OPTIONS,
   LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
-  getIgnoreUriList,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import {
@@ -38,6 +37,7 @@ import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'
 import styles from './styles.module.scss'
+import useSettings from 'hooks/use-settings'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
@@ -91,6 +91,8 @@ export const Mint = () => {
   const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
   const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
     useState(false) // Photosensitivity flag
+
+  const { ignoreUriList } = useSettings()
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -365,8 +367,8 @@ export const Mint = () => {
     const uri1 = `ipfs://${hashv1}`
 
     // Ignore IPFS URI's that are in the ignore list; they can be minted multiple times
-    const ignoreUriList = getIgnoreUriList()
-    if (ignoreUriList.includes(uri0) || ignoreUriList.includes(uri1)) {
+
+    if (ignoreUriList.get(uri0) === 1 || ignoreUriList.get(uri1) === 1) {
       return false
     }
 

@@ -5,16 +5,18 @@ import { Button } from '../button'
 import { ItemInfo } from '../item-info'
 import { renderMediaType } from '../media-types'
 import styles from './styles.module.scss'
-import { getNsfwList, METADATA_CONTENT_RATING_MATURE } from '@constants'
+import { METADATA_CONTENT_RATING_MATURE } from '@constants'
+import useSettings from 'hooks/use-settings'
 
 export const FeedItem = ({ nft }) => {
-  const nsfwList = getNsfwList()
+  const { nsfwList } = useSettings()
+
   return (
     <Padding>
       <Button to={`${PATH.OBJKT}/${nft.id}`}>
         <div
           className={`${styles.container} ${
-            nsfwList.includes(nft.id) ||
+            nsfwList.get(nft.id) === 1 ||
             (nft.content_rating &&
               nft.content_rating === METADATA_CONTENT_RATING_MATURE)
               ? styles.blur
