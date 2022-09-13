@@ -104,7 +104,7 @@ export const Info = ({ nft, viewer_address }) => {
             </div>
           </div>
 
-          <div style={{ height: '2em' }} />
+          {/* <div style={{ height: '2em' }} /> */}
 
           <Padding>
             <div className={styles.info_ipfs}>
