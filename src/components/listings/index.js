@@ -24,7 +24,7 @@ function TeiaOrHenSwapRow({
   reswap,
   cancel,
 }) {
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   const isOwnSwap =
     swap.creator.address === acc?.address ||
@@ -46,12 +46,12 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
+        {(restricted || walletBlockMap.get(swap.creator_id) === 1) && (
           <RestrictedLabel />
         )}
         <MarketplaceLabel swap={swap} />
         {!restricted &&
-          walletBlockList.get(swap.creator_id) !== 1 &&
+          walletBlockMap.get(swap.creator_id) !== 1 &&
           !isOwnSwap && (
             <Button
               onClick={() =>
@@ -110,7 +110,7 @@ function TeiaOrHenSwapRow({
 }
 
 function ObjktcomAskRow({ id, ask, swap, restricted, onCollectClick }) {
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   return (
     <div className={styles.swap}>
@@ -124,11 +124,11 @@ function ObjktcomAskRow({ id, ask, swap, restricted, onCollectClick }) {
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
+        {(restricted || walletBlockMap.get(swap.creator_id) === 1) && (
           <RestrictedLabel />
         )}
         <OBJKTLabel />
-        {!restricted && walletBlockList.get(swap.creator_id) !== 1 && (
+        {!restricted && walletBlockMap.get(swap.creator_id) !== 1 && (
           <Button onClick={() => onCollectClick()}>
             <Purchase>
               Collect for {parseFloat(ask.price / 1000000)} tez

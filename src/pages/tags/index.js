@@ -51,7 +51,7 @@ async function fetchTag(tag, offset) {
 }
 
 export const Tags = () => {
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   const { id } = useParams()
   const [feed, setFeed] = useState([])
@@ -64,9 +64,7 @@ export const Tags = () => {
     const arr = await fetchTag(id, offset + 35)
     setFeed(
       _.uniqBy(
-        [...feed, ...arr].filter(
-          (e) => walletBlockList.get(e.creator_id) !== 1
-        ),
+        [...feed, ...arr].filter((e) => walletBlockMap.get(e.creator_id) !== 1),
         'creator_id'
       )
     )
@@ -78,7 +76,7 @@ export const Tags = () => {
 
     setFeed(
       _.uniqBy(
-        arr.filter((e) => walletBlockList.get(e.creator_id) !== 1),
+        arr.filter((e) => walletBlockMap.get(e.creator_id) !== 1),
         'creator_id'
       )
     )

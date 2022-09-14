@@ -1,21 +1,6 @@
 export const BANNER_URL =
   'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
-// TODO xat: use use-settings hook instead
-export const getWalletBlockList = () => []
-
-let nsfwList = []
-export const setNsfwList = (data) => (nsfwList = data)
-export const getNsfwList = () => nsfwList
-
-let underReviewList = []
-export const setUnderReviewList = (data) => (underReviewList = data)
-export const getUnderReviewList = () => underReviewList
-
-let ignoreUriList = []
-export const setIgnoreUriList = (data) => (ignoreUriList = data)
-export const getIgnoreUriList = () => ignoreUriList
-
 export const PATH = {
   FEED: '/',
   ISSUER: '/tz',
