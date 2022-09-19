@@ -32,7 +32,7 @@ export const Info = ({ nft, viewer_address }) => {
   return (
     <>
       <Container>
-        <div className={styles.infos_attributes_container}>
+        <div className={styles.infos_container}>
           <Padding>
             <div className={styles.objkt__title}>{nft.title}</div>
           </Padding>

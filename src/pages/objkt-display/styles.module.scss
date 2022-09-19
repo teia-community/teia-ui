@@ -26,13 +26,14 @@
 
 .info_attributes,
 .info_ipfs {
+  font-size: 0.75em;
   display: flex;
   flex-direction: row;
   white-space: pre-wrap;
   color: var(--gray-70);
   margin: 0.5em 0em;
   p {
-    margin: 0 1em;
+    margin: 0 0.5em;
   }
 }
 
@@ -43,10 +44,16 @@
   }
 }
 
-.infos_attributes_container {
-  font-size: 0.75em;
+.infos_attributes_container,
+.infos_container {
   margin: 0 1.5em;
 }
+.infos_container > {
+  div {
+    margin: 2em 0em;
+  }
+}
+
 .infos_attributes_flex {
   display: flex;
   flex-direction: column;
