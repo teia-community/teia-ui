@@ -47,7 +47,13 @@
 .infos_attributes_container,
 .infos_container {
   margin: 0 16px;
+
+  hr {
+    border-color: var(--border-color);
+    margin-bottom: 1em;
+  }
 }
+
 .infos_container > {
   div {
     margin: 1em 0em;

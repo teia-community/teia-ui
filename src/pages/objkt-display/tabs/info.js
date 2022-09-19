@@ -28,7 +28,6 @@ export const Info = ({ nft, viewer_address }) => {
     [nft, viewer_address]
   )
   const metadata_ipfs_url = useMemo(() => HashToURL(nft.metadata), [nft])
-
   return (
     <>
       <Container>
@@ -48,7 +47,7 @@ export const Info = ({ nft, viewer_address }) => {
       </Container>
       <Container>
         <div className={styles.infos_attributes_container}>
-          <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
+          <hr />
           <div className={styles.infos_attributes_flex}>
             <div className={styles.info_attributes}>
               Mimetype:<p>{nft.mime}</p>
