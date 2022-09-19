@@ -14,7 +14,6 @@
 }
 
 .info_ipfs {
-  font-weight: bold;
   white-space: pre-wrap;
   margin: 0 1em;
   padding-top: 12px;
@@ -38,7 +37,7 @@
 }
 
 .info_attributes {
-  color: var(--gray-90);
+  color: var(--gray-70);
   p {
     color: var(--gray-70);
   }
@@ -46,7 +45,7 @@
 
 .infos_attributes_container {
   font-size: 0.75em;
-  margin: 0 1em;
+  margin: 0 1.5em;
 }
 .infos_attributes_flex {
   display: flex;
