@@ -31,32 +31,19 @@ export const Info = ({ nft, viewer_address }) => {
 
   return (
     <>
-      <Container>
-        <Padding>
-          <div
-            className={styles.objkt__title}
-            style={{
-              margin: '0 1em',
-            }}
-          >
-            {nft.title}
-          </div>
-        </Padding>
-      </Container>
+      <div className={styles.infos_attributes_container}>
+        <Container>
+          <div className={styles.objkt__title}>{nft.title}</div>
+        </Container>
 
-      <Container>
-        <Padding>
-          <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
-            {nft.description}
-          </div>
-        </Padding>
-      </Container>
+        <Container>
+          <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
+        </Container>
 
-      <Container>
-        <Padding>
+        <Container>
           <Tags token_tags={nft.token_tags} />
-        </Padding>
-      </Container>
+        </Container>
+      </div>
 
       <Container>
         <div className={styles.infos_attributes_container}>
