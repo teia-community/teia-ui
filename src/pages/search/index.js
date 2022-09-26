@@ -316,13 +316,28 @@ export class Search extends Component {
     flag: false,
     lastId: undefined,
     tags: [
-      { id: 10, value: 'pakistan', label: '🇵🇰 pakistan' },
-      { id: 11, value: 'ukraine', label: '🇺🇦 ukraine' },
-      { id: 12, value: 'tezos-pride', label: '🏳️‍🌈 tezospride' },
+      {
+        id: 10,
+        value: 'pakistan',
+        label: '🇵🇰 pakistan',
+        aria: 'Pakistan Fund Feed',
+      },
+      {
+        id: 11,
+        value: 'ukraine',
+        label: '🇺🇦 ukraine',
+        aria: 'Ukraine Fund Feed',
+      },
+      {
+        id: 12,
+        value: 'tezos-pride',
+        label: '🏳️‍🌈 tezospride',
+        aria: 'Tezos Pride Feed',
+      },
       { id: 6, value: 'new', label: 'new OBJKTs' },
-      { id: 7, value: 'recent-sales' },
+      { id: 7, value: 'recent-sales', label: 'recent sales' },
       { id: 1, value: 'random' },
-      { id: 2, value: 'glb' },
+      { id: 2, value: 'glb', aria: 'GLB Models' },
       { id: 3, value: 'music' },
       { id: 12, value: 'video' },
       { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
@@ -554,9 +569,9 @@ export class Search extends Component {
                       onClick={() => {
                         this.update(e.value, true)
                       }}
-                      aria-label={e.label ? e.label : e.value}
+                      aria-label={e.aria || e.label || e.value}
                     >
-                      {e.label ? e.label : e.value}{' '}
+                      {e.label || e.value}{' '}
                     </a>
                   ))}
                 </div>
