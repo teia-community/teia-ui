@@ -316,16 +316,17 @@ export class Search extends Component {
     flag: false,
     lastId: undefined,
     tags: [
-      { id: 11, value: '🇺🇦 ukraine', label: 'ukraine' },
-      { id: 12, value: '🏳️‍🌈 tezospride', label: 'tezos pride' },
+      { id: 10, value: 'pakistan', label: '🇵🇰 pakistan' },
+      { id: 11, value: 'ukraine', label: '🇺🇦 ukraine' },
+      { id: 12, value: 'tezos-pride', label: '🏳️‍🌈 tezospride' },
+      { id: 6, value: 'new', label: 'new OBJKTs' },
+      { id: 7, value: 'recent-sales' },
       { id: 1, value: 'random' },
       { id: 2, value: 'glb' },
       { id: 3, value: 'music' },
       { id: 12, value: 'video' },
       { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
       { id: 5, value: 'gif' },
-      { id: 6, value: 'new OBJKTs', label: 'new objects' },
-      { id: 7, value: 'recent sales' },
     ],
     select: [],
     mouse: false,
@@ -368,85 +369,117 @@ export class Search extends Component {
         lastId: await getLastObjktId(),
       })
     }
+    switch (e) {
+      case 'num': {
+        let res = await fetchFeed(
+          Number(this.state.search) + 1 - this.state.offset
+        )
+        res = res.filter((e) => !arr.includes(e.creator_id))
+        this.setState({
+          feed: [...this.state.feed, ...res],
+        })
+        break
+      }
+      case 'video': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchVideo(this.state.offset))],
+            'creator_id'
+          ),
+        })
+        break
+      }
 
-    if (e === 'num') {
-      let res = await fetchFeed(
-        Number(this.state.search) + 1 - this.state.offset
-      )
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: [...this.state.feed, ...res],
-      })
+      case 'glb': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchGLB(this.state.offset))],
+            'creator_id'
+          ),
+        })
+        break
+      }
+
+      case 'music': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchMusic(this.state.offset))],
+            'creator_id'
+          ),
+        })
+        break
+      }
+      case 'html/svg': {
+        let res = await fetchInteractive(this.state.offset)
+        res = res.filter((e) => !arr.includes(e.creator_id))
+        this.setState({
+          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+        })
+        break
+      }
+      case 'random': {
+        let res = await fetchRandomObjkts(15)
+        res = res.filter((e) => !arr.includes(e.creator_id))
+        this.setState({ feed: [...this.state.feed, ...res] })
+        break
+      }
+
+      case 'gif': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchGifs(this.state.offset))],
+            'creator_id'
+          ),
+        })
+        break
+      }
+      case 'ukraine': {
+        const ukr = await getObjktsByShare(
+          ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
+          '50'
+        )
+
+        this.setState({
+          feed: ukr,
+        })
+        break
+      }
+      case 'tezos-pride': {
+        let res = await fetchTag('tezospride', this.state.offset)
+        res = res.filter((e) => !arr.includes(e.creator_id))
+        this.setState({
+          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+        })
+        break
+      }
+      case 'new': {
+        let tokens = await fetchFeed(this.state.lastId, this.state.offset)
+        tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+        this.setState({
+          feed: _.uniqBy(
+            _.uniqBy([...this.state.feed, ...tokens], 'id'),
+            'creator_id'
+          ),
+        })
+        break
+      }
+      case 'recent-sales': {
+        let tokens = await fetchSales(this.state.offset)
+        tokens = tokens.map((e) => e.token)
+        tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+        this.setState({
+          feed: _.uniqBy(
+            _.uniqBy([...this.state.feed, ...tokens], 'id'),
+            'creator_id'
+          ),
+        })
+        break
+      }
+      default:
+        break
     }
 
-    if (e === 'music') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchMusic(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === 'video') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchVideo(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === 'glb') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchGLB(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === '🏳️‍🌈 tezospride') {
-      let res = await fetchTag('tezospride', this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
-      })
-    }
-
-    if (e === 'html/svg') {
-      let res = await fetchInteractive(this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
-      })
-    }
-
-    if (e === '🇺🇦 ukraine') {
-      const ukr = await getObjktsByShare(
-        ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
-        '50'
-      )
-
-      this.setState({
-        feed: ukr,
-      })
-    }
-    if (e === 'random') {
-      let res = await fetchRandomObjkts(15)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({ feed: [...this.state.feed, ...res] })
-    }
-
-    if (e === 'gif') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchGifs(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
+    // TODO: Remove? Not used at least.
     if (e === 'tag') {
       let res = await fetchTag(
         this.state.search,
@@ -457,31 +490,6 @@ export class Search extends Component {
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
     }
-
-    if (e === 'recent sales') {
-      let tokens = await fetchSales(this.state.offset)
-      tokens = tokens.map((e) => e.token)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === 'new OBJKTs') {
-      let tokens = await fetchFeed(this.state.lastId, this.state.offset)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
-      })
-    }
-
-    // new listings
 
     this.setState({ reset: false })
   }
@@ -548,7 +556,7 @@ export class Search extends Component {
                       }}
                       aria-label={e.label ? e.label : e.value}
                     >
-                      {e.value}{' '}
+                      {e.label ? e.label : e.value}{' '}
                     </a>
                   ))}
                 </div>
