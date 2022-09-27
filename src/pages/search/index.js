@@ -459,6 +459,17 @@ export class Search extends Component {
         })
         break
       }
+      case 'pakistan': {
+        const pak = await getObjktsByShare(
+          ['KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'],
+          '50'
+        )
+
+        this.setState({
+          feed: pak,
+        })
+        break
+      }
       case 'tezos-pride': {
         let res = await fetchTag('tezospride', this.state.offset)
         res = res.filter((e) => !arr.includes(e.creator_id))

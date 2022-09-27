@@ -43,7 +43,7 @@ export const ossProjects = [
   },
   {
     name: 'Pakistan Relief Smart Contract',
-    address: 'KT1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    address: 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z',
   },
 ]
 
