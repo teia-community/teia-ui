@@ -375,6 +375,7 @@ export class Search extends Component {
 
   update = async (e, reset) => {
     const arr = getWalletBlockList()
+    const banFilter = (nfts) => !arr.includes(nfts.creator_id)
 
     this.setState({ select: e })
     if (reset) {
@@ -389,7 +390,7 @@ export class Search extends Component {
         let res = await fetchFeed(
           Number(this.state.search) + 1 - this.state.offset
         )
-        res = res.filter((e) => !arr.includes(e.creator_id))
+        res = res.filter(banFilter)
         this.setState({
           feed: [...this.state.feed, ...res],
         })
@@ -400,7 +401,7 @@ export class Search extends Component {
           feed: _.uniqBy(
             [...this.state.feed, ...(await fetchVideo(this.state.offset))],
             'creator_id'
-          ),
+          ).filter(banFilter),
         })
         break
       }
@@ -410,7 +411,7 @@ export class Search extends Component {
           feed: _.uniqBy(
             [...this.state.feed, ...(await fetchGLB(this.state.offset))],
             'creator_id'
-          ),
+          ).filter(banFilter),
         })
         break
       }
@@ -420,21 +421,23 @@ export class Search extends Component {
           feed: _.uniqBy(
             [...this.state.feed, ...(await fetchMusic(this.state.offset))],
             'creator_id'
-          ),
+          ).filter(banFilter),
         })
         break
       }
       case 'html/svg': {
         let res = await fetchInteractive(this.state.offset)
-        res = res.filter((e) => !arr.includes(e.creator_id))
+        res = res.filter(banFilter)
         this.setState({
-          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id').filter(
+            banFilter
+          ),
         })
         break
       }
       case 'random': {
         let res = await fetchRandomObjkts(15)
-        res = res.filter((e) => !arr.includes(e.creator_id))
+        res = res.filter(banFilter)
         this.setState({ feed: [...this.state.feed, ...res] })
         break
       }
@@ -444,7 +447,7 @@ export class Search extends Component {
           feed: _.uniqBy(
             [...this.state.feed, ...(await fetchGifs(this.state.offset))],
             'creator_id'
-          ),
+          ).filter(banFilter),
         })
         break
       }
@@ -455,7 +458,7 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: ukr,
+          feed: ukr.filter(banFilter),
         })
         break
       }
@@ -466,13 +469,13 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: pak,
+          feed: pak.filter(banFilter),
         })
         break
       }
       case 'tezos-pride': {
         let res = await fetchTag('tezospride', this.state.offset)
-        res = res.filter((e) => !arr.includes(e.creator_id))
+        res = res.filter(banFilter)
         this.setState({
           feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
         })
@@ -480,7 +483,7 @@ export class Search extends Component {
       }
       case 'new': {
         let tokens = await fetchFeed(this.state.lastId, this.state.offset)
-        tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+        tokens = tokens.filter(banFilter)
         this.setState({
           feed: _.uniqBy(
             _.uniqBy([...this.state.feed, ...tokens], 'id'),
@@ -492,7 +495,7 @@ export class Search extends Component {
       case 'recent-sales': {
         let tokens = await fetchSales(this.state.offset)
         tokens = tokens.map((e) => e.token)
-        tokens = tokens.filter((e) => !arr.includes(e.creator_id))
+        tokens = tokens.filter(banFilter)
         this.setState({
           feed: _.uniqBy(
             _.uniqBy([...this.state.feed, ...tokens], 'id'),
@@ -511,7 +514,7 @@ export class Search extends Component {
         this.state.search,
         this.state.feed[this.state.feed.length - 1].id
       )
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(banFilter)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
