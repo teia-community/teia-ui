@@ -607,7 +607,7 @@ export class Search extends Component {
               <div className={styles.feed_info}>
                 <p>
                   This feed shows OBJKTs minted with the Pakistan donation
-                  adress as beneficiary of at least 50% of sales volume
+                  address as beneficiary of at least 50% of sales volume.
                 </p>
 
                 <a
@@ -615,7 +615,7 @@ export class Search extends Component {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <strong>(more info here)</strong>
+                  More infos <strong>here</strong>
                 </a>
               </div>
             )}
