@@ -8,7 +8,8 @@ import { FeedItem } from '@components/feed-item'
 import { fetchRandomObjkts, getLastObjktId } from '@data/hicdex'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import './style.css'
+import styles from './styles.module.scss'
+
 import { getWalletBlockList } from '@constants'
 import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
@@ -577,7 +578,7 @@ export class Search extends Component {
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     <a
                       key={e.value}
-                      className="tag"
+                      className={styles.tag}
                       href="#"
                       onClick={() => {
                         this.update(e.value, true)
@@ -603,14 +604,18 @@ export class Search extends Component {
           </Container>
           <Container xlarge>
             {this.state.current === 'pakistan' && (
-              <div className="feed_info">
-                This feed is listing the NFTs for the Pakistan Fund. More infos{' '}
+              <div className={styles.feed_info}>
+                <p>
+                  This feed shows OBJKTs minted with the Pakistan donation
+                  adress as beneficiary of at least 50% of sales volume
+                </p>
+
                 <a
                   href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <strong>here</strong>
+                  <strong>(more info here)</strong>
                 </a>
               </div>
             )}

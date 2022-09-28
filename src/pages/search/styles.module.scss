@@ -1,3 +1,6 @@
+@import '../../styles/variables.scss';
+@import '../../styles/layout.scss';
+
 .tag {
   display: inline-flex;
   color: var(--text-color);
@@ -12,9 +15,12 @@
 
 .feed_info {
   border: 0.5px white solid;
-  width: 50%;
+  width: 100%;
   margin: auto;
   padding: 1em;
   margin-bottom: 1em;
   text-align: center;
+  @include respond-to('desktop') {
+    width: 50%;
+  }
 }
