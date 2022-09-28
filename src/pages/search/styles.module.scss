@@ -20,7 +20,4 @@
   padding: 1em;
   margin-bottom: 1em;
   text-align: center;
-  @include respond-to('desktop') {
-    width: 50%;
-  }
 }

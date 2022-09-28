@@ -19,7 +19,7 @@ async function fetchFeed(lastId, offset) {
   const { errors, data } = await fetchGraphQL(
     `
 query LatestFeed {
-  token(order_by: {id: desc}, limit: 15, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
+  token(order_by: {id: desc}, limit: 20, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
     display_uri
     creator_id
@@ -49,7 +49,7 @@ async function fetchGLB(offset) {
   const { data } = await fetchGraphQL(
     `
   query GLBObjkts {
-    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -107,7 +107,7 @@ async function fetchVideo(offset) {
   const { data } = await fetchGraphQL(
     `
   query Videos {
-    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -135,7 +135,7 @@ async function fetchGifs(offset) {
   const { data } = await fetchGraphQL(
     `
     query Gifs ($offset: Int = 0) {
-      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
+      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 20, offset: ${offset}) {
         id
         artifact_uri
         display_uri
@@ -165,7 +165,7 @@ async function fetchMusic(offset) {
   const { data } = await fetchGraphQL(
     `
   query AudioObjkts {
-    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -195,7 +195,7 @@ async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
   query sales {
-    trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
+    trade(order_by: {timestamp: desc}, limit : 20, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
       swap {
         price
@@ -263,7 +263,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 15, order_by: {id: desc}) {
+  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 20, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -441,7 +441,7 @@ export class Search extends Component {
         break
       }
       case 'random': {
-        let res = await fetchRandomObjkts(15)
+        let res = await fetchRandomObjkts(20)
         res = res.filter(banFilter)
         this.setState({ feed: [...this.state.feed, ...res] })
         break
@@ -501,11 +501,13 @@ export class Search extends Component {
         let tokens = await fetchSales(this.state.offset)
         tokens = tokens.map((e) => e.token)
         tokens = tokens.filter(banFilter)
+        tokens = _.uniqBy(
+          _.uniqBy([...this.state.feed, ...tokens], 'id'),
+          'creator_id'
+        )
+
         this.setState({
-          feed: _.uniqBy(
-            _.uniqBy([...this.state.feed, ...tokens], 'id'),
-            'creator_id'
-          ),
+          feed: tokens,
         })
         break
       }
@@ -608,40 +610,40 @@ export class Search extends Component {
             </Padding>
           </Container>
           <Container xlarge>
-            {this.state.current === 'pakistan' && (
-              <div className={styles.feed_info}>
-                <p>
-                  This feed shows OBJKTs minted with the Pakistan donation
-                  address as beneficiary of at least 50% of sales volume.
-                </p>
-
-                <a
-                  href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  More infos <strong>here</strong>
-                </a>
-              </div>
-            )}
             {this.state.feed.length > 0 ? (
-              <InfiniteScroll
-                dataLength={this.state.feed.length}
-                next={this.loadMore}
-                hasMore={true}
-                loader={undefined}
-                endMessage={undefined}
-              >
-                <Container>
-                  <Padding>
+              <Container>
+                <Padding>
+                  {this.state.current === 'pakistan' && (
+                    <div className={styles.feed_info}>
+                      <p>
+                        This feed shows OBJKTs minted with the Pakistan donation
+                        address as beneficiary of at least 50% of sales volume.
+                      </p>
+
+                      <a
+                        href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        More infos <strong>here</strong>
+                      </a>
+                    </div>
+                  )}
+                  <InfiniteScroll
+                    dataLength={this.state.feed.length}
+                    next={this.loadMore}
+                    hasMore={true}
+                    loader={undefined}
+                    endMessage={undefined}
+                  >
                     {this.state.feed.map((item, index) => (
                       <div key={`${item.id}-${index}`}>
                         <FeedItem {...item} />
                       </div>
                     ))}
-                  </Padding>
-                </Container>
-              </InfiniteScroll>
+                  </InfiniteScroll>
+                </Padding>
+              </Container>
             ) : undefined}
           </Container>
         </IconCache.Provider>
