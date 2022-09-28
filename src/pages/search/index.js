@@ -311,7 +311,7 @@ export class Search extends Component {
     items: [],
     feed: [],
     search: '',
-    prev: '',
+    current: '',
     reset: false,
     flag: false,
     lastId: undefined,
@@ -376,8 +376,7 @@ export class Search extends Component {
   update = async (e, reset) => {
     const arr = getWalletBlockList()
     const banFilter = (nfts) => !arr.includes(nfts.creator_id)
-
-    this.setState({ select: e })
+    this.setState({ select: 0, current: e })
     if (reset) {
       this.setState({
         feed: [],
@@ -603,6 +602,18 @@ export class Search extends Component {
             </Padding>
           </Container>
           <Container xlarge>
+            {this.state.current === 'pakistan' && (
+              <div className="feed_info">
+                This feed is listing the NFTs for the Pakistan Fund. More infos{' '}
+                <a
+                  href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <strong>here</strong>
+                </a>
+              </div>
+            )}
             {this.state.feed.length > 0 ? (
               <InfiniteScroll
                 dataLength={this.state.feed.length}
