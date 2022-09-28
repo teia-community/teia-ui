@@ -377,7 +377,12 @@ export class Search extends Component {
   update = async (e, reset) => {
     const arr = getWalletBlockList()
     const banFilter = (nfts) => !arr.includes(nfts.creator_id)
-    this.setState({ select: 0, current: e })
+
+    this.setState({ select: 0 })
+
+    if (e) {
+      this.setState({ current: e })
+    }
     if (reset) {
       this.setState({
         feed: [],
