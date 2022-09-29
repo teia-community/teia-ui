@@ -8,7 +8,8 @@ import { FeedItem } from '@components/feed-item'
 import { fetchRandomObjkts, getLastObjktId } from '@data/hicdex'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import './style.css'
+import styles from './styles.module.scss'
+
 import { getWalletBlockList } from '@constants'
 import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
@@ -18,7 +19,7 @@ async function fetchFeed(lastId, offset) {
   const { errors, data } = await fetchGraphQL(
     `
 query LatestFeed {
-  token(order_by: {id: desc}, limit: 15, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
+  token(order_by: {id: desc}, limit: 20, offset : ${offset},where: {id: {_lt: ${lastId}}, artifact_uri: {_neq: ""}}) {
     artifact_uri
     display_uri
     creator_id
@@ -48,7 +49,7 @@ async function fetchGLB(offset) {
   const { data } = await fetchGraphQL(
     `
   query GLBObjkts {
-    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["model/gltf-binary"] }, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -106,7 +107,7 @@ async function fetchVideo(offset) {
   const { data } = await fetchGraphQL(
     `
   query Videos {
-    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where : { mime : {_in : ["video/mp4"] }, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -134,7 +135,7 @@ async function fetchGifs(offset) {
   const { data } = await fetchGraphQL(
     `
     query Gifs ($offset: Int = 0) {
-      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 15, offset: ${offset}) {
+      token(where: { mime: {_in : [ "image/gif" ]}, supply : { _neq : 0 }}, order_by: {id: desc}, limit: 20, offset: ${offset}) {
         id
         artifact_uri
         display_uri
@@ -164,7 +165,7 @@ async function fetchMusic(offset) {
   const { data } = await fetchGraphQL(
     `
   query AudioObjkts {
-    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 15, offset : ${offset}, order_by: {id: desc}) {
+    token(where: {mime: {_in: ["audio/ogg", "audio/wav", "audio/mpeg"]}, supply : { _neq : 0 }}, limit : 20, offset : ${offset}, order_by: {id: desc}) {
       id
       artifact_uri
       display_uri
@@ -194,7 +195,7 @@ async function fetchSales(offset) {
   const { errors, data } = await fetchGraphQL(
     `
   query sales {
-    trade(order_by: {timestamp: desc}, limit : 15, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
+    trade(order_by: {timestamp: desc}, limit : 20, offset : ${offset}, where: {swap: {price: {_gte: "0"}}}) {
       timestamp
       swap {
         price
@@ -262,7 +263,7 @@ async function fetchSubjkts(subjkt) {
 async function fetchTag(tag, offset) {
   const { errors, data } = await fetchGraphQL(
     `query ObjktsByTag {
-  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 15, order_by: {id: desc}) {
+  token(where: {token_tags: {tag: {tag: {_eq: "${tag}"}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 20, order_by: {id: desc}) {
     id
     artifact_uri
     display_uri
@@ -311,21 +312,37 @@ export class Search extends Component {
     items: [],
     feed: [],
     search: '',
-    prev: '',
+    current: '',
     reset: false,
     flag: false,
     lastId: undefined,
     tags: [
-      { id: 11, value: '🇺🇦 ukraine', label: 'ukraine' },
-      { id: 12, value: '🏳️‍🌈 tezospride', label: 'tezos pride' },
+      {
+        id: 10,
+        value: 'pakistan',
+        label: '🇵🇰 pakistan',
+        aria: 'Pakistan Fund Feed',
+      },
+      {
+        id: 11,
+        value: 'ukraine',
+        label: '🇺🇦 ukraine',
+        aria: 'Ukraine Fund Feed',
+      },
+      {
+        id: 12,
+        value: 'tezos-pride',
+        label: '🏳️‍🌈 tezospride',
+        aria: 'Tezos Pride Feed',
+      },
+      { id: 6, value: 'new', label: 'new OBJKTs' },
+      { id: 7, value: 'recent-sales', label: 'recent sales' },
       { id: 1, value: 'random' },
-      { id: 2, value: 'glb' },
+      { id: 2, value: 'glb', aria: 'GLB Models' },
       { id: 3, value: 'music' },
       { id: 12, value: 'video' },
       { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
       { id: 5, value: 'gif' },
-      { id: 6, value: 'new OBJKTs', label: 'new objects' },
-      { id: 7, value: 'recent sales' },
     ],
     select: [],
     mouse: false,
@@ -359,8 +376,13 @@ export class Search extends Component {
 
   update = async (e, reset) => {
     const arr = getWalletBlockList()
+    const banFilter = (nfts) => !arr.includes(nfts.creator_id)
 
     this.setState({ select: e })
+
+    if (e) {
+      this.setState({ current: e })
+    }
     if (reset) {
       this.setState({
         feed: [],
@@ -368,120 +390,142 @@ export class Search extends Component {
         lastId: await getLastObjktId(),
       })
     }
+    switch (e) {
+      case 'num': {
+        let res = await fetchFeed(
+          Number(this.state.search) + 1 - this.state.offset
+        )
+        res = res.filter(banFilter)
+        this.setState({
+          feed: [...this.state.feed, ...res],
+        })
+        break
+      }
+      case 'video': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchVideo(this.state.offset))],
+            'creator_id'
+          ).filter(banFilter),
+        })
+        break
+      }
 
-    if (e === 'num') {
-      let res = await fetchFeed(
-        Number(this.state.search) + 1 - this.state.offset
-      )
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: [...this.state.feed, ...res],
-      })
-    }
+      case 'glb': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchGLB(this.state.offset))],
+            'creator_id'
+          ).filter(banFilter),
+        })
+        break
+      }
 
-    if (e === 'music') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchMusic(this.state.offset))],
+      case 'music': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchMusic(this.state.offset))],
+            'creator_id'
+          ).filter(banFilter),
+        })
+        break
+      }
+      case 'html/svg': {
+        let res = await fetchInteractive(this.state.offset)
+        res = res.filter(banFilter)
+        this.setState({
+          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id').filter(
+            banFilter
+          ),
+        })
+        break
+      }
+      case 'random': {
+        let res = await fetchRandomObjkts(20)
+        res = res.filter(banFilter)
+        this.setState({ feed: [...this.state.feed, ...res] })
+        break
+      }
+
+      case 'gif': {
+        this.setState({
+          feed: _.uniqBy(
+            [...this.state.feed, ...(await fetchGifs(this.state.offset))],
+            'creator_id'
+          ).filter(banFilter),
+        })
+        break
+      }
+      case 'ukraine': {
+        const ukr = await getObjktsByShare(
+          ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
+          '50'
+        )
+
+        this.setState({
+          feed: ukr.filter(banFilter),
+        })
+        break
+      }
+      case 'pakistan': {
+        const pak = await getObjktsByShare(
+          ['KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'],
+          '50'
+        )
+
+        this.setState({
+          feed: pak.filter(banFilter),
+        })
+        break
+      }
+      case 'tezos-pride': {
+        let res = await fetchTag('tezospride', this.state.offset)
+        res = res.filter(banFilter)
+        this.setState({
+          feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
+        })
+        break
+      }
+      case 'new': {
+        let tokens = await fetchFeed(this.state.lastId, this.state.offset)
+        tokens = tokens.filter(banFilter)
+        this.setState({
+          feed: _.uniqBy(
+            _.uniqBy([...this.state.feed, ...tokens], 'id'),
+            'creator_id'
+          ),
+        })
+        break
+      }
+      case 'recent-sales': {
+        let tokens = await fetchSales(this.state.offset)
+        tokens = tokens.map((e) => e.token)
+        tokens = tokens.filter(banFilter)
+        tokens = _.uniqBy(
+          _.uniqBy([...this.state.feed, ...tokens], 'id'),
           'creator_id'
-        ),
-      })
+        )
+
+        this.setState({
+          feed: tokens,
+        })
+        break
+      }
+      default:
+        break
     }
 
-    if (e === 'video') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchVideo(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === 'glb') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchGLB(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === '🏳️‍🌈 tezospride') {
-      let res = await fetchTag('tezospride', this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
-      })
-    }
-
-    if (e === 'html/svg') {
-      let res = await fetchInteractive(this.state.offset)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
-      })
-    }
-
-    if (e === '🇺🇦 ukraine') {
-      const ukr = await getObjktsByShare(
-        ['KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'],
-        '50'
-      )
-
-      this.setState({
-        feed: ukr,
-      })
-    }
-    if (e === 'random') {
-      let res = await fetchRandomObjkts(15)
-      res = res.filter((e) => !arr.includes(e.creator_id))
-      this.setState({ feed: [...this.state.feed, ...res] })
-    }
-
-    if (e === 'gif') {
-      this.setState({
-        feed: _.uniqBy(
-          [...this.state.feed, ...(await fetchGifs(this.state.offset))],
-          'creator_id'
-        ),
-      })
-    }
-
+    // TODO: Remove? Not used at least.
     if (e === 'tag') {
       let res = await fetchTag(
         this.state.search,
         this.state.feed[this.state.feed.length - 1].id
       )
-      res = res.filter((e) => !arr.includes(e.creator_id))
+      res = res.filter(banFilter)
       this.setState({
         feed: _.uniqBy([...this.state.feed, ...res], 'creator_id'),
       })
     }
-
-    if (e === 'recent sales') {
-      let tokens = await fetchSales(this.state.offset)
-      tokens = tokens.map((e) => e.token)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
-      })
-    }
-
-    if (e === 'new OBJKTs') {
-      let tokens = await fetchFeed(this.state.lastId, this.state.offset)
-      tokens = tokens.filter((e) => !arr.includes(e.creator_id))
-      this.setState({
-        feed: _.uniqBy(
-          _.uniqBy([...this.state.feed, ...tokens], 'id'),
-          'creator_id'
-        ),
-      })
-    }
-
-    // new listings
 
     this.setState({ reset: false })
   }
@@ -541,14 +585,14 @@ export class Search extends Component {
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     <a
                       key={e.value}
-                      className="tag"
+                      className={styles.tag}
                       href="#"
                       onClick={() => {
                         this.update(e.value, true)
                       }}
-                      aria-label={e.label ? e.label : e.value}
+                      aria-label={e.aria || e.label || e.value}
                     >
-                      {e.value}{' '}
+                      {e.label || e.value}{' '}
                     </a>
                   ))}
                 </div>
@@ -567,23 +611,39 @@ export class Search extends Component {
           </Container>
           <Container xlarge>
             {this.state.feed.length > 0 ? (
-              <InfiniteScroll
-                dataLength={this.state.feed.length}
-                next={this.loadMore}
-                hasMore={true}
-                loader={undefined}
-                endMessage={undefined}
-              >
-                <Container>
-                  <Padding>
+              <Container>
+                <Padding>
+                  {this.state.current === 'pakistan' && (
+                    <div className={styles.feed_info}>
+                      <p>
+                        This feed shows OBJKTs minted with the Pakistan donation
+                        address as beneficiary of at least 50% of sales volume.
+                      </p>
+
+                      <a
+                        href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        More infos <strong>here</strong>
+                      </a>
+                    </div>
+                  )}
+                  <InfiniteScroll
+                    dataLength={this.state.feed.length}
+                    next={this.loadMore}
+                    hasMore={true}
+                    loader={undefined}
+                    endMessage={undefined}
+                  >
                     {this.state.feed.map((item, index) => (
                       <div key={`${item.id}-${index}`}>
                         <FeedItem {...item} />
                       </div>
                     ))}
-                  </Padding>
-                </Container>
-              </InfiniteScroll>
+                  </InfiniteScroll>
+                </Padding>
+              </Container>
             ) : undefined}
           </Container>
         </IconCache.Provider>
