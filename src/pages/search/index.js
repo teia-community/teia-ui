@@ -14,6 +14,7 @@ import SubjktsSearchResults from './subjkts-search-results'
 import RecentSalesFeed from './recent-sales-feed'
 import NewObjktsFeed from './new-objkts-feed'
 import UkraineFeed from './ukraine-feed'
+import PakistanFeed from './pakistan-feed'
 import RandomFeed from './random-feed'
 import {
   GlbFeed,
@@ -25,7 +26,7 @@ import {
 import TagFeed from './tag-feed'
 import SearchFeed from './search-feed'
 
-import './style.css'
+import styles from './styles.module.scss'
 import { IconCache } from '@utils/with-icon'
 
 function FilterLink({ children, to }) {
@@ -38,7 +39,7 @@ function FilterLink({ children, to }) {
             }
           : undefined
       }
-      className="tag"
+      className={styles.tag}
       to={to}
     >
       {children}
@@ -80,7 +81,9 @@ export function Search() {
             />
             <div style={{ marginTop: '15px' }}>
               <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
+              <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
               <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
+
               <FilterLink to="/feed/random">random</FilterLink>
               <FilterLink to="/feed/glb">glb</FilterLink>
               <FilterLink to="/feed/music">music</FilterLink>
@@ -102,6 +105,7 @@ export function Search() {
               path="/tezospride"
               element={<TagFeed tag="tezospride" namespace="tezospride" />}
             />
+            <Route path="/pakistan" element={<PakistanFeed />} />
             <Route path="/ukraine" element={<UkraineFeed />} />
             <Route path="/random" element={<RandomFeed />} />
             <Route path="/newobjkts" element={<NewObjktsFeed />} />
