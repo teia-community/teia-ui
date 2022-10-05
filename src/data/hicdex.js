@@ -153,7 +153,7 @@ export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addres
           shares
         }
       }
-      tokens(order_by: {timestamp: desc}) {
+      tokens(where: {supply: {_gt: "0"}}, order_by: {timestamp: desc}) {
         id
         artifact_uri
         display_uri
