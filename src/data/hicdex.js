@@ -134,6 +134,12 @@ shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_partici
         royalties
         creator {
           address
+          shares {
+            shareholder {
+              holder_type
+              holder_id
+            }
+          }
         }
       }
     }
