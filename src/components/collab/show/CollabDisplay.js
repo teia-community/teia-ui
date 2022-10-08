@@ -40,7 +40,6 @@ export const CollabDisplay = () => {
   const { id, name } = useParams()
 
   // one of the two will be supplied
-
   // contract id route - ie. /kt/:id
   useEffect(() => {
     if (!id && !name) {
@@ -212,7 +211,7 @@ export const CollabDisplay = () => {
             <ResponsiveMasonry>
               {items.map((nft) => {
                 return (
-                  <Button key={id} to={`${PATH.OBJKT}/${id}`}>
+                  <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
                     <div className={styles.container}>
                       {renderMediaType({
                         nft,
