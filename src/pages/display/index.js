@@ -13,6 +13,7 @@ import { GetUserMetadata } from '@data/api'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
+import { fetchGraphQL, getCollabTokensForAddress } from '../../data/hicdex'
 import styles from './styles.module.scss'
 import {
   getWalletBlockList,
@@ -22,6 +23,8 @@ import {
 } from '@constants'
 import { IconCache } from '@utils/with-icon'
 import { CIDToURL } from '@utils'
+
+const _ = require('lodash')
 const axios = require('axios')
 
 const urlParameters = new URLSearchParams(window.location.search)
@@ -55,18 +58,6 @@ query collectorGallery($address: String!) {
   }
 }
 `
-
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables,
-      operationName,
-    }),
-  })
-  return await result.json()
-}
 
 async function fetchCollection(addr) {
   const { errors, data } = await fetchGraphQL(
@@ -149,7 +140,42 @@ async function fetchCreations(addr) {
   if (errors) {
     console.error(errors)
   }
-  return data.token
+  const collabTokens = await fetchSingleCreatorCollabs(addr)
+  return _.orderBy(data.token.concat(collabTokens), ['timestamp'], ['desc'])
+}
+
+async function fetchSingleCreatorCollabs(addr) {
+  const { errors, data } = await fetchGraphQL(
+    getCollabTokensForAddress,
+    'GetCollabTokens',
+    { address: addr }
+  )
+  if (errors) {
+    console.error(errors)
+  }
+  let collabTokens = []
+  const result = data.shareholder
+
+  if (result) {
+    result.forEach(
+      (contract) =>
+        (collabTokens = collabTokens.concat(
+          contract.split_contract.contract.tokens
+        ))
+    )
+  }
+
+  return _.filter(collabTokens, (contract) => {
+    const coreParticipants = _.filter(
+      contract.creator.shares[0].shareholder,
+      (shareholder) => shareholder.holder_type === 'core_participant'
+    )
+
+    return (
+      coreParticipants.length === 1 &&
+      _.find(coreParticipants, (shareholder) => shareholder.holder_id === addr)
+    )
+  })
 }
 
 async function fetchTz(addr) {
