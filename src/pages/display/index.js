@@ -144,7 +144,6 @@ async function fetchCreations(addr) {
   return _.orderBy(data.token.concat(collabTokens), ['timestamp'], ['desc'])
 }
 
-// the following change was requested in https://github.com/teia-community/teia-ui/issues/60
 async function fetchSingleCreatorCollabs(addr) {
   const { errors, data } = await fetchGraphQL(
     getCollabTokensForAddress,
