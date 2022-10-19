@@ -316,33 +316,41 @@ export class Search extends Component {
     reset: false,
     flag: false,
     lastId: undefined,
-    tags: [
+    funds: [
       {
         id: 10,
-        value: 'pakistan',
-        label: '🇵🇰 pakistan',
-        aria: 'Pakistan Fund Feed',
+        value: 'iran',
+        label: '🇮🇷  iran',
+        aria: 'Tezos For Iran',
       },
       {
         id: 11,
-        value: 'ukraine',
-        label: '🇺🇦 ukraine',
-        aria: 'Ukraine Fund Feed',
+        value: 'pakistan',
+        label: '🇵🇰  pakistan',
+        aria: 'Pakistan Fund Feed',
       },
       {
         id: 12,
+        value: 'ukraine',
+        label: '🇺🇦  ukraine',
+        aria: 'Ukraine Fund Feed',
+      },
+      {
+        id: 100,
         value: 'tezos-pride',
         label: '🏳️‍🌈 tezospride',
         aria: 'Tezos Pride Feed',
       },
-      { id: 6, value: 'new', label: 'new OBJKTs' },
-      { id: 7, value: 'recent-sales', label: 'recent sales' },
-      { id: 1, value: 'random' },
-      { id: 2, value: 'glb', aria: 'GLB Models' },
-      { id: 3, value: 'music' },
-      { id: 12, value: 'video' },
-      { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
-      { id: 5, value: 'gif' },
+    ],
+    tags: [
+      { id: 1, value: 'new', label: 'new OBJKTs' },
+      { id: 2, value: 'recent-sales', label: 'recent sales' },
+      { id: 3, value: 'random' },
+      { id: 4, value: 'glb', aria: 'GLB Models' },
+      { id: 5, value: 'music' },
+      { id: 6, value: 'video' },
+      { id: 7, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
+      { id: 8, value: 'gif' },
     ],
     select: [],
     mouse: false,
@@ -478,6 +486,17 @@ export class Search extends Component {
         })
         break
       }
+      case 'iran': {
+        const iran = await getObjktsByShare(
+          ['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'],
+          '50'
+        )
+
+        this.setState({
+          feed: iran.filter(banFilter),
+        })
+        break
+      }
       case 'tezos-pride': {
         let res = await fetchTag('tezospride', this.state.offset)
         res = res.filter(banFilter)
@@ -581,20 +600,34 @@ export class Search extends Component {
               />
               {
                 <div style={{ marginTop: '15px' }}>
-                  {this.state.tags.map((e) => (
-                    // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                    <a
-                      key={e.value}
-                      className={styles.tag}
-                      href="#"
-                      onClick={() => {
-                        this.update(e.value, true)
-                      }}
-                      aria-label={e.aria || e.label || e.value}
-                    >
-                      {e.label || e.value}{' '}
-                    </a>
-                  ))}
+                  <div>
+                    {this.state.funds.map((e) => (
+                      <button
+                        key={e.value}
+                        className={styles.tag}
+                        onClick={() => {
+                          this.update(e.value, true)
+                        }}
+                        aria-label={e.aria || e.label || e.value}
+                      >
+                        {e.label || e.value}{' '}
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    {this.state.tags.map((e) => (
+                      <button
+                        key={e.value}
+                        className={styles.tag}
+                        onClick={() => {
+                          this.update(e.value, true)
+                        }}
+                        aria-label={e.aria || e.label || e.value}
+                      >
+                        {e.label || e.value}{' '}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               }
               {this.state.subjkt.length > 0 && this.state.search !== '' ? (
