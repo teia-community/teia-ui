@@ -487,13 +487,16 @@ export class Search extends Component {
         break
       }
       case 'iran': {
-        const iran = await getObjktsByShare(
-          ['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'],
-          '50'
-        )
+        const iran = (
+          await getObjktsByShare(['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'], '50')
+        ).filter(banFilter)
+
+        const iran_tags = (
+          await fetchTag('tezos4iran', this.state.offset)
+        ).filter(banFilter)
 
         this.setState({
-          feed: iran.filter(banFilter),
+          feed: _.uniqBy([...this.state.feed, ...iran, ...iran_tags], 'id'),
         })
         break
       }
@@ -646,15 +649,27 @@ export class Search extends Component {
             {this.state.feed.length > 0 ? (
               <Container>
                 <Padding>
-                  {this.state.current === 'pakistan' && (
+                  {['pakistan', 'iran'].includes(this.state.current) && (
                     <div className={styles.feed_info}>
-                      <p>
-                        This feed shows OBJKTs minted with the Pakistan donation
-                        address as beneficiary of at least 50% of sales volume.
-                      </p>
+                      {this.state.current === 'pakistan' && (
+                        <p>
+                          {`This feed shows OBJKTs minted with the Pakistan donation
+                        address as beneficiary of at least 50% of sales volume.`}
+                        </p>
+                      )}
+                      {this.state.current === 'iran' && (
+                        <p>
+                          {`This feed shows OBJKTs minted with the Iran donation
+                         address as beneficiary of at least 50% of sales volume or tagged with #Tezos4Iran`}
+                        </p>
+                      )}
 
                       <a
-                        href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
+                        href={
+                          this.state.current === 'iran'
+                            ? 'https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran'
+                            : 'https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser'
+                        }
                         target="_blank"
                         rel="noreferrer"
                       >
