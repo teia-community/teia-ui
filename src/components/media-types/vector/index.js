@@ -17,6 +17,7 @@ export const VectorComponent = ({
   const classes = classnames({
     [styles.container]: true,
     [styles.interactive]: onDetailView,
+    [styles.display]: displayView,
   })
 
   let _creator_ = false
@@ -56,7 +57,7 @@ export const VectorComponent = ({
     )
   } else {
     return (
-      <div className={styles.container + ' vector-container'}>
+      <div className={classes + ' vector-container'}>
         <iframe
           className={styles.vector + ' vector'}
           title={`SVG object ${objktID}`}
