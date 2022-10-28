@@ -10,7 +10,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import styles from './styles.module.scss'
 
-import { getWalletBlockList } from '@constants'
+import { getWalletBlockList, getFeedBlockList } from '@constants'
 import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
 const _ = require('lodash')
@@ -416,7 +416,10 @@ export class Search extends Component {
 
   update = async (e, reset) => {
     const arr = getWalletBlockList()
+    const fund = getFeedBlockList()
+
     const banFilter = (nfts) => !arr.includes(nfts.creator_id)
+    const feedFilter = (nfts) => !fund.includes(nfts.creator_id)
 
     this.setState({ select: e })
 
@@ -503,7 +506,7 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: ukr.filter(banFilter),
+          feed: ukr.filter(banFilter).filter(feedFilter),
         })
         break
       }
@@ -514,23 +517,26 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: pak.filter(banFilter),
+          feed: pak.filter(banFilter).filter(feedFilter),
         })
         break
       }
       case 'iran': {
-        const iran = (
-          await getObjktsByShare(['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'], '50')
-        ).filter(banFilter)
+        const iran = await getObjktsByShare(
+          ['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'],
+          '50'
+        )
 
-        const iran_tags = (
-          await fetchTags(
-            ['tezos4iran', '#Tezos4Iran', 'Iran'],
-            this.state.offset
-          )
-        ).filter(banFilter)
+        const iran_tags = await fetchTags(
+          ['tezos4iran', '#Tezos4Iran', 'Iran'],
+          this.state.offset
+        )
 
-        const combined = _.sortBy([...iran, ...iran_tags], 'id').reverse()
+        const combined = _.sortBy([...iran, ...iran_tags], 'id')
+          .reverse()
+          .filter(banFilter)
+          .filter(feedFilter)
+
         this.setState({
           feed: _.uniqBy([...this.state.feed, ...combined], 'id'),
         })

@@ -23,6 +23,14 @@ export const setWalletBlockList = (restrictedLists, permittedLists) => {
 }
 export const getWalletBlockList = () => walletBlockList
 
+// TODO: Adapt it for develop's use-setting on merge in develop
+let feedBlockList = []
+
+export const setFeedBlockList = (restrictedLists) => {
+  feedBlockList = restrictedLists
+}
+export const geFeedBlockList = () => feedBlockList
+
 let banBlockList = []
 export const setBanBlockList = (data) => (banBlockList = data)
 export const getBanBlockList = () => banBlockList
