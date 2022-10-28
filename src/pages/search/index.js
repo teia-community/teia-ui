@@ -292,6 +292,38 @@ async function fetchTag(tag, offset) {
   return result
 }
 
+async function fetchTags(tags, offset) {
+  const { errors, data } = await fetchGraphQL(
+    `query ObjktsByTags($tags: [String!] = "") {
+  token(where: {token_tags: {tag: {tag: {_in: $tags}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 20, order_by: {id: desc}) {
+    id
+    artifact_uri
+    display_uri
+    mime
+    creator_id
+    token_tags {
+      tag {
+        tag
+      }
+    }
+    creator {
+      address
+      name
+    }
+    content_rating
+    title
+  }
+}`,
+    'ObjktsByTags',
+    { tags }
+  )
+  if (errors) {
+    console.error(errors)
+  }
+  const result = data.token
+  return result
+}
+
 async function fetchGraphQL(operationsDoc, operationName, variables) {
   const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
@@ -492,11 +524,15 @@ export class Search extends Component {
         ).filter(banFilter)
 
         const iran_tags = (
-          await fetchTag('tezos4iran', this.state.offset)
+          await fetchTags(
+            ['tezos4iran', '#Tezos4Iran', 'Iran'],
+            this.state.offset
+          )
         ).filter(banFilter)
 
+        const combined = _.sortBy([...iran, ...iran_tags], 'id').reverse()
         this.setState({
-          feed: _.uniqBy([...this.state.feed, ...iran, ...iran_tags], 'id'),
+          feed: _.uniqBy([...this.state.feed, ...combined], 'id'),
         })
         break
       }
