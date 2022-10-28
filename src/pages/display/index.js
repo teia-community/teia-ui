@@ -78,6 +78,7 @@ query creatorGallery($address: String!) {
     artifact_uri
     display_uri
     mime
+    timestamp
     title
     description
     supply
