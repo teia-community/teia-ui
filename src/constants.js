@@ -29,7 +29,7 @@ let feedBlockList = []
 export const setFeedBlockList = (restrictedLists) => {
   feedBlockList = restrictedLists
 }
-export const geFeedBlockList = () => feedBlockList
+export const getFeedBlockList = () => feedBlockList
 
 let banBlockList = []
 export const setBanBlockList = (data) => (banBlockList = data)
