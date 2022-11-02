@@ -10,7 +10,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import styles from './styles.module.scss'
 
-import { getWalletBlockList } from '@constants'
+import { getWalletBlockList, getFeedBlockList } from '@constants'
 import { getObjktsByShare } from '@data/hicdex'
 import { IconCache } from '@utils/with-icon'
 const _ = require('lodash')
@@ -292,6 +292,38 @@ async function fetchTag(tag, offset) {
   return result
 }
 
+async function fetchTags(tags, offset) {
+  const { errors, data } = await fetchGraphQL(
+    `query ObjktsByTags($tags: [String!] = "") {
+  token(where: {token_tags: {tag: {tag: {_in: $tags}}}, supply: {_neq: "0"}}, offset: ${offset}, limit: 20, order_by: {id: desc}) {
+    id
+    artifact_uri
+    display_uri
+    mime
+    creator_id
+    token_tags {
+      tag {
+        tag
+      }
+    }
+    creator {
+      address
+      name
+    }
+    content_rating
+    title
+  }
+}`,
+    'ObjktsByTags',
+    { tags }
+  )
+  if (errors) {
+    console.error(errors)
+  }
+  const result = data.token
+  return result
+}
+
 async function fetchGraphQL(operationsDoc, operationName, variables) {
   const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
     method: 'POST',
@@ -316,33 +348,41 @@ export class Search extends Component {
     reset: false,
     flag: false,
     lastId: undefined,
-    tags: [
+    funds: [
       {
         id: 10,
-        value: 'pakistan',
-        label: '🇵🇰 pakistan',
-        aria: 'Pakistan Fund Feed',
+        value: 'iran',
+        label: '🇮🇷  iran',
+        aria: 'Tezos For Iran',
       },
       {
         id: 11,
-        value: 'ukraine',
-        label: '🇺🇦 ukraine',
-        aria: 'Ukraine Fund Feed',
+        value: 'pakistan',
+        label: '🇵🇰  pakistan',
+        aria: 'Pakistan Fund Feed',
       },
       {
         id: 12,
+        value: 'ukraine',
+        label: '🇺🇦  ukraine',
+        aria: 'Ukraine Fund Feed',
+      },
+      {
+        id: 100,
         value: 'tezos-pride',
         label: '🏳️‍🌈 tezospride',
         aria: 'Tezos Pride Feed',
       },
-      { id: 6, value: 'new', label: 'new OBJKTs' },
-      { id: 7, value: 'recent-sales', label: 'recent sales' },
-      { id: 1, value: 'random' },
-      { id: 2, value: 'glb', aria: 'GLB Models' },
-      { id: 3, value: 'music' },
-      { id: 12, value: 'video' },
-      { id: 4, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
-      { id: 5, value: 'gif' },
+    ],
+    tags: [
+      { id: 1, value: 'new', label: 'new OBJKTs' },
+      { id: 2, value: 'recent-sales', label: 'recent sales' },
+      { id: 3, value: 'random' },
+      { id: 4, value: 'glb', aria: 'GLB Models' },
+      { id: 5, value: 'music' },
+      { id: 6, value: 'video' },
+      { id: 7, value: 'html/svg', label: 'HTML & SVG' }, // algorithimc?
+      { id: 8, value: 'gif' },
     ],
     select: [],
     mouse: false,
@@ -376,7 +416,10 @@ export class Search extends Component {
 
   update = async (e, reset) => {
     const arr = getWalletBlockList()
+    const fund = getFeedBlockList()
+
     const banFilter = (nfts) => !arr.includes(nfts.creator_id)
+    const feedFilter = (nfts) => !fund.includes(nfts.creator_id)
 
     this.setState({ select: e })
 
@@ -463,7 +506,7 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: ukr.filter(banFilter),
+          feed: ukr.filter(banFilter).filter(feedFilter),
         })
         break
       }
@@ -474,7 +517,28 @@ export class Search extends Component {
         )
 
         this.setState({
-          feed: pak.filter(banFilter),
+          feed: pak.filter(banFilter).filter(feedFilter),
+        })
+        break
+      }
+      case 'iran': {
+        const iran = await getObjktsByShare(
+          ['KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'],
+          '50'
+        )
+
+        const iran_tags = await fetchTags(
+          ['tezos4iran', '#Tezos4Iran', 'Iran'],
+          this.state.offset
+        )
+
+        const combined = _.sortBy([...iran, ...iran_tags], 'id')
+          .reverse()
+          .filter(banFilter)
+          .filter(feedFilter)
+
+        this.setState({
+          feed: _.uniqBy([...this.state.feed, ...combined], 'id'),
         })
         break
       }
@@ -581,20 +645,34 @@ export class Search extends Component {
               />
               {
                 <div style={{ marginTop: '15px' }}>
-                  {this.state.tags.map((e) => (
-                    // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                    <a
-                      key={e.value}
-                      className={styles.tag}
-                      href="#"
-                      onClick={() => {
-                        this.update(e.value, true)
-                      }}
-                      aria-label={e.aria || e.label || e.value}
-                    >
-                      {e.label || e.value}{' '}
-                    </a>
-                  ))}
+                  <div>
+                    {this.state.funds.map((e) => (
+                      <button
+                        key={e.value}
+                        className={styles.tag}
+                        onClick={() => {
+                          this.update(e.value, true)
+                        }}
+                        aria-label={e.aria || e.label || e.value}
+                      >
+                        {e.label || e.value}{' '}
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    {this.state.tags.map((e) => (
+                      <button
+                        key={e.value}
+                        className={styles.tag}
+                        onClick={() => {
+                          this.update(e.value, true)
+                        }}
+                        aria-label={e.aria || e.label || e.value}
+                      >
+                        {e.label || e.value}{' '}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               }
               {this.state.subjkt.length > 0 && this.state.search !== '' ? (
@@ -613,15 +691,27 @@ export class Search extends Component {
             {this.state.feed.length > 0 ? (
               <Container>
                 <Padding>
-                  {this.state.current === 'pakistan' && (
+                  {['pakistan', 'iran'].includes(this.state.current) && (
                     <div className={styles.feed_info}>
-                      <p>
-                        This feed shows OBJKTs minted with the Pakistan donation
-                        address as beneficiary of at least 50% of sales volume.
-                      </p>
+                      {this.state.current === 'pakistan' && (
+                        <p>
+                          {`This feed shows OBJKTs minted with the Pakistan donation
+                        address as beneficiary of at least 50% of sales volume.`}
+                        </p>
+                      )}
+                      {this.state.current === 'iran' && (
+                        <p>
+                          {`This feed shows OBJKTs minted with the Iran donation
+                         address as beneficiary of at least 50% of sales volume or tagged with #Tezos4Iran`}
+                        </p>
+                      )}
 
                       <a
-                        href="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
+                        href={
+                          this.state.current === 'iran'
+                            ? 'https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran'
+                            : 'https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser'
+                        }
                         target="_blank"
                         rel="noreferrer"
                       >

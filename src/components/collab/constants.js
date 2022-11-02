@@ -45,6 +45,10 @@ export const ossProjects = [
     name: 'Pakistan Relief Smart Contract',
     address: 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z',
   },
+  {
+    name: 'Tezos for Iran',
+    address: 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge',
+  },
 ]
 
 export const collaboratorTemplate = {
