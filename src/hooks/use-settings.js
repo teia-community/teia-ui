@@ -61,6 +61,7 @@ async function fetchSettings() {
     nsfwResponse,
     underReviewResponse,
     ignoreUriResponse,
+    feedIgnoreUriResponse,
   ] = await Promise.all([
     axios.get(`${process.env.REACT_APP_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(`${process.env.REACT_APP_LOGOS}/logos_pride.json`), // list of logos for the pride month
@@ -69,6 +70,7 @@ async function fetchSettings() {
     axios.get(process.env.REACT_APP_TEIA_NSFW_LIST), // Teia list of NSFW tokens that are added by the moderation team
     axios.get(process.env.REACT_APP_TEIA_UNDER_REVIEW_LIST), // Teia list of under review accounts added by the moderation team
     axios.get(process.env.REACT_APP_TEIA_IGNORE_URI_LIST), // Teia list of uri to ignore added by the moderation team
+    axios.get(process.env.REACT_APP_TEIA_FEED_IGNORE_LIST), // Teia list of wallets to ignore only from feeds (created to avoid fundraiser tag abusers)
   ])
 
   const logoPacks = [logosResponse, logosPrideResponse]
@@ -84,6 +86,7 @@ async function fetchSettings() {
   const nsfwMap = mapFromList(nsfwResponse.data)
   const underReviewMap = mapFromList(underReviewResponse.data)
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)
+  const feedIgnoreUriMap = mapFromList(feedIgnoreUriResponse.data)
 
   return {
     logos: shuffleLogos(logos),
@@ -94,6 +97,7 @@ async function fetchSettings() {
     nsfwMap,
     underReviewMap,
     ignoreUriMap,
+    feedIgnoreUriMap,
   }
 }
 

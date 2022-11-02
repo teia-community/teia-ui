@@ -15,6 +15,7 @@ import RecentSalesFeed from './recent-sales-feed'
 import NewObjktsFeed from './new-objkts-feed'
 import UkraineFeed from './ukraine-feed'
 import PakistanFeed from './pakistan-feed'
+import IranFeed from './iran-feed'
 import RandomFeed from './random-feed'
 import {
   GlbFeed,
@@ -80,8 +81,9 @@ export function Search() {
               value={searchTerm}
             />
             <div style={{ marginTop: '15px' }}>
-              <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
+              <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
               <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
+              <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
               <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
 
               <FilterLink to="/feed/random">random</FilterLink>
@@ -105,6 +107,7 @@ export function Search() {
               path="/tezospride"
               element={<TagFeed tag="tezospride" namespace="tezospride" />}
             />
+            <Route path="/iran" element={<IranFeed />} />
             <Route path="/pakistan" element={<PakistanFeed />} />
             <Route path="/ukraine" element={<UkraineFeed />} />
             <Route path="/random" element={<RandomFeed />} />
