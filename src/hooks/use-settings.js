@@ -84,14 +84,16 @@ async function fetchSettings() {
     banBlockList.set(e, 1)
   })
 
+  const walletBlockList = filterWalletBlockList(
+    [teiaRestrictedListResponse.data],
+    [teiaPermittedListResponse.data]
+  )
+
   return {
     objktBlockList,
     banBlockList,
     logos: shuffleLogos(logos),
-    walletBlockList: filterWalletBlockList(
-      [teiaRestrictedListResponse.data],
-      [teiaPermittedListResponse.data]
-    ),
+    walletBlockList,
   }
 }
 

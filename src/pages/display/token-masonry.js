@@ -10,6 +10,7 @@ import { Button } from '@components/button'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import styles from './styles.module.scss'
 import laggy from '../../utils/swr-laggy-middleware'
+import useSettings from '@hooks/use-settings'
 
 function TokenMasonry({
   query,
@@ -34,6 +35,7 @@ function TokenMasonry({
     )
   },
 }) {
+  const { walletBlockList, objktBlockList } = useSettings()
   const [limit, setLimit] = useState(itemsPerLoad)
   const { data, error } = useSWR(
     [namespace, ...swrParams],
@@ -66,13 +68,16 @@ function TokenMasonry({
     )
   }
 
-  // TODO: remove tokens from blocked wallets and restricted objkts
   let tokens = extractTokensFromResponse(data, {
     postProcessTokens,
     resultsPath,
     tokenPath,
     keyPath,
-  })
+  }).filter(
+    (token) =>
+      objktBlockList.get(token.id) !== 1 &&
+      walletBlockList.get(token.creator.address) !== 1
+  )
 
   if (!tokens.length) {
     return (
