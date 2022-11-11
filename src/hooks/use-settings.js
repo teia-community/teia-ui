@@ -88,6 +88,11 @@ async function fetchSettings() {
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)
   const feedIgnoreUriMap = mapFromList(feedIgnoreUriResponse.data)
 
+  const walletBlockList = filterWalletBlockList(
+    [teiaRestrictedListResponse.data],
+    [teiaPermittedListResponse.data]
+  )
+
   return {
     logos: shuffleLogos(logos),
     walletBlockMap: filterWalletBlockList(

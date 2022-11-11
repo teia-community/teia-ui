@@ -78,6 +78,10 @@ export default function Creations({ showFilters, address }) {
                 mime
                 title
                 description
+                creator {
+                  address
+                  name
+                }
                 swaps(
                   order_by: { price: asc }
                   limit: 1

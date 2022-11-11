@@ -7,6 +7,7 @@ import { Container, Padding } from '@components/layout'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSearchParams } from 'react-router-dom'
 import laggy from '../../utils/swr-laggy-middleware'
+import useSettings from '@hooks/use-settings'
 
 function TokenFeed({
   query,
@@ -32,6 +33,7 @@ function TokenFeed({
     )
   },
 }) {
+  const { walletBlockList, objktBlockList, feedIgnoreUriMap } = useSettings()
   const [searchParams, setSearchParams] = useSearchParams()
   const [limit, setLimit] = useState(
     searchParams.get(namespace)
@@ -70,13 +72,17 @@ function TokenFeed({
     )
   }
 
-  // TODO: remove tokens from blocked wallets, restricted objkts and feed ignore lists
   let tokens = extractTokensFromResponse(data, {
     postProcessTokens,
     resultsPath,
     tokenPath,
     keyPath,
-  })
+  }).filter(
+    (token) =>
+      objktBlockList.get(token.id) !== 1 &&
+      walletBlockList.get(token.creator.address) !== 1 &&
+      feedIgnoreUriMap.get(token.creator.address) !== 1
+  )
 
   if (!tokens.length) {
     return (
