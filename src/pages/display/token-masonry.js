@@ -35,7 +35,7 @@ function TokenMasonry({
     )
   },
 }) {
-  const { walletBlockMap, nsfwMap, objktBlockMap } = useSettings()
+  const { walletBlockMap, nsfwMap } = useSettings()
 
   const filter = (token) => (walletBlockMap.get(token.id) === 1 ? null : token)
   const [limit, setLimit] = useState(itemsPerLoad)
@@ -75,11 +75,7 @@ function TokenMasonry({
     resultsPath,
     tokenPath,
     keyPath,
-  }).filter(
-    (token) =>
-      objktBlockMap.get(token.id) !== 1 &&
-      walletBlockMap.get(token.creator.address) !== 1
-  )
+  }).filter((token) => walletBlockMap.get(token.creator.address) !== 1)
 
   if (!tokens.length) {
     return (

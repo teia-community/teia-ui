@@ -33,7 +33,7 @@ function TokenFeed({
     )
   },
 }) {
-  const { walletBlockMap, objktBlockMap, feedIgnoreUriMap } = useSettings()
+  const { walletBlockMap, feedIgnoreUriMap } = useSettings()
   const [searchParams, setSearchParams] = useSearchParams()
   const [limit, setLimit] = useState(
     searchParams.get(namespace)
@@ -79,7 +79,6 @@ function TokenFeed({
     keyPath,
   }).filter(
     (token) =>
-      objktBlockMap.get(token.id) !== 1 &&
       walletBlockMap.get(token.creator.address) !== 1 &&
       feedIgnoreUriMap.get(token.creator.address) !== 1
   )
