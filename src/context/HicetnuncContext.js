@@ -43,7 +43,7 @@ const verify = require('@utils/verify')
 
 export const HicetnuncContext = createContext()
 
-const Tezos = new TezosToolkit('https://mainnet.api.tez.ie')
+const Tezos = new TezosToolkit(process.env.REACT_APP_TEZOS_RPC)
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
