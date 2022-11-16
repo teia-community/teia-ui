@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
@@ -22,19 +22,21 @@ const OPERATION_TRADE = 'TRADE'
  * @returns {any}
  */
 export const History = ({ nft }) => {
-  const trades = nft.trades.map((e) => ({
-    ...e,
-    type: OPERATION_TRADE,
-  }))
-  const swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-  const transfers = nft.transfers.map((e) => ({
-    ...e,
-    type: OPERATION_TRANSFER,
-  }))
+  const history = useMemo(() => {
+    const trades = nft.trades.map((e) => ({
+      ...e,
+      type: OPERATION_TRADE,
+    }))
+    const swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
+    const transfers = nft.transfers.map((e) => ({
+      ...e,
+      type: OPERATION_TRANSFER,
+    }))
 
-  const history = [...trades, ...swaps, ...transfers]
-    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
-    .reverse()
+    return [...trades, ...swaps, ...transfers]
+      .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
+      .reverse()
+  }, [nft])
 
   return (
     <div>

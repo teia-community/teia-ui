@@ -24,15 +24,15 @@ export const ItemInfo = ({
   supply,
   isDetailView,
 }) => {
-  const { syncTaquito, collect, fulfillObjktcomAsk, curate, acc } =
+  const { syncTaquito, collect, fulfillObjktcomAsk, acc } =
     useContext(HicetnuncContext)
 
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   const [showSignStatus, setShowSignStatus] = useState(false)
   const restricted = useMemo(
-    () => walletBlockList.get(creator.address) === 1,
-    [walletBlockList, creator]
+    () => walletBlockMap.get(creator.address) === 1,
+    [walletBlockMap, creator]
   )
 
   if (isDetailView) {
@@ -42,7 +42,7 @@ export const ItemInfo = ({
       listings
         .filter(
           (listing) =>
-            walletBlockList.get(
+            walletBlockMap.get(
               listing.seller_address
                 ? listing.seller_address
                 : listing.creator.address
@@ -54,7 +54,7 @@ export const ItemInfo = ({
     let purchaseButton = null
 
     const cheapestListing = listings.filter(
-      (listing) => walletBlockList.get(listing.creator_id) !== 1
+      (listing) => walletBlockMap.get(listing.creator_id) !== 1
     )[0]
     // listings are sorted by price
     // filterering restricted here like this because restricted listing should stay in listings for labeling them as such
@@ -200,19 +200,6 @@ export const ItemInfo = ({
             {purchaseButton}
           </div>
         )}
-        <div className={styles.spread}>
-          <Button onClick={() => curate(id)}>
-            <Primary label="curate">
-              <span
-                className={styles.top}
-                data-position={'top'}
-                data-tooltip={'curate'}
-              >
-                〇
-              </span>
-            </Primary>
-          </Button>
-        </div>
       </>
     )
   } else {
@@ -231,17 +218,6 @@ export const ItemInfo = ({
           <div className={styles.objktContainer}>
             <Button to={`${PATH.OBJKT}/${id}`}>
               <Primary label={`object ${id}`}>OBJKT#{id}</Primary>
-            </Button>
-            <Button onClick={() => curate(id)}>
-              <Primary label="curate">
-                <span
-                  className={styles.top}
-                  data-position={'top'}
-                  data-tooltip={'curate'}
-                >
-                  〇
-                </span>
-              </Primary>
             </Button>
           </div>
         </div>

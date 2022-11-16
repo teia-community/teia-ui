@@ -88,10 +88,10 @@ async function fetchUserInfo(addressOrSubjkt, type = 'address') {
 
 export default function Display() {
   const { address, subjkt } = useParams()
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
   const isRestrictedUser = useMemo(
-    () => walletBlockList.get(address) === 1,
-    [address, walletBlockList]
+    () => walletBlockMap.get(address) === 1,
+    [address, walletBlockMap]
   )
   const [showFilters, setShowFilters] = useState(false)
 

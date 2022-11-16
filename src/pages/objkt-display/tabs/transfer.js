@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { Container, Padding } from '@components/layout'
 import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/styles.module.scss'
@@ -26,10 +26,14 @@ export const Transfer = ({ nft }) => {
     : null
 
   // How many editions are held by the contract?
-  const editionsHeld = nft.token_holders.find(
-    (e) =>
-      e.holder_id === senderAddress &&
-      (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
+  const editionsHeld = useMemo(
+    () =>
+      nft.token_holders.find(
+        (e) =>
+          e.holder_id === senderAddress &&
+          (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
+      ),
+    [nft, acc, proxyAdminAddress, senderAddress]
   )
 
   // The basic schema for a transaction

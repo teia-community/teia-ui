@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useMemo } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Container, Padding } from '@components/layout'
 import { Button, Purchase } from '@components/button'
@@ -24,21 +24,21 @@ export const Burn = ({ nft }) => {
   } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState('')
 
-  let totalOwned = 0
-
   const proxyAdminAddress = nft.creator.is_split
     ? nft.creator.shares[0].administrator
     : null
 
-  const found = nft.token_holders.find(
-    (e) =>
-      e.holder_id === acc?.address ||
-      (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+  const found = useMemo(
+    () =>
+      nft.token_holders.find(
+        (e) =>
+          e.holder_id === acc?.address ||
+          (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+      ),
+    [nft, acc, proxyAddress, proxyAdminAddress]
   )
 
-  if (found) {
-    totalOwned = found.quantity
-  }
+  const totalOwned = useMemo(() => found?.quantity || 0, [found])
 
   const handleSubmit = () => {
     if (amount === '' || amount === '0') {

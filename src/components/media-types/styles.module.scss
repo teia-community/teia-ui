@@ -1,8 +1,16 @@
 @import '../../styles/layout.scss';
 
+.flex {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .container {
   position: relative;
-  display: block;
+  // display: block;
 
   &.fullscreen {
     position: fixed;
@@ -33,7 +41,7 @@
   }
 
   .icon {
-    position: absolute;
+    margin: 0.5em;
     bottom: 10px;
     right: 10px;
     width: 30px;
@@ -60,9 +68,14 @@
       }
     }
   }
+
   &:hover {
     .icon {
       opacity: 0.5;
     }
   }
+}
+
+.icon_fullscreen {
+  position: absolute;
 }

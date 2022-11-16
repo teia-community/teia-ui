@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Container, Padding } from '@components/layout'
@@ -14,7 +14,6 @@ import styles from '../styles.module.scss'
  * @returns {any}
  */
 export const Swap = ({ nft }) => {
-  let totalOwned = 0
   const { id } = useParams()
   const {
     swap,
@@ -45,15 +44,18 @@ export const Swap = ({ nft }) => {
   const proxyAdminAddress = nft.creator.is_split
     ? nft.creator.shares[0].administrator
     : null
-  const found = nft.token_holders.find(
-    (e) =>
-      e.holder_id === acc?.address ||
-      (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+
+  const found = useMemo(
+    () =>
+      nft.token_holders.find(
+        (e) =>
+          e.holder_id === acc?.address ||
+          (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+      ),
+    [nft, acc, proxyAddress, proxyAdminAddress]
   )
 
-  if (found) {
-    totalOwned = found.quantity
-  }
+  const totalOwned = useMemo(() => found?.quantity || 0, [found])
 
   const handleSubmit = async () => {
     console.debug({ amount, price })

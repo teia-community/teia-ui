@@ -1,21 +1,6 @@
 export const BANNER_URL =
   'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
-// TODO xat: use use-settings hook instead
-export const getWalletBlockList = () => []
-
-let nsfwList = []
-export const setNsfwList = (data) => (nsfwList = data)
-export const getNsfwList = () => nsfwList
-
-let underReviewList = []
-export const setUnderReviewList = (data) => (underReviewList = data)
-export const getUnderReviewList = () => underReviewList
-
-let ignoreUriList = []
-export const setIgnoreUriList = (data) => (ignoreUriList = data)
-export const getIgnoreUriList = () => ignoreUriList
-
 export const PATH = {
   FEED: '/',
   ISSUER: '/tz',
@@ -30,8 +15,7 @@ export const PATH = {
 }
 
 export const MINT_MIN_LIMIT = 1
-export const MINT_MAX_LIMIT = 10000
-export const MINT_FILESIZE = 100
+export const MINT_FILESIZE = 2000
 
 export const MIMETYPE = {
   BMP: 'image/bmp',
@@ -113,6 +97,8 @@ export const MARKETPLACE_CONTRACT_OBJKTCOM_V4 =
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
 
 export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
+export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
+export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,

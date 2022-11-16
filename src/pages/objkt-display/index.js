@@ -6,10 +6,8 @@ import sortBy from 'lodash/sortBy'
 
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import {
-  getUnderReviewList,
   SUPPORTED_MARKETPLACE_CONTRACTS,
   MIMETYPE,
-  getNsfwList,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
@@ -37,7 +35,7 @@ const TABS = [
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   const [loading, setLoading] = useState(true)
   const [tabIndex, setTabIndex] = useState(0)
@@ -49,12 +47,13 @@ export const ObjktDisplay = () => {
   const address = context.acc?.address
   const proxy = context.getProxy()
 
+  const { nsfwMap, underReviewMap } = useSettings()
+
   useEffect(async () => {
     const [objkt, objktcomAsks] = await Promise.all([
       fetchObjktDetails(id),
       fetchObjktcomAsks(id),
     ])
-    const nsfwList = getNsfwList()
 
     const listings = sortBy(
       [
@@ -82,27 +81,26 @@ export const ObjktDisplay = () => {
 
     objkt.listings = listings
 
-    if (nsfwList.includes(objkt.id)) {
+    if (nsfwMap.get(objkt.id) === 1) {
       objkt.content_rating = METADATA_CONTENT_RATING_MATURE
     }
 
     await context.setAccount()
 
-    if (walletBlockList.get(objkt.creator.address) === 1) {
+    if (walletBlockMap.get(objkt.creator.address) === 1) {
       setRestricted(true)
       objkt.restricted = true
     } else {
       objkt.restricted = false
 
-      const underReviewList = getUnderReviewList()
-      if (underReviewList.includes(objkt.creator.address)) {
+      if (underReviewMap.get(objkt.creator.address) === 1) {
         setUnderReview(true)
         objkt.underReview = true
       }
       // filter swaps from banned account
-      if (objkt.swaps && walletBlockList)
+      if (objkt.swaps && walletBlockMap)
         objkt.swaps = objkt.swaps.filter(
-          (s) => s.status > 0 || walletBlockList.get(s.creator_id) !== 1
+          (s) => s.status > 0 || walletBlockMap.get(s.creator_id) !== 1
         )
     }
     setNFT(objkt)

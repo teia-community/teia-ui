@@ -37,7 +37,7 @@ function UkraineFeed({ minShares = 50 }) {
       }}
       query={gql`
         query GetCollabTokens($limit: Int!) {
-          split_contract(limit: $limit, where: {shareholder: {holder_id: {_eq: "${UKRAINE_FUNDING_CONTRACT}"}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
+          split_contract(limit: $limit, where: {shareholder: {holder_id: {_eq: "${UKRAINE_FUNDING_CONTRACT}"}}}) {
             contract {
               address
               name
@@ -48,7 +48,7 @@ function UkraineFeed({ minShares = 50 }) {
                   shares
                 }
               }
-              tokens(order_by: {timestamp: desc}) {
+              tokens(where: {supply: {_gt: "0"}, is_signed: {_eq: true}}, order_by: {timestamp: desc}) {
                 id
                 artifact_uri
                 display_uri

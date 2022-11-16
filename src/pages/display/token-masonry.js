@@ -4,7 +4,7 @@ import get from 'lodash/get'
 import { request } from 'graphql-request'
 import { renderMediaType } from '@components/media-types'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
-import { PATH } from '@constants'
+import { METADATA_CONTENT_RATING_MATURE, PATH } from '@constants'
 import { Container, Padding } from '@components/layout'
 import { Button } from '@components/button'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -35,7 +35,9 @@ function TokenMasonry({
     )
   },
 }) {
-  const { walletBlockList, objktBlockList } = useSettings()
+  const { walletBlockMap, nsfwMap } = useSettings()
+
+  const filter = (token) => (walletBlockMap.get(token.id) === 1 ? null : token)
   const [limit, setLimit] = useState(itemsPerLoad)
   const { data, error } = useSWR(
     [namespace, ...swrParams],
@@ -69,15 +71,11 @@ function TokenMasonry({
   }
 
   let tokens = extractTokensFromResponse(data, {
-    postProcessTokens,
+    postProcessTokens: filter,
     resultsPath,
     tokenPath,
     keyPath,
-  }).filter(
-    (token) =>
-      objktBlockList.get(token.id) !== 1 &&
-      walletBlockList.get(token.creator.address) !== 1
-  )
+  }).filter((token) => walletBlockMap.get(token.creator.address) !== 1)
 
   if (!tokens.length) {
     return (
@@ -97,7 +95,15 @@ function TokenMasonry({
             style={{ positon: 'relative' }}
             to={`${PATH.OBJKT}/${token.id}`}
           >
-            <div className={styles.container}>
+            <div
+              className={`${styles.container} ${
+                nsfwMap.get(token.id) === 1 ||
+                (token.content_rating &&
+                  token.content_rating === METADATA_CONTENT_RATING_MATURE)
+                  ? styles.blur
+                  : ''
+              }`}
+            >
               {renderMediaType({
                 nft: token,
                 displayView: true,
