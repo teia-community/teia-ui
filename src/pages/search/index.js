@@ -13,9 +13,7 @@ import { Input } from '@components/input'
 import SubjktsSearchResults from './subjkts-search-results'
 import RecentSalesFeed from './recent-sales-feed'
 import NewObjktsFeed from './new-objkts-feed'
-import UkraineFeed from './ukraine-feed'
-import PakistanFeed from './pakistan-feed'
-import IranFeed from './iran-feed'
+import { PakistanFeed, IranFeed, UkraineFeed } from './fund-feeds'
 import RandomFeed from './random-feed'
 import {
   GlbFeed,
@@ -81,19 +79,22 @@ export function Search() {
               value={searchTerm}
             />
             <div style={{ marginTop: '15px' }}>
-              <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
-              <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
-              <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
-              <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
-
-              <FilterLink to="/feed/random">random</FilterLink>
-              <FilterLink to="/feed/glb">glb</FilterLink>
-              <FilterLink to="/feed/music">music</FilterLink>
-              <FilterLink to="/feed/video">video</FilterLink>
-              <FilterLink to="/feed/html-svg">html/svg</FilterLink>
-              <FilterLink to="/feed/gif">gif</FilterLink>
-              <FilterLink to="/feed/newobjkts">new OBJKTs</FilterLink>
-              <FilterLink to="/">recent sales</FilterLink>
+              <div>
+                <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
+                <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
+                <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
+                <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
+              </div>
+              <div>
+                <FilterLink to="/feed/random">random</FilterLink>
+                <FilterLink to="/feed/glb">glb</FilterLink>
+                <FilterLink to="/feed/music">music</FilterLink>
+                <FilterLink to="/feed/video">video</FilterLink>
+                <FilterLink to="/feed/html-svg">html/svg</FilterLink>
+                <FilterLink to="/feed/gif">gif</FilterLink>
+                <FilterLink to="/feed/newobjkts">new OBJKTs</FilterLink>
+                <FilterLink to="/">recent sales</FilterLink>
+              </div>
             </div>
             <Routes>
               <Route path="/search" element={<SubjktsSearchResults />} />
