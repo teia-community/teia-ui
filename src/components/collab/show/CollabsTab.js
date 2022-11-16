@@ -84,7 +84,11 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
   const hasUnverifiedObjkts = items.some((i) => !i.is_signed).length > 0
 
   if (!loading && !objkts.length) {
-    return <EmptyTab>No collabs</EmptyTab>
+    return (
+      <Container xlarge>
+        <EmptyTab>no collabs</EmptyTab>
+      </Container>
+    )
   }
 
   return (
