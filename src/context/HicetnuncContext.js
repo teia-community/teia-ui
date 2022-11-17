@@ -906,7 +906,7 @@ class HicetnuncContextProviderClass extends Component {
       syncTaquito: async () => {
         const network = {
           type: 'mainnet',
-          rpcUrl: 'https://mainnet.smartpy.io',
+          rpcUrl: process.env.REACT_APP_TEZOS_RPC,
         }
 
         // We check the storage and only do a permission request if we don't have an active account yet
