@@ -113,7 +113,10 @@ function TokenFeed({
       next={() => {
         const newLimit = limit + itemsPerLoad
         setLimit(newLimit)
-        setSearchParams({ [namespace]: newLimit })
+        setSearchParams({
+          ...Object.fromEntries(searchParams),
+          [namespace]: newLimit,
+        })
       }}
       hasMore={true}
       loader={undefined}
