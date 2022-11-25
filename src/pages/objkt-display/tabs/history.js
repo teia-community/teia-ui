@@ -28,12 +28,8 @@ export const History = ({ nft }) => {
       type: OPERATION_TRADE,
     }))
     const swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-    const transfers = nft.transfers.map((e) => ({
-      ...e,
-      type: OPERATION_TRANSFER,
-    }))
 
-    return [...trades, ...swaps, ...transfers]
+    return [...trades, ...swaps]
       .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
       .reverse()
   }, [nft])

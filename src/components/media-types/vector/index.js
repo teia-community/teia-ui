@@ -7,7 +7,7 @@ import './index.css'
 export const VectorComponent = ({
   artifactUri,
   previewUri,
-  creator,
+  artistAddress,
   objktID,
   onDetailView,
   preview,
@@ -20,13 +20,8 @@ export const VectorComponent = ({
     [styles.display]: displayView,
   })
 
-  let _creator_ = false
   let _viewer_ = false
   let _objkt_ = false
-
-  if (creator && creator.address) {
-    _creator_ = creator.address
-  }
 
   if (context.address && context.address.address) {
     _viewer_ = context.address.address
@@ -41,7 +36,7 @@ export const VectorComponent = ({
     // can't pass creator/viewer query params to data URI
     path = previewUri
   } else {
-    path = `${artifactUri}?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objkt_}`
+    path = `${artifactUri}?creator=${artistAddress}&viewer=${_viewer_}&objkt=${_objkt_}`
   }
 
   if (displayView) {

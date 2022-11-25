@@ -2,14 +2,16 @@ import { useMemo } from 'react'
 import { gql } from 'graphql-request'
 import random from 'lodash/random'
 import TokenFeed from './token-feed'
+import { BaseTokenFieldsFragment } from '../../data/api'
+import { HEN_CONTRACT_FA2 } from '../../constants'
 
 // lastId should be updated every once in a while
-function RandomFeed({ firstId = 196, lastId = 720000, max = 15 }) {
+function RandomFeed({ firstId = 196, lastId = 797535, max = 15 }) {
   const tokenIds = useMemo(() => {
     const uniqueIds = new Set()
 
     while (uniqueIds.size < max) {
-      uniqueIds.add(random(firstId, lastId))
+      uniqueIds.add(`${random(firstId, lastId)}`)
     }
 
     return Array.from(uniqueIds)
@@ -21,21 +23,10 @@ function RandomFeed({ firstId = 196, lastId = 720000, max = 15 }) {
       enableInfinityScroll={false}
       variables={{ tokenIds }}
       query={gql`
-        query Objkts($tokenIds: [bigint!] = "") {
-          token(where: { id: { _in: $tokenIds }, supply: { _neq: 0 } }) {
-            artifact_uri
-            creator_id
-            display_uri
-            hdao_balance
-            id
-            mime
-            thumbnail_uri
-            timestamp
-            title
-            creator {
-              name
-              address
-            }
+        ${BaseTokenFieldsFragment}
+        query Objkts($tokenIds: [String!] = "") {
+          tokens(where: { token_id: { _in: $tokenIds }, editions: { _neq: 0 }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}" } }) {
+            ...baseTokenFields
           }
         }
       `}

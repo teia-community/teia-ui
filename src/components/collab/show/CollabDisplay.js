@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
+import get from 'lodash/get'
 import { PATH } from '../../../constants'
 import { Loading } from '../../loading'
 import { renderMediaType } from '../../media-types'
@@ -11,7 +12,7 @@ import { walletPreview } from '../../../utils/string'
 import { Identicon } from '../../identicons'
 import {
   fetchGraphQL,
-  fetchUserMetadataFile,
+  getUser,
   getCollabCreationsByAddress,
   getCollabCreationsBySubjkt,
 } from '../../../data/hicdex'
@@ -20,9 +21,6 @@ import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
-import axios from 'axios'
-import { HashToURL } from '@utils'
-// import QRCode from 'react-qr-code'
 
 export const CollabDisplay = () => {
   // Local state
@@ -84,12 +82,12 @@ export const CollabDisplay = () => {
     }
 
     const fetchMeta = async () => {
-      const res = await fetchUserMetadataFile(contractInfo.contract.name)
-      const metadataFile = res[0] ? res[0].metadata_file : false
+      const user = await getUser(contractInfo.contract.name, 'name')
+      const identicon = get(user, 'metadata.data.identicon')
 
-      if (metadataFile) {
-        const data = await axios.get(HashToURL(metadataFile))
-        setLogo(data.identicon)
+      // TODO xat: test if this works
+      if (identicon) {
+        setLogo(identicon)
       }
     }
 

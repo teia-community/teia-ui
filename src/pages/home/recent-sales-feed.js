@@ -1,33 +1,27 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
 import TokenFeed from './token-feed'
+import { BaseTokenFieldsFragment } from '../../data/api'
+import { HEN_CONTRACT_FA2 } from '../../constants'
 
 function RecentSalesFeed() {
   return (
     <TokenFeed
       namespace="recent-sales-feed"
-      resultsPath="trade"
+      resultsPath="events"
       tokenPath="token"
-      keyPath="token.id"
-      postProcessTokens={(tokens) => uniqBy(uniqBy(tokens, 'id'), 'creator_id')}
+      keyPath="token.token_id"
+      postProcessTokens={(tokens) =>
+        uniqBy(uniqBy(tokens, 'token_id'), 'artist_address')
+      }
       query={gql`
+        ${BaseTokenFieldsFragment}
         query getLatestSales($limit: Int!) {
-          trade(
-            order_by: { timestamp: desc }
-            limit: $limit
-            where: { swap: { price: { _gte: "0" } } }
-          ) {
+          events(limit: $limit, order_by: [{level: desc, opid: desc}], where: {token: {metadata_status: {_eq: "processed"}}, implements: {_eq: "SALE"}, fa2_address: {_eq: "${HEN_CONTRACT_FA2}"}}) {
+            type
             timestamp
             token {
-              artifact_uri
-              display_uri
-              id
-              mime
-              creator_id
-              creator {
-                name
-                address
-              }
+              ...baseTokenFields
             }
           }
         }

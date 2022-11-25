@@ -1,5 +1,7 @@
 import { gql } from 'graphql-request'
 import TokenFeed from './token-feed'
+import { BaseTokenFieldsFragment } from '../../data/api'
+import { HEN_CONTRACT_FA2 } from '../../constants'
 
 function TagFeed({ tag, namespace }) {
   return (
@@ -8,24 +10,18 @@ function TagFeed({ tag, namespace }) {
       variables={{ tag }}
       swrParams={[tag]}
       query={gql`
+        ${BaseTokenFieldsFragment}
         query getObjktsByTag($tag: String!, $limit: Int!) {
-          token(
+          tokens(
             where: {
-              token_tags: { tag: { tag: { _eq: $tag } } }
-              supply: { _gt: "0" }
+              tags: { tag: { _eq: $tag } },
+              editions: { _neq: 0 },
+              fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
             }
-            order_by: { id: desc }
+            order_by: { minted_at: desc_nulls_last }
             limit: $limit
           ) {
-            id
-            artifact_uri
-            display_uri
-            creator_id
-            mime
-            creator {
-              address
-              name
-            }
+            ...baseTokenFields
           }
         }
       `}

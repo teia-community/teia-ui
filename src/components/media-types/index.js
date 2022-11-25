@@ -59,7 +59,7 @@ export const renderMediaType = ({
   //   ? HashToURL(nft.artifact_uri, 'IPFS')
   //   : ''
 
-  switch (nft.mime) {
+  switch (nft.mime_type) {
     /* IMAGES */
     case MIMETYPE.BMP:
     case MIMETYPE.GIF:
@@ -73,7 +73,7 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
-            onDetailView={interactive || nft.mimeType === MIMETYPE.GIF}
+            onDetailView={interactive || nft.mime_type === MIMETYPE.GIF}
             preview={preview}
             displayView={displayView}
             nft={nft}
@@ -90,8 +90,8 @@ export const renderMediaType = ({
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
             preview={preview}
-            creator={nft.creator}
-            objktID={nft.id}
+            artistAddress={nft.artist_address}
+            objktID={nft.token_id}
             onDetailView={interactive}
             displayView={displayView}
           />
@@ -109,8 +109,9 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
+            artistAddress={nft.artist_address}
             creator={nft.creator}
-            objktID={nft.id}
+            objktID={nft.token_id}
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
@@ -147,7 +148,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={nft.id}
+            objktID={nft.token_id}
           />
         </Container>
       )
@@ -166,7 +167,7 @@ export const renderMediaType = ({
             preview={preview}
             onDetailView={interactive}
             displayView={displayView}
-            objktID={nft.id}
+            objktID={nft.token_id}
           />
         </Container>
       )
@@ -194,11 +195,11 @@ export const renderMediaType = ({
           artifactUri={parsedArtifactUri}
           displayUri={parsedDisplayUri}
           displayView={displayView}
-          objktID={nft.id}
+          objktID={nft.token_id}
         />
       )
 
     default:
-      return <UnknownComponent mimeType={nft.mimeType} />
+      return <UnknownComponent mimeType={nft.mime_type} />
   }
 }

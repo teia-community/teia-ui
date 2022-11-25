@@ -24,7 +24,7 @@ export const HTMLComponent = (props) => {
     artifactUri,
     displayUri,
     previewUri,
-    creator,
+    artistAddress,
     objktID,
     onDetailView,
     preview,
@@ -36,8 +36,8 @@ export const HTMLComponent = (props) => {
   let _viewer_ = false
   let _objectId_ = false
 
-  if (creator && creator.address) {
-    _creator_ = creator.address
+  if (artistAddress) {
+    _creator_ = artistAddress
   }
 
   if (context.address && context.address.address) {

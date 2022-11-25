@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { gql } from 'graphql-request'
 import { Container } from '@components/layout'
-import { SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
+import get from 'lodash/get'
+import { BaseTokenFieldsFragment } from '../../data/api'
+import { HEN_CONTRACT_FA2 } from '../../constants'
 import TokenMasonry from './token-masonry'
 import Filters from './filters'
 
@@ -36,67 +38,42 @@ export default function Creations({ showFilters, address }) {
           emptyMessage="no creations"
           postProcessTokens={(tokens) => {
             if (filter === FILTER_PRIMARY) {
-              return tokens.filter((token) => {
-                return token.swaps.some(
-                  (swap) =>
-                    swap.status === 0 &&
-                    SUPPORTED_MARKETPLACE_CONTRACTS.includes(
-                      swap.contract_address
-                    ) &&
-                    swap.creator_id === address
-                )
-              })
+              return tokens.filter(
+                (token) =>
+                  get(token, 'lowest_price_listing.seller_address') === address
+              )
             }
 
             if (filter === FILTER_SECONDARY) {
-              return tokens.filter((token) => {
-                return token.swaps.some(
-                  (swap) => swap.status === 0 && swap.creator_id !== address
-                )
-              })
+              return tokens.filter(
+                (token) =>
+                  get(token, 'lowest_price_listing.seller_address') !== address
+              )
             }
 
             if (filter === FILTER_NOT_FOR_SALE) {
-              return tokens.filter((token) => token.swaps.length === 0)
+              return tokens.filter(
+                (token) => get(token, 'lowest_price_listing') === null
+              )
             }
 
             // all tokens
             return tokens
           }}
           query={gql`
+            ${BaseTokenFieldsFragment}
             query creatorGallery($address: String!) {
-              token(
+              tokens(
                 where: {
-                  creator: { address: { _eq: $address } }
-                  supply: { _gt: 0 }
+                  artist_address: { _eq: $address }
+                  editions: { _gt: 0 }
+                  fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+                  metadata_status: { _eq: "processed" }
                 }
-                order_by: { id: desc }
+                order_by: { minted_at: desc_nulls_last }
               ) {
-                id
-                artifact_uri
-                display_uri
-                mime
-                title
-                description
-                creator {
-                  address
-                  name
-                }
-                swaps(
-                  order_by: { price: asc }
-                  limit: 1
-                  where: { amount_left: { _gte: "1" }, status: { _eq: "0" } }
-                ) {
-                  id
-                  status
-                  amount_left
-                  creator_id
-                  contract_address
-                  creator {
-                    address
-                  }
-                  price
-                }
+                ...baseTokenFields
+                lowest_price_listing
               }
             }
           `}

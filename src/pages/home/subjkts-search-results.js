@@ -9,6 +9,8 @@ function SubjktsSearchResults() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('term') || ''
 
+  console.log('SubjktsSearchResults', searchTerm)
+
   const { data } = useSWR(
     ['subjkts-search', searchTerm],
     (ns, term) =>
