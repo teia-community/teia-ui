@@ -1,9 +1,7 @@
 import { rnd } from '../utils'
 import {
   MARKETPLACE_CONTRACT_V1,
-  HEN_CONTRACT_FA2,
   SUPPORTED_MARKETPLACE_CONTRACTS,
-  BURN_ADDRESS,
 } from '@constants'
 const _ = require('lodash')
 
@@ -11,13 +9,6 @@ export const getDipdupState = `query {
   dipdup_index {
     name
     level
-  }
-}`
-
-export const getUserMetaQuery = `query UserMeta($address: String = "") {
-  holder(where: { address: { _eq: $address } }) {
-      name
-      metadata
   }
 }`
 
@@ -105,14 +96,6 @@ export const getCollabCreationsBySubjkt = `query GetCollabCreations($subjkt: Str
     }
   }
 }`
-
-export const getUserMetadataFile = `
-query subjktsQuery($subjkt: String!) {
-  holder(where: { name: {_eq: $subjkt}}) {
-    metadata_file
-  }
-}
-`
 
 export const getCollabTokensForAddress = `query GetCollabTokens($address: String!) {
 shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_participant"}}) {
@@ -368,22 +351,49 @@ query querySwaps($address: String!) {
 }
 `
 
-export async function fetchUserMetadataFile(subjkt) {
-  const { errors, data } = await fetchGraphQL(
-    getUserMetadataFile,
-    'subjktsQuery',
-    { subjkt }
+export async function getUser(addressOrName, type = 'user_address') {
+  const { data } = await fetchGraphQLTezTok(
+    `
+  query addressQuery($addressOrName: String!) {
+    teia_users(where: { ${type}: {_eq: $addressOrName}}) {
+      user_address
+      name
+      metadata {
+        data
+      }
+    }
+  }
+  `,
+    'addressQuery',
+    {
+      addressOrName,
+    }
   )
 
-  if (errors) {
-    console.error(errors)
-  }
-
-  return data.holder
+  return data && data.teia_users && data.teia_users.length
+    ? data.teia_users[0]
+    : null
 }
 
 export async function fetchGraphQL(operationsDoc, operationName, variables) {
   const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: operationsDoc,
+      variables: variables,
+      operationName: operationName,
+    }),
+  })
+
+  return await result.json()
+}
+
+export async function fetchGraphQLTezTok(
+  operationsDoc,
+  operationName,
+  variables
+) {
+  const result = await fetch(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
@@ -484,25 +494,6 @@ export async function fetchObjkts(ids) {
   return data.token
 }
 
-async function fetchSubjktNames(addresses) {
-  const { errors, data } = await fetchGraphQL(
-    `query SubjktNames ($addresses: [String!]) {
-    holder(where: {address: {_in: $addresses}}) {
-      address
-      name
-    }
-  }
-  `,
-    'SubjktNames',
-    { addresses }
-  )
-  if (errors) {
-    console.error('Failed to fetch SUBJKTs')
-    console.error(errors)
-  }
-  return data.holder
-}
-
 export async function fetchObjktDetails(id) {
   const { errors, data } = await fetchGraphQL(query_objkt, 'objkt', { id })
   if (errors) {
@@ -510,41 +501,6 @@ export async function fetchObjktDetails(id) {
   }
 
   const result = data.token_by_pk
-
-  // Fetch burn transfers
-  // we want to use SUBJKT to resolve aliases not tzkt.
-  const addressesToResolve = []
-  result.transfers = []
-  const endpoint = `${process.env.REACT_APP_TZKT_API}/v1/operations/transactions?target.eq=${HEN_CONTRACT_FA2}&parameter.[*].txs.[*].token_id=${data.token_by_pk.id}&parameter.[*].txs.[*].to_=${BURN_ADDRESS}&level.gte=${data.token_by_pk.level}&entrypoint=transfer&status=applied`
-  try {
-    const burn_operations = await (await fetch(endpoint)).json()
-    burn_operations.forEach((item) => {
-      if (addressesToResolve.indexOf(item.sender.address) === -1) {
-        addressesToResolve.push(item.sender.address)
-      }
-
-      result.transfers.push({
-        timestamp: item.timestamp,
-        ophash: item.hash,
-        sender: item.sender.address,
-        opid: item.id,
-        amount: _(item.parameter.value[0].txs)
-          .filter((tx) => tx.to_ === BURN_ADDRESS)
-          .sumBy('amount'),
-      })
-    })
-  } catch (error) {
-    console.error('Problem with call to tzkt')
-    console.error(error)
-  }
-  const resolvedAddresses = await fetchSubjktNames(addressesToResolve)
-
-  result.transfers.forEach((transfer) => {
-    const resolvedAddress = resolvedAddresses.find(
-      (subjkt) => subjkt.address === transfer.sender
-    )
-    transfer.sender = resolvedAddress
-  })
 
   return result
 }

@@ -7,7 +7,7 @@ import { Page } from '@components/layout'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import { useParams, NavLink, Route, Routes } from 'react-router-dom'
 import useSWR from 'swr'
-import { fetchGraphQL } from '@data/hicdex'
+import { getUser } from '@data/hicdex'
 import { GetUserMetadata } from '@data/api'
 import { IconCache } from '@utils/with-icon'
 import useSettings from '@hooks/use-settings'
@@ -15,28 +15,6 @@ import Profile from './profile'
 import Creations from './creations'
 import Collections from './collections'
 import styles from './styles.module.scss'
-
-async function getHolder(addressOrSubjkt, type) {
-  const { data } = await fetchGraphQL(
-    `
-  query addressQuery($addressOrSubjkt: String!) {
-    holder(where: { ${type}: {_eq: $addressOrSubjkt}}) {
-      address
-      name
-      hdao_balance
-      metadata
-      metadata_file
-    }
-  }
-  `,
-    'addressQuery',
-    {
-      addressOrSubjkt,
-    }
-  )
-
-  return data && data.holder && data.holder.length ? data.holder[0] : null
-}
 
 function Tab({ children, to }) {
   return (
@@ -57,26 +35,29 @@ function Tab({ children, to }) {
   )
 }
 
-async function fetchUserInfo(addressOrSubjkt, type = 'address') {
-  const holder = await getHolder(addressOrSubjkt, type)
+async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
+  let holder = await getUser(addressOrSubjkt, type)
 
-  if (!holder) {
+  if (!holder && type !== 'user_address') {
     throw new Error('user not found')
+  } else if (!holder) {
+    // TODO: check if addressOrSubjkt is a valid tezos address
+    holder = {
+      user_address: addressOrSubjkt,
+    }
   }
 
-  // TODO: fetch hdao stuff again? yes/no?
-
-  const userMetadata = (await GetUserMetadata(holder.address)).data
+  const userMetadata = (await GetUserMetadata(holder.user_address)).data
   const user = userMetadata ? { ...userMetadata } : {}
 
-  user.address = holder.address
+  user.address = holder.user_address
 
-  if (get(holder, 'metadata.description')) {
-    user.description = get(holder, 'metadata.description')
+  if (get(holder, 'metadata.data.description')) {
+    user.description = get(holder, 'metadata.data.description')
   }
 
-  if (get(holder, 'metadata.identicon')) {
-    user.identicon = get(holder, 'metadata.identicon')
+  if (get(holder, 'metadata.data.identicon')) {
+    user.identicon = get(holder, 'metadata.data.identicon')
   }
 
   if (holder.name) {
@@ -98,7 +79,7 @@ export default function Display() {
   const { data: user, error } = useSWR(
     ['/user', address || subjkt],
     (_, addressOrSubject) =>
-      fetchUserInfo(addressOrSubject, address ? 'address' : 'name'),
+      fetchUserInfo(addressOrSubject, address ? 'user_address' : 'name'),
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

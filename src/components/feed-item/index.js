@@ -1,8 +1,9 @@
 import React from 'react'
+import get from 'lodash/get'
 import { PATH } from '../../constants'
 import { Padding } from '../layout'
 import { Button } from '../button'
-import { ItemInfo } from '../item-info'
+import { ItemInfoCompact } from '../item-info'
 import { renderMediaType } from '../media-types'
 import styles from './styles.module.scss'
 import { METADATA_CONTENT_RATING_MATURE } from '@constants'
@@ -13,12 +14,13 @@ export const FeedItem = ({ nft }) => {
 
   return (
     <Padding>
-      <Button to={`${PATH.OBJKT}/${nft.id}`}>
+      <Button to={`${PATH.OBJKT}/${nft.token_id}`}>
         <div
           className={`${styles.container} ${
-            nsfwMap.get(nft.id) === 1 ||
-            (nft.content_rating &&
-              nft.content_rating === METADATA_CONTENT_RATING_MATURE)
+            nsfwMap.get(nft.token_id) === 1 ||
+            (get(nft, 'teia_meta.content_rating') &&
+              get(nft, 'teia_meta.content_rating') ===
+                METADATA_CONTENT_RATING_MATURE)
               ? styles.blur
               : ''
           }`}
@@ -30,7 +32,7 @@ export const FeedItem = ({ nft }) => {
         </div>
       </Button>
       <div style={{ paddingLeft: '15px', paddingRight: '15px' }}>
-        <ItemInfo {...nft} />
+        <ItemInfoCompact nft={nft} />
       </div>
     </Padding>
   )

@@ -59,7 +59,7 @@ export const ImageComponent = ({
       <LazyLoadImage
         className={styles.image}
         src={src}
-        alt={`object ${nft.id} image`}
+        alt={`object ${nft.token_id} image`}
         onError={onError}
       />
     </div>
@@ -69,7 +69,7 @@ export const ImageComponent = ({
         <LazyLoadImage
           className={styles.style}
           src={src}
-          alt={`object ${nft.id} image`}
+          alt={`object ${nft.token_id} image`}
           onError={onError}
         />
       </div>

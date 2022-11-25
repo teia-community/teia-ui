@@ -60,7 +60,7 @@ export const VideoComponent = ({
         controls={interactive}
         src={preview ? previewUri : artifactUri}
         poster={displayUri}
-        title={`video object ${nft.id}`}
+        title={`video object ${nft.token_id}`}
       />
     </div>
   ) : (
@@ -74,7 +74,7 @@ export const VideoComponent = ({
       controls={interactive}
       src={preview ? previewUri : artifactUri}
       poster={displayUri}
-      title={`video object ${nft.id}`}
+      title={`video object ${nft.token_id}`}
     />
   )
 }

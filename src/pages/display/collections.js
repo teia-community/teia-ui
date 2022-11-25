@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import orderBy from 'lodash/orderBy'
+import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import { Container } from '@components/layout'
-import { SUPPORTED_MARKETPLACE_CONTRACTS } from '@constants'
 import TokenMasonry from './token-masonry'
 import Filters from './filters'
+import { BaseTokenFieldsFragment } from '../../data/api'
 
 const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
@@ -36,78 +37,67 @@ export default function Collections({ showFilters, address }) {
           postProcessTokens={(tokens) => {
             if (filter === FILTER_FOR_SALE) {
               return tokens.filter(
-                ({ swap_creator_id }) => swap_creator_id === address
+                ({ listing_seller_address }) =>
+                  listing_seller_address === address
               )
             }
 
             if (filter === FILTER_NOT_FOR_SALE) {
               return tokens.filter(
-                ({ swap_creator_id, creator }) =>
-                  creator.address !== address && swap_creator_id !== address
+                ({ listing_seller_address, artist_address }) =>
+                  artist_address !== address &&
+                  listing_seller_address !== address
               )
             }
 
             return tokens
           }}
           extractTokensFromResponse={(data, { postProcessTokens }) => {
-            const heldTokens = data.token_holder.map(({ token }) => token)
-            const swappedTokens = data.swap.map(({ token, creator_id }) => ({
-              ...token,
-              swap_creator_id: creator_id,
-            }))
-            const tokens = [...swappedTokens, ...heldTokens]
+            const heldTokens = data.holdings.map(({ token }) => token)
+            const swappedTokens = data.listings.map(
+              ({ token, seller_address }) => ({
+                ...token,
+                listing_seller_address: seller_address,
+              })
+            )
+            const tokens = uniqBy(
+              [...swappedTokens, ...heldTokens],
+              ({ token_id }) => token_id
+            ).map((token) => ({ ...token, key: token.token_id }))
 
-            return postProcessTokens(orderBy(tokens, 'id').reverse())
+            return postProcessTokens(orderBy(tokens, 'token_id').reverse())
           }}
           query={gql`
+            ${BaseTokenFieldsFragment}
             query collectorGallery($address: String!) {
-              token_holder(
+              holdings(
                 where: {
-                  holder_id: { _eq: $address }
-                  token: { creator: { address: { _neq: $address } } }
-                  quantity: { _gt: "0" }
+                  holder_address: { _eq: $address }
+                  token: { artist_address: { _neq: $address } }
+                  amount: { _gt: "0" }
+                  metadata_status: { _eq: "processed" }
                 }
                 order_by: { token_id: desc }
               ) {
                 token {
-                  id
-                  artifact_uri
-                  display_uri
-                  thumbnail_uri
-                  timestamp
-                  mime
-                  title
-                  description
-                  supply
-                  royalties
-                  creator {
-                    address
-                    name
-                  }
+                  ...baseTokenFields
                 }
               }
-              swap(where: {token: {creator: {address: {_neq: $address}}}, creator_id: {_eq: $address}, status: {_eq: "0"}, contract_address: { _in : [${SUPPORTED_MARKETPLACE_CONTRACTS.map(
-                (contractAddress) => `"${contractAddress}"`
-              ).join(', ')}] }}, distinct_on: token_id) {
-                creator_id
+              listings(
+                where: {
+                  token: { artist_address: { _neq: $address } }
+                  seller_address: { _eq: $address }
+                  status: { _eq: "active" }
+                }
+                distinct_on: token_id
+              ) {
+                seller_address
                 token {
-                  id
-                  title
-                  artifact_uri
-                  display_uri
-                  mime
-                  description
-                  supply
-                  royalties
-                  creator {
-                    name
-                    address
-                  }
+                  ...baseTokenFields
                 }
                 contract_address
                 amount_left
                 price
-                id
               }
             }
           `}

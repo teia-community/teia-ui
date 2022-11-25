@@ -37,7 +37,7 @@ export const PdfComponent = ({
     console.error(e.message)
     context.showFeedback(`${e.message}
 
-see it on [IPFS](${HashToURL(nft.artifactUri)})`)
+see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
     setLoading(false)
   }
 
@@ -66,7 +66,7 @@ see it on [IPFS](${HashToURL(nft.artifactUri)})`)
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             onItemClick={onItemClick}
-            title={`PDF object ${nft.id}`}
+            title={`PDF object ${nft.token_id}`}
             className={`${loading && styles.hidden}`}
             options={options}
           >
@@ -89,7 +89,7 @@ see it on [IPFS](${HashToURL(nft.artifactUri)})`)
       {(!onDetailView || loading) && (
         <AnimatePresence>
           <ImageComponent
-            key={`img-${nft.id}`}
+            key={`img-${nft.token_id}`}
             artifactUri={displayUri}
             displayUri={displayUri}
             previewUri={previewUri}
@@ -100,7 +100,7 @@ see it on [IPFS](${HashToURL(nft.artifactUri)})`)
           />
           {loading && (
             <p
-              key={`loading-${nft.id}`}
+              key={`loading-${nft.token_id}`}
               style={{ textAlign: 'center', margin: '1em' }}
             >
               Loading PDF...

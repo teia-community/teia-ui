@@ -1,28 +1,23 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
+import { BaseTokenFieldsFragment } from '../../data/api'
+import { HEN_CONTRACT_FA2 } from '../../constants'
 import TokenFeed from './token-feed'
 
 function MimeTypeFeed({ namespace, mimeTypes }) {
   return (
     <TokenFeed
       namespace={namespace}
-      postProcessTokens={(tokens) => uniqBy(tokens, 'creator_id')}
+      postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
       query={gql`
+        ${BaseTokenFieldsFragment}
         query getTokensByMimeTypes($limit: Int!) {
-          token(where: { mime: {_in : [${mimeTypes
+          tokens(where: { mime_type: {_in : [${mimeTypes
             .map((mimeType) => `"${mimeType}"`)
             .join(
               ', '
-            )}] }, supply : { _neq : 0 }}, order_by: {id: desc}, limit: $limit) {
-            id
-            artifact_uri
-            display_uri
-            mime
-            creator_id
-            creator {
-              name
-              address
-            }
+            )}] }, editions : { _neq : 0 }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}}, order_by: { minted_at: desc_nulls_last }, limit: $limit) {
+              ...baseTokenFields
           }
         }
       `}

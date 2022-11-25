@@ -49,6 +49,7 @@ export const ObjktDisplay = () => {
 
   const { nsfwMap, underReviewMap } = useSettings()
 
+  // TODO xat: convert this to useSwr
   useEffect(async () => {
     const [objkt, objktcomAsks] = await Promise.all([
       fetchObjktDetails(id),
@@ -254,7 +255,7 @@ export const ObjktDisplay = () => {
               <div>
                 <Container>
                   <Padding>
-                    <ItemInfo {...nft} isDetailView />
+                    <ItemInfo {...nft} />
                   </Padding>
                 </Container>
 

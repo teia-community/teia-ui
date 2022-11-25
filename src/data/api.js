@@ -1,5 +1,31 @@
 const axios = require('axios')
 
+export const BaseTokenFieldsFragment = `
+fragment baseTokenFields on tokens {
+  fa2_address
+  token_id
+  name
+  description
+  editions
+  minted_at
+  thumbnail_uri
+  display_uri
+  artifact_uri
+  artist_address
+  artist_profile {
+    name
+  }
+  teia_meta {
+    accessibility
+    content_rating
+    is_signed
+  }
+  royalties
+  mime_type
+  price
+}
+`
+
 /**
  * Get OBJKT detail page
  */

@@ -18,11 +18,10 @@ function TokenMasonry({
   variables = {},
   swrParams = [],
   itemsPerLoad = 40,
-  resultsPath = 'token',
+  resultsPath = 'tokens',
   tokenPath = '',
-  keyPath = 'id',
+  keyPath = 'token_id',
   emptyMessage = 'no results',
-  postProcessTokens = (tokens) => tokens,
   extractTokensFromResponse = (
     data,
     { postProcessTokens, resultsPath, tokenPath, keyPath }
@@ -42,7 +41,7 @@ function TokenMasonry({
   const { data, error } = useSWR(
     [namespace, ...swrParams],
     (ns) =>
-      request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
+      request(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, query, {
         ...variables,
       }),
     {
@@ -75,7 +74,7 @@ function TokenMasonry({
     resultsPath,
     tokenPath,
     keyPath,
-  }).filter((token) => walletBlockMap.get(token.creator.address) !== 1)
+  }).filter((token) => walletBlockMap.get(token.artist_address) !== 1)
 
   if (!tokens.length) {
     return (
@@ -93,13 +92,14 @@ function TokenMasonry({
         <div key={token.key || token.id} className={styles.cardContainer}>
           <Button
             style={{ positon: 'relative' }}
-            to={`${PATH.OBJKT}/${token.id}`}
+            to={`${PATH.OBJKT}/${token.token_id}`}
           >
             <div
               className={`${styles.container} ${
-                nsfwMap.get(token.id) === 1 ||
-                (token.content_rating &&
-                  token.content_rating === METADATA_CONTENT_RATING_MATURE)
+                nsfwMap.get(token.token_id) === 1 ||
+                (get(token, 'teia_meta.content_rating') &&
+                  get(token, 'teia_meta.content_rating') ===
+                    METADATA_CONTENT_RATING_MATURE)
                   ? styles.blur
                   : ''
               }`}

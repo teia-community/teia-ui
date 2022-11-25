@@ -15,9 +15,9 @@ function TokenFeed({
   variables = {},
   swrParams = [],
   itemsPerLoad = 24,
-  resultsPath = 'token',
+  resultsPath = 'tokens',
   tokenPath = '',
-  keyPath = 'id',
+  keyPath = 'token_id',
   emptyMessage = 'no results',
   postProcessTokens = (tokens) => tokens,
   enableInfinityScroll = true,
@@ -43,7 +43,7 @@ function TokenFeed({
   const { data, error } = useSWR(
     [namespace, limit, ...swrParams],
     (ns, limit) =>
-      request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
+      request(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, query, {
         ...variables,
         ...(enableInfinityScroll ? { limit } : {}),
       }),
@@ -79,8 +79,8 @@ function TokenFeed({
     keyPath,
   }).filter(
     (token) =>
-      walletBlockMap.get(token.creator.address) !== 1 &&
-      feedIgnoreUriMap.get(token.creator.address) !== 1
+      walletBlockMap.get(token.artist_address) !== 1 &&
+      feedIgnoreUriMap.get(token.artist_address) !== 1
   )
 
   if (!tokens.length) {
