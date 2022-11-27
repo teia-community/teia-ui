@@ -46,7 +46,7 @@ function FilterLink({ children, to }) {
   )
 }
 
-export function Search() {
+export function Home({ isSearch = false }) {
   const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
   const navigate = useNavigate()
@@ -67,7 +67,7 @@ export function Search() {
                 if (e.key === 'Enter') {
                   navigate(
                     {
-                      pathname: 'search',
+                      pathname: '/search',
                       search: createSearchParams({
                         term: searchTerm,
                       }).toString(),
@@ -96,30 +96,31 @@ export function Search() {
                 <FilterLink to="/">recent sales</FilterLink>
               </div>
             </div>
-            <Routes>
-              <Route path="/search" element={<SubjktsSearchResults />} />
-            </Routes>
+            {isSearch ? <SubjktsSearchResults /> : null}
           </Padding>
         </Container>
         <Container xlarge>
-          <Routes>
-            <Route index element={<RecentSalesFeed />} />
-            <Route
-              path="/tezospride"
-              element={<TagFeed tag="tezospride" namespace="tezospride" />}
-            />
-            <Route path="/iran" element={<IranFeed />} />
-            <Route path="/pakistan" element={<PakistanFeed />} />
-            <Route path="/ukraine" element={<UkraineFeed />} />
-            <Route path="/random" element={<RandomFeed />} />
-            <Route path="/newobjkts" element={<NewObjktsFeed />} />
-            <Route path="/glb" element={<GlbFeed />} />
-            <Route path="/music" element={<MusicFeed />} />
-            <Route path="/video" element={<VideoFeed />} />
-            <Route path="/html-svg" element={<HtmlSvgFeed />} />
-            <Route path="/gif" element={<GifFeed />} />
-            <Route path="search" element={<SearchFeed />} />
-          </Routes>
+          {isSearch ? (
+            <SearchFeed />
+          ) : (
+            <Routes>
+              <Route index element={<RecentSalesFeed />} />
+              <Route
+                path="/tezospride"
+                element={<TagFeed tag="tezospride" namespace="tezospride" />}
+              />
+              <Route path="/iran" element={<IranFeed />} />
+              <Route path="/pakistan" element={<PakistanFeed />} />
+              <Route path="/ukraine" element={<UkraineFeed />} />
+              <Route path="/random" element={<RandomFeed />} />
+              <Route path="/newobjkts" element={<NewObjktsFeed />} />
+              <Route path="/glb" element={<GlbFeed />} />
+              <Route path="/music" element={<MusicFeed />} />
+              <Route path="/video" element={<VideoFeed />} />
+              <Route path="/html-svg" element={<HtmlSvgFeed />} />
+              <Route path="/gif" element={<GifFeed />} />
+            </Routes>
+          )}
         </Container>
       </IconCache.Provider>
     </Page>
