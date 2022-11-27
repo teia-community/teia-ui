@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import { useParams } from 'react-router'
 import { Button } from '@components/button'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
@@ -56,7 +56,6 @@ export const Tags = () => {
   const { id } = useParams()
   const [feed, setFeed] = useState([])
   const [count, setCount] = useState(0)
-  const [hasMore] = useState(true)
   const [offset, setOffset] = useState(0)
 
   const loadMore = async () => {
@@ -85,12 +84,7 @@ export const Tags = () => {
   return (
     <Page title={`Tag ${id}`}>
       <div className="tag-view">
-        <InfiniteScroll
-          dataLength={feed.length}
-          next={loadMore}
-          hasMore={hasMore}
-          loader={undefined}
-        >
+        <InfiniteScroll loadMore={loadMore} hasMore={offset < feed.length}>
           <div className={styles.container}>
             <Container xlarge>
               <ResponsiveMasonry>

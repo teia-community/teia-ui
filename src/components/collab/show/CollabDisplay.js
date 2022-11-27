@@ -15,7 +15,7 @@ import {
   getCollabCreationsByAddress,
   getCollabCreationsBySubjkt,
 } from '../../../data/hicdex'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
@@ -202,11 +202,8 @@ export const CollabDisplay = () => {
       {!loading && (
         <Container xlarge>
           <InfiniteScroll
-            dataLength={items.length}
-            next={() => setOffset(offset + chunkSize)}
-            hasMore={items.length < creations.length}
-            loader={undefined}
-            endMessage={undefined}
+            loadMore={() => setOffset(offset + chunkSize)}
+            hasMore={offset < items.length}
           >
             <ResponsiveMasonry>
               {items.map((nft) => {

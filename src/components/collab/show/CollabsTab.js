@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import { Button } from '../../button'
 import { Container, Padding } from '../../layout'
 import { renderMediaType } from '../../media-types'
@@ -72,8 +72,6 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
     setOffset(offset + chunkSize)
   }
 
-  const hasMore = items.length < objkts.length
-
   const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
 
   // Only show unverified objkts if the user chooses to see them
@@ -108,8 +106,8 @@ export const CollabsTab = ({ wallet, onLoaded }) => {
 
       <InfiniteScroll
         dataLength={itemsToShow.length}
-        next={loadMore}
-        hasMore={hasMore}
+        loadMore={loadMore}
+        hasMore={offset < itemsToShow.length}
         loader={undefined}
         endMessage={undefined}
       >

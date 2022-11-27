@@ -7,7 +7,7 @@ import { Button, Primary } from '@components/button'
 import { ItemModal } from './item-modal'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
 import { renderMediaType } from '@components/media-types'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import styles from './styles.module.scss'
 import { fetchObjkts } from '@data/hicdex'
 import axios from 'axios'
@@ -118,11 +118,8 @@ export const GalleryDetail = () => {
           <Container xlarge>
             <Padding>
               <InfiniteScroll
-                dataLength={context.feed.length}
-                next={loadMore}
-                hasMore={hasMore}
-                loader={undefined}
-                endMessage={undefined}
+                loadMore={loadMore}
+                hasMore={offset < context.feed.length}
               >
                 <ResponsiveMasonry>
                   {context.feed.map((nft) => {

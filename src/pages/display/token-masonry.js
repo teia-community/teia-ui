@@ -7,7 +7,7 @@ import { ResponsiveMasonry } from '@components/responsive-masonry'
 import { METADATA_CONTENT_RATING_MATURE, PATH } from '@constants'
 import { Container, Padding } from '@components/layout'
 import { Button } from '@components/button'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import styles from './styles.module.scss'
 import laggy from '../../utils/swr-laggy-middleware'
 import useSettings from '@hooks/use-settings'
@@ -39,6 +39,7 @@ function TokenMasonry({
 
   const filter = (token) => (walletBlockMap.get(token.id) === 1 ? null : token)
   const [limit, setLimit] = useState(itemsPerLoad)
+
   const { data, error } = useSWR(
     [namespace, ...swrParams],
     (ns) =>
@@ -90,7 +91,7 @@ function TokenMasonry({
   const tokensContainer = (
     <ResponsiveMasonry>
       {tokens.slice(0, limit).map((token) => (
-        <div key={token.key} className={styles.cardContainer}>
+        <div key={token.key || token.id} className={styles.cardContainer}>
           <Button
             style={{ positon: 'relative' }}
             to={`${PATH.OBJKT}/${token.id}`}
@@ -117,13 +118,10 @@ function TokenMasonry({
 
   return (
     <InfiniteScroll
-      dataLength={tokens.length}
-      next={() => {
+      loadMore={() => {
         setLimit(limit + itemsPerLoad)
       }}
-      hasMore={true}
-      loader={undefined}
-      endMessage={undefined}
+      hasMore={limit < tokens.length}
     >
       {tokensContainer}
     </InfiniteScroll>
