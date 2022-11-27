@@ -39,7 +39,7 @@ const verify = require('@utils/verify')
 
 export const HicetnuncContext = createContext()
 
-const Tezos = new TezosToolkit('https://mainnet.api.tez.ie')
+const Tezos = new TezosToolkit(process.env.REACT_APP_TEZOS_RPC)
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
@@ -907,7 +907,7 @@ class HicetnuncContextProviderClass extends Component {
       syncTaquito: async () => {
         const network = {
           type: 'mainnet',
-          rpcUrl: 'https://mainnet.smartpy.io',
+          rpcUrl: process.env.REACT_APP_TEZOS_RPC,
         }
 
         // We check the storage and only do a permission request if we don't have an active account yet

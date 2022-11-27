@@ -5,6 +5,8 @@
   @include resetButton();
   font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
 
+  word-break: normal;
+
   &.fit {
     display: contents;
   }

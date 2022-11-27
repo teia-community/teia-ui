@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import get from 'lodash/get'
 import { Container, Padding } from '@components/layout'
 import { Loading } from '@components/loading'
 import { Button, Primary } from '@components/button'
@@ -9,13 +10,11 @@ import useSWR from 'swr'
 import { fetchGraphQL } from '@data/hicdex'
 import { GetUserMetadata } from '@data/api'
 import { IconCache } from '@utils/with-icon'
-import { HashToURL } from '@utils'
 import useSettings from '@hooks/use-settings'
 import Profile from './profile'
 import Creations from './creations'
 import Collections from './collections'
 import styles from './styles.module.scss'
-const axios = require('axios')
 
 async function getHolder(addressOrSubjkt, type) {
   const { data } = await fetchGraphQL(
@@ -72,16 +71,12 @@ async function fetchUserInfo(addressOrSubjkt, type = 'address') {
 
   user.address = holder.address
 
-  const meta = (await axios.get(HashToURL(holder.metadata_file))).data
-
-  console.debug('meta', meta)
-
-  if (meta.description) {
-    user.description = meta.description
+  if (get(holder, 'metadata.description')) {
+    user.description = get(holder, 'metadata.description')
   }
 
-  if (meta.identicon) {
-    user.identicon = meta.identicon
+  if (get(holder, 'metadata.identicon')) {
+    user.identicon = get(holder, 'metadata.identicon')
   }
 
   if (holder.name) {
@@ -93,10 +88,10 @@ async function fetchUserInfo(addressOrSubjkt, type = 'address') {
 
 export default function Display() {
   const { address, subjkt } = useParams()
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
   const isRestrictedUser = useMemo(
-    () => walletBlockList.get(address) === 1,
-    [address, walletBlockList]
+    () => walletBlockMap.get(address) === 1,
+    [address, walletBlockMap]
   )
   const [showFilters, setShowFilters] = useState(false)
 

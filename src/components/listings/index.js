@@ -25,7 +25,7 @@ function TeiaOrHenSwapRow({
   reswap,
   cancel,
 }) {
-  const { walletBlockList } = useSettings()
+  const { walletBlockMap } = useSettings()
 
   const isOwnSwap =
     swap.creator.address === acc?.address ||
@@ -47,12 +47,12 @@ function TeiaOrHenSwapRow({
         )}
       </div>
       <div className={styles.buttons}>
-        {(restricted || walletBlockList.get(swap.creator_id) === 1) && (
+        {(restricted || walletBlockMap.get(swap.creator_id) === 1) && (
           <RestrictedLabel />
         )}
         <MarketplaceLabel swap={swap} />
         {!restricted &&
-          walletBlockList.get(swap.creator_id) !== 1 &&
+          walletBlockMap.get(swap.creator_id) !== 1 &&
           !isOwnSwap && (
             <Button
               onClick={() =>

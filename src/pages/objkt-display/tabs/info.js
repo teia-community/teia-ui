@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Container, Padding } from '@components/layout'
 import { Tags } from '@components/tags'
 import styles from '../styles.module.scss'
@@ -9,6 +9,7 @@ import {
   LICENSE_TYPES,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
+import { getWordDate } from '@utils/time'
 
 /**
  * The Info Tab
@@ -18,110 +19,82 @@ import {
  * @returns {any}
  */
 export const Info = ({ nft, viewer_address }) => {
-  const tag = {
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-    color: 'var(--gray-80)',
-  }
+  const artifact_ipfs_url = useMemo(
+    () =>
+      HashToURL(nft.artifact_uri) +
+      `/?creator=${nft.creator.address}&viewer=${viewer_address || ''}&objkt=${
+        nft.id
+      }`,
+    [nft, viewer_address]
+  )
+  const metadata_ipfs_url = useMemo(() => HashToURL(nft.metadata), [nft])
   return (
     <>
       <Container>
-        <Padding>
-          <div
-            className={styles.objkt__title}
-            style={{
-              margin: '0 1em',
-            }}
-          >
-            {nft.title}
-          </div>
-        </Padding>
-      </Container>
+        <div className={styles.infos_container}>
+          <Padding>
+            <div className={styles.objkt__title}>{nft.title}</div>
+          </Padding>
 
-      <Container>
-        <Padding>
-          <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
-            {nft.description}
-          </div>
-        </Padding>
-      </Container>
+          <Padding>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
+          </Padding>
 
-      <Container>
-        <Padding>
-          <Tags token_tags={nft.token_tags} />
-        </Padding>
+          <Padding>
+            <Tags token_tags={nft.token_tags} />
+          </Padding>
+        </div>
       </Container>
-
       <Container>
-        <div style={{ fontSize: '0.75em' }}>
-          <div style={{ margin: '0 1em' }}>
-            <hr style={{ color: 'var(--gray-20)', marginBottom: '1em' }} />
-            <div style={{ display: 'flex' }}>
-              <div>
-                <div style={{ marginBottom: '0.5em' }}>
-                  <Padding>
-                    <strong>Mimetype</strong>:<p>{nft.mime}</p>
-                  </Padding>
-                </div>
+        <div className={styles.infos_attributes_container}>
+          <hr />
+          <div className={styles.infos_attributes_flex}>
+            <div className={styles.info_attributes}>
+              Mimetype:<p>{nft.mime}</p>
+            </div>
+            {nft.language && (
+              <div className={styles.info_attributes}>
+                Language:<p>{LANGUAGES[nft.language]}</p>
               </div>
-              {nft.language && (
-                <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
-                  <strong>Language:</strong>
-                  <p>{LANGUAGES[nft.language]}</p>
-                </div>
-              )}
-
-              {nft.content_rating === METADATA_CONTENT_RATING_MATURE && (
-                <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
-                  <strong>Content Rating:</strong>
+            )}
+            {nft.content_rating && (
+              <div className={styles.info_attributes}>
+                Content Rating:
+                {nft.content_rating === METADATA_CONTENT_RATING_MATURE ? (
                   <p>NSFW (Mature)</p>
-                </div>
-              )}
-
-              <div style={{ whiteSpace: 'pre-wrap', margin: '0 1em' }}>
-                <strong>Rights:</strong>
-                <p>
-                  {nft.rights ? (
-                    nft.rights === 'custom' ? (
-                      <a target="_blank" href={nft.right_uri} rel="noreferrer">
-                        Custom
-                      </a>
-                    ) : (
-                      LICENSE_TYPES[nft.rights]
-                    )
-                  ) : (
-                    LICENSE_TYPES.none
-                  )}
-                </p>
+                ) : (
+                  <p>Unknown Rating</p>
+                )}
               </div>
+            )}
+
+            <div className={styles.info_attributes}>
+              Rights:
+              <p>
+                {nft.rights ? (
+                  nft.rights === 'custom' ? (
+                    <a target="_blank" href={nft.right_uri} rel="noreferrer">
+                      Custom
+                    </a>
+                  ) : (
+                    LICENSE_TYPES[nft.rights]
+                  )
+                ) : (
+                  LICENSE_TYPES.none
+                )}
+              </p>
+            </div>
+
+            <div className={styles.info_attributes}>
+              Mint date:
+              <p>{getWordDate(nft.timestamp)}</p>
             </div>
           </div>
-          <div style={{ height: '2em' }} />
-
-          <Padding className="tag">
-            <div
-              style={{
-                fontWeight: 'bold',
-                whiteSpace: 'pre-wrap',
-                margin: '0 1em',
-              }}
-            >
-              <a style={tag} href={HashToURL(nft.metadata)}>
-                Metadata
-              </a>
-              &nbsp;//&nbsp;
-              <a
-                style={tag}
-                href={
-                  HashToURL(nft.artifact_uri) +
-                  `/?creator=${nft.creator.address}&viewer=${
-                    viewer_address || ''
-                  }&objkt=${nft.id}`
-                }
-              >
-                View on ipfs
-              </a>
+          <Padding>
+            <div className={styles.info_ipfs}>
+              <a href={metadata_ipfs_url}>Metadata</a>
+              {' // '}
+              <a href={artifact_ipfs_url}>View on ipfs</a>
             </div>
           </Padding>
         </div>

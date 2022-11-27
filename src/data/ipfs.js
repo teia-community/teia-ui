@@ -20,7 +20,7 @@ export async function uploadFileToIPFSProxy(file) {
   const form = new FormData()
 
   const file_type = mime.lookup(file.path)
-  console.debug(`iploading ${file.path} as ${file_type}`)
+  console.debug(`uploading ${file.path} as ${file_type}`)
 
   form.append('asset', new File([file.blob], file.path, { type: file_type }))
 

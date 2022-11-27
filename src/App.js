@@ -13,7 +13,7 @@ import { Collaborate, CollabDisplay } from './pages/collaborate'
 import { Galleries } from './pages/galleries'
 import { GalleryDetail } from './pages/gallery-detail'
 import { Config } from './pages/config'
-import { Search } from './pages/search'
+import { Home } from './pages/home'
 import { Tags } from './pages/tags'
 import { Friends } from './pages/friends'
 import { Terms } from './pages/terms'
@@ -28,9 +28,9 @@ const App = () => {
   return (
     <HicetnuncContextProvider>
       <Routes>
-        <Route path="/" element={<Search />} />
-        <Route path="/feed/*" element={<Search />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/feed/*" element={<Home />} />
+        <Route path="/search" element={<Home isSearch />} />
 
         <Route path="/friends/:id" element={<Friends />} />
         <Route path="/tz/:address/*" element={<Display />} />

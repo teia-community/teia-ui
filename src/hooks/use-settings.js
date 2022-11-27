@@ -4,10 +4,10 @@ import flatten from 'lodash/flatten'
 
 function shuffleLogos(logos) {
   // Shuffles the list daily
-  let shuffledLogos = [...logos]
-  let currentIndex = shuffledLogos.length,
-    temporaryValue,
-    randomIndex
+  const shuffledLogos = [...logos]
+  let currentIndex = shuffledLogos.length
+  let temporaryValue
+  let randomIndex
   const date = new Date(Date.now())
   let day =
     (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
@@ -16,14 +16,14 @@ function shuffleLogos(logos) {
     60 /
     60 /
     1000
-  let random = function () {
-    var x = Math.sin(day++) * 10000
+  const random = function () {
+    const x = Math.sin(day++) * 10000
     return x - Math.floor(x)
   }
 
   while (0 !== currentIndex) {
     randomIndex = Math.floor(random() * currentIndex)
-    currentIndex -= 1
+    currentIndex--
     //swap
     temporaryValue = shuffledLogos[currentIndex]
     shuffledLogos[currentIndex] = shuffledLogos[randomIndex]
@@ -40,28 +40,37 @@ function filterWalletBlockList(restrictedLists, permittedLists) {
   const overiddenList = flatten(restrictedLists).filter(
     (account) => !walletAllowList.includes(account)
   )
-  const walletBlockList = new Map()
-  overiddenList.forEach((e) => {
-    walletBlockList.set(e, 1)
-  })
-  return walletBlockList
+
+  return mapFromList(overiddenList)
 }
 
+const mapFromList = (input_list) => {
+  const out_map = new Map()
+  input_list.forEach((element) => {
+    out_map.set(element, 1)
+  })
+
+  return out_map
+}
 async function fetchSettings() {
   const [
-    objktBlockListResponse,
-    banBlockListResponse,
     logosResponse,
     logosPrideResponse,
     teiaRestrictedListResponse,
     teiaPermittedListResponse,
+    nsfwResponse,
+    underReviewResponse,
+    ignoreUriResponse,
+    feedIgnoreUriResponse,
   ] = await Promise.all([
-    axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
-    axios.get(process.env.REACT_APP_BLOCKLIST_BAN), // blocked wallets (dont allow to visualise in /tz/walletid)
     axios.get(`${process.env.REACT_APP_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(`${process.env.REACT_APP_LOGOS}/logos_pride.json`), // list of logos for the pride month
     axios.get(process.env.REACT_APP_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
     axios.get(process.env.REACT_APP_TEIA_PERMITTED_LIST), // Teia list of acccounts that override HEN's restricted list
+    axios.get(process.env.REACT_APP_TEIA_NSFW_LIST), // Teia list of NSFW tokens that are added by the moderation team
+    axios.get(process.env.REACT_APP_TEIA_UNDER_REVIEW_LIST), // Teia list of under review accounts added by the moderation team
+    axios.get(process.env.REACT_APP_TEIA_IGNORE_URI_LIST), // Teia list of uri to ignore added by the moderation team
+    axios.get(process.env.REACT_APP_TEIA_FEED_IGNORE_LIST), // Teia list of wallets to ignore only from feeds (created to avoid fundraiser tag abusers)
   ])
 
   const logoPacks = [logosResponse, logosPrideResponse]
@@ -74,24 +83,23 @@ async function fetchSettings() {
     }))
   )
 
-  const objktBlockList = new Map()
-  objktBlockListResponse.data.forEach((element) => {
-    objktBlockList.set(element, 1)
-  })
+  const nsfwMap = mapFromList(nsfwResponse.data)
+  const underReviewMap = mapFromList(underReviewResponse.data)
+  const ignoreUriMap = mapFromList(ignoreUriResponse.data)
+  const feedIgnoreUriMap = mapFromList(feedIgnoreUriResponse.data)
 
-  const banBlockList = new Map()
-  banBlockListResponse.data.forEach((e) => {
-    banBlockList.set(e, 1)
-  })
+  const walletBlockMap = filterWalletBlockList(
+    [teiaRestrictedListResponse.data],
+    [teiaPermittedListResponse.data]
+  )
 
   return {
-    objktBlockList,
-    banBlockList,
     logos: shuffleLogos(logos),
-    walletBlockList: filterWalletBlockList(
-      [teiaRestrictedListResponse.data],
-      [teiaPermittedListResponse.data]
-    ),
+    walletBlockMap,
+    nsfwMap,
+    underReviewMap,
+    ignoreUriMap,
+    feedIgnoreUriMap,
   }
 }
 

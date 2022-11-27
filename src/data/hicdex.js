@@ -135,6 +135,12 @@ shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_partici
         royalties
         creator {
           address
+          shares {
+            shareholder {
+              holder_type
+              holder_id
+            }
+          }
         }
       }
     }
@@ -143,7 +149,7 @@ shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_partici
 }`
 
 export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addresses: [String!]) {
-  split_contract(where: {shareholder: {holder_id: {_in: $addresses}}, contract: {tokens: {supply: {_gt: "0"}, _and: {is_signed: {_eq: true}}}}}) {
+  split_contract(where: {shareholder: {holder_id: {_in: $addresses}}}) {
     contract {
       address
       name
@@ -154,7 +160,7 @@ export const getCollabTokensForAddressesByShare = `query GetCollabTokens($addres
           shares
         }
       }
-      tokens(order_by: {timestamp: desc}) {
+      tokens(where: {supply: {_gt: "0"}, is_signed: {_eq: true}}, order_by: {timestamp: desc}) {
         id
         artifact_uri
         display_uri
