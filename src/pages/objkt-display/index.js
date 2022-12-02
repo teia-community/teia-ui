@@ -1,17 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
+import set from 'lodash/set'
 import { useParams } from 'react-router-dom'
-
-import sortBy from 'lodash/sortBy'
-
+import useSWR from 'swr'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import {
-  SUPPORTED_MARKETPLACE_CONTRACTS,
-  MIMETYPE,
-  METADATA_CONTENT_RATING_MATURE,
-} from '@constants'
+import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/hicdex'
-import { fetchObjktcomAsks } from '@data/objktcom'
 import { Loading } from '@components/loading'
 import { Button, Primary } from '@components/button'
 import { Page, Container, Padding } from '@components/layout'
@@ -24,8 +18,8 @@ import './style.css'
 import useSettings from '@hooks/use-settings'
 
 const TABS = [
-  { title: 'Info', component: Info }, // public tab
-  { title: 'Listings', component: Collectors }, // public tab
+  { title: 'Info', component: Info },
+  { title: 'Listings', component: Collectors },
   { title: 'History', component: History },
   { title: 'Swap', component: Swap, private: true, restricted: true }, // private tab (users only see if they are the creators or own a copy)
   { title: 'Burn', component: Burn, private: true }, // private tab (users only see if they are the creators or own a copy)
@@ -36,126 +30,59 @@ export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(HicetnuncContext)
   const { walletBlockMap } = useSettings()
-
-  const [loading, setLoading] = useState(true)
   const [tabIndex, setTabIndex] = useState(0)
-  const [nft, setNFT] = useState()
-  const [error] = useState(false)
-  const [restricted, setRestricted] = useState(false)
-  const [underReview, setUnderReview] = useState(false)
-
   const address = context.acc?.address
   const proxy = context.getProxy()
-
   const { nsfwMap, underReviewMap } = useSettings()
 
-  // TODO xat: convert this to useSwr
-  useEffect(async () => {
-    const [objkt, objktcomAsks] = await Promise.all([
-      fetchObjktDetails(id),
-      fetchObjktcomAsks(id),
-    ])
+  const { data: nft, error } = useSWR(
+    ['/token', id],
+    async () => {
+      const objkt = await fetchObjktDetails(id)
 
-    const listings = sortBy(
-      [
-        ...objkt.swaps
-          .filter(
-            (swap) =>
-              SUPPORTED_MARKETPLACE_CONTRACTS.includes(swap.contract_address) &&
-              parseInt(swap.status) === 0 &&
-              swap.is_valid
-          )
-          .map((swap) => ({
-            ...swap,
-            token: { id: id, creator_id: objkt.creator.address },
-            key: `${swap.contract_address}-${swap.id}`,
-            type: 'swap',
-          })),
-        ...objktcomAsks.map((ask) => ({
-          ...ask,
-          key: `objktcom_ask_${ask.id}`,
-          type: 'objktcom_ask',
-        })),
-      ],
-      ({ price }) => price
-    )
-
-    objkt.listings = listings
-
-    if (nsfwMap.get(objkt.id) === 1) {
-      objkt.content_rating = METADATA_CONTENT_RATING_MATURE
-    }
-
-    await context.setAccount()
-
-    if (walletBlockMap.get(objkt.creator.address) === 1) {
-      setRestricted(true)
-      objkt.restricted = true
-    } else {
-      objkt.restricted = false
-
-      if (underReviewMap.get(objkt.creator.address) === 1) {
-        setUnderReview(true)
-        objkt.underReview = true
+      if (!objkt) {
+        throw new Error('unknown objkt')
       }
-      // filter swaps from banned account
-      if (objkt.swaps && walletBlockMap)
-        objkt.swaps = objkt.swaps.filter(
-          (s) => s.status > 0 || walletBlockMap.get(s.creator_id) !== 1
-        )
+
+      if (nsfwMap.get(objkt.token_id) === 1) {
+        set(objkt, 'teia_meta.content_rating', METADATA_CONTENT_RATING_MATURE)
+      }
+
+      // TODO: is really needed?
+      await context.setAccount()
+
+      objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
+      objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
+      objkt.listings = objkt.listings.filter(
+        ({ seller_address }) => walletBlockMap.get(seller_address) !== 1
+      )
+
+      return objkt
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
     }
-    setNFT(objkt)
-    setLoading(false)
-    /*     GetOBJKT({ id })
-      .then(async (objkt) => {
-        if (Array.isArray(objkt)) {
-          setError(
-            "There's a problem loading this OBJKT. Please report it on Github."
-          )
-          setLoading(false)
-        } else {
-          await context.setAccount()
-          setNFT(objkt)
+  )
 
-          setLoading(false)
-        }
-      })
-      .catch((e) => {
-        if (e.response && e.response.data.error) {
-          setError(
-            `(http ${e.response.data.error.http_status}) ${e.response.data.error.message}`
-          )
-        } else if (e.response && e.response.data) {
-          setError(`(http ${e.response.status}) ${e.response.data}`)
-        } else if (e.request) {
-          setError(
-            `There's a problem loading this OBJKT. Please report it on Github. ${e.message}`
-          )
-        } else {
-          setError(
-            `There's a problem loading this OBJKT. Please report it on Github. ${e}`
-          )
-        }
-        setLoading(false)
-      }) */
-  }, [])
-
+  const loading = !nft && !error
   const Tab = TABS[tabIndex].component
 
-  const objkt_classes = []
-  useEffect(() => {
+  const objkt_classes = useMemo(() => {
     if (!nft) {
-      return
+      return []
     }
 
+    const classes = []
+
     if (
-      nft.mime === MIMETYPE.DIRECTORY ||
-      nft.mime === MIMETYPE.SVG
+      nft.mime_type === MIMETYPE.DIRECTORY ||
+      nft.mime_type === MIMETYPE.SVG
       // nft.mime === MIMETYPE.MD
     ) {
-      objkt_classes.push('objktview-zipembed')
-      objkt_classes.push('objktview')
-      objkt_classes.push(styles.objktview)
+      classes.push('objktview-zipembed')
+      classes.push('objktview')
+      classes.push(styles.objktview)
     } else if (
       [
         MIMETYPE.MP4,
@@ -163,16 +90,19 @@ export const ObjktDisplay = () => {
         MIMETYPE.QUICKTIME,
         MIMETYPE.WEBM,
         MIMETYPE.PDF,
-      ].includes(nft.mime)
+      ].includes(nft.mime_type)
     ) {
-      objkt_classes.push('no-fullscreen')
+      classes.push('no-fullscreen')
     } else {
-      objkt_classes.push('objktview')
-      objkt_classes.push(styles.objktview)
+      classes.push('objktview')
+      classes.push(styles.objktview)
     }
+
+    return classes
   }, [nft])
+
   return (
-    <Page title={nft?.title}>
+    <Page title={nft?.name}>
       {loading && (
         <Container>
           <Padding>
@@ -201,7 +131,7 @@ export const ObjktDisplay = () => {
           <>
             <Container>
               <Padding>
-                {restricted && (
+                {nft.restricted && (
                   <div className={styles.restricted}>
                     Restricted OBJKT. Contact the Teia moderators on{' '}
                     <a
@@ -222,7 +152,7 @@ export const ObjktDisplay = () => {
                     .
                   </div>
                 )}
-                {underReview && (
+                {nft.underReview && (
                   <div className={styles.restricted}>
                     OBJKT under review. Contact the Teia moderators on{' '}
                     <a
@@ -255,7 +185,7 @@ export const ObjktDisplay = () => {
               <div>
                 <Container>
                   <Padding>
-                    <ItemInfo {...nft} />
+                    <ItemInfo nft={nft} />
                   </Padding>
                 </Container>
 
@@ -270,15 +200,15 @@ export const ObjktDisplay = () => {
                           return null
                         }
 
-                        if (nft?.token_holders && tab.private) {
-                          let holders_arr = nft.token_holders.map(
-                            (e) => e.holder_id
+                        if (nft?.holdings && tab.private) {
+                          let holders_arr = nft.holdings.map(
+                            (e) => e.holder_address
                           )
 
                           if (
                             holders_arr.includes(address) === false &&
-                            nft.creator.address !== address &&
-                            nft.creator.address !== proxy
+                            nft.artist_address !== address &&
+                            nft.artist_address !== proxy
                           ) {
                             // user is not the creator now owns a copy of the object. hide
 

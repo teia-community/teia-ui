@@ -639,37 +639,33 @@ class HicetnuncContextProviderClass extends Component {
           })
       },
 
-      collect: async (contract_address, swap_id, amount) => {
-        return await Tezos.wallet
-          .at(this.state.proxyAddress || contract_address)
-          .then((c) =>
-            c.methods.collect(parseFloat(swap_id)).send({
-              amount: parseFloat(amount),
+      collect: async (listing) => {
+        if (listing.type.startsWith('HEN') || listing.type.startsWith('TEIA')) {
+          // TODO: be more specific about the type
+          return await Tezos.wallet
+            .at(this.state.proxyAddress || listing.contract_address)
+            .then((c) =>
+              c.methods.collect(parseFloat(listing.swap_id)).send({
+                amount: parseFloat(listing.price),
+                mutez: true,
+                storageLimit: 350,
+              })
+            )
+            .catch((e) => e)
+        } else if (listing.type.startsWith('OBJKT')) {
+          // TODO: be more specific about the type
+          // TODO: test this
+          return await Tezos.wallet.at(listing.contract_address).then((c) =>
+            c.methods.fulfill_ask(listing.ask_id).send({
+              amount: listing.price,
               mutez: true,
               storageLimit: 350,
             })
           )
-          .catch((e) => e)
-      },
-
-      fulfillObjktcomAsk: async (ask) => {
-        let contractAddress
-
-        if (ask.contract_version === 1) {
-          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V1
-        } else if (ask.contract_version === 4) {
-          contractAddress = MARKETPLACE_CONTRACT_OBJKTCOM_V4
         } else {
-          throw new Error('unsupported objkt.com marketplace contract')
+          // TODO: handle Versum case
+          throw new Error('unsupported listing')
         }
-
-        return await Tezos.wallet.at(contractAddress).then((c) =>
-          c.methods.fulfill_ask(ask.id).send({
-            amount: ask.price,
-            mutez: true,
-            storageLimit: 350,
-          })
-        )
       },
 
       curate: async (objkt_id) => {

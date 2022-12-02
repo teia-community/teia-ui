@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import { walletPreview } from '../../../utils/string'
 import styles from '../styles.module.scss'
 
@@ -8,15 +9,18 @@ export const SigningSummary = ({ coreParticipants, signatures }) => {
         <strong>Signing status</strong>
       </h2>
       <ul className={styles.list}>
-        {coreParticipants.map(({ holder }) => {
+        {coreParticipants.map((participant) => {
           const hasSigned = signatures.some(
-            ({ holder_id }) => holder.address === holder_id
+            ({ shareholder_address }) =>
+              participant.shareholder_address === shareholder_address
           )
 
           return (
             <li>
-              <a href={`/tz/${holder.address}`}>
-                {holder.name || walletPreview(holder.address)}:{' '}
+              <a href={`/tz/${participant.shareholder_address}`}>
+                {get(participant, 'shareholder_profile.name') ||
+                  walletPreview(participant.shareholder_address)}
+                :{' '}
               </a>
               {hasSigned ? '✓' : '❌'}
             </li>

@@ -30,6 +30,7 @@ import {
 } from '@constants'
 import {
   fetchGraphQL,
+  fetchGraphQLTezTok,
   getCollabsForAddress,
   getNameForAddress,
 } from '@data/hicdex'
@@ -124,12 +125,12 @@ export const Mint = () => {
   const updateName = () => {
     const currentAddress = proxyAddress || acc?.address
 
-    fetchGraphQL(getNameForAddress, 'GetNameForAddress', {
+    fetchGraphQLTezTok(getNameForAddress, 'GetNameForAddress', {
       address: currentAddress,
     }).then(({ data, errors }) => {
       if (data) {
-        const holder = data.holder[0]
-        setMintName(holder.name || currentAddress)
+        // TODO: test if this works
+        setMintName(_.get(data, 'teia_users.0.name') || currentAddress)
       }
     })
   }

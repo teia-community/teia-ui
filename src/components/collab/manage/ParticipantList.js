@@ -11,12 +11,12 @@ export const ParticipantList = ({ title, participants }) => {
           </h3>
         )}
         <div>
-          {participants.map((collabData, index) => [
+          {participants.map((participant, index) => [
             index > 0 && index < participants.length - 1 && ', ',
             index > 0 && index === participants.length - 1 && ', ',
             <CollabParticipant
-              key={collabData.holder.address}
-              collabData={collabData.holder}
+              key={participant.shareholder_address}
+              participant={participant}
             />,
           ])}
         </div>

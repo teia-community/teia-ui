@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Container, Padding } from '@components/layout'
 import { Tags } from '@components/tags'
 import styles from '../styles.module.scss'
@@ -19,21 +19,18 @@ import { getWordDate } from '@utils/time'
  * @returns {any}
  */
 export const Info = ({ nft, viewer_address }) => {
-  const artifact_ipfs_url = useMemo(
-    () =>
-      HashToURL(nft.artifact_uri) +
-      `/?creator=${nft.creator.address}&viewer=${viewer_address || ''}&objkt=${
-        nft.id
-      }`,
-    [nft, viewer_address]
-  )
-  const metadata_ipfs_url = useMemo(() => HashToURL(nft.metadata), [nft])
+  const artifact_ipfs_url =
+    HashToURL(nft.artifact_uri) +
+    `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
+      nft.token_id
+    }`
+  const metadata_ipfs_url = HashToURL(nft.metadata_uri)
   return (
     <>
       <Container>
         <div className={styles.infos_container}>
           <Padding>
-            <div className={styles.objkt__title}>{nft.title}</div>
+            <div className={styles.objkt__title}>{nft.name}</div>
           </Padding>
 
           <Padding>
@@ -41,7 +38,7 @@ export const Info = ({ nft, viewer_address }) => {
           </Padding>
 
           <Padding>
-            <Tags token_tags={nft.token_tags} />
+            <Tags token_tags={nft.tags} />
           </Padding>
         </div>
       </Container>

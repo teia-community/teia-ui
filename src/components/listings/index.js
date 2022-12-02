@@ -1,140 +1,107 @@
+import get from 'lodash/get'
 import React, { useContext, useState } from 'react'
 import { Button, Primary, Purchase } from '../button'
 
 import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-import {
-  MarketplaceLabel,
-  OBJKTLabel,
-  RestrictedLabel,
-} from './marketplace-labels'
+import { MarketplaceLabel, RestrictedLabel } from './marketplace-labels'
 import useSettings from 'hooks/use-settings'
 
-function TeiaOrHenSwapRow({
-  rowId,
-  swap,
-  acc,
-  proxyAdminAddress,
-  proxyAddress,
+// TODO: add support for all kind of listings
+function ListingRow({
+  listing,
   restricted,
+  proxyAddress,
+  onCollectClick,
   reswapPrices,
-  handleCollect,
   setReswapPrices,
   reswap,
   cancel,
+  acc,
+  proxyAdminAddress,
+  rowId,
 }) {
   const { walletBlockMap } = useSettings()
 
   const isOwnSwap =
-    swap.creator.address === acc?.address ||
+    listing.seller_address === acc?.address ||
     (proxyAdminAddress === acc?.address &&
-      swap.creator.address === proxyAddress)
+      listing.seller_address === proxyAddress)
 
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
-        {swap.amount_left} ed.&nbsp;
-        {swap.creator.name ? (
-          <Button to={`/tz/${swap.creator.address}`}>
-            <Primary>{encodeURI(swap.creator.name)}</Primary>
-          </Button>
-        ) : (
-          <Button to={`/tz/${swap.creator.address}`}>
-            <Primary>{walletPreview(swap.creator.address)}</Primary>
-          </Button>
-        )}
-      </div>
-      <div className={styles.buttons}>
-        {(restricted || walletBlockMap.get(swap.creator_id) === 1) && (
-          <RestrictedLabel />
-        )}
-        <MarketplaceLabel swap={swap} />
-        {!restricted &&
-          walletBlockMap.get(swap.creator_id) !== 1 &&
-          !isOwnSwap && (
-            <Button
-              onClick={() =>
-                handleCollect(swap.contract_address, swap.id, swap.price)
-              }
-            >
-              <Purchase>
-                Collect for {parseFloat(swap.price / 1000000)} tez
-              </Purchase>
-            </Button>
-          )}
-        {isOwnSwap && (
-          <>
-            <div className={styles.break}></div>
-            <input
-              value={reswapPrices[rowId] || parseFloat(swap.price / 1000000)}
-              onChange={(ev) => {
-                const { value } = ev.target
-                setReswapPrices((prevVal) => ({
-                  ...prevVal,
-                  [rowId]: value,
-                }))
-              }}
-              type="number"
-              placeholder="New price"
-              style={{ width: '80px', marginRight: '5px' }}
-            />
-            <Button
-              onClick={() => {
-                const priceTz = reswapPrices[rowId]
-
-                if (!priceTz || priceTz <= 0) {
-                  // TODO: communicate the error to the user.
-                  return
-                }
-
-                // TODO: add a indicator (spinner or something) that shows that the reswap is in progress
-                reswap(priceTz * 1000000, swap)
-                // TODO: after the reswap was successful we should send some feedback to the user
-              }}
-            >
-              <Purchase className={styles.smol}>reswap</Purchase>
-            </Button>
-
-            <Button
-              onClick={() => cancel(swap.contract_address, swap.id)}
-              className={styles.smol}
-            >
-              <Purchase>cancel</Purchase>
-            </Button>
-          </>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function ObjktcomAskRow({ id, ask, swap, restricted, onCollectClick }) {
-  const { walletBlockMap } = useSettings()
-
-  return (
-    <div className={styles.swap}>
-      <div className={styles.issuer}>
-        {ask.amount_left} ed.&nbsp;
-        <Button to={`/tz/${ask.seller.address}`}>
+        {listing.amount_left} ed.&nbsp;
+        <Button to={`/tz/${listing.seller_address}`}>
           <Primary>
-            {ask.seller.alias || walletPreview(ask.seller.address)}
+            {get(listing, 'seller_profile.name') ||
+              walletPreview(listing.seller_address)}
           </Primary>
         </Button>
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || walletBlockMap.get(swap.creator_id) === 1) && (
+        {(restricted || walletBlockMap.get(listing.seller_address) === 1) && (
           <RestrictedLabel />
         )}
-        <OBJKTLabel />
-        {!restricted && walletBlockMap.get(swap.creator_id) !== 1 && (
-          <Button onClick={() => onCollectClick()}>
-            <Purchase>
-              Collect for {parseFloat(ask.price / 1000000)} tez
-            </Purchase>
-          </Button>
-        )}
+        <MarketplaceLabel listing={listing} />
+        {!restricted &&
+          walletBlockMap.get(listing.seller_address) !== 1 &&
+          !isOwnSwap && (
+            <Button onClick={() => onCollectClick(listing)}>
+              <Purchase>
+                Collect for {parseFloat(listing.price / 1000000)} tez
+              </Purchase>
+            </Button>
+          )}
+        {(isOwnSwap && listing.type.startsWith('TEIA')) ||
+          (listing.type.startsWith('HEN') && (
+            <>
+              <div className={styles.break}></div>
+              <input
+                value={
+                  reswapPrices[rowId] || parseFloat(listing.price / 1000000)
+                }
+                onChange={(ev) => {
+                  const { value } = ev.target
+                  setReswapPrices((prevVal) => ({
+                    ...prevVal,
+                    [rowId]: value,
+                  }))
+                }}
+                type="number"
+                placeholder="New price"
+                style={{ width: '80px', marginRight: '5px' }}
+              />
+              <Button
+                onClick={() => {
+                  const priceTz = reswapPrices[rowId]
+
+                  if (!priceTz || priceTz <= 0) {
+                    // TODO: communicate the error to the user.
+                    return
+                  }
+
+                  // TODO: add a indicator (spinner or something) that shows that the reswap is in progress
+                  // TODO: test reswap after teztok integration
+                  reswap(priceTz * 1000000, listing)
+                  // TODO: after the reswap was successful we should send some feedback to the user
+                }}
+              >
+                <Purchase className={styles.smol}>reswap</Purchase>
+              </Button>
+
+              <Button
+                onClick={() =>
+                  cancel(listing.contract_address, listing.swap_id)
+                }
+                className={styles.smol}
+              >
+                <Purchase>cancel</Purchase>
+              </Button>
+            </>
+          ))}
       </div>
     </div>
   )
@@ -152,41 +119,33 @@ export const Listings = ({
 }) => {
   const { acc, proxyAddress } = useContext(HicetnuncContext)
   const [reswapPrices, setReswapPrices] = useState({})
+  const listingsWithKeys = listings.map((listing) => ({
+    ...listing,
+    key: listing.swap_id || listing.ask_id || listing.offer_id,
+  }))
 
   return (
     <div className={styles.container}>
-      {listings.map((listing) => {
-        if (listing.type === 'swap') {
-          return (
-            <TeiaOrHenSwapRow
-              key={listing.key}
-              rowId={listing.key}
-              swap={listing}
-              acc={acc}
-              proxyAdminAddress={proxyAdminAddress}
-              proxyAddress={proxyAddress}
-              restricted={restricted}
-              reswapPrices={reswapPrices}
-              handleCollect={handleCollect}
-              setReswapPrices={setReswapPrices}
-              reswap={reswap}
-              cancel={cancel}
-            />
-          )
-        } else {
-          return (
-            <ObjktcomAskRow
-              id={id}
-              key={listing.key}
-              ask={listing}
-              swap={listing}
-              restricted={restricted}
-              onCollectClick={() => {
-                handleCollectObjktcomAsk(listing)
-              }}
-            />
-          )
-        }
+      {listingsWithKeys.map((listing) => {
+        return (
+          <ListingRow
+            key={listing.key}
+            rowId={listing.key}
+            listing={listing}
+            restricted={restricted}
+            acc={acc}
+            proxyAdminAddress={proxyAdminAddress}
+            proxyAddress={proxyAddress}
+            reswapPrices={reswapPrices}
+            setReswapPrices={setReswapPrices}
+            reswap={reswap}
+            cancel={cancel}
+            onCollectClick={() => {
+              console.log('buy', listing)
+              handleCollect(listing)
+            }}
+          />
+        )
       })}
       <hr className={styles.nomobile}></hr>
     </div>

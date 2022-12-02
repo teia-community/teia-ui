@@ -89,3 +89,13 @@ export const HashToURL = (
   const CID = hash.split('ipfs://')[1]
   return CIDToURL(CID, type, options)
 }
+
+export function formatRoyalties(nft) {
+  const royalties = _.get(nft, 'royalty_receivers.0.royalties')
+
+  if (!_.isNumber(royalties)) {
+    return '-'
+  }
+
+  return `${royalties / 10000}%`
+}
