@@ -1,44 +1,24 @@
 import React, { useContext } from 'react'
+import get from 'lodash/get'
 import { Container, Padding } from '@components/layout'
 import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Listings } from '@components/listings'
 
-/**
- * The Collectors (listings) Tab
- * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
- * @returns {any}
- */
 export const Collectors = ({ nft }) => {
-  const {
-    syncTaquito,
-    collect,
-    fulfillObjktcomAsk,
-    acc,
-    cancel,
-    cancelv1,
-    reswap,
-  } = useContext(HicetnuncContext)
+  const { syncTaquito, collect, acc, cancel, cancelv1, reswap } =
+    useContext(HicetnuncContext)
 
-  const handleCollect = (contract_address, swap_id, price) => {
+  const handleCollect = (listing) => {
     if (acc === null) {
       syncTaquito()
     } else {
-      collect(contract_address, swap_id, price)
+      collect(listing)
     }
   }
 
-  const handleCollectObjktcomAsk = (ask) => {
-    if (acc === null) {
-      syncTaquito()
-    } else {
-      fulfillObjktcomAsk(ask)
-    }
-  }
-
-  const proxyAdminAddress = nft.creator.is_split
-    ? nft.creator.shares[0].administrator
+  const proxyAdminAddress = get(nft, 'artist_profile.is_split')
+    ? get(nft, 'artist_profile.split_contract.administrator_address')
     : null
 
   return (
@@ -47,10 +27,9 @@ export const Collectors = ({ nft }) => {
         <Container>
           <Padding>
             <Listings
-              id={nft.id}
+              id={nft.token_id}
               listings={nft.listings}
               handleCollect={handleCollect}
-              handleCollectObjktcomAsk={handleCollectObjktcomAsk}
               acc={acc}
               proxyAdminAddress={proxyAdminAddress}
               cancel={cancel}
@@ -65,7 +44,7 @@ export const Collectors = ({ nft }) => {
       {/* {filtered.length === 0 ? undefined : ( */}
       <Container>
         <Padding>
-          <OwnerList owners={nft.token_holders} />
+          <OwnerList owners={nft.holdings} />
         </Padding>
       </Container>
       {/* )} */}

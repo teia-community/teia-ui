@@ -14,6 +14,7 @@ fragment baseTokenFields on tokens {
   artist_address
   artist_profile {
     name
+    is_split
   }
   teia_meta {
     accessibility
@@ -23,6 +24,10 @@ fragment baseTokenFields on tokens {
   royalties
   mime_type
   price
+  royalty_receivers {
+    receiver_address
+    royalties
+  }
 }
 `
 

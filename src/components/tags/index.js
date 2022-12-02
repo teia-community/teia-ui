@@ -5,6 +5,7 @@ import { Button } from '../button'
 import styles from './styles.module.scss'
 
 export const Tags = ({ token_tags, preview }) => {
+  // TODO: fix data structures
   const context = useContext(HicetnuncContext)
 
   console.debug(token_tags)
@@ -29,19 +30,19 @@ export const Tags = ({ token_tags, preview }) => {
     return (
       <div className={styles.container}>
         {token_tags
-          .filter((e) => e.tag.tag !== '')
+          .filter((e) => e.tag !== '')
           .map((tag, index) => {
             return (
               <a
-                key={`tag${tag.tag.tag}${index}`}
-                href={`${PATH.TAGS}/${encodeURI(tag.tag.tag)}`}
+                key={`tag${tag.tag}${index}`}
+                href={`${PATH.TAGS}/${encodeURI(tag.tag)}`}
               >
                 <div
                   className={`${styles.tag} ${
                     context.theme === 'light' ? styles.light : styles.dark
                   }`}
                 >
-                  {tag.tag.tag}
+                  {tag.tag}
                 </div>
               </a>
             )

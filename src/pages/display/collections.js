@@ -73,9 +73,11 @@ export default function Collections({ showFilters, address }) {
               holdings(
                 where: {
                   holder_address: { _eq: $address }
-                  token: { artist_address: { _neq: $address } }
+                  token: {
+                    artist_address: { _neq: $address }
+                    metadata_status: { _eq: "processed" }
+                  }
                   amount: { _gt: "0" }
-                  metadata_status: { _eq: "processed" }
                 }
                 order_by: { token_id: desc }
               ) {

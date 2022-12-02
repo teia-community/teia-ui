@@ -45,31 +45,36 @@ export const RestrictedLabel = () => (
   </span>
 )
 
-export const MarketplaceLabel = ({ swap }) => {
-  if (swap.contract_address === MARKETPLACE_CONTRACT_TEIA) {
+export const MarketplaceLabel = ({ listing }) => {
+  if (listing.contract_address === MARKETPLACE_CONTRACT_TEIA) {
     return <TeiaLabel />
   }
+  /*
+  TODO: re-add this code
   if (
-    (swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
-      swap.contract_address === MARKETPLACE_CONTRACT_V2) &&
-    swap.token.creator_id.startsWith('KT1')
+    (listing.contract_address === MARKETPLACE_CONTRACT_V1 ||
+      listing.contract_address === MARKETPLACE_CONTRACT_V2) &&
+      listing.token.creator_id.startsWith('KT1')
   ) {
     return <CollabLabel />
   }
+  */
   if (
-    swap.contract_address === MARKETPLACE_CONTRACT_V1 ||
-    swap.contract_address === MARKETPLACE_CONTRACT_V2
+    listing.contract_address === MARKETPLACE_CONTRACT_V1 ||
+    listing.contract_address === MARKETPLACE_CONTRACT_V2
   ) {
     return <HENLabel />
   }
   if (
-    swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
-    swap.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ||
-    swap.type === 'objktcom_ask'
+    listing.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
+    listing.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ||
+    listing.type.startsWith('OBJKT')
   ) {
     return <OBJKTLabel />
   }
 
-  console.error('Could not resolve the proper label for this swap', swap)
+  // TODO: add Versum label here
+
+  console.error('Could not resolve the proper label for this listing', listing)
   return null
 }

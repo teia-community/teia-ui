@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react'
+import React from 'react'
+import get from 'lodash/get'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
+import { formatRoyalties } from '@utils'
 import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
 import { BURN_ADDRESS } from '@constants'
@@ -11,9 +13,29 @@ import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
 // import MintedIcon from '@icons/minted'
 // import SwapIcon from '@icons/swap'
 
-const OPERATION_SWAP = 'SWAP'
-const OPERATION_TRANSFER = 'TRANSFER'
-const OPERATION_TRADE = 'TRADE'
+function UsernameAndLink({ event, attr }) {
+  return (
+    <>
+      {get(event, `${attr}_profile.name`) ? (
+        <span>
+          <a
+            href={`/${encodeURI(get(event, `${attr}_profile.name`))}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Primary>{get(event, `${attr}_profile.name`)}</Primary>
+          </a>
+        </span>
+      ) : (
+        <span>
+          <a href={`/tz/${get(event, `${attr}_address`)}`}>
+            <Primary>{walletPreview(get(event, `${attr}_address`))}</Primary>
+          </a>
+        </span>
+      )}
+    </>
+  )
+}
 
 /**
  * The History Tab
@@ -22,18 +44,6 @@ const OPERATION_TRADE = 'TRADE'
  * @returns {any}
  */
 export const History = ({ nft }) => {
-  const history = useMemo(() => {
-    const trades = nft.trades.map((e) => ({
-      ...e,
-      type: OPERATION_TRADE,
-    }))
-    const swaps = nft.swaps.map((e) => ({ ...e, type: OPERATION_SWAP }))
-
-    return [...trades, ...swaps]
-      .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
-      .reverse()
-  }, [nft])
-
   return (
     <div>
       <IconCache.Provider value={{}}>
@@ -53,8 +63,8 @@ export const History = ({ nft }) => {
                 <div className={styles.history__price}>Price</div>
                 <div className={styles.history__date}>Time</div>
               </div>
-              {history.map((e) => {
-                if (e.type === OPERATION_TRADE) {
+              {nft.events.map((e) => {
+                if (e.implements === 'SALE') {
                   return (
                     <div className={`${styles.history}`} key={`t-${e.id}`}>
                       <div className={styles.history__event__container}>
@@ -74,25 +84,7 @@ export const History = ({ nft }) => {
                         >
                           From
                         </div>
-                        {e.seller.name ? (
-                          <span>
-                            <a
-                              href={`/tz/${encodeURI(e.seller.address)}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <Primary>{e.seller.name}</Primary>
-                            </a>
-                          </span>
-                        ) : (
-                          <span>
-                            <a href={`/tz/${e.seller.address}`}>
-                              <Primary>
-                                {walletPreview(e.seller.address)}
-                              </Primary>
-                            </a>
-                          </span>
-                        )}
+                        <UsernameAndLink event={e} attr="seller" />
                       </div>
 
                       <div className={styles.history__to}>
@@ -101,37 +93,19 @@ export const History = ({ nft }) => {
                         >
                           To
                         </div>
-                        {e.buyer.name ? (
-                          <span>
-                            <a
-                              href={`/${encodeURI(e.buyer.name)}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <Primary>{e.buyer.name}</Primary>
-                            </a>
-                          </span>
-                        ) : (
-                          <span>
-                            <a href={`/tz/${e.buyer.address}`}>
-                              <Primary>
-                                {walletPreview(e.buyer.address)}
-                              </Primary>
-                            </a>
-                          </span>
-                        )}
+                        <UsernameAndLink event={e} attr="buyer" />
                       </div>
 
                       <div
                         className={`${styles.history__ed} ${styles.history__desktop}`}
                       >
-                        {e.amount}
+                        1
                       </div>
 
                       <div
                         className={`${styles.history__price} ${styles.history__desktop}`}
                       >
-                        {parseFloat(e.swap.price / 1e6)} tez
+                        {parseFloat(e.price / 1e6)} tez
                       </div>
 
                       <div
@@ -149,18 +123,18 @@ export const History = ({ nft }) => {
                           {getTimeAgo(e.timestamp)}
                         </div>
 
-                        <div className={styles.history__ed}>ed. {e.amount}</div>
+                        <div className={styles.history__ed}>ed. 1</div>
 
                         <div className={styles.history__price}>
-                          {parseFloat(e.swap.price / 1e6)} tez
+                          {parseFloat(e.price / 1e6)} tez
                         </div>
                       </div>
                     </div>
                   )
                 }
-                if (e.type === OPERATION_SWAP) {
+                if (['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2'].includes(e.type)) {
                   return (
-                    <div className={`${styles.history}`} key={`s-${e.opid}`}>
+                    <div className={`${styles.history}`} key={e.id}>
                       <div className={styles.history__event__container}>
                         <SwapIcon size={14} viewBox={16} />
                         <a
@@ -178,25 +152,7 @@ export const History = ({ nft }) => {
                         >
                           from
                         </div>
-                        {e.creator.name ? (
-                          <span>
-                            <a
-                              href={`/tz/${encodeURI(e.creator.address)}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <Primary>{e.creator.name}</Primary>
-                            </a>
-                          </span>
-                        ) : (
-                          <span>
-                            <a href={`/tz/${e.creator.address}`}>
-                              <Primary>
-                                {walletPreview(e.creator.address)}
-                              </Primary>
-                            </a>
-                          </span>
-                        )}
+                        <UsernameAndLink event={e} attr="seller" />
                       </div>
 
                       <div className={styles.history__to} />
@@ -227,7 +183,10 @@ export const History = ({ nft }) => {
                     </div>
                   )
                 }
-                if (e.type === OPERATION_TRANSFER) {
+                if (
+                  e.type === 'FA2_TRANSFER' &&
+                  e.to_address === BURN_ADDRESS
+                ) {
                   return (
                     <div className={`${styles.history}`} key={`b-${e.opid}`}>
                       <div className={styles.history__event__container}>
@@ -247,25 +206,7 @@ export const History = ({ nft }) => {
                         >
                           From
                         </div>
-                        {e.sender.name ? (
-                          <span>
-                            <a
-                              href={`/tz/${encodeURI(e.sender.address)}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <Primary>{e.sender.name}</Primary>
-                            </a>
-                          </span>
-                        ) : (
-                          <span>
-                            <a href={`/tz/${e.sender.address}`}>
-                              <Primary>
-                                {walletPreview(e.sender.address)}
-                              </Primary>
-                            </a>
-                          </span>
-                        )}
+                        <UsernameAndLink event={e} attr="from" />
                       </div>
 
                       <div className={styles.history__to}>
@@ -330,20 +271,20 @@ export const History = ({ nft }) => {
                 </div>
 
                 <div className={styles.history__from}>
-                  {nft.creator.name ? (
+                  {get(nft, 'artist_profile.name') ? (
                     <span>
                       <a
-                        href={`/tz/${encodeURI(nft.creator.address)}`}
+                        href={`/tz/${encodeURI(nft.artist_address)}`}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Primary>{nft.creator.name}</Primary>
+                        <Primary>{get(nft, 'artist_profile.name')}</Primary>
                       </a>
                     </span>
                   ) : (
                     <span>
-                      <a href={`/tz/${nft.creator.address}`}>
-                        <Primary>{walletPreview(nft.creator.address)}</Primary>
+                      <a href={`/tz/${nft.artist_address}`}>
+                        <Primary>{walletPreview(nft.artist_address)}</Primary>
                       </a>
                     </span>
                   )}
@@ -351,27 +292,27 @@ export const History = ({ nft }) => {
 
                 <div className={styles.history__to} />
 
-                <div className={styles.history__ed}>{nft.supply}</div>
+                <div className={styles.history__ed}>{nft.editions}</div>
 
                 <div className={styles.history__price} />
 
-                <div className={styles.history__date} title={nft.timestamp}>
-                  {getTimeAgo(nft.timestamp)}
+                <div className={styles.history__date} title={nft.minted_at}>
+                  {getTimeAgo(nft.minted_at)}
                 </div>
 
                 <div className={styles.history__inner__mobile}>
-                  <div className={styles.history__date} title={nft.timestamp}>
-                    {getTimeAgo(nft.timestamp)}
+                  <div className={styles.history__date} title={nft.minted_at}>
+                    {getTimeAgo(nft.minted_at)}
                   </div>
 
-                  <div className={styles.history__ed}>ed. {nft.supply}</div>
+                  <div className={styles.history__ed}>ed. {nft.editions}</div>
 
                   <div className={styles.history__price} />
                 </div>
               </div>
 
               <div className={styles.history__royalties}>
-                {nft.royalties / 10}% Royalties
+                {formatRoyalties(nft)} Royalties
               </div>
             </div>
           </Padding>

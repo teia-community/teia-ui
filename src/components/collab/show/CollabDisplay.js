@@ -1,8 +1,7 @@
 import { Navigate, useParams } from 'react-router'
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import get from 'lodash/get'
 import { PATH } from '../../../constants'
-import { Loading } from '../../loading'
 import { renderMediaType } from '../../media-types'
 import { Page, Container, Padding } from '../../layout'
 import { ResponsiveMasonry } from '../../responsive-masonry'
@@ -10,91 +9,59 @@ import { Button, Primary } from '../../button'
 import styles from '../../../pages/display/styles.module.scss'
 import { walletPreview } from '../../../utils/string'
 import { Identicon } from '../../identicons'
-import {
-  fetchGraphQL,
-  getUser,
-  getCollabCreationsByAddress,
-  getCollabCreationsBySubjkt,
-} from '../../../data/hicdex'
-import InfiniteScroll from 'react-infinite-scroller'
+import { fetchCollabCreations } from '../../../data/hicdex'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
 
 export const CollabDisplay = () => {
-  // Local state
-  const [creations, setCreations] = useState([])
-  const [contractInfo, setContractInfo] = useState()
-  const [showBeneficiaries] = useState(false)
-  const [logo, setLogo] = useState()
-
-  const chunkSize = 20
-  const [items, setItems] = useState([])
-  const [offset, setOffset] = useState(chunkSize)
-  const [loading, setLoading] = useState(true)
-
-  // The route passes the contract address in as parameter "id"
   const { id, name } = useParams()
 
-  // one of the two will be supplied
-  // contract id route - ie. /kt/:id
-  useEffect(() => {
-    if (!id && !name) {
-      return
-    }
+  const { data, error } = useSWR(
+    !id || !name ? ['/contract', id, name] : null,
+    async () => {
+      const result = await fetchCollabCreations(
+        name || id,
+        name ? 'subjkt' : 'address'
+      )
 
-    // The query will depend on what has been supplied
-    const queryToUse = name
-      ? getCollabCreationsBySubjkt
-      : getCollabCreationsByAddress
-
-    const key = name ? 'subjkt' : 'address'
-    const value = name || id
-
-    fetchGraphQL(queryToUse, 'GetCollabCreations', {
-      [key]: value,
-    }).then(({ data, errors }) => {
-      if (data) {
-        setCreations(data.token)
-        setContractInfo(data.split_contract[0])
+      if (!result.split_contracts.length) {
+        throw new Error('unknown split contract')
       }
 
-      setLoading(false)
-    })
-  }, [id, name])
-
-  useEffect(() => {
-    if (items.length === 0 && creations.length > 0) {
-      setItems(creations.slice(0, chunkSize))
-    }
-  }, [creations]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!loading) {
-      setItems(creations.slice(0, offset))
-    }
-  }, [offset]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!contractInfo) {
-      return
-    }
-
-    const fetchMeta = async () => {
-      const user = await getUser(contractInfo.contract.name, 'name')
-      const identicon = get(user, 'metadata.data.identicon')
-
-      // TODO xat: test if this works
-      if (identicon) {
-        setLogo(identicon)
+      return {
+        tokens: result.tokens,
+        split_contract: result.split_contracts[0],
       }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
     }
+  )
 
-    fetchMeta().catch((error) =>
-      console.log('Error retrieving meta file', error)
+  if (error) {
+    return (
+      <Container>
+        <Padding>
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        </Padding>
+      </Container>
     )
-  }, [contractInfo])
+  }
+
+  if (!data) {
+    return (
+      <Container>
+        <Padding>loading...</Padding>
+      </Container>
+    )
+  }
+
+  // TODO: use the new masonry/feed component here that also supports infinte
+
+  const { split_contract, tokens } = data
 
   const headerClass = classNames(
     styles.profile,
@@ -105,19 +72,20 @@ export const CollabDisplay = () => {
 
   const infoPanelClass = classNames(collabStyles.flex, collabStyles.flexBetween)
   const displayName =
-    contractInfo?.contract.name || contractInfo?.contract.address || ''
-  const address = contractInfo?.contract.address
-  const description = contractInfo?.contract.description
+    get(split_contract, 'contract_profile.name') ||
+    get(split_contract, 'contract_address')
+  const address = get(split_contract, 'contract_address')
+  const description = get(
+    split_contract,
+    'contract_profile.metadata.data.description',
+    ''
+  )
+  const logo = get(split_contract, 'contract_profile.metadata.data.identicon')
   const descriptionClass = classNames(collabStyles.pt1, collabStyles.muted)
 
   // Core participants
-  const coreParticipants = contractInfo?.shareholder.filter(
+  const coreParticipants = get(split_contract, 'shareholders').filter(
     ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
-  )
-
-  // Beneficiaries
-  const beneficiaries = contractInfo?.shareholder.filter(
-    ({ holder_type }) => holder_type === CollaboratorType.BENEFICIARY
   )
 
   const oldContractAddresses = [
@@ -129,97 +97,70 @@ export const CollabDisplay = () => {
     return <Navigate to={`${PATH.ISSUER}/${id}`} replace />
   }
 
+  console.log('tokens', tokens)
+
   return (
     <Page title={`Collab: ${displayName}`}>
       {/* <CollabHeader collaborators={collaborators} /> */}
+      <Container>
+        <Padding>
+          <div className={headerClass}>
+            <Identicon address={address} logo={logo} />
 
-      {loading && (
-        <Container>
-          <Padding>
-            <Loading />
-          </Padding>
-        </Container>
-      )}
-
-      {contractInfo && (
-        <Container>
-          <Padding>
-            <div className={headerClass}>
-              <Identicon address={address} logo={logo} />
-
-              <div className={infoPanelClass} style={{ flex: 1 }}>
-                <div>
-                  <div className={styles.info}>
-                    <h2>
-                      <strong>{displayName}</strong>
-                    </h2>
-                  </div>
-
-                  <div className={styles.info}>
-                    {coreParticipants.length > 0 && (
-                      <ParticipantList
-                        title={false}
-                        participants={coreParticipants}
-                      />
-                    )}
-
-                    {showBeneficiaries && beneficiaries.length > 0 && (
-                      <ParticipantList
-                        title="beneficiaries"
-                        participants={beneficiaries}
-                      />
-                    )}
-                  </div>
-
-                  <div className={styles.info}>
-                    {description && (
-                      <p className={descriptionClass}>{description}</p>
-                    )}
-                    <Button href={`https://tzkt.io/${address}`}>
-                      <Primary>{walletPreview(address)}</Primary>
-                    </Button>
-                  </div>
+            <div className={infoPanelClass} style={{ flex: 1 }}>
+              <div>
+                <div className={styles.info}>
+                  <h2>
+                    <strong>{displayName}</strong>
+                  </h2>
                 </div>
-                {/* <div className={collabStyles.qr}>
-                                    <QRCode value={address} size={120} />
-                                </div> */}
+
+                <div className={styles.info}>
+                  {coreParticipants.length > 0 && (
+                    <ParticipantList
+                      title={false}
+                      participants={coreParticipants}
+                    />
+                  )}
+                </div>
+
+                <div className={styles.info}>
+                  {description && (
+                    <p className={descriptionClass}>{description}</p>
+                  )}
+                  <Button href={`https://tzkt.io/${address}`}>
+                    <Primary>{walletPreview(address)}</Primary>
+                  </Button>
+                </div>
               </div>
             </div>
-          </Padding>
-        </Container>
-      )}
+          </div>
+        </Padding>
+      </Container>
 
-      {/* <div>Tab selection here</div> */}
-
-      {!loading && items.length === 0 && (
+      {tokens.length === 0 && (
         <Container>
           <p>This collab has no OBJKT creations to display</p>
         </Container>
       )}
 
-      {!loading && (
-        <Container xlarge>
-          <InfiniteScroll
-            loadMore={() => setOffset(offset + chunkSize)}
-            hasMore={offset < items.length}
-          >
-            <ResponsiveMasonry>
-              {items.map((nft) => {
-                return (
-                  <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
-                    <div className={styles.container}>
-                      {renderMediaType({
-                        nft,
-                        displayView: true,
-                      })}
-                    </div>
-                  </Button>
-                )
-              })}
-            </ResponsiveMasonry>
-          </InfiniteScroll>
-        </Container>
-      )}
+      {/** TODO: re-add infinite-scroll */}
+      <Container xlarge>
+        <ResponsiveMasonry>
+          {tokens.map((nft) => {
+            return (
+              <Button key={nft.token_id} to={`${PATH.OBJKT}/${nft.token_id}`}>
+                <div className={styles.container}>
+                  {renderMediaType({
+                    nft,
+                    displayView: true,
+                  })}
+                </div>
+              </Button>
+            )
+          })}
+        </ResponsiveMasonry>
+      </Container>
     </Page>
   )
 }

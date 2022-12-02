@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import get from 'lodash/get'
 import { PATH } from '../../../constants'
 import { walletPreview } from '../../../utils/string'
 import { Primary } from '../../button'
@@ -7,13 +8,13 @@ import { ParticipantList } from '../../collab/manage/ParticipantList'
 import { CollaboratorType } from '../constants'
 
 export const CollabIssuerInfo = ({ creator }) => {
-  const { name, address } = creator
+  const { name, user_address } = creator
   const [showCollabSummary, setShowCollabSummary] = useState(false)
 
-  const coreParticipants = creator.shares[0].shareholder.filter(
+  const coreParticipants = get(creator, 'split_contract.shareholders').filter(
     (h) => h.holder_type === CollaboratorType.CORE_PARTICIPANT
   )
-  const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${address}`
+  const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${user_address}`
 
   return (
     <div>
@@ -25,7 +26,7 @@ export const CollabIssuerInfo = ({ creator }) => {
         onMouseOut={() => setShowCollabSummary(false)}
         onBlur={() => setShowCollabSummary(false)}
       >
-        <Primary>{name !== '' ? name : walletPreview(address)}</Primary>
+        <Primary>{name !== '' ? name : walletPreview(user_address)}</Primary>
       </a>
 
       {showCollabSummary && (

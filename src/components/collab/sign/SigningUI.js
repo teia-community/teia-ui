@@ -3,6 +3,7 @@ import { HicetnuncContext } from '../../../context/HicetnuncContext'
 import { Button, Purchase } from '../../button'
 import styles from '../styles.module.scss'
 
+// TODO: test if this still works
 export const SigningUI = ({ id, hasSigned }) => {
   const context = useContext(HicetnuncContext)
 
