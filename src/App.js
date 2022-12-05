@@ -45,7 +45,7 @@ const App = () => {
         <Route path="/galleries" element={<Galleries />} />
         <Route path="/gallery/:id" element={<GalleryDetail />} />
         <Route path="/config" element={<Config />} />
-        <Route path="/tags/:id" element={<Tags />} />
+        <Route path="/tags/:tag" element={<Tags />} />
         <Route path="/:id/:collection?" element={<Display />} />
         <Route path="/:subjkt/*" element={<Display />} />
       </Routes>
