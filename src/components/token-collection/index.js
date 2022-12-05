@@ -61,6 +61,7 @@ function MasonryView({ tokens }) {
 function TokenCollection({
   query,
   namespace,
+  disable = false,
   defaultViewMode = 'single',
   variables = {},
   swrParams = [],
@@ -93,7 +94,7 @@ function TokenCollection({
     : itemsPerLoad
 
   const { data, error } = useSWR(
-    [namespace, ...swrParams],
+    disable ? null : [namespace, ...swrParams],
     (ns) =>
       request(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, query, {
         ...variables,

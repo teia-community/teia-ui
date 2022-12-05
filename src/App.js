@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import HicetnuncContextProvider from '@context/HicetnuncContext'
 import useSettings from '@hooks/use-settings'
 import { Loading as Preloading } from '@components/loading'
+import { IconCache } from '@utils/with-icon'
 import Sync from './pages/sync'
 import { About } from './pages/about'
 import { FAQ } from './pages/faq'
@@ -27,28 +28,30 @@ const App = () => {
 
   return (
     <HicetnuncContextProvider>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/feed/*" element={<Home />} />
-        <Route path="/search/*" element={<Home isSearch />} />
-        <Route path="/friends/:id" element={<Friends />} />
-        <Route path="/tz/:address/*" element={<Display />} />
-        <Route path="/kt/:id" element={<CollabDisplay />} />
-        <Route path="/collab/:name" element={<CollabDisplay />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/sync" element={<Sync />} />
-        <Route path="/mint" element={<Mint />} />
-        <Route path="/collaborate" element={<Collaborate />} />
-        <Route path="/objkt/:id" element={<ObjktDisplay />} />
-        <Route path="/galleries" element={<Galleries />} />
-        <Route path="/gallery/:id" element={<GalleryDetail />} />
-        <Route path="/config" element={<Config />} />
-        <Route path="/tags/:tag" element={<Tags />} />
-        <Route path="/:id/:collection?" element={<Display />} />
-        <Route path="/:subjkt/*" element={<Display />} />
-      </Routes>
+      <IconCache.Provider value={{}}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/feed/*" element={<Home />} />
+          <Route path="/search/*" element={<Home isSearch />} />
+          <Route path="/friends/:address" element={<Friends />} />
+          <Route path="/tz/:address/*" element={<Display />} />
+          <Route path="/kt/:id" element={<CollabDisplay />} />
+          <Route path="/collab/:name" element={<CollabDisplay />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/sync" element={<Sync />} />
+          <Route path="/mint" element={<Mint />} />
+          <Route path="/collaborate" element={<Collaborate />} />
+          <Route path="/objkt/:id" element={<ObjktDisplay />} />
+          <Route path="/galleries" element={<Galleries />} />
+          <Route path="/gallery/:id" element={<GalleryDetail />} />
+          <Route path="/config" element={<Config />} />
+          <Route path="/tags/:tag" element={<Tags />} />
+          <Route path="/:id/:collection?" element={<Display />} />
+          <Route path="/:subjkt/*" element={<Display />} />
+        </Routes>
+      </IconCache.Provider>
     </HicetnuncContextProvider>
   )
 }
