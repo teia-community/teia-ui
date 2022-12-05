@@ -78,12 +78,10 @@ export function Home({ isSearch = false }) {
           />
           <div style={{ marginTop: '15px' }}>
             <div>
-              {/*
-                  <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
-                  <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
-                  <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
-                  <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
-                */}
+              <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
+              <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
+              <FilterLink to="/feed/ukraine">🇺🇦 ukraine</FilterLink>
+              <FilterLink to="/feed/tezospride">🏳️‍🌈 tezospride</FilterLink>
             </div>
             <div>
               <FilterLink to="/feed/random">random</FilterLink>
