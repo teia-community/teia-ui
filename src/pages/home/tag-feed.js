@@ -1,11 +1,11 @@
 import { gql } from 'graphql-request'
-import TokenFeed from './token-feed'
+import TokenCollection from '../../components/token-collection'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
 
 function TagFeed({ tag, namespace }) {
   return (
-    <TokenFeed
+    <TokenCollection
       namespace={namespace}
       variables={{ tag }}
       swrParams={[tag]}

@@ -3,7 +3,7 @@ import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import { Container } from '@components/layout'
-import TokenMasonry from './token-masonry'
+import TokenCollection from '../../components/token-collection'
 import Filters from './filters'
 import { BaseTokenFieldsFragment } from '../../data/api'
 
@@ -29,11 +29,13 @@ export default function Collections({ showFilters, address }) {
       )}
       <Container xlarge>
         {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
-        <TokenMasonry
+        <TokenCollection
+          defaultViewMode="masonry"
           namespace="collections"
           swrParams={[address]}
           variables={{ address }}
           emptyMessage="no collections"
+          maxItems={null}
           postProcessTokens={(tokens) => {
             if (filter === FILTER_FOR_SALE) {
               return tokens.filter(

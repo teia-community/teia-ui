@@ -2,11 +2,11 @@ import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
-import TokenFeed from './token-feed'
+import TokenCollection from '../../components/token-collection'
 
 function NewObjktsFeed() {
   return (
-    <TokenFeed
+    <TokenCollection
       namespace="new-objkts-feed"
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
       query={gql`
