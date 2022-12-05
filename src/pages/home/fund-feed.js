@@ -3,6 +3,7 @@ import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import flatten from 'lodash/flatten'
 import TokenCollection from '../../components/token-collection'
+import { BaseTokenFieldsFragment } from '@data/api'
 import styles from './styles.module.scss'
 
 function FundFeed({
@@ -29,87 +30,60 @@ function FundFeed({
             uniqBy(
               [
                 ...flatten(
-                  tokens_by_share.map(({ contract }) => {
-                    const total = contract.shares[0].total_shares
-
-                    return flatten(
-                      contract.shares[0].shareholder
-                        .map((shareholder) => {
-                          if (
-                            [contractAddress].includes(shareholder.holder_id) &&
-                            (shareholder.shares / total) * 100 >= minShares
-                          ) {
-                            return contract.tokens
-                          }
-                          return undefined
-                        })
-                        .filter((tokens) => tokens !== undefined)
-                    )
-                  })
+                  tokens_by_share.map(
+                    ({ total_shares, shareholders, created_tokens }) => {
+                      return flatten(
+                        shareholders
+                          .map((shareholder) => {
+                            if (
+                              [contractAddress].includes(
+                                shareholder.shareholder_address
+                              ) &&
+                              (shareholder.shares / total_shares) * 100 >=
+                                minShares
+                            ) {
+                              return created_tokens
+                            }
+                            return undefined
+                          })
+                          .filter((tokens) => tokens !== undefined)
+                      )
+                    }
+                  )
                 ),
                 ...(tokens_by_tag ? tokens_by_tag : []),
-              ].map((token) => ({ ...token, key: token.id })),
+              ].map((token) => ({ ...token, key: token.token_id })),
               ({ key }) => key
             ),
-            ['timestamp'],
+            ['minted_at'],
             ['desc']
           )
 
           return tokensFromSplitContract
         }}
         query={gql`
+        ${BaseTokenFieldsFragment}
         query GetCollabTokens($limit: Int!) {
-          tokens_by_share: split_contract(limit: $limit, where: {shareholder: {holder_id: {_eq: "${contractAddress}"}}}) {
-            contract {
-              address
+          tokens_by_share: teia_split_contracts(limit: $limit, where: {shareholders: {shareholder_address: {_eq: "${contractAddress}"}}}) {
+            contract_profile {
               name
-              shares {
-                total_shares
-                shareholder {
-                  holder_id
-                  shares
-                }
-              }
-              tokens(where: {supply: {_gt: "0"}, is_signed: {_eq: true}}, order_by: {timestamp: desc}) {
-                id
-                artifact_uri
-                display_uri
-                thumbnail_uri
-                timestamp
-                mime
-                title
-                description
-                supply
-                royalties
-                creator {
-                  name
-                  address
-                }
-              }
+            }
+            total_shares
+            shareholders {
+              shareholder_address
+              shares
+            }
+            created_tokens(where: {editions: {_gt: "0"}, teia_meta: { is_signed: { _eq: true }}}, order_by: { minted_at: desc_nulls_last }) {
+              ...baseTokenFields
             }
           }
           ${
             tags
               ? `
-            tokens_by_tag: token(where: {token_tags: {tag: {tag: {_in: [${tags.map(
+            tokens_by_tag: tokens(where: {tags: {tag: {_in: [${tags.map(
               (tag) => `"${tag}"`
-            )}]}}}, supply: {_neq: "0"}}, limit: $limit, order_by: { id: desc }) {
-              id
-              artifact_uri
-              display_uri
-              mime
-              creator_id
-              token_tags {
-                tag {
-                  tag
-                }
-              }
-              creator {
-                address
-                name
-              }
-              content_rating
-              title
+            )}]}}, editions: {_gt: "0"}}, limit: $limit, order_by: { minted_at: desc_nulls_last }) {
+              ...baseTokenFields
             }
           `
               : ''
