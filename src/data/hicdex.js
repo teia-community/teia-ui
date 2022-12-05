@@ -9,39 +9,6 @@ export const getDipdupState = `query {
   }
 }`
 
-export const getCollabTokensForAddress = `query GetCollabTokens($address: String!) {
-shareholder(where: {holder_id: {_eq: $address}, holder_type: {_eq: "core_participant"}}) {
-  split_contract {
-    contract {
-      address
-      name
-      tokens(where: {supply: {_gt: "0"}}) {
-        id
-        is_signed
-        artifact_uri
-        display_uri
-        thumbnail_uri
-        timestamp
-        mime
-        title
-        description
-        supply
-        royalties
-        creator {
-          address
-          shares {
-            shareholder {
-              holder_type
-              holder_id
-            }
-          }
-        }
-      }
-    }
-  }
-}
-}`
-
 export const getCollabsForAddress = `query GetCollabs($address: String!) {
 split_contract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
   id

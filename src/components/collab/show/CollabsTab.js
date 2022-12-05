@@ -1,129 +1,70 @@
-import { useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroller'
-import { Button } from '../../button'
-import { Container, Padding } from '../../layout'
-import { renderMediaType } from '../../media-types'
-import { ResponsiveMasonry } from '../../responsive-masonry'
-import { PATH } from '../../../constants'
-import { fetchGraphQL, getCollabTokensForAddress } from '../../../data/hicdex'
+import { useState } from 'react'
+import get from 'lodash/get'
+import { gql } from 'graphql-request'
+import orderBy from 'lodash/orderBy'
+import { BaseTokenFieldsFragment } from '../../../data/api'
+import { Container } from '../../layout'
+import TokenCollection from '../../../components/token-collection'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
-const _ = require('lodash')
-
-function EmptyTab({ children }) {
-  return (
-    <Container>
-      <Padding>
-        <h1>{children}</h1>
-      </Padding>
-    </Container>
-  )
-}
-
-export const CollabsTab = ({ wallet, onLoaded }) => {
-  const chunkSize = 20
-  const [objkts, setObjkts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [items, setItems] = useState([])
+export const CollabsTab = ({ wallet }) => {
   const [showUnverified, setShowUnverified] = useState(false)
-  const [offset, setOffset] = useState(0)
-
-  useEffect(() => {
-    setLoading(true)
-    fetchGraphQL(getCollabTokensForAddress, 'GetCollabTokens', {
-      address: wallet,
-    })
-      .then(({ errors, data }) => {
-        if (errors) {
-          console.error(errors)
-        }
-
-        let tokens = []
-        const result = data.shareholder
-
-        if (result) {
-          result.forEach(
-            (contract) =>
-              (tokens = tokens.concat(contract.split_contract.contract.tokens))
-          )
-        }
-        tokens = _.orderBy(tokens, ['timestamp'], ['desc'])
-        setObjkts(tokens)
-        setLoading(false)
-        onLoaded()
-      })
-      .catch((err) => {
-        console.error(err)
-        setLoading(false)
-        onLoaded()
-      })
-  }, [wallet, onLoaded])
-
-  useEffect(() => {
-    if (objkts.length === 0) {
-      return
-    }
-
-    setItems(objkts.slice(0, offset + chunkSize))
-  }, [offset, objkts])
-
-  const loadMore = () => {
-    setOffset(offset + chunkSize)
-  }
-
   const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
-
-  // Only show unverified objkts if the user chooses to see them
-  const itemsToShow = showUnverified
-    ? items
-    : items.filter((item) => item.is_signed)
-
-  const hasUnverifiedObjkts = items.some((i) => !i.is_signed).length > 0
-
-  if (!loading && !objkts.length) {
-    return (
-      <Container xlarge>
-        <EmptyTab>no collabs</EmptyTab>
-      </Container>
-    )
-  }
 
   return (
     <Container xlarge>
-      {hasUnverifiedObjkts && (
-        <div className={toolbarStyles}>
-          <label>
-            <input
-              type="checkbox"
-              onChange={() => setShowUnverified(!showUnverified)}
-              checked={showUnverified}
-            />
-            include unverified OBJKTs
-          </label>
-        </div>
-      )}
+      {/** TODO: decide if this should be hidden again in case there are no tokens */}
+      <div className={toolbarStyles}>
+        <label>
+          <input
+            type="checkbox"
+            onChange={() => setShowUnverified(!showUnverified)}
+            checked={showUnverified}
+          />
+          include unverified OBJKTs
+        </label>
+      </div>
 
-      <InfiniteScroll
-        dataLength={itemsToShow.length}
-        loadMore={loadMore}
-        hasMore={offset < itemsToShow.length}
-        loader={undefined}
-        endMessage={undefined}
-      >
-        <ResponsiveMasonry>
-          {itemsToShow.map((nft) => {
-            return (
-              <Button key={nft.id} to={`${PATH.OBJKT}/${nft.id}`}>
-                {renderMediaType({
-                  nft,
-                  displayView: true,
-                })}
-              </Button>
+      <TokenCollection
+        defaultViewMode="masonry"
+        namespace="collabs"
+        swrParams={[wallet]}
+        variables={{ address: wallet }}
+        emptyMessage="no collabs"
+        maxItems={null}
+        extractTokensFromResponse={(data) => {
+          const tokens = data.teia_shareholders
+            .map((shareholder) => {
+              return get(shareholder, 'split_contract.created_tokens', [])
+            })
+            .flat()
+
+          return orderBy(tokens, ['minted_at'])
+            .reverse()
+            .filter(
+              (token) => showUnverified || get(token, 'teia_meta.is_signed')
             )
-          })}
-        </ResponsiveMasonry>
-      </InfiniteScroll>
+            .map((token) => ({ ...token, key: token.token_id }))
+        }}
+        query={gql`
+          ${BaseTokenFieldsFragment}
+          query GetCollabTokens($address: String!) {
+            teia_shareholders(
+              where: {
+                shareholder_address: { _eq: $address }
+                holder_type: { _eq: "core_participant" }
+              }
+            ) {
+              split_contract {
+                created_tokens(where: { editions: { _gt: "0" } }) {
+                  ...baseTokenFields
+                }
+              }
+            }
+          }
+        `}
+      />
     </Container>
   )
 }
