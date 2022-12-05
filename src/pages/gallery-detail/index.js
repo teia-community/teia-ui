@@ -19,7 +19,6 @@ export const GalleryDetail = () => {
   const [loaded, setLoaded] = useState(false)
   const [collection, setCollection] = useState([])
   const [modal, setModal] = useState()
-  const [hasMore, setHasMore] = useState(true)
   const [items, setItems] = useState([])
   const [feed, setFeed] = useState([])
   const [offset, setOffset] = useState(0)
@@ -80,7 +79,6 @@ export const GalleryDetail = () => {
       'id'
     )
     setOffset(offset + 15)
-    if (feed.length === items.lenght) setHasMore(false)
   }
 
   return (
