@@ -9,7 +9,6 @@ import { HicetnuncContext } from '../../context/HicetnuncContext'
 import { Footer } from '../footer'
 import { Container, Padding } from '../layout'
 import { Button, Primary } from '../button'
-import { Status } from '../status'
 import { fadeIn } from '../../utils/motion'
 import { Menu } from '../icons'
 import { walletPreview } from '../../utils/string'
@@ -149,7 +148,6 @@ export const Header = () => {
               </Primary>{' '}
               {/* Main address display here */}
             </Button>
-            <Status />
             <Button onClick={context.toogleNavbar} secondary>
               <VisuallyHidden>
                 {`${context.collapsed ? 'show' : 'hide'} menu`}

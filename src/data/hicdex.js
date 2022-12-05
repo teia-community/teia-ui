@@ -2,13 +2,6 @@
 import { BaseTokenFieldsFragment } from '../data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 
-export const getDipdupState = `query {
-  dipdup_index {
-    name
-    level
-  }
-}`
-
 export const getCollabsForAddress = `query GetCollabs($address: String!) {
 split_contract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
   id
