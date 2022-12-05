@@ -1,62 +1,45 @@
 /* eslint-disable */
-
+import get from 'lodash/get'
 import React, { Component } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Container, Padding, Page } from '@components/layout'
-import { BottomBanner } from '@components/bottom-banner'
-import { Input, Textarea } from '@components/input'
-import { Button, Curate, Primary, Purchase } from '@components/button'
-import { Upload } from '@components/upload'
+import { Input } from '@components/input'
+import { Button, Purchase } from '@components/button'
 import { Identicon } from '@components/identicons'
-import { SigningType } from '@airgap/beacon-sdk'
-import { char2Bytes } from '@taquito/utils'
+import { fetchGraphQLTezTok } from '@data/hicdex'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
-import styles from './styles.module.scss'
-import axios from 'axios'
-import { HashToURL } from '@utils'
 
 const ls = require('local-storage')
 
 const query_tz = `
 query addressQuery($address: String!) {
-  holder(where: { address: {_eq: $address}}) {
-    address
+  teia_users(where: { user_address: {_eq: $address}}) {
+    user_address
     name
-    hdao_balance
-    metadata
-    metadata_file
+    metadata {
+      data
+    }
   }
 }
 `
 
 const query_name_exist = `
 query nameExists($name: String!) {
-  holder(where: { name: {_eq: $name}}) {
-    address
+  teia_users(where: { name: {_eq: $name}}) {
+    user_address
   }
 }
 `
 
-async function fetchTz(addr) {
-  const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
-    address: addr,
+async function fetchTz(address) {
+  const { errors, data } = await fetchGraphQLTezTok(query_tz, 'addressQuery', {
+    address,
   })
   if (errors) {
     console.error(errors)
   }
-  return data.holder
-}
 
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables,
-      operationName,
-    }),
-  })
-  return await result.json()
+  return get(data, 'teia_users.0', { user_address: address })
 }
 
 export class Config extends Component {
@@ -87,21 +70,24 @@ export class Config extends Component {
     this.setState({ address })
     const res = await fetchTz(address)
 
-    this.context.subjktInfo = res[0]
+    this.context.subjktInfo = res
     console.debug('Subjkt Infos:', this.context.subjktInfo)
 
     if (this.context.subjktInfo) {
-      let { metadata, name, metadata_file } = this.context.subjktInfo
+      let { metadata, name } = this.context.subjktInfo
 
       if (name) this.setState({ subjkt: name })
 
       // FOR V6
-      if (metadata && !_.isEmpty(metadata)) {
-        if (metadata.description)
-          this.setState({ description: metadata.description })
-        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
+      if (metadata && !_.isEmpty(get(metadata, 'data'))) {
+        if (get(metadata, 'data.description'))
+          this.setState({ description: get(metadata, 'data.description') })
+        if (get(metadata, 'data.identicon'))
+          this.setState({ identicon: get(metadata, 'data.identicon') })
       }
       // FALLBACK FOR V5
+      /*
+      TODO: is this still needed after teztok migration?
       else if (metadata_file) {
         const metadata_uri = HashToURL(metadata_file)
         metadata = await axios
@@ -115,6 +101,7 @@ export class Config extends Component {
           this.setState({ description: metadata.description })
         if (metadata.identicon) this.setState({ identicon: metadata.identicon })
       }
+      */
     }
     this.setState({ loading: false })
   }
@@ -131,7 +118,7 @@ export class Config extends Component {
   name_exists = async () => {
     if (!this.state.subjkt) return false
 
-    const { errors, data } = await fetchGraphQL(
+    const { errors, data } = await fetchGraphQLTezTok(
       query_name_exist,
       'nameExists',
       {
@@ -142,17 +129,18 @@ export class Config extends Component {
       console.error(errors)
       return false
     }
-    if (data.holder.length == 0) return false
 
-    const holder = data.holder[0]
+    if (data.teia_users.length === 0) return false
 
-    if (holder.address == this.state.address) return false
+    const holder = data.teia_users[0]
 
-    console.error(`name exists and is registered to ${holder.address}`)
+    if (holder.user_address == this.state.address) return false
+
+    console.error(`name exists and is registered to ${holder.user_address}`)
 
     this.context.setFeedback({
       visible: true,
-      message: `The provided name is already registered by ${holder.address}`,
+      message: `The provided name is already registered by ${holder.user_address}`,
       progress: false,
       confirm: true,
       confirmCallback: () => {
