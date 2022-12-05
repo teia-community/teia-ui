@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { gql } from 'graphql-request'
 import random from 'lodash/random'
-import TokenFeed from './token-feed'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
+import TokenCollection from '../../components/token-collection'
 
 // lastId should be updated every once in a while
 function RandomFeed({ firstId = 196, lastId = 797535, max = 15 }) {
@@ -18,7 +18,7 @@ function RandomFeed({ firstId = 196, lastId = 797535, max = 15 }) {
   }, [firstId, lastId, max])
 
   return (
-    <TokenFeed
+    <TokenCollection
       namespace="random-feed"
       enableInfinityScroll={false}
       variables={{ tokenIds }}

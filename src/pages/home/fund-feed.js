@@ -2,7 +2,7 @@ import { gql } from 'graphql-request'
 import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import flatten from 'lodash/flatten'
-import TokenFeed from './token-feed'
+import TokenCollection from '../../components/token-collection'
 import styles from './styles.module.scss'
 
 function FundFeed({
@@ -22,7 +22,7 @@ function FundFeed({
           More infos <strong>here</strong>
         </a>
       </div>
-      <TokenFeed
+      <TokenCollection
         namespace={namepsace}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {
           const tokensFromSplitContract = orderBy(

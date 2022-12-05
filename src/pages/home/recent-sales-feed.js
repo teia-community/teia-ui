@@ -1,12 +1,12 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
-import TokenFeed from './token-feed'
+import TokenCollection from '../../components/token-collection'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
 
 function RecentSalesFeed() {
   return (
-    <TokenFeed
+    <TokenCollection
       namespace="recent-sales-feed"
       resultsPath="events"
       tokenPath="token"

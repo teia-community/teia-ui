@@ -4,7 +4,7 @@ import { Container } from '@components/layout'
 import get from 'lodash/get'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
-import TokenMasonry from './token-masonry'
+import TokenCollection from '../../components/token-collection'
 import Filters from './filters'
 
 const FILTER_ALL = 'ALL'
@@ -31,11 +31,13 @@ export default function Creations({ showFilters, address }) {
       )}
       <Container xlarge>
         {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
-        <TokenMasonry
+        <TokenCollection
+          defaultViewMode="masonry"
           namespace="creations"
           swrParams={[address]}
           variables={{ address }}
           emptyMessage="no creations"
+          maxItems={null}
           postProcessTokens={(tokens) => {
             if (filter === FILTER_PRIMARY) {
               return tokens.filter(
