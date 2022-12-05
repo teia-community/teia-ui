@@ -1,4 +1,4 @@
-// TODO rename this file
+// TODO: move everything that's in this file to api.js
 import { BaseTokenFieldsFragment } from '../data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 
