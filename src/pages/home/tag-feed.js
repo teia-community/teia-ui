@@ -3,10 +3,9 @@ import TokenCollection from '../../components/token-collection'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
 
-function TagFeed({ tag, namespace }) {
+function TagFeed({ tag, ...otherProps }) {
   return (
     <TokenCollection
-      namespace={namespace}
       variables={{ tag }}
       swrParams={[tag]}
       query={gql`
@@ -25,6 +24,7 @@ function TagFeed({ tag, namespace }) {
           }
         }
       `}
+      {...otherProps}
     />
   )
 }
