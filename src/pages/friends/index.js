@@ -4,7 +4,7 @@ import { Page, Container, Padding } from '@components/layout'
 import { Loading } from '@components/loading'
 import { FeedItem } from '@components/feed-item'
 import { IconCache } from '@utils/with-icon'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 
 async function fetchGraphQL(operationsDoc, operationName, variables) {
   const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
@@ -178,8 +178,8 @@ export class Friends extends Component {
             <Container xlarge>
               <InfiniteScroll
                 dataLength={this.state.creations.length}
-                next={this.loadMore}
-                hasMore={true}
+                loadMore={this.loadMore}
+                hasMore={this.offset < this.state.creations.length}
                 loader={undefined}
                 endMessage={
                   <p>

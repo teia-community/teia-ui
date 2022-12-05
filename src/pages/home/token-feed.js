@@ -4,7 +4,7 @@ import get from 'lodash/get'
 import { request } from 'graphql-request'
 import { FeedItem } from '@components/feed-item'
 import { Container, Padding } from '@components/layout'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import laggy from '../../utils/swr-laggy-middleware'
 import useSettings from '@hooks/use-settings'
@@ -109,8 +109,7 @@ function TokenFeed({
 
   return (
     <InfiniteScroll
-      dataLength={tokens.length}
-      next={() => {
+      loadMore={() => {
         const newLimit = limit + itemsPerLoad
         setLimit(newLimit)
         setSearchParams({
@@ -118,9 +117,7 @@ function TokenFeed({
           [namespace]: newLimit,
         })
       }}
-      hasMore={true}
-      loader={undefined}
-      endMessage={undefined}
+      hasMore={limit < tokens.length}
     >
       {tokensContainer}
     </InfiniteScroll>
