@@ -9,7 +9,6 @@ import { useParams, NavLink, Route, Routes } from 'react-router-dom'
 import useSWR from 'swr'
 import { getUser } from '@data/hicdex'
 import { GetUserMetadata } from '@data/api'
-import { IconCache } from '@utils/with-icon'
 import useSettings from '@hooks/use-settings'
 import Profile from './profile'
 import Creations from './creations'
@@ -103,81 +102,79 @@ export default function Display() {
 
   return (
     <Page title={user.alias}>
-      <IconCache.Provider value={{}}>
-        <Profile user={user} />
+      <Profile user={user} />
 
-        {user.address.substr(0, 2) !== 'KT' && (
-          <Container>
-            <Padding>
-              <div className={styles.menu}>
-                <Tab to={``}>Creations</Tab>
-                <Tab to={`collection`}>Collection</Tab>
-                <Tab to={`collabs`}>Collabs</Tab>
+      {user.address.substr(0, 2) !== 'KT' && (
+        <Container>
+          <Padding>
+            <div className={styles.menu}>
+              <Tab to={``}>Creations</Tab>
+              <Tab to={`collection`}>Collection</Tab>
+              <Tab to={`collabs`}>Collabs</Tab>
 
-                <div className={styles.filter}>
-                  <Button
-                    onClick={() => {
-                      setShowFilters(!showFilters)
-                    }}
-                  >
-                    <Primary>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="feather feather-filter"
-                      >
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                      </svg>
-                    </Primary>
-                  </Button>
-                </div>
+              <div className={styles.filter}>
+                <Button
+                  onClick={() => {
+                    setShowFilters(!showFilters)
+                  }}
+                >
+                  <Primary>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="feather feather-filter"
+                    >
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                  </Primary>
+                </Button>
               </div>
-            </Padding>
-          </Container>
-        )}
+            </div>
+          </Padding>
+        </Container>
+      )}
 
-        {isRestrictedUser && (
-          <Container>
-            <Padding>
-              <div
-                style={{
-                  color: 'white',
-                  background: 'black',
-                  textAlign: 'center',
-                }}
-              >
-                Restricted account
-              </div>
-            </Padding>
-          </Container>
-        )}
+      {isRestrictedUser && (
+        <Container>
+          <Padding>
+            <div
+              style={{
+                color: 'white',
+                background: 'black',
+                textAlign: 'center',
+              }}
+            >
+              Restricted account
+            </div>
+          </Padding>
+        </Container>
+      )}
 
-        <Routes>
-          <Route
-            index
-            element={
-              <Creations showFilters={showFilters} address={user.address} />
-            }
-          />
-          <Route
-            path="/collection"
-            element={
-              <Collections showFilters={showFilters} address={user.address} />
-            }
-          />
-          <Route
-            path="/collabs"
-            element={<CollabsTab wallet={user.address} onLoaded={() => {}} />}
-          />
-        </Routes>
-      </IconCache.Provider>
+      <Routes>
+        <Route
+          index
+          element={
+            <Creations showFilters={showFilters} address={user.address} />
+          }
+        />
+        <Route
+          path="/collection"
+          element={
+            <Collections showFilters={showFilters} address={user.address} />
+          }
+        />
+        <Route
+          path="/collabs"
+          element={<CollabsTab wallet={user.address} onLoaded={() => {}} />}
+        />
+      </Routes>
     </Page>
   )
 }

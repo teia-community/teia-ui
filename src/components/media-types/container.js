@@ -8,7 +8,6 @@ import { HicetnuncContext } from '../../context/HicetnuncContext'
 import styles from './styles.module.scss'
 import './style.css'
 import { FullScreenEnter, FullScreenExit } from '@icons'
-import { IconCache } from '@utils/with-icon'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -97,28 +96,26 @@ export const Container = ({
       }}
       className="objktview-container"
     >
-      <IconCache.Provider value={{}}>
-        <div ref={domElement} className={classes}>
-          {childrenWithProps}
+      <div ref={domElement} className={classes}>
+        {childrenWithProps}
 
-          {interactive && !iOS && !nofullscreen && (
-            <div
-              onClick={toggleFullScreen}
-              className={
-                styles.icon +
-                ' svg-icon ' +
-                (context.fullscreen ? styles.icon_fullscreen : '')
-              }
-              onKeyPress={toggleFullScreen}
-              tabIndex="0"
-              role="button"
-              aria-label="fullscreen"
-            >
-              {context.fullscreen ? <FullScreenEnter /> : <FullScreenExit />}
-            </div>
-          )}
-        </div>
-      </IconCache.Provider>
+        {interactive && !iOS && !nofullscreen && (
+          <div
+            onClick={toggleFullScreen}
+            className={
+              styles.icon +
+              ' svg-icon ' +
+              (context.fullscreen ? styles.icon_fullscreen : '')
+            }
+            onKeyPress={toggleFullScreen}
+            tabIndex="0"
+            role="button"
+            aria-label="fullscreen"
+          >
+            {context.fullscreen ? <FullScreenEnter /> : <FullScreenExit />}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
