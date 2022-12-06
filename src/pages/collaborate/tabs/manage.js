@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Container, Padding } from '@components/layout'
 import styles from '@components/collab/styles.module.scss'
-import { fetchGraphQLTezTok, getCollabsForAddress } from '@data/hicdex'
+import { fetchGraphQL, getCollabsForAddress } from '@data/hicdex'
 // import { Input } from '@components/input'
 import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
 import { CollabList } from '@components/collab/manage/CollabList'
@@ -45,7 +45,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     console.log('Now checking for available collabs')
 
     // On boot, see what addresses the synced address can manage
-    fetchGraphQLTezTok(getCollabsForAddress, 'GetCollabs', {
+    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
       address: acc.address,
     }).then(({ data }) => {
       setLoadingCollabs(false)

@@ -113,7 +113,7 @@ query objkt($id: String!) {
 `
 
 export async function getUser(addressOrName, type = 'user_address') {
-  const { data } = await fetchGraphQLTezTok(
+  const { data } = await fetchGraphQL(
     `
   query addressQuery($addressOrName: String!) {
     teia_users(where: { ${type}: {_eq: $addressOrName}}) {
@@ -149,26 +149,9 @@ export async function fetchGraphQL(operationsDoc, operationName, variables) {
   return await result.json()
 }
 
-export async function fetchGraphQLTezTok(
-  operationsDoc,
-  operationName,
-  variables
-) {
-  const result = await fetch(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  })
-
-  return await result.json()
-}
-
 // TODO: this is currently only used on the gallery page
 export async function fetchObjkts(ids) {
-  const { data } = await fetchGraphQLTezTok(
+  const { data } = await fetchGraphQL(
     `
     ${BaseTokenFieldsFragment}
     query Objkts($_in: [bigint!] = "") {
@@ -182,7 +165,7 @@ export async function fetchObjkts(ids) {
 }
 
 export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
-  const { data } = await fetchGraphQLTezTok(
+  const { data } = await fetchGraphQL(
     `
     ${BaseTokenFieldsFragment}
     query GetCollabCreations($addressOrSubjkt: String!) {
@@ -226,7 +209,7 @@ export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
 }
 
 export async function fetchObjktDetails(id) {
-  const { data } = await fetchGraphQLTezTok(query_objkt, 'objkt', {
+  const { data } = await fetchGraphQL(query_objkt, 'objkt', {
     id,
   })
   return data.tokens_by_pk

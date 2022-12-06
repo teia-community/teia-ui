@@ -96,7 +96,7 @@ function TokenCollection({
   const { data, error } = useSWR(
     disable ? null : [namespace, ...swrParams],
     (ns) =>
-      request(process.env.REACT_APP_TEIA_TEZTOK_GRAPHQL_API, query, {
+      request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
         ...variables,
         ...(maxItems ? { limit: maxItems } : {}),
       }),

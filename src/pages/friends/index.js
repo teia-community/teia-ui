@@ -3,13 +3,13 @@ import useSWR from 'swr'
 import uniq from 'lodash/uniq'
 import { Page } from '@components/layout'
 import TokenCollection from '@components/token-collection'
-import { fetchGraphQLTezTok } from '@data/hicdex'
+import { fetchGraphQL } from '@data/hicdex'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { gql } from 'graphql-request'
 import { useParams } from 'react-router'
 
 async function fetchAllFrensAddresses(address) {
-  const { errors, data } = await fetchGraphQLTezTok(
+  const { errors, data } = await fetchGraphQL(
     `
     query collectorGallery($address: String!) {
       holdings(where: {holder_address: {_eq: $address}, amount: { _gt: 0 }, token: { artist_address: { _neq: $address }}}, order_by: {token_id: desc}) {
