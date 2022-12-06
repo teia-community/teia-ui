@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import get from 'lodash/get'
 import uniqBy from 'lodash/uniqBy'
-import { fetchGraphQL } from '@data/hicdex'
+import { fetchGraphQL } from '@data/api'
 import { useSearchParams, Link } from 'react-router-dom'
 import laggy from '../../utils/swr-laggy-middleware'
 
