@@ -1,5 +1,6 @@
 import React from 'react'
 import get from 'lodash/get'
+import isNumber from 'lodash/isNumber'
 import { Container, Padding } from '@components/layout'
 import { Primary } from '@components/button'
 import { walletPreview } from '@utils/string'
@@ -8,8 +9,6 @@ import { getTimeAgo } from '@utils/time'
 import styles from '../styles.module.scss'
 import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
-// import MintedIcon from '@icons/minted'
-// import SwapIcon from '@icons/swap'
 
 function UsernameAndLink({ event, attr }) {
   return (
@@ -35,6 +34,67 @@ function UsernameAndLink({ event, attr }) {
   )
 }
 
+function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
+  return (
+    <div className={`${styles.history}`}>
+      <div className={styles.history__event__container}>{eventType}</div>
+
+      <div className={styles.history__from}>
+        {from ? (
+          <>
+            <div
+              className={`${styles.history__mobile} ${styles.history__secondary}`}
+            >
+              From
+            </div>
+            {from}
+          </>
+        ) : null}
+      </div>
+
+      <div className={styles.history__to}>
+        {to ? (
+          <>
+            <div
+              className={`${styles.history__mobile} ${styles.history__secondary}`}
+            >
+              To
+            </div>
+            {to}
+          </>
+        ) : null}
+      </div>
+
+      <div className={`${styles.history__ed} ${styles.history__desktop}`}>
+        {editions}
+      </div>
+
+      <div className={`${styles.history__price} ${styles.history__desktop}`}>
+        {isNumber(price) ? `${parseFloat(price / 1e6)} tez` : null}
+      </div>
+
+      <div
+        className={`${styles.history__date} ${styles.history__desktop}`}
+        title={timestamp}
+      >
+        {getTimeAgo(timestamp)}
+      </div>
+
+      <div className={styles.history__inner__mobile}>
+        <div className={styles.history__date} title={timestamp}>
+          {getTimeAgo(timestamp)}
+        </div>
+
+        <div className={styles.history__ed}>ed. {editions}</div>
+
+        <div className={styles.history__price}>
+          {isNumber(price) ? `${parseFloat(price / 1e6)} tez` : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /**
  * The History Tab
  * @function
@@ -42,6 +102,8 @@ function UsernameAndLink({ event, attr }) {
  * @returns {any}
  */
 export const History = ({ nft }) => {
+  console.log('nft.events', nft.events)
+
   return (
     <Container>
       <Padding>
@@ -49,7 +111,7 @@ export const History = ({ nft }) => {
           <div className={styles.history__labels}>
             <div
               className={styles.history__event}
-              style={{ width: 'calc(7% + 35px)' }}
+              style={{ width: 'calc(10% + 35px)' }}
             >
               Event
             </div>
@@ -62,238 +124,136 @@ export const History = ({ nft }) => {
           {nft.events.map((e) => {
             if (e.implements === 'SALE') {
               return (
-                <div className={`${styles.history}`} key={`t-${e.id}`}>
-                  <div className={styles.history__event__container}>
-                    <TradeIcon size={14} viewBox={16} />
-                    <a
-                      href={`https://tzkt.io/${e.ophash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Trade
-                    </a>
-                  </div>
-
-                  <div className={styles.history__from}>
-                    <div
-                      className={`${styles.history__mobile} ${styles.history__secondary}`}
-                    >
-                      From
-                    </div>
-                    <UsernameAndLink event={e} attr="seller" />
-                  </div>
-
-                  <div className={styles.history__to}>
-                    <div
-                      className={`${styles.history__mobile} ${styles.history__secondary}`}
-                    >
-                      To
-                    </div>
-                    <UsernameAndLink event={e} attr="buyer" />
-                  </div>
-
-                  <div
-                    className={`${styles.history__ed} ${styles.history__desktop}`}
-                  >
-                    1
-                  </div>
-
-                  <div
-                    className={`${styles.history__price} ${styles.history__desktop}`}
-                  >
-                    {parseFloat(e.price / 1e6)} tez
-                  </div>
-
-                  <div
-                    className={`${styles.history__date} ${styles.history__desktop}`}
-                    title={e.timestamp}
-                  >
-                    {getTimeAgo(e.timestamp)}
-                  </div>
-
-                  <div className={styles.history__inner__mobile}>
-                    <div className={styles.history__date} title={e.timestamp}>
-                      {getTimeAgo(e.timestamp)}
-                    </div>
-
-                    <div className={styles.history__ed}>ed. 1</div>
-
-                    <div className={styles.history__price}>
-                      {parseFloat(e.price / 1e6)} tez
-                    </div>
-                  </div>
-                </div>
+                <HistoryRow
+                  key={`t-${e.id}`}
+                  eventType={
+                    <>
+                      <TradeIcon size={14} viewBox={16} />
+                      <a
+                        href={`https://tzkt.io/${e.ophash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Trade
+                      </a>
+                    </>
+                  }
+                  from={<UsernameAndLink event={e} attr="seller" />}
+                  to={<UsernameAndLink event={e} attr="buyer" />}
+                  editions={1}
+                  timestamp={e.timestamp}
+                  price={e.price}
+                />
               )
             }
             if (['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2'].includes(e.type)) {
               return (
-                <div className={`${styles.history}`} key={e.id}>
-                  <div className={styles.history__event__container}>
-                    <SwapIcon size={14} viewBox={16} />
-                    <a
-                      href={`https://tzkt.io/${e.ophash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Swap
-                    </a>
-                  </div>
-
-                  <div className={styles.history__from}>
-                    <div
-                      className={`${styles.history__mobile} ${styles.history__secondary}`}
-                    >
-                      from
-                    </div>
-                    <UsernameAndLink event={e} attr="seller" />
-                  </div>
-
-                  <div className={styles.history__to} />
-                  <div className={styles.history__ed}>{e.amount}</div>
-
-                  <div className={styles.history__price}>
-                    {parseFloat(e.price / 1e6)} tez
-                  </div>
-
-                  <div className={styles.history__date} title={e.timestamp}>
-                    {getTimeAgo(e.timestamp)}
-                  </div>
-
-                  <div className={styles.history__inner__mobile}>
-                    <div className={styles.history__date} title={e.timestamp}>
-                      {getTimeAgo(e.timestamp)}
-                    </div>
-
-                    <div className={styles.history__ed}>ed. {e.amount}</div>
-
-                    <div className={styles.history__price}>
-                      {parseFloat(e.price / 1e6)} tez
-                    </div>
-                  </div>
-                </div>
+                <HistoryRow
+                  key={`t-${e.id}`}
+                  eventType={
+                    <>
+                      <SwapIcon size={14} viewBox={16} />
+                      <a
+                        href={`https://tzkt.io/${e.ophash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Swap
+                      </a>
+                    </>
+                  }
+                  from={<UsernameAndLink event={e} attr="seller" />}
+                  editions={e.amount}
+                  timestamp={e.timestamp}
+                  price={e.price}
+                />
+              )
+            }
+            if (
+              e.type === 'FA2_TRANSFER' &&
+              e.to_address !== BURN_ADDRESS &&
+              !nft.events.some(
+                (ev) =>
+                  (ev.implements === 'SALE' ||
+                    ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2'].includes(
+                      ev.type
+                    )) &&
+                  e.ophash === ev.ophash
+              )
+            ) {
+              return (
+                <HistoryRow
+                  key={`t-${e.id}`}
+                  eventType={
+                    <>
+                      <a
+                        href={`https://tzkt.io/${e.ophash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Transfer
+                      </a>
+                    </>
+                  }
+                  from={<UsernameAndLink event={e} attr="from" />}
+                  to={<UsernameAndLink event={e} attr="to" />}
+                  editions={e.amount}
+                  timestamp={e.timestamp}
+                />
               )
             }
             if (e.type === 'FA2_TRANSFER' && e.to_address === BURN_ADDRESS) {
               return (
-                <div className={`${styles.history}`} key={`b-${e.opid}`}>
-                  <div className={styles.history__event__container}>
-                    <BurnIcon size={14} viewBox={16} />
-                    <a
-                      href={`https://tzkt.io/${e.ophash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Burn
-                    </a>
-                  </div>
+                <HistoryRow
+                  key={`t-${e.id}`}
+                  eventType={
+                    <>
+                      <BurnIcon size={14} viewBox={16} />
+                      <a
+                        href={`https://tzkt.io/${e.ophash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Burn
+                      </a>
+                    </>
+                  }
+                  from={<UsernameAndLink event={e} attr="from" />}
+                  to={
+                    <span>
+                      <a
+                        href={`/tz/${encodeURI(BURN_ADDRESS)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Primary>Burn Address</Primary>
+                      </a>
+                    </span>
+                  }
+                  editions={e.amount}
+                  timestamp={e.timestamp}
+                />
+              )
+            }
 
-                  <div className={styles.history__from}>
-                    <div
-                      className={`${styles.history__mobile} ${styles.history__secondary}`}
-                    >
-                      From
-                    </div>
-                    <UsernameAndLink event={e} attr="from" />
-                  </div>
-
-                  <div className={styles.history__to}>
-                    <div
-                      className={`${styles.history__mobile} ${styles.history__secondary}`}
-                    >
-                      To
-                    </div>
-                    {
-                      <span>
-                        <a
-                          href={`/tz/${encodeURI(BURN_ADDRESS)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <Primary>Burn Address</Primary>
-                        </a>
-                      </span>
-                    }
-                  </div>
-
-                  <div
-                    className={`${styles.history__ed} ${styles.history__desktop}`}
-                  >
-                    {e.amount}
-                  </div>
-
-                  <div
-                    className={`${styles.history__price} ${styles.history__desktop}`}
-                  ></div>
-
-                  <div
-                    className={`${styles.history__date} ${styles.history__desktop}`}
-                    title={e.timestamp}
-                  >
-                    {getTimeAgo(e.timestamp)}
-                  </div>
-
-                  <div className={styles.history__inner__mobile}>
-                    <div className={styles.history__date} title={e.timestamp}>
-                      {getTimeAgo(e.timestamp)}
-                    </div>
-
-                    <div className={styles.history__ed}>ed. {e.amount}</div>
-
-                    <div className={styles.history__price}></div>
-                  </div>
-                </div>
+            if (e.type === 'HEN_MINT') {
+              return (
+                <HistoryRow
+                  key={`t-${e.id}`}
+                  eventType={
+                    <>
+                      <MintedIcon size={14} viewBox={16} />
+                      <div className={styles.history__mint__op}>Minted</div>
+                    </>
+                  }
+                  editions={e.editions}
+                  timestamp={e.timestamp}
+                />
               )
             }
 
             return null
           })}
-
-          <div className={styles.history} key="mint-op">
-            <div className={styles.history__event__container}>
-              <MintedIcon size={14} viewBox={16} />
-              <div className={styles.history__mint__op}>Minted</div>
-            </div>
-
-            <div className={styles.history__from}>
-              {get(nft, 'artist_profile.name') ? (
-                <span>
-                  <a
-                    href={`/tz/${encodeURI(nft.artist_address)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Primary>{get(nft, 'artist_profile.name')}</Primary>
-                  </a>
-                </span>
-              ) : (
-                <span>
-                  <a href={`/tz/${nft.artist_address}`}>
-                    <Primary>{walletPreview(nft.artist_address)}</Primary>
-                  </a>
-                </span>
-              )}
-            </div>
-
-            <div className={styles.history__to} />
-
-            <div className={styles.history__ed}>{nft.editions}</div>
-
-            <div className={styles.history__price} />
-
-            <div className={styles.history__date} title={nft.minted_at}>
-              {getTimeAgo(nft.minted_at)}
-            </div>
-
-            <div className={styles.history__inner__mobile}>
-              <div className={styles.history__date} title={nft.minted_at}>
-                {getTimeAgo(nft.minted_at)}
-              </div>
-
-              <div className={styles.history__ed}>ed. {nft.editions}</div>
-
-              <div className={styles.history__price} />
-            </div>
-          </div>
 
           <div className={styles.history__royalties}>
             {formatRoyalties(nft)} Royalties
