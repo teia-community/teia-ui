@@ -127,7 +127,7 @@ query objkt($id: String!) {
     tags {
       tag
     }
-    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "FA2_TRANSFER"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
+    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "FA2_TRANSFER"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
       timestamp
       implements
       ophash
@@ -135,6 +135,7 @@ query objkt($id: String!) {
       type
       price
       amount
+      editions
       seller_address
       seller_profile {
         name
