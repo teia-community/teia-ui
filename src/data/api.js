@@ -180,11 +180,12 @@ export async function getUser(addressOrName, type = 'user_address') {
 }
 
 export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
+  console.log('fetchCollabCreations', addressOrSubjkt, type)
   const { data } = await fetchGraphQL(
     `
     ${BaseTokenFieldsFragment}
     query GetCollabCreations($addressOrSubjkt: String!) {
-      tokens(where: {artist_profile: {is_split: {_eq: true}}, ${
+      tokens(where: {${
         type === 'address'
           ? `artist_address: {_eq: $addressOrSubjkt}`
           : `artist_profile: {name: {_eq: $addressOrSubjkt }}`
