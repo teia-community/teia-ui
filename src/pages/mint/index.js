@@ -31,7 +31,7 @@ import {
   fetchGraphQL,
   getCollabsForAddress,
   getNameForAddress,
-} from '@data/hicdex'
+} from '@data/api'
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate/tabs/manage'

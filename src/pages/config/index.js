@@ -6,7 +6,7 @@ import { Container, Padding, Page } from '@components/layout'
 import { Input } from '@components/input'
 import { Button, Purchase } from '@components/button'
 import { Identicon } from '@components/identicons'
-import { fetchGraphQL } from '@data/hicdex'
+import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 
 const ls = require('local-storage')
