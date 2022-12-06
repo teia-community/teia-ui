@@ -32,23 +32,6 @@ fragment baseTokenFields on tokens {
 `
 
 /**
- * Get OBJKT detail page
- */
-export const GetOBJKT = async ({ id }) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(process.env.REACT_APP_OBJKT, {
-        params: { id: id },
-      })
-      .then((res) => {
-        // console.log(res.data)
-        resolve(res.data.result)
-      })
-      .catch((e) => reject(e))
-  })
-}
-
-/**
  * Get User claims from their tzprofile
  */
 const GetUserClaims = async (walletAddr) => {

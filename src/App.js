@@ -11,8 +11,6 @@ import Display from './pages/display'
 import { Mint } from './pages/mint'
 import { ObjktDisplay } from './pages/objkt-display'
 import { Collaborate, CollabDisplay } from './pages/collaborate'
-import { Galleries } from './pages/galleries'
-import { GalleryDetail } from './pages/gallery-detail'
 import { Config } from './pages/config'
 import { Home } from './pages/home'
 import { Tags } from './pages/tags'
@@ -44,8 +42,6 @@ const App = () => {
           <Route path="/mint" element={<Mint />} />
           <Route path="/collaborate" element={<Collaborate />} />
           <Route path="/objkt/:id" element={<ObjktDisplay />} />
-          <Route path="/galleries" element={<Galleries />} />
-          <Route path="/gallery/:id" element={<GalleryDetail />} />
           <Route path="/config" element={<Config />} />
           <Route path="/tags/:tag" element={<Tags />} />
           <Route path="/:id/:collection?" element={<Display />} />
