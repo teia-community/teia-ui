@@ -61,6 +61,7 @@ export const CollabDisplay = () => {
 
   // TODO: use the new masonry/feed component here that also supports infinte
 
+  console.log('data', data)
   const { split_contract, tokens } = data
 
   const headerClass = classNames(
