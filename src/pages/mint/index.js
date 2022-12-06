@@ -21,7 +21,6 @@ import {
   MAX_EDITIONS,
   MIN_ROYALTIES,
   MAX_ROYALTIES,
-  BURN_ADDRESS,
   COVER_COMPRESSOR_OPTIONS,
   THUMBNAIL_COMPRESSOR_OPTIONS,
   LICENSE_TYPES_OPTIONS,
@@ -29,7 +28,6 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import {
-  fetchGraphQL,
   fetchGraphQLTezTok,
   getCollabsForAddress,
   getNameForAddress,
@@ -41,17 +39,9 @@ import styles from './styles.module.scss'
 import useSettings from 'hooks/use-settings'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
-  token(order_by: {id: desc}, where: {artifact_uri: {_in: $ids}, creator_id: {_eq: $address}}) {
-    id
-    creator {
-      address
-      name
-    }
-    token_holders(where: {quantity: {_gt: "0"}}, order_by: {id: asc}) {
-      holder {
-        address
-      }
-    }
+  tokens(order_by: {minted_at: desc_nulls_last}, where: {artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
+    artist_address
+    editions
   }
 }`
 
@@ -98,13 +88,13 @@ export const Mint = () => {
   // On mount, see if there are available collab contracts
   useEffect(() => {
     // On boot, see what addresses the synced address can manage
-    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
+    fetchGraphQLTezTok(getCollabsForAddress, 'GetCollabs', {
       address: acc?.address,
     }).then(({ data, errors }) => {
       if (data) {
         // const shareholderInfo = data.shareholder.map(s => s.split_contract);
         // setCollabs(shareholderInfo || [])
-        const managedCollabs = data.split_contract
+        const managedCollabs = data.split_contracts
         setCollabs(managedCollabs || [])
       }
     })
@@ -373,7 +363,8 @@ export const Mint = () => {
       return false
     }
 
-    const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
+    // TODO: test if this still works correctly
+    const { errors, data } = await fetchGraphQLTezTok(uriQuery, 'uriQuery', {
       address: proxyAddress || acc.address,
       ids: [uri0, uri1],
     })
@@ -382,9 +373,8 @@ export const Mint = () => {
       showFeedback(`GraphQL Error: ${JSON.stringify(errors)}`)
       return true
     } else if (data) {
-      const areAllTokensBurned = (data.token || []).every(
-        (token) =>
-          _.get(token, 'token_holders.0.holder.address') === BURN_ADDRESS
+      const areAllTokensBurned = (data.tokens || []).every(
+        ({ editions }) => editions === 0
       )
 
       if (areAllTokensBurned) {
@@ -637,7 +627,7 @@ export const Mint = () => {
             </Container>
           )}
 
-          {selectCollab && <CollabContractsOverview showAdminOnly={true} />}
+          {selectCollab && <CollabContractsOverview showAdminOnly />}
 
           {balance > 0 && balance < 0.15 && (
             <Container>
