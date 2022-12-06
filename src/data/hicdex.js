@@ -3,23 +3,24 @@ import { BaseTokenFieldsFragment } from '../data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 
 export const getCollabsForAddress = `query GetCollabs($address: String!) {
-split_contract(where: {_or: [{administrator: {_eq: $address}}, {shareholder: {holder_id: {_eq: $address}}}]}) {
-  id
-  contract {
-    address
-    description
-    name
-  }
-  administrator
-  shareholder {
-    shares
-    holder {
+  split_contracts: teia_split_contracts(where: {_or: [{administrator_address: {_eq: $address}}, {shareholders: {shareholder_address: {_eq: $address}}}]}) {
+    contract_address
+    contract_profile {
       name
-      address
+      metadata {
+        data
+      }
     }
-    holder_type
+    administrator_address
+    shareholders {
+      shareholder_address
+      shareholder_profile {
+        name
+      }
+      shares
+      holder_type
+    }
   }
-}
 }`
 
 export const getNameForAddress = `query GetNameForAddress($address: String!) {

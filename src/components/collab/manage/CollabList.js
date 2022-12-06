@@ -25,7 +25,7 @@ export const CollabList = ({ description, collabs }) => {
       <ul>
         {collabs.map((collab) => (
           <CollabParticipantInfo
-            key={collab.contract.address}
+            key={collab.contract_address}
             collabData={collab}
             expanded={showDetail}
           />

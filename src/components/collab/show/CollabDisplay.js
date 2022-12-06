@@ -97,8 +97,6 @@ export const CollabDisplay = () => {
     return <Navigate to={`${PATH.ISSUER}/${id}`} replace />
   }
 
-  console.log('tokens', tokens)
-
   return (
     <Page title={`Collab: ${displayName}`}>
       {/* <CollabHeader collaborators={collaborators} /> */}
