@@ -35,7 +35,7 @@ fragment baseTokenFields on tokens {
  * Get User claims from their tzprofile
  */
 const GetUserClaims = async (walletAddr) => {
-  return await axios.post('https://indexer.tzprofiles.com/v1/graphql', {
+  return await axios.post(process.env.REACT_APP_TZPROFILES_GRAPHQL_API, {
     query: `query MyQuery { tzprofiles_by_pk(account: "${walletAddr}") { valid_claims } }`,
     variables: null,
     operationName: 'MyQuery',
