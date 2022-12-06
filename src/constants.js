@@ -10,7 +10,6 @@ export const PATH = {
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
-  GALLERY: '/gallery',
   TAGS: '/tags',
 }
 

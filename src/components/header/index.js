@@ -176,15 +176,6 @@ export const Header = () => {
                       </Button>
                     </li>
                     <li>
-                      <Button>
-                        <Primary>
-                          <a className={styles.link} href="/galleries">
-                            Galleries
-                          </a>
-                        </Primary>
-                      </Button>
-                    </li>
-                    <li>
                       <Button onClick={() => handleRoute('/collaborate')}>
                         <Primary>Collaborate</Primary>
                       </Button>

@@ -149,21 +149,6 @@ export async function fetchGraphQL(operationsDoc, operationName, variables) {
   return await result.json()
 }
 
-// TODO: this is currently only used on the gallery page
-export async function fetchObjkts(ids) {
-  const { data } = await fetchGraphQL(
-    `
-    ${BaseTokenFieldsFragment}
-    query Objkts($_in: [bigint!] = "") {
-      tokens(where: { token_id: {_in: $_in}, editions : { _neq : 0 }}) {
-        ...baseTokenFields
-    }`,
-    'Objkts',
-    { _in: ids }
-  )
-  return data.tokens
-}
-
 export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
   const { data } = await fetchGraphQL(
     `
