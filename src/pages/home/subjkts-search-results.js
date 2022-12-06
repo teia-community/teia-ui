@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import get from 'lodash/get'
 import uniqBy from 'lodash/uniqBy'
-import { fetchGraphQLTezTok } from '@data/hicdex'
+import { fetchGraphQL } from '@data/hicdex'
 import { useSearchParams, Link } from 'react-router-dom'
 import laggy from '../../utils/swr-laggy-middleware'
 
@@ -12,7 +12,7 @@ function SubjktsSearchResults() {
   const { data } = useSWR(
     ['subjkts-search', searchTerm],
     async (ns, term) => {
-      const result = await fetchGraphQLTezTok(
+      const result = await fetchGraphQL(
         `
           query getSubjkts($subjkt: String!) {
             teia_users(

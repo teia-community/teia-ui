@@ -6,7 +6,7 @@ import { Container, Padding, Page } from '@components/layout'
 import { Input } from '@components/input'
 import { Button, Purchase } from '@components/button'
 import { Identicon } from '@components/identicons'
-import { fetchGraphQLTezTok } from '@data/hicdex'
+import { fetchGraphQL } from '@data/hicdex'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 
 const ls = require('local-storage')
@@ -32,7 +32,7 @@ query nameExists($name: String!) {
 `
 
 async function fetchTz(address) {
-  const { errors, data } = await fetchGraphQLTezTok(query_tz, 'addressQuery', {
+  const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
     address,
   })
   if (errors) {
@@ -118,7 +118,7 @@ export class Config extends Component {
   name_exists = async () => {
     if (!this.state.subjkt) return false
 
-    const { errors, data } = await fetchGraphQLTezTok(
+    const { errors, data } = await fetchGraphQL(
       query_name_exist,
       'nameExists',
       {

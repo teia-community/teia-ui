@@ -28,7 +28,7 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import {
-  fetchGraphQLTezTok,
+  fetchGraphQL,
   getCollabsForAddress,
   getNameForAddress,
 } from '@data/hicdex'
@@ -88,7 +88,7 @@ export const Mint = () => {
   // On mount, see if there are available collab contracts
   useEffect(() => {
     // On boot, see what addresses the synced address can manage
-    fetchGraphQLTezTok(getCollabsForAddress, 'GetCollabs', {
+    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
       address: acc?.address,
     }).then(({ data, errors }) => {
       if (data) {
@@ -115,7 +115,7 @@ export const Mint = () => {
   const updateName = () => {
     const currentAddress = proxyAddress || acc?.address
 
-    fetchGraphQLTezTok(getNameForAddress, 'GetNameForAddress', {
+    fetchGraphQL(getNameForAddress, 'GetNameForAddress', {
       address: currentAddress,
     }).then(({ data, errors }) => {
       if (data) {
@@ -364,7 +364,7 @@ export const Mint = () => {
     }
 
     // TODO: test if this still works correctly
-    const { errors, data } = await fetchGraphQLTezTok(uriQuery, 'uriQuery', {
+    const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
       address: proxyAddress || acc.address,
       ids: [uri0, uri1],
     })
