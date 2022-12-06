@@ -16,7 +16,7 @@ export const SigningSummary = ({ coreParticipants, signatures }) => {
           )
 
           return (
-            <li>
+            <li key={participant.shareholder_address}>
               <a href={`/tz/${participant.shareholder_address}`}>
                 {get(participant, 'shareholder_profile.name') ||
                   walletPreview(participant.shareholder_address)}

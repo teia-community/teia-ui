@@ -82,7 +82,7 @@ export const Preview = ({
         )}
         <div className={styles.attributes}>
           <strong>Tags:</strong>
-          <Tags token_tags={token_tags} preview={true} />
+          <Tags tags={token_tags} />
         </div>
       </div>
     </div>

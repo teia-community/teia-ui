@@ -10,6 +10,7 @@ import useSWR from 'swr'
 import { getUser } from '@data/api'
 import { GetUserMetadata } from '@data/api'
 import useSettings from '@hooks/use-settings'
+import { validateAddress, ValidationResult } from '@taquito/utils'
 import Profile from './profile'
 import Creations from './creations'
 import Collections from './collections'
@@ -39,8 +40,10 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
   if (!holder && type !== 'user_address') {
     throw new Error('user not found')
-  } else if (!holder) {
-    // TODO: check if addressOrSubjkt is a valid tezos address
+  } else if (
+    !holder &&
+    validateAddress(addressOrSubjkt) === ValidationResult.VALID
+  ) {
     holder = {
       user_address: addressOrSubjkt,
     }

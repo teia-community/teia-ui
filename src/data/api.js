@@ -12,6 +12,7 @@ fragment baseTokenFields on tokens {
   thumbnail_uri
   display_uri
   artifact_uri
+  metadata_uri
   artist_address
   artist_profile {
     name
@@ -180,7 +181,6 @@ export async function getUser(addressOrName, type = 'user_address') {
 }
 
 export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
-  console.log('fetchCollabCreations', addressOrSubjkt, type)
   const { data } = await fetchGraphQL(
     `
     ${BaseTokenFieldsFragment}

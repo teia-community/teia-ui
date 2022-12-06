@@ -37,9 +37,11 @@ export const Info = ({ nft, viewer_address }) => {
             <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
           </Padding>
 
-          <Padding>
-            <Tags token_tags={nft.tags} />
-          </Padding>
+          {nft.tags && nft.tags.length ? (
+            <Padding>
+              <Tags tags={nft.tags.map(({ tag }) => tag)} />
+            </Padding>
+          ) : null}
         </div>
       </Container>
       <Container>
@@ -47,7 +49,7 @@ export const Info = ({ nft, viewer_address }) => {
           <hr />
           <div className={styles.infos_attributes_flex}>
             <div className={styles.info_attributes}>
-              Mimetype:<p>{nft.mime}</p>
+              Mimetype:<p>{nft.mime_type}</p>
             </div>
             {nft.language && (
               <div className={styles.info_attributes}>
@@ -84,7 +86,7 @@ export const Info = ({ nft, viewer_address }) => {
 
             <div className={styles.info_attributes}>
               Mint date:
-              <p>{getWordDate(nft.timestamp)}</p>
+              <p>{getWordDate(nft.minted_at)}</p>
             </div>
           </div>
           <Padding>
