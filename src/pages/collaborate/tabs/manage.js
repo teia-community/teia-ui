@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Container, Padding } from '@components/layout'
 import styles from '@components/collab/styles.module.scss'
-import { fetchGraphQL, getCollabsForAddress } from '@data/hicdex'
+import { fetchGraphQLTezTok, getCollabsForAddress } from '@data/hicdex'
 // import { Input } from '@components/input'
 import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
 import { CollabList } from '@components/collab/manage/CollabList'
@@ -45,23 +45,23 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     console.log('Now checking for available collabs')
 
     // On boot, see what addresses the synced address can manage
-    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
+    fetchGraphQLTezTok(getCollabsForAddress, 'GetCollabs', {
       address: acc.address,
     }).then(({ data }) => {
       setLoadingCollabs(false)
 
       if (data) {
-        const allCollabs = data.split_contract || []
+        const allCollabs = data.split_contracts || []
         const adminCollabs = allCollabs.filter(
-          (c) => c.administrator === acc.address
+          (c) => c.administrator_address === acc.address
         )
         const participantCollabs = allCollabs.filter(
-          (c) => c.administrator !== acc.address
+          (c) => c.administrator_address !== acc.address
         )
 
         // Show admin followed by participant
         const availableCollabs = showAdminOnly
-          ? allCollabs.filter((c) => c.administrator === acc.address)
+          ? allCollabs.filter((c) => c.administrator_address === acc.address)
           : [...adminCollabs, ...participantCollabs]
 
         setCollabs(availableCollabs)

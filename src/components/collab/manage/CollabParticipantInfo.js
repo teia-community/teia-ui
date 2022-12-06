@@ -1,4 +1,5 @@
 import React, { Fragment, useContext } from 'react'
+import get from 'lodash/get'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
 import { Button, Purchase } from '../../button'
 import classNames from 'classnames'
@@ -10,17 +11,22 @@ import { Link } from 'react-router-dom'
 
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
   const { proxyAddress, setProxyAddress, acc } = useContext(HicetnuncContext)
-  const { administrator, contract, shareholder } = collabData
+  const {
+    administrator_address,
+    contract_address,
+    contract_profile,
+    shareholders,
+  } = collabData
 
-  const isAdmin = acc?.address === administrator
+  const isAdmin = acc?.address === administrator_address
 
   // Core participants
-  const coreParticipants = shareholder.filter(
+  const coreParticipants = shareholders.filter(
     ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
   )
 
   // beneficiaries
-  const beneficiaries = shareholder.filter(
+  const beneficiaries = shareholders.filter(
     ({ holder_type }) => holder_type === CollaboratorType.BENEFACTOR
   )
 
@@ -31,7 +37,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
     styles.alignStart,
     styles.mb2,
     {
-      [styles.border]: contract.address === proxyAddress,
+      [styles.border]: contract_address === proxyAddress,
     }
   )
 
@@ -42,35 +48,31 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
     styles.fullWidth
   )
 
-  // We'll show the name of the contract if set
-  const { name, address } = contract
-
-  const displayName = name || address
+  const name = get(contract_profile, 'name')
+  const displayName = name || contract_address
 
   // TODO: Sort out better path naming in constants file for /kt vs. /collab
-  const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${address}`
+  const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${contract_address}`
 
   return (
-    <li className={listStyle} key={address}>
+    <li className={listStyle} key={contract_address}>
       <div className={styles.fullWidth}>
         <div className={headerStyle}>
           {displayName && (
-            <Fragment>
-              <h3>
-                <strong>
-                  <Link to={path}>{displayName}</Link>
-                </strong>
-              </h3>
-            </Fragment>
+            <h3>
+              <strong>
+                <Link to={path}>{displayName}</Link>
+              </strong>
+            </h3>
           )}
 
-          {address !== proxyAddress && isAdmin && (
-            <Button onClick={() => setProxyAddress(address, name)}>
+          {contract_address !== proxyAddress && isAdmin && (
+            <Button onClick={() => setProxyAddress(contract_address, name)}>
               <Purchase>sign in</Purchase>
             </Button>
           )}
 
-          {address === proxyAddress && isAdmin && (
+          {contract_address === proxyAddress && isAdmin && (
             <Button onClick={() => setProxyAddress(null)}>
               <Purchase>sign out</Purchase>
             </Button>
@@ -80,7 +82,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
         {!name && isAdmin && (
           <p>
             to set the name of this collab,{' '}
-            {address !== proxyAddress ? 'sign in and' : ''} visit{' '}
+            {contract_address !== proxyAddress ? 'sign in and' : ''} visit{' '}
             <Link to="/config" style={{ textDecoration: 'underline' }}>
               settings
             </Link>
@@ -91,8 +93,11 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
           <Fragment>
             <p>
               <span className={styles.infoLabel}>address:</span>
-              <Link className={styles.link} to={`${PATH.ISSUER}/${address}`}>
-                {address}
+              <Link
+                className={styles.link}
+                to={`${PATH.ISSUER}/${contract_address}`}
+              >
+                {contract_address}
               </Link>
             </p>{' '}
             {/* <span className={styles.muted}>(admin)</span> */}
@@ -103,12 +108,10 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
               />
             )}
             {beneficiaries.length > 0 && (
-              <Fragment>
-                <ParticipantList
-                  title="beneficiaries"
-                  participants={beneficiaries}
-                />
-              </Fragment>
+              <ParticipantList
+                title="beneficiaries"
+                participants={beneficiaries}
+              />
             )}
           </Fragment>
         )}
