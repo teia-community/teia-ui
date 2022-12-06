@@ -37,7 +37,6 @@ function TokenMasonry({
 }) {
   const { walletBlockMap, nsfwMap } = useSettings()
 
-  const filter = (token) => (walletBlockMap.get(token.id) === 1 ? null : token)
   const [limit, setLimit] = useState(itemsPerLoad)
 
   const { data, error } = useSWR(
@@ -72,7 +71,7 @@ function TokenMasonry({
   }
 
   let tokens = extractTokensFromResponse(data, {
-    postProcessTokens: filter,
+    postProcessTokens,
     resultsPath,
     tokenPath,
     keyPath,
