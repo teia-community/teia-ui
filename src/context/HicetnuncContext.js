@@ -22,24 +22,19 @@ import {
   MARKETPLACE_CONTRACT_V1,
   MARKETPLACE_CONTRACT_V2,
   MARKETPLACE_CONTRACT_TEIA,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
   MAIN_MARKETPLACE_CONTRACT,
   MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
   SWAP_TYPE_TEIA,
   SWAP_TYPE_HEN,
   BURN_ADDRESS,
+  SUBJKT_CONTRACT,
+  UNREGISTRY_CONTRACT,
+  PROXY_FACTORY_CONTRACT,
+  SIGNING_CONTRACT,
 } from '@constants'
-const { NetworkType } = require('@airgap/beacon-sdk')
 var ls = require('local-storage')
 const axios = require('axios')
 const verify = require('@utils/verify')
-// import { Parser, Expr } from "@taquito/michel-codec";
-// import { Schema } from "@taquito/michelson-encoder";
-// import { KeyStoreUtils } from 'conseiljs-softsigner'
-// import { PermissionScope } from '@airgap/beacon-sdk'
-// import { UnitValue } from '@taquito/michelson-encoder'
-// import { contentType } from 'mime-types';
 
 export const HicetnuncContext = createContext()
 
@@ -221,19 +216,15 @@ class HicetnuncContextProviderClass extends Component {
     this.state = {
       // smart contracts
 
-      // TODO: move these into constants.js?
-      hDAO: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
-      subjkt: 'KT1My1wDZHDGweCrJnQJi3wcFaS67iksirvj',
+      subjkt: SUBJKT_CONTRACT,
       v1: MARKETPLACE_CONTRACT_V1,
-      unregistry: 'KT18xby6bb1ur1dKe7i6YVrBaksP4AgtuLES',
+      unregistry: UNREGISTRY_CONTRACT,
       v2: MARKETPLACE_CONTRACT_V2,
       objkts: HEN_CONTRACT_FA2,
-      hDAO_curation: 'KT1TybhR7XraG75JFYKSrh7KnxukMBT5dor6',
-      hDAO_marketplace: 'KT1QPvv7sWVaT9PcPiC4fN9BgfX8NB2d5WzL',
 
       // Collab additions
-      proxyFactoryAddress: 'KT1DoyD6kr8yLK8mRBFusyKYJUk2ZxNHKP1N',
-      signingContractAddress: 'KT1BcLnWRziLDNJNRn3phAANKrEBiXhytsMY',
+      proxyFactoryAddress: PROXY_FACTORY_CONTRACT,
+      signingContractAddress: SIGNING_CONTRACT,
 
       lastId: undefined,
       setId: (id) => this.setState({ lastId: id }),
@@ -363,23 +354,6 @@ class HicetnuncContextProviderClass extends Component {
 
         console.debug(list)
         const batch = await Tezos.wallet.batch(list)
-        return await batch.send()
-      },
-
-      // TODO (xat): remove all the v1 logic
-      batch_cancelv1: async (arr) => {
-        const v1 = await Tezos.wallet.at(MARKETPLACE_CONTRACT_V1)
-
-        /*         const batch = await arr
-                  .map((e) => parseInt(e.id))
-                  .reduce((batch, id) => {
-                    return { kind : OpKind.TRANSACTION, ...batch.withContractCall(v1.methods.cancel_swap(id)).toTransferParams({ amount: 0, mutez: true, storageLimit: 150 }) }
-                  }, Tezos.wallet.batch()) */
-        const batch = await arr
-          .map((e) => parseInt(e.id))
-          .reduce((batch, id) => {
-            return batch.withContractCall(v1.methods.cancel_swap(id))
-          }, Tezos.wallet.batch())
         return await batch.send()
       },
 
@@ -668,21 +642,6 @@ class HicetnuncContextProviderClass extends Component {
         }
       },
 
-      curate: async (objkt_id) => {
-        await Tezos.wallet
-          .at(this.state.v1)
-          .then((c) =>
-            c.methods
-              .curate(
-                ls.get('hDAO_config') != null
-                  ? parseInt(ls.get('hDAO_config'))
-                  : 1,
-                objkt_id
-              )
-              .send()
-          )
-      },
-
       sign: async (objkt_id) => {
         await Tezos.wallet
           .at(this.state.signingContractAddress)
@@ -690,27 +649,6 @@ class HicetnuncContextProviderClass extends Component {
             c.methods.sign(objkt_id).send({ amount: 0, storageLimit: 310 })
           )
           .then((op) => console.log(op))
-      },
-
-      claim_hDAO: async (hDAO_amount, objkt_id) => {
-        await Tezos.wallet.at(this.state.hDAO_curation).then((c) => {
-          c.methods.claim_hDAO(parseInt(hDAO_amount), parseInt(objkt_id)).send()
-        })
-      },
-
-      batch_claim: async (arr) => {
-        console.log(arr)
-        let curation = await Tezos.wallet.at(this.state.hDAO_curation)
-        let transactions = arr.map((e) => {
-          return {
-            kind: OpKind.TRANSACTION,
-            ...curation.methods
-              .claim_hDAO(e.hdao_balance, e.id)
-              .toTransferParams({ amount: 0, mutez: true, storageLimit: 175 }),
-          }
-        })
-        let batch = await Tezos.wallet.batch(transactions)
-        return await batch.send()
       },
 
       transfer: async (txs) => {
@@ -832,7 +770,6 @@ class HicetnuncContextProviderClass extends Component {
        * @returns {any}
        * */
       registry: async (alias, metadata) => {
-        // console.log(metadata)
         const subjktAddressOrProxy =
           this.state.proxyAddress || this.state.subjkt
 
@@ -854,22 +791,6 @@ class HicetnuncContextProviderClass extends Component {
                   ''
                 )
             )
-            .send({ amount: 0 })
-        )
-      },
-
-      hDAO_update_operators: async (address) => {
-        return await Tezos.wallet.at(this.state.hDAO).then((c) =>
-          c.methods
-            .update_operators([
-              {
-                add_operator: {
-                  owner: address,
-                  operator: this.state.subjkt,
-                  token_id: 0,
-                },
-              },
-            ])
             .send({ amount: 0 })
         )
       },
@@ -1023,8 +944,6 @@ class HicetnuncContextProviderClass extends Component {
           title: title,
         })
       },
-
-      hDAO_vote: ls.get('hDAO_vote'),
 
       mockProxy: async () => {
         this.state.setFeedback({

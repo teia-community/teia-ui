@@ -9,22 +9,24 @@ import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
 export const CollabsTab = ({ wallet }) => {
+  const [hasUnverifiedTokens, setHasUnverifiedTokens] = useState(false)
   const [showUnverified, setShowUnverified] = useState(false)
   const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
 
   return (
     <Container xlarge>
-      {/** TODO: decide if this should be hidden again in case there are no tokens */}
-      <div className={toolbarStyles}>
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => setShowUnverified(!showUnverified)}
-            checked={showUnverified}
-          />
-          include unverified OBJKTs
-        </label>
-      </div>
+      {hasUnverifiedTokens ? (
+        <div className={toolbarStyles}>
+          <label>
+            <input
+              type="checkbox"
+              onChange={() => setShowUnverified(!showUnverified)}
+              checked={showUnverified}
+            />
+            include unverified OBJKTs
+          </label>
+        </div>
+      ) : null}
 
       <TokenCollection
         defaultViewMode="masonry"
@@ -39,6 +41,10 @@ export const CollabsTab = ({ wallet }) => {
               return get(shareholder, 'split_contract.created_tokens', [])
             })
             .flat()
+
+          setHasUnverifiedTokens(
+            tokens.some((token) => !get(token, 'teia_meta.is_signed'))
+          )
 
           return orderBy(tokens, ['minted_at'])
             .reverse()

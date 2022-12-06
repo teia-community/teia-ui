@@ -22,7 +22,6 @@ export const ItemInfo = ({ nft }) => {
   const [showSignStatus, setShowSignStatus] = useState(false)
   const restricted = walletBlockMap.get(nft.artist_address) === 1
 
-  // TODO: subtract burned pieces from total
   const editionsForSale = sum(
     nft.listings
       .filter((listing) => walletBlockMap.get(listing.seller_address) !== 1)
@@ -73,9 +72,10 @@ export const ItemInfo = ({ nft }) => {
     []
   )
   const isCoreParticipant = isCollab
-    ? // TODO: should we also check for holder_type here?
-      shareholders.find(
-        ({ shareholder_address }) => acc?.address === shareholder_address
+    ? shareholders.some(
+        ({ shareholder_address, holder_type }) =>
+          acc?.address === shareholder_address &&
+          holder_type === CollaboratorType.CORE_PARTICIPANT
       )
     : false
 
@@ -180,7 +180,13 @@ export const ItemInfoCompact = ({ nft }) => {
     <div className={styles.container}>
       <div className={styles.edition}>
         <div className={styles.inline}>
-          <Button to={`/tz/${nft.artist_address}`}>
+          <Button
+            to={
+              get(nft, 'artist_profile.name')
+                ? `/${get(nft, 'artist_profile.name')}`
+                : `/tz/${nft.artist_address}`
+            }
+          >
             {get(nft, 'artist_profile.name') ? (
               <Primary>{encodeURI(get(nft, 'artist_profile.name'))}</Primary>
             ) : (

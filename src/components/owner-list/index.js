@@ -6,16 +6,17 @@ import { walletPreview } from '../../utils/string'
 import styles from './styles.module.scss'
 
 export const OwnerList = ({ owners }) => {
-  owners = owners.filter((e) => e.holder_address !== BURN_ADDRESS)
+  const ownersWithoutBurn = owners.filter(
+    (e) => e.holder_address !== BURN_ADDRESS
+  )
 
-  // TODO: update the different marketplace cases
   return (
     <div className={styles.container}>
-      {owners.map(({ amount, holder_address, holder_profile }) => (
+      {ownersWithoutBurn.map(({ amount, holder_address, holder_profile }) => (
         <div key={holder_address} className={styles.owner}>
           {amount}&nbsp;ed.&nbsp;
           {get(holder_profile, 'name') ? (
-            <Button to={`/tz/${holder_address}`}>
+            <Button to={`/${get(holder_profile, 'name')}`}>
               <Primary>{encodeURI(get(holder_profile, 'name'))}</Primary>
             </Button>
           ) : holder_address !== MARKETPLACE_CONTRACT_V1 ? (

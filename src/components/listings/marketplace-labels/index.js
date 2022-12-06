@@ -1,11 +1,4 @@
 import styles from './styles.module.scss'
-import {
-  MARKETPLACE_CONTRACT_TEIA,
-  MARKETPLACE_CONTRACT_V1,
-  MARKETPLACE_CONTRACT_V2,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V1,
-  MARKETPLACE_CONTRACT_OBJKTCOM_V4,
-} from '@constants'
 
 export const TeiaLabel = () => (
   <span
@@ -23,19 +16,13 @@ export const HENLabel = () => (
     H=N
   </span>
 )
-export const CollabLabel = () => (
-  <span
-    className={styles.swapLabel}
-    title="this listing is a collab through the original HEN contract"
-  >
-    Collab
-  </span>
-)
+
 export const OBJKTLabel = () => (
   <span className={styles.swapLabel} title="This swap is through OBJKT.com">
     Objkt.com
   </span>
 )
+
 export const RestrictedLabel = () => (
   <span
     className={styles.swapLabel}
@@ -45,35 +32,28 @@ export const RestrictedLabel = () => (
   </span>
 )
 
-export const MarketplaceLabel = ({ listing }) => {
-  if (listing.contract_address === MARKETPLACE_CONTRACT_TEIA) {
+export const VersumLabel = () => (
+  <span className={styles.swapLabel} title="This swap is through versum.xyz">
+    Versum.xyz
+  </span>
+)
+
+export const MarketplaceLabel = ({ listing, nft }) => {
+  if (listing.type.startsWith('TEIA')) {
     return <TeiaLabel />
   }
-  /*
-  TODO: re-add this code
-  if (
-    (listing.contract_address === MARKETPLACE_CONTRACT_V1 ||
-      listing.contract_address === MARKETPLACE_CONTRACT_V2) &&
-      listing.token.creator_id.startsWith('KT1')
-  ) {
-    return <CollabLabel />
-  }
-  */
-  if (
-    listing.contract_address === MARKETPLACE_CONTRACT_V1 ||
-    listing.contract_address === MARKETPLACE_CONTRACT_V2
-  ) {
+
+  if (listing.type.startsWith('HEN')) {
     return <HENLabel />
   }
-  if (
-    listing.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V1 ||
-    listing.contract_address === MARKETPLACE_CONTRACT_OBJKTCOM_V4 ||
-    listing.type.startsWith('OBJKT')
-  ) {
+
+  if (listing.type.startsWith('OBJKT')) {
     return <OBJKTLabel />
   }
 
-  // TODO: add Versum label here
+  if (listing.type.startsWith('VERSUM')) {
+    return <VersumLabel />
+  }
 
   console.error('Could not resolve the proper label for this listing', listing)
   return null

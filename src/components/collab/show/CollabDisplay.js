@@ -2,10 +2,9 @@ import { Navigate, useParams } from 'react-router'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { PATH } from '../../../constants'
-import { renderMediaType } from '../../media-types'
 import { Page, Container, Padding } from '../../layout'
-import { ResponsiveMasonry } from '../../responsive-masonry'
 import { Button, Primary } from '../../button'
+import TokenCollection from '../../token-collection'
 import styles from '../../../pages/display/styles.module.scss'
 import { walletPreview } from '../../../utils/string'
 import { Identicon } from '../../identicons'
@@ -59,9 +58,6 @@ export const CollabDisplay = () => {
     )
   }
 
-  // TODO: use the new masonry/feed component here that also supports infinte
-
-  console.log('data', data)
   const { split_contract, tokens } = data
 
   const headerClass = classNames(
@@ -137,28 +133,14 @@ export const CollabDisplay = () => {
         </Padding>
       </Container>
 
-      {tokens.length === 0 && (
-        <Container>
-          <p>This collab has no OBJKT creations to display</p>
-        </Container>
-      )}
-
-      {/** TODO: re-add infinite-scroll */}
       <Container xlarge>
-        <ResponsiveMasonry>
-          {tokens.map((nft) => {
-            return (
-              <Button key={nft.token_id} to={`${PATH.OBJKT}/${nft.token_id}`}>
-                <div className={styles.container}>
-                  {renderMediaType({
-                    nft,
-                    displayView: true,
-                  })}
-                </div>
-              </Button>
-            )
-          })}
-        </ResponsiveMasonry>
+        <TokenCollection
+          namespace="collab-tokens"
+          defaultViewMode="masonry"
+          emptyMessage="This collab has no OBJKT creations to display"
+          swrParams={[address]}
+          query={{ tokens }}
+        />
       </Container>
     </Page>
   )

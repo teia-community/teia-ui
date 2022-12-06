@@ -18,7 +18,7 @@ function SingleView({ tokens }) {
     <Container>
       <Padding>
         {tokens.map((token) => (
-          <div key={token.key || token.id}>
+          <div key={token.key || token.token_id}>
             <FeedItem nft={token} />
           </div>
         ))}
@@ -95,11 +95,17 @@ function TokenCollection({
 
   const { data, error } = useSWR(
     disable ? null : [namespace, ...swrParams],
-    (ns) =>
-      request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
-        ...variables,
-        ...(maxItems ? { limit: maxItems } : {}),
-      }),
+    async (ns) => {
+      if (typeof query === 'string') {
+        return request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
+          ...variables,
+          ...(maxItems ? { limit: maxItems } : {}),
+        })
+      } else {
+        // it's possible to also pass in the response data in the query
+        return query
+      }
+    },
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

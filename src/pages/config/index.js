@@ -78,30 +78,12 @@ export class Config extends Component {
 
       if (name) this.setState({ subjkt: name })
 
-      // FOR V6
       if (metadata && !_.isEmpty(get(metadata, 'data'))) {
         if (get(metadata, 'data.description'))
           this.setState({ description: get(metadata, 'data.description') })
         if (get(metadata, 'data.identicon'))
           this.setState({ identicon: get(metadata, 'data.identicon') })
       }
-      // FALLBACK FOR V5
-      /*
-      TODO: is this still needed after teztok migration?
-      else if (metadata_file) {
-        const metadata_uri = HashToURL(metadata_file)
-        metadata = await axios
-          .get(metadata_uri)
-          .then((res) => res.data)
-          .catch((err) => {
-            console.error(err)
-          })
-
-        if (metadata.description)
-          this.setState({ description: metadata.description })
-        if (metadata.identicon) this.setState({ identicon: metadata.identicon })
-      }
-      */
     }
     this.setState({ loading: false })
   }
@@ -242,16 +224,7 @@ export class Config extends Component {
     this.setState({ identicon: `ipfs://${picture_cid}` })
   }
 
-  hDAO_operators = () => {
-    this.context.hDAO_update_operators(this.context.acc.address)
-  }
-
   unregister = () => this.context.unregister()
-
-  hDAO_config = () => {
-    // convert float to 10^6
-    ls.set('hDAO_config', this.state.vote)
-  }
 
   toggle = () => this.setState({ toogled: !this.state.toogled })
   /*
