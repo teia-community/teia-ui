@@ -68,7 +68,7 @@ export const renderMediaType = ({
     case MIMETYPE.TIFF:
     case MIMETYPE.WEBP:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <ImageComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -84,7 +84,7 @@ export const renderMediaType = ({
     /* VECTOR */
     case MIMETYPE.SVG:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <VectorComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -104,7 +104,7 @@ export const renderMediaType = ({
     case MIMETYPE.ZIP1:
     case MIMETYPE.ZIP2:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <HTMLComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -124,7 +124,7 @@ export const renderMediaType = ({
     case MIMETYPE.QUICKTIME:
     case MIMETYPE.WEBM:
       return (
-        <Container interactive={interactive} nofullscreen>
+        <Container interactive={interactive} nofullscreen nft={nft}>
           <VideoComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -140,7 +140,7 @@ export const renderMediaType = ({
     case MIMETYPE.GLB:
     case MIMETYPE.GLTF:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <GLBComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -159,7 +159,7 @@ export const renderMediaType = ({
     case MIMETYPE.WAV:
     case MIMETYPE.XWAV:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <AudioComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
@@ -174,7 +174,7 @@ export const renderMediaType = ({
     /* PDF */
     case MIMETYPE.PDF:
       return (
-        <Container interactive={interactive}>
+        <Container interactive={interactive} nft={nft}>
           <PdfComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
