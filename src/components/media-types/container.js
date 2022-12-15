@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useRef } from 'react'
+import isNumber from 'lodash/isNumber'
 import screenfull from 'screenfull'
 import { useInView } from 'react-intersection-observer'
 import classnames from 'classnames'
@@ -22,6 +23,7 @@ export const Container = ({
   children = null,
   interactive,
   nofullscreen = false,
+  nft,
   flex = false,
 }) => {
   const context = useContext(HicetnuncContext)
@@ -88,6 +90,26 @@ export const Container = ({
     return child
   })
 
+  let price = null
+
+  if (!interactive && isNumber(nft.price)) {
+    price = (
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          padding: '5px',
+          transform: 'translate3d(-50%, 0, 0)',
+          backgroundColor: 'white',
+          color: 'black',
+        }}
+      >
+        {Number(nft.price) / 1000000} tez
+      </div>
+    )
+  }
+
   return (
     <div
       ref={ref}
@@ -97,6 +119,7 @@ export const Container = ({
       className="objktview-container"
     >
       <div ref={domElement} className={classes}>
+        {price}
         {childrenWithProps}
 
         {interactive && !iOS && !nofullscreen && (

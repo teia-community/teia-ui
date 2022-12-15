@@ -11,6 +11,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
 import styles from './styles.module.scss'
+import homeStyles from '../../pages/home/styles.module.scss'
 import laggy from '../../utils/swr-laggy-middleware'
 
 function SingleView({ tokens }) {
@@ -159,6 +160,7 @@ function TokenCollection({
     <div>
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
         <button
+          className={homeStyles.tag}
           onClick={() => {
             setSearchParams({
               ...Object.fromEntries(searchParams),
@@ -166,9 +168,7 @@ function TokenCollection({
             })
           }}
         >
-          {viewMode === 'single'
-            ? 'set view-mode to masonry'
-            : 'set view-mode to single'}
+          {viewMode === 'single' ? 'grid view' : 'classic view'}
         </button>
       </div>
       <InfiniteScroll
