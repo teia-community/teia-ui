@@ -8,13 +8,14 @@ function NewObjktsFeed() {
   return (
     <TokenCollection
       namespace="new-objkts-feed"
+      maxItems={600}
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
       query={gql`
         ${BaseTokenFieldsFragment}
         query getNewObjkt($limit: Int!) {
           tokens(
             where: { metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"} }
-            order_by: { minted_at: desc_nulls_last }
+            order_by: { minted_at: desc }
             limit: $limit
             
           ) {

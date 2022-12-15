@@ -72,7 +72,7 @@ export default function Creations({ showFilters, address }) {
                   fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
                   metadata_status: { _eq: "processed" }
                 }
-                order_by: { minted_at: desc_nulls_last }
+                order_by: { minted_at: desc }
               ) {
                 ...baseTokenFields
                 lowest_price_listing

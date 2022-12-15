@@ -25,6 +25,7 @@ function FundFeed({
       </div>
       <TokenCollection
         namespace={namepsace}
+        maxItems={600}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {
           const tokensFromSplitContract = orderBy(
             uniqBy(
@@ -73,7 +74,7 @@ function FundFeed({
               shareholder_address
               shares
             }
-            created_tokens(where: {editions: {_gt: "0"}, teia_meta: { is_signed: { _eq: true }}}, order_by: { minted_at: desc_nulls_last }) {
+            created_tokens(where: {editions: {_gt: "0"}, metadata_status: { _eq: "processed" }, teia_meta: { is_signed: { _eq: true }}}, order_by: { minted_at: desc }) {
               ...baseTokenFields
             }
           }
@@ -82,7 +83,7 @@ function FundFeed({
               ? `
             tokens_by_tag: tokens(where: {tags: {tag: {_in: [${tags.map(
               (tag) => `"${tag}"`
-            )}]}}, editions: {_gt: "0"}}, limit: $limit, order_by: { minted_at: desc_nulls_last }) {
+            )}]}}, editions: {_gt: "0"}, metadata_status: { _eq: "processed" },}, limit: $limit, order_by: { minted_at: desc }) {
               ...baseTokenFields
             }
           `

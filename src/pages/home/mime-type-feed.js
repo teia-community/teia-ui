@@ -8,6 +8,7 @@ function MimeTypeFeed({ namespace, mimeTypes }) {
   return (
     <TokenCollection
       namespace={namespace}
+      maxItems={600}
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
       query={gql`
         ${BaseTokenFieldsFragment}
@@ -16,7 +17,7 @@ function MimeTypeFeed({ namespace, mimeTypes }) {
             .map((mimeType) => `"${mimeType}"`)
             .join(
               ', '
-            )}] }, editions : { _neq : 0 }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}}, order_by: { minted_at: desc_nulls_last }, limit: $limit) {
+            )}] }, editions : { _neq : 0 }, metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}}, order_by: { minted_at: desc }, limit: $limit) {
               ...baseTokenFields
           }
         }

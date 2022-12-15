@@ -39,7 +39,7 @@ import styles from './styles.module.scss'
 import useSettings from 'hooks/use-settings'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
-  tokens(order_by: {minted_at: desc_nulls_last}, where: {artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
+  tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
     artist_address
     editions
   }

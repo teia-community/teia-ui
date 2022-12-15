@@ -11,6 +11,7 @@ function RecentSalesFeed() {
       resultsPath="events"
       tokenPath="token"
       keyPath="token.token_id"
+      maxItems={600}
       postProcessTokens={(tokens) =>
         uniqBy(uniqBy(tokens, 'token_id'), 'artist_address')
       }
