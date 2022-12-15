@@ -61,7 +61,7 @@ export function Friends() {
                 artist_address: { _in: $wallets }
                 metadata_status: { _eq: "processed" }
               }
-              order_by: { minted_at: desc_nulls_last }
+              order_by: { minted_at: desc }
               limit: $limit
             ) {
               ...baseTokenFields

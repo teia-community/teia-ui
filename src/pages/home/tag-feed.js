@@ -8,6 +8,7 @@ function TagFeed({ tag, ...otherProps }) {
     <TokenCollection
       variables={{ tag }}
       swrParams={[tag]}
+      maxItems={600}
       query={gql`
         ${BaseTokenFieldsFragment}
         query getObjktsByTag($tag: String!, $limit: Int!) {
@@ -15,9 +16,10 @@ function TagFeed({ tag, ...otherProps }) {
             where: {
               tags: { tag: { _eq: $tag } },
               editions: { _neq: 0 },
-              fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+              fa2_address: { _eq: "${HEN_CONTRACT_FA2}" },
+              metadata_status: { _eq: "processed" }
             }
-            order_by: { minted_at: desc_nulls_last }
+            order_by: { minted_at: desc }
             limit: $limit
           ) {
             ...baseTokenFields
