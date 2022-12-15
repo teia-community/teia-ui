@@ -22,6 +22,7 @@ fragment baseTokenFields on tokens {
     accessibility
     content_rating
     is_signed
+    preview_uri
   }
   royalties
   mime_type

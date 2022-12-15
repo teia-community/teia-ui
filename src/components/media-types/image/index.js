@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import get from 'lodash/get'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from './styles.module.scss'
 import { VideoComponent } from '../video'
@@ -13,12 +14,26 @@ export const ImageComponent = ({
   displayView,
   nft,
 }) => {
-  let src = onDetailView ? artifactUri : displayUri || artifactUri
-
   const [isVideo, setIsVideo] = useState(false)
+
+  let src
 
   if (preview) {
     src = previewUri
+  } else if (onDetailView) {
+    src = artifactUri
+  } else if (
+    process.env.REACT_APP_IMGPROXY &&
+    get(nft, 'teia_meta.preview_uri')
+  ) {
+    src = `${process.env.REACT_APP_IMGPROXY}${get(
+      nft,
+      'teia_meta.preview_uri'
+    )}`
+  } else if (displayUri) {
+    src = displayUri
+  } else {
+    src = artifactUri
   }
 
   const onError = (error) => {

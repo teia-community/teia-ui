@@ -73,7 +73,7 @@ export const renderMediaType = ({
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             previewUri={previewUri}
-            onDetailView={interactive || nft.mime_type === MIMETYPE.GIF}
+            onDetailView={interactive}
             preview={preview}
             displayView={displayView}
             nft={nft}
