@@ -614,8 +614,7 @@ class HicetnuncContextProviderClass extends Component {
       },
 
       collect: async (listing) => {
-        if (listing.type.startsWith('HEN') || listing.type.startsWith('TEIA')) {
-          // TODO: be more specific about the type
+        if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
           return await Tezos.wallet
             .at(this.state.proxyAddress || listing.contract_address)
             .then((c) =>
@@ -626,9 +625,7 @@ class HicetnuncContextProviderClass extends Component {
               })
             )
             .catch((e) => e)
-        } else if (listing.type.startsWith('OBJKT')) {
-          // TODO: be more specific about the type
-          // TODO: test this
+        } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
           return await Tezos.wallet.at(listing.contract_address).then((c) =>
             c.methods.fulfill_ask(listing.ask_id).send({
               amount: listing.price,
@@ -636,8 +633,16 @@ class HicetnuncContextProviderClass extends Component {
               storageLimit: 350,
             })
           )
+          // TODO: Versum currently doesn't support hen tokens yet. Once they do, this code can be activated and tested.
+          //} else if (['VERSUM_SWAP'].includes(listing.type)) {
+          //  return await Tezos.wallet.at(listing.contract_address).then((c) =>
+          //    c.methods.collect_swap('1', listing.swap_id).send({
+          //      amount: listing.price,
+          //      mutez: true,
+          //      storageLimit: 350,
+          //    })
+          //  )
         } else {
-          // TODO: handle Versum case
           throw new Error('unsupported listing')
         }
       },
