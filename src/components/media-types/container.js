@@ -103,6 +103,7 @@ export const Container = ({
           transform: 'translate3d(-50%, 0, 0)',
           backgroundColor: 'white',
           color: 'black',
+          zIndex: 1,
         }}
       >
         {Number(nft.price) / 1000000} tez
