@@ -146,7 +146,11 @@ export const History = ({ nft }) => {
                 />
               )
             }
-            if (['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2'].includes(e.type)) {
+            if (
+              ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2', 'VERSUM_SWAP'].includes(
+                e.type
+              )
+            ) {
               return (
                 <HistoryRow
                   key={`t-${e.id}`}
@@ -175,9 +179,12 @@ export const History = ({ nft }) => {
               !nft.events.some(
                 (ev) =>
                   (ev.implements === 'SALE' ||
-                    ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2'].includes(
-                      ev.type
-                    )) &&
+                    [
+                      'TEIA_SWAP',
+                      'HEN_SWAP',
+                      'HEN_SWAP_V2',
+                      'VERSUM_SWAP',
+                    ].includes(ev.type)) &&
                   e.ophash === ev.ophash
               )
             ) {

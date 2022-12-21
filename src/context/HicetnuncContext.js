@@ -633,15 +633,14 @@ class HicetnuncContextProviderClass extends Component {
               storageLimit: 350,
             })
           )
-          // TODO: Versum currently doesn't support hen tokens yet. Once they do, this code can be activated and tested.
-          //} else if (['VERSUM_SWAP'].includes(listing.type)) {
-          //  return await Tezos.wallet.at(listing.contract_address).then((c) =>
-          //    c.methods.collect_swap('1', listing.swap_id).send({
-          //      amount: listing.price,
-          //      mutez: true,
-          //      storageLimit: 350,
-          //    })
-          //  )
+        } else if (['VERSUM_SWAP'].includes(listing.type)) {
+          return await Tezos.wallet.at(listing.contract_address).then((c) =>
+            c.methods.collect_swap('1', listing.swap_id).send({
+              amount: listing.price,
+              mutez: true,
+              storageLimit: 350,
+            })
+          )
         } else {
           throw new Error('unsupported listing')
         }
