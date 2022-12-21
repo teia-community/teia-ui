@@ -29,6 +29,8 @@ function ListingRow({
     (proxyAdminAddress === acc?.address &&
       listing.seller_address === proxyAddress)
 
+  console.log('isOwnSwap', isOwnSwap)
+
   return (
     <div className={styles.swap}>
       <div className={styles.issuer}>
@@ -55,8 +57,9 @@ function ListingRow({
               </Purchase>
             </Button>
           )}
-        {(isOwnSwap && listing.type.startsWith('TEIA')) ||
-          (listing.type.startsWith('HEN') && (
+        {isOwnSwap &&
+          (listing.type.startsWith('TEIA') ||
+            listing.type.startsWith('HEN')) && (
             <>
               <div className={styles.break}></div>
               <input
@@ -101,7 +104,7 @@ function ListingRow({
                 <Purchase>cancel</Purchase>
               </Button>
             </>
-          ))}
+          )}
       </div>
     </div>
   )
