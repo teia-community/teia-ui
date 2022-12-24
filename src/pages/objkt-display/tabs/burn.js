@@ -1,15 +1,15 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { Container, Padding } from '@components/layout'
-import { Button, Purchase } from '@components/button'
-import { Input } from '@components/input'
-import { Loading } from '@components/loading'
-import styles from '../styles.module.scss'
+import { Container } from '@atoms/layout'
+import { Button, Purchase } from '@atoms/button'
+import { Input } from '@atoms/input'
+import { Loading } from '@atoms/loading'
+import styles from '@style'
 
 /**
  * The Burn Tab
  * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
 export const Burn = ({ nft }) => {
@@ -24,13 +24,13 @@ export const Burn = ({ nft }) => {
   } = useContext(HicetnuncContext)
   const [amount, setAmount] = useState('')
 
-  const proxyAdminAddress = nft.creator.is_split
+  const proxyAdminAddress = nft.creator?.is_split
     ? nft.creator.shares[0].administrator
     : null
 
   const found = useMemo(
     () =>
-      nft.token_holders.find(
+      nft.token_holders?.find(
         (e) =>
           e.holder_id === acc?.address ||
           (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
@@ -59,7 +59,7 @@ export const Burn = ({ nft }) => {
     if (r) {
       setProgress(true)
       setMessage('Burning OBJKT')
-      burn(nft.id, amount)
+      burn(nft.token_id, amount)
     }
   }
 
@@ -68,62 +68,54 @@ export const Burn = ({ nft }) => {
       {!progress ? (
         <div>
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <p>
-                  You own {totalOwned} editions of OBJKT#{nft.id}. How many
-                  would you like to burn?
-                </p>
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <p>
+                You own {totalOwned} editions of OBJKT#{nft.id}. How many would
+                you like to burn?
+              </p>
+            </div>
           </Container>
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <Input
-                  type="number"
-                  placeholder="OBJKTs to burn"
-                  value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value)
-                  }}
-                  onBlur={(e) => {
-                    if (parseInt(e.target.value) >= totalOwned) {
-                      setAmount(totalOwned)
-                    }
-                  }}
-                  disabled={progress}
-                />
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <Input
+                type="number"
+                placeholder="OBJKTs to burn"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value)
+                }}
+                onBlur={(e) => {
+                  if (parseInt(e.target.value) >= totalOwned) {
+                    setAmount(totalOwned)
+                  }
+                }}
+                disabled={progress}
+              />
+            </div>
           </Container>
 
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <p style={{ fontSize: '14px' }}>
-                  Burning will transfer the OBJKTs from your possession to a
-                  burn address. Once in the burn address, the OBJKT can't be
-                  recovered or sold. You can only burn tokens that you own. If
-                  you have them swapped, you first need to cancel that swap
-                  before you try to burn them.
-                </p>
-                <br />
-                <p>
-                  <strong>NB: This action is not reversable.</strong>
-                </p>
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <p style={{ fontSize: '14px' }}>
+                Burning will transfer the OBJKTs from your possession to a burn
+                address. Once in the burn address, the OBJKT can't be recovered
+                or sold. You can only burn tokens that you own. If you have them
+                swapped, you first need to cancel that swap before you try to
+                burn them.
+              </p>
+              <br />
+              <p>
+                <strong>NB: This action is not reversable.</strong>
+              </p>
+            </div>
           </Container>
 
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <Button onClick={handleSubmit} fit>
-                  <Purchase>Burn</Purchase>
-                </Button>
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <Button onClick={handleSubmit} fit>
+                <Purchase>Burn</Purchase>
+              </Button>
+            </div>
           </Container>
         </div>
       ) : (

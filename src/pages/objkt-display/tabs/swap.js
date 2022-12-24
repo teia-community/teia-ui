@@ -1,16 +1,16 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { Container, Padding } from '@components/layout'
-import { Loading } from '@components/loading'
-import { Input } from '@components/input'
-import { Button, Purchase } from '@components/button'
-import styles from '../styles.module.scss'
+import { Container } from '@atoms/layout'
+import { Loading } from '@atoms/loading'
+import { Input } from '@atoms/input'
+import { Button, Purchase } from '@atoms/button'
+import styles from '@style'
 
 /**
  * The Swap Tab
  * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
 export const Swap = ({ nft }) => {
@@ -41,13 +41,13 @@ export const Swap = ({ nft }) => {
     }
   }
 
-  const proxyAdminAddress = nft.creator.is_split
+  const proxyAdminAddress = nft.creator?.is_split
     ? nft.creator.shares[0].administrator
     : null
 
   const found = useMemo(
     () =>
-      nft.token_holders.find(
+      nft.token_holders?.find(
         (e) =>
           e.holder_id === acc?.address ||
           (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
@@ -113,92 +113,83 @@ export const Swap = ({ nft }) => {
       {!progress ? (
         <div>
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <p>
-                  You own {totalOwned} editions of OBJKT#{id}. How many would
-                  you like to swap?
-                </p>
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <p>
+                You own {totalOwned} editions of OBJKT#{id}. How many would you
+                like to swap?
+              </p>
+            </div>
           </Container>
 
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <Input
-                  type="number"
-                  placeholder="OBJKT quantity"
-                  min={1}
-                  value={amount}
-                  /* max={total_amount - sales} */
-                  onChange={(e) => setAmount(e.target.value)}
-                  onBlur={(e) => {
-                    if (parseInt(e.target.value) > totalOwned) {
-                      setAmount(totalOwned)
-                    }
-                  }}
-                  onWheel={(e) => e.target.blur()}
-                  disabled={progress}
-                />
-                <div style={{ width: '100%', display: 'flex' }}>
-                  <div style={{ width: '90%' }}>
-                    <Input
-                      style={style}
-                      type="number"
-                      placeholder="Price per OBJKT"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      onBlur={(e) => {
-                        const val = parseFloat(e.target.value)
-                        if (val > 1e4) {
-                          setPrice(1e4)
-                        } else if (val < 0) {
-                          setPrice(0)
-                        }
-                        checkPrice(val)
-                      }}
-                      onWheel={(e) => e.target.blur()}
-                      disabled={progress}
-                    />
-                  </div>
-                  <div>
-                    <select
-                      onChange={onChange}
-                      style={{ float: 'right', display: 'inline' }}
-                    >
-                      <option value="tezos">tez</option>
-                    </select>
-                  </div>
+            <div className={styles.container}>
+              <Input
+                type="number"
+                placeholder="OBJKT quantity"
+                min={1}
+                value={amount}
+                /* max={total_amount - sales} */
+                onChange={(e) => setAmount(e.target.value)}
+                onBlur={(e) => {
+                  if (parseInt(e.target.value) > totalOwned) {
+                    setAmount(totalOwned)
+                  }
+                }}
+                onWheel={(e) => e.target.blur()}
+                disabled={progress}
+              />
+              <div style={{ width: '100%', display: 'flex' }}>
+                <div style={{ width: '90%' }}>
+                  <Input
+                    style={style}
+                    type="number"
+                    placeholder="Price per OBJKT"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    onBlur={(e) => {
+                      const val = parseFloat(e.target.value)
+                      if (val > 1e4) {
+                        setPrice(1e4)
+                      } else if (val < 0) {
+                        setPrice(0)
+                      }
+                      checkPrice(val)
+                    }}
+                    onWheel={(e) => e.target.blur()}
+                    disabled={progress}
+                  />
                 </div>
-                <Button onClick={handleSubmit} fit disabled={progress}>
-                  <Purchase>Swap</Purchase>
-                </Button>
+                <div>
+                  <select
+                    onChange={onChange}
+                    style={{ float: 'right', display: 'inline' }}
+                  >
+                    <option value="tezos">tez</option>
+                  </select>
+                </div>
               </div>
-            </Padding>
+              <Button onClick={handleSubmit} fit disabled={progress}>
+                <Purchase>Swap</Purchase>
+              </Button>
+            </div>
           </Container>
 
           <Container>
-            <Padding>
-              <div className={styles.container}>
-                <p>
-                  The Teia marketplace fee is temporarily set to 0%. Please
-                  consider donating to teiaescrow.tez
-                  (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance
-                  funding.
-                </p>
-              </div>
-            </Padding>
+            <div className={styles.container}>
+              <p>
+                The Teia marketplace fee is temporarily set to 0%. Please
+                consider donating to teiaescrow.tez
+                (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance funding.
+              </p>
+            </div>
           </Container>
         </div>
       ) : (
         <Container>
-          <Padding>
-            <div>
-              <p>{message}</p>
-              {progress && <Loading />}
-            </div>
-          </Padding>
+          <div>
+            <p>{message}</p>
+            {progress && <Loading />}
+          </div>
         </Container>
       )}
     </>

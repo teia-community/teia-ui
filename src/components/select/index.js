@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './styles.module.scss'
+import styles from '@style'
 import ReactSelect from 'react-select'
 
 const style = {

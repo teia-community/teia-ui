@@ -3,16 +3,22 @@
     "baseUrl": "./src",
     "target": "es2017",
     "jsx": "react",
+    "checkJs": true,
     "allowSyntheticDefaultImports": false,
     "paths": {
-      "@data": ["data"],
-      "@data/*": ["data/*"],
-      "@utils": ["utils"],
-      "@utils/*": ["utils/*"],
-      "@context/*": ["context/*"],
+      "@atoms/*": ["atoms/*"],
+      "@components/*": ["components/*"],
       "@constants": ["constants"],
-      "@components/*": ["components/*"]
+      "@context/*": ["context/*"],
+      "@data/*": ["data/*"],
+      "@hooks/*": ["hooks/*"],
+      "@icons/*": ["icons/*"],
+      "@style": ["./styles.module.scss"],
+      "@styles/*": ["styles/*"],
+      "@utils/*": ["utils/*"],
+      "@types": ["types.d.ts"]
     }
   },
+  "include": ["src"],
   "exclude": ["node_modules", "dist", "docs"]
 }

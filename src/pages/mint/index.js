@@ -3,10 +3,10 @@ import Compressor from 'compressorjs'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { Page, Container, Padding } from '@components/layout'
-import { Input, Textarea, Checkbox } from '@components/input'
+import { Page, Container } from '@atoms/layout'
+import { Input, Textarea, Checkbox } from '@atoms/input'
 import { Select } from '@components/select'
-import { Button, Curate, Primary, Purchase } from '@components/button'
+import { Button, Curate, Primary, Purchase } from '@atoms/button'
 import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
 import { prepareFile, prepareDirectory } from '@data/ipfs'
@@ -34,8 +34,8 @@ import {
 } from '@data/api'
 import collabStyles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'
-import { CollabContractsOverview } from '../collaborate/tabs/manage'
-import styles from './styles.module.scss'
+import { CollabContractsOverview } from '../collaborate'
+import styles from '@style'
 import useSettings from 'hooks/use-settings'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
@@ -614,16 +614,14 @@ export const Mint = () => {
           {/* User has collabs available */}
           {collabs.length > 0 && (
             <Container>
-              <Padding>
-                <div className={flexBetween}>
-                  <p>
-                    <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
-                  </p>
-                  <Button onClick={() => setSelectCollab(!selectCollab)}>
-                    <Purchase>{selectCollab ? 'Cancel' : 'Change'}</Purchase>
-                  </Button>
-                </div>
-              </Padding>
+              <div className={flexBetween}>
+                <p>
+                  <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
+                </p>
+                <Button onClick={() => setSelectCollab(!selectCollab)}>
+                  <Purchase>{selectCollab ? 'Cancel' : 'Change'}</Purchase>
+                </Button>
+              </div>
             </Container>
           )}
 
@@ -631,234 +629,212 @@ export const Mint = () => {
 
           {balance > 0 && balance < 0.15 && (
             <Container>
-              <Padding>
-                <div className={styles.fundsWarning}>
-                  <p>
-                    {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
-                  </p>
-                </div>
-              </Padding>
+              <div className={styles.fundsWarning}>
+                <p>
+                  {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
+                </p>
+              </div>
             </Container>
           )}
 
           <Container>
-            <Padding>
-              <Input
-                type="text"
-                onChange={(e) => {
-                  setTitle(e.target.value)
-                  window.localStorage.setItem('objkt::title', e.target.value)
-                }}
-                placeholder="Max 500 characters (optional)"
-                label="Title"
-                value={title}
-              >
-                <span className={styles.line} />
-              </Input>
-
-              <Textarea
-                type="text"
-                style={{ whiteSpace: 'pre' }}
-                onChange={(e) => {
-                  setDescription(e.target.value)
-                  window.localStorage.setItem(
-                    'objkt::description',
-                    e.target.value
-                  )
-                }}
-                placeholder="Max 5000 characters (optional)"
-                label="Description"
-                value={description}
-              >
-                <span className={styles.line} />
-              </Textarea>
-
-              <Input
-                type="text"
-                onChange={(e) => {
-                  setTags(e.target.value)
-                  window.localStorage.setItem('objkt::tags', e.target.value)
-                }}
-                onBlur={(e) => {
-                  const tags = _.join(
-                    _.uniq(e.target.value.split(',').map((tag) => tag.trim())),
-                    ','
-                  )
-                  setTags(tags)
-                  window.localStorage.setItem('objkt::tags', tags)
-                }}
-                placeholder="Comma separated. example: illustration, digital (optional)"
-                label="Tags"
-                value={tags}
-              >
-                <span className={styles.line} />
-              </Input>
-              <Input
-                type="number"
-                min={1}
-                max={MAX_EDITIONS}
-                onChange={(e) => {
-                  setAmount(e.target.value)
-                  window.localStorage.setItem(
-                    'objkt::edition_count',
-                    e.target.value
-                  )
-                }}
-                onBlur={(e) => {
-                  limitNumericField(e.target, 1, MAX_EDITIONS)
-                  setAmount(e.target.value)
-                }}
-                placeholder={`No. editions, 1-${MAX_EDITIONS}`}
-                label="Editions"
-                value={amount}
-              >
-                <span className={styles.line} />
-              </Input>
-
-              <Input
-                type="number"
-                min={MIN_ROYALTIES}
-                max={MAX_ROYALTIES}
-                onChange={(e) => {
-                  setRoyalties(e.target.value)
-                  window.localStorage.setItem(
-                    'objkt::royalties',
-                    e.target.value
-                  )
-                }}
-                onBlur={(e) => {
-                  limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
-                  setRoyalties(e.target.value)
-                }}
-                placeholder={`After each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
-                label="Royalties"
-                value={royalties}
-              >
-                <span className={styles.line} />
-              </Input>
-              <Select
-                label="License"
-                value={rights}
-                placeholder="(optional)"
-                onChange={(e) => {
-                  setRights(e)
-                  window.localStorage.setItem(
-                    'objkt::rights',
-                    JSON.stringify(e)
-                  )
-                }}
-                options={LICENSE_TYPES_OPTIONS}
-              />
-
-              {rights.value === 'custom' && (
-                <Padding>
-                  <Input
-                    type="text"
-                    onChange={(e) => {
-                      setRightUri(e.target.value)
-                      window.localStorage.setItem(
-                        'objkt::rights_uri',
-                        e.target.value
-                      )
-                    }}
-                    placeholder="The URI to the custom license"
-                    label="Custom license URI"
-                    value={rightUri}
-                  />
-                </Padding>
-              )}
+            <Input
+              type="text"
+              onChange={(e) => {
+                setTitle(e.target.value)
+                window.localStorage.setItem('objkt::title', e.target.value)
+              }}
+              placeholder="Max 500 characters (optional)"
+              label="Title"
+              value={title}
+            >
               <span className={styles.line} />
-              <Select
-                label="Language"
-                placeholder="(optional)"
-                options={LANGUAGES_OPTIONS}
-                value={language}
+            </Input>
+
+            <Textarea
+              type="text"
+              style={{ whiteSpace: 'pre' }}
+              onChange={(e) => {
+                setDescription(e.target.value)
+                window.localStorage.setItem(
+                  'objkt::description',
+                  e.target.value
+                )
+              }}
+              placeholder="Max 5000 characters (optional)"
+              label="Description"
+              value={description}
+            >
+              <span className={styles.line} />
+            </Textarea>
+
+            <Input
+              type="text"
+              onChange={(e) => {
+                setTags(e.target.value)
+                window.localStorage.setItem('objkt::tags', e.target.value)
+              }}
+              onBlur={(e) => {
+                const tags = _.join(
+                  _.uniq(e.target.value.split(',').map((tag) => tag.trim())),
+                  ','
+                )
+                setTags(tags)
+                window.localStorage.setItem('objkt::tags', tags)
+              }}
+              placeholder="Comma separated. example: illustration, digital (optional)"
+              label="Tags"
+              value={tags}
+            >
+              <span className={styles.line} />
+            </Input>
+            <Input
+              type="number"
+              min={1}
+              max={MAX_EDITIONS}
+              onChange={(e) => {
+                setAmount(e.target.value)
+                window.localStorage.setItem(
+                  'objkt::edition_count',
+                  e.target.value
+                )
+              }}
+              onBlur={(e) => {
+                limitNumericField(e.target, 1, MAX_EDITIONS)
+                setAmount(e.target.value)
+              }}
+              placeholder={`No. editions, 1-${MAX_EDITIONS}`}
+              label="Editions"
+              value={amount}
+            >
+              <span className={styles.line} />
+            </Input>
+
+            <Input
+              type="number"
+              min={MIN_ROYALTIES}
+              max={MAX_ROYALTIES}
+              onChange={(e) => {
+                setRoyalties(e.target.value)
+                window.localStorage.setItem('objkt::royalties', e.target.value)
+              }}
+              onBlur={(e) => {
+                limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
+                setRoyalties(e.target.value)
+              }}
+              placeholder={`After each sale (between ${MIN_ROYALTIES}-${MAX_ROYALTIES}%)`}
+              label="Royalties"
+              value={royalties}
+            >
+              <span className={styles.line} />
+            </Input>
+            <Select
+              label="License"
+              value={rights}
+              placeholder="(optional)"
+              onChange={(e) => {
+                setRights(e)
+                window.localStorage.setItem('objkt::rights', JSON.stringify(e))
+              }}
+              options={LICENSE_TYPES_OPTIONS}
+            />
+
+            {rights.value === 'custom' && (
+              <Input
+                type="text"
                 onChange={(e) => {
-                  setLanguage(e)
+                  setRightUri(e.target.value)
                   window.localStorage.setItem(
-                    'objkt::language',
-                    JSON.stringify(e)
+                    'objkt::rights_uri',
+                    e.target.value
                   )
                 }}
-              >
-                <span className={styles.line} />
-              </Select>
-              <Padding>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    paddingTop: '30px',
-                  }}
-                >
-                  <Checkbox
-                    label="NSFW"
-                    checked={nsfw}
-                    onChange={(e) => {
-                      setNsfw(e.target.checked)
-                      window.localStorage.setItem(
-                        'objkt::nsfw',
-                        e.target.checked ? 'true' : 'false'
-                      )
-                    }}
-                    name="nsfw"
-                  />
-                  <Checkbox
-                    checked={photosensitiveSeizureWarning}
-                    onChange={(e) => {
-                      setPhotosensitiveSeizureWarning(e.target.checked)
-                      window.localStorage.setItem(
-                        'objkt::photosensitive_seizure_warning',
-                        e.target.checked ? 'true' : 'false'
-                      )
-                    }}
-                    name="photosens"
-                    label="Photo Sensitive Seizure Warning"
-                  />
-                </div>
-              </Padding>
-            </Padding>
-          </Container>
-
-          <Container>
-            <Padding>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button onClick={clearFields} fit>
-                  <Primary>Clear Fields</Primary>
-                </Button>
-              </div>
-            </Padding>
-          </Container>
-
-          <Container>
-            <Padding>
-              <Upload
-                label="Upload OBJKT"
-                allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
-                onChange={handleFileUpload}
+                placeholder="The URI to the custom license"
+                label="Custom license URI"
+                value={rightUri}
               />
-            </Padding>
+            )}
+            <span className={styles.line} />
+            <Select
+              label="Language"
+              placeholder="(optional)"
+              options={LANGUAGES_OPTIONS}
+              value={language}
+              onChange={(e) => {
+                setLanguage(e)
+                window.localStorage.setItem(
+                  'objkt::language',
+                  JSON.stringify(e)
+                )
+              }}
+            >
+              <span className={styles.line} />
+            </Select>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                paddingTop: '30px',
+              }}
+            >
+              <Checkbox
+                label="NSFW"
+                checked={nsfw}
+                onChange={(e) => {
+                  setNsfw(e.target.checked)
+                  window.localStorage.setItem(
+                    'objkt::nsfw',
+                    e.target.checked ? 'true' : 'false'
+                  )
+                }}
+                name="nsfw"
+              />
+              <Checkbox
+                checked={photosensitiveSeizureWarning}
+                onChange={(e) => {
+                  setPhotosensitiveSeizureWarning(e.target.checked)
+                  window.localStorage.setItem(
+                    'objkt::photosensitive_seizure_warning',
+                    e.target.checked ? 'true' : 'false'
+                  )
+                }}
+                name="photosens"
+                label="Photo Sensitive Seizure Warning"
+              />
+            </div>
+          </Container>
+
+          <Container>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button onClick={clearFields} fit>
+                <Primary>Clear Fields</Primary>
+              </Button>
+            </div>
+          </Container>
+
+          <Container>
+            <Upload
+              label="Upload OBJKT"
+              allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
+              onChange={handleFileUpload}
+            />
           </Container>
 
           {file && needsCover && (
             <Container>
-              <Padding>
-                <Upload
-                  label="Upload cover image"
-                  allowedTypes={ALLOWED_COVER_MIMETYPES}
-                  allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
-                  onChange={handleCoverUpload}
-                />
-              </Padding>
+              <Upload
+                label="Upload cover image"
+                allowedTypes={ALLOWED_COVER_MIMETYPES}
+                allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
+                onChange={handleCoverUpload}
+              />
             </Container>
           )}
 
           <Container>
-            <Padding>
-              <Button onClick={handlePreview} fit disabled={handleValidation()}>
-                <Curate>Preview</Curate>
-              </Button>
-            </Padding>
+            <Button onClick={handlePreview} fit disabled={handleValidation()}>
+              <Curate>Preview</Curate>
+            </Button>
           </Container>
         </>
       )}
@@ -866,59 +842,49 @@ export const Mint = () => {
       {step === 1 && (
         <>
           <Container>
-            <Padding>
-              <div style={{ display: 'flex' }}>
-                <Button onClick={() => setStep(0)} fit>
-                  <Primary>
-                    <strong>Back</strong>
-                  </Primary>
-                </Button>
-              </div>
-            </Padding>
-          </Container>
-
-          <Container>
-            <Padding>
-              <Preview
-                mimeType={file.mimeType}
-                previewUri={file.reader}
-                title={title}
-                description={description}
-                tags={tags}
-                rights={rights}
-                rightUri={rightUri}
-                language={language}
-                nsfw={nsfw}
-                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
-                amount={amount}
-                royalties={royalties}
-              />
-            </Padding>
-          </Container>
-
-          <Container>
-            <Padding>
-              <Button onClick={handleMint} fit>
-                <Purchase>Mint OBJKT</Purchase>
+            <div style={{ display: 'flex' }}>
+              <Button onClick={() => setStep(0)} fit>
+                <Primary>
+                  <strong>Back</strong>
+                </Primary>
               </Button>
-            </Padding>
+            </div>
           </Container>
 
           <Container>
-            <Padding>
-              <p>this operation costs 0.08~ tez</p>
-              <p>Your royalties upon each sale are {royalties}%</p>
-            </Padding>
+            <Preview
+              mimeType={file.mimeType}
+              previewUri={file.reader}
+              title={title}
+              description={description}
+              tags={tags}
+              rights={rights}
+              rightUri={rightUri}
+              language={language}
+              nsfw={nsfw}
+              photosensitiveSeizureWarning={photosensitiveSeizureWarning}
+              amount={amount}
+              royalties={royalties}
+            />
+          </Container>
+
+          <Container>
+            <Button onClick={handleMint} fit>
+              <Purchase>Mint OBJKT</Purchase>
+            </Button>
+          </Container>
+
+          <Container>
+            <p>this operation costs 0.08~ tez</p>
+            <p>Your royalties upon each sale are {royalties}%</p>
           </Container>
         </>
       )}
 
       <Container>
-        <Padding>
-          <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
-            <Primary>Terms & Conditions</Primary>
-          </Button>
-        </Padding>
+        <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
+          <Primary>Terms & Conditions</Primary>
+        </Button>
       </Container>
       <hr />
       {/*       <BottomBanner>

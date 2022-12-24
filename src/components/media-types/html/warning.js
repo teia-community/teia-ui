@@ -1,5 +1,5 @@
-import { Button, Primary } from '../../button'
-import styles from './styles.module.scss'
+import { Button, Primary } from '@atoms/button'
+import styles from '@style'
 
 export function HTMLWarning() {
   return (

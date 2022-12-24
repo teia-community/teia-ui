@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Page, Container, Padding } from '@components/layout'
-import { Button, Primary } from '@components/button'
+import { Page, Container } from '@atoms/layout'
+import { Button, Primary } from '@atoms/button'
 import { CollabDisplay } from '@components/collab/show/CollabDisplay'
-import { CreateCollaboration } from './tabs'
-import { Menu } from '@components/menu'
+import { CreateCollaboration } from './create'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { CollabContractsOverview } from './tabs/manage'
+import { CollabContractsOverview } from './manage'
 import { useParams } from 'react-router'
 
 const TABS = [
@@ -38,21 +37,22 @@ const Collaborate = () => {
   return (
     <Page title="proxy" large={banner != null}>
       <Container>
-        <Padding>
-          <Menu>
-            {TABS.map((tab, index) => {
-              return (
-                <Button key={tab.title} onClick={() => setTabIndex(index)}>
-                  <Primary selected={tabIndex === index}>{tab.title}</Primary>
-                </Button>
-              )
-            })}
-          </Menu>
-        </Padding>
+        {TABS.map((tab, index) => {
+          return (
+            <Button key={tab.title} onClick={() => setTabIndex(index)}>
+              <Primary selected={tabIndex === index}>{tab.title}</Primary>
+            </Button>
+          )
+        })}
       </Container>
       <Tab />
     </Page>
   )
 }
 
-export { Collaborate, CollabDisplay }
+export {
+  Collaborate,
+  CollabDisplay,
+  CreateCollaboration,
+  CollabContractsOverview,
+}

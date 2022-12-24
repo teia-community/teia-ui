@@ -6,14 +6,13 @@ import useSWR from 'swr'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
-import { Loading } from '@components/loading'
-import { Button, Primary } from '@components/button'
-import { Page, Container, Padding } from '@components/layout'
+import { Loading } from '@atoms/loading'
+import { Button, Primary } from '@atoms/button'
+import { Page, Container } from '@atoms/layout'
 import { renderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
-import { Menu } from '@components/menu'
 import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
-import styles from './styles.module.scss'
+import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
 
@@ -103,26 +102,16 @@ export const ObjktDisplay = () => {
 
   return (
     <Page title={nft?.name}>
-      {loading && (
-        <Container>
-          <Padding>
-            <Loading />
-          </Padding>
-        </Container>
-      )}
+      {loading && <Loading />}
 
       {error && (
         <Container>
-          <Padding>
-            <p>{error}</p>
-          </Padding>
-          <Padding>
-            <Button href="https://github.com/teia-community/teia-ui/issues">
-              <Primary>
-                <strong>Report</strong>
-              </Primary>
-            </Button>
-          </Padding>
+          <p>{error}</p>
+          <Button href="https://github.com/teia-community/teia-ui/issues">
+            <Primary>
+              <strong>Report</strong>
+            </Primary>
+          </Button>
         </Container>
       )}
 
@@ -130,42 +119,40 @@ export const ObjktDisplay = () => {
         (!context.progress ? (
           <>
             <Container>
-              <Padding>
-                {nft.restricted && (
-                  <div className={styles.restricted}>
-                    Restricted OBJKT. Contact the Teia moderators on{' '}
-                    <a
-                      href="https://discord.gg/TKeybhYhNe"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Discord
-                    </a>{' '}
-                    to resolve the status. See the{' '}
-                    <a
-                      href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Teia Terms and Conditions
-                    </a>
-                    .
-                  </div>
-                )}
-                {nft.underReview && (
-                  <div className={styles.restricted}>
-                    OBJKT under review. Contact the Teia moderators on{' '}
-                    <a
-                      href="https://discord.gg/TKeybhYhNe"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Discord
-                    </a>{' '}
-                    to resolve the status.
-                  </div>
-                )}
-              </Padding>
+              {nft.restricted && (
+                <div className={styles.restricted}>
+                  Restricted OBJKT. Contact the Teia moderators on{' '}
+                  <a
+                    href="https://discord.gg/TKeybhYhNe"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Discord
+                  </a>{' '}
+                  to resolve the status. See the{' '}
+                  <a
+                    href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Teia Terms and Conditions
+                  </a>
+                  .
+                </div>
+              )}
+              {nft.underReview && (
+                <div className={styles.restricted}>
+                  OBJKT under review. Contact the Teia moderators on{' '}
+                  <a
+                    href="https://discord.gg/TKeybhYhNe"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Discord
+                  </a>{' '}
+                  to resolve the status.
+                </div>
+              )}
             </Container>
             <div
               style={{
@@ -184,51 +171,48 @@ export const ObjktDisplay = () => {
               </div>
               <div>
                 <Container>
-                  <Padding>
-                    <ItemInfo nft={nft} />
-                  </Padding>
+                  <ItemInfo nft={nft} />
                 </Container>
 
                 <Container>
-                  <Padding>
-                    <Menu>
-                      {TABS.map((tab, index) => {
-                        // if nft.owners exist and this is a private route, try to hide the tab.
-                        // if nft.owners fails, always show route!
+                  {TABS.map((tab, index) => {
+                    // if nft.owners exist and this is a private route, try to hide the tab.
+                    // if nft.owners fails, always show route!
 
-                        if (nft?.restricted && tab.restricted) {
-                          return null
-                        }
+                    if (nft?.restricted && tab.restricted) {
+                      return null
+                    }
 
-                        if (nft?.holdings && tab.private) {
-                          let holders_arr = nft.holdings.map(
-                            (e) => e.holder_address
-                          )
+                    if (nft?.holdings && tab.private) {
+                      let holders_arr = nft.holdings.map(
+                        (e) => e.holder_address
+                      )
 
-                          if (
-                            holders_arr.includes(address) === false &&
-                            nft.artist_address !== address &&
-                            nft.artist_address !== proxy
-                          ) {
-                            // user is not the creator now owns a copy of the object. hide
+                      if (
+                        holders_arr.includes(address) === false &&
+                        nft.artist_address !== address &&
+                        nft.artist_address !== proxy
+                      ) {
+                        // user is not the creator now owns a copy of the object. hide
 
-                            return null
-                          }
-                        }
+                        return null
+                      }
+                    }
 
-                        return (
-                          <Button
-                            key={tab.title}
-                            onClick={() => setTabIndex(index)}
-                          >
-                            <Primary selected={tabIndex === index}>
-                              {tab.title}
-                            </Primary>
-                          </Button>
-                        )
-                      })}
-                    </Menu>
-                  </Padding>
+                    return (
+                      <Button
+                        key={tab.title}
+                        onClick={() => setTabIndex(index)}
+                      >
+                        <Primary
+                          className={styles.tab}
+                          selected={tabIndex === index}
+                        >
+                          {tab.title}
+                        </Primary>
+                      </Button>
+                    )
+                  })}
                 </Container>
 
                 <Tab nft={nft} viewer_address={address} />
@@ -237,20 +221,18 @@ export const ObjktDisplay = () => {
           </>
         ) : (
           <Container>
-            <Padding>
-              <div>
-                <p
-                  style={{
-                    position: 'absolute',
-                    left: '46%',
-                    top: '45%',
-                  }}
-                >
-                  {context.message}
-                </p>
-                {context.progress && <Loading />}
-              </div>
-            </Padding>
+            <div>
+              <p
+                style={{
+                  position: 'absolute',
+                  left: '46%',
+                  top: '45%',
+                }}
+              >
+                {context.message}
+              </p>
+              {context.progress && <Loading />}
+            </div>
           </Container>
         ))}
       <div style={{ height: '40px' }}></div>

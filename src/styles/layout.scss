@@ -16,3 +16,10 @@ $breakpoints: (
     }
   }
 }
+@mixin page-width($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @container page (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}

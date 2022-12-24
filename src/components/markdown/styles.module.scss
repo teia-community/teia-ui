@@ -1,0 +1,14 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.content {
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  a {
+    font-weight: 700;
+  }
+}

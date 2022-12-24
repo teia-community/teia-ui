@@ -1,9 +1,9 @@
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
-import { Container, Padding } from '../../layout'
-import { Button } from '../../button'
-import { VisuallyHidden } from '../../visually-hidden'
-import styles from './styles.module.scss'
+import { Container } from '@atoms/layout'
+import { Button } from '@atoms/button'
+import { VisuallyHidden } from '@atoms/visually-hidden'
+import styles from '@style'
 const axios = require('axios')
 
 export const MD = ({
@@ -51,9 +51,7 @@ export const MD = ({
   ) : (
     <div>
       <Container>
-        <Padding>
-          <Markdown>{content}</Markdown>
-        </Padding>
+        <Markdown>{content}</Markdown>
       </Container>
     </div>
   )

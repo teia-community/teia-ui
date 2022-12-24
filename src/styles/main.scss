@@ -21,6 +21,20 @@ body {
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'iosevka-semibold', 'IBM Plex Mono', 'Courier New', monospace;
+  font-weight: 600;
+}
+button {
+  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  color: var(--text-color);
+  background: none;
+}
 
 * {
   -webkit-box-sizing: border-box;
@@ -49,4 +63,19 @@ img.emoji {
     margin: 1.5em 0 0.5em;
   }
   font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+// used for modals and the events menu
+// in conjunction of the useBodyClass("overlay") hook.
+body.overlay:after {
+  content: '';
+  display: block;
+  position: fixed; /* could also be absolute */
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.2);
 }

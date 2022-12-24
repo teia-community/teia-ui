@@ -1,8 +1,8 @@
 import React from 'react'
 import useSWR from 'swr'
 import uniq from 'lodash/uniq'
-import { Page } from '@components/layout'
-import TokenCollection from '@components/token-collection'
+import { Page } from '@atoms/layout'
+import TokenCollection from '@atoms/token-collection'
 import { fetchGraphQL } from '@data/api'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { gql } from 'graphql-request'
@@ -46,7 +46,7 @@ export function Friends() {
   )
 
   return (
-    <Page>
+    <Page title="Friends">
       <TokenCollection
         disable={!wallets}
         namespace="friends"

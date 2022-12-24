@@ -1,8 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import { iOS } from '../../../utils/os'
-import styles from './styles.module.scss'
+import styles from '@style'
 import './style.css'
 
+/**
+ * @param {Object} videoComponentOptions
+ * @param {import("@types").NFT} videoComponentOptions.nft
+ **/
 export const VideoComponent = ({
   artifactUri,
   displayUri,

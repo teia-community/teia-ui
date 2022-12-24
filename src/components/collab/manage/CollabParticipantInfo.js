@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from 'react'
 import get from 'lodash/get'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Button, Purchase } from '../../button'
+import { Button, Purchase } from '@atoms/button'
 import classNames from 'classnames'
 import styles from '../styles.module.scss'
 import { CollaboratorType } from '../constants'

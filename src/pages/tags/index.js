@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import { useParams } from 'react-router'
-import { Page } from '@components/layout'
+import { Page } from '@atoms/layout'
 import TagFeed from 'pages/home/tag-feed'
 
 export const Tags = () => {
@@ -10,7 +10,7 @@ export const Tags = () => {
   return (
     <Page title={`Tag ${tag}`}>
       <div className="tag-view">
-        <TagFeed tag={tag} namespace={`tag_${tag}`} defaultViewMode="masonry" />
+        <TagFeed tag={tag} namespace={`tag_${tag}`} />
       </div>
     </Page>
   )

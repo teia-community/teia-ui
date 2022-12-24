@@ -1,4 +1,4 @@
-@import '../../styles/layout.scss';
+@import '@styles/layout.scss';
 
 .flex {
   width: auto;
@@ -11,7 +11,8 @@
 .container {
   position: relative;
   // display: block;
-
+  min-width: 200px;
+  min-height: 200px;
   &.fullscreen {
     position: fixed;
     top: 0;

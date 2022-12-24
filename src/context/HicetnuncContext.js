@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { createContext, Component } from 'react'
 import {
   BeaconWallet,
@@ -214,7 +213,36 @@ class HicetnuncContextProviderClass extends Component {
     super(props)
 
     this.state = {
-      // smart contracts
+      openedDropdown: {},
+      openDropdown: (name: String) => {
+        const dp = { [name]: true }
+        this.setState({
+          openedDropdown: { ...this.state.openedDropdown, ...dp },
+        })
+      },
+      closeDropdown: (name) => {
+        const dp = { [name]: false }
+        this.setState({
+          openedDropdown: { ...this.state.openedDropdown, ...dp },
+        })
+      },
+      profileFeed: false,
+      setProfileFeed: (pf) => {
+        this.setState({ profileFeed: pf })
+      },
+      viewMode:
+        localStorage.getItem(
+          this.profileFeed ? 'profileViewMode' : 'feedViewMode'
+        ) || this.profileFeed
+          ? 'masonry'
+          : 'single',
+      setViewMode: (viewMode) => {
+        if (this.state.profileFeed) {
+        }
+
+        console.log(viewMode)
+        this.setState({ viewMode: viewMode })
+      },
 
       subjkt: SUBJKT_CONTRACT,
       v1: MARKETPLACE_CONTRACT_V1,
@@ -309,7 +337,6 @@ class HicetnuncContextProviderClass extends Component {
           this.state.setFeedback({
             message: 'reswapping is not yet supported in collab mode',
             progress: false,
-            confirm: false,
             visible: true,
             confirm: true,
             confirmCallback: () => {
@@ -365,62 +392,20 @@ class HicetnuncContextProviderClass extends Component {
       theme: 'unset',
 
       // TODO (xat): theme stuff should not happen here
+      // NOTE: I removed the actual styling part, but I'm not sure of the
+      // be
+
+      toggleTheme: () => {
+        this.state.setTheme(this.state.theme === 'light' ? 'dark' : 'light')
+      },
       setTheme: (theme) => {
+        // safeguards
+        theme = theme === 'dark' ? 'dark' : 'light'
+
+        // use data-theme for styling
         const root = document.documentElement
-
-        const light = theme === 'light'
-
-        setItem('theme', light ? 'light' : 'dark')
-
-        // TODO (xat): move these styles into css files (or some other styles abstraction)
-        root.style.setProperty(
-          '--background-color',
-          light ? '#ffffff' : '#111111'
-        )
-        root.style.setProperty(
-          '--background-color-rgb',
-          light ? '255, 255, 255' : '0, 0, 0'
-        )
-        root.style.setProperty('--text-color', light ? '#000000' : '#dedede')
-        root.style.setProperty(
-          '--border-color',
-          light ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.3)'
-        )
-        root.style.setProperty(
-          '--shadow-color',
-          light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)'
-        )
-        root.style.setProperty(
-          '--secondary-color',
-          light ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)'
-        )
-
-        root.style.setProperty('--gray-0', light ? '#FFFFFF' : '#000000')
-
-        root.style.setProperty('--gray-05', light ? '#F2F2F2' : '#0D0D0D')
-
-        root.style.setProperty('--gray-10', light ? '#E6E6E6' : '#1A1A1A')
-
-        root.style.setProperty('--gray-15', light ? '#D9D9D9' : '#262626')
-
-        root.style.setProperty('--gray-20', light ? '#CCCCCC' : '#333333')
-
-        root.style.setProperty('--gray-30', light ? '#B3B3B3' : '#4D4D4D')
-
-        root.style.setProperty('--gray-40', light ? '#999999' : '#666666')
-
-        root.style.setProperty('--gray-50', light ? '#808080' : '#808080')
-
-        root.style.setProperty('--gray-60', light ? '#666666' : '#999999')
-
-        root.style.setProperty('--gray-70', light ? '#4D4D4D' : '#B3B3B3')
-
-        root.style.setProperty('--gray-80', light ? '#333333' : '#CCCCCC')
-
-        root.style.setProperty('--gray-90', light ? '#191919' : '#E6E6E6')
-
-        root.style.setProperty('--gray-100', light ? '#000000' : '#FFFFFF')
-
+        root.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark')
+        setItem('theme', theme)
         this.setState({ theme })
       },
 
@@ -498,10 +483,6 @@ class HicetnuncContextProviderClass extends Component {
       // but we don't want to auto-sign in
       originatedContract: undefined,
       originationOpHash: undefined,
-
-      // This will be set after creating a new collab
-      // but we don't want to auto-sign in
-      originatedContract: null,
 
       setProxyAddress: (proxyAddress, proxyName) => {
         // setting proxy updates objkt contract as well:
@@ -757,7 +738,7 @@ class HicetnuncContextProviderClass extends Component {
           await axios.get(`https://tezos-prod.cryptonomic-infra.tech/chains/main/blocks/head/context/contracts/${await wallet.getPKH()}/manager_key`).then(res => res.data)
         ) */
 
-        const r = await verify(
+        await verify(
           payload.payload.toString(),
           signature.signature,
           await axios.get(
@@ -912,24 +893,16 @@ class HicetnuncContextProviderClass extends Component {
 
       setFeed: (arr) => this.setState({ feed: arr }),
 
-      // Event banner
-      banner: null,
-      setBanner: (banner) => this.setState({ banner }),
-      bannerColor: null,
-      setBannerColor: (bannerColor) => this.setState({ bannerColor }),
-
       collapsed: true,
 
-      toogleNavbar: () => {
-        document.body.style.overflow = this.state.collapsed
-          ? 'hidden'
-          : 'scroll'
+      toggleMenu: () => {
+        document.body.style.overflow = this.state.collapsed ? 'hidden' : null
         this.setState({ collapsed: !this.state.collapsed })
       },
 
-      setMenu: (collapsed) => {
+      collapseMenu: (collapsed) => {
         this.setState({ collapsed })
-        document.body.style.overflow = collapsed ? 'scroll' : 'hidden'
+        document.body.style.overflow = collapsed ? null : 'hidden'
       },
 
       getStyle: (style) =>

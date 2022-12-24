@@ -1,0 +1,23 @@
+.container,
+.msg_box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  h1 {
+    font-size: 50px;
+  }
+}
+.msg_box {
+  margin-bottom: 10em;
+  border: 1px dashed var(--text-color);
+  padding: 1em 2em;
+}

@@ -1,0 +1,56 @@
+@import '@styles/variables.scss';
+.debug {
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  z-index: 2000;
+  h1 {
+    font-size: 256px;
+    opacity: 0.5;
+  }
+  p {
+    font-size: 20px;
+    opacity: 0.5;
+  }
+}
+.debug_center,
+.cross {
+  position: fixed;
+  z-index: 999999;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+
+  opacity: 1;
+  pointer-events: none;
+}
+
+.fill {
+  background-color: var(--background-color);
+  opacity: 1;
+}
+
+.debug_center:before,
+.debug_center:after,
+.cross:before,
+.cross:after {
+  position: absolute;
+  content: ' ';
+  top: 50%;
+  height: 5px;
+  width: 100%;
+  background-color: #333;
+}
+
+.debug_center:after {
+  transform: rotate(-90deg);
+}
+
+.cross:before {
+  transform: rotate(45deg);
+}
+.cross:after {
+  transform: rotate(-45deg);
+}

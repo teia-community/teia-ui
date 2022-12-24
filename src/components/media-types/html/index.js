@@ -1,14 +1,14 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
 import classnames from 'classnames'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Button } from '../../button'
+import { Button } from '@atoms/button'
 import {
   dataRUIToBuffer,
   prepareFilesFromZIP,
   validateFiles,
 } from '../../../utils/html'
-import { VisuallyHidden } from '../../visually-hidden'
-import styles from './styles.module.scss'
+import { VisuallyHidden } from '@atoms/visually-hidden'
+import styles from '@style'
 import GenerativeIcon from '@icons/generative'
 // import './styles.css'
 

@@ -1,0 +1,150 @@
+@import '@styles/variables.scss';
+@import '@styles/mixins.scss';
+
+.container {
+  @include resetButton();
+  font-family: var(--text-font);
+
+  word-break: normal;
+
+  &.fit {
+    display: contents;
+  }
+
+  &.disabled,
+  &:disabled {
+    pointer-events: none;
+    cursor: unset;
+    opacity: 0.5;
+  }
+
+  &.full {
+    width: 100%;
+
+    @include respond-to('desktop') {
+      width: fit-content;
+    }
+  }
+}
+
+.primary {
+  color: var(--text-color);
+  transition: color #{$theme-duration} ease-out;
+
+  &.selected {
+    font-weight: bold;
+
+    margin-bottom: -7px;
+    border-bottom: 1px solid var(--text-color);
+  }
+
+  @include hover {
+    &.menu {
+      margin-bottom: -1px;
+      border-bottom: 1px solid var(--text-color);
+      padding: 6px 0;
+
+      text-decoration: none;
+    }
+
+    &:not(.selected):not(.menu) {
+      text-decoration: underline;
+    }
+  }
+}
+
+.secondary {
+  color: var(--text-color);
+  transition: color #{$theme-duration} ease-out;
+
+  @include hover {
+    text-decoration: none;
+  }
+}
+
+.purchase {
+  width: 100%;
+  padding: 4px 16px;
+  color: var(--gray-100);
+  background-color: var(--gray-5);
+  border-right: 2px solid var(--gray-100);
+  border-bottom: 2px solid var(--gray-100);
+  transition: border-color #{$theme-duration} ease-out,
+    color #{$theme-duration} ease-out;
+  min-width: 220px;
+  text-justify: center;
+  text-align: center;
+}
+
+.purchase:hover {
+  border-right: 2px solid var(--gray-50);
+  border-bottom: 2px solid var(--gray-50);
+}
+
+.curate {
+  opacity: inherit;
+  margin-bottom: 10px;
+  cursor: pointer;
+
+  padding: 2px 6px;
+  width: 100%;
+  color: black; // this colour doesnt change
+  background-color: rgb(239, 239, 239);
+  border-right: 2px solid var(--text-color);
+  border-bottom: 2px solid var(--text-color);
+  transition: border-color #{$theme-duration} ease-out,
+    color #{$theme-duration} ease-out;
+}
+
+.primary__purchase {
+  width: calc(100vw - 2em);
+
+  margin: 1em 0;
+  @include respond-to('desktop') {
+    width: auto;
+    margin: 0;
+  }
+}
+
+.dark {
+  color: var(--gray-80);
+  background-color: var(--gray-15);
+  border-right: 2px solid var(--gray-80);
+  border-bottom: 2px solid var(--gray-80);
+}
+
+.dark:hover {
+  border-right: 2px solid var(--gray-50);
+  border-bottom: 2px solid var(--gray-50);
+}
+
+.left {
+  text-align: left;
+}
+
+.button_theme {
+  display: flex;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  transition: background-color #{$theme-duration} ease-out,
+    color #{$theme-duration} ease-out;
+  z-index: 200;
+  cursor: pointer;
+}
+
+.box_toggle {
+  font-size: 16px;
+  padding: 5px 10px;
+  display: block;
+  border: none;
+  background-color: var(--gray-10);
+  color: var(--text-color);
+  transition: background-color 133ms linear;
+  word-break: keep-all;
+}
+.box_toggle.toggled {
+  background-color: var(--gray-80);
+  color: var(--background-color);
+}

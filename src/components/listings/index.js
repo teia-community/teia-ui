@@ -1,11 +1,11 @@
 import get from 'lodash/get'
 import React, { useContext, useState } from 'react'
-import { Button, Primary, Purchase } from '../button'
+import { Button, Primary, Purchase } from '@atoms/button'
 
-import { walletPreview } from '../../utils/string'
-import styles from './styles.module.scss'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { MarketplaceLabel, RestrictedLabel } from './marketplace-labels'
+import { walletPreview } from '@utils/string'
+import styles from '@style'
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import { MarketplaceLabel, RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from 'hooks/use-settings'
 
 // TODO: add support for all kind of listings

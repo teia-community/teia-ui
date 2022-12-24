@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useRef } from 'react'
-import isNumber from 'lodash/isNumber'
 import screenfull from 'screenfull'
 import { useInView } from 'react-intersection-observer'
 import classnames from 'classnames'
 import { iOS } from '../../utils/os'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-import styles from './styles.module.scss'
+import styles from '@style'
 import './style.css'
 import { FullScreenEnter, FullScreenExit } from '@icons'
 
@@ -19,6 +18,18 @@ import { FullScreenEnter, FullScreenExit } from '@icons'
  * This component handles fullscreen mode
  * and inView prop for lazy loading
  */
+
+/**
+ * This component handles fullscreen mode
+ * and inView prop for lazy loading
+ * @param {Object} containerOptions
+ * @param {import("@types").NFT} containerOptions.nft
+ * @param {React.ReactNode} containerOptions.children
+ * @param {boolean} containerOptions.nofullscreen
+ * @param {boolean} containerOptions.interactive - In "detailed" view?
+ * @param {flex} containerOptions.flex - Use a flex container
+ *
+ **/
 export const Container = ({
   children = null,
   interactive,
@@ -41,21 +52,20 @@ export const Container = ({
     }
   }
 
-  const fullscreenChange = (e) => {
-    if (iOS) {
-      return
-    }
-
-    if (screenfull.isFullscreen) {
-      context.setFullscreen(true)
-    } else {
-      context.setFullscreen(false)
-    }
-    // simulates resize to fix GLB player
-    window.dispatchEvent(new Event('resize'))
-  }
-
   useEffect(() => {
+    const fullscreenChange = (e) => {
+      if (iOS) {
+        return
+      }
+
+      if (screenfull.isFullscreen) {
+        context.setFullscreen(true)
+      } else {
+        context.setFullscreen(false)
+      }
+      // simulates resize to fix GLB player
+      window.dispatchEvent(new Event('resize'))
+    }
     if (nofullscreen || !iOS) {
       document.addEventListener('fullscreenchange', fullscreenChange)
       document.addEventListener(
@@ -90,37 +100,9 @@ export const Container = ({
     return child
   })
 
-  let price = null
-
-  if (!interactive && isNumber(nft.price)) {
-    price = (
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          padding: '5px',
-          transform: 'translate3d(-50%, 0, 0)',
-          backgroundColor: 'white',
-          color: 'black',
-          zIndex: 1,
-        }}
-      >
-        {Number(nft.price) / 1000000} tez
-      </div>
-    )
-  }
-
   return (
-    <div
-      ref={ref}
-      style={{
-        width: '100%',
-      }}
-      className="objktview-container"
-    >
+    <div ref={ref}>
       <div ref={domElement} className={classes}>
-        {price}
         {childrenWithProps}
 
         {interactive && !iOS && !nofullscreen && (

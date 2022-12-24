@@ -1,16 +1,14 @@
-/* eslint-disable */
+/* eslint-disable react-hooks/exhaustive-deps */
 import get from 'lodash/get'
-import React, { Component } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
-import { Container, Padding, Page } from '@components/layout'
-import { Input } from '@components/input'
-import { Button, Purchase } from '@components/button'
-import { Identicon } from '@components/identicons'
+import React, { useContext, useEffect, useState } from 'react'
+import { Container, Page } from '@atoms/layout'
+import { Input } from '@atoms/input'
+import { Button, Purchase } from '@atoms/button'
+import { Identicon } from '@atoms/identicons'
 import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
-
-const ls = require('local-storage')
-
+import { HicetnuncContext } from '@context/HicetnuncContext'
+import _ from 'lodash'
 const query_tz = `
 query addressQuery($address: String!) {
   teia_users(where: { user_address: {_eq: $address}}) {
@@ -42,54 +40,66 @@ async function fetchTz(address) {
   return get(data, 'teia_users.0', { user_address: address })
 }
 
-export class Config extends Component {
-  static contextType = HicetnuncContext
+export const Config = () => {
+  //static contextType = HicetnuncContext
+  const context = useContext(HicetnuncContext)
+  const [loading, setLoading] = useState(true)
+  const [address, setAddress] = useState('')
+  const [subjkt, setSubjkt] = useState('')
+  const [description, setDescription] = useState('')
+  const [identicon, setIdenticon] = useState('')
+  const [selectedFile, setSelectedFile] = useState('')
+  // const [toggled, setToggled] = useState(false)
 
-  state = {
-    loading: true,
-    vote: 0,
-    address: '',
-    subjkt: '',
-    description: '',
-    social_media: '',
-    identicon: '',
-    subjktUri: '', // uploads image
-    cid: undefined,
-    selectedFile: undefined,
-    toogled: false,
-  }
+  // state = {
+  //   loading: true,
+  //   vote: 0,
+  //   address: '',
+  //   subjkt: '',
+  //   description: '',
+  //   social_media: '',
+  //   identicon: '',
+  //   subjktUri: '', // uploads image
+  //   cid: undefined,
+  //   selectedFile: undefined,
+  //   toogled: false,
+  // }
 
-  componentDidMount = async () => {
-    await this.context.syncTaquito()
+  useEffect(() => {
+    const init = async () => {
+      await context.syncTaquito()
 
-    const { acc, proxyAddress } = this.context
+      const { acc, proxyAddress } = context
 
-    // Maybe use proxy address here
-    const address = proxyAddress || acc.address
+      // Maybe use proxy address here
+      const cur_address = proxyAddress || acc?.address
 
-    this.setState({ address })
-    const res = await fetchTz(address)
+      if (cur_address) {
+        setAddress(cur_address)
+        const res = await fetchTz(address)
+        context.subjktInfo = res
+        console.debug('Subjkt Infos:', context.subjktInfo)
 
-    this.context.subjktInfo = res
-    console.debug('Subjkt Infos:', this.context.subjktInfo)
+        if (context.subjktInfo) {
+          let { metadata, name } = context.subjktInfo
 
-    if (this.context.subjktInfo) {
-      let { metadata, name } = this.context.subjktInfo
+          if (name) setSubjkt(name)
 
-      if (name) this.setState({ subjkt: name })
-
-      if (metadata && !_.isEmpty(get(metadata, 'data'))) {
-        if (get(metadata, 'data.description'))
-          this.setState({ description: get(metadata, 'data.description') })
-        if (get(metadata, 'data.identicon'))
-          this.setState({ identicon: get(metadata, 'data.identicon') })
+          if (metadata && !_.isEmpty(get(metadata, 'data'))) {
+            if (get(metadata, 'data.description'))
+              setDescription(get(metadata, 'data.description'))
+            if (get(metadata, 'data.identicon'))
+              setIdenticon(get(metadata, 'data.identicon'))
+          }
+        }
       }
+      setLoading(false)
     }
-    this.setState({ loading: false })
-  }
+    init().catch(console.error)
+  }, [])
 
-  handleChange = (e) => {
-    if (e.target.name == 'subjkt' && !e.target.checkValidity()) {
+  const handleChange = (e) => {
+    if (e.target.name === 'subjkt' && !e.target.checkValidity()) {
       console.debug(e.target.pattern)
       e.target.value = e.target.value.replace(/[^a-z0-9-._]/g, '')
     }
@@ -97,14 +107,14 @@ export class Config extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  name_exists = async () => {
-    if (!this.state.subjkt) return false
+  const name_exists = async () => {
+    if (!subjkt) return false
 
     const { errors, data } = await fetchGraphQL(
       query_name_exist,
       'nameExists',
       {
-        name: this.state.subjkt,
+        name: subjkt,
       }
     )
     if (errors) {
@@ -116,17 +126,17 @@ export class Config extends Component {
 
     const holder = data.teia_users[0]
 
-    if (holder.user_address == this.state.address) return false
+    if (holder.user_address === address) return false
 
     console.error(`name exists and is registered to ${holder.user_address}`)
 
-    this.context.setFeedback({
+    context.setFeedback({
       visible: true,
       message: `The provided name is already registered by ${holder.user_address}`,
       progress: false,
       confirm: true,
       confirmCallback: () => {
-        this.context.setFeedback({ visible: false })
+        context.setFeedback({ visible: false })
       },
     })
 
@@ -134,22 +144,22 @@ export class Config extends Component {
   }
 
   // upload to profile pic + subjkt meta to IPFS & call the SUBJKT registry
-  subjkt_config = async () => {
-    if (await this.name_exists()) {
+  const subjkt_config = async () => {
+    if (await name_exists()) {
       return
     }
 
-    this.context.setFeedback({
+    context.setFeedback({
       visible: true,
       message: 'uploading SUBJKT',
       progress: true,
       confirm: false,
     })
 
-    if (this.state.selectedFile) {
-      const [file] = this.state.selectedFile
+    if (selectedFile) {
+      const [file] = selectedFile
 
-      this.context.setFeedback({
+      context.setFeedback({
         message: 'uploading indenticon',
       })
 
@@ -158,13 +168,13 @@ export class Config extends Component {
         blob: new Blob([buffer]),
         path: file.name,
       })
-      this.setState({ identicon: `ipfs://${picture_cid}` })
+      setIdenticon(`ipfs://${picture_cid}`)
     }
     const meta = JSON.stringify({
-      description: this.state.description,
-      identicon: this.state.identicon,
+      description: description,
+      identicon: identicon,
     })
-    this.context.setFeedback({
+    context.setFeedback({
       message: 'uploading metadatas',
     })
 
@@ -176,11 +186,11 @@ export class Config extends Component {
     })
 
     if (subjkt_meta_cid == null) {
-      this.context.setFeedback({
+      context.setFeedback({
         confirm: true,
         message: 'Error uploading metadatas',
         confirmCallback: () => {
-          this.context.setFeedback({ visible: false })
+          context.setFeedback({ visible: false })
         },
       })
       console.error('Error uploading metadatas file to IPFS')
@@ -188,31 +198,29 @@ export class Config extends Component {
     }
     console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
-    this.context.setFeedback({
+    context.setFeedback({
       message: 'minting SUBJKT',
       progress: true,
       confirm: false,
     })
 
-    await this.context.registry(this.state.subjkt, subjkt_meta_cid)
+    await context.registry(subjkt, subjkt_meta_cid)
 
-    this.context.setFeedback({
+    context.setFeedback({
       message: 'SUBJKT Minted',
       progress: false,
       confirm: true,
       confirmCallback: () => {
-        this.context.setFeedback({ visible: false })
+        context.setFeedback({ visible: false })
       },
     })
   }
 
   // upload file
 
-  onFileChange = async (event) => {
-    this.setState({
-      selectedFile: event.target.files,
-      fileTitle: event.target.files[0].name,
-    })
+  const onFileChange = async (event) => {
+    setSelectedFile(event.target.files)
+    //const file_title = event.target.files[0].name
 
     const [file] = event.target.files
 
@@ -221,12 +229,12 @@ export class Config extends Component {
       blob: new Blob([buffer]),
       path: file.name,
     })
-    this.setState({ identicon: `ipfs://${picture_cid}` })
+    setIdenticon(`ipfs://${picture_cid}`)
   }
 
-  unregister = () => this.context.unregister()
+  // const unregister = () => context.unregister()
 
-  toggle = () => this.setState({ toogled: !this.state.toogled })
+  // const toggle = () => setToggled(!toggled)
   /*
 
    signature studies
@@ -250,78 +258,66 @@ export class Config extends Component {
 
   */
 
-  sign = () => {
-    this.context.signStr({
-      /*       payload : "05" + char2Bytes(this.state.str) */
-      payload: this.state.str
-        .split('')
-        .reduce(
-          (hex, c) => (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
-          ''
-        ),
-      /*         sourceAddress: this.context.addr,
-       */
-    })
-  }
+  // const sign = () => {
+  //   context.signStr({
+  //     /*       payload : "05" + char2Bytes(this.state.str) */
+  //     payload: str
+  //       .split('')
+  //       .reduce(
+  //         (hex, c) => (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
+  //         ''
+  //       ),
+  //     /*         sourceAddress: this.context.addr,
+  //      */
+  //   })
+  // }
 
   // delete account
 
-  render() {
-    return (
-      !this.state.loading && (
-        <Page large={this.context.banner != null}>
-          <Container>
-            <Identicon
-              address={this.state.address}
-              logo={this.state.identicon}
-            />
-            <input
-              type="file"
-              onChange={this.onFileChange}
-              title="avatar file"
-            />
-            <Padding>
-              <Input
-                name="subjkt"
-                value={this.state.subjkt}
-                onChange={this.handleChange}
-                placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
-                label="Username"
-                pattern="^[a-z0-9-._]*$"
-              />
-              <Input
-                name="description"
-                onChange={this.handleChange}
-                placeholder="(Max length 500 characters)"
-                label="Description"
-                value={this.state.description}
-              />
-              <Button onClick={this.subjkt_config}>
-                <Purchase>Save Profile</Purchase>
-              </Button>
-            </Padding>
-            <div style={{ display: 'inline' }}>
-              <p style={{ paddingTop: '7.5px' }}>
-                <span>
-                  Link your Twitter, Discord, GitHub, and website with{' '}
-                </span>
-                <span>
-                  <a
-                    style={{ fontWeight: 'bold' }}
-                    target="_blank"
-                    href="https://tzprofiles.com"
-                  >
-                    Tezos Profiles
-                  </a>
-                </span>
-              </p>
-            </div>
-          </Container>
-          {/*         <BottomBanner>
+  return (
+    !loading && (
+      <Page large={context.banner != null}>
+        <Container>
+          <Identicon address={address} logo={identicon} />
+          <input type="file" onChange={onFileChange} title="avatar file" />
+          <Input
+            name="subjkt"
+            value={subjkt}
+            onChange={handleChange}
+            placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+            label="Username"
+            pattern="^[a-z0-9-._]*$"
+          />
+          <Input
+            name="description"
+            onChange={handleChange}
+            placeholder="(Max length 500 characters)"
+            label="Description"
+            value={description}
+          />
+          <Button onClick={subjkt_config}>
+            <Purchase>Save Profile</Purchase>
+          </Button>
+          <div style={{ display: 'inline' }}>
+            <p style={{ paddingTop: '7.5px' }}>
+              <span>Link your Twitter, Discord, GitHub, and website with </span>
+              <span>
+                <a
+                  style={{ fontWeight: 'bold' }}
+                  target="_blank"
+                  href="https://tzprofiles.com"
+                  rel="noreferrer"
+                >
+                  Tezos Profiles
+                </a>
+              </span>
+            </p>
+          </div>
+        </Container>
+        {/*         <BottomBanner>
           The dApp has been temporarily disabled for a contract migration. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
         </BottomBanner> */}
-        </Page>
-      )
+      </Page>
     )
-  }
+  )
 }

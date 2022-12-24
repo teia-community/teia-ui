@@ -1,0 +1,84 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.line {
+  border-right: 1px solid var(--border-color);
+}
+
+.menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+
+  transition: background-color #{$theme-duration} ease-out,
+    color #{$theme-duration} ease-out;
+
+  z-index: 400;
+
+  .content {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+  }
+}
+
+.menu_label {
+  font-size: 20px;
+  margin-bottom: 0.2em;
+  @include respond-to('desktop') {
+    font-size: 30px;
+  }
+}
+
+.address {
+  position: absolute;
+
+  color: var(--secondary-color);
+  transform: translateY(-100%);
+}
+
+.menu_left,
+.menu_right {
+  padding-top: 100px;
+  @include respond-to('desktop') {
+    margin-top: 150px;
+  }
+}
+
+.menu_right {
+  padding-left: 15px;
+
+  @include respond-to('desktop') {
+    padding-left: 30px;
+  }
+  li {
+    text-align: left;
+  }
+}
+.menu_left {
+  padding-right: 15px;
+
+  @include respond-to('desktop') {
+    padding-right: 30px;
+  }
+  li {
+    text-align: right;
+  }
+}
+
+.disabled {
+  color: var(--gray-30);
+}
+.state_buttons {
+  :first-child {
+    width: 2em;
+    height: 2em;
+  }
+  display: flex;
+  flex: row;
+  gap: 0.5em;
+}
