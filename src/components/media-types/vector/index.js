@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import classnames from 'classnames'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import styles from './styles.module.scss'
+import styles from '@style'
 import './index.css'
 
 export const VectorComponent = ({
@@ -64,7 +64,6 @@ export const VectorComponent = ({
           //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
           // }}
           // onLoad={
-          // eslint-disable-next-line no-script-url
           // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
           // }
         />

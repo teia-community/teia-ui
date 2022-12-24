@@ -2,21 +2,27 @@ import { Navigate, useParams } from 'react-router'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { PATH } from '../../../constants'
-import { Page, Container, Padding } from '../../layout'
-import { Button, Primary } from '../../button'
-import TokenCollection from '../../token-collection'
-import styles from '../../../pages/display/styles.module.scss'
+import { Page, Container } from '@atoms/layout'
+import { Button, Primary } from '@atoms/button'
+import TokenCollection from '@atoms/token-collection'
+import styles from '../../../pages/profile/styles.module.scss'
 import { walletPreview } from '../../../utils/string'
-import { Identicon } from '../../identicons'
+import { Identicon } from '@atoms/identicons'
 import { fetchCollabCreations } from '@data/api'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
+import { useContext, useEffect } from 'react'
+import { HicetnuncContext } from '@context/HicetnuncContext'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
 
+  const { setProfileFeed } = useContext(HicetnuncContext)
+  useEffect(() => {
+    setProfileFeed(true)
+  }, [setProfileFeed])
   const { data, error } = useSWR(
     !id || !name ? ['/contract', id, name] : null,
     async () => {
@@ -43,19 +49,13 @@ export const CollabDisplay = () => {
   if (error) {
     return (
       <Container>
-        <Padding>
-          <pre>{JSON.stringify(error, null, 2)}</pre>
-        </Padding>
+        <pre>{JSON.stringify(error, null, 2)}</pre>
       </Container>
     )
   }
 
   if (!data) {
-    return (
-      <Container>
-        <Padding>loading...</Padding>
-      </Container>
-    )
+    return <Container>loading...</Container>
   }
 
   const { split_contract, tokens } = data
@@ -98,45 +98,42 @@ export const CollabDisplay = () => {
     <Page title={`Collab: ${displayName}`}>
       {/* <CollabHeader collaborators={collaborators} /> */}
       <Container>
-        <Padding>
-          <div className={headerClass}>
-            <Identicon address={address} logo={logo} />
+        <div className={headerClass}>
+          <Identicon address={address} logo={logo} />
 
-            <div className={infoPanelClass} style={{ flex: 1 }}>
-              <div>
-                <div className={styles.info}>
-                  <h2>
-                    <strong>{displayName}</strong>
-                  </h2>
-                </div>
+          <div className={infoPanelClass} style={{ flex: 1 }}>
+            <div>
+              <div className={styles.info}>
+                <h2>
+                  <strong>{displayName}</strong>
+                </h2>
+              </div>
 
-                <div className={styles.info}>
-                  {coreParticipants.length > 0 && (
-                    <ParticipantList
-                      title={false}
-                      participants={coreParticipants}
-                    />
-                  )}
-                </div>
+              <div className={styles.info}>
+                {coreParticipants.length > 0 && (
+                  <ParticipantList
+                    title={false}
+                    participants={coreParticipants}
+                  />
+                )}
+              </div>
 
-                <div className={styles.info}>
-                  {description && (
-                    <p className={descriptionClass}>{description}</p>
-                  )}
-                  <Button href={`https://tzkt.io/${address}`}>
-                    <Primary>{walletPreview(address)}</Primary>
-                  </Button>
-                </div>
+              <div className={styles.info}>
+                {description && (
+                  <p className={descriptionClass}>{description}</p>
+                )}
+                <Button href={`https://tzkt.io/${address}`}>
+                  <Primary>{walletPreview(address)}</Primary>
+                </Button>
               </div>
             </div>
           </div>
-        </Padding>
+        </div>
       </Container>
 
       <Container xlarge>
         <TokenCollection
           namespace="collab-tokens"
-          defaultViewMode="masonry"
           emptyMessage="This collab has no OBJKT creations to display"
           swrParams={[address]}
           query={{ tokens }}

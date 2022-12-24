@@ -3,7 +3,7 @@ import { gql } from 'graphql-request'
 import random from 'lodash/random'
 import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
-import TokenCollection from '../../components/token-collection'
+import TokenCollection from '@atoms/token-collection'
 
 // lastId should be updated every once in a while
 function RandomFeed({ firstId = 196, lastId = 797535, max = 200 }) {

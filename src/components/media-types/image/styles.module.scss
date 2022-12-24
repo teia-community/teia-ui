@@ -1,5 +1,6 @@
-@import '../../../styles/layout.scss';
+@import '@styles/layout.scss';
 .style {
+  min-width: 200px;
   max-height: 60vh;
   max-width: 100%;
   display: block;
@@ -24,4 +25,10 @@
       max-height: 60vh;
     }
   }
+}
+
+.smol {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }

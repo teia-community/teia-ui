@@ -1,0 +1,17 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.container {
+  position: relative;
+
+  margin: auto;
+  min-height: 100vh;
+  min-width: 320px;
+  margin: 2em;
+
+  // container: page / inline-size;
+
+  &.large {
+    /*padding: 120px 0 0 0;*/
+  }
+}

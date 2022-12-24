@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Secondary } from '@components/button'
+import { Button, Secondary } from '@atoms/button'
 import {} from '@components/media-types/'
 import styles from '../styles.module.scss'
-import inputStyles from '@components/input/styles.module.scss'
+import inputStyles from '@atoms/input/styles.module.scss'
 import { CloseIcon } from '../'
 import classNames from 'classnames'
 import { GetUserMetadata } from '@data/api'
@@ -28,16 +28,6 @@ export const CollaboratorRow = ({
 
   useEffect(() => {
     const { address, shares } = collaborator
-
-    // if (/^.*\.tez$/.test(address)) {
-    //     resolveTezosDomain(address).then(resolvedAddress => {
-    //         if (resolvedAddress) {
-    //             setAddress(resolvedAddress)
-    //         }
-    //     })
-    // } else {
-    //     setAddress(address)
-    // }
     setAddress(address)
     setShares(shares)
   }, [collaborator])
@@ -60,7 +50,7 @@ export const CollaboratorRow = ({
     } else {
       setMeta()
     }
-  }, [address, shares]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address, shares, meta])
 
   const _update = (field, value) => {
     // If we have multiple lines, don't handle here

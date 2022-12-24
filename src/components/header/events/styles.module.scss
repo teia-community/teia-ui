@@ -1,0 +1,34 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.event_card {
+  margin: 1rem;
+  width: 600px;
+  overflow: hidden;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-20);
+}
+.event_card h1 {
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  font-size: 20px;
+}
+.event_content,
+.event_tag_line {
+  font-size: 13px;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+.event_icon {
+  display: inline-flex;
+  margin: 0rem 1rem;
+}
+.event_icon img {
+  width: 25px;
+}
+.event_tag_line {
+  color: var(--gray-50);
+  padding-bottom: 10px;
+}

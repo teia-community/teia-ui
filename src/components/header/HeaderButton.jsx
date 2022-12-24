@@ -1,0 +1,60 @@
+import React, { useState } from 'react'
+import styles from '@style'
+import { AnimatePresence, motion } from 'framer-motion'
+import classnames from 'classnames'
+
+/**
+ * Dropdown Button
+ * @param {*} param0
+ * @returns
+ */
+export function HeaderButton({
+  menuID,
+  direction = 'right',
+  label,
+  icon,
+  toggled,
+  children,
+  onClick,
+  className,
+}) {
+  const [open, setOpen] = useState(false)
+
+  const toggle = () => {
+    setOpen(!open)
+  }
+
+  const classes = classnames({
+    [styles.header_button]: true,
+    [styles.header_button_open]: open,
+    [styles.header_button_toggled]: toggled,
+  })
+
+  const containerClasses = classnames({
+    [styles.menu_left]: direction === 'left',
+  })
+  let props = {}
+  if (direction === 'left') {
+    props.left = true
+  }
+  return (
+    <motion.div className={containerClasses}>
+      <motion.button
+        className={`${classes} ${className || ''}`}
+        data-toggle={menuID}
+        onClick={() => {
+          toggle()
+          if (onClick) onClick()
+        }}
+      >
+        {label}
+        {icon}
+      </motion.button>
+      <AnimatePresence>
+        {children &&
+          open &&
+          React.cloneElement(children, { setOpen, ...props })}
+      </AnimatePresence>
+    </motion.div>
+  )
+}

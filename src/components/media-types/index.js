@@ -10,29 +10,25 @@ import { PdfComponent } from './pdf'
 import { MIMETYPE } from '@constants'
 import { Container } from './container'
 import { MD } from './md'
-import { HashToURL } from 'utils/index'
+import { HashToURL } from '@utils'
 
 /**
  * @typedef {{address:string,name:string}} Wallet
  */
 
 /**
- * @typedef {Object} NFT
- * @property {number} [id] - the objkt id
- * @property {string} [creator] - the creator tz address
- * @property {string} mimeType - the mimetype of the token metadata
- * @property {string} artifact_uri - the artifact IPFS URI
- * @property {string} display_uri - the display IPFS URI a.k.a cover image
+ * Method that handles the rendering of any of the supported
+ * media types.
  */
 
 /**
- * Method that handles the rendering of any of the supported
- * media types.
- * @param {NFT} nft - The nft object
- * @param {boolean} [preview=false] - True if we are on the mint preview page
- * @param {boolean} [previewUri] - True if we are on the mint preview page
- * @param {boolean} [interactive] - Unsure?
- * @param {boolean} [displayView] - Unsure?
+ * @param {Object} renderOptions - The options for the media renderer
+ * @param {import("@types").NFT} renderOptions.nft - The nft to render
+ * @param {boolean} renderOptions.preview
+ * @param {string} renderOptions.previewUri
+ * @param {boolean} renderOptions.interactive
+ * @param {boolean} renderOptions.displayView
+ *
  */
 export const renderMediaType = ({
   nft,
@@ -52,12 +48,6 @@ export const renderMediaType = ({
   const parsedDisplayUri = nft.display_uri
     ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
     : ''
-
-  // // Due to issues for generative tokens on NFTStorage.link gateway
-  // // we use ipfs.io only for these
-  // const parsedArtifactHtmlUri = nft.artifact_uri
-  //   ? HashToURL(nft.artifact_uri, 'IPFS')
-  //   : ''
 
   switch (nft.mime_type) {
     /* IMAGES */
@@ -149,6 +139,7 @@ export const renderMediaType = ({
             onDetailView={interactive}
             displayView={displayView}
             objktID={nft.token_id}
+            nft={nft}
           />
         </Container>
       )

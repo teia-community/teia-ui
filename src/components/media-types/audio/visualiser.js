@@ -1,109 +1,124 @@
-import { createRef, PureComponent } from 'react'
+import { createRef, useEffect, useState } from 'react'
 
-export class Visualiser extends PureComponent {
-  ref = createRef()
+export const Visualiser = ({ src }) => {
+  const ref = createRef()
+  const [ctx, setCtx] = useState()
+  const [ratio, setRatio] = useState(1)
+  const [audio, setAudio] = useState()
+  const [raf, setRaf] = useState()
+  const [data, setData] = useState()
+  const [analyser, setAnalyser] = useState()
 
-  componentDidMount() {
-    this.ctx = this.ref.current.getContext('2d')
-    this.ratio = Math.max(1, Math.min(global.devicePixelRatio, 2))
+  useEffect(() => {
+    setCtx(ref.current.getContext('2d'))
+    setRatio(Math.max(1, Math.min(global.devicePixelRatio, 2)))
+
+    return () => {
+      cancelAnimationFrame(raf)
+    }
+  }, [ref, raf])
+
+  useEffect(() => {
+    resize()
+  })
+
+  useEffect(() => {
+    let _audio = new Audio()
+    _audio.src = src
+    _audio.controls = false
+    _audio.loop = true
+    _audio.autoplay = false
+    _audio.crossOrigin = 'anonymous'
+
+    setAudio(_audio)
+
+    let audioCtx = new AudioContext()
+
+    setAnalyser(audioCtx.createAnalyser())
+    // analyser.fftSize = 2048
+
+    let source = audioCtx.createMediaElementSource(audio)
+    source.connect(analyser)
+    source.connect(audioCtx.destination)
+
+    setData(new Float32Array(analyser.frequencyBinCount))
+    analyser.getFloatTimeDomainData(data)
+
+    //style = getComputedStyle(document.body)
+  }, [analyser, audio, src, data])
+
+  const play = () => {
+    audio.play()
+    setRaf(requestAnimationFrame(update))
   }
 
-  componentDidUpdate() {
-    this.resize()
-  }
+  const pause = (reset) => {
+    audio.pause()
 
-  componentWillUnmount() {
-    cancelAnimationFrame(this.raf)
-  }
-
-  init() {
-    this.audio = new Audio()
-    this.audio.src = this.props.src
-    this.audio.controls = false
-    this.audio.loop = true
-    this.audio.autoplay = false
-    this.audio.crossOrigin = 'anonymous'
-
-    this.audioCtx = new AudioContext()
-
-    this.analyser = this.audioCtx.createAnalyser()
-    // this.analyser.fftSize = 2048
-
-    this.source = this.audioCtx.createMediaElementSource(this.audio)
-    this.source.connect(this.analyser)
-
-    this.source.connect(this.audioCtx.destination)
-
-    this.data = new Float32Array(this.analyser.frequencyBinCount)
-    this.analyser.getFloatTimeDomainData(this.data)
-
-    this.style = getComputedStyle(document.body)
-  }
-
-  play() {
-    this.audio.play()
-
-    this.raf = requestAnimationFrame(this.update)
-  }
-
-  pause(reset) {
-    this.audio.pause()
-
-    cancelAnimationFrame(this.raf)
+    cancelAnimationFrame(raf)
 
     if (reset) {
-      this.audio.currentTime = 0
+      audio.currentTime = 0
     }
   }
 
-  resize() {
+  const resize = () => {
     const width = 320
     const height = 320
-    this.ctx.canvas.width = width * this.ratio
-    this.ctx.canvas.height = height * this.ratio
-    this.ctx.canvas.style.width = `${width}px`
-    this.ctx.canvas.style.height = `${height}px`
+    ctx.canvas.width = width * ratio
+    ctx.canvas.height = height * ratio
+    ctx.canvas.style.width = `${width}px`
+    ctx.canvas.style.height = `${height}px`
   }
 
-  update = () => {
-    // this.analyser.getByteFrequencyData(this.data)
-    this.analyser.getFloatTimeDomainData(this.data)
+  const update = () => {
+    // analyser.getByteFrequencyData(data)
+    analyser.getFloatTimeDomainData(data)
 
-    this.resize()
+    resize()
 
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     // FIRST OPTION (traditional)
-    // let space = this.ctx.canvas.width / this.data.length
-    // this.data.forEach((value, i) => {
-    //   this.ctx.beginPath()
-    //   this.ctx.strokeStyle = 'red'
-    //   this.ctx.moveTo(space * i, this.ctx.canvas.height) //x,y
-    //   this.ctx.lineTo(space * i, this.ctx.canvas.height - value) //x,y
-    //   this.ctx.stroke()
+    // let space = ctx.canvas.width / data.length
+    // data.forEach((value, i) => {
+    //   ctx.beginPath()
+    //   ctx.strokeStyle = 'red'
+    //   ctx.moveTo(space * i, ctx.canvas.height) //x,y
+    //   ctx.lineTo(space * i, ctx.canvas.height - value) //x,y
+    //   ctx.stroke()
     // })
 
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-    this.ctx.beginPath()
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    ctx.beginPath()
 
-    for (let i = 0; i < this.data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       const x = i
-      const y = (0.5 + this.data[i] / 2) * this.ctx.canvas.height
+      const y = (0.5 + data[i] / 2) * ctx.canvas.height
 
       if (i === 0) {
-        this.ctx.moveTo(x, y)
+        ctx.moveTo(x, y)
       } else {
-        this.ctx.lineTo(x, y)
+        ctx.lineTo(x, y)
       }
     }
 
-    this.ctx.strokeStyle = this.style.getPropertyValue('--text-color')
-    this.ctx.lineWidth = 2 * global.devicePixelRatio
-    this.ctx.stroke()
-    this.raf = requestAnimationFrame(this.update)
+    ctx.strokeStyle = 'var(--text-color)' //style.getPropertyValue('--text-color')
+    ctx.lineWidth = 2 * global.devicePixelRatio
+    ctx.stroke()
+    setRaf(requestAnimationFrame(update))
   }
 
-  render() {
-    return <canvas ref={this.ref}></canvas>
-  }
+  return (
+    <canvas
+      onClick={() => {
+        if (audio.paused) {
+          play()
+        } else {
+          pause()
+        }
+      }}
+      ref={ref}
+    ></canvas>
+  )
 }

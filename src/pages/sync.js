@@ -1,40 +1,52 @@
 import React, { useContext, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { HicetnuncContext } from '@context/HicetnuncContext'
-import { Page, Container, Padding } from '@components/layout'
-import { LoadingContainer } from '@components/loading'
-import { Button, Primary } from '@components/button'
+import { Page, Container } from '@atoms/layout'
+import { LoadingContainer } from '@atoms/loading'
+import { Button, Primary } from '@atoms/button'
 
 export default function Sync() {
   const location = useLocation()
   const context = useContext(HicetnuncContext)
 
   useEffect(() => {
-    ;(async () => {
+    const init = async () => {
       if (!context.acc) {
         await context.syncTaquito()
         await context.setAccount()
       } else {
         await context.setAccount()
       }
-    })()
-  }, [context])
+    }
+    init().catch(console.error)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.acc])
 
-  return context.acc ? (
-    <Navigate
-      to={`/${location.state}/${context.getProxy() || context.acc.address}`}
-      replace
-    />
-  ) : (
+  const locationSync = (state) => {
+    const address = context.getProxy() || context.acc.address
+    switch (state) {
+      case '/tz':
+      case '/friends':
+        return `${state}/${address}`
+      case '/config':
+      case '/mint':
+        return state
+      default:
+        return '/'
+    }
+  }
+  if (context.acc) {
+    return <Navigate to={locationSync(location.state)} replace />
+  }
+
+  return (
     <Page title="">
       <Container>
-        <Padding>
-          <p>requesting permissions</p>
-          <Button to="/sync">
-            <Primary>try again?</Primary>
-          </Button>
-          <LoadingContainer />
-        </Padding>
+        <p>requesting permissions</p>
+        <Button to="/sync">
+          <Primary>try again?</Primary>
+        </Button>
+        <LoadingContainer />
       </Container>
     </Page>
   )

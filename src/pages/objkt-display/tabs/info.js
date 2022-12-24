@@ -1,7 +1,7 @@
 import React from 'react'
-import { Container, Padding } from '@components/layout'
+import { Container } from '@atoms/layout'
 import { Tags } from '@components/tags'
-import styles from '../styles.module.scss'
+import styles from '@style'
 import '../style.css'
 import { HashToURL } from '@utils'
 import {
@@ -14,7 +14,7 @@ import { getWordDate } from '@utils/time'
 /**
  * The Info Tab
  * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {{nft:import('@types').NFT}} props
  * @param {string} viewer_address - The current viewer if logged in.
  * @returns {any}
  */
@@ -29,18 +29,12 @@ export const Info = ({ nft, viewer_address }) => {
     <>
       <Container>
         <div className={styles.infos_container}>
-          <Padding>
-            <div className={styles.objkt__title}>{nft.name}</div>
-          </Padding>
+          <div className={styles.objkt__title}>{nft.name}</div>
 
-          <Padding>
-            <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
-          </Padding>
+          <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
 
           {nft.tags && nft.tags.length ? (
-            <Padding>
-              <Tags tags={nft.tags.map(({ tag }) => tag)} />
-            </Padding>
+            <Tags tags={nft.tags.map(({ tag }) => tag)} />
           ) : null}
         </div>
       </Container>
@@ -89,13 +83,12 @@ export const Info = ({ nft, viewer_address }) => {
               <p>{getWordDate(nft.minted_at)}</p>
             </div>
           </div>
-          <Padding>
-            <div className={styles.info_ipfs}>
-              <a href={metadata_ipfs_url}>Metadata</a>
-              {' // '}
-              <a href={artifact_ipfs_url}>View on ipfs</a>
-            </div>
-          </Padding>
+
+          <div className={styles.info_ipfs}>
+            <a href={metadata_ipfs_url}>Metadata</a>
+            {' // '}
+            <a href={artifact_ipfs_url}>View on ipfs</a>
+          </div>
         </div>
       </Container>
     </>

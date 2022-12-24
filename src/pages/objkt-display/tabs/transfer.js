@@ -1,16 +1,16 @@
 import { useContext, useMemo, useState } from 'react'
-import { Container, Padding } from '@components/layout'
+import { Container } from '@atoms/layout'
 import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/styles.module.scss'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import classNames from 'classnames'
-import { Button, Purchase } from '@components/button'
+import { Button, Purchase } from '@atoms/button'
 
 /**
  * The Transfer Tab
  * This allow the user to send tokens to a specific address.
  * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
 export const Transfer = ({ nft }) => {
@@ -21,14 +21,14 @@ export const Transfer = ({ nft }) => {
   const senderAddress = proxyAddress || acc?.address
 
   // See if the creator of this token is also the admin
-  const proxyAdminAddress = nft.creator.is_split
+  const proxyAdminAddress = nft.creator?.is_split
     ? nft.creator.shares[0].administrator
     : null
 
   // How many editions are held by the contract?
   const editionsHeld = useMemo(
     () =>
-      nft.token_holders.find(
+      nft.token_holders?.find(
         (e) =>
           e.holder_id === senderAddress &&
           (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
@@ -40,7 +40,7 @@ export const Transfer = ({ nft }) => {
   const txSchema = {
     to_: undefined,
     amount: undefined,
-    token_id: nft.id,
+    token_id: nft.token_id,
   }
 
   const [txs, setTxs] = useState([
@@ -112,47 +112,43 @@ export const Transfer = ({ nft }) => {
   return (
     <Container>
       {tokenCount === 0 ? (
-        <Padding>
-          <div className={styles.container}>
-            <p>No editions found to transfer.</p>
-          </div>
-        </Padding>
+        <div className={styles.container}>
+          <p>No editions found to transfer.</p>
+        </div>
       ) : (
-        <Padding>
-          <div className={styles.container}>
-            <p>
-              Add addresses below along with how many tokens you wish to send to
-              each.
-            </p>
-            <p>You currently have {tokenCount} editions available.</p>
-            <div className={tableStyle}>
-              {txs.map((tx, index) => (
-                <TxRow
-                  key={`transfer-${index}`}
-                  tx={tx}
-                  onUpdate={(tx) => _update(index, tx)}
-                  onAdd={_addTransfer}
-                  onRemove={index < txs.length - 1 ? _deleteTransfer : null}
-                />
-              ))}
-            </div>
+        <div className={styles.container}>
+          <p>
+            Add addresses below along with how many tokens you wish to send to
+            each.
+          </p>
+          <p>You currently have {tokenCount} editions available.</p>
+          <div className={tableStyle}>
+            {txs.map((tx, index) => (
+              <TxRow
+                key={`transfer-${index}`}
+                tx={tx}
+                onUpdate={(tx) => _update(index, tx)}
+                onAdd={_addTransfer}
+                onRemove={index < txs.length - 1 ? _deleteTransfer : null}
+              />
+            ))}
+          </div>
 
-            {/* <div className={styles.upload_container}>
+          {/* <div className={styles.upload_container}>
                     <label>
                         <span>Upload CSV</span>
                         <input type="file" name="file" onChange={handleUpload} />
                     </label>
                 </div> */}
 
-            <Button
-              onClick={onClick}
-              disabled={validTxs.length === 0}
-              className={styles.btnSecondary}
-            >
-              <Purchase>send</Purchase>
-            </Button>
-          </div>
-        </Padding>
+          <Button
+            onClick={onClick}
+            disabled={validTxs.length === 0}
+            className={styles.btnSecondary}
+          >
+            <Purchase>send</Purchase>
+          </Button>
+        </div>
       )}
     </Container>
   )

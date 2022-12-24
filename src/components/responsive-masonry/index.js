@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import Masonry from 'react-masonry-css'
-import styles from './styles.module.scss'
+import styles from '@style'
 
 export const ResponsiveMasonry = ({ children }) => {
   const getColumns = () => {
-    if (global.innerWidth > 1024) {
+    if (global.innerWidth > 1170) {
       return 4
     }
 
-    if (global.innerWidth > 600) {
+    if (global.innerWidth > 744) {
       return 3
+    }
+    if (global.innerWidth > 320) {
+      return 2
     }
 
     return 1

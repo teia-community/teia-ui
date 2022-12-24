@@ -1,11 +1,4 @@
 :root {
-  --background-color: #ffffff;
-  --background-color-rgb: 255, 255, 255;
-  --text-color: #000000;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --shadow-color: rgba(0, 0, 0, 0.2);
-  --secondary-color: rgba(0, 0, 0, 0.5);
-
   --gray-0: #ffffff;
   --gray-5: #f2f2f2;
   --gray-10: #e6e6e6;
@@ -19,6 +12,64 @@
   --gray-80: #333333;
   --gray-90: #191919;
   --gray-100: #000000;
+
+  --background-color: #ffffff;
+  --background-color-rgb: 255, 255, 255;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --secondary-color: rgba(0, 0, 0, 0.5);
+
+  --text-font: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+
+  --text-color: var(--gray-80);
+}
+
+:root[data-theme='dark'] {
+  --gray-0: #000000;
+  --gray-5: #0d0d0d;
+  --gray-10: #1a1a1a;
+  --gray-15: #262626;
+  --gray-20: #333333;
+  --gray-30: #4d4d4d;
+  --gray-40: #666666;
+  --gray-50: #808080;
+  --gray-60: #999999;
+  --gray-70: #b3b3b3;
+  --gray-80: #cccccc;
+  --gray-90: #e6e6e6;
+  --gray-100: #ffffff;
+
+  --background-color: #111;
+  --background-color-rgb: 0, 0, 0;
+  --border-color: rgba(255, 255, 255, 0.3);
+  --shadow-color: rgba(255, 255, 255, 0.3);
+  --secondary-color: rgba(255, 255, 255, 0.5);
+
+  --text-color: #dedede;
+}
+
+:root[data-theme='kawai'] {
+  --gray-0: #ff96cc;
+  --gray-5: #ffaad7;
+  --gray-10: #ffb9de;
+  --gray-15: #ffd3ea;
+  --gray-20: #c896ff;
+  --gray-30: #d6afff;
+  --gray-40: #e3c9ff;
+  --gray-50: #f0e2ff;
+  --gray-60: #fff0e2;
+  --gray-70: #ffffe2;
+  --gray-80: #cccccc;
+  --gray-90: #e6e6e6;
+  --gray-100: #ffffff;
+
+  --background-color: #ffe2e2;
+  --background-color-rgb: 255, 226, 226;
+  --border-color: #c896ff;
+  --shadow-color: #c896ff;
+  --secondary-color: #ffffe2;
+
+  --text-color: var(--gray-20);
 }
 
 $font-h1: 33.18px;

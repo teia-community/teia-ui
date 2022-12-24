@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Purchase } from '@components/button'
+import { Button, Purchase } from '@atoms/button'
 import { CollabParticipantInfo } from './CollabParticipantInfo'
 import styles from '@components/collab/styles.module.scss'
 import classNames from 'classnames'

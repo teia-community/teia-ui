@@ -24,13 +24,16 @@ process.env['REACT_APP_BUILD_COMMIT'] = commitHash
 module.exports = {
   webpack: {
     alias: {
-      '@data': path.resolve(__dirname, 'src/data'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
-      '@icons': path.resolve(__dirname, 'src/icons'),
-      '@context': path.resolve(__dirname, 'src/context'),
-      '@constants': path.resolve(__dirname, 'src/constants'),
+      '@atoms': path.resolve(__dirname, 'src/atoms'),
       '@components': path.resolve(__dirname, 'src/components'),
+      '@constants': path.resolve(__dirname, 'src/constants'),
+      '@context': path.resolve(__dirname, 'src/context'),
+      '@data': path.resolve(__dirname, 'src/data'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
+      '@icons': path.resolve(__dirname, 'src/icons'),
+      '@style': './styles.module.scss',
+      '@styles': path.resolve(__dirname, 'src/styles'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
     },
     configure: {
       resolve: {

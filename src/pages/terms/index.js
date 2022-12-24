@@ -1,60 +1,37 @@
-import React, { Component } from 'react'
-import { Page, Container, Padding } from '@components/layout'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Page, Container } from '@atoms/layout'
 
 import Markdown from 'markdown-to-jsx'
+import useLanguage from 'hooks/use-language'
 
-export class Terms extends Component {
-  static contextType = HicetnuncContext
+export const Terms = () => {
+  // eslint-disable-next-line no-unused-vars
+  const { language } = useLanguage()
+  const [terms, setTerms] = useState('')
 
-  docLang = 'en'
-
-  // load public\languages\documents\terms-en.md based on language
-  componentDidMount() {
-    this.loadDocument()
-  }
-
-  // load public\languages\documents\terms-en.md based on language
-  componentDidUpdate(prevProps) {
-    if (this.props.docLang !== prevProps.docLang) {
-      this.loadDocument()
-    }
-  }
-
-  loadDocument() {
-    const docLang = this.docLang
-    const document = `/languages/documents/terms-${docLang}.md`
+  const loadDocument = useCallback(() => {
+    const document = `/languages/documents/terms-${language}.md`
     fetch(document)
       .then((response) => response.text())
       .then((text) => {
-        this.termsContent = text
-        this.forceUpdate()
+        setTerms(text)
+        // this.forceUpdate()
       })
-  }
+  }, [language])
 
-  state = {
-    reveal: false,
-  }
+  useEffect(() => {
+    loadDocument()
+  }, [loadDocument])
 
-  reveal = () => {
-    this.setState({
-      reveal: !this.state.reveal,
-    })
-  }
-
-  render() {
-    return (
-      <Page title="terms" large>
-        <Container>
-          <Padding>
-            {this.termsContent && (
-              <Markdown options={{ forceBlock: true }} className="markdown-doc">
-                {this.termsContent}
-              </Markdown>
-            )}
-          </Padding>
-        </Container>
-      </Page>
-    )
-  }
+  return (
+    <Page title="terms" large>
+      <Container>
+        {terms && (
+          <Markdown options={{ forceBlock: true }} className="markdown-doc">
+            {terms}
+          </Markdown>
+        )}
+      </Container>
+    </Page>
+  )
 }
