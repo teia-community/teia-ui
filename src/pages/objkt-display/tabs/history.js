@@ -1,14 +1,15 @@
 import React from 'react'
 import get from 'lodash/get'
 import isNumber from 'lodash/isNumber'
-import { Container, Padding } from '@components/layout'
-import { Primary } from '@components/button'
+import { Container } from '@atoms/layout'
+import { Primary } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import { formatRoyalties } from '@utils'
 import { getTimeAgo } from '@utils/time'
-import styles from '../styles.module.scss'
+import styles from '@style'
 import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
+import { IconCache } from '@utils/with-icon'
 
 function UsernameAndLink({ event, attr }) {
   return (
@@ -98,15 +99,15 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
 /**
  * The History Tab
  * @function
- * @param {{nft:import('@components/media-types/index').NFT}} props
+ * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
 export const History = ({ nft }) => {
-  console.log('nft.events', nft.events)
+  console.debug('nft.events', nft.events)
 
   return (
     <Container>
-      <Padding>
+      <IconCache.Provider value={{}}>
         <div className={styles.history__container}>
           <div className={styles.history__labels}>
             <div
@@ -193,6 +194,7 @@ export const History = ({ nft }) => {
                   key={`t-${e.id}`}
                   eventType={
                     <>
+                      <TradeIcon size={14} viewBox={16} />
                       <a
                         href={`https://tzkt.io/${e.ophash}`}
                         target="_blank"
@@ -266,7 +268,7 @@ export const History = ({ nft }) => {
             {formatRoyalties(nft)} Royalties
           </div>
         </div>
-      </Padding>
+      </IconCache.Provider>
     </Container>
   )
 }

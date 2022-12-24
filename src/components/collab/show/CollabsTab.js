@@ -3,8 +3,8 @@ import get from 'lodash/get'
 import { gql } from 'graphql-request'
 import orderBy from 'lodash/orderBy'
 import { BaseTokenFieldsFragment } from '../../../data/api'
-import { Container } from '../../layout'
-import TokenCollection from '../../../components/token-collection'
+import { Container } from '@atoms/layout'
+import TokenCollection from '@atoms/token-collection'
 import collabStyles from '../styles.module.scss'
 import classNames from 'classnames'
 
@@ -29,7 +29,6 @@ export const CollabsTab = ({ wallet }) => {
       ) : null}
 
       <TokenCollection
-        defaultViewMode="masonry"
         namespace="collabs"
         swrParams={[wallet]}
         variables={{ address: wallet }}

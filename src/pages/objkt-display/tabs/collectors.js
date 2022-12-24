@@ -1,10 +1,14 @@
 import React, { useContext } from 'react'
 import get from 'lodash/get'
-import { Container, Padding } from '@components/layout'
+import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { Listings } from '@components/listings'
 
+/**
+ * @param {Object} collectorsOptions
+ * @param {import("@types").NFT} collectorsOptions.nft
+ **/
 export const Collectors = ({ nft }) => {
   const { syncTaquito, collect, acc, cancel, cancelv1, reswap } =
     useContext(HicetnuncContext)
@@ -25,27 +29,23 @@ export const Collectors = ({ nft }) => {
     <>
       {nft.listings.length > 0 && (
         <Container>
-          <Padding>
-            <Listings
-              id={nft.token_id}
-              listings={nft.listings}
-              handleCollect={handleCollect}
-              acc={acc}
-              proxyAdminAddress={proxyAdminAddress}
-              cancel={cancel}
-              cancelv1={cancelv1}
-              restricted={nft.restricted}
-              reswap={reswap}
-            />
-          </Padding>
+          <Listings
+            id={nft.token_id}
+            listings={nft.listings}
+            handleCollect={handleCollect}
+            acc={acc}
+            proxyAdminAddress={proxyAdminAddress}
+            cancel={cancel}
+            cancelv1={cancelv1}
+            restricted={nft.restricted}
+            reswap={reswap}
+          />
         </Container>
       )}
 
       {/* {filtered.length === 0 ? undefined : ( */}
       <Container>
-        <Padding>
-          <OwnerList owners={nft.holdings} />
-        </Padding>
+        <OwnerList owners={nft.holdings} />
       </Container>
       {/* )} */}
     </>

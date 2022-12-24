@@ -1,9 +1,9 @@
 import React from 'react'
 import get from 'lodash/get'
-import { Button, Primary } from '../button'
+import { Button, Primary } from '@atoms/button'
 import { MARKETPLACE_CONTRACT_V1, BURN_ADDRESS } from '../../constants'
 import { walletPreview } from '../../utils/string'
-import styles from './styles.module.scss'
+import styles from '@style'
 
 export const OwnerList = ({ owners }) => {
   const ownersWithoutBurn = owners.filter(

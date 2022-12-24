@@ -1,104 +1,81 @@
-import React, { Component } from 'react'
-import { Page, Container, Padding } from '@components/layout'
-import { Button, Primary } from '@components/button'
-import { HicetnuncContext } from '@context/HicetnuncContext'
-import styles from './styles.module.scss'
+import React from 'react'
+import { Page, Container } from '@atoms/layout'
+import { Button, Primary } from '@atoms/button'
+import styles from '@style'
 
-export class FAQ extends Component {
-  static contextType = HicetnuncContext
-
-  state = {
-    reveal: false,
-  }
-
-  reveal = () => {
-    this.setState({
-      reveal: !this.state.reveal,
-    })
-  }
-
-  render() {
+export const FAQ = () => {
+  const Question = ({ text, link }) => {
     return (
-      <Page title="faq" large>
-        <Container>
-          <Padding>
-            <div className={styles.faq__outer__container}>
-              <h1 className={styles.faq__title}>FAQ</h1>
-              <ul className={styles.faq__container}>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/Getting-Started-with-Tezos">
-                    <Primary>How do I get tezos/make a wallet?</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-mint-%F0%9F%8C%BF">
-                    <Primary>How do I mint?</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/Edit-your-profile">
-                    <Primary>How do I edit my profile?</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83">
-                    <Primary>
-                      How do I add/change the price of my OBJKT?
-                    </Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-burn-%F0%9F%94%A5">
-                    <Primary>How do I burn my OBJKT?</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/How-to-resell-%F0%9F%8F%AA">
-                    <Primary>How do I resell an OBJKT?</Primary>
-                  </Button>
-                </li>
-              </ul>
-            </div>
-          </Padding>
-        </Container>
-
-        <Container>
-          <Padding>
-            <div className={styles.faq__outer__container}>
-              <hr className={styles.divider} />
-            </div>
-          </Padding>
-        </Container>
-
-        <Container>
-          <Padding>
-            <div className={styles.faq__outer__container}>
-              <ul className={styles.faq__container}>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/General-FAQs">
-                    <Primary>General FAQ</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/Troubleshooting">
-                    <Primary>Troubleshooting</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community">
-                    <Primary>Useful tools</Primary>
-                  </Button>
-                </li>
-                <li className={styles.buttons}>
-                  <Button href="https://github.com/teia-community/teia-docs/wiki/User-safety">
-                    <Primary>User Safety</Primary>
-                  </Button>
-                </li>
-              </ul>
-            </div>
-          </Padding>
-        </Container>
-      </Page>
+      <li className={styles.buttons}>
+        <Button href={link}>
+          <Primary>{text}</Primary>
+        </Button>
+      </li>
     )
   }
+
+  return (
+    <Page title="faq" large>
+      <Container>
+        <div className={styles.faq__outer__container}>
+          <h1 className={styles.faq__title}>FAQ</h1>
+          <ul className={styles.faq__container}>
+            <Question
+              text="How do I get tezos/make a wallet?"
+              link="https://github.com/teia-community/teia-docs/wiki/Getting-Started-with-Tezos"
+            />
+            <Question
+              text="How do I mint?"
+              link="https://github.com/teia-community/teia-docs/wiki/How-to-mint-%F0%9F%8C%BF"
+            />
+            <Question
+              text="How do I edit my profile?"
+              link="https://github.com/teia-community/teia-docs/wiki/Edit-your-profile"
+            />
+            <Question
+              text="How do I add/change the price of my OBJKT?"
+              link="https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83"
+            />
+            <Question
+              text="How do I burn my OBJKT?"
+              link="https://github.com/teia-community/teia-docs/wiki/How-to-burn-%F0%9F%94%A5"
+            />
+            <Question
+              text="How do I resell an OBJKT?"
+              link="https://github.com/teia-community/teia-docs/wiki/How-to-resell-%F0%9F%8F%AA"
+            />
+          </ul>
+        </div>
+      </Container>
+
+      <Container>
+        <div className={styles.faq__outer__container}>
+          <hr className={styles.divider} />
+        </div>
+      </Container>
+
+      <Container>
+        <div className={styles.faq__outer__container}>
+          <ul className={styles.faq__container}>
+            <Question
+              text="General FAQ"
+              link="https://github.com/teia-community/teia-docs/wiki/General-FAQs"
+            />
+            <Question
+              text="Troubleshooting"
+              link="https://github.com/teia-community/teia-docs/wiki/Troubleshooting"
+            />
+            <Question
+              text="Useful tools"
+              link="https://github.com/teia-community/teia-docs/wiki/Tools-made-by-the-community"
+            />
+            <Question
+              text="User Safety"
+              link="https://github.com/teia-community/teia-docs/wiki/User-safety"
+            />
+          </ul>
+        </div>
+      </Container>
+    </Page>
+  )
 }

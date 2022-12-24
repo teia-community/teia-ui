@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react'
-import styles from './styles.module.scss'
+import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack5'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
-import { Button, Primary } from '../../button'
+import { Button, Primary } from '@atoms/button'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { AnimatePresence } from 'framer-motion'
 import { HashToURL } from '@utils'
@@ -16,6 +16,10 @@ const options = {
   standardFontDataUrl: 'standard_fonts/',
 }
 
+/**
+ * @param {Object} pdfComponentOptions
+ * @param {import("@types").NFT} pdfComponentOptions.nft
+ **/
 export const PdfComponent = ({
   artifactUri,
   displayUri,
@@ -89,7 +93,7 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
       {(!onDetailView || loading) && (
         <AnimatePresence>
           <ImageComponent
-            key={`img-${nft.token_id}`}
+            // key={`img-${nft.token_id}`}
             artifactUri={displayUri}
             displayUri={displayUri}
             previewUri={previewUri}

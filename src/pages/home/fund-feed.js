@@ -2,9 +2,9 @@ import { gql } from 'graphql-request'
 import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import flatten from 'lodash/flatten'
-import TokenCollection from '../../components/token-collection'
+import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/api'
-import styles from './styles.module.scss'
+import styles from '@style'
 
 function FundFeed({
   minShares = 50,

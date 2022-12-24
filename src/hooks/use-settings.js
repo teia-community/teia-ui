@@ -2,6 +2,12 @@ import useSWR from 'swr'
 import axios from 'axios'
 import flatten from 'lodash/flatten'
 
+/**
+ * @typedef { Map<string,number> } ListMap
+ * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap} } SettingsData
+ * @typedef { {data: SettingsData, error:Error, isLoading:boolean} } UseSettingsResult
+ */
+
 function shuffleLogos(logos) {
   // Shuffles the list daily
   const shuffledLogos = [...logos]
@@ -52,6 +58,11 @@ const mapFromList = (input_list) => {
 
   return out_map
 }
+
+/**
+ * Fetches the various lists
+ * @returns {SettingsData}
+ */
 async function fetchSettings() {
   const [
     logosResponse,
@@ -92,7 +103,6 @@ async function fetchSettings() {
     [teiaRestrictedListResponse.data],
     [teiaPermittedListResponse.data]
   )
-
   return {
     logos: shuffleLogos(logos),
     walletBlockMap,
@@ -103,6 +113,10 @@ async function fetchSettings() {
   }
 }
 
+/**
+ * Hook to manage shared data (allow/deny lists & logos)
+ * @returns {SettingsData}
+ */
 export default function useSettings() {
   const { data, error, isValidating } = useSWR('/settings', fetchSettings, {
     revalidateIfStale: false,

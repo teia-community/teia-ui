@@ -27,6 +27,14 @@ fragment baseTokenFields on tokens {
   royalties
   mime_type
   price
+  listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {
+    type
+    contract_address
+    amount
+    amount_left
+    price
+    status
+  }
   royalty_receivers {
     receiver_address
     royalties

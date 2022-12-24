@@ -1,5 +1,5 @@
-@import '../../styles/layout.scss';
-@import '../../styles/variables.scss';
+@import '@styles/layout.scss';
+@import '@styles/variables.scss';
 .objktview {
   position: relative;
   overflow: hidden;
@@ -275,4 +275,9 @@
 .restricted a {
   padding: 0em;
   cursor: pointer;
+}
+
+.tab {
+  padding: 0.4em;
+  border-bottom: 1px solid var(--gray-30);
 }

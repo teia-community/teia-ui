@@ -1,0 +1,38 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.dropdown_container {
+  // position: absolute;
+  display: flex;
+  position: absolute;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+
+  //top: 90px;
+  z-index: 5000;
+  //transform: translateX(-45%);
+  background-color: var(--background-color);
+  border: 1px solid var(--text-color);
+  //border-radius: var(--border-radius);
+  //padding: 1rem;
+  transition: height var(--speed) ease;
+  transition: width var(--speed) ease;
+}
+.vertical {
+  flex-direction: column;
+}
+
+.left {
+  right: 0;
+  @include respond-to('tablet') {
+    //width: 100%;
+    position: absolute;
+    right: 0;
+    left: unset;
+  }
+  @include respond-to('desktop') {
+    //width: 700px;
+    position: absolute;
+  }
+}

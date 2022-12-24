@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "base-x": "^3.0.8",
     "bs58check": "^2.1.2",
     "classnames": "^2.3.1",
@@ -23,22 +23,23 @@
     "ipfs-http-client": "^53.0.1",
     "ipfs-only-hash": "^4.0.0",
     "json5": "^2.2.1",
+    "keyboardjs": "^2.7.0",
     "local-storage": "^2.0.0",
     "lodash": "^4.17.21",
     "markdown-to-jsx": "^7.1.7",
     "mime-types": "^2.1.35",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-helmet": "^6.1.0",
     "react-infinite-scroller": "^1.2.6",
     "react-intersection-observer": "^8.32.0",
-    "react-lazy-load-image-component": "^1.5.1",
+    "react-lazy-load-image-component": "^1.5.6",
     "react-masonry-css": "^1.0.16",
     "react-pdf": "^5.7.2",
-    "react-router": "^6.3.0",
-    "react-router-dom": "^6.3.0",
+    "react-router": "^6.4.3",
+    "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.0",
-    "react-select": "^5.3.2",
+    "react-select": "^5.6.1",
+    "react-transition-group": "^4.4.5",
     "react-use": "^17.4.0",
     "react-use-clipboard": "^1.0.8",
     "read-json-lines-sync": "^2.1.7",
@@ -47,6 +48,7 @@
     "swr": "^1.3.0"
   },
   "scripts": {
+    "dev": "vite",
     "start": "craco start",
     "build": "craco build",
     "test-build": "CI=true npm run build",
@@ -73,6 +75,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0-alpha.7",
+    "@vitejs/plugin-react": "^3.0.0",
     "assert": "^2.0.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
@@ -92,7 +95,8 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "typescript": "^4.7.4",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "vite": "^4.0.0"
   },
   "module": "commonjs"
 }

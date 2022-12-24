@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react'
 import { PauseIcon, PlayIcon } from './icons'
 import { Visualiser } from './visualiser'
-import styles from './styles.module.scss'
+import styles from '@style'
 
 export const AudioComponent = ({
   artifactUri,
@@ -35,10 +34,7 @@ export const AudioComponent = ({
         visualiser.current.pause()
       }
     }
-  }, [play])
-
-  /*   console.log(displayUri)
-   */
+  }, [play, userTouched])
 
   if (!displayView) {
     return (

@@ -1,10 +1,10 @@
 import { useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HicetnuncContext } from '../../context/HicetnuncContext'
-import { Loading } from '../loading'
-import { Button, Purchase } from '../button'
+import { Loading } from '@atoms/loading'
+import { Button, Purchase } from '@atoms/button'
 import { fadeIn } from '../../utils/motion'
-import styles from './styles.module.scss'
+import styles from '@style'
 import Markdown from 'markdown-to-jsx'
 
 export const FeedbackComponent = () => {

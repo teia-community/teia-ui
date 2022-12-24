@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { HicetnuncContext } from '../../../context/HicetnuncContext'
-import { Button, Purchase } from '../../button'
+import { Button, Purchase } from '@atoms/button'
 import styles from '../styles.module.scss'
 
 // TODO: test if this still works

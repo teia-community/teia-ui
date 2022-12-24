@@ -1,0 +1,53 @@
+@import '@styles/layout.scss';
+@import '@styles/variables.scss';
+
+.bottom_banner {
+  background: var(--background-color);
+  padding: 10px;
+  font-size: 15px;
+  text-align: justify;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  a {
+    color: var(--text-color);
+    font-weight: bold;
+  }
+}
+
+.banner {
+  width: 100%;
+  padding: 0 2rem;
+  /*position: fixed;*/
+  z-index: 400;
+  top: 0;
+  color: #fff;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+    font-size: 12px;
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+
+  @include respond-to('desktop') {
+    /*width: 50%;*/
+    margin: 0 auto;
+  }
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+    @media (min-width: 769px) {
+      display: inline-block;
+    }
+  }
+}

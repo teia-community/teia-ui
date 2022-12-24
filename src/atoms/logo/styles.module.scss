@@ -1,0 +1,19 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.logo {
+  color: var(--text-color);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    transition: fill #{$theme-duration} ease-out;
+  }
+
+  img {
+    width: auto;
+    height: 32px;
+  }
+}
