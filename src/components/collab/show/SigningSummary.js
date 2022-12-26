@@ -30,3 +30,5 @@ export const SigningSummary = ({ coreParticipants, signatures }) => {
     </div>
   )
 }
+
+export default SigningSummary

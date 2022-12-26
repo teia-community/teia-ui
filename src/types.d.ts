@@ -93,6 +93,11 @@ export type NFT = {
   /** List of addresses owning that token */
   token_holders: [string]
 
+  /** This is an artifact of TokenCollection, where the check logic happens. */
+  isNSFW?: boolean
+  /** This is an artifact of ??, where the key logic happens. */
+  key?: string
+
   teia_meta?: TeiaMeta
 
   listings: [Listing]

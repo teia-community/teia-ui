@@ -2,24 +2,23 @@
 @import '@styles/layout.scss';
 .container {
   position: relative;
-}
+  max-width: 600px;
 
-.blur {
-  filter: blur(1.1rem);
-}
-
-.token_infos_container {
-  width: 100%;
-  // background-color: peru;
-  margin-bottom: 2em;
-}
-
-.masonry {
   .token_infos_container {
-    margin-bottom: 0em;
+    width: 100%;
+    margin-bottom: 2em;
+  }
 
-    * {
-      font-size: 12px;
+  &.blur {
+    filter: blur(1.1rem);
+  }
+
+  &.masonry {
+    .token_infos_container {
+      margin-bottom: 0em;
+      * {
+        font-size: 12px;
+      }
     }
   }
 }

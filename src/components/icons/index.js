@@ -13,7 +13,6 @@ export const Menu = ({ isOpen = false }) => {
   const top = {
     closed: {
       rotate: 0,
-      translateY: 0,
     },
     opened: {
       rotate: 45,
@@ -61,26 +60,22 @@ export const Menu = ({ isOpen = false }) => {
           variants={top}
           {...lineProps}
         />
-        {true && (
-          <motion.line
-            x1="2"
-            x2="12"
-            y1="7"
-            y2="7"
-            variants={center}
-            {...lineProps}
-          />
-        )}
-        {true && (
-          <motion.line
-            x1="2"
-            x2="12"
-            y1="10"
-            y2="10"
-            variants={bottom}
-            {...lineProps}
-          />
-        )}
+        <motion.line
+          x1="2"
+          x2="12"
+          y1="7"
+          y2="7"
+          variants={center}
+          {...lineProps}
+        />
+        <motion.line
+          x1="2"
+          x2="12"
+          y1="10"
+          y2="10"
+          variants={bottom}
+          {...lineProps}
+        />
       </motion.svg>
     </div>
   )

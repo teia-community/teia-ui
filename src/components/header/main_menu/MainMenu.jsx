@@ -6,7 +6,7 @@ import { walletPreview } from '@utils/string'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { useContext } from 'react'
 import { MenuItem } from './MenuItem'
-import { BoxToggle } from '@atoms/button'
+import { Toggle, toggleType } from '@atoms/toggles'
 
 /**
  * The main global menu.
@@ -54,15 +54,18 @@ export const MainMenu = () => {
             need_sync
           />
           <div className={styles.state_buttons}>
-            <BoxToggle
+            <Toggle
+              kind={toggleType.BOX}
               onToggle={context.toggleTheme}
-              initial={context.theme === 'dark'}
+              toggled={context.theme === 'dark'}
             />
-            <BoxToggle label="ZEN" />
+            <Toggle kind={toggleType.BOX} label="ZEN" />
           </div>
         </ul>
       </nav>
-      <Footer />
+      <Footer pin />
     </motion.div>
   )
 }
+
+export default MainMenu

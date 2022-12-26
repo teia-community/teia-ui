@@ -9,6 +9,7 @@ import { useClickOutside } from 'hooks/use-click-outside'
 import { useTwemoji } from '@hooks/use-twemoji'
 import classnames from 'classnames'
 import React from 'react'
+
 export function DropDown({ children, setOpen, vertical, menuID, left }) {
   useBodyClass('overlay')
 
@@ -42,3 +43,5 @@ export function DropDown({ children, setOpen, vertical, menuID, left }) {
     </motion.div>
   )
 }
+
+export default DropDown

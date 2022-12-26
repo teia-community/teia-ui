@@ -395,8 +395,13 @@ class HicetnuncContextProviderClass extends Component {
       // NOTE: I removed the actual styling part, but I'm not sure of the
       // be
 
-      toggleTheme: () => {
-        this.state.setTheme(this.state.theme === 'light' ? 'dark' : 'light')
+      toggleTheme: (useDark = undefined) => {
+        console.log('Toggle Theme')
+        if (useDark === undefined) {
+          this.state.setTheme(this.state.theme === 'light' ? 'dark' : 'light')
+          return
+        }
+        this.state.setTheme(useDark ? 'dark' : 'light')
       },
       setTheme: (theme) => {
         // safeguards
@@ -893,6 +898,7 @@ class HicetnuncContextProviderClass extends Component {
 
       setFeed: (arr) => this.setState({ feed: arr }),
 
+      /** Main menu is collapsed */
       collapsed: true,
 
       toggleMenu: () => {
