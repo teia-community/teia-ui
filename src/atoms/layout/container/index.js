@@ -2,7 +2,11 @@ import React from 'react'
 import classnames from 'classnames'
 import styles from '@style'
 
-export const Container = ({ children = null, large, xlarge }) => {
+export const Container = ({
+  children = null,
+  large = false,
+  xlarge = false,
+}) => {
   const classes = classnames({
     [styles.container]: true,
     [styles.large]: large,

@@ -19,18 +19,21 @@
   transition: height var(--speed) ease;
   transition: width var(--speed) ease;
 }
+
 .vertical {
   flex-direction: column;
 }
 
 .left {
   right: 0;
+
   @include respond-to('tablet') {
     //width: 100%;
     position: absolute;
     right: 0;
     left: unset;
   }
+
   @include respond-to('desktop') {
     //width: 700px;
     position: absolute;
