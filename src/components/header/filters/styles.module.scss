@@ -4,10 +4,18 @@
 .filter_bar {
   width: 100%;
   height: 56px;
-  // background-color: yellowgreen;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: 0px 10px;
+  grid-template-areas: 'Feeds View-Mode Sort Filter';
+
+  @include respond-to('phone') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @include respond-to('desktop') {
+    grid-template-columns: 2fr repeat(3, 1fr);
+  }
 }
 
 .filter_box {
@@ -19,17 +27,24 @@
   background-color: var(--background-color);
   flex: 1;
   container: filters / inline-size;
+
   @include respond-to('phone') {
     justify-content: center;
   }
 }
-.filter_bar {
-  display: flex;
+
+.filter_button {
+  grid-area: Filter;
 }
 
 .view_mode {
+  grid-area: View-Mode;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
 }
+
 .tagline {
   font-size: 13px;
   color: var(--gray-30);
@@ -40,6 +55,7 @@
   align-items: center;
   gap: 10px;
 }
+
 .confirm_box {
   display: flex;
   gap: 1em;
@@ -47,16 +63,19 @@
   margin-right: 1em;
   border-top: 1px solid var(--gray-20);
 }
+
 .tags {
   display: flex;
   gap: 1em;
   flex-wrap: wrap;
   padding-bottom: 1em;
 }
+
 .line {
   display: block;
   border-bottom: 1px solid var(--gray-20);
 }
+
 .filters_container {
   display: flex;
   flex-direction: row;
@@ -65,18 +84,22 @@
     flex-direction: column;
     width: 100vw;
   }
+
   @include respond-to('tablet') {
     flex-direction: row;
     width: 100vw;
   }
+
   @include respond-to('desktop') {
     //width: 700px;
     width: 60vw;
   }
+
   @container (max-width:150px) {
     .filter_box {
       justify-items: center;
     }
+
     .media_type {
       .tagline {
         display: none;

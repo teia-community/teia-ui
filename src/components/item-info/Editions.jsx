@@ -5,7 +5,7 @@ import { sum } from 'lodash'
  * @param {Object} editionOptions
  * @param {import("@types").NFT} editionOptions.nft
  **/
-export const Editions = ({ prefix, nft }) => {
+const Editions = ({ prefix, nft }) => {
   const { walletBlockMap } = useSettings()
   const editionsForSale = sum(
     nft.listings
@@ -32,3 +32,5 @@ export const Editions = ({ prefix, nft }) => {
     </div>
   )
 }
+
+export default Editions

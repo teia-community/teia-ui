@@ -1,15 +1,15 @@
 import { Button, Primary } from '@atoms/button'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
-import { get, isNumber } from 'lodash'
+import { isNumber } from 'lodash'
 import styles from '@style'
-import { Editions } from './Editions'
+import Editions from './Editions'
 
 /**
  * @param {Object} itemInfoCompactOptions
  * @param {import("@types").NFT} itemInfoCompactOptions.nft
  **/
-export const ItemInfoCompact = ({ nft }) => {
+const ItemInfoCompact = ({ nft }) => {
   let zen = false
   let _price = null
 
@@ -34,14 +34,14 @@ export const ItemInfoCompact = ({ nft }) => {
         </Button>
         <Button
           to={
-            get(nft, 'artist_profile.name')
-              ? `/${get(nft, 'artist_profile.name')}`
+            nft.artist_profile?.name
+              ? `/${nft.artist_profile.name}`
               : `/tz/${nft.artist_address}`
           }
         >
           <Primary className={styles.artist}>
-            {get(nft, 'artist_profile.name')
-              ? encodeURI(get(nft, 'artist_profile.name'))
+            {nft.artist_profile?.name
+              ? encodeURI(nft.artist_profile.name)
               : walletPreview(nft.artist_address)}
           </Primary>
         </Button>
@@ -53,3 +53,5 @@ export const ItemInfoCompact = ({ nft }) => {
     </div>
   )
 }
+
+export default ItemInfoCompact

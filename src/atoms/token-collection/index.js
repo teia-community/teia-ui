@@ -13,10 +13,8 @@ import { useContext } from 'react'
 import { HicetnuncContext } from '@context/HicetnuncContext'
 import { IconCache } from '@utils/with-icon'
 import { AnimatePresence, motion } from 'framer-motion'
-// import { renderMediaType } from '@components/media-types'
-// import { METADATA_CONTENT_RATING_MATURE, PATH } from '@constants'
-// import { Button } from '@atoms/button'
-// import styles from '@style'
+import React from 'react'
+import styles from '@style'
 
 /**
  * Single view, vertical feed
@@ -24,13 +22,13 @@ import { AnimatePresence, motion } from 'framer-motion'
  * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
  * @returns {React.ReactElement} The feed
  */
-function SingleView({ tokens }) {
+function SingleView({ tokens, zen }) {
   return (
-    <>
+    <div className={styles.single_view}>
       {tokens.map((token) => (
-        <FeedItem key={token.token_id} nft={token} />
+        <FeedItem zen={zen} key={token.token_id} nft={token} />
       ))}
-    </>
+    </div>
   )
 }
 
@@ -40,38 +38,15 @@ function SingleView({ tokens }) {
  * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
  * @returns {React.ReactElement} The feed
  */
-function MasonryView({ tokens }) {
+function MasonryView({ tokens, zen }) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
-        // <div key={token.key || token.id} className={styles.cardContainer}>
-        //   <Button
-        //     style={{ positon: 'relative' }}
-        //     to={`${PATH.OBJKT}/${token.token_id}`}
-        //   >
-        //     <div
-        //       className={`${styles.container} ${
-        //         token.isNsfw ||
-        //         (get(token, 'teia_meta.content_rating') &&
-        //           get(token, 'teia_meta.content_rating') ===
-        //             METADATA_CONTENT_RATING_MATURE)
-        //           ? styles.blur
-        //           : ''
-        //       }`}
-        //     >
-        //       {renderMediaType({
-        //         nft: token,
-        //         displayView: true,
-        //       })}
-        //     </div>
-        //   </Button>
-        // </div>
-        // TODO: I did not fully check this, but using the new "zen" prop on FeedItem should mimic this 👆
         <motion.div
           exit={{ opacity: 0, x: -1000 }}
           key={token.key || token.token_id}
         >
-          <FeedItem /*zen*/ nft={token} />
+          <FeedItem zen={zen} nft={token} />
         </motion.div>
       ))}
     </ResponsiveMasonry>
@@ -110,7 +85,7 @@ function TokenCollection({
   },
 }) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { walletBlockMap, nsfwMap } = useSettings()
+  const { walletBlockMap, nsfwMap, objktBlockMap } = useSettings()
 
   const context = useContext(HicetnuncContext)
   const inViewMode = searchParams.get('view') ? searchParams.get('view') : null
@@ -157,11 +132,17 @@ function TokenCollection({
     tokenPath,
     keyPath,
   })
-    .filter((token) => walletBlockMap.get(token.artist_address) !== 1)
-    .map((token) => ({
-      ...token,
-      isNsfw: nsfwMap.get(token.token_id) === 1,
-    }))
+    .filter(
+      (token) =>
+        walletBlockMap.get(token.artist_address) !== 1 &&
+        objktBlockMap.get(token.id) !== 1
+    )
+    .map((token) => {
+      return {
+        ...token,
+        isNSFW: nsfwMap.get(token.token_id) === 1,
+      }
+    })
 
   if (!tokens.length) {
     return (
@@ -175,26 +156,30 @@ function TokenCollection({
 
   return (
     <div>
-      <FilterBar />
-      <InfiniteScroll
-        loadMore={() => {
-          setSearchParams({
-            ...Object.fromEntries(searchParams),
-            [namespace]: limit + itemsPerLoad,
-          })
-        }}
-        hasMore={limit < tokens.length}
-      >
-        <IconCache.Provider value={{}}>
-          <AnimatePresence>
-            {(inViewMode ? inViewMode : viewMode) === 'single' ? (
-              <SingleView tokens={limitedTokens} />
-            ) : (
-              <MasonryView tokens={limitedTokens} />
-            )}
-          </AnimatePresence>
-        </IconCache.Provider>
-      </InfiniteScroll>
+      {/* {context.collapsed && ( */}
+      <>
+        <FilterBar />
+        <InfiniteScroll
+          loadMore={() => {
+            setSearchParams({
+              ...Object.fromEntries(searchParams),
+              [namespace]: limit + itemsPerLoad,
+            })
+          }}
+          hasMore={limit < tokens.length}
+        >
+          <IconCache.Provider value={{}}>
+            <AnimatePresence>
+              {(inViewMode ? inViewMode : viewMode) === 'single' ? (
+                <SingleView tokens={limitedTokens} />
+              ) : (
+                <MasonryView tokens={limitedTokens} />
+              )}
+            </AnimatePresence>
+          </IconCache.Provider>
+        </InfiniteScroll>
+      </>
+      {/* )} */}
     </div>
   )
 }

@@ -40,3 +40,5 @@ export const EventBanner = () => {
     </>
   )
 }
+
+export default EventBanner

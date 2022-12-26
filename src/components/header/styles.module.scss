@@ -15,6 +15,7 @@
 .dropdown_menu {
   background-color: var(--background-color);
   color: var(--text-color);
+
   button {
     background: none;
     color: inherit;
@@ -24,6 +25,7 @@
 .banner_on {
   margin-top: 3em;
 }
+
 .container {
   width: 100%;
 
@@ -57,6 +59,13 @@
     // @include respond-to('desktop') {
     //   background-color: rgb(30, 255, 0);
     // }
+    @include respond-to('phone') {
+      padding: 25px 20px;
+    }
+
+    @include respond-to('tablet') {
+      padding: 50px 40px;
+    }
 
     .left {
       display: flex;
@@ -120,6 +129,7 @@ ul {
   margin: 0;
   padding: 0;
 }
+
 li {
   list-style: none;
 }
@@ -138,9 +148,11 @@ li {
 .menu_item .header_button:hover {
   filter: none;
 }
+
 .menu_item:hover {
   background-color: #525357;
 }
+
 .icon-right {
   margin-left: auto;
 }
@@ -155,21 +167,24 @@ li {
   justify-content: center;
   background: var(--background-color);
   transition: filter 300ms;
-  // border: 1px solid var(--text-color);
   border: none;
   gap: 0.5rem;
-  padding: 0.25em 0.5em;
+  padding: 0.75em 0.5em;
+  word-break: keep-all;
 }
+
 .menu_left {
   position: relative;
 
   .header_button {
     position: unset;
   }
+
   .header_button_open {
     position: relative;
   }
 }
+
 .header_button svg > path {
   fill: var(--text-color);
 }
@@ -181,6 +196,7 @@ li {
 .header_button_toggled {
   background-color: var(--gray-80);
   color: var(--background-color);
+
   svg > path {
     fill: var(--background-color);
   }
@@ -188,10 +204,6 @@ li {
 
 .header_button:hover {
   filter: brightness(1.2);
-}
-
-.events_button {
-  padding-bottom: 15px;
 }
 
 .logo {

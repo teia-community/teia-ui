@@ -26,3 +26,5 @@ export const SigningUI = ({ id, hasSigned }) => {
     </div>
   )
 }
+
+export default SigningUI

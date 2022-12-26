@@ -10,9 +10,10 @@
 
 .container {
   position: relative;
-  // display: block;
   min-width: 200px;
   min-height: 200px;
+  display: flex;
+  justify-content: center;
   &.fullscreen {
     position: fixed;
     top: 0;

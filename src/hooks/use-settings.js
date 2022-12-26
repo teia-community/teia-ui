@@ -65,6 +65,7 @@ const mapFromList = (input_list) => {
  */
 async function fetchSettings() {
   const [
+    objktBlockMapResponse,
     logosResponse,
     logosPrideResponse,
     teiaRestrictedListResponse,
@@ -74,6 +75,7 @@ async function fetchSettings() {
     ignoreUriResponse,
     feedIgnoreUriResponse,
   ] = await Promise.all([
+    axios.get(process.env.REACT_APP_BLOCKLIST_OBJKT), // loads blocked objkt
     axios.get(`${process.env.REACT_APP_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(`${process.env.REACT_APP_LOGOS}/logos_pride.json`), // list of logos for the pride month
     axios.get(process.env.REACT_APP_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
@@ -94,7 +96,10 @@ async function fetchSettings() {
     }))
   )
 
-  const nsfwMap = mapFromList(nsfwResponse.data)
+  const objktBlockMap = mapFromList(
+    objktBlockMapResponse.data.map((n) => n.toString())
+  )
+  const nsfwMap = mapFromList(nsfwResponse.data.map((n) => n.toString()))
   const underReviewMap = mapFromList(underReviewResponse.data)
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)
   const feedIgnoreUriMap = mapFromList(feedIgnoreUriResponse.data)
@@ -109,6 +114,7 @@ async function fetchSettings() {
     nsfwMap,
     underReviewMap,
     ignoreUriMap,
+    objktBlockMap,
     feedIgnoreUriMap,
   }
 }
