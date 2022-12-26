@@ -2,9 +2,11 @@ import { motion } from 'framer-motion'
 import styles from '@style'
 import { HeaderButton } from '../HeaderButton'
 import { DropDown } from '@atoms/dropdown'
-import { BoxToggle } from '@atoms/button'
+import { Toggle, toggleType } from '@atoms/toggles'
 import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
 import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
+import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
+
 import useLocalSettings from '@hooks/use-local-settings'
 import { Input } from '@atoms/input'
 import { useContext, useState } from 'react'
@@ -14,7 +16,7 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 const MediaFilter = ({ label, tagline }) => {
   return (
     <div className={styles.media_type}>
-      <BoxToggle label={label} />
+      <Toggle kind={toggleType.BOX} label={label} />
       <p className={styles.tagline}>{tagline}</p>
     </div>
   )
@@ -30,25 +32,28 @@ export const FilterBar = () => {
   return (
     <motion.div className={styles.filter_bar}>
       <div className={styles.view_mode}>
-        <HeaderButton
+        <Toggle
+          kind={toggleType.MINIMAL}
           toggled={viewMode === 'single'}
-          onClick={() => {
+          onToggle={() => {
             setViewMode('single')
           }}
-          icon={<SingleIcon />}
+          label={<SingleIcon />}
         />
-        <HeaderButton
+        <Toggle
+          kind={toggleType.MINIMAL}
           toggled={viewMode === 'masonry'}
-          onClick={() => setViewMode('masonry')}
-          icon={<MasonryIcon />}
+          onToggle={() => setViewMode('masonry')}
+          label={<MasonryIcon />}
         />
       </div>
       {filters && (
         <HeaderButton
           direction="left"
           menuID="filters"
-          icon={'🚀'}
+          icon={<FiltersIcon />}
           label="Filters"
+          className={styles.filter_button}
         >
           <DropDown ref={drop} left menuID="filters">
             <motion.div key="filters" className={styles.filters_container}>
@@ -112,15 +117,27 @@ export const FilterBar = () => {
                 <h1>Featured tags</h1>
                 <p className={styles.tagline}>Events</p>
                 <div className={styles.tags}>
-                  <BoxToggle key="pakistan" label="Pakistan" />
-                  <BoxToggle key="ukraine" label="Ukraine" />
-                  <BoxToggle key="iran" label="Iran" />
+                  <Toggle
+                    kind={toggleType.BOX}
+                    key="pakistan"
+                    label="Pakistan"
+                  />
+                  <Toggle kind={toggleType.BOX} key="ukraine" label="Ukraine" />
+                  <Toggle kind={toggleType.BOX} key="iran" label="Iran" />
                 </div>
                 <p className={styles.tagline}>Popular</p>
                 <div className={styles.tags}>
-                  <BoxToggle key="pixelart" label="pixelart" />
-                  <BoxToggle key="generativeart" label="generativeart" />
-                  <BoxToggle key="gan" label="gan" />
+                  <Toggle
+                    kind={toggleType.BOX}
+                    key="pixelart"
+                    label="pixelart"
+                  />
+                  <Toggle
+                    kind={toggleType.BOX}
+                    key="generativeart"
+                    label="generativeart"
+                  />
+                  <Toggle kind={toggleType.BOX} key="gan" label="gan" />
                 </div>
               </motion.div>
             </motion.div>
@@ -138,3 +155,5 @@ export const FilterBar = () => {
     </motion.div>
   )
 }
+
+export default FilterBar

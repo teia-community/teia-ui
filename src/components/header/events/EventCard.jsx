@@ -45,3 +45,5 @@ export const EventCard = ({ event }) => {
     </article>
   )
 }
+
+export default EventCard

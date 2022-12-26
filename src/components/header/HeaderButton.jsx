@@ -38,9 +38,9 @@ export function HeaderButton({
     props.left = true
   }
   return (
-    <motion.div className={containerClasses}>
+    <motion.div className={`${className ? className : ''} ${containerClasses}`}>
       <motion.button
-        className={`${classes} ${className || ''}`}
+        className={`${classes} `}
         data-toggle={menuID}
         onClick={() => {
           toggle()

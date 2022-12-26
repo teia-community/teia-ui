@@ -7,19 +7,27 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import collabStyles from '../collab/styles.module.scss'
-import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
-import { SigningUI } from '../collab/sign/SigningUI'
-import { SigningSummary } from '../collab/show/SigningSummary'
+// TODO: Properly test collab UIs with loadables
+// import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
+// import { SigningUI } from '../collab/sign/SigningUI'
+// import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 import useSettings from '@hooks/use-settings'
-import { CheapestButton } from './CheapestButton'
-import { Editions } from './Editions'
+import loadable from '@loadable/component'
+
+const CollabIssuerInfo = loadable(() =>
+  import('../collab/show/CollabIssuerInfo')
+)
+const SigningUI = loadable(() => import('../collab/sign/SigningUI'))
+const SigningSummary = loadable(() => import('../collab/show/SigningSummary'))
+const CheapestButton = loadable(() => import('./CheapestButton'))
+const Editions = loadable(() => import('./Editions'))
 
 /**
  * @param {Object} itemInfoOptions
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
-export const ItemInfo = ({ nft }) => {
+const ItemInfo = ({ nft }) => {
   const { acc } = useContext(HicetnuncContext)
 
   const { walletBlockMap } = useSettings()
@@ -134,3 +142,4 @@ export const ItemInfo = ({ nft }) => {
     </>
   )
 }
+export default ItemInfo

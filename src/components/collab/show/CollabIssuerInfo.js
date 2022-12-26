@@ -37,3 +37,5 @@ export const CollabIssuerInfo = ({ creator }) => {
     </div>
   )
 }
+
+export default CollabIssuerInfo

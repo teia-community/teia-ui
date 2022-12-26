@@ -4,7 +4,8 @@
     "target": "es2017",
     "jsx": "react",
     "checkJs": true,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "NodeNext",
     "paths": {
       "@atoms/*": ["atoms/*"],
       "@components/*": ["components/*"],

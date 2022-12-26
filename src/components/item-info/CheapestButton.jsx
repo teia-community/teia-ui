@@ -5,7 +5,7 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
 import styles from '@style'
 import { useContext } from 'react'
 
-export const CheapestButton = ({ listing }) => {
+const CheapestButton = ({ listing }) => {
   const { syncTaquito, collect, acc } = useContext(HicetnuncContext)
   return listing ? (
     <div className={styles.main_swap}>
@@ -30,3 +30,5 @@ export const CheapestButton = ({ listing }) => {
     </Button>
   )
 }
+
+export default CheapestButton

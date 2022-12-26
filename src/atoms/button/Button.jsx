@@ -40,7 +40,7 @@ export const Button = ({
     )
   }
   return (
-    <button onClick={onClick} onKeyDown={onClick} className={classes}>
+    <button onClick={onClick} className={classes}>
       {children}
     </button>
   )

@@ -10,24 +10,24 @@ import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms/visually-hidden'
 import styles from '@style'
 import { getItem, setItem } from '@utils/storage'
-import { EventBanner } from '@components/banners'
 import { HeaderButton } from './HeaderButton'
-import { MainMenu } from './main_menu/MainMenu'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
-
-import { FilterBar } from './filters/FilterBar'
-import { DropDown } from '@atoms/dropdown'
-import { EventCard } from './events/EventCard'
+import loadable from '@loadable/component'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
-import { RotatingLogo } from '@atoms/logo'
+
+const EventBanner = loadable(() => import('@components/banners/EventBanner'))
+const MainMenu = loadable(() => import('./main_menu/MainMenu'))
+const FilterBar = loadable(() => import('./filters/FilterBar'))
+const EventCard = loadable(() => import('./events/EventCard'))
+const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
+const DropDown = loadable(() => import('@atoms/dropdown/Dropdown'))
 
 export const Header = ({ filters = false }) => {
   const context = useContext(HicetnuncContext)
   const navigate = useNavigate()
-  // const { logos } = useSettings()
 
   useEffect(() => {
     context.setAccount()
@@ -102,7 +102,7 @@ export const Header = ({ filters = false }) => {
           </div>
 
           <Button onClick={() => handleRoute('/')}>
-            <RotatingLogo className={styles.logo} />
+            <RotatingLogo seed={10} className={styles.logo} />
           </Button>
           <div className={styles.right}>
             {!context.collapsed && context.proxyAddress && (
