@@ -68,7 +68,7 @@
       "amount": "number of OBJKTs",
       "price": "price per OBJKT (in tez)",
       "cta": "swap it",
-      "warning": "The Teia marketplace fee is temporarily set to 0%. Please consider donating to teias main multisig address KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb for maintenance funding."
+      "warning": "The Teia marketplace fee is temporarily set to 0%. You can donate to Teias main multisign address KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb for maintenance funding."
     },
     "cancel": {
       "title": "you're about to cancel your swap",
