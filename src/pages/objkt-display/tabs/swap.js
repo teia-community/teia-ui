@@ -183,10 +183,9 @@ export const Swap = ({
             <Padding>
               <div className={styles.container}>
                 <p>
-                  The Teia marketplace fee is temporarily set to 0%. Please
-                  consider donating to teiaescrow.tez
-                  (tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8) for maintenance
-                  funding.
+                  The Teia marketplace fee is temporarily set to 0%. 
+                  You can donate to Teias main multisign address 
+                  KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb for maintenance funding.
                 </p>
               </div>
             </Padding>
