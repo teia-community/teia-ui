@@ -3,7 +3,7 @@ import { Page, Container } from '@atoms/layout'
 import { Button, Primary } from '@atoms/button'
 import { CollabDisplay } from '@components/collab/show/CollabDisplay'
 import { CreateCollaboration } from './create'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { CollabContractsOverview } from './manage'
 import { useParams } from 'react-router'
 
@@ -17,7 +17,7 @@ const Collaborate = () => {
   const Tab = TABS[tabIndex].component
 
   // We watch for this being created so we can change from create to manage
-  const { originationOpHash, banner } = useContext(HicetnuncContext)
+  const { originationOpHash, banner } = useContext(TeiaContext)
 
   const { action } = useParams()
 

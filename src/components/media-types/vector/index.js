@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import classnames from 'classnames'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { TeiaContext } from '../../../context/TeiaContext'
 import styles from '@style'
 import './index.css'
 
@@ -13,7 +13,7 @@ export const VectorComponent = ({
   preview,
   displayView,
 }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const classes = classnames({
     [styles.container]: true,
     [styles.interactive]: onDetailView,
@@ -72,4 +72,4 @@ export const VectorComponent = ({
   }
 }
 // svg version:     src={`${src}?author=${_creator_}&viewer=${_viewer_}`}
-// iframe version:  src={`https://hicetnunc2000.github.io/hicetnunc/gh-pages/sandbox-svg.html?src=${src}&creator=${_creator_}&viewer=${_viewer_}`}
+// iframe version:  src={`https://teia-community.github.io/teia-ui/gh-pages/sandbox-svg.html?src=${src}&creator=${_creator_}&viewer=${_viewer_}`}

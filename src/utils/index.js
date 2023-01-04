@@ -23,7 +23,7 @@ export const fetchJSON = async (url) => {
 /**
  * Converts an ipfs hash to ipfs url
  * @param {string} cid
- * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {'CDN' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
  * @param {HashToURLOptions} [options]
  * @returns {string}
  */
@@ -44,8 +44,6 @@ const CIDToURL = (
       return `https://cache.teia.rocks/media/${
         options.size || 'raw'
       }/ipfs/${cid}`
-    case 'HIC':
-      return `https://pinata.hicetnunc.xyz/ipfs/${cid}`
     case 'CLOUDFLARE':
       return `https://cloudflare-ipfs.com/ipfs/${cid}`
     case 'PINATA':
@@ -70,7 +68,7 @@ const CIDToURL = (
 /**
  * Converts an ipfs hash to ipfs url
  * @param {string} hash
- * @param {'CDN' | 'HIC' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
+ * @param {'CDN' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
  * @param {HashToURLOptions} [options]
  * @returns {string}
  */

@@ -1,11 +1,11 @@
 import { useContext } from 'react'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { TeiaContext } from '../../../context/TeiaContext'
 import { Button, Purchase } from '@atoms/button'
 import styles from '../styles.module.scss'
 
 // TODO: test if this still works
 export const SigningUI = ({ id, hasSigned }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   const sign = () => {
     context.sign(id).then((response) => console.log(response))

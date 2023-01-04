@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Button, Purchase } from '@atoms/button'
 import { Input } from '@atoms/input'
@@ -21,7 +21,7 @@ export const Burn = ({ nft }) => {
     setMessage,
     setProgress,
     progress,
-  } = useContext(HicetnuncContext)
+  } = useContext(TeiaContext)
   const [amount, setAmount] = useState('')
 
   const proxyAdminAddress = nft.creator?.is_split

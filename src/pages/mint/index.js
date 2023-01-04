@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import Compressor from 'compressorjs'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'
 import { Input, Textarea, Checkbox } from '@atoms/input'
 import { Select } from '@components/select'
@@ -58,7 +58,7 @@ export const Mint = () => {
     setFeedback,
     showFeedback,
     syncTaquito,
-  } = useContext(HicetnuncContext)
+  } = useContext(TeiaContext)
 
   const [balance, setBalance] = useState(-1.0)
   // const history = useHistory()
@@ -887,9 +887,6 @@ export const Mint = () => {
         </Button>
       </Container>
       <hr />
-      {/*       <BottomBanner>
-      Collecting has been temporarily disabled. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
-      </BottomBanner> */}
     </Page>
   )
 }

@@ -3,7 +3,7 @@ import useLanguage from '@hooks/use-language'
 import styles from '@style'
 import { MenuItem } from '@components/header/main_menu/MenuItem'
 import { walletPreview } from '@utils/string'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import { motion } from 'framer-motion'
 import loadable from '@loadable/component'
@@ -14,7 +14,7 @@ const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
 
 export const Footer = ({ menu, pin }) => {
   const { language } = useLanguage()
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const [logoSeed, setLogoSeed] = useState(3)
 
   const transition = () => {

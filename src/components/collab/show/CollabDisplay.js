@@ -14,12 +14,12 @@ import classNames from 'classnames'
 import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
 import { useContext, useEffect } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
 
-  const { setProfileFeed } = useContext(HicetnuncContext)
+  const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
     setProfileFeed(true)
   }, [setProfileFeed])

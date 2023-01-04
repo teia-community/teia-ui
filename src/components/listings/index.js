@@ -4,7 +4,7 @@ import { Button, Primary, Purchase } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
 import styles from '@style'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { MarketplaceLabel, RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from 'hooks/use-settings'
 
@@ -120,7 +120,7 @@ export const Listings = ({
   restricted,
   reswap,
 }) => {
-  const { acc, proxyAddress } = useContext(HicetnuncContext)
+  const { acc, proxyAddress } = useContext(TeiaContext)
   const [reswapPrices, setReswapPrices] = useState({})
   const listingsWithKeys = listings.map((listing) => ({
     ...listing,
