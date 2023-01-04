@@ -6,7 +6,7 @@ import { BaseTokenFieldsFragment } from '../../data/api'
 import { HEN_CONTRACT_FA2 } from '../../constants'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 
 const FILTER_ALL = 'ALL'
 const FILTER_PRIMARY = 'PRIMARY'
@@ -15,7 +15,7 @@ const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Creations({ showFilters, address }) {
   const [filter, setFilter] = useState(FILTER_ALL)
-  const { setProfileFeed } = useContext(HicetnuncContext)
+  const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
     setProfileFeed(true)
   }, [setProfileFeed])

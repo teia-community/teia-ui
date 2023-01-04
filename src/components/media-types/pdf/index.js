@@ -5,7 +5,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button, Primary } from '@atoms/button'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { AnimatePresence } from 'framer-motion'
 import { HashToURL } from '@utils'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -31,7 +31,7 @@ export const PdfComponent = ({
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(onDetailView)
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages)

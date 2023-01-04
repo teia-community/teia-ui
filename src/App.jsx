@@ -1,6 +1,6 @@
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import HicetnuncContextProvider from '@context/HicetnuncContext'
+import TeiaContextProvider from '@context/TeiaContext'
 import useSettings from '@hooks/use-settings'
 import { Loading as Preloading } from '@atoms/loading'
 import Sync from './pages/sync'
@@ -27,7 +27,7 @@ const App = () => {
   }
 
   return (
-    <HicetnuncContextProvider>
+    <TeiaContextProvider>
       <AnimatePresence>
         <Debug />
         <Routes location={location} key={location.pathname}>
@@ -51,7 +51,7 @@ const App = () => {
           <Route path="/:subjkt/*" element={<Display />} />
         </Routes>
       </AnimatePresence>
-    </HicetnuncContextProvider>
+    </TeiaContextProvider>
   )
 }
 

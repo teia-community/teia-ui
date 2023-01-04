@@ -1,6 +1,6 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Input } from '@atoms/input'
@@ -24,7 +24,7 @@ export const Swap = ({ nft }) => {
     message,
     showFeedback,
     setMessage,
-  } = useContext(HicetnuncContext)
+  } = useContext(TeiaContext)
   const [amount, setAmount] = useState()
   const [price, setPrice] = useState()
   //const [progress, setProgress] = useState(false)

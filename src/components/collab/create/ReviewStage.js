@@ -3,7 +3,7 @@ import { Container } from '@atoms/layout'
 import styles from '../styles.module.scss'
 import { groupShareTotal } from '../functions'
 import { Button, Curate } from '@atoms/button'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Fragment } from 'react'
 
 export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
@@ -14,8 +14,7 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
   const bNum = beneficiaries.length
 
   // Proxy contract creation function
-  const { originateProxy } = useContext(HicetnuncContext) // use mockProxy instead for fake return data
-  // const { mockProxy } = useContext(HicetnuncContext) // use mockProxy instead for fake return data
+  const { originateProxy } = useContext(TeiaContext) // use mockProxy instead for fake return data
 
   const originateContract = async () => {
     // shares should be object where keys are addresses and

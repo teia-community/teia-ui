@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'
 import { LoadingContainer } from '@atoms/loading'
 import { Button, Primary } from '@atoms/button'
 
 export default function Sync() {
   const location = useLocation()
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   useEffect(() => {
     const init = async () => {

@@ -1,10 +1,10 @@
 import classnames from 'classnames'
 import { useContext } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 
 export const Purchase = ({ children = null, selected }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   const classes = classnames({
     [styles.purchase]: true,
