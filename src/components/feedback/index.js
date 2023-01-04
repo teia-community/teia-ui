@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
+import { TeiaContext } from '../../context/TeiaContext'
 import { Loading } from '@atoms/loading'
 import { Button, Purchase } from '@atoms/button'
 import { fadeIn } from '../../utils/motion'
@@ -8,7 +8,7 @@ import styles from '@style'
 import Markdown from 'markdown-to-jsx'
 
 export const FeedbackComponent = () => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const { visible, message, progress, confirm, confirmCallback } =
     context.feedback
 

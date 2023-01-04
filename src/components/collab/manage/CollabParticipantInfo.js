@@ -1,6 +1,6 @@
 import React, { Fragment, useContext } from 'react'
 import get from 'lodash/get'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { TeiaContext } from '../../../context/TeiaContext'
 import { Button, Purchase } from '@atoms/button'
 import classNames from 'classnames'
 import styles from '../styles.module.scss'
@@ -10,7 +10,7 @@ import { ParticipantList } from './ParticipantList'
 import { Link } from 'react-router-dom'
 
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
-  const { proxyAddress, setProxyAddress, acc } = useContext(HicetnuncContext)
+  const { proxyAddress, setProxyAddress, acc } = useContext(TeiaContext)
   const {
     administrator_address,
     contract_address,

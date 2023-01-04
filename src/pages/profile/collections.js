@@ -6,7 +6,7 @@ import { Container } from '@atoms/layout'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 import { BaseTokenFieldsFragment } from '../../data/api'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 
 const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
@@ -14,7 +14,7 @@ const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Collections({ showFilters, address }) {
   const [filter, setFilter] = useState(FILTER_ALL)
-  const { setProfileFeed } = useContext(HicetnuncContext)
+  const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
     setProfileFeed(true)
   }, [setProfileFeed])

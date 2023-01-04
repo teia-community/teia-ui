@@ -7,7 +7,7 @@ import { Button, Purchase } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
 import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import _ from 'lodash'
 const query_tz = `
 query addressQuery($address: String!) {
@@ -41,8 +41,7 @@ async function fetchTz(address) {
 }
 
 export const Config = () => {
-  //static contextType = HicetnuncContext
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const [loading, setLoading] = useState(true)
   const [address, setAddress] = useState('')
   const [subjkt, setSubjkt] = useState('')
@@ -314,9 +313,6 @@ export const Config = () => {
             </p>
           </div>
         </Container>
-        {/*         <BottomBanner>
-          The dApp has been temporarily disabled for a contract migration. Follow <a href="https://twitter.com/hicetnunc2000" target="_blank">@hicetnunc2000</a> or <a href="https://discord.gg/jKNy6PynPK" target="_blank">join the discord</a> for updates.
-        </BottomBanner> */}
       </Page>
     )
   )

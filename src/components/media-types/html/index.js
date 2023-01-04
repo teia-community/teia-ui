@@ -1,6 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
 import classnames from 'classnames'
-import { HicetnuncContext } from '../../../context/HicetnuncContext'
+import { TeiaContext } from '../../../context/TeiaContext'
 import { Button } from '@atoms/button'
 import {
   dataRUIToBuffer,
@@ -30,7 +30,7 @@ export const HTMLComponent = (props) => {
     preview,
     displayView,
   } = props
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   let _creator_ = false
   let _viewer_ = false

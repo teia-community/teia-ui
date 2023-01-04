@@ -35,7 +35,7 @@ var ls = require('local-storage')
 const axios = require('axios')
 const verify = require('@utils/verify')
 
-export const HicetnuncContext = createContext()
+export const TeiaContext = createContext()
 
 const Tezos = new TezosToolkit(process.env.REACT_APP_TEZOS_RPC)
 const Packer = new MichelCodecPacker()
@@ -208,7 +208,7 @@ function createSwapCalls(
   ]
 }
 
-class HicetnuncContextProviderClass extends Component {
+class TeiaContextProviderClass extends Component {
   constructor(props) {
     super(props)
 
@@ -1068,15 +1068,15 @@ class HicetnuncContextProviderClass extends Component {
 
   render() {
     return (
-      <HicetnuncContext.Provider
+      <TeiaContext.Provider
         value={{
           ...this.state,
         }}
       >
         {this.props.children}
-      </HicetnuncContext.Provider>
+      </TeiaContext.Provider>
     )
   }
 }
 
-export default HicetnuncContextProviderClass
+export default TeiaContextProviderClass

@@ -3,7 +3,7 @@ import { fadeIn } from '@utils/motion'
 import styles from '@style'
 import { motion } from 'framer-motion'
 import { walletPreview } from '@utils/string'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { useContext } from 'react'
 import { MenuItem } from './MenuItem'
 import { Toggle, toggleType } from '@atoms/toggles'
@@ -13,7 +13,7 @@ import { Toggle, toggleType } from '@atoms/toggles'
  * @returns {React.ReactElement}
  */
 export const MainMenu = () => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
