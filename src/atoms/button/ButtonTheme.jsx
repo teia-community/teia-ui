@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 
 export const ButtonTheme = () => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   const toggleTheme = () => {
     context.setTheme(context.theme === 'light' ? 'dark' : 'light')

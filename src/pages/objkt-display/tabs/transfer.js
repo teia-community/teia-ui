@@ -2,7 +2,7 @@ import { useContext, useMemo, useState } from 'react'
 import { Container } from '@atoms/layout'
 import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/styles.module.scss'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
 import { Button, Purchase } from '@atoms/button'
 
@@ -15,8 +15,7 @@ import { Button, Purchase } from '@atoms/button'
  */
 export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
-  const { transfer, setFeedback, acc, proxyAddress } =
-    useContext(HicetnuncContext)
+  const { transfer, setFeedback, acc, proxyAddress } = useContext(TeiaContext)
 
   const senderAddress = proxyAddress || acc?.address
 

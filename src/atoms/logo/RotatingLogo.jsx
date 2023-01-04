@@ -1,11 +1,11 @@
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import useSettings from '@hooks/use-settings'
 import styles from '@style'
 import React from 'react'
 import { useContext, useMemo } from 'react'
 
 export const RotatingLogo = ({ className, seed = 1 }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const { logos } = useSettings()
 
   const logo = useMemo(

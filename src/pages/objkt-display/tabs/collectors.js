@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import get from 'lodash/get'
 import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Listings } from '@components/listings'
 
 /**
@@ -11,7 +11,7 @@ import { Listings } from '@components/listings'
  **/
 export const Collectors = ({ nft }) => {
   const { syncTaquito, collect, acc, cancel, cancelv1, reswap } =
-    useContext(HicetnuncContext)
+    useContext(TeiaContext)
 
   const handleCollect = (listing) => {
     if (acc === null) {

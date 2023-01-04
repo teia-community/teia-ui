@@ -1,13 +1,13 @@
 import { useContext, useEffect } from 'react'
 import { useLocalStorage } from './use-local-storage'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 
 /**
  * Hook to manage local settings, i.e settings stored in local storage
  * @returns {SettingsData}
  */
 export default function useLocalSettings(profile) {
-  const { profileFeed, setViewMode } = useContext(HicetnuncContext)
+  const { profileFeed, setViewMode } = useContext(TeiaContext)
   const [profileViewMode, setProfileViewMode] = useLocalStorage(
     'profileViewMode',
     'masonry'

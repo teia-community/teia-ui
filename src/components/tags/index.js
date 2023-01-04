@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { PATH } from '../../constants'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
+import { TeiaContext } from '../../context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '@style'
 
 export const Tags = ({ tags }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
 
   return (
     <div className={styles.container}>
