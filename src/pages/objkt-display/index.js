@@ -3,7 +3,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import set from 'lodash/set'
 import { useParams } from 'react-router-dom'
 import useSWR from 'swr'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
@@ -27,7 +27,7 @@ const TABS = [
 
 export const ObjktDisplay = () => {
   const { id } = useParams()
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const { walletBlockMap } = useSettings()
   const [tabIndex, setTabIndex] = useState(0)
   const address = context.acc?.address

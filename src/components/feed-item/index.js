@@ -5,7 +5,7 @@ import { ItemInfoCompact } from '@components/item-info'
 import { renderMediaType } from '@components/media-types'
 import styles from '@style'
 import classnames from 'classnames'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 
 /**
  * @param {Object} feedOptions - The options for the feed item
@@ -13,7 +13,7 @@ import { HicetnuncContext } from '@context/HicetnuncContext'
  * @returns {React.ReactElement} The feed item
  */
 export const FeedItem = ({ nft, zen }) => {
-  const { viewMode } = useContext(HicetnuncContext)
+  const { viewMode } = useContext(TeiaContext)
 
   const containerClasses = classnames({
     [styles.container]: true,

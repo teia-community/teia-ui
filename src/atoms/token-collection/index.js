@@ -10,7 +10,7 @@ import useSettings from '@hooks/use-settings'
 import laggy from '../../utils/swr-laggy-middleware'
 import { FilterBar } from '@components/header/filters/FilterBar'
 import { useContext } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { IconCache } from '@utils/with-icon'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
@@ -87,7 +87,7 @@ function TokenCollection({
   const [searchParams, setSearchParams] = useSearchParams()
   const { walletBlockMap, nsfwMap, objktBlockMap } = useSettings()
 
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const inViewMode = searchParams.get('view') ? searchParams.get('view') : null
   const { viewMode } = context
   const limit = searchParams.get(namespace)

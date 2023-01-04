@@ -1,12 +1,12 @@
 import { Button } from '@atoms/button'
 import { Purchase } from '@atoms/button'
 import { MarketplaceLabel } from '@atoms/marketplace-labels'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import { useContext } from 'react'
 
 const CheapestButton = ({ listing }) => {
-  const { syncTaquito, collect, acc } = useContext(HicetnuncContext)
+  const { syncTaquito, collect, acc } = useContext(TeiaContext)
   return listing ? (
     <div className={styles.main_swap}>
       <MarketplaceLabel listing={listing} />

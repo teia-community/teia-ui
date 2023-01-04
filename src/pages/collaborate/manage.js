@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import styles from '@components/collab/styles.module.scss'
 import { fetchGraphQL, getCollabsForAddress } from '@data/api'
@@ -13,7 +13,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     originatedContract,
     originationOpHash,
     findOriginatedContractFromOpHash,
-  } = useContext(HicetnuncContext)
+  } = useContext(TeiaContext)
   const [collabs, setCollabs] = useState([])
   // const [managedCollabs, setManagedCollabs] = useState([])
   const [loadingCollabs, setLoadingCollabs] = useState(true)

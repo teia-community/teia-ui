@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import get from 'lodash/get'
 import { PATH } from '@constants'
 import { Button, Primary, Secondary } from '@atoms/button'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import collabStyles from '../collab/styles.module.scss'
@@ -28,7 +28,7 @@ const Editions = loadable(() => import('./Editions'))
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
 const ItemInfo = ({ nft }) => {
-  const { acc } = useContext(HicetnuncContext)
+  const { acc } = useContext(TeiaContext)
 
   const { walletBlockMap } = useSettings()
   const [showSignStatus, setShowSignStatus] = useState(false)

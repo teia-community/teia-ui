@@ -5,7 +5,7 @@ import { walletPreview } from '@utils/string'
 import { useNavigate } from 'react-router'
 
 import { AnimatePresence } from 'framer-motion'
-import { HicetnuncContext } from '@context/HicetnuncContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms/visually-hidden'
 import styles from '@style'
@@ -26,7 +26,7 @@ const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
 const DropDown = loadable(() => import('@atoms/dropdown/Dropdown'))
 
 export const Header = ({ filters = false }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const navigate = useNavigate()
 
   useEffect(() => {

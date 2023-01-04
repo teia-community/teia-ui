@@ -4,7 +4,7 @@ import screenfull from 'screenfull'
 import { useInView } from 'react-intersection-observer'
 import classnames from 'classnames'
 import { iOS } from '../../utils/os'
-import { HicetnuncContext } from '../../context/HicetnuncContext'
+import { TeiaContext } from '../../context/TeiaContext'
 import styles from '@style'
 import './style.css'
 import { FullScreenEnter, FullScreenExit } from '@icons'
@@ -37,7 +37,7 @@ export const Container = ({
   nft,
   flex = false,
 }) => {
-  const context = useContext(HicetnuncContext)
+  const context = useContext(TeiaContext)
   const domElement = useRef()
 
   const { ref, inView } = useInView({
