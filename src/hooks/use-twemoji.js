@@ -5,9 +5,10 @@ import { useEffect } from 'react'
  */
 export function useTwemoji() {
   useEffect(() => {
-    window.twemoji.parse(
-      document.body,
-      { folder: 'svg', ext: '.svg' } // This is to specify to Twemoji to use SVGs and not PNGs
-    )
+   window.twemoji.parse(document.body, {
+      folder: 'svg',
+      ext: '.svg',
+      base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/',
+    })
   }, [])
 }
