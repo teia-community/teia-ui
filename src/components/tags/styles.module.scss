@@ -34,24 +34,24 @@
     @include respond-to('desktop') {
       font-size: $font-small;
     }
+
+    background-color: var(--gray-5);
+    color: var(--gray-80);
+  }
+
+  .tag:hover {
+    color: var(--gray-50);
   }
 }
 
-.light {
-  background-color: var(--gray-5);
-  color: var(--gray-80);
-}
+:root[data-theme='dark'] {
+  .tag {
+    background-color: var(--gray-15);
+    color: var(--gray-60);
+  }
 
-.light:hover {
-  color: var(--gray-50);
-}
-
-.dark {
-  background-color: var(--gray-15);
-  color: var(--gray-60);
-}
-
-.dark:hover {
-  background-color: var(--gray-10);
-  color: var(--gray-40);
+  .tag:hover {
+    background-color: var(--gray-10);
+    color: var(--gray-40);
+  }
 }

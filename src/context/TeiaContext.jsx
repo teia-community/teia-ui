@@ -31,9 +31,9 @@ import {
   PROXY_FACTORY_CONTRACT,
   SIGNING_CONTRACT,
 } from '@constants'
-var ls = require('local-storage')
-const axios = require('axios')
-const verify = require('@utils/verify')
+import ls from 'local-storage'
+import axios from 'axios'
+import verify from '@utils/verify'
 
 export const TeiaContext = createContext()
 
@@ -214,7 +214,7 @@ class TeiaContextProviderClass extends Component {
 
     this.state = {
       openedDropdown: {},
-      openDropdown: (name: String) => {
+      openDropdown: (name) => {
         const dp = { [name]: true }
         this.setState({
           openedDropdown: { ...this.state.openedDropdown, ...dp },
