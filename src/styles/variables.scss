@@ -26,11 +26,11 @@
 
 :root[data-theme='dark'] {
   --gray-0: #000000;
-  --gray-5: #0d0d0d;
+  --gray-5: #2f2f2f;
   --gray-10: #1a1a1a;
   --gray-15: #262626;
-  --gray-20: #333333;
-  --gray-30: #4d4d4d;
+  --gray-20: #515151;
+  --gray-30: #494949;
   --gray-40: #666666;
   --gray-50: #808080;
   --gray-60: #999999;
@@ -72,20 +72,13 @@
   --text-color: var(--gray-20);
 }
 
-$font-h1: 33.18px;
-$font-h2: 27.65px;
-$font-h3: 23.04px;
 $font-large: 19.2px;
 $font-body: 16px;
 $font-small: 13.33px;
 
-$font-h1-mobile: 25.63px;
-$font-h2-mobile: 22.78px;
-$font-h3-mobile: 20.25px;
 $font-large-mobile: 18px;
 $font-body-mobile: 16px;
 $font-small-mobile: 14.22px;
 
 $theme-duration: 0.5s;
-$mobile-padding: 1.25rem;
 $letter-spacing: 0.015em;

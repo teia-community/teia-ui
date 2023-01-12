@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Container } from '@atoms/layout'
 import styles from '../styles.module.scss'
 import { groupShareTotal } from '../functions'
-import { Button, Curate } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { Fragment } from 'react'
 
@@ -137,8 +137,8 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
       )}
 
       <div className={styles.mt3}>
-        <Button onClick={() => originateContract()}>
-          <Curate>Create collaborative contract</Curate>
+        <Button shadow_box onClick={() => originateContract()}>
+          Create collaborative contract
         </Button>
       </div>
 
