@@ -1,6 +1,3 @@
-const _sodium = require('libsodium-wrappers')
-const bs58check = require('bs58check')
-
 const prefixes = {
   tz1: new Uint8Array([6, 161, 159]),
   tz2: new Uint8Array([6, 161, 161]),
@@ -16,9 +13,13 @@ const hex2buf = (hex) =>
     })
   )
 
-const b58cdecode = (enc, prefix) => bs58check.decode(enc).slice(prefix.length)
+const b58cdecode = (enc, prefix) => {
+  const bs58check = require('bs58check')
+  bs58check.decode(enc).slice(prefix.length)
+}
 
 export const verify = async (bytes, sig, pk) => {
+  const _sodium = require('libsodium-wrappers')
   const sodium = await _sodium.await
   return sodium.crypto_sign_verify_detached(
     sig,
