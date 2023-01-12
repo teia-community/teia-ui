@@ -12,11 +12,11 @@
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out, opacity #{$theme-duration} ease-out;
-  padding: $mobile-padding;
+  padding: 1.25em;
 
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr repeat(3, 1fr);
   gap: 0px 10px;
   align-items: center;
 

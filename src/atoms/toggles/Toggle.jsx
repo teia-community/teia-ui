@@ -10,6 +10,7 @@ import { useControlled } from '@hooks/use-controlled'
  * @param {string} coreToggleProps.label - The text or icon used for the toggle
  * @param {boolean} coreToggleProps.initial - The initial value
  * @param {boolean} coreToggleProps.toggled - If set the control becomes controlled
+ * @param {boolean} coreToggleProps.style - Style object (as a last resort)
  * @param {React.EffectCallback} coreToggleProps.onToggle
  *
  */
@@ -17,6 +18,7 @@ export const Toggle = React.memo(function CoreToggle({
   label,
   initial,
   toggled: toggledProp,
+  style = {},
   onToggle,
   className,
   kind = toggleType.MINIMAL,
@@ -40,7 +42,7 @@ export const Toggle = React.memo(function CoreToggle({
   })
 
   return (
-    <label className={classes}>
+    <label style={style} className={classes}>
       <input
         defaultChecked={initial}
         checked={toggledProp}
@@ -48,6 +50,7 @@ export const Toggle = React.memo(function CoreToggle({
         aria-checked={toggled}
         type="checkbox"
         className={classes}
+        style={style}
         onChange={handleToggle}
       />
       {label}

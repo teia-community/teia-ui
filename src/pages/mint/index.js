@@ -6,7 +6,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'
 import { Input, Textarea, Checkbox } from '@atoms/input'
 import { Select } from '@components/select'
-import { Button, Curate, Primary, Purchase } from '@atoms/button'
+import { Button, Primary, Purchase } from '@atoms/button'
 import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
 import { prepareFile, prepareDirectory } from '@data/ipfs'
@@ -832,8 +832,13 @@ export const Mint = () => {
           )}
 
           <Container>
-            <Button onClick={handlePreview} fit disabled={handleValidation()}>
-              <Curate>Preview</Curate>
+            <Button
+              shadow_box
+              onClick={handlePreview}
+              fit
+              disabled={handleValidation()}
+            >
+              Preview
             </Button>
           </Container>
         </>
