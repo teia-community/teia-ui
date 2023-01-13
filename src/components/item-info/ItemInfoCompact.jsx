@@ -29,10 +29,14 @@ const ItemInfoCompact = ({ nft }) => {
   return (
     <div className={styles.compact_container}>
       <div className={styles.infos_left}>
-        <Button to={`${PATH.OBJKT}/${nft.token_id}`}>
+        <Button
+          alt={`Go to OBJKT ${nft.token_id}`}
+          to={`${PATH.OBJKT}/${nft.token_id}`}
+        >
           <Primary label={`object ${nft.token_id}`}>#{nft.token_id}</Primary>
         </Button>
         <Button
+          alt="Go to artist page"
           to={
             nft.artist_profile?.name
               ? `/${nft.artist_profile.name}`
