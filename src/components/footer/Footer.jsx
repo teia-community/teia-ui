@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 import loadable from '@loadable/component'
 import classnames from 'classnames'
 import { Toggle, toggleType } from '@atoms/toggles'
+import { LocalSettingsContext } from '@context/LocalSettingsProvider'
 
 const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
 
@@ -16,6 +17,8 @@ export const Footer = ({ menu, pin }) => {
   const { language } = useLanguage()
   const context = useContext(TeiaContext)
   const [logoSeed, setLogoSeed] = useState(3)
+
+  const { zen, setZen } = useContext(LocalSettingsContext)
 
   const transition = () => {
     return {
@@ -96,7 +99,12 @@ export const Footer = ({ menu, pin }) => {
               onToggle={context.toggleTheme}
               initial={context.theme === 'dark'}
             />
-            <Toggle kind={toggleType.BOX} label="ZEN" />
+            <Toggle
+              kind={toggleType.BOX}
+              label="ZEN"
+              onToggle={setZen}
+              togggled={zen}
+            />
           </div>
         </>
       )}
