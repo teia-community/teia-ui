@@ -1,5 +1,5 @@
 import { CollabParticipant } from '../show/CollabParticipant'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const ParticipantList = ({ title, participants }) => {
   return (

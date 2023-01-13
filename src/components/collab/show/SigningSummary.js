@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import { walletPreview } from '../../../utils/string'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const SigningSummary = ({ coreParticipants, signatures }) => {
   return (
