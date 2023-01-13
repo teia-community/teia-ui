@@ -16,7 +16,7 @@ export const FeedItem = ({ nft, zen }) => {
   const { viewMode } = useContext(TeiaContext)
 
   const containerClasses = classnames({
-    [styles.feed_item]: true,
+    [styles.container]: true,
     [styles.blur]: nft.isNSFW,
     [styles.masonry]: viewMode === 'masonry',
   })

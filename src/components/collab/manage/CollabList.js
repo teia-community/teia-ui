@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button, Purchase } from '@atoms/button'
 import { CollabParticipantInfo } from './CollabParticipantInfo'
-import styles from '@components/collab/styles.module.scss'
+import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 
 export const CollabList = ({ description, collabs }) => {

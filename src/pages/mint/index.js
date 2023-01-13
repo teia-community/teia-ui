@@ -32,7 +32,7 @@ import {
   getCollabsForAddress,
   getNameForAddress,
 } from '@data/api'
-import collabStyles from '@components/collab/styles.module.scss'
+import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate'
 import styles from '@style'

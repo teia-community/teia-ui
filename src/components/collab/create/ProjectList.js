@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import classNames from 'classnames'
 import { Secondary } from '@atoms/button'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 import { ossProjects } from '../constants'
 
 export const ProjectList = ({ beneficiaries, onSelect }) => {

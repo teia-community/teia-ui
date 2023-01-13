@@ -31,7 +31,7 @@ module.exports = {
       '@data': path.resolve(__dirname, 'src/data'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@icons': path.resolve(__dirname, 'src/icons'),
-      '@style': './styles.module.scss',
+      '@style': './index.module.scss',
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@utils': path.resolve(__dirname, 'src/utils'),
     },

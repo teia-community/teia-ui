@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 import { Button, Purchase, Secondary } from '@atoms/button'
 import { BeneficiaryRow, collaboratorTemplate } from '..'
 import { extractAddress } from '../functions'

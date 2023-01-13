@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import { PATH } from '../../../constants'
 import { walletPreview } from '../../../utils/string'
 import { Primary } from '@atoms/button'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 import { ParticipantList } from '../../collab/manage/ParticipantList'
 import { CollaboratorType } from '../constants'
 

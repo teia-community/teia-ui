@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CollaboratorRow, collaboratorTemplate } from '../'
 import { extractAddress } from '../functions'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const CollaboratorTable = ({
   collaborators,

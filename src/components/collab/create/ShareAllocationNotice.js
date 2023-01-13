@@ -1,4 +1,4 @@
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const ShareAllocationNotice = ({ collaborators, muted }) => {
   // Add everything up and see if the total is less than 100. If so, show this notice
