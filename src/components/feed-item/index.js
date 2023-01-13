@@ -6,14 +6,16 @@ import { renderMediaType } from '@components/media-types'
 import styles from '@style'
 import classnames from 'classnames'
 import { TeiaContext } from '@context/TeiaContext'
+import { LocalSettingsContext } from '@context/LocalSettingsProvider'
 
 /**
  * @param {Object} feedOptions - The options for the feed item
  * @param {import("@types").NFT} feedOptions.nft - The nft to render
  * @returns {React.ReactElement} The feed item
  */
-export const FeedItem = ({ nft, zen }) => {
+export const FeedItem = ({ nft }) => {
   const { viewMode } = useContext(TeiaContext)
+  const { zen } = useContext(LocalSettingsContext)
 
   const containerClasses = classnames({
     [styles.container]: true,
