@@ -6,7 +6,7 @@ import { Button, Primary, Secondary } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
-import collabStyles from '../collab/styles.module.scss'
+import collabStyles from '../collab/index.module.scss'
 // TODO: Properly test collab UIs with loadables
 // import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
 // import { SigningUI } from '../collab/sign/SigningUI'

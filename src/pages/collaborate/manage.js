@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
-import styles from '@components/collab/styles.module.scss'
+import styles from '@components/collab/index.module.scss'
 import { fetchGraphQL, getCollabsForAddress } from '@data/api'
 // import { Input } from '@atoms/input'
 import { CountdownTimer } from '@components/collab/manage/CountdownTimer'

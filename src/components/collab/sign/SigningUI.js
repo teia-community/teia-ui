@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { TeiaContext } from '../../../context/TeiaContext'
 import { Button, Purchase } from '@atoms/button'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 // TODO: test if this still works
 export const SigningUI = ({ id, hasSigned }) => {

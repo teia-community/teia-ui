@@ -1,5 +1,5 @@
 import { Input } from '@atoms/input'
-import styles from '../../collab/styles.module.scss'
+import styles from '../../collab/index.module.scss'
 import { Button, Purchase, Secondary } from '@atoms/button'
 import { CloseIcon } from '..'
 
