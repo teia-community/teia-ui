@@ -22,6 +22,11 @@ const pdfWorkerPath = path.join(pdfjsDistPath, 'build', 'pdf.worker.min.js')
 process.env['REACT_APP_BUILD_COMMIT'] = commitHash
 
 module.exports = {
+  style: {
+    modules: {
+      // localIdentName: '[hash:base64]',
+    },
+  },
   webpack: {
     alias: {
       '@atoms': path.resolve(__dirname, 'src/atoms'),
