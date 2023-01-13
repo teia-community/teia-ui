@@ -8,11 +8,9 @@ import { IconCache } from '@utils/with-icon'
 
 ReactDOM.render(
   // <React.StrictMode>
-  <IconCache.Provider value={{}}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </IconCache.Provider>,
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
   // </React.StrictMode>,
   document.getElementById('root')
 )

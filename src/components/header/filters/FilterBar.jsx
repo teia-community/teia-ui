@@ -7,11 +7,11 @@ import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
 import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
 import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
 
-import useLocalSettings from '@hooks/use-local-settings'
 import { Input } from '@atoms/input'
 import { useContext, useState } from 'react'
 import { Button, Primary } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
+import { LocalSettingsContext } from '@context'
 
 const MediaFilter = ({ label, tagline }) => {
   return (
@@ -23,9 +23,9 @@ const MediaFilter = ({ label, tagline }) => {
 }
 
 export const FilterBar = () => {
-  const { setViewMode, viewMode } = useLocalSettings()
   const [price, setPrice] = useState({ from: 0, to: 0 })
   const context = useContext(TeiaContext)
+  const { viewMode, setViewMode } = useContext(LocalSettingsContext)
   let drop
   // TODO: finish the filtering logic
   const filters = true

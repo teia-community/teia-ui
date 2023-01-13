@@ -230,19 +230,6 @@ class TeiaContextProviderClass extends Component {
       setProfileFeed: (pf) => {
         this.setState({ profileFeed: pf })
       },
-      viewMode:
-        localStorage.getItem(
-          this.profileFeed ? 'profileViewMode' : 'feedViewMode'
-        ) || this.profileFeed
-          ? 'masonry'
-          : 'single',
-      setViewMode: (viewMode) => {
-        if (this.state.profileFeed) {
-        }
-
-        console.log(viewMode)
-        this.setState({ viewMode: viewMode })
-      },
 
       subjkt: SUBJKT_CONTRACT,
       v1: MARKETPLACE_CONTRACT_V1,
