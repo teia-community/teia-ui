@@ -85,7 +85,7 @@ export default function Display() {
 
   if (error) {
     // TODO: find a nice way to display errors.
-    return <ErrorComponent message={error.message} />
+    return <ErrorComponent title="Route Error" message={error.message} />
   }
 
   if (!user) {
