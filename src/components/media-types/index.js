@@ -27,7 +27,7 @@ import { HashToURL } from '@utils'
  * @param {boolean} renderOptions.preview
  * @param {string} renderOptions.previewUri
  * @param {boolean} renderOptions.interactive
- * @param {boolean} renderOptions.displayView
+ * @param {boolean} renderOptions.displayView - use the display/preview image
  *
  */
 export const renderMediaType = ({
