@@ -11,10 +11,11 @@ import { useControlled } from '@hooks/use-controlled'
  * @param {boolean} coreToggleProps.initial - The initial value
  * @param {boolean} coreToggleProps.toggled - If set the control becomes controlled
  * @param {boolean} coreToggleProps.style - Style object (as a last resort)
+ * @param {import("@types").ToggleKind} coreToggleProps.kind - The type of toggle
  * @param {React.EffectCallback} coreToggleProps.onToggle
  *
  */
-export const Toggle = React.memo(function CoreToggle({
+export const Toggle = ({
   label,
   initial,
   toggled: toggledProp,
@@ -22,7 +23,7 @@ export const Toggle = React.memo(function CoreToggle({
   onToggle,
   className,
   kind = toggleType.MINIMAL,
-}) {
+}) => {
   const [toggled, setToggled] = useControlled(toggledProp, initial)
 
   const handleToggle = useCallback(
@@ -56,6 +57,6 @@ export const Toggle = React.memo(function CoreToggle({
       {label}
     </label>
   )
-})
+}
 
 export default Toggle

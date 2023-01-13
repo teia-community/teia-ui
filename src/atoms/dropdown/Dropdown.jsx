@@ -22,7 +22,6 @@ export function DropDown({ children, setOpen, vertical, menuID, left }) {
     },
     true
   )
-  useTwemoji()
 
   const classes = classnames({
     [styles.dropdown_container]: true,

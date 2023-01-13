@@ -22,11 +22,11 @@ import { LocalSettingsContext } from '@context/LocalSettingsProvider'
  * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
  * @returns {React.ReactElement} The feed
  */
-function SingleView({ tokens, zen }) {
+function SingleView({ tokens }) {
   return (
     <div className={styles.single_view}>
       {tokens.map((token) => (
-        <FeedItem zen={zen} key={token.token_id} nft={token} />
+        <FeedItem key={token.token_id} nft={token} />
       ))}
     </div>
   )
@@ -38,7 +38,7 @@ function SingleView({ tokens, zen }) {
  * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
  * @returns {React.ReactElement} The feed
  */
-function MasonryView({ tokens, zen }) {
+function MasonryView({ tokens }) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
@@ -46,7 +46,7 @@ function MasonryView({ tokens, zen }) {
           exit={{ opacity: 0, x: -1000 }}
           key={token.key || token.token_id}
         >
-          <FeedItem zen={zen} nft={token} />
+          <FeedItem nft={token} />
         </motion.div>
       ))}
     </ResponsiveMasonry>

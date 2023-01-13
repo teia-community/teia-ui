@@ -1,3 +1,8 @@
+export enum ToggleKind {
+  BOX = 'box',
+  MINIMAL = 'minimal',
+}
+
 /**
  * WIP
  * Basic Types used in jsdoc.

@@ -6,13 +6,15 @@ export const LocalSettingsContext = createContext()
 
 export const LocalSettingsProvider = (props) => {
   const [viewMode, setViewMode, rmViewMode] = useLocalStorage(
-    'viewMode',
+    'settings:viewMode',
     'single'
   )
   const [nsfwFriendly, setNsfwFriendly, rmNsfwFriendly] = useLocalStorage(
-    'nsfwFriendly',
+    'settings:nsfwFriendly',
     false
   )
+
+  const [zen, setZen, rmZen] = useLocalStorage('settings:zen', false)
 
   useEffect(() => {
     console.log(viewMode)
@@ -27,6 +29,9 @@ export const LocalSettingsProvider = (props) => {
         nsfwFriendly,
         setNsfwFriendly,
         rmNsfwFriendly,
+        zen,
+        setZen,
+        rmZen,
       }}
     >
       {props.children}
