@@ -33,7 +33,7 @@ export const Input = ({
         onChange={onChange}
         onBlur={onBlur}
         pattern={pattern}
-        onWheel={onWheel}
+        onWheel={(e) => e.target.blur()}
         onKeyPress={onKeyPress}
       />
     </label>
