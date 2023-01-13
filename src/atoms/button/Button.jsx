@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
  * @param {boolean} buttonProps.shadow_box - (Style) Box (adds nesting)
  * @param {boolean} buttonProps.box - (Style) Box (adds nesting)
  * @param {string} buttonProps.className - Extra classes to apply to the button
+ * @param {string} buttonProps.alt - Used for accessibility (aria-label)
  * @param {React.EffectCallback} buttonProps.onClick - onClick callback
  * @param {React.ReactNode} buttonProps.children - children
  *
@@ -22,6 +23,7 @@ export const Button = ({
   href = null,
   onClick = () => null,
   children,
+  alt,
   disabled,
   fit,
   full,
@@ -44,7 +46,11 @@ export const Button = ({
 
   if (to) {
     return (
-      <Link to={to} className={`${classes} ${className || ''}`}>
+      <Link
+        aria-label={alt}
+        to={to}
+        className={`${classes} ${className || ''}`}
+      >
         {children}
       </Link>
     )
@@ -57,13 +63,14 @@ export const Button = ({
         target="_blank"
         rel="noopener noreferrer"
         className={classes}
+        aria-label={alt}
       >
         {children}
       </a>
     )
   }
   return (
-    <button onClick={onClick} className={classes}>
+    <button aria-label={alt} onClick={onClick} className={classes}>
       {children}
     </button>
   )
