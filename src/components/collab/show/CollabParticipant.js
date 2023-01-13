@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import { PATH } from '../../../constants'
 import { Link } from 'react-router-dom'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const CollabParticipant = ({ participant }) => {
   const displayName = get(participant, 'shareholder_profile.name')

@@ -1,6 +1,6 @@
 import { Button, Purchase } from '@atoms/button'
 import { validAddress } from '../functions'
-import styles from '../styles.module.scss'
+import styles from '../index.module.scss'
 
 export const AddCollaboratorsButton = ({
   collaborators,
