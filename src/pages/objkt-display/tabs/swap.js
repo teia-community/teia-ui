@@ -135,7 +135,6 @@ export const Swap = ({ nft }) => {
                     setAmount(totalOwned)
                   }
                 }}
-                onWheel={(e) => e.target.blur()}
                 disabled={progress}
               />
               <div style={{ width: '100%', display: 'flex' }}>
@@ -155,7 +154,6 @@ export const Swap = ({ nft }) => {
                       }
                       checkPrice(val)
                     }}
-                    onWheel={(e) => e.target.blur()}
                     disabled={progress}
                   />
                 </div>
