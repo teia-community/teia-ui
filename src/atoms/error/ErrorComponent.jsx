@@ -8,6 +8,11 @@ export const ErrorComponent = ({ title = 'Ooops!', message }) => {
         <h1>{title}</h1>
         <p>{message}</p>
       </div>
+      <Button href="https://github.com/teia-community/teia-ui/issues">
+        <Primary>
+          <strong>Report Issue</strong>
+        </Primary>
+      </Button>
       <Button to="/">
         <Primary>Go back home</Primary>
       </Button>

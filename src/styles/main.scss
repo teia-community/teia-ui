@@ -15,7 +15,6 @@ body {
   // font-family: 'OCR A Std', monospace; // README: crzypatchwork, this font doesn't look great.
   // font-family: 'Courier New', 'Courier', monospace; // README: old font
   font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
-  overflow-x: hidden;
   color: var(--text-color);
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,

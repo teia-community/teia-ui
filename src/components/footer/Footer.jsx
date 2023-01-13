@@ -62,9 +62,9 @@ export const Footer = ({ menu, pin }) => {
             <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
           </ul>
           <ul className={styles.menu_right}>
-            <div className={styles.address}>
+            <li className={styles.address}>
               {walletPreview(context.acc?.address)}
-            </div>
+            </li>
             <MenuItem
               className={styles.menu_label}
               label="Mint"

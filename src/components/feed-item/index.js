@@ -16,14 +16,17 @@ export const FeedItem = ({ nft, zen }) => {
   const { viewMode } = useContext(TeiaContext)
 
   const containerClasses = classnames({
-    [styles.container]: true,
+    [styles.feed_item]: true,
     [styles.blur]: nft.isNSFW,
     [styles.masonry]: viewMode === 'masonry',
   })
 
   return (
     <div className={containerClasses}>
-      <Button to={`${PATH.OBJKT}/${nft.token_id}`}>
+      <Button
+        alt={`OBJKT ${nft.token_id}`}
+        to={`${PATH.OBJKT}/${nft.token_id}`}
+      >
         <div>
           {renderMediaType({
             nft,
