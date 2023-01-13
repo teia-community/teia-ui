@@ -14,7 +14,7 @@
       "@data/*": ["data/*"],
       "@hooks/*": ["hooks/*"],
       "@icons/*": ["icons/*"],
-      "@style": ["./styles.module.scss"],
+      "@style": ["./index.module.scss"],
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"],
       "@types": ["types.d.ts"]
