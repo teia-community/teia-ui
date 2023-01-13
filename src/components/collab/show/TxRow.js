@@ -31,7 +31,6 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
           min={1}
           value={tx.amount}
           onChange={(event) => _update('amount', event.target.value)}
-          onWheel={(e) => e.target.blur()}
         />
       </td>
       <td>
