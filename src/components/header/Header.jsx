@@ -17,6 +17,7 @@ import loadable from '@loadable/component'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
+import { EventMenu } from './events/EventMenu'
 
 const EventBanner = loadable(() => import('@components/banners/EventBanner'))
 const MainMenu = loadable(() => import('./main_menu/MainMenu'))
@@ -87,17 +88,7 @@ export const Header = ({ filters = false }) => {
               menuID="events"
               label="Events"
             >
-              <DropDown menuID="events" vertical>
-                {sample_events &&
-                  sample_events.map((evt) => {
-                    return (
-                      <EventCard
-                        event={evt}
-                        key={`${evt.title} - ${evt.subtitle}`}
-                      />
-                    )
-                  })}
-              </DropDown>
+              <EventMenu events={sample_events} />
             </HeaderButton>
           </div>
 
