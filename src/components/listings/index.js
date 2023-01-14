@@ -29,7 +29,7 @@ function ListingRow({
     (proxyAdminAddress === acc?.address &&
       listing.seller_address === proxyAddress)
 
-  console.log('isOwnSwap', isOwnSwap)
+  console.debug('isOwnSwap', isOwnSwap)
 
   return (
     <div className={styles.swap}>
@@ -53,7 +53,7 @@ function ListingRow({
           !isOwnSwap && (
             <Button onClick={() => onCollectClick(listing)}>
               <Purchase>
-                Collect for {parseFloat(listing.price / 1000000)} tez
+                Collect for {parseFloat(listing.price / 1e6)} tez
               </Purchase>
             </Button>
           )}
@@ -61,11 +61,9 @@ function ListingRow({
           (listing.type.startsWith('TEIA') ||
             listing.type.startsWith('HEN')) && (
             <>
-              <div className={styles.break}></div>
+              <div className={styles.break} />
               <input
-                value={
-                  reswapPrices[rowId] || parseFloat(listing.price / 1000000)
-                }
+                value={reswapPrices[rowId] || parseFloat(listing.price / 1e6)}
                 onChange={(ev) => {
                   const { value } = ev.target
                   setReswapPrices((prevVal) => ({
@@ -88,7 +86,7 @@ function ListingRow({
 
                   // TODO: add a indicator (spinner or something) that shows that the reswap is in progress
                   // TODO: test reswap after teztok integration
-                  reswap(priceTz * 1000000, listing)
+                  reswap(priceTz * 1e6, listing)
                   // TODO: after the reswap was successful we should send some feedback to the user
                 }}
               >
@@ -144,13 +142,13 @@ export const Listings = ({
             reswap={reswap}
             cancel={cancel}
             onCollectClick={() => {
-              console.log('buy', listing)
+              console.debug('buy', listing)
               handleCollect(listing)
             }}
           />
         )
       })}
-      <hr className={styles.nomobile}></hr>
+      <hr className={styles.nomobile} />
     </div>
   )
 }

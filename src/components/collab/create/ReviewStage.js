@@ -20,7 +20,7 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
     // shares should be object where keys are addresses and
     // values are natural numbers (it is not required to have 100% in the sum)
     // admin will be the signed in address that creates it
-    let participantData = {}
+    const participantData = {}
 
     const validCollaborators = collaborators
       .filter((b) => b.shares)

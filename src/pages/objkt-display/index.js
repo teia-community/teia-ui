@@ -9,7 +9,7 @@ import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
 import { Button, Primary } from '@atoms/button'
 import { Page, Container } from '@atoms/layout'
-import { renderMediaType } from '@components/media-types'
+import { RenderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
 import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from '@style'
@@ -176,11 +176,7 @@ export const ObjktDisplay = () => {
           className="objkt-display"
         >
           <div className={objkt_classes}>
-            {renderMediaType({
-              nft,
-              interactive: true,
-              displayView: false,
-            })}
+            <RenderMediaType nft={nft} interactive />
           </div>
           <div>
             <Container>

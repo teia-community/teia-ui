@@ -21,7 +21,7 @@ const CheapestButton = ({ listing }) => {
         }}
         full
       >
-        <Purchase>Collect for {Number(listing.price) / 1000000} tez</Purchase>
+        <Purchase>Collect for {Number(listing.price) / 1e6} tez</Purchase>
       </Button>
     </div>
   ) : (

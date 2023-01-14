@@ -105,3 +105,5 @@ export const ImageComponent = ({
     </div>
   )
 }
+
+export default ImageComponent

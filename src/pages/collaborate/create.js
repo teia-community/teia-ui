@@ -54,7 +54,7 @@ export const CreateCollaboration = () => {
     const benefactor = beneficiaries[index]
     const updatedBeneficiaries = [...beneficiaries]
 
-    console.log('_calculateShares', index, percentage)
+    console.debug('_calculateShares', index, percentage)
 
     updatedBeneficiaries[index] = {
       ...benefactor,

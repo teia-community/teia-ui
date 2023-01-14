@@ -11,3 +11,5 @@ export const UnknownComponent = ({ mimeType }) => {
     </div>
   )
 }
+
+export default UnknownComponent

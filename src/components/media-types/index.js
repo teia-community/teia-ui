@@ -1,4 +1,7 @@
 import React from 'react'
+import { HashToURL } from '@utils'
+import { MIMETYPE } from '@constants'
+
 import { GLBComponent } from './glb'
 import { ImageComponent } from './image'
 import { VideoComponent } from './video'
@@ -7,10 +10,9 @@ import { VectorComponent } from './vector'
 import { HTMLComponent } from './html'
 import { UnknownComponent } from './unknown'
 import { PdfComponent } from './pdf'
-import { MIMETYPE } from '@constants'
 import { Container } from './container'
 import { MD } from './md'
-import { HashToURL } from '@utils'
+import { useMemo } from 'react'
 
 /**
  * @typedef {{address:string,name:string}} Wallet
@@ -30,24 +32,30 @@ import { HashToURL } from '@utils'
  * @param {boolean} renderOptions.displayView - use the display/preview image
  *
  */
-export const renderMediaType = ({
+export const RenderMediaType = ({
   nft,
-  preview = false,
+  preview,
   previewUri,
-  interactive = false,
+  interactive,
   displayView,
 }) => {
+  const parsedArtifactUri = useMemo(
+    () =>
+      nft.artifact_uri
+        ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
+        : '',
+    [nft]
+  )
+  const parsedDisplayUri = useMemo(
+    () =>
+      nft.display_uri ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' }) : '',
+    [nft]
+  )
+
   if (!nft) {
     console.error('No nft to render')
     return
   }
-
-  const parsedArtifactUri = nft.artifact_uri
-    ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
-    : ''
-  const parsedDisplayUri = nft.display_uri
-    ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
-    : ''
 
   switch (nft.mime_type) {
     /* IMAGES */

@@ -28,7 +28,7 @@ const Collaborate = () => {
 
   // If an address is created, update the tab
   useEffect(() => {
-    console.log({ originationOpHash })
+    console.debug({ originationOpHash })
     if (originationOpHash) {
       setTabIndex(0)
     }
