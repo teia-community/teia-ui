@@ -47,8 +47,8 @@ export async function fetchGraphQL(operationsDoc, operationName, variables) {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
+      variables,
+      operationName,
     }),
   })
 
@@ -185,9 +185,7 @@ export async function getUser(addressOrName, type = 'user_address') {
     }
   )
 
-  return data && data.teia_users && data.teia_users.length
-    ? data.teia_users[0]
-    : null
+  return data?.teia_users?.length ? data.teia_users[0] : null
 }
 
 export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {

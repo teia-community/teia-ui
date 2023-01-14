@@ -11,7 +11,7 @@ export const CountdownTimer = ({ endDate, onComplete }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeRemaining())
 
   useEffect(() => {
-    let timerFunc = setTimeout(() => {
+    const timerFunc = setTimeout(() => {
       const remaining = calculateTimeRemaining()
       setTimeLeft(remaining)
     }, 1000)

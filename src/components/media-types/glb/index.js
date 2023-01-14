@@ -52,36 +52,34 @@ export const GLBComponent = ({
   //     global.removeEventListener('resize', handleResize)
   //   }
   // }, [width, height])
-  if (displayView) {
-    return (
-      // <div className={styles.container} ref={ref}>
-      //   <model-viewer
-      //     {...props}
-      //     style={{ width, height }}
-      //     title={`GLB object ${objktID}`}
-      //   >
-      //     <button slot="ar-button" className={styles.arButton}>
-      //       AR
-      //     </button>
-      //   </model-viewer>
-      // </div>
-      <ImageComponent
-        // key={`img-${objktID}`}
-        artifactUri={artifactUri}
-        previewUri={previewUri}
-        onDetailView={false}
-        displayUri
-        displayView={true}
-        nft={nft}
-      />
-    )
-  } else {
-    return (
-      <model-viewer {...props} title={`GLB object ${objktID}`}>
-        <button slot="ar-button" className={styles.arButton}>
-          AR
-        </button>
-      </model-viewer>
-    )
-  }
+  return displayView ? (
+    // <div className={styles.container} ref={ref}>
+    //   <model-viewer
+    //     {...props}
+    //     style={{ width, height }}
+    //     title={`GLB object ${objktID}`}
+    //   >
+    //     <button slot="ar-button" className={styles.arButton}>
+    //       AR
+    //     </button>
+    //   </model-viewer>
+    // </div>
+    <ImageComponent
+      // key={`img-${objktID}`}
+      artifactUri={artifactUri}
+      previewUri={previewUri}
+      onDetailView={false}
+      displayUri
+      displayView={true}
+      nft={nft}
+    />
+  ) : (
+    <model-viewer {...props} title={`GLB object ${objktID}`}>
+      <button slot="ar-button" className={styles.arButton}>
+        AR
+      </button>
+    </model-viewer>
+  )
 }
+
+export default GLBComponent

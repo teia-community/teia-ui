@@ -47,7 +47,7 @@ export const CollaboratorTable = ({
           collaborator.address === collabData.address && i !== index
       )
     ) {
-      console.log('Address exists')
+      console.debug('Address exists')
     } else {
       updatedCollabs[index] = collabData
     }

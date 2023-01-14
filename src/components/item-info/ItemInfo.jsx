@@ -35,9 +35,9 @@ const ItemInfo = ({ nft }) => {
 
   const restricted = walletBlockMap.get(nft.artist_address) === 1
 
-  const cheapestListing = nft.listings.filter(
+  const cheapestListing = nft.listings.find(
     (listing) => walletBlockMap.get(listing.seller_address) !== 1
-  )[0]
+  )
 
   // Check collab status
   const isSigned = get(nft, 'teia_meta.is_signed')

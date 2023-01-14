@@ -19,7 +19,7 @@ export const Upload = ({
     const file = files[0]
 
     setTitle(file.name)
-    const mimeType = file.type !== '' ? file.type : await getMimeType(file)
+    const mimeType = file.type === '' ? await getMimeType(file) : file.type
     const buffer = Buffer.from(await file.arrayBuffer())
 
     // set reader for preview
@@ -36,7 +36,7 @@ export const Upload = ({
   }
 
   if (allowedTypes) {
-    props['accept'] = allowedTypes.join(',')
+    props.accept = allowedTypes.join(',')
   }
 
   return (

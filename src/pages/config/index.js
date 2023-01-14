@@ -170,8 +170,8 @@ export const Config = () => {
       setIdenticon(`ipfs://${picture_cid}`)
     }
     const meta = JSON.stringify({
-      description: description,
-      identicon: identicon,
+      description,
+      identicon,
     })
     context.setFeedback({
       message: 'uploading metadatas',

@@ -9,12 +9,11 @@ import { useSearchParams } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
 import laggy from '../../utils/swr-laggy-middleware'
 import { FilterBar } from '@components/header/filters/FilterBar'
-import { useContext } from 'react'
 import { IconCache } from '@utils/with-icon'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 import styles from '@style'
-import { LocalSettingsContext } from '@context/LocalSettingsProvider'
+import useLocalSettings from '@hooks/use-local-settings'
 
 /**
  * Single view, vertical feed
@@ -87,7 +86,7 @@ function TokenCollection({
   const [searchParams, setSearchParams] = useSearchParams()
   const { walletBlockMap, nsfwMap, objktBlockMap } = useSettings()
 
-  const { viewMode } = useContext(LocalSettingsContext)
+  const { viewMode } = useLocalSettings()
 
   const inViewMode = searchParams.get('view')
     ? searchParams.get('view')
@@ -100,15 +99,12 @@ function TokenCollection({
   const { data, error } = useSWR(
     disable ? null : [namespace, ...swrParams],
     async (ns) => {
-      if (typeof query === 'string') {
-        return request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
-          ...variables,
-          ...(maxItems ? { limit: maxItems } : {}),
-        })
-      } else {
-        // it's possible to also pass in the response data in the query
-        return query
-      }
+      return typeof query === 'string'
+        ? request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
+            ...variables,
+            ...(maxItems ? { limit: maxItems } : {}),
+          })
+        : query
     },
     {
       revalidateIfStale: false,
@@ -129,7 +125,7 @@ function TokenCollection({
     return <Container>loading...</Container>
   }
 
-  let tokens = extractTokensFromResponse(data, {
+  const tokens = extractTokensFromResponse(data, {
     postProcessTokens,
     resultsPath,
     tokenPath,

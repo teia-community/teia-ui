@@ -7,7 +7,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { useContext } from 'react'
 import { MenuItem } from './MenuItem'
 import { Toggle, toggleType } from '@atoms/toggles'
-import { LocalSettingsContext } from '@context/LocalSettingsProvider'
+import useLocalSettings from '@hooks/use-local-settings'
 
 /**
  * The main global menu.
@@ -16,7 +16,7 @@ import { LocalSettingsContext } from '@context/LocalSettingsProvider'
 export const MainMenu = () => {
   const context = useContext(TeiaContext)
 
-  const { zen, setZen } = useContext(LocalSettingsContext)
+  const { zen, setZen, theme, toggleTheme } = useLocalSettings()
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
@@ -59,14 +59,14 @@ export const MainMenu = () => {
           <div className={styles.state_buttons}>
             <Toggle
               kind={toggleType.BOX}
-              onToggle={context.toggleTheme}
-              toggled={context.theme === 'dark'}
+              onToggle={toggleTheme}
+              toggled={theme === 'dark'}
             />
             <Toggle
               kind={toggleType.BOX}
               label="ZEN"
               onToggle={setZen}
-              togggled={zen}
+              toggled={zen}
             />
           </div>
         </ul>
