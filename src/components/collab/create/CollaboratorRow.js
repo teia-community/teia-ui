@@ -40,10 +40,10 @@ export const CollaboratorRow = ({
     }
 
     if (isValid) {
-      console.log('valid address, checking meta', meta, address)
+      console.debug('valid address, checking meta', meta, address)
       if (!meta || (meta && meta.tzprofile !== address)) {
         GetUserMetadata(address).then(({ data }) => {
-          console.log('Data from user meta query', data)
+          console.debug('Data from user meta query', data)
           setMeta(data)
         })
       }

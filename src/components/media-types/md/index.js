@@ -56,3 +56,5 @@ export const MD = ({
     </div>
   )
 }
+
+export default MD

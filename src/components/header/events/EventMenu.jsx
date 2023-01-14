@@ -8,12 +8,9 @@ export const EventMenu = ({ events }) => {
 
   return (
     <DropDown menuID="events" vertical>
-      {events &&
-        events.map((evt) => {
-          return (
-            <EventCard event={evt} key={`${evt.title} - ${evt.subtitle}`} />
-          )
-        })}
+      {events?.map((evt) => {
+        return <EventCard event={evt} key={`${evt.title} - ${evt.subtitle}`} />
+      })}
     </DropDown>
   )
 }

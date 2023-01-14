@@ -82,3 +82,5 @@ export const VideoComponent = ({
     />
   )
 }
+
+export default VideoComponent

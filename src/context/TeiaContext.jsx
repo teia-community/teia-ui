@@ -1,8 +1,5 @@
 import React, { createContext, Component } from 'react'
-import {
-  BeaconWallet,
-  // BeaconWalletNotInitialized,
-} from '@taquito/beacon-wallet'
+import { BeaconWallet } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { MichelsonMap } from '@taquito/taquito'
 import { packData } from '@components/collab/functions'
@@ -13,7 +10,6 @@ import {
 } from '@components/collab/constants'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
-import { setItem } from '@utils/storage'
 import { fetchJSON } from '@utils'
 
 import {
@@ -146,14 +142,14 @@ async function createLambdaSwapCall(
   creator
 ) {
   const data = {
-    marketplaceAddress: marketplaceAddress,
+    marketplaceAddress,
     params: {
       fa2: objktsAddress,
       objkt_id: parseFloat(objkt_id),
       objkt_amount: parseFloat(objkt_amount),
       royalties: parseFloat(royalties),
       xtz_per_objkt: parseFloat(xtz_per_objkt),
-      creator: creator,
+      creator,
     },
   }
 
@@ -240,9 +236,6 @@ class TeiaContextProviderClass extends Component {
       // Collab additions
       proxyFactoryAddress: PROXY_FACTORY_CONTRACT,
       signingContractAddress: SIGNING_CONTRACT,
-
-      lastId: undefined,
-      setId: (id) => this.setState({ lastId: id }),
 
       subjktInfo: {},
       setSubjktInfo: (subjkt) => this.setState({ subjktInfo: subjkt }),
@@ -374,32 +367,6 @@ class TeiaContextProviderClass extends Component {
       // fullscreen. DO NOT CHANGE!
       fullscreen: false,
       setFullscreen: (fullscreen) => this.setState({ fullscreen }),
-
-      // theme, DO NO CHANGE!
-      theme: 'unset',
-
-      // TODO (xat): theme stuff should not happen here
-      // NOTE: I removed the actual styling part, but I'm not sure of the
-      // be
-
-      toggleTheme: (useDark = undefined) => {
-        console.log('Toggle Theme')
-        if (useDark === undefined) {
-          this.state.setTheme(this.state.theme === 'light' ? 'dark' : 'light')
-          return
-        }
-        this.state.setTheme(useDark ? 'dark' : 'light')
-      },
-      setTheme: (theme) => {
-        // safeguards
-        theme = theme === 'dark' ? 'dark' : 'light'
-
-        // use data-theme for styling
-        const root = document.documentElement
-        root.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark')
-        setItem('theme', theme)
-        this.setState({ theme })
-      },
 
       // --------------------
       // feedback component
@@ -534,7 +501,7 @@ class TeiaContextProviderClass extends Component {
               .mint_OBJKT(
                 tz,
                 parseFloat(amount),
-                ('ipfs://' + cid)
+                `ipfs://${cid}`
                   .split('')
                   .reduce(
                     (hex, c) =>
@@ -558,21 +525,17 @@ class TeiaContextProviderClass extends Component {
                 const { handled, error } = await handleOpStatus(op)
                 if (!handled) {
                   this.state.showFeedback(DEFAULT_ERROR_MESSAGE)
-                  return !error
-                } else {
-                  return !error
                 }
+                return !error
               })
               .catch(async (err) => {
                 console.error(err)
                 const { handled, error } = await handleOpStatus(op)
                 if (!handled) {
-                  let message = DEFAULT_ERROR_MESSAGE
-                  // bad way to detect timeouts, but the Taquito error is generic unfortunately
-                  if (error.message === 'Confirmation polling timed out') {
-                    message =
-                      'a timeout occurred, but the mint might have succeeded'
-                  }
+                  const message =
+                    error.message === 'Confirmation polling timed out'
+                      ? 'a timeout occurred, but the mint might have succeeded'
+                      : DEFAULT_ERROR_MESSAGE
                   this.state.showFeedback(message)
                   return !error
                 }
@@ -651,7 +614,7 @@ class TeiaContextProviderClass extends Component {
       },
 
       burn: async (objkt_id, amount) => {
-        var tz = await wallet.client.getActiveAccount()
+        const tz = await wallet.client.getActiveAccount()
         const objktsOrProxy = this.state.proxyAddress || this.state.objkts
         const addressFrom = this.state.proxyAddress || tz.address
 
@@ -721,8 +684,6 @@ class TeiaContextProviderClass extends Component {
 
       signStr: async (payload) => {
         const signedPayload = await wallet.client.requestSignPayload(payload)
-        // console.log(signedPayload, payload)
-        const signature = signedPayload
         // console.log(signature.signature, payload.payload, await wallet.getPKH())
         /*         const r = await KeyStoreUtils.checkSignature(
           signature.signature,
@@ -732,7 +693,7 @@ class TeiaContextProviderClass extends Component {
 
         await verify(
           payload.payload.toString(),
-          signature.signature,
+          signedPayload.signature,
           await axios.get(
             `https://tezos-prod.cryptonomic-infra.tech/chains/main/blocks/head/context/contracts/${await wallet.getPKH()}/manager_key`
           )
@@ -785,7 +746,7 @@ class TeiaContextProviderClass extends Component {
       wallet: null,
       acc: null,
 
-      updateMessage: (message) => this.setState({ message: message }),
+      updateMessage: (message) => this.setState({ message }),
 
       setAccount: async () => {
         this.setState({
@@ -814,7 +775,7 @@ class TeiaContextProviderClass extends Component {
         }
 
         this.setState({
-          Tezos: Tezos,
+          Tezos,
           address: await wallet.getPKH(),
           acc: await wallet.client.getActiveAccount(),
           wallet,
@@ -837,7 +798,7 @@ class TeiaContextProviderClass extends Component {
             airgap/thanos interop methods
       */
       operationRequest: async (obj) => {
-        var op = obj.result
+        const op = obj.result
         delete op.mutez
         op.destination = op.to
         op.kind = 'transaction'
@@ -911,7 +872,7 @@ class TeiaContextProviderClass extends Component {
       title: '',
       setTitle: (title) => {
         this.setState({
-          title: title,
+          title,
         })
       },
 

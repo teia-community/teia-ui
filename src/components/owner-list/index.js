@@ -19,13 +19,13 @@ export const OwnerList = ({ owners }) => {
             <Button to={`/${get(holder_profile, 'name')}`}>
               <Primary>{encodeURI(get(holder_profile, 'name'))}</Primary>
             </Button>
-          ) : holder_address !== MARKETPLACE_CONTRACT_V1 ? (
+          ) : holder_address === MARKETPLACE_CONTRACT_V1 ? (
             <Button to={`/tz/${holder_address}`}>
-              <Primary>{walletPreview(holder_address)}</Primary>
+              <Primary>OBJKTSWAP V1</Primary>
             </Button>
           ) : (
             <Button to={`/tz/${holder_address}`}>
-              <Primary>OBJKTSWAP V1</Primary>
+              <Primary>{walletPreview(holder_address)}</Primary>
             </Button>
           )}
         </div>

@@ -10,7 +10,7 @@ export const ProjectList = ({ beneficiaries, onSelect }) => {
   const beneficiaryAddresses = beneficiaries.map((b) => b.address)
   const validBeneficiaries = beneficiaries.filter((b) => b.address && b.shares)
   const unselectedProjects = ossProjects.filter(
-    (project) => beneficiaryAddresses.indexOf(project.address) === -1
+    (project) => !beneficiaryAddresses.includes(project.address)
   )
   const btnClass = classNames(styles.btn, {
     [styles.muted]:

@@ -57,8 +57,9 @@ export function Home({ isSearch = false }) {
 
   return (
     <Page title="Home">
+      {/*
       <Container>
-        {/* <Input
+       <Input
           type="text"
           name="search"
           onChange={(ev) => {
@@ -80,7 +81,7 @@ export function Home({ isSearch = false }) {
           }}
           value={searchTerm}
         /> */}
-        {/* <div style={{ marginTop: '15px' }}>
+      {/* <div style={{ marginTop: '15px' }}>
           <div>
             <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
             <FilterLink to="/feed/pakistan">🇵🇰 pakistan</FilterLink>
@@ -98,31 +99,30 @@ export function Home({ isSearch = false }) {
             <FilterLink to="/">recent sales</FilterLink>
           </div>
         </div>
-        {isSearch ? <SubjktsSearchResults /> : null} */}
+        {isSearch ? <SubjktsSearchResults /> : null}
       </Container>
-      <Container xlarge>
-        {isSearch ? (
-          <SearchFeed />
-        ) : (
-          <Routes>
-            <Route index element={<RecentSalesFeed />} />
-            <Route
-              path="/tezospride"
-              element={<TagFeed tag="tezospride" namespace="tezospride" />}
-            />
-            <Route path="/iran" element={<IranFeed />} />
-            <Route path="/pakistan" element={<PakistanFeed />} />
-            <Route path="/ukraine" element={<UkraineFeed />} />
-            <Route path="/random" element={<RandomFeed />} />
-            <Route path="/newobjkts" element={<NewObjktsFeed />} />
-            <Route path="/glb" element={<GlbFeed />} />
-            <Route path="/music" element={<MusicFeed />} />
-            <Route path="/video" element={<VideoFeed />} />
-            <Route path="/html-svg" element={<HtmlSvgFeed />} />
-            <Route path="/gif" element={<GifFeed />} />
-          </Routes>
-        )}
-      </Container>
+       */}
+      {isSearch ? (
+        <SearchFeed />
+      ) : (
+        <Routes>
+          <Route index element={<RecentSalesFeed />} />
+          <Route
+            path="/tezospride"
+            element={<TagFeed tag="tezospride" namespace="tezospride" />}
+          />
+          <Route path="/iran" element={<IranFeed />} />
+          <Route path="/pakistan" element={<PakistanFeed />} />
+          <Route path="/ukraine" element={<UkraineFeed />} />
+          <Route path="/random" element={<RandomFeed />} />
+          <Route path="/newobjkts" element={<NewObjktsFeed />} />
+          <Route path="/glb" element={<GlbFeed />} />
+          <Route path="/music" element={<MusicFeed />} />
+          <Route path="/video" element={<VideoFeed />} />
+          <Route path="/html-svg" element={<HtmlSvgFeed />} />
+          <Route path="/gif" element={<GifFeed />} />
+        </Routes>
+      )}
     </Page>
   )
 }

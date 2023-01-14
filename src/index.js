@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import './styles/index.scss'
-import { IconCache } from '@utils/with-icon'
 
 ReactDOM.render(
   // <React.StrictMode>
