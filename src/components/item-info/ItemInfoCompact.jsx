@@ -4,22 +4,19 @@ import { walletPreview } from '@utils/string'
 import { isNumber } from 'lodash'
 import styles from '@style'
 import Editions from './Editions'
-import { useContext } from 'react'
-import { LocalSettingsContext } from '@context/LocalSettingsProvider'
+import useLocalSettings from '@hooks/use-local-settings'
 
 /**
  * @param {Object} itemInfoCompactOptions
  * @param {import("@types").NFT} itemInfoCompactOptions.nft
  **/
 const ItemInfoCompact = ({ nft }) => {
-  const { zen } = useContext(LocalSettingsContext)
-  let _price = null
-
-  if (!zen) {
-    _price = isNumber(nft.price)
-      ? (Number(nft.price) / 1000000).toString()
+  const { zen } = useLocalSettings()
+  const _price = !zen
+    ? isNumber(nft.price)
+      ? (Number(nft.price) / 1e6).toString()
       : 'X'
-  }
+    : null
 
   const price = (
     <span>

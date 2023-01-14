@@ -29,11 +29,12 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     // const isChecking = originationOpHash && !checkingForOrigination
     // setCheckingForOrigination(isChecking)
 
-    if (originationOpHash && !timerEndDate) {
-      const timerDate = new Date()
-      timerDate.setTime(timerDate.getTime() + checkInterval * 1000)
-      setTimerEndDate(timerDate)
+    if (!(originationOpHash && !timerEndDate)) {
+      return
     }
+    const timerDate = new Date()
+    timerDate.setTime(timerDate.getTime() + checkInterval * 1000)
+    setTimerEndDate(timerDate)
   }, [originationOpHash, timerEndDate, checkInterval])
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     }
 
     setLoadingCollabs(true)
-    console.log('Now checking for available collabs')
+    console.debug('Now checking for available collabs')
 
     // On boot, see what addresses the synced address can manage
     fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
@@ -50,22 +51,23 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     }).then(({ data }) => {
       setLoadingCollabs(false)
 
-      if (data) {
-        const allCollabs = data.split_contracts || []
-        const adminCollabs = allCollabs.filter(
-          (c) => c.administrator_address === acc.address
-        )
-        const participantCollabs = allCollabs.filter(
-          (c) => c.administrator_address !== acc.address
-        )
-
-        // Show admin followed by participant
-        const availableCollabs = showAdminOnly
-          ? allCollabs.filter((c) => c.administrator_address === acc.address)
-          : [...adminCollabs, ...participantCollabs]
-
-        setCollabs(availableCollabs)
+      if (!data) {
+        return
       }
+      const allCollabs = data.split_contracts || []
+      const adminCollabs = allCollabs.filter(
+        (c) => c.administrator_address === acc.address
+      )
+      const participantCollabs = allCollabs.filter(
+        (c) => c.administrator_address !== acc.address
+      )
+
+      // Show admin followed by participant
+      const availableCollabs = showAdminOnly
+        ? allCollabs.filter((c) => c.administrator_address === acc.address)
+        : [...adminCollabs, ...participantCollabs]
+
+      setCollabs(availableCollabs)
     })
   }, [acc, originatedContract, showAdminOnly])
 

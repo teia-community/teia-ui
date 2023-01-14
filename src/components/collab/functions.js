@@ -19,7 +19,7 @@ export const validAddress = (input) => {
   }
 
   const isAddressFormat =
-    ['tz', 'KT'].indexOf(input.substr(0, 2)) > -1 && input.length === 36
+    ['tz', 'KT'].includes(input.substr(0, 2)) && input.length === 36
 
   // TODO: add .tez support
   // const isTezFormat = /^.*\.tez$/.test(input)

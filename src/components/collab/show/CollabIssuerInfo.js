@@ -26,7 +26,7 @@ export const CollabIssuerInfo = ({ creator }) => {
         onMouseOut={() => setShowCollabSummary(false)}
         onBlur={() => setShowCollabSummary(false)}
       >
-        <Primary>{name !== '' ? name : walletPreview(user_address)}</Primary>
+        <Primary>{name === '' ? walletPreview(user_address) : name}</Primary>
       </a>
 
       {showCollabSummary && (

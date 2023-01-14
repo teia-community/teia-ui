@@ -115,3 +115,5 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
     </>
   )
 }
+
+export default PdfComponent

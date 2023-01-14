@@ -36,71 +36,67 @@ export const AudioComponent = ({
     }
   }, [play, userTouched])
 
-  if (!displayView) {
-    return (
-      <div>
-        <div>
-          <img
-            style={{ height: '50vh', display: 'block', margin: '0 auto' }}
-            alt={`cover for audio object ${objktID}`}
-            src={displayUri}
-          />
-          <br />
-          <audio
-            style={{ display: 'block', margin: '0 auto' }}
-            src={preview ? previewUri : artifactUri}
-            controls
-          />
-        </div>
-        {/*         {true && <audio src={preview ? previewUri : artifactUri} controls />}
+  return displayView ? (
+    <div>
+      <span>
+        <img
+          style={{ width: '100%' }}
+          src={displayUri}
+          alt={`cover for audio object ${objktID}`}
+        />
+        <br />
+        <audio
+          style={{ width: '100%' }}
+          src={preview ? previewUri : artifactUri}
+          controls
+        />
+      </span>
+      {/*         {true && <audio src={preview ? previewUri : artifactUri} controls />}
     <img src={displayUri} alt="album cover" /> */}
-        {false && <Visualiser ref={visualiser} src={artifactUri} />}
-        {false && (
-          <div
-            className={styles.icons}
-            onClick={togglePlay}
-            onKeyPress={togglePlay}
-            tabIndex="0"
-            role="button"
-          >
-            {play ? <PauseIcon /> : <PlayIcon />}
-          </div>
-        )}
-      </div>
-    )
-  } else {
-    return (
-      <>
-        <div>
-          <span>
-            <img
-              style={{ width: '100%' }}
-              src={displayUri}
-              alt={`cover for audio object ${objktID}`}
-            />
-            <br />
-            <audio
-              style={{ width: '100%' }}
-              src={preview ? previewUri : artifactUri}
-              controls
-            />
-          </span>
-          {/*         {true && <audio src={preview ? previewUri : artifactUri} controls />}
-        <img src={displayUri} alt="album cover" /> */}
-          {false && <Visualiser ref={visualiser} src={artifactUri} />}
-          {false && (
-            <div
-              className={styles.icons}
-              onClick={togglePlay}
-              onKeyPress={togglePlay}
-              tabIndex="0"
-              role="button"
-            >
-              {play ? <PauseIcon /> : <PlayIcon />}
-            </div>
-          )}
+      {false && <Visualiser ref={visualiser} src={artifactUri} />}
+      {false && (
+        <div
+          className={styles.icons}
+          onClick={togglePlay}
+          onKeyPress={togglePlay}
+          tabIndex="0"
+          role="button"
+        >
+          {play ? <PauseIcon /> : <PlayIcon />}
         </div>
-      </>
-    )
-  }
+      )}
+    </div>
+  ) : (
+    <div>
+      <div>
+        <img
+          style={{ height: '50vh', display: 'block', margin: '0 auto' }}
+          alt={`cover for audio object ${objktID}`}
+          src={displayUri}
+        />
+        <br />
+        <audio
+          style={{ display: 'block', margin: '0 auto' }}
+          src={preview ? previewUri : artifactUri}
+          controls
+        />
+      </div>
+      {/*         {true && <audio src={preview ? previewUri : artifactUri} controls />}
+  <img src={displayUri} alt="album cover" /> */}
+      {false && <Visualiser ref={visualiser} src={artifactUri} />}
+      {false && (
+        <div
+          className={styles.icons}
+          onClick={togglePlay}
+          onKeyPress={togglePlay}
+          tabIndex="0"
+          role="button"
+        >
+          {play ? <PauseIcon /> : <PlayIcon />}
+        </div>
+      )}
+    </div>
+  )
 }
+
+export default AudioComponent

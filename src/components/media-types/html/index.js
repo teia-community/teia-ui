@@ -12,7 +12,7 @@ import styles from '@style'
 import GenerativeIcon from '@icons/generative'
 // import './styles.css'
 
-const uid = Math.round(Math.random() * 100000000).toString()
+const uid = Math.round(Math.random() * 1e8).toString()
 
 const allowed_features =
   'accelerometer; camera; fullscreen; gyroscope; microphone; midi *; xr-spatial-tracking;'
@@ -40,7 +40,7 @@ export const HTMLComponent = (props) => {
     _creator_ = artistAddress
   }
 
-  if (context.address && context.address.address) {
+  if (context.address?.address) {
     _viewer_ = context.address.address
   }
 
@@ -154,23 +154,7 @@ export const HTMLComponent = (props) => {
     )
   }
 
-  if (!displayView) {
-    try {
-      return (
-        <div>
-          <iframe
-            className={styles.html + ' zip-embed'}
-            title={`interactive object ${objktID}`}
-            src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-            sandbox={sandbox_features}
-            allow={allowed_features}
-          />
-        </div>
-      )
-    } catch (err) {
-      return undefined
-    }
-  } else {
+  if (displayView) {
     return (
       <div>
         <iframe
@@ -183,4 +167,21 @@ export const HTMLComponent = (props) => {
       </div>
     )
   }
+  try {
+    return (
+      <div>
+        <iframe
+          className={`${styles.html} zip-embed`}
+          title={`interactive object ${objktID}`}
+          src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
+          sandbox={sandbox_features}
+          allow={allowed_features}
+        />
+      </div>
+    )
+  } catch (err) {
+    return undefined
+  }
 }
+
+export default HTMLComponent

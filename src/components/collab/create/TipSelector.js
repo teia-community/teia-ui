@@ -11,7 +11,7 @@ export const TipSelector = ({ onSelect }) => {
             onClick={() => onSelect(percentage)}
           >
             {percentage}
-            {!isNaN(percentage) ? '%' : ''}
+            {isNaN(percentage) ? '' : '%'}
           </button>
         )
       })}

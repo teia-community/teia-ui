@@ -45,7 +45,7 @@ export const TipJar = ({ tips, setTips }) => {
     <ul className={styles.list}>
       {ossProjects.map((project, projectIndex) => {
         const { name, address } = project
-        const isChecked = tipsByAddress.indexOf(address) > -1
+        const isChecked = tipsByAddress.includes(address)
 
         return (
           <li key={project.address}>

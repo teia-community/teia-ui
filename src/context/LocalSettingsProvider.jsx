@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useCallback } from 'react'
 import { createContext } from 'react'
 import { useLocalStorage } from 'react-use'
 
@@ -14,11 +15,19 @@ export const LocalSettingsProvider = (props) => {
     false
   )
 
+  const [theme, setTheme, rmTheme] = useLocalStorage('settings:theme', 'dark')
+
   const [zen, setZen, rmZen] = useLocalStorage('settings:zen', false)
 
   useEffect(() => {
-    console.log(viewMode)
-  }, [viewMode])
+    const root = document.documentElement
+    root.setAttribute('data-theme', theme)
+  }, [theme])
+
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme])
 
   return (
     <LocalSettingsContext.Provider
@@ -32,6 +41,10 @@ export const LocalSettingsProvider = (props) => {
         zen,
         setZen,
         rmZen,
+        theme,
+        setTheme,
+        rmTheme,
+        toggleTheme,
       }}
     >
       {props.children}
