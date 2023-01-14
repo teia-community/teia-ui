@@ -9,7 +9,6 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms/visually-hidden'
 import styles from '@style'
-import { getItem, setItem } from '@utils/storage'
 import { HeaderButton } from './HeaderButton'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
@@ -22,9 +21,7 @@ import { EventMenu } from './events/EventMenu'
 const EventBanner = loadable(() => import('@components/banners/EventBanner'))
 const MainMenu = loadable(() => import('./main_menu/MainMenu'))
 const FilterBar = loadable(() => import('./filters/FilterBar'))
-const EventCard = loadable(() => import('./events/EventCard'))
 const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
-const DropDown = loadable(() => import('@atoms/dropdown/Dropdown'))
 
 export const Header = ({ filters = false }) => {
   const context = useContext(TeiaContext)
@@ -32,7 +29,6 @@ export const Header = ({ filters = false }) => {
 
   useEffect(() => {
     context.setAccount()
-    context.setTheme(getItem('theme') || setItem('theme', 'dark'))
   }, [])
 
   const [button, setButton] = useState('Sync')

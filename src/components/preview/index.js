@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tags } from '../tags'
 import { MIMETYPE } from '@constants'
-import { renderMediaType } from '../media-types'
+import { RenderMediaType } from '../media-types'
 import { HTMLWarning } from '../media-types/html/warning'
 import styles from '@style'
 
@@ -28,23 +28,21 @@ export const Preview = ({
   royalties,
 }) => {
   const token_tags = tags
-    ? tags !== ''
-      ? tags.replace(/\s/g, '').split(',')
-      : []
+    ? tags === ''
+      ? []
+      : tags.replace(/\s/g, '').split(',')
     : []
   return (
     <div className={styles.container}>
       {isHTML(mimeType) && <HTMLWarning />}
       <div className={styles.media}>
-        {renderMediaType({
-          nft: {
-            mime: mimeType,
-          },
-          previewUri,
-          interactive: true,
-          preview: true,
-          displayView: true,
-        })}
+        <RenderMediaType
+          nft={{ mime: mimeType }}
+          previewUri={previewUri}
+          interactive
+          preview
+          displayView
+        />
       </div>
       <div className={styles.info}>
         <div className={styles.title}>

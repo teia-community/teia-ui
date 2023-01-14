@@ -1,12 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { PATH } from '../../constants'
 import { Button } from '@atoms/button'
 import { ItemInfoCompact } from '@components/item-info'
-import { renderMediaType } from '@components/media-types'
+import { RenderMediaType } from '@components/media-types'
 import styles from '@style'
 import classnames from 'classnames'
-import { TeiaContext } from '@context/TeiaContext'
-import { LocalSettingsContext } from '@context/LocalSettingsProvider'
+import useLocalSettings from '@hooks/use-local-settings'
 
 /**
  * @param {Object} feedOptions - The options for the feed item
@@ -14,8 +13,7 @@ import { LocalSettingsContext } from '@context/LocalSettingsProvider'
  * @returns {React.ReactElement} The feed item
  */
 export const FeedItem = ({ nft }) => {
-  const { viewMode } = useContext(TeiaContext)
-  const { zen } = useContext(LocalSettingsContext)
+  const { zen, viewMode } = useLocalSettings()
 
   const containerClasses = classnames({
     [styles.container]: true,
@@ -30,10 +28,7 @@ export const FeedItem = ({ nft }) => {
         to={`${PATH.OBJKT}/${nft.token_id}`}
       >
         <div>
-          {renderMediaType({
-            nft,
-            displayView: true,
-          })}
+          <RenderMediaType nft={nft} displayView />
         </div>
       </Button>
       {!zen && (

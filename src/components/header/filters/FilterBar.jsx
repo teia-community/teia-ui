@@ -11,7 +11,7 @@ import { Input } from '@atoms/input'
 import { useContext, useState } from 'react'
 import { Button, Primary } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
-import { LocalSettingsContext } from '@context'
+import useLocalSettings from '@hooks/use-local-settings'
 
 const MediaFilter = ({ label, tagline }) => {
   return (
@@ -25,7 +25,7 @@ const MediaFilter = ({ label, tagline }) => {
 export const FilterBar = () => {
   const [price, setPrice] = useState({ from: 0, to: 0 })
   const context = useContext(TeiaContext)
-  const { viewMode, setViewMode } = useContext(LocalSettingsContext)
+  const { viewMode, setViewMode } = useLocalSettings()
   let drop
   // TODO: finish the filtering logic
   const filters = true

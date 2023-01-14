@@ -45,10 +45,10 @@ export const Container = ({
   })
 
   const toggleFullScreen = () => {
-    if (!screenfull.isFullscreen) {
-      screenfull.request(domElement.current, { navigationUI: 'hide' })
-    } else {
+    if (screenfull.isFullscreen) {
       screenfull.exit()
+    } else {
+      screenfull.request(domElement.current, { navigationUI: 'hide' })
     }
   }
 

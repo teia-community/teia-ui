@@ -22,8 +22,8 @@ function shuffleLogos(logos) {
     60 /
     60 /
     1000
-  const random = function () {
-    const x = Math.sin(day++) * 10000
+  const random = () => {
+    const x = Math.sin(day++) * 1e4
     return x - Math.floor(x)
   }
 
