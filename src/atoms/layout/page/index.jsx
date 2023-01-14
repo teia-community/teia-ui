@@ -44,7 +44,7 @@ export const Page = ({ title = '', children = null, filters = false }) => {
           <VisuallyHidden as="h1">
             {title !== '' ? `${title} - teia` : 'teia'}
           </VisuallyHidden>
-          {children}
+          <div className={styles.content}>{children}</div>
           <AnimatePresence>
             {/*footerVisible &&*/ <Footer menu />}
           </AnimatePresence>
