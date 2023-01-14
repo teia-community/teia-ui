@@ -13,6 +13,7 @@
 
   container: main_menu / inline-size;
   height: 100vh;
+  width: 100vw;
   top: 0;
   left: 0;
   right: 0;
@@ -50,9 +51,6 @@
 .menu_left,
 .menu_right {
   padding-top: 10cqh;
-  @include respond-to('desktop') {
-    margin-top: 20cqh;
-  }
 }
 
 .menu_right {

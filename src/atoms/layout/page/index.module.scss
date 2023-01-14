@@ -7,12 +7,14 @@
   margin: auto;
   min-height: 100vh;
   min-width: 320px;
-  margin: 0 15px;
-  @include respond-to('tablet') {
-    margin: 0 40px;
-  }
-  @include respond-to('desktop') {
-    margin: 0 60px;
+  .content {
+    margin: 0 15px;
+    @include respond-to('tablet') {
+      margin: 0 40px;
+    }
+    @include respond-to('desktop') {
+      margin: 0 60px;
+    }
   }
 
   // container: page / inline-size;
