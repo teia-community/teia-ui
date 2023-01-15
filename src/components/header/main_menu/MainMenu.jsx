@@ -22,13 +22,13 @@ export const MainMenu = () => {
   return (
     <motion.div className={styles.menu} {...fadeIn()}>
       <nav className={styles.content}>
-        <ul className={`${styles.line} ${styles.menu_left}`}>
+        <div className={`${styles.line} ${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="collaborate" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
-        </ul>
-        <ul className={styles.menu_right}>
+        </div>
+        <div className={styles.menu_right}>
           <li className={styles.address}>
             {walletPreview(context.acc?.address)}
           </li>
@@ -69,7 +69,7 @@ export const MainMenu = () => {
               toggled={zen}
             />
           </div>
-        </ul>
+        </div>
       </nav>
       <Footer pin />
     </motion.div>

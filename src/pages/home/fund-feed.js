@@ -27,7 +27,8 @@ function FundFeed({
         namespace={namepsace}
         maxItems={600}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {
-          const tokensFromSplitContract = orderBy(
+          // tokensFromSplitContract
+          return orderBy(
             uniqBy(
               [
                 ...flatten(
@@ -59,8 +60,6 @@ function FundFeed({
             ['minted_at'],
             ['desc']
           )
-
-          return tokensFromSplitContract
         }}
         query={gql`
         ${BaseTokenFieldsFragment}
