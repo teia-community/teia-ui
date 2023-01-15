@@ -1,4 +1,21 @@
+$font-large: 19.2px;
+$font-body: 16px;
+$font-small: 13.33px;
+
+$font-large-mobile: 18px;
+$font-body-mobile: 16px;
+$font-small-mobile: 14.22px;
+
+$theme-duration: 0.333s;
+$letter-spacing: 0.015em;
+
 :root {
+  // COMMON
+  --text-font: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
+  --body-transition: background-color #{$theme-duration} ease-out,
+    color #{$theme-duration} ease-out;
+
+  // Theme
   --gray-0: #ffffff;
   --gray-5: #f2f2f2;
   --gray-10: #e6e6e6;
@@ -18,8 +35,6 @@
   --border-color: rgba(0, 0, 0, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.2);
   --secondary-color: rgba(0, 0, 0, 0.5);
-
-  --text-font: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
 
   --text-color: var(--gray-80);
 }
@@ -71,14 +86,3 @@
 
   --text-color: var(--gray-20);
 }
-
-$font-large: 19.2px;
-$font-body: 16px;
-$font-small: 13.33px;
-
-$font-large-mobile: 18px;
-$font-body-mobile: 16px;
-$font-small-mobile: 14.22px;
-
-$theme-duration: 0.5s;
-$letter-spacing: 0.015em;

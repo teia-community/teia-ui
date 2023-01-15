@@ -7,7 +7,13 @@
   margin: auto;
   min-height: 100vh;
   min-width: 320px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   .content {
+    flex-grow: 1;
     margin: 0 15px;
     @include respond-to('tablet') {
       margin: 0 40px;
