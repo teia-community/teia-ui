@@ -21,8 +21,8 @@ export const FeedbackComponent = () => {
             <Markdown className={styles.message}>{message}</Markdown>
             {confirm && (
               <div className={styles.buttons}>
-                <Button onClick={() => confirmCallback()}>
-                  <Purchase>close</Purchase>
+                <Button shadow_box onClick={() => confirmCallback()}>
+                  close
                 </Button>
               </div>
             )}

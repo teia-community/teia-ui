@@ -67,14 +67,17 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
           )}
 
           {contract_address !== proxyAddress && isAdmin && (
-            <Button onClick={() => setProxyAddress(contract_address, name)}>
-              <Purchase>sign in</Purchase>
+            <Button
+              shadow_box
+              onClick={() => setProxyAddress(contract_address, name)}
+            >
+              sign in
             </Button>
           )}
 
           {contract_address === proxyAddress && isAdmin && (
-            <Button onClick={() => setProxyAddress(null)}>
-              <Purchase>sign out</Purchase>
+            <Button shadow_box onClick={() => setProxyAddress(null)}>
+              sign out
             </Button>
           )}
         </div>

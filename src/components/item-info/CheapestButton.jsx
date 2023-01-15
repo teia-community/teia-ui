@@ -1,5 +1,4 @@
 import { Button } from '@atoms/button'
-import { Purchase } from '@atoms/button'
 import { MarketplaceLabel } from '@atoms/marketplace-labels'
 import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
@@ -20,13 +19,14 @@ const CheapestButton = ({ listing }) => {
           }
         }}
         full
+        shadow_box
       >
-        <Purchase>Collect for {Number(listing.price) / 1e6} tez</Purchase>
+        Collect for {Number(listing.price) / 1e6} tez
       </Button>
     </div>
   ) : (
-    <Button full>
-      <Purchase>Not for sale</Purchase>
+    <Button shadow_box full>
+      Not for sale
     </Button>
   )
 }

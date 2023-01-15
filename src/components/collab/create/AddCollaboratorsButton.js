@@ -17,8 +17,9 @@ export const AddCollaboratorsButton = ({
         onClick={onClick}
         disabled={validCollaborators.length < threshold}
         className={styles.btnSecondary}
+        shadow_box
       >
-        <Purchase>{validCollaborators.length === 0 ? 'Skip' : 'Next'}</Purchase>
+        {validCollaborators.length === 0 ? 'Skip' : 'Next'}
       </Button>
     </div>
   )

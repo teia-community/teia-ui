@@ -618,8 +618,11 @@ export const Mint = () => {
                 <p>
                   <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
                 </p>
-                <Button onClick={() => setSelectCollab(!selectCollab)}>
-                  <Purchase>{selectCollab ? 'Cancel' : 'Change'}</Purchase>
+                <Button
+                  shadow_box
+                  onClick={() => setSelectCollab(!selectCollab)}
+                >
+                  {selectCollab ? 'Cancel' : 'Change'}
                 </Button>
               </div>
             </Container>
@@ -874,8 +877,8 @@ export const Mint = () => {
           </Container>
 
           <Container>
-            <Button onClick={handleMint} fit>
-              <Purchase>Mint OBJKT</Purchase>
+            <Button shadow_box onClick={handleMint} fit>
+              Mint OBJKT
             </Button>
           </Container>
 

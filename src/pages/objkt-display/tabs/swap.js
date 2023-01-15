@@ -166,8 +166,8 @@ export const Swap = ({ nft }) => {
                   </select>
                 </div>
               </div>
-              <Button onClick={handleSubmit} fit disabled={progress}>
-                <Purchase>Swap</Purchase>
+              <Button shadow_box onClick={handleSubmit} fit disabled={progress}>
+                Swap
               </Button>
             </div>
           </Container>

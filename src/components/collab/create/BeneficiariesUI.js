@@ -168,8 +168,8 @@ export const BeneficiariesUI = ({
       {(validBeneficiaries.length === 0 || totalParticipants < 2) && (
         <div className={styles.mt2}>
           {totalParticipants >= 2 && (
-            <Button onClick={onComplete}>
-              <Purchase>Skip</Purchase>
+            <Button shadow_box onClick={onComplete}>
+              Skip
             </Button>
           )}
           {totalParticipants < 2 && (
