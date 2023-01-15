@@ -32,17 +32,24 @@
     justify-content: center;
   }
 }
-
+.feeds_dropdown {
+  grid-area: Feeds;
+}
 .filter_button {
   grid-area: Filter;
   justify-self: flex-end;
 }
-
+.feeds_buttons {
+  display: flex;
+  flex-direction: column;
+}
 .view_mode {
   grid-area: View-Mode;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1em;
+  gap: 1.5em;
 }
 
 .tagline {
@@ -69,11 +76,6 @@
   gap: 1em;
   flex-wrap: wrap;
   padding-bottom: 1em;
-}
-
-.line {
-  display: block;
-  border-bottom: 1px solid var(--gray-20);
 }
 
 .filters_container {
