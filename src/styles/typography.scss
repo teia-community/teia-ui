@@ -2,18 +2,44 @@
 // @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap');
 
 @font-face {
-  font-family: 'iosevka-extended';
-  font-display: block;
+  font-family: 'Iosevka';
+  font-display: swap;
   font-weight: 400;
   font-stretch: expanded;
   font-style: normal;
   src: url('fonts/iosevka-extended.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'iosevka-semibold';
-  font-display: block;
+  font-family: 'Iosevka';
+  font-display: swap;
+  font-weight: 400;
+  font-stretch: expanded;
+  font-style: italic;
+  src: url('fonts/iosevka-extendeditalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Iosevka';
+  font-display: swap;
+  font-weight: 500;
+  font-stretch: expanded;
+  font-style: normal;
+  src: url('fonts/iosevka-extendedmedium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Iosevka';
+  font-display: swap;
   font-weight: 600;
   font-stretch: expanded;
   font-style: normal;
-  src: url('fonts/iosevka-semibold.woff2') format('woff2');
+  src: url('fonts/iosevka-extendedsemibold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Iosevka';
+  font-display: swap;
+  font-weight: 700;
+  font-stretch: expanded;
+  font-style: normal;
+  src: url('fonts/iosevka-extendedbold.woff2') format('woff2');
 }

@@ -1,12 +1,12 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
 import classnames from 'classnames'
-import { TeiaContext } from '../../../context/TeiaContext'
+import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import {
   dataRUIToBuffer,
   prepareFilesFromZIP,
   validateFiles,
-} from '../../../utils/html'
+} from '@utils/html'
 import { VisuallyHidden } from '@atoms/visually-hidden'
 import styles from '@style'
 import GenerativeIcon from '@icons/generative'

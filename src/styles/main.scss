@@ -15,7 +15,7 @@ body {
   // font-family: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
   // font-family: 'OCR A Std', monospace; // README: crzypatchwork, this font doesn't look great.
   // font-family: 'Courier New', 'Courier', monospace; // README: old font
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
   color: var(--text-color);
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,
@@ -27,7 +27,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
   font-weight: 700;
 }
 
@@ -49,7 +49,7 @@ h3 {
 }
 
 button {
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
   color: var(--text-color);
   background: none;
 }
