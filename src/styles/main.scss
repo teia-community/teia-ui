@@ -18,8 +18,7 @@ body {
   font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
   color: var(--text-color);
   background-color: var(--background-color);
-  transition: background-color #{$theme-duration} ease-out,
-    color #{$theme-duration} ease-out;
+  transition: var(--body-transition);
 }
 h1,
 h2,

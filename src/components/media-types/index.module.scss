@@ -11,8 +11,12 @@
 .container {
   background-color: var(--gray-10);
   position: relative;
-  min-width: 200px;
-  min-height: 200px;
+  min-width: 100px;
+  min-height: 100px;
+  @include respond-to('tablet') {
+    min-width: 200px;
+    min-height: 200px;
+  }
   display: flex;
   justify-content: center;
   &.fullscreen {
