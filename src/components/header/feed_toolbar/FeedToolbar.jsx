@@ -21,7 +21,7 @@ const MediaFilter = ({ label, tagline }) => {
   )
 }
 
-export const FilterBar = () => {
+export const FeedToolbar = () => {
   const [price, setPrice] = useState({ from: 0, to: 0 })
   const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
@@ -154,4 +154,4 @@ export const FilterBar = () => {
   )
 }
 
-export default FilterBar
+export default FeedToolbar
