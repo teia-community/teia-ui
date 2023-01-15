@@ -15,24 +15,22 @@ export const MenuItem = ({ label, route, need_sync, className }) => {
     navigate(path, { state: data })
   }
   return (
-    <li>
-      <Button
-        onClick={() => {
-          if (need_sync) {
-            handleRoute('/sync', `/${route}`)
-          } else {
-            handleRoute(`/${route}`)
-          }
-        }}
+    <Button
+      onClick={() => {
+        if (need_sync) {
+          handleRoute('/sync', `/${route}`)
+        } else {
+          handleRoute(`/${route}`)
+        }
+      }}
+    >
+      <Primary
+        className={`${
+          need_sync && !context.acc?.address ? styles.disabled : ''
+        } ${className ? className : ''} `}
       >
-        <Primary
-          className={`${
-            need_sync && !context.acc?.address ? styles.disabled : ''
-          } ${className ? className : ''} `}
-        >
-          {label}
-        </Primary>
-      </Button>
-    </li>
+        {label}
+      </Primary>
+    </Button>
   )
 }
