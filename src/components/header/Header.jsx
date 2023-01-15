@@ -9,7 +9,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms/visually-hidden'
 import styles from '@style'
-import { HeaderButton } from './HeaderButton'
+import { DropdownButton } from '@atoms/dropdown'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
 import { MainMenu } from './main_menu/MainMenu'
@@ -76,14 +76,14 @@ export const Header = ({ filters = false }) => {
       <header className={`${styles.container}`}>
         <div className={styles.content}>
           <div className={styles.left}>
-            <HeaderButton
+            <DropdownButton
               className={styles.events_button}
               icon={<EventIcon />}
               menuID="events"
               label="Events"
             >
               <EventMenu events={sample_events} />
-            </HeaderButton>
+            </DropdownButton>
           </div>
 
           <Button onClick={() => handleRoute('/')}>
