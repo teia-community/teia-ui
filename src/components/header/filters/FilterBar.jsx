@@ -26,7 +26,6 @@ export const FilterBar = () => {
   const [price, setPrice] = useState({ from: 0, to: 0 })
   const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
-  let drop
   // TODO: finish the filtering logic
   const filters = true
   return (
@@ -55,7 +54,7 @@ export const FilterBar = () => {
           label="Filters"
           className={styles.filter_button}
         >
-          <DropDown ref={drop} left menuID="filters">
+          <DropDown left menuID="filters">
             <motion.div key="filters" className={styles.filters_container}>
               <motion.div key="media" className={styles.filter_box}>
                 <h1>Media Types</h1>
