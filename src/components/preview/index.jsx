@@ -18,6 +18,7 @@ export const Preview = ({
   description,
   mimeType,
   previewUri,
+  previewDisplayUri,
   tags,
   rights,
   rightUri,
@@ -37,8 +38,9 @@ export const Preview = ({
       {isHTML(mimeType) && <HTMLWarning />}
       <div className={styles.media}>
         <RenderMediaType
-          nft={{ mime: mimeType }}
+          nft={{ mime_type: mimeType }}
           previewUri={previewUri}
+          previewDisplayUri={previewDisplayUri}
           interactive
           preview
           displayView
@@ -86,7 +88,7 @@ export const Preview = ({
           <strong>Editions:</strong> {amount}
         </div>
         <div className={styles.attributes}>
-          <strong>Royalties:</strong> {royalties}
+          <strong>Royalties:</strong> {royalties}%
         </div>
       </div>
     </div>

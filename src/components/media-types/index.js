@@ -36,6 +36,7 @@ export const RenderMediaType = ({
   nft,
   preview,
   previewUri,
+  previewDisplayUri,
   interactive,
   displayView,
 }) => {
@@ -46,11 +47,14 @@ export const RenderMediaType = ({
         : '',
     [nft]
   )
-  const parsedDisplayUri = useMemo(
-    () =>
-      nft.display_uri ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' }) : '',
-    [nft]
-  )
+  const parsedDisplayUri = useMemo(() => {
+    if (preview) {
+      return previewDisplayUri
+    }
+    return nft.display_uri
+      ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
+      : ''
+  }, [nft, preview, previewDisplayUri])
 
   if (!nft) {
     console.error('No nft to render')
