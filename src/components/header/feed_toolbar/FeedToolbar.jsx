@@ -26,7 +26,7 @@ export const FeedToolbar = () => {
   const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
   // TODO: finish the filtering logic
-  const filters = true
+  const filters = false
   return (
     <motion.div className={styles.filter_bar}>
       <div className={styles.view_mode}>

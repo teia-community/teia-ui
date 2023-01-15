@@ -30,10 +30,8 @@
   width: 100%;
 
   z-index: 200;
-  background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color #{$theme-duration} ease-out,
-    color #{$theme-duration} ease-out;
+  transition: var(--body-transition);
 
   .content {
     width: 100%;
@@ -162,5 +160,7 @@ li {
 }
 
 .logo {
+  font-size: 36px;
+  font-weight: 700;
   grid-area: Logo;
 }

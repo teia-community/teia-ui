@@ -2,11 +2,14 @@
 @import '@styles/layout.scss';
 
 .event_card {
-  margin: 1rem;
-  width: 600px;
+  padding: 1rem;
   overflow: hidden;
+  width: 100%;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--gray-20);
+  @include respond-to('desktop') {
+    width: 600px;
+  }
 }
 .event_card h1 {
   align-items: center;
