@@ -84,7 +84,8 @@ function TokenCollection({
   },
 }) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { walletBlockMap, nsfwMap, objktBlockMap } = useSettings()
+  const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
+    useSettings()
 
   const { viewMode } = useLocalSettings()
 
@@ -140,6 +141,7 @@ function TokenCollection({
       return {
         ...token,
         isNSFW: nsfwMap.get(token.token_id) === 1,
+        isPhotoSensitive: photosensitiveMap.get(token.token_id) === 1,
       }
     })
 
