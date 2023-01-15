@@ -6,9 +6,9 @@ export const ParticipantList = ({ title, participants }) => {
     <div>
       <div className={styles.flex}>
         {title && (
-          <h3 className={styles.infoLabel}>
+          <p className={styles.infoLabel}>
             <span>{title}:</span>
-          </h3>
+          </p>
         )}
         <div>
           {participants.map((participant, index) => [

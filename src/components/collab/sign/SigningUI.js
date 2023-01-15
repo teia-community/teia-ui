@@ -19,8 +19,8 @@ export const SigningUI = ({ id, hasSigned }) => {
         <p style={{ width: '50%' }}>
           You are a core participant in this work but you haven’t signed it yet
         </p>
-        <Button onClick={() => sign()}>
-          <Purchase>sign work now</Purchase>
+        <Button shadow_box onClick={() => sign()}>
+          sign work now
         </Button>
       </div>
     </div>
