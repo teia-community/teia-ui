@@ -112,8 +112,8 @@ export const Burn = ({ nft }) => {
 
           <Container>
             <div className={styles.container}>
-              <Button onClick={handleSubmit} fit>
-                <Purchase>Burn</Purchase>
+              <Button shadow_box onClick={handleSubmit} fit>
+                Burn
               </Button>
             </div>
           </Container>

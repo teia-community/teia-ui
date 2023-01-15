@@ -294,8 +294,8 @@ export const Config = () => {
             label="Description"
             value={description}
           />
-          <Button onClick={subjkt_config}>
-            <Purchase>Save Profile</Purchase>
+          <Button shadow_box onClick={subjkt_config}>
+            Save Profile
           </Button>
           <div style={{ display: 'inline' }}>
             <p style={{ paddingTop: '7.5px' }}>

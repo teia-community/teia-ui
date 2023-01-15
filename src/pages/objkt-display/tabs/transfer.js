@@ -143,9 +143,10 @@ export const Transfer = ({ nft }) => {
           <Button
             onClick={onClick}
             disabled={validTxs.length === 0}
+            shadow_box
             className={styles.btnSecondary}
           >
-            <Purchase>send</Purchase>
+            send
           </Button>
         </div>
       )}
