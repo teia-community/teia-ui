@@ -161,7 +161,7 @@ function TokenCollection({
   return (
     <div>
       {/* {context.collapsed && ( */}
-      <>
+      <IconCache.Provider value={{}}>
         <FeedToolbar />
         <InfiniteScroll
           loadMore={() => {
@@ -172,17 +172,15 @@ function TokenCollection({
           }}
           hasMore={limit < tokens.length}
         >
-          <IconCache.Provider value={{}}>
-            <AnimatePresence>
-              {viewMode === 'single' ? (
-                <SingleView tokens={limitedTokens} />
-              ) : (
-                <MasonryView tokens={limitedTokens} />
-              )}
-            </AnimatePresence>
-          </IconCache.Provider>
+          <AnimatePresence>
+            {viewMode === 'single' ? (
+              <SingleView tokens={limitedTokens} />
+            ) : (
+              <MasonryView tokens={limitedTokens} />
+            )}
+          </AnimatePresence>
         </InfiniteScroll>
-      </>
+      </IconCache.Provider>
       {/* )} */}
     </div>
   )
