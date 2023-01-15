@@ -6,18 +6,16 @@
 }
 
 .menu {
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
 
   container: main_menu / inline-size;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
   background-color: var(--background-color);
   color: var(--text-color);
 
@@ -30,6 +28,7 @@
     display: flex;
     justify-content: center;
     height: 80cqh;
+    width: 100%;
   }
 }
 
@@ -56,6 +55,9 @@
 .menu_left,
 .menu_right {
   padding-top: 10cqh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .menu_right {
@@ -64,7 +66,7 @@
   @include respond-to('desktop') {
     padding-left: 30px;
   }
-  li {
+  button {
     text-align: left;
   }
 }
@@ -74,7 +76,7 @@
   @include respond-to('desktop') {
     padding-right: 30px;
   }
-  li {
+  button {
     text-align: right;
   }
 }
