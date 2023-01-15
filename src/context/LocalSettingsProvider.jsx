@@ -24,10 +24,20 @@ export const LocalSettingsProvider = (props) => {
     root.setAttribute('data-theme', theme)
   }, [theme])
 
+  const toggleZen = useCallback(() => {
+    setZen(!zen)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zen])
+
   const toggleTheme = useCallback(() => {
     setTheme(theme === 'light' ? 'dark' : 'light')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme])
+
+  const toggleViewMode = useCallback(() => {
+    setViewMode(viewMode === 'single' ? 'masonry' : 'single')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode])
 
   return (
     <LocalSettingsContext.Provider
@@ -35,12 +45,14 @@ export const LocalSettingsProvider = (props) => {
         viewMode,
         setViewMode,
         rmViewMode,
+        toggleViewMode,
         nsfwFriendly,
         setNsfwFriendly,
         rmNsfwFriendly,
         zen,
         setZen,
         rmZen,
+        toggleZen,
         theme,
         setTheme,
         rmTheme,
