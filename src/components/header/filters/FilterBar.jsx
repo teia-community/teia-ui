@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import styles from '@style'
-import { HeaderButton } from '../HeaderButton'
-import { DropDown } from '@atoms/dropdown'
+import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Toggle, toggleType } from '@atoms/toggles'
 import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
 import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
@@ -47,7 +46,7 @@ export const FilterBar = () => {
         />
       </div>
       {filters && (
-        <HeaderButton
+        <DropdownButton
           direction="left"
           menuID="filters"
           icon={<FiltersIcon />}
@@ -149,7 +148,7 @@ export const FilterBar = () => {
               </Button>
             </div>
           </DropDown>
-        </HeaderButton>
+        </DropdownButton>
       )}
     </motion.div>
   )
