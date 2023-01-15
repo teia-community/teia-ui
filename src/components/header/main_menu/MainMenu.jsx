@@ -22,7 +22,7 @@ export const MainMenu = () => {
   return (
     <motion.div className={styles.menu} {...fadeIn()}>
       <nav className={styles.content}>
-        <div className={`${styles.line} ${styles.menu_left}`}>
+        <div className={`line-vertical ${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="collaborate" />
           <MenuItem className={styles.menu_label} route="about" />

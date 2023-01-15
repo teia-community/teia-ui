@@ -11,6 +11,8 @@ import { useContext, useState } from 'react'
 import { Button, Primary } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import useLocalSettings from '@hooks/use-local-settings'
+import { useLocation } from 'react-router'
+import { useEffect } from 'react'
 
 const MediaFilter = ({ label, tagline }) => {
   return (
@@ -21,14 +23,60 @@ const MediaFilter = ({ label, tagline }) => {
   )
 }
 
+const locationMap = new Map([
+  ['/', 'Recent Sales'],
+  ['/feed/pakistan', '🇵🇰 pakistan'],
+  ['/feed/iran', '🇮🇷 iran'],
+  ['/feed/ukraine', '🇺🇦 ukraine'],
+  ['/feed/tezospride', '🏳️‍🌈 tezospride'],
+  ['---', 'others'],
+  ['/feed/random', 'random'],
+  ['/feed/glb', 'glb'],
+  ['/feed/music', 'music'],
+  ['/feed/video', 'video'],
+  ['/feed/html-svg', 'html/svg'],
+  ['/feed/gif', 'gif'],
+  ['/feed/newobjkts', 'new OBJKTs'],
+])
+
 export const FeedToolbar = () => {
   const [price, setPrice] = useState({ from: 0, to: 0 })
   const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
+  const location = useLocation()
+  const [feedLabel, setFeedLabel] = useState('Recent Sales')
+
+  useEffect(() => {
+    setFeedLabel(locationMap.get(location.pathname))
+    // return locationMap[location]
+  }, [location])
+
   // TODO: finish the filtering logic
   const filters = false
   return (
     <motion.div className={styles.filter_bar}>
+      <DropdownButton
+        menuID="feeds"
+        // icon={<FiltersIcon />}
+        label={feedLabel}
+        className={styles.feeds_dropdown}
+      >
+        <DropDown menuID="feeds">
+          <div className={styles.feeds_buttons}>
+            {[...locationMap.keys()].map((k) => {
+              if (k === '---') {
+                return <span key={k} className="line-horizontal" />
+              }
+              return (
+                <Button key={k} to={k}>
+                  {locationMap.get(k)}
+                </Button>
+              )
+            })}
+          </div>
+        </DropDown>
+      </DropdownButton>
+
       <div className={styles.view_mode}>
         <Toggle
           kind={toggleType.MINIMAL}
@@ -92,7 +140,7 @@ export const FeedToolbar = () => {
                     label="From"
                     value={price.from}
                   >
-                    <span className={styles.line} />
+                    <span className="line-horizontal" />
                   </Input>
                   <Input
                     type="number"
@@ -107,7 +155,7 @@ export const FeedToolbar = () => {
                     label="To"
                     value={price.to}
                   >
-                    <span className={styles.line} />
+                    <span className="line-horizontal" />
                   </Input>
                 </div>
               </motion.div>
