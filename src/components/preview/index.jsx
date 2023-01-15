@@ -82,6 +82,12 @@ export const Preview = ({
           <strong>Tags:</strong>
           <Tags tags={token_tags} />
         </div>
+        <div className={styles.attributes}>
+          <strong>Editions:</strong> {amount}
+        </div>
+        <div className={styles.attributes}>
+          <strong>Royalties:</strong> {royalties}
+        </div>
       </div>
     </div>
   )
