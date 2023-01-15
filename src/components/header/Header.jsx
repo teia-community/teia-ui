@@ -12,16 +12,14 @@ import styles from '@style'
 import { HeaderButton } from './HeaderButton'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
-import loadable from '@loadable/component'
+import { MainMenu } from './main_menu/MainMenu'
+import { FilterBar } from './filters/FilterBar'
+import { EventBanner } from '@components/banners/EventBanner'
+import { RotatingLogo } from '@atoms/logo/RotatingLogo'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
 import { EventMenu } from './events/EventMenu'
-
-const EventBanner = loadable(() => import('@components/banners/EventBanner'))
-const MainMenu = loadable(() => import('./main_menu/MainMenu'))
-const FilterBar = loadable(() => import('./filters/FilterBar'))
-const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
 
 export const Header = ({ filters = false }) => {
   const context = useContext(TeiaContext)
