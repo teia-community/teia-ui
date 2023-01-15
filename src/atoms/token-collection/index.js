@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
+import { useKeyboard } from '@hooks/use-keyboard'
 
 /**
  * Single view, vertical feed
@@ -87,11 +88,13 @@ function TokenCollection({
   const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
     useSettings()
 
-  const { viewMode } = useLocalSettings()
+  const { viewMode, toggleViewMode, toggleZen } = useLocalSettings()
+  useKeyboard('v', toggleViewMode)
+  useKeyboard('z', toggleZen)
 
-  const inViewMode = searchParams.get('view')
-    ? searchParams.get('view')
-    : viewMode
+  // let inViewMode = searchParams.get('view')
+  //   ? searchParams.get('view')
+  //   : viewMode
 
   const limit = searchParams.get(namespace)
     ? parseInt(searchParams.get(namespace), 10)
@@ -141,7 +144,7 @@ function TokenCollection({
       return {
         ...token,
         isNSFW: nsfwMap.get(token.token_id) === 1,
-        isPhotoSensitive: photosensitiveMap.get(token.token_id) === 1,
+        isPhotosensitive: photosensitiveMap.get(token.token_id) === 1,
       }
     })
 
@@ -171,7 +174,7 @@ function TokenCollection({
         >
           <IconCache.Provider value={{}}>
             <AnimatePresence>
-              {inViewMode === 'single' ? (
+              {viewMode === 'single' ? (
                 <SingleView tokens={limitedTokens} />
               ) : (
                 <MasonryView tokens={limitedTokens} />
