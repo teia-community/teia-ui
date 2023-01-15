@@ -45,7 +45,6 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   }
 }`
 
-// @crzypathwork change to "true" to activate displayUri and thumbnailUri
 const GENERATE_DISPLAY_AND_THUMBNAIL = true
 
 export const Mint = () => {
@@ -61,7 +60,6 @@ export const Mint = () => {
   } = useContext(TeiaContext)
 
   const [balance, setBalance] = useState(-1.0)
-  // const history = useHistory()
 
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState()
@@ -862,7 +860,7 @@ export const Mint = () => {
             <Preview
               mimeType={file.mimeType}
               previewUri={file.reader}
-              displayUri={cover}
+              previewDisplayUri={cover.reader}
               title={title}
               description={description}
               tags={tags}
