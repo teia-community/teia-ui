@@ -8,7 +8,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
 import laggy from '../../utils/swr-laggy-middleware'
-import { FilterBar } from '@components/header/filters/FilterBar'
+import { FeedToolbar } from '@components/header/feed_toolbar/FeedToolbar'
 import { IconCache } from '@utils/with-icon'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
@@ -162,7 +162,7 @@ function TokenCollection({
     <div>
       {/* {context.collapsed && ( */}
       <>
-        <FilterBar />
+        <FeedToolbar />
         <InfiniteScroll
           loadMore={() => {
             setSearchParams({
