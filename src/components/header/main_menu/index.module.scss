@@ -36,6 +36,11 @@
 .menu_label {
   font-size: 20px;
   margin-bottom: 0.2em;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
   @include respond-to('desktop') {
     font-size: 30px;
   }

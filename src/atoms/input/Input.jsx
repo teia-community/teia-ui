@@ -35,6 +35,7 @@ export const Input = ({
         pattern={pattern}
         onWheel={(e) => e.target.blur()}
         onKeyPress={onKeyPress}
+        autoComplete={false}
       />
     </label>
     {children}

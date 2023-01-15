@@ -56,8 +56,8 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
 
       {!onRemove && tx.to_ && tx.amount && (
         <td>
-          <Button onClick={onAdd}>
-            <Purchase>add</Purchase>
+          <Button shadow_box onClick={onAdd}>
+            add
           </Button>
         </td>
       )}
