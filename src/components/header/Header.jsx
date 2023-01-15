@@ -13,7 +13,7 @@ import { DropdownButton } from '@atoms/dropdown'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
 import { MainMenu } from './main_menu/MainMenu'
-import { FilterBar } from './filters/FilterBar'
+import { FeedToolbar } from './feed_toolbar/FeedToolbar'
 import { EventBanner } from '@components/banners/EventBanner'
 import { RotatingLogo } from '@atoms/logo/RotatingLogo'
 
@@ -112,7 +112,7 @@ export const Header = ({ filters = false }) => {
           </div>
         </div>
 
-        {filters && <FilterBar />}
+        {filters && <FeedToolbar />}
       </header>
     </>
   )
