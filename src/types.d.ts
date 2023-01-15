@@ -98,8 +98,10 @@ export type NFT = {
   /** List of addresses owning that token */
   token_holders: [string]
 
-  /** This is an artifact of TokenCollection, where the check logic happens. */
+  /** These are artifacts of TokenCollection, where the check logic happens. */
   isNSFW?: boolean
+  isPhotosensitive?: boolean
+  
   /** This is an artifact of ??, where the key logic happens. */
   key?: string
 
