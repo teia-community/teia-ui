@@ -51,10 +51,8 @@ function ListingRow({
         {!restricted &&
           walletBlockMap.get(listing.seller_address) !== 1 &&
           !isOwnSwap && (
-            <Button onClick={() => onCollectClick(listing)}>
-              <Purchase>
-                Collect for {parseFloat(listing.price / 1e6)} tez
-              </Purchase>
+            <Button shadow_box onClick={() => onCollectClick(listing)}>
+              Collect for {parseFloat(listing.price / 1e6)} tez
             </Button>
           )}
         {isOwnSwap &&
@@ -76,6 +74,8 @@ function ListingRow({
                 style={{ width: '80px', marginRight: '5px' }}
               />
               <Button
+                className={styles.smol}
+                shadow_box
                 onClick={() => {
                   const priceTz = reswapPrices[rowId]
 
@@ -90,16 +90,17 @@ function ListingRow({
                   // TODO: after the reswap was successful we should send some feedback to the user
                 }}
               >
-                <Purchase className={styles.smol}>reswap</Purchase>
+                reswap
               </Button>
 
               <Button
+                shadow_box
                 onClick={() =>
                   cancel(listing.contract_address, listing.swap_id)
                 }
                 className={styles.smol}
               >
-                <Purchase>cancel</Purchase>
+                cancel
               </Button>
             </>
           )}

@@ -16,8 +16,8 @@ export const CollabList = ({ description, collabs }) => {
         {description && <p className={styles.mb1}>{description}</p>}
 
         <div className={styles.mb2}>
-          <Button onClick={() => setShowDetail(!showDetail)}>
-            <Purchase>{showDetail ? 'less detail' : 'more detail'}</Purchase>
+          <Button shadow_box onClick={() => setShowDetail(!showDetail)}>
+            {showDetail ? 'less detail' : 'more detail'}
           </Button>
         </div>
       </div>
@@ -50,10 +50,8 @@ export const CollabList = ({ description, collabs }) => {
                                     value={manualAddress}
                                     autoFocus={true}
                                 />
-                                <Button onClick={() => setProxyAddress(manualAddress)}>
-                                    <Purchase>
-                                        sign in
-                                    </Purchase>
+                                <Button shadow_box onClick={() => setProxyAddress(manualAddress)}>
+                                        sign in 
                                 </Button>
                             </div>
                         )} */}
