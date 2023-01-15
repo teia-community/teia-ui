@@ -6,12 +6,10 @@ import { walletPreview } from '@utils/string'
 import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import { motion } from 'framer-motion'
-import loadable from '@loadable/component'
 import classnames from 'classnames'
 import { Toggle, toggleType } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
-
-const RotatingLogo = loadable(() => import('@atoms/logo/RotatingLogo'))
+import { RotatingLogo } from '@atoms/logo'
 
 export const Footer = ({ menu, pin }) => {
   const { language } = useLanguage()
@@ -53,45 +51,49 @@ export const Footer = ({ menu, pin }) => {
         </Button>
       </div>
 
-      <div>
-        <div className={styles.copy}>{language.footer.mint}</div>
-      </div>
+      <div className={styles.copyright}>{language.footer.mint}</div>
       {menu && (
         <>
-          <ul className={styles.menu_left}>
-            <MenuItem className={styles.menu_label} route="collaborate" />
-            <MenuItem className={styles.menu_label} route="about" />
-            <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
-          </ul>
-          <ul className={styles.menu_right}>
-            <li className={styles.address}>
-              {walletPreview(context.acc?.address)}
-            </li>
-            <MenuItem
-              className={styles.menu_label}
-              label="Mint"
-              route="mint"
-              need_sync
-            />
-            <MenuItem
-              className={styles.menu_label}
-              label="Assets"
-              route="tz"
-              need_sync
-            />
-            <MenuItem
-              className={styles.menu_label}
-              label="Friends"
-              route="friends"
-              need_sync
-            />
-            <MenuItem
-              className={styles.menu_label}
-              label="Profile"
-              route="config"
-              need_sync
-            />
-          </ul>
+          <div className={styles.menus}>
+            <ul className={styles.menu_left}>
+              <MenuItem className={styles.menu_label} route="collaborate" />
+              <MenuItem className={styles.menu_label} route="about" />
+              <MenuItem
+                className={styles.menu_label}
+                label="F.A.Q"
+                route="faq"
+              />
+            </ul>
+            <ul className={styles.menu_right}>
+              <li className={styles.address}>
+                {walletPreview(context.acc?.address)}
+              </li>
+              <MenuItem
+                className={styles.menu_label}
+                label="Mint"
+                route="mint"
+                need_sync
+              />
+              <MenuItem
+                className={styles.menu_label}
+                label="Assets"
+                route="tz"
+                need_sync
+              />
+              <MenuItem
+                className={styles.menu_label}
+                label="Friends"
+                route="friends"
+                need_sync
+              />
+              <MenuItem
+                className={styles.menu_label}
+                label="Profile"
+                route="config"
+                need_sync
+              />
+            </ul>
+          </div>
           <div className={styles.state_buttons}>
             <Toggle
               kind={toggleType.BOX}

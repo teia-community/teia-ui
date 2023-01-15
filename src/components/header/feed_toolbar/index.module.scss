@@ -10,7 +10,7 @@
   grid-template-areas: 'Feeds View-Mode Sort Filter';
 
   @include respond-to('phone') {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @include respond-to('desktop') {
@@ -43,7 +43,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1em;
 }
 
 .tagline {

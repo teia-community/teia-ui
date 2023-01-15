@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { walletPreview } from '@utils/string'
 
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 
 import { AnimatePresence } from 'framer-motion'
 import { TeiaContext } from '@context/TeiaContext'
@@ -15,15 +15,20 @@ import { ReactComponent as EventIcon } from './icons/events.svg'
 import { MainMenu } from './main_menu/MainMenu'
 import { FeedToolbar } from './feed_toolbar/FeedToolbar'
 import { EventBanner } from '@components/banners/EventBanner'
-import { RotatingLogo } from '@atoms/logo/RotatingLogo'
+// import { RotatingLogo } from '@atoms/logo/RotatingLogo'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
 import { EventMenu } from './events/EventMenu'
+import { useMedia } from 'react-use'
 
 export const Header = ({ filters = false }) => {
   const context = useContext(TeiaContext)
   const navigate = useNavigate()
+  const location = useLocation()
+  const isWide = useMedia('(min-width: 600px)')
+
+  const [logoSeed, setLogoSeed] = useState(3)
 
   useEffect(() => {
     context.setAccount()
@@ -80,14 +85,23 @@ export const Header = ({ filters = false }) => {
               className={styles.events_button}
               icon={<EventIcon />}
               menuID="events"
-              label="Events"
+              label={isWide ? 'Events' : ''}
             >
               <EventMenu events={sample_events} />
             </DropdownButton>
           </div>
 
-          <Button onClick={() => handleRoute('/')}>
-            <RotatingLogo seed={10} className={styles.logo} />
+          <Button
+            onClick={() => {
+              if (location.pathname === '/') {
+                setLogoSeed(Math.random() * logoSeed)
+              } else {
+                handleRoute('/')
+              }
+            }}
+          >
+            <p className={styles.logo}>TEIA</p>
+            {/* <RotatingLogo seed={logoSeed} className={styles.logo} /> */}
           </Button>
           <div className={styles.right}>
             {!context.collapsed && context.proxyAddress && (
@@ -100,7 +114,7 @@ export const Header = ({ filters = false }) => {
 
             <Button onClick={handleSyncUnsync} secondary>
               <Primary label={`wallet account ending in ${accountPreview}`}>
-                {button}
+                {isWide && button}
               </Primary>
             </Button>
             <Button onClick={context.toggleMenu} secondary>

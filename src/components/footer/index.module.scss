@@ -16,15 +16,25 @@
 
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: 1fr 2fr repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+
+  grid-template-areas:
+    'Copyright Copyright'
+    'Menu Tools';
   gap: 0px 10px;
   align-items: center;
 
-  & > * {
-    display: flex;
-    align-items: center;
-    width: 100%;
+  @include respond-to('tablet') {
+    grid-template-rows: none;
+    grid-template-areas: 'Logo Copyright Menu Tools';
+    grid-template-columns: 1fr 2fr repeat(2, 1fr);
   }
+
+  // & > * {
+  //   display: flex;
+  //   align-items: center;
+  //   width: 100%;
+  // }
 }
 
 .minimal {
@@ -34,6 +44,13 @@
   }
 }
 
+.menus {
+  grid-area: Menu;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  justify-content: space-around;
+}
 .menu_left {
   display: flex;
   flex-direction: column;
@@ -52,9 +69,19 @@
 }
 
 .logo {
-  display: flex;
   flex-direction: column;
   justify-content: center;
+  grid-area: Logo;
+  @include respond-to('phone') {
+    display: none;
+  }
+  @include respond-to('tablet') {
+    display: flex;
+  }
+}
+
+.copyright {
+  grid-area: Copyright;
 }
 
 .state_buttons {
@@ -65,4 +92,5 @@
   display: flex;
   flex: row;
   gap: 0.5em;
+  grid-area: Tools;
 }
