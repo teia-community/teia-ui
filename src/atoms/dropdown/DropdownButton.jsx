@@ -3,12 +3,7 @@ import styles from '@style'
 import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 
-/**
- * Dropdown Button
- * @param {*} param0
- * @returns
- */
-export function HeaderButton({
+export function DropdownButton({
   menuID,
   direction = 'right',
   label,
@@ -33,7 +28,7 @@ export function HeaderButton({
   const containerClasses = classnames({
     [styles.menu_left]: direction === 'left',
   })
-  let props = {}
+  const props = {}
   if (direction === 'left') {
     props.left = true
   }
