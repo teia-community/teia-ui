@@ -8,10 +8,6 @@
   --speed: 500ms;
 }
 
-.line {
-  border-right: 1px solid var(--border-color);
-}
-
 .dropdown_menu {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -72,7 +68,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
+      justify-self: flex-start;
       grid-area: Events;
     }
 
