@@ -56,6 +56,7 @@ button {
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  font-smooth: always;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -63,6 +64,15 @@ button {
   // font-family: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
   // font-family: 'OCR A Std', monospace;// README: crzypatchwork, this font doesn't look great.
   // font-family: 'Courier New', 'Courier', monospace;// README: oldfont
+}
+
+.line-horizontal {
+  display: block;
+  border-bottom: 1px solid var(--gray-20);
+}
+
+.line-vertical {
+  border-right: 1px solid var(--border-color);
 }
 
 img.emoji {

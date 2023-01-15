@@ -145,7 +145,7 @@ export const Mint = () => {
     await setAccount()
 
     // check mime type
-    if (ALLOWED_MIMETYPES.indexOf(file.mimeType) === -1) {
+    if (!ALLOWED_MIMETYPES.includes(file.mimeType)) {
       showFeedback(
         `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`
       )
@@ -195,12 +195,12 @@ export const Mint = () => {
           image.onload = function () {
             resolve({ imageWidth: this.width, imageHeight: this.height })
           }
-          image.onerror = function (e) {
+          image.onerror = (e) => {
             resolve({ imageWidth: 0, imageHeight: 0 })
           }
-        } else {
-          resolve({ imageWidth: 0, imageHeight: 0 })
+          return
         }
+        resolve({ imageWidth: 0, imageHeight: 0 })
       })
     }
     const { imageWidth, imageHeight } = await getImageDimensions(file)
@@ -533,8 +533,7 @@ export const Mint = () => {
       const rights_uri = window.localStorage.getItem('objkt::rights_uri') || ''
       let language = window.localStorage.getItem('objkt::language')
       language = language ? JSON.parse(language) : 'null'
-      const nsfw =
-        window.localStorage.getItem('objkt::nsfw') === 'true' ? true : false
+      const nsfw = window.localStorage.getItem('objkt::nsfw') === 'true'
       const photoSeizureWarning =
         window.localStorage.getItem('objkt::photosensitive_seizure_warning') ===
         'true'
@@ -651,7 +650,7 @@ export const Mint = () => {
               label="Title"
               value={title}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Input>
 
             <Textarea
@@ -668,7 +667,7 @@ export const Mint = () => {
               label="Description"
               value={description}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Textarea>
 
             <Input
@@ -689,7 +688,7 @@ export const Mint = () => {
               label="Tags"
               value={tags}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Input>
             <Input
               type="number"
@@ -710,7 +709,7 @@ export const Mint = () => {
               label="Editions"
               value={amount}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Input>
 
             <Input
@@ -729,7 +728,7 @@ export const Mint = () => {
               label="Royalties"
               value={royalties}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Input>
             <Select
               label="License"
@@ -757,7 +756,7 @@ export const Mint = () => {
                 value={rightUri}
               />
             )}
-            <span className={styles.line} />
+            <span className="line-horizontal" />
             <Select
               label="Language"
               placeholder="(optional)"
@@ -771,7 +770,7 @@ export const Mint = () => {
                 )
               }}
             >
-              <span className={styles.line} />
+              <span className="line-horizontal" />
             </Select>
             <div
               style={{
@@ -863,6 +862,7 @@ export const Mint = () => {
             <Preview
               mimeType={file.mimeType}
               previewUri={file.reader}
+              displayUri={cover}
               title={title}
               description={description}
               tags={tags}
