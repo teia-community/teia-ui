@@ -27,7 +27,7 @@
 }
 
 .container {
-  width: 100vw;
+  width: 100%;
 
   z-index: 200;
   background-color: var(--background-color);
@@ -47,8 +47,11 @@
       '. . .'
       '. . .';
     justify-items: center;
-    padding: 50px 40px;
 
+    padding: 20px 40px;
+    @include respond-to('tablet') {
+      padding: 30px 40px;
+    }
     /* FOR DEBUG (keep) */
     // @include respond-to('phone') {
     //   background-color: red;
@@ -78,9 +81,10 @@
     .right {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       grid-area: User;
       z-index: 500;
+      width: 100%;
 
       & > * {
         font-size: 16px;

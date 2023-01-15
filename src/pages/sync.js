@@ -13,10 +13,8 @@ export default function Sync() {
     const init = async () => {
       if (!context.acc) {
         await context.syncTaquito()
-        await context.setAccount()
-      } else {
-        await context.setAccount()
       }
+      await context.setAccount()
     }
     init().catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
