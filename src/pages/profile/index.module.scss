@@ -134,8 +134,7 @@
   text-transform: lowercase;
   font-size: 15px;
   align-items: center;
-  transition: background-color #{$theme-duration} ease-out,
-    color #{$theme-duration} ease-out;
+  transition: var(--body-transition);
 }
 
 .tag:hover {

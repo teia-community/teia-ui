@@ -126,8 +126,7 @@
   height: 16px;
   border-radius: 50%;
   background-color: var(--background-color);
-  transition: background-color #{$theme-duration} ease-out,
-    color #{$theme-duration} ease-out;
+  transition: var(--body-transition);
   z-index: 200;
   cursor: pointer;
 }
