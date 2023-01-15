@@ -101,7 +101,7 @@ export type NFT = {
   /** These are artifacts of TokenCollection, where the check logic happens. */
   isNSFW?: boolean
   isPhotosensitive?: boolean
-  
+
   /** This is an artifact of ??, where the key logic happens. */
   key?: string
 
@@ -118,6 +118,39 @@ export type NFT = {
 export type ArtistProfile = {
   name?: string
   is_split: boolean
+}
+
+export type LocalSettingsContext = {
+  /**The feed view mode */
+  viewMode: 'single' | 'masonry'
+  /**Set the feed view mode */
+  setViewMode: (mode: 'single' | 'masonry') => void
+  /**Delete the localstorage for the feed view mode */
+  rmViewMode: () => void
+  /**Utility function to toggle the view mode*/
+  toggleViewMode: () => void
+  /**The NSFW preference (true == show them unblurred) */
+  nsfwFriendly: boolean
+  /**Set the NSFW preference*/
+  setNsfwFriendly: (boolean) => void
+  /**Delete the localstorage for the NSFW preference */
+  rmNsfwFriendly: () => void
+  /**The zen preference*/
+  zen: boolean
+  /**Set the zen preference*/
+  setZen: (boolean) => void
+  /**Delete the localstorage for the zen preference */
+  rmZen: () => void
+  /**Utility function to toggle the zen preference */
+  toggleZen: () => void
+  /**The theme preference*/
+  theme: 'light' | 'dark'
+  /**Set the theme preference*/
+  setTheme: (theme: 'light' | 'dark') => void
+  /**Delete the localstorage for the theme preference */
+  rmTheme: () => void
+  /**Utility function to toggle the current theme */
+  toggleTheme: () => void
 }
 
 export type FeedEvent = {
