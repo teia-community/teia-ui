@@ -67,7 +67,6 @@ export const Config = () => {
   useEffect(() => {
     const init = async () => {
       await context.syncTaquito()
-
       const { acc, proxyAddress } = context
 
       // Maybe use proxy address here
@@ -84,11 +83,10 @@ export const Config = () => {
 
           if (name) setSubjkt(name)
 
-          if (metadata && !_.isEmpty(get(metadata, 'data'))) {
-            if (get(metadata, 'data.description'))
-              setDescription(get(metadata, 'data.description'))
-            if (get(metadata, 'data.identicon'))
-              setIdenticon(get(metadata, 'data.identicon'))
+          if (metadata && !_.isEmpty(metadata?.data)) {
+            if (metadata?.data?.description)
+              setDescription(metadata.data.description)
+            if (metadata?.data?.identicon) setIdenticon(metadata.data.identicon)
           }
         }
       }

@@ -28,24 +28,24 @@ const App = () => {
 
   return (
     <TeiaProvider>
-      <AnimatePresence>
-        <Debug />
+      <Debug />
+      <AnimatePresence exitBeforeEnter initial={false}>
         <Routes location={location} key={location.pathname}>
-          <Route path="/*" element={<Home />} />
+          <Route exact path="/" element={<Home />} />
           <Route path="/feed/*" element={<Home />} />
           <Route path="/search/*" element={<Home isSearch />} />
           <Route path="/friends/:address" element={<Friends />} />
           <Route path="/tz/:address/*" element={<Display />} />
           <Route path="/kt/:id" element={<CollabDisplay />} />
           <Route path="/collab/:name" element={<CollabDisplay />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/faq" element={<FAQ />} />
+          <Route exact path="/about" element={<About />} />
+          <Route exact path="/terms" element={<Terms />} />
+          <Route exact path="/faq" element={<FAQ />} />
           <Route path="/sync" element={<Sync />} />
-          <Route path="/mint" element={<Mint />} />
+          <Route exact path="/mint" element={<Mint />} />
           <Route path="/collaborate" element={<Collaborate />} />
           <Route path="/objkt/:id" element={<ObjktDisplay />} />
-          <Route path="/config" element={<Config />} />
+          <Route exact path="/config" element={<Config />} />
           <Route path="/tags/:tag" element={<Tags />} />
           <Route path="/:id/:collection?/*" element={<Display />} />
           <Route path="/:subjkt/*" element={<Display />} />
