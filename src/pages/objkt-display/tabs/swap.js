@@ -4,7 +4,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Input } from '@atoms/input'
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 import styles from '@style'
 
 /**
