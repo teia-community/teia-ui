@@ -1,7 +1,7 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
 import { Loading } from '@atoms/loading'
 import styles from '@style'

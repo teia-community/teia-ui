@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import React, { useContext, useState } from 'react'
-import { Button, Primary, Purchase } from '@atoms/button'
+import { Button, Primary } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
 import styles from '@style'

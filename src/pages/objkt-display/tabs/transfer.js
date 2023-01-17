@@ -4,7 +4,7 @@ import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/index.module.scss'
 import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 
 /**
  * The Transfer Tab
