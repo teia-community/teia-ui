@@ -1,6 +1,6 @@
 import { Input } from '@atoms/input'
 import styles from '../../collab/index.module.scss'
-import { Button, Purchase, Secondary } from '@atoms/button'
+import { Button, Secondary } from '@atoms/button'
 import { CloseIcon } from '..'
 
 export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {

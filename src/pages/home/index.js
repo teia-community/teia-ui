@@ -1,7 +1,7 @@
 // TODO (mel & xat) - best way to handle filter composition?
 // import { useEffect, useState } from 'react'
 import React from 'react'
-import { Page, Container } from '@atoms/layout'
+import { Page } from '@atoms/layout'
 import {
   Routes,
   Route,

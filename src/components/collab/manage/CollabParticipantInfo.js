@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from 'react'
 import get from 'lodash/get'
 import { TeiaContext } from '../../../context/TeiaContext'
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 import classNames from 'classnames'
 import styles from '../index.module.scss'
 import { CollaboratorType } from '../constants'
