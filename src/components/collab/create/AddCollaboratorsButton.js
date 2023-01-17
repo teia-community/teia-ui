@@ -1,4 +1,4 @@
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { validAddress } from '../functions'
 import styles from '../index.module.scss'
 

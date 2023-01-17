@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { TeiaContext } from '../../../context/TeiaContext'
-import { Button, Purchase } from '@atoms/button'
+import { Button } from '@atoms/button'
 import styles from '../index.module.scss'
 
 // TODO: test if this still works
