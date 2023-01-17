@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react'
 import styles from '../index.module.scss'
-import { Button, Purchase, Secondary } from '@atoms/button'
+import { Button, Secondary } from '@atoms/button'
 import { BeneficiaryRow, collaboratorTemplate } from '..'
 import { extractAddress } from '../functions'
 import classNames from 'classnames'
