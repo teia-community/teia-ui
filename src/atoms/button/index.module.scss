@@ -20,6 +20,7 @@
 
   &.full {
     width: 100%;
+    white-space: nowrap;
 
     @include respond-to('desktop') {
       width: fit-content;
