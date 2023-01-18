@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom'
 /**
  * Core button style (used for links, buttons, and <a>)
  * @param {Object} buttonProps
- * @param {string} buttonProps.to - If provided return a <Link>
- * @param {string} buttonProps.href - If provided return a <a>
+ * @param {string} buttonProps.to - If provided return a "Link"
+ * @param {string} buttonProps.href - If provided return a "a"
  * @param {boolean} buttonProps.disabled - Disables the button
  * @param {boolean} buttonProps.fit - (Style) Fit
  * @param {boolean} buttonProps.full - (Style) Full
@@ -44,7 +44,7 @@ export const Button = ({
     children = <div className={styles.shadow_box}>{children}</div>
   }
 
-  if (to) {
+  if (to !== null) {
     return (
       <Link
         aria-label={alt}
@@ -56,7 +56,7 @@ export const Button = ({
     )
   }
 
-  if (href) {
+  if (href !== null) {
     return (
       <a
         href={href}

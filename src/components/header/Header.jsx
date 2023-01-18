@@ -13,7 +13,6 @@ import { DropdownButton } from '@atoms/dropdown'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
 import { MainMenu } from './main_menu/MainMenu'
-import { FeedToolbar } from './feed_toolbar/FeedToolbar'
 import { EventBanner } from '@components/banners/EventBanner'
 // import { RotatingLogo } from '@atoms/logo/RotatingLogo'
 
@@ -22,7 +21,7 @@ import { sample_events } from './sample_events'
 import { EventMenu } from './events/EventMenu'
 import { useMedia } from 'react-use'
 
-export const Header = ({ filters = false }) => {
+export const Header = () => {
   const context = useContext(TeiaContext)
   const navigate = useNavigate()
   const location = useLocation()
@@ -125,8 +124,7 @@ export const Header = ({ filters = false }) => {
             </Button>
           </div>
         </div>
-
-        {filters && <FeedToolbar />}
+        <span className="line-horizontal" />
       </header>
     </>
   )
