@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Compressor from 'compressorjs'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { TeiaContext } from '@context/TeiaContext'
@@ -37,6 +36,12 @@ import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate'
 import styles from '@style'
 import useSettings from 'hooks/use-settings'
+import {
+  extensionFromMimetype,
+  generateCompressedImage,
+  getImageDimensions,
+  removeExtension,
+} from './utils'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
@@ -59,8 +64,9 @@ export const Mint = () => {
     syncTaquito,
   } = useContext(TeiaContext)
 
-  const [balance, setBalance] = useState(-1.0)
+  const { ignoreUriMap } = useSettings()
 
+  const [balance, setBalance] = useState(-1.0)
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState()
   const [mintName, setMintName] = useState('')
@@ -68,6 +74,7 @@ export const Mint = () => {
   const [tags, setTags] = useState()
   const [amount, setAmount] = useState()
   const [royalties, setRoyalties] = useState()
+  /** @type {import("@types").useState<import("@types").FileMint>} */
   const [file, setFile] = useState() // the uploaded file
   const [cover, setCover] = useState() // the uploaded or generated cover image
   const [thumbnail, setThumbnail] = useState() // the uploaded or generated cover image
@@ -80,8 +87,6 @@ export const Mint = () => {
   const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
   const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
     useState(false) // Photosensitivity flag
-
-  const { ignoreUriMap } = useSettings()
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -110,6 +115,7 @@ export const Mint = () => {
     setSelectCollab(false)
   }, [proxyAddress]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  /** Resolves the minter name */
   const updateName = () => {
     const currentAddress = proxyAddress || acc?.address
 
@@ -124,8 +130,8 @@ export const Mint = () => {
   }
 
   const handleMint = async () => {
+    // check sync status
     if (!acc) {
-      // warning for sync
       setFeedback({
         visible: true,
         message: 'Sync your wallet',
@@ -159,7 +165,6 @@ export const Mint = () => {
       return
     }
 
-    // file about to be minted, change to the mint screen
     setStep(2)
 
     setFeedback({
@@ -185,22 +190,6 @@ export const Mint = () => {
 
     const contentRating = nsfw ? METADATA_CONTENT_RATING_MATURE : null
 
-    const getImageDimensions = async (file) => {
-      return await new Promise((resolve, reject) => {
-        if (file) {
-          const image = new Image()
-          image.src = file.reader
-          image.onload = function () {
-            resolve({ imageWidth: this.width, imageHeight: this.height })
-          }
-          image.onerror = (e) => {
-            resolve({ imageWidth: 0, imageHeight: 0 })
-          }
-          return
-        }
-        resolve({ imageWidth: 0, imageHeight: 0 })
-      })
-    }
     const { imageWidth, imageHeight } = await getImageDimensions(file)
 
     const isDirectory = [MIMETYPE.ZIP, MIMETYPE.ZIP1, MIMETYPE.ZIP2].includes(
@@ -232,23 +221,6 @@ export const Mint = () => {
         fileName: file.file.name,
         mimeType: file.mimeType,
       })
-    }
-
-    const removeExtension = (name) => {
-      return name.split('.').slice(0, -1).join('.')
-    }
-
-    const extensionFromMimetype = (mime) => {
-      switch (mime) {
-        case MIMETYPE.JPEG:
-          return 'jpg'
-        case MIMETYPE.PNG:
-          return 'png'
-        case MIMETYPE.GIF:
-          return 'gif'
-        default:
-          return 'jpg'
-      }
     }
 
     // TMP: skip GIFs to avoid making static
@@ -345,6 +317,7 @@ export const Mint = () => {
     }
   }
 
+  /** Check the user account minted CIDs against the current one. */
   const isDoubleMint = async () => {
     const rawLeaves = false
     const hashv0 = await ipfsHash.of(file.buffer, { cidVersion: 0, rawLeaves })
@@ -389,6 +362,7 @@ export const Mint = () => {
     return false
   }
 
+  /** Detect user double mints and proceed to the preview page */
   const handlePreview = async () => {
     if (!(await isDoubleMint())) {
       setStep(1)
@@ -406,41 +380,6 @@ export const Mint = () => {
         setNeedsCover(true)
       }
     }
-  }
-
-  const generateCompressedImage = async (props, options) => {
-    const blob = await compressImage(props.file, options)
-    const mimeType = blob.type
-    const buffer = await blob.arrayBuffer()
-    const reader = await blobToDataURL(blob)
-    return { mimeType, buffer, reader }
-  }
-
-  const compressImage = (file, options) => {
-    return new Promise(async (resolve, reject) => {
-      new Compressor(file, {
-        ...options,
-        success(blob) {
-          resolve(blob)
-        },
-        error(err) {
-          reject(err)
-        },
-      })
-    })
-  }
-
-  const blobToDataURL = async (blob) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onerror = reject
-      reader.onload = (e) => resolve(reader.result)
-      reader.readAsDataURL(blob)
-    })
-  }
-
-  const handleCoverUpload = async (props) => {
-    await generateCoverAndThumbnail(props)
   }
 
   const generateCoverAndThumbnail = async (props) => {
@@ -606,38 +545,38 @@ export const Mint = () => {
 
   return (
     <Page title="Mint" large>
-      {step === 0 && (
-        <>
-          {/* User has collabs available */}
-          {collabs.length > 0 && (
-            <Container>
-              <div className={flexBetween}>
-                <p>
-                  <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
-                </p>
-                <Button
-                  shadow_box
-                  onClick={() => setSelectCollab(!selectCollab)}
-                >
-                  {selectCollab ? 'Cancel' : 'Change'}
-                </Button>
-              </div>
-            </Container>
-          )}
+      <div className={styles.mint_form} data-form-type="other">
+        {step === 0 && (
+          <>
+            {/* User has collabs available */}
+            {collabs.length > 0 && (
+              <Container>
+                <div className={flexBetween}>
+                  <p>
+                    <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
+                  </p>
+                  <Button
+                    shadow_box
+                    onClick={() => setSelectCollab(!selectCollab)}
+                  >
+                    {selectCollab ? 'Cancel' : 'Change'}
+                  </Button>
+                </div>
+              </Container>
+            )}
 
-          {selectCollab && <CollabContractsOverview showAdminOnly />}
+            {selectCollab && <CollabContractsOverview showAdminOnly />}
 
-          {balance > 0 && balance < 0.15 && (
-            <Container>
-              <div className={styles.fundsWarning}>
-                <p>
-                  {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
-                </p>
-              </div>
-            </Container>
-          )}
+            {balance > 0 && balance < 0.15 && (
+              <Container>
+                <div className={styles.fundsWarning}>
+                  <p>
+                    {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
+                  </p>
+                </div>
+              </Container>
+            )}
 
-          <Container>
             <Input
               type="text"
               onChange={(e) => {
@@ -802,97 +741,93 @@ export const Mint = () => {
                 label="Photo Sensitive Seizure Warning"
               />
             </div>
-          </Container>
-
-          <Container>
+            <span className="horizontal-line" />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button onClick={clearFields} fit>
                 <Primary>Clear Fields</Primary>
               </Button>
             </div>
-          </Container>
 
-          <Container>
             <Upload
               label="Upload OBJKT"
               allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
               onChange={handleFileUpload}
             />
-          </Container>
 
-          {file && needsCover && (
+            {file && needsCover && (
+              <Container>
+                <Upload
+                  label="Upload cover image"
+                  allowedTypes={ALLOWED_COVER_MIMETYPES}
+                  allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
+                  onChange={generateCoverAndThumbnail}
+                />
+              </Container>
+            )}
+
             <Container>
-              <Upload
-                label="Upload cover image"
-                allowedTypes={ALLOWED_COVER_MIMETYPES}
-                allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
-                onChange={handleCoverUpload}
+              <Button
+                shadow_box
+                onClick={handlePreview}
+                fit
+                disabled={handleValidation()}
+              >
+                Preview
+              </Button>
+            </Container>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <Container>
+              <div style={{ display: 'flex' }}>
+                <Button onClick={() => setStep(0)} fit>
+                  <Primary>
+                    <strong>Back</strong>
+                  </Primary>
+                </Button>
+              </div>
+            </Container>
+
+            <Container>
+              <Preview
+                mimeType={file.mimeType}
+                previewUri={file.reader}
+                previewDisplayUri={cover.reader}
+                title={title}
+                description={description}
+                tags={tags}
+                rights={rights}
+                rightUri={rightUri}
+                language={language}
+                nsfw={nsfw}
+                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
+                amount={amount}
+                royalties={royalties}
               />
             </Container>
-          )}
 
-          <Container>
-            <Button
-              shadow_box
-              onClick={handlePreview}
-              fit
-              disabled={handleValidation()}
-            >
-              Preview
-            </Button>
-          </Container>
-        </>
-      )}
-
-      {step === 1 && (
-        <>
-          <Container>
-            <div style={{ display: 'flex' }}>
-              <Button onClick={() => setStep(0)} fit>
-                <Primary>
-                  <strong>Back</strong>
-                </Primary>
+            <Container>
+              <Button shadow_box onClick={handleMint} fit>
+                Mint OBJKT
               </Button>
-            </div>
-          </Container>
+            </Container>
 
-          <Container>
-            <Preview
-              mimeType={file.mimeType}
-              previewUri={file.reader}
-              previewDisplayUri={cover.reader}
-              title={title}
-              description={description}
-              tags={tags}
-              rights={rights}
-              rightUri={rightUri}
-              language={language}
-              nsfw={nsfw}
-              photosensitiveSeizureWarning={photosensitiveSeizureWarning}
-              amount={amount}
-              royalties={royalties}
-            />
-          </Container>
+            <Container>
+              <p>this operation costs 0.08~ tez</p>
+              <p>Your royalties upon each sale are {royalties}%</p>
+            </Container>
+          </>
+        )}
 
-          <Container>
-            <Button shadow_box onClick={handleMint} fit>
-              Mint OBJKT
-            </Button>
-          </Container>
-
-          <Container>
-            <p>this operation costs 0.08~ tez</p>
-            <p>Your royalties upon each sale are {royalties}%</p>
-          </Container>
-        </>
-      )}
-
-      <Container>
-        <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
-          <Primary>Terms & Conditions</Primary>
-        </Button>
-      </Container>
-      <hr />
+        <Container>
+          <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
+            <Primary>Terms & Conditions</Primary>
+          </Button>
+        </Container>
+        <hr />
+      </div>
     </Page>
   )
 }
