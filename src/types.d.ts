@@ -1,3 +1,19 @@
+type useState<T> = [T, React.Dispatch<T>]
+
+export type FileMint = {
+  /** The title of the file */
+  title: string
+  /** The file mimetype */
+  mimeType: string
+  /** The file object */
+  file: File
+  /** The buffer extracted from the file. */
+  buffer: Buffer
+  /** The file reader (actually an ArrayBuffer?!) */
+  reader: ArrayBuffer
+}
+export type UploadCallback = (arg: FileMint) => void
+
 export enum ToggleKind {
   BOX = 'box',
   MINIMAL = 'minimal',
