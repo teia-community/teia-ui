@@ -2,7 +2,7 @@
 @import '@styles/layout.scss';
 
 .tag {
-  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: --var(--text-font);
   background: none;
   border: none;
   display: inline-flex;
@@ -11,7 +11,7 @@
   padding: 4px 8px;
   margin-right: 6px;
   margin-bottom: 6px;
-  font-size: 16px;
+  font-size: $font-body;
   font-weight: bold;
   align-items: center;
   &:hover {

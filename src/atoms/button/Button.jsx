@@ -31,12 +31,14 @@ export const Button = ({
   shadow_box,
   className,
 }) => {
-  const classes = classnames({
+  const _classes = classnames({
     [styles.container]: true,
     [styles.disabled]: disabled,
     [styles.fit]: fit,
     [styles.full]: full,
   })
+
+  const classes = `${_classes} ${className || ''}`
 
   if (box) {
     children = <div className={styles.box}>{children}</div>
@@ -46,11 +48,7 @@ export const Button = ({
 
   if (to !== null) {
     return (
-      <Link
-        aria-label={alt}
-        to={to}
-        className={`${classes} ${className || ''}`}
-      >
+      <Link aria-label={alt} to={to} className={classes}>
         {children}
       </Link>
     )
