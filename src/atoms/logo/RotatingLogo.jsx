@@ -17,7 +17,7 @@ export const RotatingLogo = ({ className, seed = 1 }) => {
   )
   return (
     <div className={`${styles.logo} ${className ? className : ''}`}>
-      {true && theme !== 'unset' && (
+      {true && theme !== 'unset' && logo && (
         <img
           src={`${process.env.REACT_APP_LOGOS}/logos${
             logo.themable ? `/${theme}` : ''
