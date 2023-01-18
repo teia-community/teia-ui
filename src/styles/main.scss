@@ -12,10 +12,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  // font-family: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
-  // font-family: 'OCR A Std', monospace; // README: crzypatchwork, this font doesn't look great.
-  // font-family: 'Courier New', 'Courier', monospace; // README: old font
-  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: var(--text-font);
   color: var(--text-color);
   background-color: var(--background-color);
   transition: var(--body-transition);
@@ -26,7 +23,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: var(--text-font);
   font-weight: 700;
 }
 
@@ -48,7 +45,7 @@ h3 {
 }
 
 button {
-  font-family: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: var(--text-font);
   color: var(--text-color);
   background: none;
 }
@@ -61,9 +58,6 @@ button {
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-  // font-family: 'IBM Plex Mono', 'Courier New', 'Courier', monospace;
-  // font-family: 'OCR A Std', monospace;// README: crzypatchwork, this font doesn't look great.
-  // font-family: 'Courier New', 'Courier', monospace;// README: oldfont
 }
 
 .line-horizontal {
@@ -76,7 +70,6 @@ button {
 }
 
 img.emoji {
-  //width: 1em;
   width: $font-small-mobile;
   pointer-events: none;
 }
@@ -89,7 +82,7 @@ img.emoji {
     font-size: 1.5em;
     margin: 1.5em 0 0.5em;
   }
-  font-family: 'iosevka-extended', 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: var(--text-font);
 }
 
 // used for modals and the events menu

@@ -16,7 +16,7 @@
 .profile {
   display: grid;
 
-  grid-template-columns: 0.5fr 2fr;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 10px;
   grid-template-areas: 'Photo Details';
@@ -32,13 +32,15 @@
   .socials {
     margin-top: 8px;
   }
+  @include respond-to('desktop') {
+    grid-template-columns: 0.5fr 2fr;
+  }
 }
 
 .menu {
   display: flex;
   min-width: 335px;
   width: 100%;
-  max-width: var(--max-width);
   //padding: 6px 0;
   border-bottom: 1px solid var(--border-color);
   transition: border-color #{$theme-duration} ease-out;
@@ -49,7 +51,7 @@
 
 .container {
   width: 100%;
-  max-width: var(--max-width);
+
   .number {
     position: absolute;
     bottom: 6px;

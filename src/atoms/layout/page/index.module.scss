@@ -20,6 +20,8 @@
 
     flex-grow: 1;
     width: 100%;
+    max-width: 100vw;
+    max-width: var(--max-width);
   }
 
   // container: page / inline-size;
