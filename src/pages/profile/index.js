@@ -98,7 +98,7 @@ export default function Display() {
 
       {user.address.substr(0, 2) !== 'KT' && (
         <div className={styles.menu}>
-          <Tab to={``}>Creations</Tab>
+          <Tab to={''}>Creations</Tab>
           <Tab to={`collection`}>Collection</Tab>
           <Tab to={`collabs`}>Collabs</Tab>
 

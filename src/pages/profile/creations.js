@@ -21,7 +21,7 @@ export default function Creations({ showFilters, address }) {
   }, [setProfileFeed])
 
   return (
-    <div>
+    <>
       {showFilters && (
         <Filters
           filter={filter}
@@ -34,39 +34,38 @@ export default function Creations({ showFilters, address }) {
           ]}
         />
       )}
-      <Container xlarge>
-        {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
-        <TokenCollection
-          namespace="creations"
-          swrParams={[address]}
-          variables={{ address }}
-          emptyMessage="no creations"
-          maxItems={null}
-          postProcessTokens={(tokens) => {
-            if (filter === FILTER_PRIMARY) {
-              return tokens.filter(
-                (token) =>
-                  get(token, 'lowest_price_listing.seller_address') === address
-              )
-            }
+      {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
+      <TokenCollection
+        namespace="creations"
+        swrParams={[address]}
+        variables={{ address }}
+        emptyMessage="no creations"
+        maxItems={null}
+        postProcessTokens={(tokens) => {
+          if (filter === FILTER_PRIMARY) {
+            return tokens.filter(
+              (token) =>
+                get(token, 'lowest_price_listing.seller_address') === address
+            )
+          }
 
-            if (filter === FILTER_SECONDARY) {
-              return tokens.filter(
-                (token) =>
-                  get(token, 'lowest_price_listing.seller_address') !== address
-              )
-            }
+          if (filter === FILTER_SECONDARY) {
+            return tokens.filter(
+              (token) =>
+                get(token, 'lowest_price_listing.seller_address') !== address
+            )
+          }
 
-            if (filter === FILTER_NOT_FOR_SALE) {
-              return tokens.filter(
-                (token) => get(token, 'lowest_price_listing') === null
-              )
-            }
+          if (filter === FILTER_NOT_FOR_SALE) {
+            return tokens.filter(
+              (token) => get(token, 'lowest_price_listing') === null
+            )
+          }
 
-            // all tokens
-            return tokens
-          }}
-          query={gql`
+          // all tokens
+          return tokens
+        }}
+        query={gql`
             ${BaseTokenFieldsFragment}
             query creatorGallery($address: String!) {
               tokens(
@@ -83,8 +82,7 @@ export default function Creations({ showFilters, address }) {
               }
             }
           `}
-        />
-      </Container>
-    </div>
+      />
+    </>
   )
 }

@@ -10,7 +10,7 @@ import { Footer } from '@components/footer'
 import { LocalSettingsProvider } from '@context'
 import { IconCache } from '@utils/with-icon'
 
-export const Page = ({ title = '', children = null, filters = false }) => {
+export const Page = ({ title = '', children = null }) => {
   const classes = classnames({
     [styles.container]: true,
   })
@@ -39,7 +39,7 @@ export const Page = ({ title = '', children = null, filters = false }) => {
           variants={containerVariants}
           className={classes}
         >
-          <Header filters={filters} />
+          <Header />
 
           <VisuallyHidden as="h1">
             {title !== '' ? `${title} - teia` : 'teia'}

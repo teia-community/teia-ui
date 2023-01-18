@@ -30,6 +30,7 @@ export const ResponsiveMasonry = ({ children }) => {
 
   return (
     <Masonry
+      // cellSpacing={150}
       breakpointCols={colums}
       className={styles.grid}
       columnClassName={styles.column}

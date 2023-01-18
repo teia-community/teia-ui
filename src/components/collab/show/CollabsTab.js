@@ -3,7 +3,6 @@ import get from 'lodash/get'
 import { gql } from 'graphql-request'
 import orderBy from 'lodash/orderBy'
 import { BaseTokenFieldsFragment } from '../../../data/api'
-import { Container } from '@atoms/layout'
 import TokenCollection from '@atoms/token-collection'
 import collabStyles from '../index.module.scss'
 import classNames from 'classnames'
@@ -14,7 +13,7 @@ export const CollabsTab = ({ wallet }) => {
   const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
 
   return (
-    <Container xlarge>
+    <>
       {hasUnverifiedTokens ? (
         <div className={toolbarStyles}>
           <label>
@@ -70,6 +69,6 @@ export const CollabsTab = ({ wallet }) => {
           }
         `}
       />
-    </Container>
+    </>
   )
 }
