@@ -1,10 +1,9 @@
-$font-large: 19.2px;
+$font-large: 18px;
 $font-body: 16px;
 $font-small: 13.33px;
 
-$font-large-mobile: 18px;
-$font-body-mobile: 16px;
-$font-small-mobile: 14.22px;
+$font-large-mobile: 16px;
+$font-small-mobile: 13px;
 
 $theme-duration: 0.333s;
 $letter-spacing: 0.015em;
@@ -14,7 +13,7 @@ $letter-spacing: 0.015em;
   --text-font: 'Iosevka', 'IBM Plex Mono', 'Courier New', monospace;
   --body-transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
-  --max-width: 1200px;
+  --max-width: 1800px;
 
   // Theme
   --gray-0: #ffffff;
