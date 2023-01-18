@@ -1,3 +1,6 @@
+@import '@styles/variables.scss';
+//@import '@styles/layout.scss';
+
 .base_toggle {
   word-break: keep-all;
   transition: background-color 133ms linear;
@@ -8,7 +11,7 @@
 }
 
 .box_toggle {
-  font-size: 16px;
+  font-size: $font-body;
   padding: 5px 10px;
   display: block;
   border: none;
