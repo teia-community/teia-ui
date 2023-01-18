@@ -31,7 +31,7 @@ export default function Collections({ showFilters, address }) {
           ]}
         />
       )}
-      <Container xlarge>
+      <>
         {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
         <TokenCollection
           namespace="collections"
@@ -109,7 +109,7 @@ export default function Collections({ showFilters, address }) {
             }
           `}
         />
-      </Container>
+      </>
     </div>
   )
 }

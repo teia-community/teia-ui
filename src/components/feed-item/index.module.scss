@@ -3,6 +3,7 @@
 .container {
   position: relative;
   max-width: 600px;
+  margin-bottom: 20px;
 
   .token_infos_container {
     width: 100%;
@@ -16,9 +17,10 @@
   &.masonry {
     .token_infos_container {
       margin: 0;
-      margin-bottom: 20px;
       * {
         font-size: 12px;
+        overflow: hidden;
+        max-width: 100%;
       }
     }
   }
