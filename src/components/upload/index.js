@@ -5,6 +5,14 @@ import styles from '@style'
 
 const Buffer = require('buffer').Buffer
 
+/**
+ * Upload component
+ * @param {Object} uploadProps
+ * @param {string} uploadProps.label - The displayed label
+ * @param {string} uploadProps.allowedTypes - A comma separated list of accepted types
+ * @param {boolean} uploadProps.allowedTypesLabel - A comma separated list of label of accepted types
+ * @param {import("@types").UploadCallback} uploadProps.onChange - on file change.
+ */
 export const Upload = ({
   label,
   allowedTypes,
