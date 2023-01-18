@@ -3,6 +3,7 @@
 
 .filter_bar {
   width: 100%;
+  max-width: var(--max-width);
   height: 56px;
   display: grid;
   grid-template-rows: 1fr;

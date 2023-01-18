@@ -10,11 +10,12 @@ import useSettings from '@hooks/use-settings'
 import laggy from '../../utils/swr-laggy-middleware'
 import { FeedToolbar } from '@components/header/feed_toolbar/FeedToolbar'
 import { IconCache } from '@utils/with-icon'
-import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import { useKeyboard } from '@hooks/use-keyboard'
+import { Loading } from '@atoms/loading/index'
+import { ErrorComponent } from '@atoms/error/ErrorComponent'
 
 /**
  * Single view, vertical feed
@@ -42,12 +43,12 @@ function MasonryView({ tokens }) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
-        <motion.div
-          exit={{ opacity: 0, x: -1000 }}
-          key={token.key || token.token_id}
-        >
-          <FeedItem nft={token} />
-        </motion.div>
+        // <motion.div
+        //   exit={{ opacity: 0, x: -1000 }}
+        //   key={token.key || token.token_id}
+        // >
+        <FeedItem key={token.key || token.token_id} nft={token} />
+        // </motion.div>
       ))}
     </ResponsiveMasonry>
   )
@@ -126,7 +127,15 @@ function TokenCollection({
   }
 
   if (!data) {
-    return <Container>loading...</Container>
+    return <Loading />
+  }
+  if (walletBlockMap === undefined) {
+    return (
+      <ErrorComponent
+        title="Could not retrieve lists"
+        message="Please try again in a few minutes."
+      />
+    )
   }
 
   const tokens = extractTokensFromResponse(data, {
@@ -159,11 +168,12 @@ function TokenCollection({
   const limitedTokens = tokens.slice(0, limit)
 
   return (
-    <div>
+    <div className={styles.feed_container}>
       {/* {context.collapsed && ( */}
       <IconCache.Provider value={{}}>
         <FeedToolbar />
         <InfiniteScroll
+          style={{ width: '100%' }}
           loadMore={() => {
             setSearchParams({
               ...Object.fromEntries(searchParams),
@@ -172,13 +182,11 @@ function TokenCollection({
           }}
           hasMore={limit < tokens.length}
         >
-          <AnimatePresence>
-            {viewMode === 'single' ? (
-              <SingleView tokens={limitedTokens} />
-            ) : (
-              <MasonryView tokens={limitedTokens} />
-            )}
-          </AnimatePresence>
+          {viewMode === 'single' ? (
+            <SingleView tokens={limitedTokens} />
+          ) : (
+            <MasonryView tokens={limitedTokens} />
+          )}
         </InfiniteScroll>
       </IconCache.Provider>
       {/* )} */}

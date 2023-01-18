@@ -1,12 +1,21 @@
+@import '@styles/layout.scss';
+
 .grid {
   display: flex;
-  margin-left: -5px;
+  margin-left: -16px;
   width: auto;
+  @include respond-to('tablet') {
+    margin-left: -20px;
+  }
 }
 
 .column {
-  padding-left: 5px;
+  padding-left: 16px;
   background-clip: padding-box;
+
+  @include respond-to('tablet') {
+    padding-left: 20px;
+  }
 
   & > * {
     position: relative;

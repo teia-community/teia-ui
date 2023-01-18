@@ -5,7 +5,7 @@ import { sum } from 'lodash'
  * @param {Object} editionOptions
  * @param {import("@types").NFT} editionOptions.nft
  **/
-const Editions = ({ prefix, nft }) => {
+const Editions = ({ prefix, nft, className }) => {
   const { walletBlockMap } = useSettings()
   const editionsForSale = sum(
     nft.listings
@@ -14,7 +14,7 @@ const Editions = ({ prefix, nft }) => {
   )
   const ed = editionsForSale || 'X'
   return (
-    <div>
+    <div className={className}>
       <p>
         {prefix ? (
           <span>

@@ -15,6 +15,7 @@ import { CollaboratorType } from '../constants'
 import { ParticipantList } from '../manage/ParticipantList'
 import { useContext, useEffect } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
+import { Loading } from '@atoms/loading/index'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
@@ -55,7 +56,7 @@ export const CollabDisplay = () => {
   }
 
   if (!data) {
-    return <Container>loading...</Container>
+    return <Loading />
   }
 
   const { split_contract, tokens } = data
