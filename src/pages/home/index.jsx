@@ -56,7 +56,7 @@ export function Home({ isSearch = false }) {
   useTwemoji()
 
   return (
-    <Page title="Home">
+    <Page feed title="Home">
       {/*
       <Container>
        <Input

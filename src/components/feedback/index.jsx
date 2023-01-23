@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { TeiaContext } from '../../context/TeiaContext'
+import { TeiaContext } from '@context'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
-import { fadeIn } from '../../utils/motion'
+import { fadeIn } from '@utils/motion'
 import styles from '@style'
 import Markdown from 'markdown-to-jsx'
 

@@ -1,4 +1,4 @@
-import { PATH } from '../../constants'
+import { PATH } from '@constants'
 import { Button } from '@atoms/button'
 import styles from '@style'
 

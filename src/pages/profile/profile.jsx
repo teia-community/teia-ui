@@ -2,7 +2,7 @@ import useClipboard from 'react-use-clipboard'
 import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms'
 import { walletPreview } from '@utils/string'
-import { Identicon } from '@atoms/identicons'
+import Identicon from '@atoms/identicons'
 import styles from '@style'
 
 export default function Profile({ user }) {

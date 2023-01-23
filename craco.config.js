@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-
+const { POSTCSS_MODES } = require('@craco/craco')
 const commitHash = require('child_process')
   .execSync('git rev-parse HEAD')
   .toString()
@@ -23,6 +23,9 @@ process.env['REACT_APP_BUILD_COMMIT'] = commitHash
 
 module.exports = {
   style: {
+    postcss: {
+      mode: 'file',
+    },
     modules: {
       // localIdentName: '[hash:base64]',
     },
@@ -36,6 +39,7 @@ module.exports = {
       '@data': path.resolve(__dirname, 'src/data'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@icons': path.resolve(__dirname, 'src/icons'),
+      '@pages': path.resolve(__dirname, 'src/pages'),
       '@style': './index.module.scss',
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@utils': path.resolve(__dirname, 'src/utils'),

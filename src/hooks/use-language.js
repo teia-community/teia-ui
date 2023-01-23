@@ -1,4 +1,4 @@
-import en from '../data/translations/en.json'
+import en from '@data/translations/en.json'
 
 /**
  * (WIP) Hook to manage languages/i18n

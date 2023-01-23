@@ -1,4 +1,4 @@
-import { MIMETYPE, MARKETPLACE_CONTRACT_V1 } from '../constants'
+import { MIMETYPE, MARKETPLACE_CONTRACT_V1 } from '@constants'
 
 /**
  * If a OBJKT is missing a relevant property, we filter it out.
