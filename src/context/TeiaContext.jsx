@@ -1,31 +1,26 @@
 import React, { createContext, Component } from 'react'
+// import { createContext, useContextSelector } from 'use-context-selector'
 import { BeaconWallet } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'
 import { MichelsonMap } from '@taquito/taquito'
-import { packData } from '@components/collab/functions'
+import { packData } from '@utils/swap'
 import {
   createProxySchema,
   teiaSwapSchema,
   teiaCancelSwapSchema,
-} from '@components/collab/constants'
+} from '@constants'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import { fetchJSON } from '@utils'
 
 import {
-  HEN_CONTRACT_FA2,
   MARKETPLACE_CONTRACT_V1,
-  MARKETPLACE_CONTRACT_V2,
   MARKETPLACE_CONTRACT_TEIA,
   MAIN_MARKETPLACE_CONTRACT,
   MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
   SWAP_TYPE_TEIA,
   SWAP_TYPE_HEN,
   BURN_ADDRESS,
-  SUBJKT_CONTRACT,
-  UNREGISTRY_CONTRACT,
-  PROXY_FACTORY_CONTRACT,
-  SIGNING_CONTRACT,
 } from '@constants'
 import ls from 'local-storage'
 import axios from 'axios'
@@ -226,16 +221,6 @@ class TeiaContextProviderClass extends Component {
       setProfileFeed: (pf) => {
         this.setState({ profileFeed: pf })
       },
-
-      subjkt: SUBJKT_CONTRACT,
-      v1: MARKETPLACE_CONTRACT_V1,
-      unregistry: UNREGISTRY_CONTRACT,
-      v2: MARKETPLACE_CONTRACT_V2,
-      objkts: HEN_CONTRACT_FA2,
-
-      // Collab additions
-      proxyFactoryAddress: PROXY_FACTORY_CONTRACT,
-      signingContractAddress: SIGNING_CONTRACT,
 
       subjktInfo: {},
       setSubjktInfo: (subjkt) => this.setState({ subjktInfo: subjkt }),
@@ -454,11 +439,6 @@ class TeiaContextProviderClass extends Component {
         ls.set('collab_address', proxyAddress)
         ls.set('collab_name', proxyName)
       },
-
-      // Do we need this? proxyAddress will push to UI via context
-      getProxy: () => this.state.proxyAddress,
-
-      objkt: MARKETPLACE_CONTRACT_V1,
 
       mint: async (tz, amount, cid, royalties) => {
         // show feedback component with followind message and progress indicator
@@ -794,6 +774,7 @@ class TeiaContextProviderClass extends Component {
         })
       },
 
+      /*
       /*
             airgap/thanos interop methods
       */

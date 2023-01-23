@@ -3,7 +3,7 @@ import { BeneficiariesUI } from './create/BeneficiariesUI'
 import { CollaboratorRow } from './create/CollaboratorRow'
 import { CollaboratorTable } from './create/CollaboratorTable'
 import { ShareAllocationNotice } from './create/ShareAllocationNotice'
-import { collaboratorTemplate } from './constants'
+import { collaboratorTemplate } from '@constants'
 
 const CloseIcon = () => {
   return (

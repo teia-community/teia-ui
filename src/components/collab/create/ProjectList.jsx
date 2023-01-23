@@ -2,7 +2,7 @@ import { useState } from 'react'
 import classNames from 'classnames'
 import { Secondary } from '@atoms/button'
 import styles from '../index.module.scss'
-import { ossProjects } from '../constants'
+import { ossProjects } from '@constants'
 
 export const ProjectList = ({ beneficiaries, onSelect }) => {
   const [showList, setShowList] = useState(false)
