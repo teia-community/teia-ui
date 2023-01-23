@@ -8,7 +8,7 @@ import { memo } from 'react'
  * @param {Object} checkboxProps
  * @param {string} checkboxProps.label - The text or icon used for the toggle
  * @param {boolean} checkboxProps.initial - The initial value
- * @param {boolean} checkboxProps.toggled - If set the control becomes controlled
+ * @param {boolean} checkboxProps.checked - If set the control becomes controlled
  * @param {boolean} checkboxProps.style - Style object (as a last resort)
  * @param {import("@types").ToggleKind} checkboxProps.kind - The type of toggle
  * @param {React.EffectCallback} checkboxProps.onCheck

@@ -1,17 +1,15 @@
 import Button from '@atoms/button/Button'
-import Primary from '@atoms/button/Primary'
-import { useLocation } from 'react-router'
 import styles from '@style'
+import classnames from 'classnames'
 
-export function Tab({ children, to }) {
-  const location = useLocation()
-  const current = location.pathname.split('/')
+export function Tab({ children, to, selected }) {
+  const classes = classnames({
+    [styles.tab]: true,
+    [styles.selected]: selected,
+  })
+
   return (
-    <Button
-      className={styles.tab}
-      to={to}
-      selected={current && current[current.length - 1] === to}
-    >
+    <Button className={classes} to={to} selected={selected}>
       {children}
     </Button>
   )
