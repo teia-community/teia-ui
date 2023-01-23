@@ -1,6 +1,7 @@
 import styles from '@style'
+import { memo } from 'react'
 
-export const Checkbox = ({
+const Checkbox = ({
   name,
   label,
   onChange = () => null,
@@ -25,3 +26,5 @@ export const Checkbox = ({
     <span className={styles.checkmark}></span>
   </label>
 )
+
+export default memo(Checkbox)

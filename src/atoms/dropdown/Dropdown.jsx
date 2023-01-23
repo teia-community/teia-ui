@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 
 import useBodyClass from '@hooks/use-body-class'
@@ -9,7 +9,7 @@ import { useClickOutside } from 'hooks/use-click-outside'
 import classnames from 'classnames'
 import React from 'react'
 
-export function DropDown({ children, setOpen, vertical, menuID, left }) {
+function DropDown({ children, setOpen, vertical, menuID, left }) {
   useBodyClass('overlay')
 
   const dropdownRef = useRef(null)
@@ -42,4 +42,4 @@ export function DropDown({ children, setOpen, vertical, menuID, left }) {
   )
 }
 
-export default DropDown
+export default memo(DropDown)

@@ -1,7 +1,8 @@
 import classnames from 'classnames'
 import styles from '@style'
+import { memo } from 'react'
 
-export const Primary = (props) => {
+const Primary = (props) => {
   //{ children = null, selected, menu, left, label = '' }) => {
   const classes = classnames({
     [styles.primary]: true,
@@ -19,3 +20,5 @@ export const Primary = (props) => {
     </div>
   )
 }
+
+export default memo(Primary)

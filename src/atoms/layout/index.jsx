@@ -1,2 +1,2 @@
 export { Page } from './page'
-export { Container } from './container'
+export { default as Container } from './container'
