@@ -60,11 +60,11 @@ export const Config = () => {
       if (cur_address) {
         setAddress(cur_address)
         const res = await fetchTz(address)
-        context.subjktInfo = res
-        console.debug('Subjkt Infos:', context.subjktInfo)
+        context.setSubjktInfo(res)
+        console.debug('Subjkt Infos:', res)
 
-        if (context.subjktInfo) {
-          let { metadata, name } = context.subjktInfo
+        if (res) {
+          let { metadata, name } = res
 
           if (name) setSubjkt(name)
 
@@ -259,43 +259,41 @@ export const Config = () => {
   return (
     !loading && (
       <Page large={context.banner != null}>
-        <Container>
-          <Identicon address={address} logo={identicon} />
-          <input type="file" onChange={onFileChange} title="avatar file" />
-          <Input
-            name="subjkt"
-            value={subjkt}
-            onChange={handleChange}
-            placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
-            label="Username"
-            pattern="^[a-z0-9-._]*$"
-          />
-          <Input
-            name="description"
-            onChange={handleChange}
-            placeholder="(Max length 500 characters)"
-            label="Description"
-            value={description}
-          />
-          <Button shadow_box onClick={subjkt_config}>
-            Save Profile
-          </Button>
-          <div style={{ display: 'inline' }}>
-            <p style={{ paddingTop: '7.5px' }}>
-              <span>Link your Twitter, Discord, GitHub, and website with </span>
-              <span>
-                <a
-                  style={{ fontWeight: 'bold' }}
-                  target="_blank"
-                  href="https://tzprofiles.com"
-                  rel="noreferrer"
-                >
-                  Tezos Profiles
-                </a>
-              </span>
-            </p>
-          </div>
-        </Container>
+        <Identicon address={address} logo={identicon} />
+        <input type="file" onChange={onFileChange} title="avatar file" />
+        <Input
+          name="subjkt"
+          value={subjkt}
+          onChange={handleChange}
+          placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+          label="Username"
+          pattern="^[a-z0-9-._]*$"
+        />
+        <Input
+          name="description"
+          onChange={handleChange}
+          placeholder="(Max length 500 characters)"
+          label="Description"
+          value={description}
+        />
+        <Button shadow_box onClick={subjkt_config}>
+          Save Profile
+        </Button>
+        <div style={{ display: 'inline' }}>
+          <p style={{ paddingTop: '7.5px' }}>
+            <span>Link your Twitter, Discord, GitHub, and website with </span>
+            <span>
+              <a
+                style={{ fontWeight: 'bold' }}
+                target="_blank"
+                href="https://tzprofiles.com"
+                rel="noreferrer"
+              >
+                Tezos Profiles
+              </a>
+            </span>
+          </p>
+        </div>
       </Page>
     )
   )

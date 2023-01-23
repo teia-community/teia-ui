@@ -21,7 +21,7 @@ export default function Sync() {
   }, [context.acc])
 
   const locationSync = (state) => {
-    const address = context.getProxy() || context.acc.address
+    const address = context.proxyAddress || context.acc.address
     switch (state) {
       case '/tz':
       case '/friends':
