@@ -19,14 +19,18 @@
     align-items: center;
 
     flex-grow: 1;
-    width: 100%;
-    max-width: 100vw;
-    max-width: var(--max-width);
+    width: 100vw;
+    max-width: var(--max-width-interal);
   }
 
   // container: page / inline-size;
 
   &.large {
     /*padding: 120px 0 0 0;*/
+  }
+  &.feed {
+    .content {
+      max-width: var(--max-width);
+    }
   }
 }

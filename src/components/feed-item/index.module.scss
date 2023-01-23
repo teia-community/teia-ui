@@ -18,7 +18,7 @@
     .token_infos_container {
       margin: 0;
       * {
-        font-size: 12px;
+        font-size: $font-small;
         overflow: hidden;
         max-width: 100%;
       }

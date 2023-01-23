@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
-import { BaseTokenFieldsFragment } from '../../data/api'
-import { HEN_CONTRACT_FA2 } from '../../constants'
+import { BaseTokenFieldsFragment } from '@data/api'
+import { HEN_CONTRACT_FA2 } from '@constants'
 
 function TagFeed({ tag, ...otherProps }) {
   return (
