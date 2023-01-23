@@ -1,6 +1,7 @@
 import styles from '@style'
+import { memo } from 'react'
 
-export const Textarea = ({
+const Textarea = ({
   type = 'text',
   placeholder = 'placeholder',
   name = 'input-name-not-set',
@@ -33,3 +34,5 @@ export const Textarea = ({
     {children}
   </div>
 )
+
+export default memo(Textarea)

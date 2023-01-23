@@ -1,5 +1,5 @@
 import { Button } from '@atoms/button'
-import { MarketplaceLabel } from '@atoms/marketplace-labels'
+import MarketplaceLabel from '@atoms/marketplace-labels'
 import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import { useContext } from 'react'
