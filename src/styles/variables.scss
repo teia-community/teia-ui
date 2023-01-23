@@ -1,6 +1,6 @@
 $font-large: 18px;
 $font-body: 16px;
-$font-small: 13.33px;
+$font-small: 13px;
 
 $font-large-mobile: 16px;
 $font-small-mobile: 13px;
@@ -14,6 +14,7 @@ $letter-spacing: 0.015em;
   --body-transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
   --max-width: 1800px;
+  --max-width-interal: 1200px;
 
   // Theme
   --gray-0: #ffffff;

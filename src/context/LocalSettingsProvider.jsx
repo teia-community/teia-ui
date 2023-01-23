@@ -14,9 +14,13 @@ export const LocalSettingsProvider = (props) => {
     'settings:nsfwFriendly',
     false
   )
+  const [
+    photosensitiveFriendly,
+    setPhotosensitiveFriendly,
+    rmPhotosensitiveFriendly,
+  ] = useLocalStorage('settings:photosensitiveFriendly')
 
   const [theme, setTheme, rmTheme] = useLocalStorage('settings:theme', 'dark')
-
   const [zen, setZen, rmZen] = useLocalStorage('settings:zen', false)
 
   useEffect(() => {
@@ -49,6 +53,9 @@ export const LocalSettingsProvider = (props) => {
         nsfwFriendly,
         setNsfwFriendly,
         rmNsfwFriendly,
+        photosensitiveFriendly,
+        setPhotosensitiveFriendly,
+        rmPhotosensitiveFriendly,
         zen,
         setZen,
         rmZen,

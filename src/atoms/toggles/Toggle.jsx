@@ -4,6 +4,7 @@ import styles from '@style'
 import { toggleType } from './index'
 import { useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
+
 /**
  * Core toggle used by variants
  * @param {Object} coreToggleProps

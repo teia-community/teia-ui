@@ -10,9 +10,10 @@ import { Footer } from '@components/footer'
 import { LocalSettingsProvider } from '@context'
 import { IconCache } from '@utils/with-icon'
 
-export const Page = ({ title = '', children = null }) => {
+export const Page = ({ title = '', children = null, feed, className }) => {
   const classes = classnames({
     [styles.container]: true,
+    [styles.feed]: feed,
   })
   // const [footerVisible, setFooterVisible] = useState(false)
   // const { y } = useWindowScroll()
@@ -25,30 +26,29 @@ export const Page = ({ title = '', children = null }) => {
   // motion
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1.5 } },
+    visible: { opacity: 1, transition: { duration: 0.333 } },
     exit: { opacity: 0, transition: { ease: 'easeInOut' } },
   }
   return (
     <LocalSettingsProvider>
       <IconCache.Provider value={{}}>
         <FeedbackComponent />
+        <Header />
         <motion.main
           initial="hidden"
           animate="visible"
           exit="exit"
           variants={containerVariants}
-          className={classes}
+          className={`${classes} ${className}`}
         >
-          <Header />
-
           <VisuallyHidden as="h1">
             {title !== '' ? `${title} - teia` : 'teia'}
           </VisuallyHidden>
           <div className={styles.content}>{children}</div>
-          <AnimatePresence>
-            {/*footerVisible &&*/ <Footer menu />}
-          </AnimatePresence>
         </motion.main>
+        <AnimatePresence>
+          {/*footerVisible &&*/ <Footer menu />}
+        </AnimatePresence>
       </IconCache.Provider>
     </LocalSettingsProvider>
   )

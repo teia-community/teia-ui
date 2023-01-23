@@ -1,6 +1,6 @@
 import * as fflate from 'fflate'
 import mime from 'mime-types'
-import { MIMETYPE } from '../constants'
+import { MIMETYPE } from '@constants'
 
 export async function prepareFilesFromZIP(buffer) {
   console.debug('Preparing files from ZIP')
