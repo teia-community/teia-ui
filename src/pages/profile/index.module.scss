@@ -42,6 +42,7 @@
   display: flex;
   min-width: 335px;
   width: 100%;
+  max-width: var(--max-width-internal);
   //padding: 6px 0;
   border-bottom: 1px solid var(--border-color);
   transition: border-color #{$theme-duration} ease-out;
@@ -233,12 +234,4 @@ span[data-tooltip][data-position='top']:after {
 
 .blur {
   filter: blur(1.1rem);
-}
-
-.tab {
-  padding: 0.4em;
-  &.selected {
-    border-bottom: 1px solid var(--text-color);
-    background-color: red;
-  }
 }

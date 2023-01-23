@@ -1,0 +1,16 @@
+// .tab {
+//   padding: 0.4em;
+//   &.selected {
+//     border-bottom: 1px solid var(--text-color);
+//     background-color: red;
+//   }
+// }
+
+.tab {
+  padding: 0.4em;
+  border-bottom: 1px solid var(--gray-20);
+  &:hover {
+    text-decoration: none;
+    border-bottom: 1px solid var(--gray-60);
+  }
+}

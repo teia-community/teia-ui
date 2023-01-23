@@ -10,7 +10,7 @@
   }
 
   width: 100%;
-  max-width: var(--max-width-interal);
+  max-width: var(--max-width-internal);
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out, opacity #{$theme-duration} ease-out;

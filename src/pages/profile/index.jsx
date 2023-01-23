@@ -15,21 +15,7 @@ import Creations from './creations'
 import Collections from './collections'
 import styles from '@style'
 import { ErrorComponent } from '@atoms/error'
-
-function Tab({ children, to }) {
-  const location = useLocation()
-  const current = location.pathname.split('/')
-  return (
-    <Button to={to} end>
-      <Primary
-        className={styles.tab}
-        selected={current && current[current.length - 1] === to}
-      >
-        {children}
-      </Primary>
-    </Button>
-  )
-}
+import { Tab } from '@atoms/tab'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -93,7 +79,7 @@ export default function Display() {
   }
 
   return (
-    <Page title={user.alias}>
+    <Page feed title={user.alias}>
       <Profile user={user} />
 
       {user.address.substr(0, 2) !== 'KT' && (
