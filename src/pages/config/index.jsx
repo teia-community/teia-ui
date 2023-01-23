@@ -1,14 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import get from 'lodash/get'
 import React, { useContext, useEffect, useState } from 'react'
-import { Container, Page } from '@atoms/layout'
-import { Input } from '@atoms/input'
+import { Page } from '@atoms/layout'
+import { Checkbox, Input } from '@atoms/input'
 import { Button } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
 import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 import { TeiaContext } from '@context/TeiaContext'
 import _ from 'lodash'
+import styles from '@style'
+import useLocalSettings from '@hooks/use-local-settings'
+import Select from '@atoms/select/index'
+import { THEMES, THEME_OPTIONS } from '@constants'
 const query_tz = `
 query addressQuery($address: String!) {
   teia_users(where: { user_address: {_eq: $address}}) {
@@ -49,17 +53,25 @@ export const Config = () => {
   const [identicon, setIdenticon] = useState('')
   const [selectedFile, setSelectedFile] = useState('')
 
+  const {
+    theme,
+    setTheme,
+    nsfwFriendly,
+    setNsfwFriendly,
+    photosensitiveFriendly,
+    setPhotosensitiveFriendly,
+  } = useLocalSettings()
   useEffect(() => {
     const init = async () => {
-      await context.syncTaquito()
+      const address = await context.syncTaquito()
       const { acc, proxyAddress } = context
 
       // Maybe use proxy address here
-      const cur_address = proxyAddress || acc?.address
-
+      const cur_address = proxyAddress || address || acc?.address
+      console.log(address)
       if (cur_address) {
         setAddress(cur_address)
-        const res = await fetchTz(address)
+        const res = await fetchTz(cur_address)
         context.setSubjktInfo(res)
         console.debug('Subjkt Infos:', res)
 
@@ -259,23 +271,29 @@ export const Config = () => {
   return (
     !loading && (
       <Page large={context.banner != null}>
-        <Identicon address={address} logo={identicon} />
-        <input type="file" onChange={onFileChange} title="avatar file" />
-        <Input
-          name="subjkt"
-          value={subjkt}
-          onChange={handleChange}
-          placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
-          label="Username"
-          pattern="^[a-z0-9-._]*$"
-        />
-        <Input
-          name="description"
-          onChange={handleChange}
-          placeholder="(Max length 500 characters)"
-          label="Description"
-          value={description}
-        />
+        <div className={styles.subjkt_editor}>
+          <div className={styles.fields}>
+            <Identicon address={address} logo={identicon} />
+            <input type="file" onChange={onFileChange} title="avatar file" />
+          </div>
+          <div className={styles.fields}>
+            <Input
+              name="subjkt"
+              value={subjkt}
+              onChange={handleChange}
+              placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+              label="Username"
+              pattern="^[a-z0-9-._]*$"
+            />
+            <Input
+              name="description"
+              onChange={handleChange}
+              placeholder="(Max length 500 characters)"
+              label="Description"
+              value={description}
+            />
+          </div>
+        </div>
         <Button shadow_box onClick={subjkt_config}>
           Save Profile
         </Button>
@@ -293,6 +311,32 @@ export const Config = () => {
               </a>
             </span>
           </p>
+        </div>
+
+        <div className={styles.localSettings}>
+          <span className="line-horizontal" />
+          <h1>Local Settings</h1>
+          <span>
+            <p>These are only stored locally, in your cache browser.</p>
+          </span>
+          <div className={styles.fields}>
+            <Checkbox
+              checked={nsfwFriendly}
+              onCheck={setNsfwFriendly}
+              label={'Allow NSFW on feeds'}
+            />
+            <Checkbox
+              checked={photosensitiveFriendly}
+              onCheck={setPhotosensitiveFriendly}
+              label={'Allow Photosensitive on feeds'}
+            />
+            <Select
+              label="Theme"
+              value={{ label: THEMES[theme], value: theme }}
+              onChange={(e) => setTheme(e.value)}
+              options={THEME_OPTIONS}
+            />
+          </div>
         </div>
       </Page>
     )

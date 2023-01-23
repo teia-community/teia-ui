@@ -26,7 +26,7 @@
     width: 20px;
     background-color: var(--background-color);
     //box-shadow: 1px 1px 0px 1px var(--text-color);
-    box-shadow: 1px 1px 0px 1px rgb(239, 239, 239);
+    box-shadow: 1px 1px 0px 1px var(--gray-70);
   }
   input:focus-visible ~ .checkmark {
     opacity: 0.4;
