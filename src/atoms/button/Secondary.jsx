@@ -1,7 +1,8 @@
 import classnames from 'classnames'
 import styles from '@style'
+import { memo } from 'react'
 
-export const Secondary = ({ children = null, selected, label = '' }) => {
+const Secondary = ({ children = null, selected, label = '' }) => {
   const classes = classnames({
     [styles.secondary]: true,
     [styles.selected]: selected,
@@ -12,3 +13,5 @@ export const Secondary = ({ children = null, selected, label = '' }) => {
     </div>
   )
 }
+
+export default memo(Secondary)

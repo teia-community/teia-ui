@@ -1,6 +1,7 @@
 import styles from '@style'
+import { memo } from 'react'
 
-export const Input = ({
+const Input = ({
   type = 'text',
   placeholder = 'placeholder',
   name,
@@ -41,3 +42,5 @@ export const Input = ({
     {children}
   </div>
 )
+
+export default memo(Input)

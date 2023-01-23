@@ -1,3 +1,3 @@
-export { Button } from './Button'
-export { Primary } from './Primary'
-export { Secondary } from './Secondary'
+export { default as Button } from './Button'
+export { default as Primary } from './Primary'
+export { default as Secondary } from './Secondary'

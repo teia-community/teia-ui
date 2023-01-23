@@ -7,7 +7,6 @@ import { TopBanner } from './TopBanner'
 
 export const EventBanner = () => {
   const [content, setContent] = useState()
-
   const [config, setConfig] = useState()
   useEffect(() => {
     async function getBanner() {

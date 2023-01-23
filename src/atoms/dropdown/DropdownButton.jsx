@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import styles from '@style'
 import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 
-export function DropdownButton({
+function DropdownButton({
   menuID,
   direction = 'right',
   label,
@@ -53,3 +53,5 @@ export function DropdownButton({
     </motion.div>
   )
 }
+
+export default memo(DropdownButton)
