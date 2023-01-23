@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Container } from '@atoms/layout'
 import styles from '../index.module.scss'
-import { groupShareTotal } from '../functions'
+import { groupShareTotal } from '@utils/collab'
 import { Button } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { Fragment } from 'react'
