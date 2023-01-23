@@ -15,7 +15,7 @@ import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
 import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
-import { ErrorComponent } from '@atoms/error/ErrorComponent'
+import { ErrorComponent } from '@atoms/error'
 
 const TABS = [
   { title: 'Info', component: Info },
