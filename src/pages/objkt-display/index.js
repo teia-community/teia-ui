@@ -32,7 +32,7 @@ export const ObjktDisplay = () => {
   const { walletBlockMap } = useSettings()
   const [tabIndex, setTabIndex] = useState(0)
   const address = context.acc?.address
-  const proxy = context.getProxy()
+  const proxy = context.proxyAddress
   const { nsfwMap, underReviewMap } = useSettings()
 
   const { data: nft, error } = useSWR(
