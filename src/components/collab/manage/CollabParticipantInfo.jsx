@@ -1,11 +1,10 @@
 import React, { Fragment, useContext } from 'react'
 import get from 'lodash/get'
-import { TeiaContext } from '../../../context/TeiaContext'
+import { TeiaContext } from '@context'
 import { Button } from '@atoms/button'
 import classNames from 'classnames'
 import styles from '../index.module.scss'
-import { CollaboratorType } from '../constants'
-import { PATH } from '../../../constants'
+import { CollaboratorType, PATH } from '@constants'
 import ParticipantList from './ParticipantList'
 import { Link } from 'react-router-dom'
 

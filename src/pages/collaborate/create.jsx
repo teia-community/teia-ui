@@ -1,5 +1,5 @@
 import { useState, useEffect, Fragment, useContext } from 'react'
-import { groupShareTotal, validAddress } from '@components/collab/functions'
+import { groupShareTotal, validAddress } from '@utils/collab'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { CollaboratorTable, BeneficiariesUI } from '@components/collab'

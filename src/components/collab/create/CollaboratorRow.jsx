@@ -6,7 +6,7 @@ import inputStyles from '@atoms/input/index.module.scss'
 import { CloseIcon } from '..'
 import classNames from 'classnames'
 import { GetUserMetadata } from '@data/api'
-import { validAddress } from '../functions'
+import { validAddress } from '@utils/collab'
 
 export const CollaboratorRow = ({
   collaborator,

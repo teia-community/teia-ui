@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import classnames from 'classnames'
-import { TeiaContext } from '../../../context/TeiaContext'
+import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import './index.css'
 
