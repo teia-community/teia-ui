@@ -1,2 +1,2 @@
-export { DropDown } from './Dropdown'
-export { DropdownButton } from './DropdownButton'
+export { default as DropDown } from './Dropdown'
+export { default as DropdownButton } from './DropdownButton'

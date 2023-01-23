@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import styles from '@style'
 import { Link } from 'react-router-dom'
+import { memo } from 'react'
 
 /**
  * Core button style (used for links, buttons, and <a>)
@@ -18,7 +19,7 @@ import { Link } from 'react-router-dom'
  * @param {React.ReactNode} buttonProps.children - children
  *
  */
-export const Button = ({
+const Button = ({
   to = null,
   href = null,
   onClick = () => null,
@@ -73,3 +74,5 @@ export const Button = ({
     </button>
   )
 }
+
+export default memo(Button)

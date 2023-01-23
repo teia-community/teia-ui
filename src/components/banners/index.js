@@ -1,2 +1,2 @@
 export { EventBanner } from './EventBanner'
-export { BottomBanner } from './BottomBanner'
+export { default as BottomBanner } from './BottomBanner'

@@ -1,5 +1,6 @@
 import useSettings from '@hooks/use-settings'
 import { sum } from 'lodash'
+import { memo } from 'react'
 
 /**
  * @param {Object} editionOptions
@@ -33,4 +34,4 @@ const Editions = ({ prefix, nft, className }) => {
   )
 }
 
-export default Editions
+export default memo(Editions)

@@ -1,7 +1,8 @@
 import { Button, Primary } from '@atoms/button'
 import styles from '@style'
+import { memo } from 'react'
 
-export const ErrorComponent = ({ title = 'Ooops!', message }) => {
+const ErrorComponent = ({ title = 'Ooops!', message }) => {
   return (
     <div className={styles.container}>
       <div className={styles.msg_box}>
@@ -19,3 +20,5 @@ export const ErrorComponent = ({ title = 'Ooops!', message }) => {
     </div>
   )
 }
+
+export default memo(ErrorComponent)
