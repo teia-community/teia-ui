@@ -3,12 +3,14 @@
 
 .container {
   position: relative;
+
   &.pinned {
     position: fixed;
     bottom: 0;
   }
 
   width: 100%;
+  max-width: var(--max-width-interal);
   background-color: var(--background-color);
   transition: background-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out, opacity #{$theme-duration} ease-out;
@@ -29,12 +31,6 @@
     grid-template-areas: 'Logo Copyright Menu Tools';
     grid-template-columns: 1fr 2fr repeat(2, 1fr);
   }
-
-  // & > * {
-  //   display: flex;
-  //   align-items: center;
-  //   width: 100%;
-  // }
 }
 
 .minimal {

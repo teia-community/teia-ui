@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
-import { BaseTokenFieldsFragment } from '../../data/api'
-import { HEN_CONTRACT_FA2 } from '../../constants'
+import { BaseTokenFieldsFragment } from '@data/api'
+import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
 function MimeTypeFeed({ namespace, mimeTypes }) {

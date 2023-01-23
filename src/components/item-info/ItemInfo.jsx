@@ -7,22 +7,14 @@ import { TeiaContext } from '@context/TeiaContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import collabStyles from '../collab/index.module.scss'
-// TODO: Properly test collab UIs with loadables
-// import { CollabIssuerInfo } from '../collab/show/CollabIssuerInfo'
-// import { SigningUI } from '../collab/sign/SigningUI'
-// import { SigningSummary } from '../collab/show/SigningSummary'
 import { CollaboratorType } from '../collab/constants'
 import useSettings from '@hooks/use-settings'
-import loadable from '@loadable/component'
 
-const CollabIssuerInfo = loadable(() =>
-  import('../collab/show/CollabIssuerInfo')
-)
-const SigningUI = loadable(() => import('../collab/sign/SigningUI'))
-const SigningSummary = loadable(() => import('../collab/show/SigningSummary'))
-const CheapestButton = loadable(() => import('./CheapestButton'))
-const Editions = loadable(() => import('./Editions'))
-
+import SigningUI from '@components/collab/sign/SigningUI'
+import SigningSummary from '@components/collab/show/SigningSummary'
+import CheapestButton from './CheapestButton'
+import CollabIssuerInfo from '@components/collab/show/CollabIssuerInfo'
+import Editions from './Editions'
 /**
  * @param {Object} itemInfoOptions
  * @param {import("@types").NFT} itemInfoOptions.nft
@@ -44,11 +36,8 @@ const ItemInfo = ({ nft }) => {
   const isCollab = get(nft, 'artist_profile.is_split')
   const verifiedSymbol = isCollab && isSigned ? '✓ ' : '⚠️'
   const verifiedStatus = isCollab && isSigned ? 'VERIFIED' : 'UNVERIFIED'
-  const shareholders = get(
-    nft,
-    'artist_profile.split_contract.shareholders',
-    []
-  )
+  const shareholders = nft?.artist_profile?.split_contract?.shareholders || []
+
   const isCoreParticipant = isCollab
     ? shareholders.some(
         ({ shareholder_address, holder_type }) =>
@@ -71,24 +60,21 @@ const ItemInfo = ({ nft }) => {
     collabStyles.flexBetween,
     collabStyles.alignStart
   )
-
   return (
     <>
       <div className={styles.container}>
         <div className={styles.edition}>
           <div className={collabStyles.relative}>
             <div className={styles.inline}>
-              {isCollab && <CollabIssuerInfo creator={nft.artist_profile} />}
-
-              {!isCollab && (
+              {isCollab ? (
+                <CollabIssuerInfo creator={nft.artist_profile} />
+              ) : (
                 <Button to={`${PATH.ISSUER}/${nft.artist_address}`}>
-                  {get(nft, 'artist_profile.name') ? (
-                    <Primary>
-                      {encodeURI(get(nft, 'artist_profile.name'))}
-                    </Primary>
-                  ) : (
-                    <Primary>{walletPreview(nft.artist_address)}</Primary>
-                  )}
+                  <Primary>
+                    {nft.artist_profile.name
+                      ? nft.artist_profile.name
+                      : walletPreview(nft.artist_address)}
+                  </Primary>
                 </Button>
               )}
             </div>

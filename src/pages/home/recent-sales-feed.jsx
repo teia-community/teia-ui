@@ -1,8 +1,8 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
 import TokenCollection from '@atoms/token-collection'
-import { BaseTokenFieldsFragment } from '../../data/api'
-import { HEN_CONTRACT_FA2 } from '../../constants'
+import { BaseTokenFieldsFragment } from '@data/api'
+import { HEN_CONTRACT_FA2 } from '@constants'
 
 function RecentSalesFeed() {
   return (
