@@ -7,6 +7,7 @@
   margin: auto;
   min-height: 100vh;
   min-width: 320px;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -19,15 +20,12 @@
     align-items: center;
 
     flex-grow: 1;
-    width: 100vw;
+    width: 100%;
     max-width: var(--max-width-internal);
   }
 
   // container: page / inline-size;
 
-  &.large {
-    /*padding: 120px 0 0 0;*/
-  }
   &.feed {
     .content {
       max-width: var(--max-width);

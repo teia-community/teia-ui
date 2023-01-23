@@ -169,11 +169,9 @@ function TokenCollection({
 
   return (
     <div className={styles.feed_container}>
-      {/* {context.collapsed && ( */}
       <IconCache.Provider value={{}}>
         <FeedToolbar />
         <InfiniteScroll
-          style={{ width: '100%' }}
           loadMore={() => {
             setSearchParams({
               ...Object.fromEntries(searchParams),
@@ -189,7 +187,6 @@ function TokenCollection({
           )}
         </InfiniteScroll>
       </IconCache.Provider>
-      {/* )} */}
     </div>
   )
 }

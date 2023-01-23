@@ -1,16 +1,12 @@
-// .tab {
-//   padding: 0.4em;
-//   &.selected {
-//     border-bottom: 1px solid var(--text-color);
-//     background-color: red;
-//   }
-// }
-
 .tab {
   padding: 0.4em;
-  border-bottom: 1px solid var(--gray-20);
-  &:hover {
+  //border-bottom: 1px solid var(--gray-20);
+
+  &:hover,
+  &.selected {
     text-decoration: none;
+    // offset the bottom line by the border size.
+    margin-bottom: -1px;
     border-bottom: 1px solid var(--gray-60);
   }
 }

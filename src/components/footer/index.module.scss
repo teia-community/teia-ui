@@ -3,7 +3,7 @@
 
 .container {
   position: relative;
-
+  pointer-events: all;
   &.pinned {
     position: fixed;
     bottom: 0;
