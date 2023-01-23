@@ -1,5 +1,5 @@
 import styles from '../index.module.scss'
-import { ossProjects } from '../constants'
+import { ossProjects } from '@constants'
 import { TipSelector } from './TipSelector'
 
 export const TipJar = ({ tips, setTips }) => {

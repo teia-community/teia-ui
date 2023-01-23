@@ -7,7 +7,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import collabStyles from '../collab/index.module.scss'
-import { CollaboratorType } from '../collab/constants'
+import { CollaboratorType } from '@constants'
 import useSettings from '@hooks/use-settings'
 
 import SigningUI from '@components/collab/sign/SigningUI'
