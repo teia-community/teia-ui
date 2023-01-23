@@ -747,21 +747,23 @@ class TeiaContextProviderClass extends Component {
         // We check the storage and only do a permission request if we don't have an active account yet
         // This piece of code should be called on startup to "load" the current address from the user
         // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
-        const activeAccount = await wallet.client.getActiveAccount()
-        // console.log(activeAccount)
+        let activeAccount = await wallet.client.getActiveAccount()
+
         if (activeAccount === undefined) {
           console.log('permissions')
           await wallet.requestPermissions({ network })
+          activeAccount = await wallet.client.getActiveAccount()
         }
 
         this.setState({
           Tezos,
           address: await wallet.getPKH(),
-          acc: await wallet.client.getActiveAccount(),
+          acc: activeAccount,
           wallet,
         })
         this.state.setAuth(await wallet.getPKH())
         // console.log(this.state)
+        return activeAccount.address
       },
 
       disconnect: async () => {

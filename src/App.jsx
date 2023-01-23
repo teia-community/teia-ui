@@ -17,6 +17,7 @@ import { Friends } from './pages/friends'
 import { Terms } from './pages/terms'
 import { AnimatePresence } from 'framer-motion'
 import { Debug } from '@atoms/debug'
+import { LocalSettingsProvider } from '@context'
 
 const App = () => {
   const location = useLocation()
@@ -28,29 +29,31 @@ const App = () => {
 
   return (
     <TeiaProvider>
-      <Debug />
-      <AnimatePresence exitBeforeEnter initial={false}>
-        <Routes location={location} key={location.pathname}>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/feed/*" element={<Home />} />
-          <Route path="/search/*" element={<Home isSearch />} />
-          <Route path="/friends/:address" element={<Friends />} />
-          <Route path="/tz/:address/*" element={<Display />} />
-          <Route path="/kt/:id" element={<CollabDisplay />} />
-          <Route path="/collab/:name" element={<CollabDisplay />} />
-          <Route exact path="/about" element={<About />} />
-          <Route exact path="/terms" element={<Terms />} />
-          <Route exact path="/faq" element={<FAQ />} />
-          <Route path="/sync" element={<Sync />} />
-          <Route exact path="/mint" element={<Mint />} />
-          <Route path="/collaborate" element={<Collaborate />} />
-          <Route path="/objkt/:id" element={<ObjktDisplay />} />
-          <Route exact path="/config" element={<Config />} />
-          <Route path="/tags/:tag" element={<Tags />} />
-          <Route path="/:id/:collection?/*" element={<Display />} />
-          <Route path="/:subjkt/*" element={<Display />} />
-        </Routes>
-      </AnimatePresence>
+      <LocalSettingsProvider>
+        <Debug />
+        <AnimatePresence exitBeforeEnter initial={false}>
+          <Routes location={location} key={location.pathname}>
+            <Route exact path="/" element={<Home />} />
+            <Route path="/feed/*" element={<Home />} />
+            <Route path="/search/*" element={<Home isSearch />} />
+            <Route path="/friends/:address" element={<Friends />} />
+            <Route path="/tz/:address/*" element={<Display />} />
+            <Route path="/kt/:id" element={<CollabDisplay />} />
+            <Route path="/collab/:name" element={<CollabDisplay />} />
+            <Route exact path="/about" element={<About />} />
+            <Route exact path="/terms" element={<Terms />} />
+            <Route exact path="/faq" element={<FAQ />} />
+            <Route path="/sync" element={<Sync />} />
+            <Route exact path="/mint" element={<Mint />} />
+            <Route path="/collaborate" element={<Collaborate />} />
+            <Route path="/objkt/:id" element={<ObjktDisplay />} />
+            <Route exact path="/config" element={<Config />} />
+            <Route path="/tags/:tag" element={<Tags />} />
+            <Route path="/:id/:collection?/*" element={<Display />} />
+            <Route path="/:subjkt/*" element={<Display />} />
+          </Routes>
+        </AnimatePresence>
+      </LocalSettingsProvider>
     </TeiaProvider>
   )
 }

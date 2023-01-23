@@ -17,6 +17,8 @@ body {
   background-color: var(--background-color);
   transition: var(--body-transition);
   font-size: $font-small;
+  line-height: 150%;
+  width: 100%;
 }
 #root {
   display: flex;
@@ -32,7 +34,9 @@ h6 {
   font-family: var(--text-font);
   font-weight: 700;
 }
-
+p {
+  line-height: 150%;
+}
 h1 {
   font-size: 32px;
   line-height: 125%;
@@ -43,11 +47,18 @@ h1 {
 
 h2 {
   font-size: 26px;
+  line-height: 125%;
+  @include respond-to('phone') {
+    font-size: 22px;
+  }
 }
 
 h3 {
   font-size: 23px;
   line-height: 125%;
+  @include respond-to('phone') {
+    font-size: 20px;
+  }
 }
 
 button {
