@@ -18,7 +18,7 @@ export const LocalSettingsProvider = (props) => {
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
     rmPhotosensitiveFriendly,
-  ] = useLocalStorage('settings:photosensitiveFriendly')
+  ] = useLocalStorage('settings:photosensitiveFriendly', false)
 
   const [theme, setTheme, rmTheme] = useLocalStorage('settings:theme', 'dark')
   const [zen, setZen, rmZen] = useLocalStorage('settings:zen', false)

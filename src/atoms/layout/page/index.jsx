@@ -7,7 +7,7 @@ import styles from '@style'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTitle } from 'hooks/use-title'
 import { Footer } from '@components/footer'
-import { LocalSettingsProvider } from '@context'
+
 import { IconCache } from '@utils/with-icon'
 
 export const Page = ({ title = '', children = null, feed, className }) => {
@@ -30,26 +30,22 @@ export const Page = ({ title = '', children = null, feed, className }) => {
     exit: { opacity: 0, transition: { ease: 'easeInOut' } },
   }
   return (
-    <LocalSettingsProvider>
-      <IconCache.Provider value={{}}>
-        <FeedbackComponent />
-        <Header />
-        <motion.main
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={containerVariants}
-          className={`${classes} ${className}`}
-        >
-          <VisuallyHidden as="h1">
-            {title !== '' ? `${title} - teia` : 'teia'}
-          </VisuallyHidden>
-          <div className={styles.content}>{children}</div>
-        </motion.main>
-        <AnimatePresence>
-          {/*footerVisible &&*/ <Footer menu />}
-        </AnimatePresence>
-      </IconCache.Provider>
-    </LocalSettingsProvider>
+    <IconCache.Provider value={{}}>
+      <FeedbackComponent />
+      <Header />
+      <motion.main
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={containerVariants}
+        className={`${classes} ${className}`}
+      >
+        <VisuallyHidden as="h1">
+          {title !== '' ? `${title} - teia` : 'teia'}
+        </VisuallyHidden>
+        <div className={styles.content}>{children}</div>
+      </motion.main>
+      <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>
+    </IconCache.Provider>
   )
 }
