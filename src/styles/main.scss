@@ -16,6 +16,7 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   transition: var(--body-transition);
+  font-size: $font-small;
 }
 #root {
   display: flex;

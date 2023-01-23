@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { TeiaContext } from '@context/TeiaContext'
-import { Page, Container } from '@atoms/layout'
+import { Page } from '@atoms/layout'
 import { Input, Textarea, Checkbox } from '@atoms/input'
 import Select from '@atoms/select'
 import { Button, Primary } from '@atoms/button'
@@ -550,31 +550,27 @@ export const Mint = () => {
           <>
             {/* User has collabs available */}
             {collabs.length > 0 && (
-              <Container>
-                <div className={flexBetween}>
-                  <p>
-                    <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
-                  </p>
-                  <Button
-                    shadow_box
-                    onClick={() => setSelectCollab(!selectCollab)}
-                  >
-                    {selectCollab ? 'Cancel' : 'Change'}
-                  </Button>
-                </div>
-              </Container>
+              <div className={flexBetween}>
+                <p>
+                  <span style={{ opacity: 0.5 }}>minting as</span> {mintName}
+                </p>
+                <Button
+                  shadow_box
+                  onClick={() => setSelectCollab(!selectCollab)}
+                >
+                  {selectCollab ? 'Cancel' : 'Change'}
+                </Button>
+              </div>
             )}
 
             {selectCollab && <CollabContractsOverview showAdminOnly />}
 
             {balance > 0 && balance < 0.15 && (
-              <Container>
-                <div className={styles.fundsWarning}>
-                  <p>
-                    {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
-                  </p>
-                </div>
-              </Container>
+              <div className={styles.fundsWarning}>
+                <p>
+                  {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
+                </p>
+              </div>
             )}
 
             <Input
@@ -755,77 +751,63 @@ export const Mint = () => {
             />
 
             {file && needsCover && (
-              <Container>
-                <Upload
-                  label="Upload cover image"
-                  allowedTypes={ALLOWED_COVER_MIMETYPES}
-                  allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
-                  onChange={generateCoverAndThumbnail}
-                />
-              </Container>
+              <Upload
+                label="Upload cover image"
+                allowedTypes={ALLOWED_COVER_MIMETYPES}
+                allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
+                onChange={generateCoverAndThumbnail}
+              />
             )}
 
-            <Container>
-              <Button
-                shadow_box
-                onClick={handlePreview}
-                fit
-                disabled={handleValidation()}
-              >
-                Preview
-              </Button>
-            </Container>
+            <Button
+              shadow_box
+              onClick={handlePreview}
+              fit
+              disabled={handleValidation()}
+            >
+              Preview
+            </Button>
           </>
         )}
 
         {step === 1 && (
           <>
-            <Container>
-              <div style={{ display: 'flex' }}>
-                <Button onClick={() => setStep(0)} fit>
-                  <Primary>
-                    <strong>Back</strong>
-                  </Primary>
-                </Button>
-              </div>
-            </Container>
-
-            <Container>
-              <Preview
-                mimeType={file.mimeType}
-                previewUri={file.reader}
-                previewDisplayUri={cover.reader}
-                title={title}
-                description={description}
-                tags={tags}
-                rights={rights}
-                rightUri={rightUri}
-                language={language}
-                nsfw={nsfw}
-                photosensitiveSeizureWarning={photosensitiveSeizureWarning}
-                amount={amount}
-                royalties={royalties}
-              />
-            </Container>
-
-            <Container>
-              <Button shadow_box onClick={handleMint} fit>
-                Mint OBJKT
+            <div style={{ display: 'flex' }}>
+              <Button onClick={() => setStep(0)} fit>
+                <Primary>
+                  <strong>Back</strong>
+                </Primary>
               </Button>
-            </Container>
+            </div>
 
-            <Container>
-              <p>this operation costs 0.08~ tez</p>
-              <p>Your royalties upon each sale are {royalties}%</p>
-            </Container>
+            <Preview
+              mimeType={file.mimeType}
+              previewUri={file.reader}
+              previewDisplayUri={cover.reader}
+              title={title}
+              description={description}
+              tags={tags}
+              rights={rights}
+              rightUri={rightUri}
+              language={language}
+              nsfw={nsfw}
+              photosensitiveSeizureWarning={photosensitiveSeizureWarning}
+              amount={amount}
+              royalties={royalties}
+            />
+
+            <Button shadow_box onClick={handleMint} fit>
+              Mint OBJKT
+            </Button>
+
+            <p>this operation costs 0.08~ tez</p>
+            <p>Your royalties upon each sale are {royalties}%</p>
           </>
         )}
 
-        <Container>
-          <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
-            <Primary>Terms & Conditions</Primary>
-          </Button>
-        </Container>
+        <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
+          <Primary>Terms & Conditions</Primary>
+        </Button>
         <hr />
       </div>
     </Page>
