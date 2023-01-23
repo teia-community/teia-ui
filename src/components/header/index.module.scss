@@ -27,7 +27,7 @@
   max-width: var(--max-width-internal);
   margin-bottom: 20px;
 
-  z-index: 200;
+  z-index: 800;
   color: var(--text-color);
   transition: var(--body-transition);
 
@@ -36,11 +36,7 @@
     height: 110px;
     display: grid;
     grid-template-columns: 0.5fr 1fr 0.5fr;
-    grid-template-rows: 0.5fr 2fr 0.5fr;
-    grid-template-areas:
-      'Events Logo User'
-      '. . .'
-      '. . .';
+    grid-template-areas: 'Events Logo User';
     justify-items: center;
     padding: 20px 0;
     @include respond-to('tablet') {

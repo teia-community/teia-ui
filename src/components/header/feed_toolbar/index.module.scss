@@ -1,7 +1,7 @@
 @import '@styles/variables.scss';
 @import '@styles/layout.scss';
 
-.filter_bar {
+.toolbar {
   max-width: var(--max-width-internal);
   width: 100%;
   height: 56px;
@@ -33,10 +33,15 @@
     justify-content: center;
   }
 }
-.feeds_dropdown {
+.feeds_area {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
   grid-area: Feeds;
 }
-.filter_button {
+// .feeds_dropdown {
+// }
+.filter_area {
   grid-area: Filter;
   justify-self: flex-end;
 }
@@ -45,7 +50,7 @@
   flex-direction: column;
   margin: 1em;
 }
-.view_mode {
+.view_mode_area {
   grid-area: View-Mode;
   display: flex;
   align-items: center;

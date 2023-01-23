@@ -71,7 +71,7 @@ const ItemInfo = ({ nft }) => {
               ) : (
                 <Button to={`${PATH.ISSUER}/${nft.artist_address}`}>
                   <Primary>
-                    {nft.artist_profile.name
+                    {nft.artist_profile?.name
                       ? nft.artist_profile.name
                       : walletPreview(nft.artist_address)}
                   </Primary>

@@ -54,30 +54,31 @@ export const FeedToolbar = () => {
   // TODO: finish the filtering logic
   const filters = false
   return (
-    <motion.div className={styles.filter_bar}>
-      <DropdownButton
-        menuID="feeds"
-        // icon={<FiltersIcon />}
-        label={feedLabel}
-        className={styles.feeds_dropdown}
-      >
-        <DropDown menuID="feeds">
-          <div className={styles.feeds_buttons}>
-            {[...locationMap.keys()].map((k) => {
-              if (k === '---') {
-                return <span key={k} className="line-horizontal" />
-              }
-              return (
-                <Button key={k} to={k}>
-                  {locationMap.get(k)}
-                </Button>
-              )
-            })}
-          </div>
-        </DropDown>
-      </DropdownButton>
-
-      <div className={styles.view_mode}>
+    <motion.div className={styles.toolbar}>
+      <div className={styles.feeds_area}>
+        <DropdownButton
+          menuID="feeds"
+          // icon={<FiltersIcon />}
+          label={feedLabel}
+          className={styles.feeds_dropdown}
+        >
+          <DropDown menuID="feeds">
+            <div className={styles.feeds_buttons}>
+              {[...locationMap.keys()].map((k) => {
+                if (k === '---') {
+                  return <span key={k} className="line-horizontal" />
+                }
+                return (
+                  <Button key={k} to={k}>
+                    {locationMap.get(k)}
+                  </Button>
+                )
+              })}
+            </div>
+          </DropDown>
+        </DropdownButton>
+      </div>
+      <div className={styles.view_mode_area}>
         <Toggle
           kind={toggleType.MINIMAL}
           toggled={viewMode === 'single'}
@@ -99,7 +100,7 @@ export const FeedToolbar = () => {
           menuID="filters"
           icon={<FiltersIcon />}
           label="Filters"
-          className={styles.filter_button}
+          className={styles.filter_area}
         >
           <DropDown left menuID="filters">
             <motion.div key="filters" className={styles.filters_container}>

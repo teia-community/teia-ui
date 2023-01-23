@@ -140,12 +140,21 @@ export const LICENSE_TYPES = {
   custom: 'Custom (Specify below)',
 }
 
-export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => {
-  return {
-    label: LICENSE_TYPES[k],
-    value: k,
-  }
-})
+export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => ({
+  label: LICENSE_TYPES[k],
+  value: k,
+}))
+
+export const THEMES = {
+  dark: 'Dark',
+  light: 'Light',
+  kawai: 'Kawai',
+}
+
+export const THEME_OPTIONS = Object.keys(THEMES).map((m) => ({
+  label: THEMES[m],
+  value: m,
+}))
 
 export const LANGUAGES = {
   none: 'None',
