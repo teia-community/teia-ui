@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  flex-direction: column;
 
   container: main_menu / inline-size;
   height: 100%;
@@ -20,11 +21,13 @@
   .content {
     display: flex;
     justify-content: center;
+    flex-direction: row;
+    align-items: center;
     background-color: var(--background-color);
     transition: background-color #{$theme-duration} ease-out,
       color #{$theme-duration} ease-out;
     pointer-events: all;
-    height: 85cqh;
+    height: 100%;
     width: 100%;
   }
 }
@@ -51,7 +54,7 @@
 
 .menu_left,
 .menu_right {
-  padding-top: 10cqh;
+  //padding-top: 10cqh;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -81,6 +84,7 @@
 .disabled {
   color: var(--gray-30);
 }
+
 .state_buttons {
   :first-child {
     width: 2em;
