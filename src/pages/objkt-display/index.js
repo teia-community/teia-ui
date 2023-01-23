@@ -125,7 +125,7 @@ export const ObjktDisplay = () => {
     )
   }
   return (
-    <Page title={nft?.name}>
+    <Page className={styles.profile_page} title={nft?.name}>
       {error && (
         <ErrorComponent title="Error Fetching OBJKTs" message={error} />
       )}

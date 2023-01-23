@@ -1,5 +1,5 @@
 import React from 'react'
-import { PATH } from '../../constants'
+import { PATH } from '@constants'
 import { Button } from '@atoms/button'
 import { ItemInfoCompact } from '@components/item-info'
 import { RenderMediaType } from '@components/media-types'

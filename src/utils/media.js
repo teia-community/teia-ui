@@ -1,6 +1,6 @@
 import * as fflate from 'fflate'
 import mime from 'mime-types'
-import { ALLOWED_COVER_MIMETYPES } from '../constants'
+import { ALLOWED_COVER_MIMETYPES } from '@constants'
 
 export async function unzipMedia(buffer) {
   // unzip into blobs

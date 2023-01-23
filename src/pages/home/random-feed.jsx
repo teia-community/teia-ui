@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { gql } from 'graphql-request'
 import random from 'lodash/random'
-import { BaseTokenFieldsFragment } from '../../data/api'
-import { HEN_CONTRACT_FA2 } from '../../constants'
+import { BaseTokenFieldsFragment } from '@data/api'
+import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
 // TODO: Fetch last ID from the indexer

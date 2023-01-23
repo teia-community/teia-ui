@@ -25,7 +25,58 @@ function newPath(path) {
   return path.substr(-2) !== 'M '
 }
 
+/**
+ * Generates a random valid Tezos address
+ * @returns {string} - The generated address in the format prefix + base58
+ */
+function dummyAddress() {
+  // prefix options
+  const prefixes = [
+    { tag: 0, curve: 0, prefix: 'tz1' },
+    { tag: 0, curve: 1, prefix: 'tz2' },
+    { tag: 0, curve: 2, prefix: 'tz3' },
+    { tag: 1, prefix: 'KT1' },
+  ]
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
+
+  // generate random 20-byte hash
+  const hash = window.crypto.getRandomValues(new Uint8Array(20))
+
+  // create a Uint8Array of length 22
+  const addressArray = new Uint8Array(22)
+
+  // set first byte as prefix.tag
+  addressArray[0] = prefix.tag
+
+  // if prefix.tag is 0, set second byte as prefix.curve
+  if (prefix.tag === 0) {
+    addressArray[1] = prefix.curve
+  }
+
+  // copy the hash into addressArray starting from the third byte
+  addressArray.set(hash, prefix.tag === 0 ? 2 : 1)
+
+  // if prefix.tag is 1, set last byte as 0
+  if (prefix.tag === 1) {
+    addressArray[21] = 0
+  }
+
+  // encode addressArray using Base58
+  const base58Address = base58.encode(addressArray)
+  const address = prefix.prefix + base58Address
+  console.debug(`Random address: ${address}`)
+
+  return address
+}
+
+/**
+ * Generates an avatar based on a Tezos address
+ * @param {string} [address] The Tezos address to generate the avatar for. If not provided, a dummy address will be used.
+ * @return {array} An array containing the path and the sum of the avatar
+ * @throws {Error} If the provided address is not a valid Tezos address
+ */
 function avatar(address) {
+  address = address ? address : dummyAddress()
   const decoded = base58.decode(address.trim().substr(3))
   const hex = decoded.toString('hex')
   const check = hex.split('').reduce((sum, x) => sum + parseInt(x, 16), 0)

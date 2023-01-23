@@ -2,7 +2,7 @@ import {
   IRAN_FUNDING_CONTRACT,
   PAKISTAN_FUNDING_CONTRACT,
   UKRAINE_FUNDING_CONTRACT,
-} from '../../constants'
+} from '@constants'
 import FundFeed from './fund-feed'
 
 export function IranFeed() {

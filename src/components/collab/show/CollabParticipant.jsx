@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { PATH } from '../../../constants'
+import { PATH } from '@constants'
 import { Link } from 'react-router-dom'
 import styles from '../index.module.scss'
 

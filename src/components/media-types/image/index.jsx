@@ -42,9 +42,10 @@ export const ImageComponent = ({
   }
 
   const onError = (error) => {
-    if (nft.mime_type === MIMETYPE.GIF) {
-      setIsVideo(true)
-    }
+    // if (nft.mime_type === MIMETYPE.GIF) {
+    //   setIsVideo(true)
+    // }
+    console.error(error)
   }
   const onLoad = ({ target: img }) => {
     // Do whatever you want here

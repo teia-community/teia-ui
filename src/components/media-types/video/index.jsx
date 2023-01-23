@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { iOS } from '../../../utils/os'
+import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
 
