@@ -1,5 +1,5 @@
 import styles from '../index.module.scss'
-import { tipOptions } from '../constants'
+import { tipOptions } from '@constants'
 
 export const TipSelector = ({ onSelect }) => {
   return (

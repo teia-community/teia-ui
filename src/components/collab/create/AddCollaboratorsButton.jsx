@@ -1,6 +1,6 @@
 import { Button } from '@atoms/button'
 import { memo } from 'react'
-import { validAddress } from '../functions'
+import { validAddress } from '@utils/collab'
 import styles from '../index.module.scss'
 
 const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }) => {

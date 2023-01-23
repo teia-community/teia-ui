@@ -1,18 +1,3 @@
-import { Parser } from '@taquito/michel-codec'
-import { Schema } from '@taquito/michelson-encoder'
-
-export const packData = (rawData, schema) => {
-  const parser = new Parser()
-  const michelsonType = parser.parseData(schema)
-  const parsedSchema = new Schema(michelsonType)
-  const data = parsedSchema.Encode(rawData)
-
-  return {
-    data,
-    type: michelsonType,
-  }
-}
-
 export const validAddress = (input) => {
   if (!input.length) {
     return false

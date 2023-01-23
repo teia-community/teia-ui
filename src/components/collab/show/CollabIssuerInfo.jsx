@@ -5,7 +5,7 @@ import { walletPreview } from '@utils/string'
 import { Primary } from '@atoms/button'
 import styles from '../index.module.scss'
 import ParticipantList from '../manage/ParticipantList'
-import { CollaboratorType } from '../constants'
+import { CollaboratorType } from '@constants'
 
 export const CollabIssuerInfo = ({ creator }) => {
   const { name, user_address } = creator
