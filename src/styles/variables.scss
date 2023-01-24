@@ -63,7 +63,43 @@ $letter-spacing: 0.015em;
 
   --text-color: #dedede;
 }
+:root[data-theme='noui'] {
+  --gray-0: #111;
+  --gray-5: ##111;
+  --gray-10: #111;
+  --gray-15: #111;
+  --gray-20: #111;
+  --gray-30: #111;
+  --gray-40: #111;
+  --gray-50: #111;
+  --gray-60: #111;
+  --gray-70: #111;
+  --gray-80: #111;
+  --gray-90: #111;
+  --gray-100: #111;
 
+  --background-color: #111;
+  --text-color: #111;
+  * {
+    color: #111;
+
+    svg {
+      * {
+        fill: #111;
+        stroke: #111;
+      }
+    }
+    svg:hover {
+      * {
+        fill: #cccccc;
+        stroke: #cccccc;
+      }
+    }
+    &:hover {
+      color: #cccccc;
+    }
+  }
+}
 :root[data-theme='kawai'] {
   --gray-0: #ff96cc;
   --gray-5: #ffaad7;
