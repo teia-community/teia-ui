@@ -9,7 +9,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Button, Primary } from '@atoms/button'
 import { VisuallyHidden } from '@atoms'
 import styles from '@style'
-import { DropdownButton } from '@atoms/dropdown'
+import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Menu } from '../icons'
 import { ReactComponent as EventIcon } from './icons/events.svg'
 import { MainMenu } from './main_menu/MainMenu'
@@ -18,8 +18,8 @@ import { EventBanner } from '@components/banners'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
-import { EventMenu } from './events/EventMenu'
 import { useMedia } from 'react-use'
+import EventCard from './events/EventCard'
 
 export const Header = () => {
   const context = useContext(TeiaContext)
@@ -90,7 +90,17 @@ export const Header = () => {
               menuID="events"
               label={isWide ? 'Events' : ''}
             >
-              <EventMenu events={sample_events} />
+              {/* <EventMenu events={sample_events} /> */}
+              <DropDown menuID="events" vertical>
+                {sample_events?.map((evt) => {
+                  return (
+                    <EventCard
+                      event={evt}
+                      key={`${evt.title} - ${evt.subtitle}`}
+                    />
+                  )
+                })}
+              </DropDown>
             </DropdownButton>
           </div>
 

@@ -41,7 +41,7 @@ export const Page = ({ title = '', children = null, feed, className }) => {
         className={`${classes} ${className}`}
       >
         <VisuallyHidden as="h1">
-          {title !== '' ? `${title} - teia` : 'teia'}
+          {title === '' ? 'teia' : `${title} - teia`}
         </VisuallyHidden>
         <div className={styles.content}>{children}</div>
       </motion.main>
