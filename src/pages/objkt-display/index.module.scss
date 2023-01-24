@@ -17,7 +17,6 @@
 }
 .info_ipfs {
   white-space: pre-wrap;
-  margin: 0 1em;
   padding-top: 12px;
   width: fit-content;
   a {
@@ -48,17 +47,9 @@
 
 .infos_attributes_container,
 .infos_container {
-  margin: 0 16px;
-
   hr {
     border-color: var(--border-color);
     margin-bottom: 1em;
-  }
-}
-
-.infos_container > {
-  div {
-    margin: 1em 0em;
   }
 }
 
@@ -71,11 +62,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  margin: 0 1em;
-}
-
-.history__container {
-  margin: 0 1em;
 }
 
 .history {
