@@ -2,6 +2,7 @@
 export const sample_events = [
   {
     title: 'Ukraine',
+    feed: 'ukraine',
     icon: '🇺🇦 ',
     link: 'https://github.com/teia-community/teia-docs/wiki/Ukranian-Fundraising',
     subtitle: 'Mid November - Late December 2022',
@@ -15,6 +16,7 @@ you can find the source code on [github](https://github.com/ciphrd/public-contra
   {
     title: 'Pakistan Fundraiser',
     icon: '🇵🇰 ',
+    feed: 'pakistan',
     link: 'https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser',
     subtitle: '1st October - 2nd December 2022',
     content:
@@ -23,6 +25,7 @@ you can find the source code on [github](https://github.com/ciphrd/public-contra
   {
     title: 'Tezos for Iran',
     icon: '🇮🇷 ',
+    feed: 'iran',
     link: 'https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran',
     subtitle: '25 October - 1st January 2022',
     content: '',

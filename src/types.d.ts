@@ -181,6 +181,8 @@ export type FeedEvent = {
   subtitle?: string
   /** Either an emoji or an Icon component */
   icon?: string
+  /** A linked feed */
+  feed?: string
   /** markdown string */
   content: string
   /** external link */
