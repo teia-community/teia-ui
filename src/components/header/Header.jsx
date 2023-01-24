@@ -64,9 +64,13 @@ export const Header = () => {
   }
 
   const handleSyncUnsync = () => {
-    if (context.acc?.address && !context.collapsed) {
-      // disconnect wallet
-      context.disconnect()
+    if (context.acc?.address) {
+      if (!context.collapsed) {
+        // disconnect wallet
+        context.disconnect()
+      } else {
+        handleRoute('/sync', '/tz')
+      }
     } else {
       // connect wallet
       context.syncTaquito()
