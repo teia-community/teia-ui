@@ -71,7 +71,7 @@ export const MainMenu = () => {
           </div>
         </div>
       </nav>
-      <Footer />
+      <Footer pin />
     </motion.div>
   )
 }

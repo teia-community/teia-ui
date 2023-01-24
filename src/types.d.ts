@@ -151,6 +151,12 @@ export type LocalSettingsContext = {
   setNsfwFriendly: (boolean) => void
   /**Delete the localstorage for the NSFW preference */
   rmNsfwFriendly: () => void
+  /**The Photosensitive preference (true == show them unblurred) */
+  photosensitiveFriendly: boolean
+  /**Set the Photosensitive preference*/
+  setPhotosensitiveFriendly: (boolean) => void
+  /**Delete the localstorage for the Photosensitive preference */
+  rmPhotosensitiveFriendly: () => void
   /**The zen preference*/
   zen: boolean
   /**Set the zen preference*/
