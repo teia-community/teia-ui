@@ -13,11 +13,14 @@ import useLocalSettings from '@hooks/use-local-settings'
  * @returns {React.ReactElement} The feed item
  */
 export const FeedItem = ({ nft }) => {
-  const { zen, viewMode, nsfwFriendly } = useLocalSettings()
+  const { zen, viewMode, nsfwFriendly, photosensitiveFriendly } =
+    useLocalSettings()
 
   const containerClasses = classnames({
     [styles.container]: true,
-    [styles.blur]: (nft.isNSFW && !nsfwFriendly) || nft.isPhotosensitive,
+    [styles.blur]:
+      (nft.isNSFW && !nsfwFriendly) ||
+      (nft.isPhotosensitive && !photosensitiveFriendly),
     [styles.masonry]: viewMode === 'masonry',
   })
 

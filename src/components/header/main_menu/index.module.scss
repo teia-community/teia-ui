@@ -15,19 +15,21 @@
   top: 0;
   left: 0;
   color: var(--text-color);
+  background-color: var(--background-color);
+  transition: var(--body-transition);
 
   z-index: 400;
+  height: 100%;
 
   .content {
+    line-height: 3em;
     display: flex;
     justify-content: center;
     flex-direction: row;
-    align-items: center;
-    background-color: var(--background-color);
-    transition: background-color #{$theme-duration} ease-out,
-      color #{$theme-duration} ease-out;
+    align-items: flex-start;
     pointer-events: all;
-    height: 100%;
+    transform: translateY(-10%);
+
     width: 100%;
   }
 }
@@ -86,11 +88,10 @@
 }
 
 .state_buttons {
-  :first-child {
-    width: 2em;
-    height: 2em;
-  }
+  line-height: 100%;
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
   flex: row;
   gap: 0.5em;
 }
