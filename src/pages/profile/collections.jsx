@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
@@ -65,11 +64,11 @@ export default function Collections({ showFilters, address }) {
               })
             )
             const tokens = uniqBy(
-              [...swappedTokens, ...heldTokens],
+              [...heldTokens, ...swappedTokens],
               ({ token_id }) => token_id
             ).map((token) => ({ ...token, key: token.token_id }))
 
-            return postProcessTokens(orderBy(tokens, 'token_id').reverse())
+            return postProcessTokens(tokens)
           }}
           query={gql`
             ${BaseTokenFieldsFragment}
@@ -83,7 +82,7 @@ export default function Collections({ showFilters, address }) {
                   }
                   amount: { _gt: "0" }
                 }
-                order_by: { token_id: desc }
+                order_by: { last_received_at: desc }
               ) {
                 token {
                   ...baseTokenFields
