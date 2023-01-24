@@ -1,3 +1,4 @@
+import Button from '@atoms/button/Button'
 import { Markdown } from '@components/markdown'
 import styles from '@style'
 import { motion } from 'framer-motion'
@@ -28,7 +29,17 @@ export const EventCard = ({ event }) => {
   return (
     <article className={styles.event_card}>
       <motion.h1 variants={itemVariants}>
-        {event.title} - <span className={styles.event_icon}>{event.icon}</span>
+        {event.feed ? (
+          <Button to={`/feed/${event.feed}`}>
+            {event.title} -{' '}
+            <span className={styles.event_icon}>{event.icon}</span>
+          </Button>
+        ) : (
+          <>
+            {event.title} -{' '}
+            <span className={styles.event_icon}>{event.icon}</span>
+          </>
+        )}
       </motion.h1>
       <motion.p variants={itemVariants} className={styles.event_tag_line}>
         {event.subtitle}
