@@ -15,7 +15,7 @@ function FundFeed({
   tags = null,
 }) {
   return (
-    <div>
+    <>
       <div className={styles.feed_info}>
         <p>{introText}</p>
 
@@ -91,7 +91,7 @@ function FundFeed({
         }
       `}
       />
-    </div>
+    </>
   )
 }
 
