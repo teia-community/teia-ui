@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import get from 'lodash/get'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from '@style'
-import { VideoComponent } from '../video/index'
-import { MIMETYPE } from '@constants'
 
 /**
  * @param {Object} imageComponentOptions
@@ -18,7 +16,6 @@ export const ImageComponent = ({
   displayView,
   nft,
 }) => {
-  const [isVideo, setIsVideo] = useState(false)
   const [isSmol, setSmol] = useState(false)
 
   let src
@@ -72,18 +69,7 @@ export const ImageComponent = ({
   //     })
   // }, [src])
 
-  return isVideo ? (
-    <VideoComponent
-      artifactUri={artifactUri}
-      displayUri={displayUri}
-      previewUri={previewUri}
-      preview={preview}
-      onDetailView={onDetailView}
-      displayView={displayView}
-      inView={true}
-      nft={nft}
-    />
-  ) : displayView ? (
+  return displayView ? (
     <div className={styles.container}>
       <LazyLoadImage
         className={styles.image}

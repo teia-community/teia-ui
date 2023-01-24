@@ -1,5 +1,5 @@
 import React from 'react'
-import { Page, Container } from '@atoms/layout'
+import { Page } from '@atoms/layout'
 import styles from '@style'
 import Markdown from 'markdown-to-jsx'
 import raw from 'raw.macro'
