@@ -9,7 +9,22 @@
 }
 .localSettings {
   width: 100%;
+  padding-top: 2em;
   max-width: var(--max-width-internal);
+  align-self: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap: 1em;
+}
+
+.explainer {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  margin-bottom: 1em;
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
 }
 
 // .box {
