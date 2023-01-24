@@ -159,9 +159,9 @@ function TokenCollection({
 
   if (!tokens.length) {
     return (
-      <Container>
+      <div className={styles.empty_section}>
         <h1>{emptyMessage}</h1>
-      </Container>
+      </div>
     )
   }
 

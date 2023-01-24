@@ -27,3 +27,13 @@
   align-self: stretch;
   width: 100%;
 }
+
+.empty_section {
+  align-items: center;
+  align-self: center;
+  padding: 2em 0;
+  display: flex;
+  width: 100%;
+  max-width: var(--max-width-internal);
+  justify-content: flex-start;
+}
