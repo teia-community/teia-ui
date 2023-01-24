@@ -313,8 +313,8 @@ export const Config = () => {
           </p>
         </div>
 
+        <span className="line-horizontal" />
         <div className={styles.localSettings}>
-          <span className="line-horizontal" />
           <div className={styles.explainer}>
             <h1>Local Settings</h1>
             <span>
