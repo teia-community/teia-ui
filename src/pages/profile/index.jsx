@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
-import { Button, Primary } from '@atoms/button'
 import { Page } from '@atoms/layout'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import { useParams, Route, Routes, useLocation } from 'react-router-dom'
