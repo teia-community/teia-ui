@@ -8,12 +8,13 @@ import { containerMenu } from '@utils/motion'
 import { useClickOutside } from 'hooks/use-click-outside'
 import classnames from 'classnames'
 import React from 'react'
+import { useTwemoji } from '@hooks/use-twemoji'
 
 function DropDown({ children, setOpen, vertical, menuID, left }) {
   useBodyClass('overlay')
 
   const dropdownRef = useRef(null)
-
+  useTwemoji()
   useClickOutside(
     dropdownRef,
     () => {

@@ -11,7 +11,6 @@ import {
   // useSearchParams,
 } from 'react-router-dom'
 // import { Input } from '@atoms/input'
-import { useTwemoji } from '@hooks/use-twemoji'
 
 // import SubjktsSearchResults from './subjkts-search-results'
 import RecentSalesFeed from './recent-sales-feed'
@@ -52,8 +51,6 @@ export function Home({ isSearch = false }) {
   // const [searchParams] = useSearchParams()
   // const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
   // const navigate = useNavigate()
-
-  useTwemoji()
 
   return (
     <Page feed title="Home">

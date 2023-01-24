@@ -17,7 +17,7 @@ export default function Collections({ showFilters, address }) {
     setProfileFeed(true)
   }, [setProfileFeed])
   return (
-    <div>
+    <>
       {showFilters && (
         <Filters
           filter={filter}
@@ -29,85 +29,81 @@ export default function Collections({ showFilters, address }) {
           ]}
         />
       )}
-      <>
-        {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
-        <TokenCollection
-          namespace="collections"
-          swrParams={[address]}
-          variables={{ address }}
-          emptyMessage="no collections"
-          maxItems={null}
-          postProcessTokens={(tokens) => {
-            if (filter === FILTER_FOR_SALE) {
-              return tokens.filter(
-                ({ listing_seller_address }) =>
-                  listing_seller_address === address
-              )
-            }
-
-            if (filter === FILTER_NOT_FOR_SALE) {
-              return tokens.filter(
-                ({ listing_seller_address, artist_address }) =>
-                  artist_address !== address &&
-                  listing_seller_address !== address
-              )
-            }
-
-            return tokens
-          }}
-          extractTokensFromResponse={(data, { postProcessTokens }) => {
-            const heldTokens = data.holdings.map(({ token }) => token)
-            const swappedTokens = data.listings.map(
-              ({ token, seller_address }) => ({
-                ...token,
-                listing_seller_address: seller_address,
-              })
+      {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
+      <TokenCollection
+        namespace="collections"
+        swrParams={[address]}
+        variables={{ address }}
+        emptyMessage="no collections"
+        maxItems={null}
+        postProcessTokens={(tokens) => {
+          if (filter === FILTER_FOR_SALE) {
+            return tokens.filter(
+              ({ listing_seller_address }) => listing_seller_address === address
             )
-            const tokens = uniqBy(
-              [...heldTokens, ...swappedTokens],
-              ({ token_id }) => token_id
-            ).map((token) => ({ ...token, key: token.token_id }))
+          }
 
-            return postProcessTokens(tokens)
-          }}
-          query={gql`
-            ${BaseTokenFieldsFragment}
-            query collectorGallery($address: String!) {
-              holdings(
-                where: {
-                  holder_address: { _eq: $address }
-                  token: {
-                    artist_address: { _neq: $address }
-                    metadata_status: { _eq: "processed" }
-                  }
-                  amount: { _gt: "0" }
+          if (filter === FILTER_NOT_FOR_SALE) {
+            return tokens.filter(
+              ({ listing_seller_address, artist_address }) =>
+                artist_address !== address && listing_seller_address !== address
+            )
+          }
+
+          return tokens
+        }}
+        extractTokensFromResponse={(data, { postProcessTokens }) => {
+          const heldTokens = data.holdings.map(({ token }) => token)
+          const swappedTokens = data.listings.map(
+            ({ token, seller_address }) => ({
+              ...token,
+              listing_seller_address: seller_address,
+            })
+          )
+          const tokens = uniqBy(
+            [...heldTokens, ...swappedTokens],
+            ({ token_id }) => token_id
+          ).map((token) => ({ ...token, key: token.token_id }))
+
+          return postProcessTokens(tokens)
+        }}
+        query={gql`
+          ${BaseTokenFieldsFragment}
+          query collectorGallery($address: String!) {
+            holdings(
+              where: {
+                holder_address: { _eq: $address }
+                token: {
+                  artist_address: { _neq: $address }
+                  metadata_status: { _eq: "processed" }
                 }
-                order_by: { last_received_at: desc }
-              ) {
-                token {
-                  ...baseTokenFields
-                }
+                amount: { _gt: "0" }
               }
-              listings(
-                where: {
-                  token: { artist_address: { _neq: $address } }
-                  seller_address: { _eq: $address }
-                  status: { _eq: "active" }
-                }
-                distinct_on: token_id
-              ) {
-                seller_address
-                token {
-                  ...baseTokenFields
-                }
-                contract_address
-                amount_left
-                price
+              order_by: { last_received_at: desc }
+            ) {
+              token {
+                ...baseTokenFields
               }
             }
-          `}
-        />
-      </>
-    </div>
+            listings(
+              where: {
+                token: { artist_address: { _neq: $address } }
+                seller_address: { _eq: $address }
+                status: { _eq: "active" }
+              }
+              distinct_on: token_id
+            ) {
+              seller_address
+              token {
+                ...baseTokenFields
+              }
+              contract_address
+              amount_left
+              price
+            }
+          }
+        `}
+      />
+    </>
   )
 }
