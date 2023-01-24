@@ -19,7 +19,7 @@
   //padding: 1rem;
   transition: height var(--speed) ease;
   transition: width var(--speed) ease;
-  @include respond-to('desktop') {
+  @include respond-to('tablet') {
     // width: 600px;
     left: unset;
   }

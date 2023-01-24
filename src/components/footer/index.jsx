@@ -39,84 +39,86 @@ export const Footer = ({ menu, pin }) => {
     }
   }
   const classes = classnames({
-    [styles.container]: true,
+    [styles.content]: true,
     [styles.pinned]: pin,
     [styles.minimal]: !menu,
   })
 
   return (
-    <motion.footer {...transition()} className={classes}>
-      <div className={styles.logo}>
-        Teia DAO LLC.
-        <Button onClick={() => setLogoSeed(Math.random() * 100)}>
-          <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
-        </Button>
-      </div>
-
-      <div className={styles.copyright}>{language.footer.mint}</div>
-      {menu && (
-        <>
-          <div className={styles.menus}>
-            <ul className={styles.menu_left}>
-              <MenuItem className={styles.menu_label} route="collaborate" />
-              <MenuItem className={styles.menu_label} route="about" />
-              <MenuItem
-                className={styles.menu_label}
-                label="F.A.Q"
-                route="faq"
-              />
-            </ul>
-            <ul className={styles.menu_right}>
-              <li className={styles.address}>
-                {walletPreview(context.acc?.address)}
-              </li>
-              <MenuItem
-                className={styles.menu_label}
-                label="Mint"
-                route="mint"
-                need_sync
-              />
-              <MenuItem
-                className={styles.menu_label}
-                label="Assets"
-                route="tz"
-                need_sync
-              />
-              <MenuItem
-                className={styles.menu_label}
-                label="Friends"
-                route="friends"
-                need_sync
-              />
-              <MenuItem
-                className={styles.menu_label}
-                label="Profile"
-                route="config"
-                need_sync
-              />
-            </ul>
-          </div>
-          <div className={styles.state_buttons}>
-            <Toggle
-              kind={toggleType.BOX}
-              onToggle={toggleTheme}
-              initial={theme === 'dark'}
-            />
-            <Toggle
-              kind={toggleType.BOX}
-              label="ZEN"
-              onToggle={setZen}
-              toggled={zen}
-            />
-          </div>
-        </>
-      )}
-
-      {false && (
-        <div>
-          <div className={styles.warning}>{language.footer.warning}</div>
+    <div className={styles.container}>
+      <motion.footer {...transition()} className={classes}>
+        <div className={styles.logo}>
+          Teia DAO LLC.
+          <Button onClick={() => setLogoSeed(Math.random() * 100)}>
+            <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
+          </Button>
         </div>
-      )}
-    </motion.footer>
+
+        <div className={styles.copyright}>{language.footer.mint}</div>
+        {menu && (
+          <>
+            <div className={styles.menus}>
+              <ul className={styles.menu_left}>
+                <MenuItem className={styles.menu_label} route="collaborate" />
+                <MenuItem className={styles.menu_label} route="about" />
+                <MenuItem
+                  className={styles.menu_label}
+                  label="F.A.Q"
+                  route="faq"
+                />
+              </ul>
+              <ul className={styles.menu_right}>
+                <li className={styles.address}>
+                  {walletPreview(context.acc?.address)}
+                </li>
+                <MenuItem
+                  className={styles.menu_label}
+                  label="Mint"
+                  route="mint"
+                  need_sync
+                />
+                <MenuItem
+                  className={styles.menu_label}
+                  label="Assets"
+                  route="tz"
+                  need_sync
+                />
+                <MenuItem
+                  className={styles.menu_label}
+                  label="Friends"
+                  route="friends"
+                  need_sync
+                />
+                <MenuItem
+                  className={styles.menu_label}
+                  label="Profile"
+                  route="config"
+                  need_sync
+                />
+              </ul>
+            </div>
+            <div className={styles.state_buttons}>
+              <Toggle
+                kind={toggleType.BOX}
+                onToggle={toggleTheme}
+                initial={theme === 'dark'}
+              />
+              <Toggle
+                kind={toggleType.BOX}
+                label="ZEN"
+                onToggle={setZen}
+                toggled={zen}
+              />
+            </div>
+          </>
+        )}
+
+        {false && (
+          <div>
+            <div className={styles.warning}>{language.footer.warning}</div>
+          </div>
+        )}
+      </motion.footer>
+    </div>
   )
 }

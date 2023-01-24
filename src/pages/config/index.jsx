@@ -315,10 +315,12 @@ export const Config = () => {
 
         <div className={styles.localSettings}>
           <span className="line-horizontal" />
+          <div className={styles.explainer}>
           <h1>Local Settings</h1>
           <span>
             <p>These are only stored locally, in your cache browser.</p>
           </span>
+          </div>
           <div className={styles.fields}>
             <Checkbox
               checked={nsfwFriendly}

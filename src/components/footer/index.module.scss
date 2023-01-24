@@ -1,7 +1,14 @@
 @import '@styles/variables.scss';
 @import '@styles/layout.scss';
-
 .container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-color);
+  transition: var(--body-transition);
+}
+.content {
   position: relative;
   pointer-events: all;
   &.pinned {
@@ -11,9 +18,7 @@
 
   width: 100%;
   max-width: var(--max-width-internal);
-  background-color: var(--background-color);
-  transition: background-color #{$theme-duration} ease-out,
-    color #{$theme-duration} ease-out, opacity #{$theme-duration} ease-out;
+
   padding: 1.25em;
 
   display: grid;
@@ -24,7 +29,7 @@
     'Copyright Copyright'
     'Menu Tools';
   gap: 0px 10px;
-  align-items: center;
+  align-items: flex-start;
 
   @include respond-to('tablet') {
     grid-template-rows: none;
@@ -43,7 +48,7 @@
 .menus {
   grid-area: Menu;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1em;
   justify-content: center;
 }
@@ -90,4 +95,5 @@
   flex: row;
   gap: 0.5em;
   grid-area: Tools;
+  align-items: center;
 }

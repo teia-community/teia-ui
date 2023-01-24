@@ -51,8 +51,6 @@ export const Toggle = ({
         aria-label={typeof label === 'string' ? label : 'icon-toggle'}
         aria-checked={toggled}
         type="checkbox"
-        className={classes}
-        style={style}
         onChange={handleToggle}
       />
       {label}
