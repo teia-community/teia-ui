@@ -7,14 +7,15 @@
   justify-content: center;
   background-color: var(--background-color);
   transition: var(--body-transition);
-}
-.content {
-  position: relative;
-  pointer-events: all;
+  flex-direction: column;
   &.pinned {
     position: fixed;
     bottom: 0;
   }
+}
+.content {
+  position: relative;
+  pointer-events: all;
 
   width: 100%;
   max-width: var(--max-width-internal);
