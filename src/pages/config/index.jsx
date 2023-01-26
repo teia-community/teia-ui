@@ -13,6 +13,7 @@ import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import Select from '@atoms/select/index'
 import { THEMES, THEME_OPTIONS } from '@constants'
+import { Line } from '@atoms/line'
 const query_tz = `
 query addressQuery($address: String!) {
   teia_users(where: { user_address: {_eq: $address}}) {
@@ -313,7 +314,7 @@ export const Config = () => {
           </p>
         </div>
 
-        <span className="line-horizontal" />
+        <Line />
         <div className={styles.localSettings}>
           <div className={styles.explainer}>
             <h1>Local Settings</h1>

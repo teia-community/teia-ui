@@ -10,6 +10,7 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { getWordDate } from '@utils/time'
+import { Line } from '@atoms/line'
 
 /**
  * The Info Tab
@@ -39,7 +40,7 @@ export const Info = ({ nft, viewer_address }) => {
           ) : null}
         </div>
       </Container>
-      <span className="line-horizontal" />
+      <Line />
       <Container>
         <div className={styles.infos_attributes_container}>
           <div className={styles.infos_attributes_flex}>

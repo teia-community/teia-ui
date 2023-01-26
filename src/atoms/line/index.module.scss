@@ -1,0 +1,12 @@
+// @import '@styles/variables.scss';
+// @import '@styles/layout.scss';
+.horizontal {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid var(--gray-20);
+}
+
+.vertical {
+  border-right: 1px solid var(--border-color);
+  height: 100%;
+}

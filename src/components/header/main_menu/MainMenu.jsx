@@ -8,6 +8,7 @@ import { useContext } from 'react'
 import { MenuItem } from './MenuItem'
 import { Toggle, toggleType } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
+import { Line } from '@atoms/line'
 
 /**
  * The main global menu.
@@ -22,11 +23,12 @@ export const MainMenu = () => {
   return (
     <motion.div className={styles.menu} {...fadeIn()}>
       <nav className={styles.content}>
-        <div className={`line-vertical ${styles.menu_left}`}>
+        <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
         </div>
+        <Line vertical />
         <div className={styles.menu_right}>
           <li className={styles.address}>
             {walletPreview(context.acc?.address)}

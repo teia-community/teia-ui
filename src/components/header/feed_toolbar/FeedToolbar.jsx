@@ -1,27 +1,29 @@
+// ! NOTE - Keep the comments.
 import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Toggle, toggleType } from '@atoms/toggles'
 import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
 import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
-import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
+// import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
 
-import { Input } from '@atoms/input'
-import { useContext, useState } from 'react'
-import { Button, Primary } from '@atoms/button'
-import { TeiaContext } from '@context/TeiaContext'
+// import { Input } from '@atoms/input'
+import { /*useContext, */ useState } from 'react'
+import { Button /*Primary*/ } from '@atoms/button'
+// import { TeiaContext } from '@context/TeiaContext'
 import useLocalSettings from '@hooks/use-local-settings'
 import { useLocation } from 'react-router'
 import { useEffect } from 'react'
+import { Line } from '@atoms/line'
 
-const MediaFilter = ({ label, tagline }) => {
-  return (
-    <div className={styles.media_type}>
-      <Toggle kind={toggleType.BOX} label={label} />
-      <p className={styles.tagline}>{tagline}</p>
-    </div>
-  )
-}
+// const MediaFilter = ({ label, tagline }) => {
+//   return (
+//     <div className={styles.media_type}>
+//       <Toggle kind={toggleType.BOX} label={label} />
+//       <p className={styles.tagline}>{tagline}</p>
+//     </div>
+//   )
+// }
 
 const locationMap = new Map([
   ['/', 'Recent Sales'],
@@ -45,8 +47,8 @@ const locationMap = new Map([
 ])
 
 export const FeedToolbar = () => {
-  const [price, setPrice] = useState({ from: 0, to: 0 })
-  const context = useContext(TeiaContext)
+  // const [price, setPrice] = useState({ from: 0, to: 0 })
+  // const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
   const location = useLocation()
   const [feedLabel, setFeedLabel] = useState('Recent Sales')
@@ -71,7 +73,7 @@ export const FeedToolbar = () => {
             <div className={styles.feeds_buttons}>
               {[...locationMap.keys()].map((k) => {
                 if (k.startsWith('-')) {
-                  return <span key={k} className="line-horizontal" />
+                  return <Line key={k} />
                 }
                 return (
                   <Button key={k} to={k}>
@@ -147,7 +149,7 @@ export const FeedToolbar = () => {
                     label="From"
                     value={price.from}
                   >
-                    <span className="line-horizontal" />
+                    <Line/>
                   </Input>
                   <Input
                     type="number"
@@ -162,7 +164,7 @@ export const FeedToolbar = () => {
                     label="To"
                     value={price.to}
                   >
-                    <span className="line-horizontal" />
+                    <Line/>
                   </Input>
                 </div>
               </motion.div>

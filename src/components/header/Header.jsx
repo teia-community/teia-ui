@@ -20,6 +20,7 @@ import { EventBanner } from '@components/banners'
 import { sample_events } from './sample_events'
 import { useMedia } from 'react-use'
 import EventCard from './events/EventCard'
+import { Line } from '@atoms/line'
 
 export const Header = () => {
   const context = useContext(TeiaContext)
@@ -138,7 +139,7 @@ export const Header = () => {
             </Button>
           </div>
         </div>
-        <span className="line-horizontal" />
+        <Line />
       </header>
     </>
   )
