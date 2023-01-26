@@ -53,6 +53,9 @@
   & > * {
     margin-bottom: 10px;
   }
+  & > button:hover {
+    text-decoration: underline;
+  }
 }
 .view_mode_area {
   grid-area: View-Mode;

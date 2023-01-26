@@ -24,7 +24,7 @@ export default function Sync() {
     const address = context.proxyAddress || context.acc.address
     switch (state) {
       case '/tz':
-      case '/friends':
+      case '/feed/friends':
         return `${state}/${address}`
       case '/config':
       case '/mint':

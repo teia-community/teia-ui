@@ -13,7 +13,7 @@ import { /*useContext, */ useState } from 'react'
 import { Button /*Primary*/ } from '@atoms/button'
 // import { TeiaContext } from '@context/TeiaContext'
 import useLocalSettings from '@hooks/use-local-settings'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { useEffect } from 'react'
 import { Line } from '@atoms/line'
 
@@ -30,7 +30,7 @@ const locationMap = new Map([
   ['/', 'Recent Sales'],
   ['/feed/random', 'Random'],
   ['/feed/newobjkts', 'New OBJKTs'],
-  ['/friends', 'Friends'],
+  ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
   ['/feed/ukraine', '🇺🇦 Ukraine'],
@@ -46,6 +46,9 @@ const locationMap = new Map([
   ['/feed/gif', 'GIF'],
 ])
 
+const locationNeedSync = ['/feed/friends']
+const locationPaths = [...locationMap.keys()]
+
 export const FeedToolbar = ({ feeds_menu = false }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
   // const context = useContext(TeiaContext)
@@ -53,8 +56,15 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   const location = useLocation()
   const [feedLabel, setFeedLabel] = useState('Recent Sales')
 
+  const navigate = useNavigate()
+
   useEffect(() => {
-    setFeedLabel(locationMap.get(location.pathname))
+    for (const pth of locationPaths.slice(1)) {
+      if (location.pathname.includes(pth)) {
+        setFeedLabel(locationMap.get(pth))
+      }
+    }
+
     // return locationMap[location]
   }, [location])
 
@@ -75,6 +85,18 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
                 {[...locationMap.keys()].map((k) => {
                   if (k.startsWith('-')) {
                     return <Line key={k} />
+                  }
+                  if (locationNeedSync.includes(k)) {
+                    return (
+                      <Button
+                        key={k}
+                        onClick={() => {
+                          navigate('/sync', { state: `${k}` })
+                        }}
+                      >
+                        {locationMap.get(k)}
+                      </Button>
+                    )
                   }
                   return (
                     <Button key={k} to={k}>
