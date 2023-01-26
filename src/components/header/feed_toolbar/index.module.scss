@@ -48,7 +48,11 @@
 .feeds_buttons {
   display: flex;
   flex-direction: column;
-  margin: 1em;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  & > * {
+    margin-bottom: 10px;
+  }
 }
 .view_mode_area {
   grid-area: View-Mode;
