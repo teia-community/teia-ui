@@ -24,7 +24,6 @@ export const MainMenu = () => {
       <nav className={styles.content}>
         <div className={`line-vertical ${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
-          <MenuItem className={styles.menu_label} route="collaborate" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
         </div>
@@ -46,10 +45,10 @@ export const MainMenu = () => {
           />
           <MenuItem
             className={styles.menu_label}
-            label="Friends"
-            route="friends"
             need_sync
+            route="collaborate"
           />
+
           <MenuItem
             className={styles.menu_label}
             label="Profile"

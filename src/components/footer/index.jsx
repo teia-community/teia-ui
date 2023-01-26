@@ -49,9 +49,11 @@ export const Footer = ({ menu, pin }) => {
       <motion.footer {...transition()} className={classes}>
         <div className={styles.logo}>
           Teia DAO LLC.
-          <Button onClick={() => setLogoSeed(Math.random() * 100)}>
-            <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
-          </Button>
+          {menu && (
+            <Button onClick={() => setLogoSeed(Math.random() * 100)}>
+              <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
+            </Button>
+          )}
         </div>
 
         <div className={styles.copyright}>{language.footer.mint}</div>
@@ -59,7 +61,6 @@ export const Footer = ({ menu, pin }) => {
           <>
             <div className={styles.menus}>
               <ul className={styles.menu_left}>
-                <MenuItem className={styles.menu_label} route="collaborate" />
                 <MenuItem className={styles.menu_label} route="about" />
                 <MenuItem
                   className={styles.menu_label}
@@ -84,11 +85,11 @@ export const Footer = ({ menu, pin }) => {
                   need_sync
                 />
                 <MenuItem
-                  className={styles.menu_label}
-                  label="Friends"
-                  route="friends"
                   need_sync
+                  className={styles.menu_label}
+                  route="collaborate"
                 />
+
                 <MenuItem
                   className={styles.menu_label}
                   label="Profile"
