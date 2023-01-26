@@ -13,21 +13,21 @@ import {
 // import { Input } from '@atoms/input'
 
 // import SubjktsSearchResults from './subjkts-search-results'
-import RecentSalesFeed from './recent-sales-feed'
-import NewObjktsFeed from './new-objkts-feed'
-import { PakistanFeed, IranFeed, UkraineFeed } from './fund-feeds'
-import RandomFeed from './random-feed'
+import RecentSalesFeed from './feeds/recent-sales-feed'
+import NewObjktsFeed from './feeds/new-objkts-feed'
+import { PakistanFeed, IranFeed, UkraineFeed } from './feeds/fund-feeds'
+import RandomFeed from './feeds/random-feed'
 import {
   GlbFeed,
-  MusicFeed,
   VideoFeed,
   HtmlSvgFeed,
   GifFeed,
   ImageFeed,
   AudioFeed,
-} from './mime-type-feed'
-import TagFeed from './tag-feed'
-import SearchFeed from './search-feed'
+} from './feeds/mime-type-feed'
+import TagFeed from './feeds/tag-feed'
+import SearchFeed from './feeds/search-feed'
+import { FriendsFeed } from './feeds/friends-feed'
 
 // import styles from '@style'
 
@@ -121,6 +121,7 @@ export function Home({ isSearch = false }) {
           <Route path="/audio" element={<AudioFeed />} />
           <Route path="/html-svg" element={<HtmlSvgFeed />} />
           <Route path="/gif" element={<GifFeed />} />
+          <Route path="/friends/:address" element={<FriendsFeed />} />
         </Routes>
       )}
     </Page>

@@ -3,6 +3,8 @@
 
 .base_toggle {
   word-break: keep-all;
+  cursor: pointer;
+
   transition: background-color 133ms linear;
 
   input[type='checkbox'] {
