@@ -47,7 +47,7 @@ const locationMap = new Map([
   ['/feed/gif', 'gif'],
 ])
 
-export const FeedToolbar = () => {
+export const FeedToolbar = ({ feeds_menu = false }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
   // const context = useContext(TeiaContext)
   const { viewMode, setViewMode } = useLocalSettings()
@@ -63,29 +63,31 @@ export const FeedToolbar = () => {
   // const filters = false
   return (
     <motion.div className={styles.toolbar}>
-      <div className={styles.feeds_area}>
-        <DropdownButton
-          menuID="feeds"
-          icon={<ChevronIcon />}
-          label={feedLabel}
-          className={styles.feeds_dropdown}
-        >
-          <DropDown menuID="feeds">
-            <div className={styles.feeds_buttons}>
-              {[...locationMap.keys()].map((k) => {
-                if (k.startsWith('-')) {
-                  return <Line key={k} />
-                }
-                return (
-                  <Button key={k} to={k}>
-                    {locationMap.get(k)}
-                  </Button>
-                )
-              })}
-            </div>
-          </DropDown>
-        </DropdownButton>
-      </div>
+      {feeds_menu && (
+        <div className={styles.feeds_area}>
+          <DropdownButton
+            menuID="feeds"
+            icon={<ChevronIcon />}
+            label={feedLabel}
+            className={styles.feeds_dropdown}
+          >
+            <DropDown menuID="feeds">
+              <div className={styles.feeds_buttons}>
+                {[...locationMap.keys()].map((k) => {
+                  if (k.startsWith('-')) {
+                    return <Line key={k} />
+                  }
+                  return (
+                    <Button key={k} to={k}>
+                      {locationMap.get(k)}
+                    </Button>
+                  )
+                })}
+              </div>
+            </DropDown>
+          </DropdownButton>
+        </div>
+      )}
       <div className={styles.view_mode_area}>
         <Toggle
           kind={toggleType.MINIMAL}

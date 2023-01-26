@@ -50,7 +50,7 @@ export const Footer = ({ menu, pin }) => {
   })
 
   return (
-    <div className={classes}>
+    <motion.div {...transition()} className={classes}>
       <Line />
       <motion.footer {...transition()} className={classes_content}>
         <div className={styles.logo}>
@@ -126,6 +126,6 @@ export const Footer = ({ menu, pin }) => {
           </div>
         )}
       </motion.footer>
-    </div>
+    </motion.div>
   )
 }

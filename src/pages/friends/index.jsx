@@ -48,6 +48,7 @@ export function Friends() {
   return (
     <Page title="Friends">
       <TokenCollection
+        feeds_menu
         disable={!wallets}
         namespace="friends"
         variables={{ wallets }}

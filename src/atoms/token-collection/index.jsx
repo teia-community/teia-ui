@@ -54,6 +54,7 @@ function MasonryView({ tokens }) {
   )
 }
 
+// TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
 /**
  * Main feed component that can be either in Single or Masonry mode.
  * @param {Object} tkProps - The props
@@ -63,6 +64,7 @@ function MasonryView({ tokens }) {
 function TokenCollection({
   query,
   namespace,
+  feeds_menu = false,
   disable = false,
   variables = {},
   swrParams = [],
@@ -170,7 +172,7 @@ function TokenCollection({
   return (
     <div className={styles.feed_container}>
       <IconCache.Provider value={{}}>
-        <FeedToolbar />
+        <FeedToolbar feeds_menu={feeds_menu} />
         <InfiniteScroll
           className={`${viewMode === 'masonry' && styles.infinite_scroll}`}
           loadMore={() => {
