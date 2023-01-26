@@ -31,8 +31,11 @@
   color: var(--text-color);
 
   .content {
-    background-color: var(--background-color);
-    transition: var(--body-transition);
+    &.fill_bg {
+      background-color: var(--background-color);
+      transition: var(--body-transition);
+    }
+
     width: 100%;
     height: 110px;
     display: grid;

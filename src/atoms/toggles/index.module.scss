@@ -29,7 +29,8 @@
 
 .minimal_toggle {
   border: none;
-
+  display: flex;
+  align-items: center;
   svg > * {
     fill: var(--gray-50);
   }

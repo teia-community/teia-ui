@@ -66,11 +66,11 @@ export const Header = () => {
 
   const handleSyncUnsync = () => {
     if (context.acc?.address) {
-      if (!context.collapsed) {
+      if (context.collapsed) {
+        handleRoute('/sync', '/tz')
+      } else {
         // disconnect wallet
         context.disconnect()
-      } else {
-        handleRoute('/sync', '/tz')
       }
     } else {
       // connect wallet
@@ -83,7 +83,11 @@ export const Header = () => {
       <EventBanner />
       <AnimatePresence>{!context.collapsed && <MainMenu />}</AnimatePresence>
       <header className={`${styles.container}`}>
-        <div className={styles.content}>
+        <div
+          className={`${styles.content} ${
+            context.collapsed ? '' : styles.fill_bg
+          }`}
+        >
           <div className={styles.left}>
             <DropdownButton
               className={styles.events_button}
