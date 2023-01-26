@@ -5,6 +5,7 @@ import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Toggle, toggleType } from '@atoms/toggles'
 import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
 import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
+import { ReactComponent as ChevronIcon } from '../icons/chevron.svg'
 // import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
 
 // import { Input } from '@atoms/input'
@@ -65,7 +66,7 @@ export const FeedToolbar = () => {
       <div className={styles.feeds_area}>
         <DropdownButton
           menuID="feeds"
-          // icon={<FiltersIcon />}
+          icon={<ChevronIcon />}
           label={feedLabel}
           className={styles.feeds_dropdown}
         >
