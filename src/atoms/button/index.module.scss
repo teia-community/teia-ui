@@ -33,8 +33,8 @@
   transition: color #{$theme-duration} ease-out;
 
   &.selected {
-    font-weight: bold;
-    margin-bottom: -7px;
+    // fake bold to avoid shift... 96% support, no Opera or IE
+    -webkit-text-stroke: 0.5px var(--text-color);
     border-bottom: 1px solid var(--text-color);
   }
 

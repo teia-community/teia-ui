@@ -25,9 +25,8 @@
   top: 0;
   color: #fff;
 
-  @media (max-width: 768px) {
+  @include respond-to('tablet') {
     padding: 0 1rem;
-    font-size: $font-small;
   }
 }
 
