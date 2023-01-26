@@ -7,6 +7,7 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 function RecentSalesFeed() {
   return (
     <TokenCollection
+      feeds_menu
       namespace="recent-sales-feed"
       resultsPath="events"
       tokenPath="token"

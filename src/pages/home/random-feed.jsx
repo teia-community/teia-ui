@@ -19,6 +19,7 @@ function RandomFeed({ firstId = 196, lastId = 1_592_463, max = 200 }) {
 
   return (
     <TokenCollection
+      feeds_menu
       namespace="random-feed"
       enableInfinityScroll={false}
       variables={{ tokenIds }}
