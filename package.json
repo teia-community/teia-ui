@@ -31,7 +31,7 @@
     "react-pdf": "^6.2.2",
     "react-router": "^6.4.3",
     "react-router-dom": "^6.4.3",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.1",
     "react-select": "^5.7.0",
     "react-use": "^17.4.0",
     "react-use-clipboard": "^1.0.9",
