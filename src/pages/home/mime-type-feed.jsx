@@ -45,6 +45,24 @@ export function VideoFeed() {
   return <MimeTypeFeed namespace="video-feed" mimeTypes={['video/mp4']} />
 }
 
+export function ImageFeed() {
+  return (
+    <MimeTypeFeed
+      namespace="image-feed"
+      mimeTypes={['image/jpeg', 'image/png', 'image/jpg']}
+    />
+  )
+}
+
+export function AudioFeed() {
+  return (
+    <MimeTypeFeed
+      namespace="audio-feed"
+      mimeTypes={['audio/mpeg', 'audio/vorbis', 'audio/mp4', 'audio/ogg']}
+    />
+  )
+}
+
 export function HtmlSvgFeed() {
   return (
     <MimeTypeFeed

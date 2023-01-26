@@ -25,18 +25,23 @@ const MediaFilter = ({ label, tagline }) => {
 
 const locationMap = new Map([
   ['/', 'Recent Sales'],
+  ['/feed/random', 'random'],
+  ['/feed/newobjkts', 'new OBJKTs'],
+  ['/friends', 'friends'],
+  // separator
+  ['---fund_feeds', 'fund_feeds'],
+  ['/feed/ukraine', '🇺🇦 ukraine'],
   ['/feed/pakistan', '🇵🇰 pakistan'],
   ['/feed/iran', '🇮🇷 iran'],
-  ['/feed/ukraine', '🇺🇦 ukraine'],
   ['/feed/tezospride', '🏳️‍🌈 tezospride'],
-  ['---', 'others'],
-  ['/feed/random', 'random'],
+  ['---mime_feeds', 'mime_feeds'],
+  ['/feed/image', 'image'],
+  ['/feed/video', 'video'],
+  ['/feed/audio', 'audio'],
   ['/feed/glb', 'glb'],
   ['/feed/music', 'music'],
-  ['/feed/video', 'video'],
   ['/feed/html-svg', 'html/svg'],
   ['/feed/gif', 'gif'],
-  ['/feed/newobjkts', 'new OBJKTs'],
 ])
 
 export const FeedToolbar = () => {
@@ -52,7 +57,7 @@ export const FeedToolbar = () => {
   }, [location])
 
   // TODO: finish the filtering logic
-  const filters = false
+  // const filters = false
   return (
     <motion.div className={styles.toolbar}>
       <div className={styles.feeds_area}>
@@ -65,7 +70,7 @@ export const FeedToolbar = () => {
           <DropDown menuID="feeds">
             <div className={styles.feeds_buttons}>
               {[...locationMap.keys()].map((k) => {
-                if (k === '---') {
+                if (k.startsWith('-')) {
                   return <span key={k} className="line-horizontal" />
                 }
                 return (
@@ -94,7 +99,8 @@ export const FeedToolbar = () => {
           label={<MasonryIcon />}
         />
       </div>
-      {filters && (
+      {/* KEEP */}
+      {/* {filters && (
         <DropdownButton
           direction="left"
           menuID="filters"
@@ -198,7 +204,7 @@ export const FeedToolbar = () => {
             </div>
           </DropDown>
         </DropdownButton>
-      )}
+      )} */}
     </motion.div>
   )
 }

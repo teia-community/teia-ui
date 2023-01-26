@@ -23,6 +23,8 @@ import {
   VideoFeed,
   HtmlSvgFeed,
   GifFeed,
+  ImageFeed,
+  AudioFeed,
 } from './mime-type-feed'
 import TagFeed from './tag-feed'
 import SearchFeed from './search-feed'
@@ -116,6 +118,8 @@ export function Home({ isSearch = false }) {
           <Route path="/glb" element={<GlbFeed />} />
           <Route path="/music" element={<MusicFeed />} />
           <Route path="/video" element={<VideoFeed />} />
+          <Route path="/image" element={<ImageFeed />} />
+          <Route path="/audio" element={<AudioFeed />} />
           <Route path="/html-svg" element={<HtmlSvgFeed />} />
           <Route path="/gif" element={<GifFeed />} />
         </Routes>
