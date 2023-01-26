@@ -25,10 +25,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 30px;
+
   word-break: normal;
   width: 100%;
   padding: 20px 0;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 .spread {
@@ -65,7 +67,7 @@
 
 .edition {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   width: 100%;
   font-size: 80%;
@@ -154,20 +156,16 @@ span[data-tooltip][data-position='top']:after {
 }
 
 .objkt_label {
-  padding-bottom: 7.5px;
+  margin-bottom: 7.5px;
 
   @include respond-to('desktop') {
-    padding-bottom: 0;
+    margin-bottom: 0;
     height: fit-content;
   }
 }
 
 .objkt_details_container {
-  align-items: flex-start;
-
-  @include respond-to('dekstop') {
-    align-items: center;
-  }
+  align-items: center;
 }
 .objkt_label_container {
   width: 100%;
