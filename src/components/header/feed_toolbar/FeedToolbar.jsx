@@ -28,23 +28,22 @@ import { Line } from '@atoms/line'
 
 const locationMap = new Map([
   ['/', 'Recent Sales'],
-  ['/feed/random', 'random'],
-  ['/feed/newobjkts', 'new OBJKTs'],
-  ['/friends', 'friends'],
+  ['/feed/random', 'Random'],
+  ['/feed/newobjkts', 'New OBJKTs'],
+  ['/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
-  ['/feed/ukraine', '🇺🇦 ukraine'],
-  ['/feed/pakistan', '🇵🇰 pakistan'],
-  ['/feed/iran', '🇮🇷 iran'],
-  ['/feed/tezospride', '🏳️‍🌈 tezospride'],
+  ['/feed/ukraine', '🇺🇦 Ukraine'],
+  ['/feed/pakistan', '🇵🇰 Pakistan'],
+  ['/feed/iran', '🇮🇷 Iran'],
+  ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
   ['---mime_feeds', 'mime_feeds'],
-  ['/feed/image', 'image'],
-  ['/feed/video', 'video'],
-  ['/feed/audio', 'audio'],
-  ['/feed/glb', 'glb'],
-  ['/feed/music', 'music'],
-  ['/feed/html-svg', 'html/svg'],
-  ['/feed/gif', 'gif'],
+  ['/feed/image', 'Image'],
+  ['/feed/video', 'Video'],
+  ['/feed/audio', 'Audio'],
+  ['/feed/glb', '3D'],
+  ['/feed/html-svg', 'HTML & SVG'],
+  ['/feed/gif', 'GIF'],
 ])
 
 export const FeedToolbar = ({ feeds_menu = false }) => {

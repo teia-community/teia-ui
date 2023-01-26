@@ -33,11 +33,17 @@ export function GlbFeed() {
   return <MimeTypeFeed namespace="glb-feed" mimeTypes={['model/gltf-binary']} />
 }
 
-export function MusicFeed() {
+export function AudioFeed() {
   return (
     <MimeTypeFeed
-      namespace="music-feed"
-      mimeTypes={['audio/ogg', 'audio/wav', 'audio/mpeg']}
+      namespace="audio-feed"
+      mimeTypes={[
+        'audio/ogg',
+        'audio/wav',
+        'audio/mpeg',
+        'audio/vorbis',
+        'audio/mp4',
+      ]}
     />
   )
 }
@@ -51,15 +57,6 @@ export function ImageFeed() {
     <MimeTypeFeed
       namespace="image-feed"
       mimeTypes={['image/jpeg', 'image/png', 'image/jpg']}
-    />
-  )
-}
-
-export function AudioFeed() {
-  return (
-    <MimeTypeFeed
-      namespace="audio-feed"
-      mimeTypes={['audio/mpeg', 'audio/vorbis', 'audio/mp4', 'audio/ogg']}
     />
   )
 }

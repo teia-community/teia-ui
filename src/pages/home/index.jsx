@@ -116,7 +116,6 @@ export function Home({ isSearch = false }) {
           <Route path="/random" element={<RandomFeed />} />
           <Route path="/newobjkts" element={<NewObjktsFeed />} />
           <Route path="/glb" element={<GlbFeed />} />
-          <Route path="/music" element={<MusicFeed />} />
           <Route path="/video" element={<VideoFeed />} />
           <Route path="/image" element={<ImageFeed />} />
           <Route path="/audio" element={<AudioFeed />} />
