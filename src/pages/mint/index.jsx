@@ -42,6 +42,7 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
+import { Line } from '@atoms/line'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
@@ -583,7 +584,7 @@ export const Mint = () => {
               label="Title"
               value={title}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Input>
 
             <Textarea
@@ -600,7 +601,7 @@ export const Mint = () => {
               label="Description"
               value={description}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Textarea>
 
             <Input
@@ -621,7 +622,7 @@ export const Mint = () => {
               label="Tags"
               value={tags}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Input>
             <Input
               type="number"
@@ -642,7 +643,7 @@ export const Mint = () => {
               label="Editions"
               value={amount}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Input>
 
             <Input
@@ -661,7 +662,7 @@ export const Mint = () => {
               label="Royalties"
               value={royalties}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Input>
             <Select
               label="License"
@@ -689,7 +690,7 @@ export const Mint = () => {
                 value={rightUri}
               />
             )}
-            <span className="line-horizontal" />
+            <Line />
             <Select
               label="Language"
               placeholder="(optional)"
@@ -703,7 +704,7 @@ export const Mint = () => {
                 )
               }}
             >
-              <span className="line-horizontal" />
+              <Line />
             </Select>
             <div
               style={{

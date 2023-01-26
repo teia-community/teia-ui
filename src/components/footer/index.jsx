@@ -11,6 +11,7 @@ import { Toggle, toggleType } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
 import { RotatingLogo } from '@atoms/logo'
 import useSettings from '@hooks/use-settings'
+import { Line } from '@atoms/line'
 
 export const Footer = ({ menu, pin }) => {
   const { language } = useLanguage()
@@ -38,15 +39,20 @@ export const Footer = ({ menu, pin }) => {
       },
     }
   }
+
   const classes = classnames({
-    [styles.content]: true,
+    [styles.container]: true,
     [styles.pinned]: pin,
+  })
+  const classes_content = classnames({
+    [styles.content]: true,
     [styles.minimal]: !menu,
   })
 
   return (
-    <div className={styles.container}>
-      <motion.footer {...transition()} className={classes}>
+    <div className={classes}>
+      <Line />
+      <motion.footer {...transition()} className={classes_content}>
         <div className={styles.logo}>
           Teia DAO LLC.
           {menu && (

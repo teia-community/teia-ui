@@ -77,17 +77,6 @@ button {
   -webkit-touch-callout: none;
 }
 
-.line-horizontal {
-  display: block;
-  width: 100%;
-  border-bottom: 1px solid var(--gray-20);
-}
-
-.line-vertical {
-  border-right: 1px solid var(--border-color);
-  height: 100%;
-}
-
 img.emoji {
   width: $font-small-mobile;
   pointer-events: none;
