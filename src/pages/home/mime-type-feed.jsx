@@ -7,6 +7,7 @@ import TokenCollection from '@atoms/token-collection'
 function MimeTypeFeed({ namespace, mimeTypes }) {
   return (
     <TokenCollection
+      feeds_menu
       namespace={namespace}
       maxItems={600}
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}

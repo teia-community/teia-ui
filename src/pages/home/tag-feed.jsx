@@ -6,6 +6,7 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 function TagFeed({ tag, ...otherProps }) {
   return (
     <TokenCollection
+      feeds_menu
       variables={{ tag }}
       swrParams={[tag]}
       maxItems={600}

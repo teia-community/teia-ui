@@ -24,6 +24,7 @@ function FundFeed({
         </a>
       </div>
       <TokenCollection
+        feeds_menu
         namespace={namepsace}
         maxItems={600}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {
