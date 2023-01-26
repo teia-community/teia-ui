@@ -1,7 +1,6 @@
 import React from 'react'
 import useSWR from 'swr'
 import uniq from 'lodash/uniq'
-import { Page } from '@atoms/layout'
 import TokenCollection from '@atoms/token-collection'
 import { fetchGraphQL } from '@data/api'
 import { BaseTokenFieldsFragment } from '@data/api'
@@ -33,12 +32,12 @@ async function fetchAllFrensAddresses(address) {
   return uniq(data.holdings.map((holding) => holding.token.artist_address))
 }
 
-export function Friends() {
-  const { address } = useParams()
+export function FriendsFeed() {
+  const param = useParams()
 
   const { data: wallets } = useSWR(
-    ['/friends', address],
-    async () => fetchAllFrensAddresses(address),
+    ['/feed/friends', param.address],
+    async () => fetchAllFrensAddresses(param.address),
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -46,30 +45,30 @@ export function Friends() {
   )
 
   return (
-    <Page title="Friends">
-      <TokenCollection
-        feeds_menu
-        disable={!wallets}
-        namespace="friends"
-        variables={{ wallets }}
-        swrParams={[address]}
-        query={gql`
-          ${BaseTokenFieldsFragment}
-          query frensGallery($wallets: [String!], $limit: Int!) {
-            tokens(
-              where: {
-                editions: { _gt: 0 }
-                artist_address: { _in: $wallets }
-                metadata_status: { _eq: "processed" }
-              }
-              order_by: { minted_at: desc }
-              limit: $limit
-            ) {
-              ...baseTokenFields
+    <TokenCollection
+      feeds_menu
+      disable={!wallets}
+      namespace="friends"
+      variables={{ wallets }}
+      swrParams={[param.address]}
+      query={gql`
+        ${BaseTokenFieldsFragment}
+        query frensGallery($wallets: [String!], $limit: Int!) {
+          tokens(
+            where: {
+              editions: { _gt: 0 }
+              artist_address: { _in: $wallets }
+              metadata_status: { _eq: "processed" }
             }
+            order_by: { minted_at: desc }
+            limit: $limit
+          ) {
+            ...baseTokenFields
           }
-        `}
-      />
-    </Page>
+        }
+      `}
+    />
   )
 }
+
+export default FriendsFeed

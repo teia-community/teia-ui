@@ -13,7 +13,6 @@ import { Collaborate, CollabDisplay } from './pages/collaborate'
 import { Config } from './pages/config'
 import { Home } from './pages/home'
 import { Tags } from './pages/tags'
-import { Friends } from './pages/friends'
 import { Terms } from './pages/terms'
 import { AnimatePresence } from 'framer-motion'
 import { Debug } from '@atoms/debug'
@@ -36,7 +35,6 @@ const App = () => {
             <Route exact path="/" element={<Home />} />
             <Route path="/feed/*" element={<Home />} />
             <Route path="/search/*" element={<Home isSearch />} />
-            <Route path="/friends/:address" element={<Friends />} />
             <Route path="/tz/:address/*" element={<Display />} />
             <Route path="/kt/:id" element={<CollabDisplay />} />
             <Route path="/collab/:name" element={<CollabDisplay />} />

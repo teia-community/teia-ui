@@ -19,7 +19,7 @@ import { Tab } from '@atoms/tab'
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
   if (!holder && type !== 'user_address') {
-    throw new Error('user not found')
+    throw new Error(`user ${addressOrSubjkt} not found`)
   } else if (
     !holder &&
     validateAddress(addressOrSubjkt) === ValidationResult.VALID
@@ -52,6 +52,7 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 export default function Display() {
   const { address, id: subjkt } = useParams()
   const { walletBlockMap } = useSettings()
+
   const isRestrictedUser = useMemo(
     () => walletBlockMap.get(address) === 1,
     [address, walletBlockMap]

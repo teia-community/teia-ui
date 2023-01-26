@@ -1,3 +1,5 @@
+@import '@styles/variables.scss';
+
 .container,
 .msg_box {
   display: flex;
@@ -5,15 +7,15 @@
   justify-content: center;
   flex-direction: column;
 }
+
 .container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-
-  h1 {
-    font-size: 50px;
+  a {
+    font-size: $font-small;
   }
 }
 .msg_box {
