@@ -29,18 +29,19 @@ export const Info = ({ nft, viewer_address }) => {
     <>
       <Container>
         <div className={styles.infos_container}>
-          <div className={styles.objkt__title}>{nft.name}</div>
+          <div className={styles.basic_infos}>
+            <h1>{nft.name}</h1>
 
-          <div style={{ whiteSpace: 'pre-wrap' }}>{nft.description}</div>
-
-          {nft.tags && nft.tags.length ? (
+            <p>{nft.description}</p>
+          </div>
+          {nft.tags?.length ? (
             <Tags tags={nft.tags.map(({ tag }) => tag)} />
           ) : null}
         </div>
       </Container>
+      <span className="line-horizontal" />
       <Container>
         <div className={styles.infos_attributes_container}>
-          <hr />
           <div className={styles.infos_attributes_flex}>
             <div className={styles.info_attributes}>
               Mimetype:<p>{nft.mime_type}</p>

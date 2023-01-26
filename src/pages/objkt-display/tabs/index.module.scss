@@ -15,8 +15,7 @@
 
 .info_ipfs {
   white-space: pre-wrap;
-  margin: 0 1em;
-  padding-top: 12px;
+  padding-top: 20px;
   width: fit-content;
   a {
     color: var(--gray-70);
@@ -24,16 +23,22 @@
   border-top: 1px solid var(--border-color);
 }
 
+.info_attributes {
+  margin-bottom: 10px;
+}
+.info_ipfs {
+  margin-bottom: 100px;
+}
 .info_attributes,
 .info_ipfs {
-  font-size: 0.75em;
+  font-size: $font-small;
   display: flex;
   flex-direction: row;
   white-space: pre-wrap;
   color: var(--gray-70);
-  margin: 0.5em 0em;
+  align-items: center;
   p {
-    margin: 0 0.5em;
+    margin-left: 10px;
   }
 }
 
@@ -43,19 +48,14 @@
     color: var(--gray-70);
   }
 }
-
-.infos_attributes_container,
-.infos_container {
-  hr {
-    border-color: var(--border-color);
-    margin-bottom: 1em;
-  }
+.infos_attributes_container {
+  margin-top: 20px;
 }
 
 .infos_attributes_flex {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1em;
+  margin-bottom: 10px;
 }
 
 .container {
@@ -238,13 +238,11 @@
   }
 }
 
-.objkt__title {
-  padding-top: 10px;
-  font-weight: bold;
-  font-size: $font-large-mobile;
-  @include respond-to('desktop') {
-    font-size: $font-large;
+.basic_infos {
+  h1 {
+    margin-bottom: 10px;
   }
+  margin-bottom: 20px;
 }
 
 .restricted,
