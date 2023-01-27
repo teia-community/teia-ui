@@ -2,7 +2,6 @@ import React from 'react'
 import Markdown from 'markdown-to-jsx'
 import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
-import { VisuallyHidden } from '@atoms'
 import styles from '@style'
 const axios = require('axios')
 
@@ -42,9 +41,7 @@ export const MD = ({
       <div className={styles.preview}>
         <img src={displayUri} alt={`cover for markdown object ${objktID}`} />
         <div className={styles.button}>
-          <Button>
-            <VisuallyHidden>View</VisuallyHidden>
-          </Button>
+          <Button alt="View Markdown Token" />
         </div>
       </div>
     </div>

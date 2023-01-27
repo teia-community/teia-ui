@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import get from 'lodash/get'
 import { PATH } from '@constants'
 import { Page, Container } from '@atoms/layout'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import TokenCollection from '@atoms/token-collection'
 import styles from '@pages/profile/index.module.scss'
 import { walletPreview } from '@utils/string'
@@ -124,7 +124,7 @@ export const CollabDisplay = () => {
                   <p className={descriptionClass}>{description}</p>
                 )}
                 <Button href={`https://tzkt.io/${address}`}>
-                  <Primary>{walletPreview(address)}</Primary>
+                  {walletPreview(address)}
                 </Button>
               </div>
             </div>

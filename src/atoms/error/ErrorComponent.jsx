@@ -1,4 +1,4 @@
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import styles from '@style'
 import { memo } from 'react'
 
@@ -10,13 +10,9 @@ const ErrorComponent = ({ title = 'Ooops!', message }) => {
         <p>{message}</p>
       </div>
       <Button href="https://github.com/teia-community/teia-ui/issues">
-        <Primary>
-          <strong>Report Issue</strong>
-        </Primary>
+        <strong>Report Issue</strong>
       </Button>
-      <Button to="/">
-        <Primary>Go back home</Primary>
-      </Button>
+      <Button to="/">Go back home</Button>
     </div>
   )
 }

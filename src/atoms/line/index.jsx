@@ -6,5 +6,5 @@ export const Line = ({ vertical, className }) => {
     [styles.vertical]: vertical,
     [styles.horizontal]: !vertical,
   })
-  return <span className={`${classes} ${className ? className : ''}`} />
+  return <hr className={`${classes} ${className ? className : ''}`} />
 }

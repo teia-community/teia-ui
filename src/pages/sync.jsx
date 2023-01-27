@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'
 import { LoadingContainer } from '@atoms/loading'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 
 export default function Sync() {
   const location = useLocation()
@@ -41,9 +41,7 @@ export default function Sync() {
     <Page title="">
       <Container>
         <p>requesting permissions</p>
-        <Button to="/sync">
-          <Primary>try again?</Primary>
-        </Button>
+        <Button to="/sync">try again?</Button>
         <LoadingContainer />
       </Container>
     </Page>

@@ -2,7 +2,6 @@ import React from 'react'
 import get from 'lodash/get'
 import isNumber from 'lodash/isNumber'
 import { Container } from '@atoms/layout'
-import { Primary } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import { formatRoyalties } from '@utils'
 import { getTimeAgo } from '@utils/time'
@@ -21,13 +20,13 @@ function UsernameAndLink({ event, attr }) {
             target="_blank"
             rel="noreferrer"
           >
-            <Primary>{get(event, `${attr}_profile.name`)}</Primary>
+            {get(event, `${attr}_profile.name`)}
           </a>
         </span>
       ) : (
         <span>
           <a href={`/tz/${get(event, `${attr}_address`)}`}>
-            <Primary>{walletPreview(get(event, `${attr}_address`))}</Primary>
+            {walletPreview(get(event, `${attr}_address`))}
           </a>
         </span>
       )}
@@ -235,7 +234,7 @@ export const History = ({ nft }) => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Primary>Burn Address</Primary>
+                        Burn Address
                       </a>
                     </span>
                   }

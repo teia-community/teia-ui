@@ -6,8 +6,7 @@ import { useLocation, useNavigate } from 'react-router'
 
 import { AnimatePresence } from 'framer-motion'
 import { TeiaContext } from '@context/TeiaContext'
-import { Button, Primary } from '@atoms/button'
-import { VisuallyHidden } from '@atoms'
+import { Button } from '@atoms/button'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Menu } from '../icons'
@@ -110,6 +109,7 @@ export const Header = () => {
           </div>
 
           <Button
+            alt="main teia logo"
             onClick={() => {
               if (location.pathname === '/') {
                 setLogoSeed(Math.random() * logoSeed)
@@ -125,20 +125,23 @@ export const Header = () => {
             {!context.collapsed && context.proxyAddress && (
               <div className={styles.mr}>
                 <Button onClick={() => context.setProxyAddress(null)} secondary>
-                  <Primary>Exit collab</Primary>
+                  Exit collab
                 </Button>
               </div>
             )}
 
-            <Button onClick={handleSyncUnsync} secondary>
-              <Primary label={`wallet account ending in ${accountPreview}`}>
-                {isWide && button}
-              </Primary>
+            <Button
+              onClick={handleSyncUnsync}
+              secondary
+              alt={`wallet account ending in ${accountPreview}`}
+            >
+              {isWide && button}
             </Button>
-            <Button onClick={context.toggleMenu} secondary>
-              <VisuallyHidden>
-                {`${context.collapsed ? 'show' : 'hide'} menu`}
-              </VisuallyHidden>
+            <Button
+              alt={`${context.collapsed ? 'show' : 'hide'} menu`}
+              onClick={context.toggleMenu}
+              secondary
+            >
               <Menu isOpen={!context.collapsed} />
             </Button>
           </div>

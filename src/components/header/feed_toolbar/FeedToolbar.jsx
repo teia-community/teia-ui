@@ -219,10 +219,10 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
             </motion.div>
             <div key="confirm_box" className={styles.confirm_box}>
               <Button>
-                <Primary>Clear</Primary>
+                Clear
               </Button>
               <Button onClick={() => context.closeDropdowns()}>
-                <Primary>Ok</Primary>
+                Ok
               </Button>
             </div>
           </DropDown>

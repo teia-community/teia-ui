@@ -5,7 +5,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Page } from '@atoms/layout'
 import { Input, Textarea, Checkbox } from '@atoms/input'
 import Select from '@atoms/select'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
 import { prepareFile, prepareDirectory } from '@data/ipfs'
@@ -741,7 +741,7 @@ export const Mint = () => {
             <span className="horizontal-line" />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button onClick={clearFields} fit>
-                <Primary>Clear Fields</Primary>
+                Clear Fields
               </Button>
             </div>
 
@@ -775,9 +775,7 @@ export const Mint = () => {
           <>
             <div style={{ display: 'flex' }}>
               <Button onClick={() => setStep(0)} fit>
-                <Primary>
-                  <strong>Back</strong>
-                </Primary>
+                <strong>Back</strong>
               </Button>
             </div>
 
@@ -807,7 +805,7 @@ export const Mint = () => {
         )}
 
         <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
-          <Primary>Terms & Conditions</Primary>
+          Terms & Conditions
         </Button>
         <hr />
       </div>

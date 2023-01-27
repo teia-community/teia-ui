@@ -1,15 +1,13 @@
 import React from 'react'
 import { Page, Container } from '@atoms/layout'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import styles from '@style'
 
 export const FAQ = () => {
   const Question = ({ text, link }) => {
     return (
       <li className={styles.buttons}>
-        <Button href={link}>
-          <Primary>{text}</Primary>
-        </Button>
+        <Button href={link}>{text}</Button>
       </li>
     )
   }
