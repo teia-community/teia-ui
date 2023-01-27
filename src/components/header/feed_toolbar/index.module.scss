@@ -41,21 +41,33 @@
 }
 // .feeds_dropdown {
 // }
+
 .filter_area {
   grid-area: Filter;
   justify-self: flex-end;
 }
-.feeds_buttons {
+.feeds_button {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 20px;
+  width: 180px;
+  padding: 0 20px;
   & > * {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   & > button:hover {
     text-decoration: underline;
   }
+}
+
+.separator {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.feeds_dropdown {
+  width: 180px;
 }
 .view_mode_area {
   grid-area: View-Mode;

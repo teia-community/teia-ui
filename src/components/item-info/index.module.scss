@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   flex-direction: row;
-  font-size: $font-body;
+  font-size: $font-small;
   justify-content: space-between;
   margin: 10px 0;
   word-break: normal;
@@ -23,6 +23,8 @@
 
 .container {
   display: flex;
+  font-size: $font-small;
+
   align-items: center;
   justify-content: space-between;
 
@@ -118,7 +120,7 @@ span[data-tooltip] {
     content: attr(data-tooltip);
     background-color: var(--text-color);
     color: var(--background-color);
-    font-size: 12px;
+    font-size: $font-small;
     font-weight: bold;
     padding: 10px 15px;
     border-radius: 10px;
@@ -186,7 +188,7 @@ span[data-tooltip][data-position='top']:after {
 }
 
 .tz {
-  font-size: 20px;
+  font-size: $font-small;
 }
 
 .infos_left,

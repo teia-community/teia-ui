@@ -38,7 +38,7 @@ export const Page = ({ title = '', children = null, feed, className }) => {
         animate="visible"
         exit="exit"
         variants={containerVariants}
-        className={`${classes} ${className}`}
+        className={`${classes} ${className ? className : ''}`}
       >
         <VisuallyHidden as="h1">
           {title === '' ? 'teia' : `${title} - teia`}

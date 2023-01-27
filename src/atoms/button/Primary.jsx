@@ -12,7 +12,7 @@ const Primary = (props) => {
   })
   return (
     <div
-      className={`${classes} ${props.className || ''}`}
+      className={`${classes} ${props.className ? props.className : ''}`}
       role="button"
       aria-label={props.label}
     >
