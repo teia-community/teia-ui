@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import classNames from 'classnames'
 import get from 'lodash/get'
 import { PATH } from '@constants'
-import { Button, Primary, Secondary } from '@atoms/button'
+import { Button, Secondary } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
@@ -70,11 +70,9 @@ const ItemInfo = ({ nft }) => {
                 <CollabIssuerInfo creator={nft.artist_profile} />
               ) : (
                 <Button to={`${PATH.ISSUER}/${nft.artist_address}`}>
-                  <Primary>
-                    {nft.artist_profile?.name
-                      ? nft.artist_profile.name
-                      : walletPreview(nft.artist_address)}
-                  </Primary>
+                  {nft.artist_profile?.name
+                    ? nft.artist_profile.name
+                    : walletPreview(nft.artist_address)}
                 </Button>
               )}
             </div>
@@ -101,9 +99,7 @@ const ItemInfo = ({ nft }) => {
                     {verifiedSymbol}
                   </span>
                   <Button onClick={() => setShowSignStatus(!showSignStatus)}>
-                    <Primary>
-                      <strong>{verifiedStatus}</strong>
-                    </Primary>
+                    {verifiedStatus}
                   </Button>
                 </div>
                 {showSignStatus && (

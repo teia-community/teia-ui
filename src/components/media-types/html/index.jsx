@@ -7,7 +7,6 @@ import {
   prepareFilesFromZIP,
   validateFiles,
 } from '@utils/html'
-import { VisuallyHidden } from '@atoms'
 import styles from '@style'
 import GenerativeIcon from '@icons/generative'
 // import './styles.css'
@@ -144,8 +143,7 @@ export const HTMLComponent = (props) => {
         <div className={styles.preview}>
           <img src={displayUri} alt={`interactive object ${objktID}`} />
           <div className={styles.button}>
-            <Button>
-              <VisuallyHidden>View</VisuallyHidden>
+            <Button alt="View Generative Token">
               <GenerativeIcon />
             </Button>
           </div>

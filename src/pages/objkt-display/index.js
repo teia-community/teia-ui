@@ -7,7 +7,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { Page, Container } from '@atoms/layout'
 import { RenderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
@@ -207,13 +207,13 @@ export const ObjktDisplay = () => {
                 }
 
                 return (
-                  <Button key={tab.title} onClick={() => setTabIndex(index)}>
-                    <Primary
-                      className={styles.tab}
-                      selected={tabIndex === index}
-                    >
-                      {tab.title}
-                    </Primary>
+                  <Button
+                    selected={tabIndex === index}
+                    className={styles.tab}
+                    key={tab.title}
+                    onClick={() => setTabIndex(index)}
+                  >
+                    {tab.title}
                   </Button>
                 )
               })}

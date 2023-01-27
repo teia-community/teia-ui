@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Page, Container } from '@atoms/layout'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { CollabDisplay } from '@components/collab/show/CollabDisplay'
 import { CreateCollaboration } from './create'
 import { TeiaContext } from '@context/TeiaContext'
@@ -39,8 +39,12 @@ const Collaborate = () => {
       <Container>
         {TABS.map((tab, index) => {
           return (
-            <Button key={tab.title} onClick={() => setTabIndex(index)}>
-              <Primary selected={tabIndex === index}>{tab.title}</Primary>
+            <Button
+              selected={tabIndex === index}
+              key={tab.title}
+              onClick={() => setTabIndex(index)}
+            >
+              {tab.title}
             </Button>
           )
         })}

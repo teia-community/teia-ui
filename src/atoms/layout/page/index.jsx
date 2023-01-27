@@ -2,7 +2,6 @@ import React from 'react'
 import classnames from 'classnames'
 import { Header } from '@components/header'
 import { FeedbackComponent } from '@components/feedback'
-import { VisuallyHidden } from '@atoms'
 import styles from '@style'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTitle } from 'hooks/use-title'
@@ -40,9 +39,6 @@ export const Page = ({ title = '', children = null, feed, className }) => {
         variants={containerVariants}
         className={`${classes} ${className ? className : ''}`}
       >
-        <VisuallyHidden as="h1">
-          {title === '' ? 'teia' : `${title} - teia`}
-        </VisuallyHidden>
         <div className={styles.content}>{children}</div>
       </motion.main>
       <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>
