@@ -716,22 +716,22 @@ export const Mint = () => {
               <Checkbox
                 label="NSFW"
                 checked={nsfw}
-                onChange={(e) => {
-                  setNsfw(e.target.checked)
+                onCheck={(v) => {
+                  setNsfw(v)
                   window.localStorage.setItem(
                     'objkt::nsfw',
-                    e.target.checked ? 'true' : 'false'
+                    v ? 'true' : 'false'
                   )
                 }}
                 name="nsfw"
               />
               <Checkbox
                 checked={photosensitiveSeizureWarning}
-                onChange={(e) => {
-                  setPhotosensitiveSeizureWarning(e.target.checked)
+                onCheck={(v) => {
+                  setPhotosensitiveSeizureWarning(v)
                   window.localStorage.setItem(
                     'objkt::photosensitive_seizure_warning',
-                    e.target.checked ? 'true' : 'false'
+                    v ? 'true' : 'false'
                   )
                 }}
                 name="photosens"
