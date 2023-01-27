@@ -52,10 +52,23 @@ export const VideoComponent = ({
   }, [inView])
 
   return displayView ? (
-    <div className={styles.video}>
+    <video
+      ref={domElement}
+      className={styles.displayviewVideo}
+      autoPlay={inView}
+      playsInline
+      muted
+      loop
+      controls={interactive}
+      src={preview ? previewUri : artifactUri}
+      poster={displayUri}
+      title={`video object ${nft.token_id}`}
+    />
+  ) : (
+    <div className={styles.container}>
       <video
         ref={domElement}
-        className={styles.displayviewVideo}
+        className={styles.video}
         autoPlay={inView}
         playsInline
         muted
@@ -66,19 +79,6 @@ export const VideoComponent = ({
         title={`video object ${nft.token_id}`}
       />
     </div>
-  ) : (
-    <video
-      ref={domElement}
-      className={styles.video}
-      autoPlay={inView}
-      playsInline
-      muted
-      loop
-      controls={interactive}
-      src={preview ? previewUri : artifactUri}
-      poster={displayUri}
-      title={`video object ${nft.token_id}`}
-    />
   )
 }
 
