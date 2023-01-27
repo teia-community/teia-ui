@@ -1,4 +1,4 @@
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 // import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
 import { isNumber } from 'lodash'
@@ -34,18 +34,17 @@ const ItemInfoCompact = ({ nft }) => {
           <Primary label={`object ${nft.token_id}`}>#{nft.token_id}</Primary>
         </Button> */}
       <Button
-        alt="Go to artist page"
+        className={styles.artist}
+        alt={`Go to artist page of token #${nft.token_id}`}
         to={
           nft.artist_profile?.name
             ? `/${nft.artist_profile.name}`
             : `/tz/${nft.artist_address}`
         }
       >
-        <Primary className={styles.artist}>
           {nft.artist_profile?.name
             ? nft.artist_profile.name
             : walletPreview(nft.artist_address)}
-        </Primary>
       </Button>
       <Editions className={styles.editions} nft={nft} />
       {price}

@@ -94,7 +94,6 @@ export default function Display() {
                   setShowFilters(!showFilters)
                 }}
               >
-                <Primary>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -109,7 +108,6 @@ export default function Display() {
                   >
                     <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                   </svg>
-                </Primary>
               </Button>
             </div> */}
         </div>

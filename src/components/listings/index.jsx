@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import React, { useContext, useState } from 'react'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
 import styles from '@style'
@@ -36,10 +36,8 @@ function ListingRow({
       <div className={styles.issuer}>
         {listing.amount_left} ed.&nbsp;
         <Button to={`/tz/${listing.seller_address}`}>
-          <Primary>
-            {get(listing, 'seller_profile.name') ||
-              walletPreview(listing.seller_address)}
-          </Primary>
+          {get(listing, 'seller_profile.name') ||
+            walletPreview(listing.seller_address)}
         </Button>
       </div>
 

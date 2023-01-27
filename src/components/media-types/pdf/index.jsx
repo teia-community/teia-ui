@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack5'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image/index'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { AnimatePresence } from 'framer-motion'
 import { HashToURL } from '@utils'
@@ -78,13 +78,13 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
 
             <div className={styles.pdfNav}>
               <Button disabled={pageNumber <= 1} onClick={previousPage}>
-                <Primary>Prev «</Primary>
+                Prev «
               </Button>
               <p>
                 Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
               </p>
               <Button disabled={pageNumber >= numPages} onClick={nextPage}>
-                <Primary>» Next</Primary>
+                >» Next
               </Button>
             </div>
           </Document>

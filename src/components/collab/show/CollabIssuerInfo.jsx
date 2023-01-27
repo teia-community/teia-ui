@@ -2,7 +2,6 @@ import { useState } from 'react'
 import get from 'lodash/get'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
-import { Primary } from '@atoms/button'
 import styles from '../index.module.scss'
 import ParticipantList from '../manage/ParticipantList'
 import { CollaboratorType } from '@constants'
@@ -26,7 +25,7 @@ export const CollabIssuerInfo = ({ creator }) => {
         onMouseOut={() => setShowCollabSummary(false)}
         onBlur={() => setShowCollabSummary(false)}
       >
-        <Primary>{name === '' ? walletPreview(user_address) : name}</Primary>
+        {name === '' ? walletPreview(user_address) : name}
       </a>
 
       {showCollabSummary && (

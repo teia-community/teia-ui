@@ -1,6 +1,6 @@
 import React from 'react'
 import get from 'lodash/get'
-import { Button, Primary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { MARKETPLACE_CONTRACT_V1, BURN_ADDRESS } from '@constants'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
@@ -17,15 +17,13 @@ export const OwnerList = ({ owners }) => {
           {amount}&nbsp;ed.&nbsp;
           {get(holder_profile, 'name') ? (
             <Button to={`/${get(holder_profile, 'name')}`}>
-              <Primary>{encodeURI(get(holder_profile, 'name'))}</Primary>
+              {encodeURI(get(holder_profile, 'name'))}
             </Button>
           ) : holder_address === MARKETPLACE_CONTRACT_V1 ? (
-            <Button to={`/tz/${holder_address}`}>
-              <Primary>OBJKTSWAP V1</Primary>
-            </Button>
+            <Button to={`/tz/${holder_address}`}>OBJKTSWAP V1</Button>
           ) : (
             <Button to={`/tz/${holder_address}`}>
-              <Primary>{walletPreview(holder_address)}</Primary>
+              {walletPreview(holder_address)}
             </Button>
           )}
         </div>

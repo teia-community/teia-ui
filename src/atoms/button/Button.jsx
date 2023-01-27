@@ -41,6 +41,7 @@ const Button = ({
 
   const classes = `${_classes} ${className ? className : ''}`
 
+  // variants..
   if (box) {
     children = <div className={styles.box}>{children}</div>
   } else if (shadow_box) {
