@@ -29,6 +29,7 @@ export default function Sync() {
       case '/settings':
       case '/subjkt':
       case '/mint':
+      case '/collaborate':
         return state
       default:
         return '/'
