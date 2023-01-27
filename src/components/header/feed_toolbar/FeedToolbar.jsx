@@ -3,10 +3,7 @@ import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { Toggle, toggleType } from '@atoms/toggles'
-import { ReactComponent as SingleIcon } from '../icons/single_view.svg'
-import { ReactComponent as MasonryIcon } from '../icons/masonry.svg'
-import { ReactComponent as ChevronIcon } from '../icons/chevron.svg'
-// import { ReactComponent as FiltersIcon } from '../icons/filters.svg'
+import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 
 // import { Input } from '@atoms/input'
 import { /*useContext, */ useState } from 'react'
@@ -116,7 +113,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
           onToggle={() => {
             setViewMode('single')
           }}
-          label={<SingleIcon />}
+          label={<SingleViewIcon />}
         />
         <Toggle
           kind={toggleType.MINIMAL}
