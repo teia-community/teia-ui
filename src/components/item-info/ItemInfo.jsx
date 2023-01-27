@@ -69,7 +69,7 @@ const ItemInfo = ({ nft }) => {
               {isCollab ? (
                 <CollabIssuerInfo creator={nft.artist_profile} />
               ) : (
-                <Button to={`${PATH.ISSUER}/${nft.artist_address}`}>
+                <Button primary to={`${PATH.ISSUER}/${nft.artist_address}`}>
                   {nft.artist_profile?.name
                     ? nft.artist_profile.name
                     : walletPreview(nft.artist_address)}
@@ -98,7 +98,10 @@ const ItemInfo = ({ nft }) => {
                   <span className={styles.collab_verification_symbol}>
                     {verifiedSymbol}
                   </span>
-                  <Button onClick={() => setShowSignStatus(!showSignStatus)}>
+                  <Button
+                    primary
+                    onClick={() => setShowSignStatus(!showSignStatus)}
+                  >
                     {verifiedStatus}
                   </Button>
                 </div>
