@@ -8,7 +8,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  min-width: 200px;
+  min-width: 180px;
   left: 0;
 
   //top: 90px;
@@ -38,7 +38,7 @@
   justify-content: center;
   border: none;
   gap: 0.5rem;
-  padding: 0.75em 0.5em;
+  padding: 0.8em 0.8em;
   word-break: keep-all;
   cursor: pointer;
   transition: var(--body-transition) filter 300ms;

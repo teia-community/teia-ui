@@ -25,7 +25,7 @@ export const Markdown = ({ children, className }) => {
           },
         },
       }}
-      className={`${className || ''} ${styles.content}`}
+      className={`${className ? className : ''} ${styles.content}`}
     >
       {children}
     </MarkdownToJSX>

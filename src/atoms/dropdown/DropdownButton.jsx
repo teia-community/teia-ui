@@ -35,7 +35,7 @@ function DropdownButton({
   return (
     <motion.div className={`${className ? className : ''} ${containerClasses}`}>
       <motion.button
-        className={`${classes} `}
+        className={classes}
         data-toggle={menuID}
         onClick={() => {
           toggle()

@@ -10,10 +10,12 @@
 
 .container {
   /* FOR DEBUG (keep) */
-  // background-color: var(--gray-10);
+  /*background-color: var(--gray-10);*/
+
   position: relative;
   min-width: 100px;
   min-height: 100px;
+  max-height: 60vh;
   @include respond-to('tablet') {
     min-width: 200px;
     min-height: 200px;
