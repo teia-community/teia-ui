@@ -47,8 +47,7 @@ const App = () => {
             <Route path="/objkt/:id" element={<ObjktDisplay />} />
             <Route exact path="/config" element={<Config />} />
             <Route path="/tags/:tag" element={<Tags />} />
-            <Route path="/:id/:collection?/*" element={<Display />} />
-            <Route path="/:subjkt/*" element={<Display />} />
+            <Route path="/:id/*" element={<Display />} />
           </Routes>
         </AnimatePresence>
       </LocalSettingsProvider>
