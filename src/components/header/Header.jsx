@@ -36,6 +36,7 @@ export const Header = () => {
   const [button, setButton] = useState('Sync')
   const [accountPreview, setAccountPreview] = useState('')
 
+  // on Menu Toggle or Sign in
   useEffect(() => {
     if (context.acc?.address) {
       // is menu closed?
@@ -122,6 +123,16 @@ export const Header = () => {
             {/* <RotatingLogo seed={logoSeed} className={styles.logo} /> */}
           </Button>
           <div className={styles.right}>
+            {!context.collapsed && (
+              <Button
+                onClick={() => {
+                  handleRoute('/settings')
+                }}
+                className={styles.config_button}
+              >
+                config
+              </Button>
+            )}
             {!context.collapsed && context.proxyAddress && (
               <div className={styles.mr}>
                 <Button onClick={() => context.setProxyAddress(null)} secondary>

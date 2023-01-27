@@ -99,7 +99,7 @@ export const Footer = ({ menu, pin }) => {
                 <MenuItem
                   className={styles.menu_label}
                   label="Profile"
-                  route="config"
+                  route="subjkt"
                   need_sync
                 />
               </ul>
