@@ -13,7 +13,7 @@ import { Menu } from '../icons'
 import { EventIcon } from '@icons'
 import { MainMenu } from './main_menu/MainMenu'
 import { EventBanner } from '@components/banners'
-// import { RotatingLogo } from '@atoms/logo/RotatingLogo'
+import RotatingLogo from '@atoms/logo'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
@@ -113,14 +113,14 @@ export const Header = () => {
             alt="main teia logo"
             onClick={() => {
               if (location.pathname === '/') {
-                setLogoSeed(Math.random() * logoSeed)
+                setLogoSeed(Math.random() * 100)
               } else {
                 handleRoute('/')
               }
             }}
           >
-            <p className={styles.logo}>TEIA</p>
-            {/* <RotatingLogo seed={logoSeed} className={styles.logo} /> */}
+            {/* <p className={styles.logo}>TEIA</p> */}
+            <RotatingLogo seed={logoSeed} className={styles.logo} />
           </Button>
           <div className={styles.right}>
             {!context.collapsed && (

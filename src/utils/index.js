@@ -12,6 +12,16 @@ export function shuffle(a) {
   return a
 }
 
+/**
+ * A very basic random with seed
+ * @param {number} seed
+ * @returns
+ */
+export function randomSeed(seed) {
+  let s = Math.sin(seed) * 1e4
+  return (s -= Math.floor(s))
+}
+
 export const fetchJSON = async (url) => {
   try {
     return await fetch(url).then(async (res) => await res.json())
