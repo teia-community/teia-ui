@@ -4,8 +4,9 @@ import styles from '@style'
 import React from 'react'
 import { memo } from 'react'
 import { useMemo } from 'react'
-
-export const RotatingLogo = ({ className, seed = 1 }) => {
+import { RotatingLogoSVG } from '@icons'
+import { randomSeed } from '@utils/index'
+export const RotatingLogoRemote = ({ className, seed = 1 }) => {
   const { theme } = useLocalSettings()
   const { logos } = useSettings()
 
@@ -26,6 +27,19 @@ export const RotatingLogo = ({ className, seed = 1 }) => {
           alt="teia-logo"
         />
       )}
+    </div>
+  )
+}
+
+export const RotatingLogo = ({ className, seed = 1 }) => {
+  const Logo = useMemo(() => {
+    return RotatingLogoSVG[
+      Math.floor(randomSeed(seed) * RotatingLogoSVG.length)
+    ]
+  }, [seed])
+  return (
+    <div>
+      <Logo width="132px" />
     </div>
   )
 }
