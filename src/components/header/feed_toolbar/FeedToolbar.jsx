@@ -78,10 +78,10 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
             className={styles.feeds_dropdown}
           >
             <DropDown menuID="feeds">
-              <div className={styles.feeds_buttons}>
+              <div className={styles.feeds_button}>
                 {[...locationMap.keys()].map((k) => {
                   if (k.startsWith('-')) {
-                    return <Line key={k} />
+                    return <Line className={styles.separator} key={k} />
                   }
                   if (locationNeedSync.includes(k)) {
                     return (

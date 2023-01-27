@@ -39,7 +39,7 @@ const Button = ({
     [styles.full]: full,
   })
 
-  const classes = `${_classes} ${className || ''}`
+  const classes = `${_classes} ${className ? className : ''}`
 
   if (box) {
     children = <div className={styles.box}>{children}</div>

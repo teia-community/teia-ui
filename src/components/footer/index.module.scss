@@ -5,6 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: $font-small;
   background-color: var(--background-color);
   transition: var(--body-transition);
   flex-direction: column;
