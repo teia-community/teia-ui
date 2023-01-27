@@ -10,7 +10,7 @@ import Display from './pages/profile'
 import { Mint } from './pages/mint'
 import { ObjktDisplay } from './pages/objkt-display'
 import { Collaborate, CollabDisplay } from './pages/collaborate'
-import { Config } from './pages/config'
+import { Settings, Subjkt } from './pages/config'
 import { Home } from './pages/home'
 import { Tags } from './pages/tags'
 import { Terms } from './pages/terms'
@@ -47,7 +47,8 @@ const App = () => {
             <Route exact path="/mint" element={<Mint />} />
             <Route path="/collaborate" element={<Collaborate />} />
             <Route path="/objkt/:id" element={<ObjktDisplay />} />
-            <Route exact path="/config" element={<Config />} />
+            <Route exact path="/subjkt" element={<Subjkt />} />
+            <Route exact path="/settings" element={<Settings />} />
             <Route path="/tags/:tag" element={<Tags />} />
             <Route path="/:id/*" element={<Display />} />
           </Routes>

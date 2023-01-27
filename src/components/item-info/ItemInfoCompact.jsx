@@ -28,11 +28,11 @@ const ItemInfoCompact = ({ nft }) => {
   return (
     <div className={`${styles.compact_container} ${styles.masonry}`}>
       {/* <Button
-          alt={`Go to OBJKT ${nft.token_id}`}
-          to={`${PATH.OBJKT}/${nft.token_id}`}
-        >
-          <Primary label={`object ${nft.token_id}`}>#{nft.token_id}</Primary>
-        </Button> */}
+        alt={`Go to OBJKT ${nft.token_id}`}
+        to={`${PATH.OBJKT}/${nft.token_id}`}
+      >
+        #{nft.token_id}
+      </Button> */}
       <Button
         className={styles.artist}
         alt={`Go to artist page of token #${nft.token_id}`}
@@ -42,9 +42,9 @@ const ItemInfoCompact = ({ nft }) => {
             : `/tz/${nft.artist_address}`
         }
       >
-          {nft.artist_profile?.name
-            ? nft.artist_profile.name
-            : walletPreview(nft.artist_address)}
+        {nft.artist_profile?.name
+          ? nft.artist_profile.name
+          : walletPreview(nft.artist_address)}
       </Button>
       <Editions className={styles.editions} nft={nft} />
       {price}

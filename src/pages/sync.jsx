@@ -26,7 +26,8 @@ export default function Sync() {
       case '/tz':
       case '/feed/friends':
         return `${state}/${address}`
-      case '/config':
+      case '/settings':
+      case '/subjkt':
       case '/mint':
         return state
       default:
