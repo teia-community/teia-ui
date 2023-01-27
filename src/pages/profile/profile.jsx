@@ -19,7 +19,7 @@ export default function Profile({ user }) {
           {user.description && <p>{user.description}</p>}
 
           <div>
-            <Button href={`https://tzkt.io/${user.address}`}>
+            <Button primary href={`https://tzkt.io/${user.address}`}>
               {walletPreview(user.address)}
             </Button>
           </div>
@@ -73,6 +73,7 @@ export default function Profile({ user }) {
 
             {user.discord && (
               <Button
+                primary
                 alt={`User profile on Discord, click to copy (${user.discord})`}
                 onClick={setDiscordCopied}
               >

@@ -740,7 +740,7 @@ export const Mint = () => {
             </div>
             <span className="horizontal-line" />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button onClick={clearFields} fit>
+              <Button primary onClick={clearFields} fit>
                 Clear Fields
               </Button>
             </div>
@@ -774,7 +774,7 @@ export const Mint = () => {
         {step === 1 && (
           <>
             <div style={{ display: 'flex' }}>
-              <Button onClick={() => setStep(0)} fit>
+              <Button primary onClick={() => setStep(0)} fit>
                 <strong>Back</strong>
               </Button>
             </div>
@@ -804,7 +804,10 @@ export const Mint = () => {
           </>
         )}
 
-        <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
+        <Button
+          primary
+          href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions"
+        >
           Terms & Conditions
         </Button>
         <hr />

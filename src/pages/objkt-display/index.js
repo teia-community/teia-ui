@@ -208,6 +208,7 @@ export const ObjktDisplay = () => {
 
                 return (
                   <Button
+                    primary
                     selected={tabIndex === index}
                     className={styles.tab}
                     key={tab.title}

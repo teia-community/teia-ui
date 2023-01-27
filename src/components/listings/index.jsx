@@ -35,7 +35,7 @@ function ListingRow({
     <div className={styles.swap}>
       <div className={styles.issuer}>
         {listing.amount_left} ed.&nbsp;
-        <Button to={`/tz/${listing.seller_address}`}>
+        <Button primary to={`/tz/${listing.seller_address}`}>
           {get(listing, 'seller_profile.name') ||
             walletPreview(listing.seller_address)}
         </Button>

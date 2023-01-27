@@ -30,6 +30,9 @@ const Button = ({
   full,
   box,
   shadow_box,
+  primary,
+  style,
+  selected,
   className,
 }) => {
   const _classes = classnames({
@@ -37,6 +40,8 @@ const Button = ({
     [styles.disabled]: disabled,
     [styles.fit]: fit,
     [styles.full]: full,
+    [styles.selected]: selected,
+    [styles.primary]: primary,
   })
 
   const classes = `${_classes} ${className ? className : ''}`
@@ -70,7 +75,12 @@ const Button = ({
     )
   }
   return (
-    <button aria-label={alt} onClick={onClick} className={classes}>
+    <button
+      style={style}
+      aria-label={alt}
+      onClick={onClick}
+      className={classes}
+    >
       {children}
     </button>
   )

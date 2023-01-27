@@ -5,6 +5,7 @@ import { isNumber } from 'lodash'
 import styles from '@style'
 import Editions from './Editions'
 import useLocalSettings from '@hooks/use-local-settings'
+import { PATH } from '@constants'
 
 /**
  * @param {Object} itemInfoCompactOptions
@@ -34,6 +35,7 @@ const ItemInfoCompact = ({ nft }) => {
         #{nft.token_id}
       </Button> */}
       <Button
+        primary
         className={styles.artist}
         alt={`Go to artist page of token #${nft.token_id}`}
         to={
