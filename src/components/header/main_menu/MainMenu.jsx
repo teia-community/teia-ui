@@ -54,7 +54,7 @@ export const MainMenu = () => {
           <MenuItem
             className={styles.menu_label}
             label="Profile"
-            route="config"
+            route="subjkt"
             need_sync
           />
           <div className={styles.state_buttons}>

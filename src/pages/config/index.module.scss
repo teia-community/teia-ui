@@ -11,10 +11,10 @@
   width: 100%;
   padding-top: 2em;
   max-width: var(--max-width-internal);
-  align-self: flex-start;
-  display: grid;
-  grid-template-columns: 1fr 4fr;
+  display: flex;
   gap: 1em;
+  align-items: center;
+  justify-content: center;
 }
 
 .explainer {

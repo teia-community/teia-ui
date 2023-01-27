@@ -85,7 +85,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
           <p>
             to set the name of this collab,{' '}
             {contract_address !== proxyAddress ? 'sign in and' : ''} visit{' '}
-            <Link to="/config" style={{ textDecoration: 'underline' }}>
+            <Link to="/subjkt" style={{ textDecoration: 'underline' }}>
               settings
             </Link>
           </p>

@@ -149,7 +149,8 @@ export const THEMES = {
   dark: 'Dark',
   light: 'Light',
   kawai: 'Kawai',
-  noui: 'No UI (Expert Mode)',
+  aqua: 'Aqua',
+  // noui: 'No UI (Expert Mode)',
 }
 
 export const THEME_OPTIONS = Object.keys(THEMES).map((m) => ({
