@@ -40,6 +40,7 @@ const Collaborate = () => {
         {TABS.map((tab, index) => {
           return (
             <Button
+              primary
               selected={tabIndex === index}
               key={tab.title}
               onClick={() => setTabIndex(index)}

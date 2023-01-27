@@ -15,6 +15,7 @@ export const MenuItem = ({ label, route, need_sync, className }) => {
   }
   return (
     <Button
+      primary
       className={`${
         need_sync && !context.acc?.address ? styles.disabled : ''
       } ${className ? className : ''} `}

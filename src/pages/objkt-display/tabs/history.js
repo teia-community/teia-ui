@@ -9,25 +9,25 @@ import styles from '@style'
 import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
 import { IconCache } from '@utils/with-icon'
+import Button from '@atoms/button/Button'
 
 function UsernameAndLink({ event, attr }) {
   return (
     <>
       {get(event, `${attr}_profile.name`) ? (
         <span>
-          <a
+          <Button
+            primary
             href={`/${encodeURI(get(event, `${attr}_profile.name`))}`}
-            target="_blank"
-            rel="noreferrer"
           >
             {get(event, `${attr}_profile.name`)}
-          </a>
+          </Button>
         </span>
       ) : (
         <span>
-          <a href={`/tz/${get(event, `${attr}_address`)}`}>
+          <Button primary href={`/tz/${get(event, `${attr}_address`)}`}>
             {walletPreview(get(event, `${attr}_address`))}
-          </a>
+          </Button>
         </span>
       )}
     </>
@@ -229,13 +229,9 @@ export const History = ({ nft }) => {
                   from={<UsernameAndLink event={e} attr="from" />}
                   to={
                     <span>
-                      <a
-                        href={`/tz/${encodeURI(BURN_ADDRESS)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
+                      <Button primary href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
                         Burn Address
-                      </a>
+                      </Button>
                     </span>
                   }
                   editions={e.amount}
