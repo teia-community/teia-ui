@@ -1,16 +1,15 @@
 @import '@styles/layout.scss';
 
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  max-height: auto;
+  max-width: 100%;
+}
+
+.displayviewVideo {
+  height: 100%;
+  width: 100%;
 }
 
 .video {
-  // outline: 0px;
-
-  video {
-    height: 100%;
-    width: 100%;
-  }
+  max-height: 60vh;
 }
