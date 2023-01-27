@@ -14,6 +14,7 @@ import { Config } from './pages/config'
 import { Home } from './pages/home'
 import { Tags } from './pages/tags'
 import { Terms } from './pages/terms'
+import { ScrollToTop } from './components/scroll-to-top'
 import { AnimatePresence } from 'framer-motion'
 import { Debug } from '@atoms/debug'
 import { LocalSettingsProvider } from '@context'
@@ -30,6 +31,7 @@ const App = () => {
     <TeiaProvider>
       <LocalSettingsProvider>
         <Debug />
+        <ScrollToTop />
         <AnimatePresence exitBeforeEnter initial={false}>
           <Routes location={location} key={location.pathname}>
             <Route exact path="/" element={<Home />} />
