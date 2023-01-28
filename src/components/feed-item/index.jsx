@@ -18,9 +18,8 @@ export const FeedItem = ({ nft }) => {
 
   const containerClasses = classnames({
     [styles.container]: true,
-    [styles.blur]:
-      (nft.isNSFW && !nsfwFriendly) ||
-      (nft.isPhotosensitive && !photosensitiveFriendly),
+    [styles.blur]: nft.isNSFW && !nsfwFriendly,
+    [styles.photo_protect]: nft.isPhotosensitive && !photosensitiveFriendly,
     [styles.masonry]: viewMode === 'masonry',
   })
 

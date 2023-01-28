@@ -3,7 +3,7 @@ import axios from 'axios'
 import flatten from 'lodash/flatten'
 
 /**
- * @typedef { Map<string,number> } ListMap
+ * @typedef { Map<string, string> } ListMap
  * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap} } SettingsData
  * @typedef { {data: SettingsData, error:Error, isLoading:boolean} } UseSettingsResult
  */
@@ -102,7 +102,9 @@ async function fetchSettings() {
     objktBlockMapResponse.data.map((n) => n.toString())
   )
   const nsfwMap = mapFromList(nsfwResponse.data.map((n) => n.toString()))
-  const photosensitiveMap = mapFromList(photosensitiveResponse.data)
+  const photosensitiveMap = mapFromList(
+    photosensitiveResponse.data.map((n) => n.toString())
+  )
   const underReviewMap = mapFromList(underReviewResponse.data)
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)
   const feedIgnoreUriMap = mapFromList(feedIgnoreUriResponse.data)
