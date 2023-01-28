@@ -40,9 +40,14 @@ export enum EventType {
   VERSUM_SWAP,
   FA2_TRANSFER,
 }
-
+export type MetadataAccessibility = {
+  /** resource that is physiologically dangerous to some users.*/
+  hazards: [string]
+}
 export type TeiaMeta = {
-  accessibility: string
+  /** Accessibility metadatas */
+  accessibility: MetadataAccessibility
+  /** The content rating, for instance "mature" for nsfw.*/
   content_rating: string
   is_signed: boolean
   preview_uri: string
@@ -129,6 +134,13 @@ export type NFT = {
   artist_profile: ArtistProfile
   teia_meta: TeiaMeta
   price: number
+}
+
+export type TokenResponse = {
+  postProcessTokens: ([NFT]) => [NFT]
+  resultsPath: string
+  tokenPath: string
+  keyPath: string
 }
 
 export type ArtistProfile = {
