@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo } from 'react'
 import set from 'lodash/set'
 import { useParams } from 'react-router-dom'
 import useSWR from 'swr'
@@ -7,8 +7,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
-import { Button } from '@atoms/button'
-import { Page, Container } from '@atoms/layout'
+import { Page } from '@atoms/layout'
 import { RenderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
 import { Info, Collectors, Swap, Burn, History, Transfer } from './tabs'
@@ -16,6 +15,7 @@ import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
 import { ErrorComponent } from '@atoms/error'
+import { Tabs } from '@atoms/tab/Tabs'
 
 const TABS = [
   { title: 'Info', component: Info },
@@ -30,7 +30,6 @@ export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(TeiaContext)
   const { walletBlockMap } = useSettings()
-  const [tabIndex, setTabIndex] = useState(0)
   const address = context.acc?.address
   const proxy = context.proxyAddress
   const { nsfwMap, underReviewMap } = useSettings()
@@ -66,7 +65,6 @@ export const ObjktDisplay = () => {
   )
 
   const loading = !nft && !error
-  const Tab = TABS[tabIndex].component
 
   const objkt_classes = useMemo(() => {
     if (!nft) {
@@ -107,20 +105,18 @@ export const ObjktDisplay = () => {
   if (context.progress) {
     return (
       <Page title={nft?.name}>
-        <Container>
-          <div>
-            <p
-              style={{
-                position: 'absolute',
-                left: '46%',
-                top: '45%',
-              }}
-            >
-              {context.message}
-            </p>
-            {context.progress && <Loading />}
-          </div>
-        </Container>
+        <div>
+          <p
+            style={{
+              position: 'absolute',
+              left: '46%',
+              top: '45%',
+            }}
+          >
+            {context.message}
+          </p>
+          {context.progress && <Loading />}
+        </div>
       </Page>
     )
   }
@@ -129,103 +125,82 @@ export const ObjktDisplay = () => {
       {error && (
         <ErrorComponent title="Error Fetching OBJKTs" message={error} />
       )}
-
-      <>
-        <Container>
-          {nft.restricted && (
-            <div className={styles.restricted}>
-              Restricted OBJKT. Contact the Teia moderators on{' '}
-              <a
-                href="https://discord.gg/TKeybhYhNe"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Discord
-              </a>{' '}
-              to resolve the status. See the{' '}
-              <a
-                href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Teia Terms and Conditions
-              </a>
-              .
-            </div>
-          )}
-          {nft.underReview && (
-            <div className={styles.restricted}>
-              OBJKT under review. Contact the Teia moderators on{' '}
-              <a
-                href="https://discord.gg/TKeybhYhNe"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Discord
-              </a>{' '}
-              to resolve the status.
-            </div>
-          )}
-        </Container>
-        <div
-          style={{
-            position: 'relative',
-            display: 'block',
-            width: '100%',
-          }}
-          className="objkt-display"
-        >
-          <div className={objkt_classes}>
-            <RenderMediaType nft={nft} interactive />
-          </div>
-          <div>
-            <Container>
-              <ItemInfo nft={nft} />
-            </Container>
-
-            <Container>
-              {TABS.map((tab, index) => {
-                // if nft.owners exist and this is a private route, try to hide the tab.
-                // if nft.owners fails, always show route!
-
-                if (nft?.restricted && tab.restricted) {
-                  return null
-                }
-
-                if (nft?.holdings && tab.private) {
-                  let holders_arr = nft.holdings.map((e) => e.holder_address)
-
-                  if (
-                    holders_arr.includes(address) === false &&
-                    nft.artist_address !== address &&
-                    nft.artist_address !== proxy
-                  ) {
-                    // user is not the creator now owns a copy of the object. hide
-
-                    return null
-                  }
-                }
-
-                return (
-                  <Button
-                    primary
-                    selected={tabIndex === index}
-                    className={styles.tab}
-                    key={tab.title}
-                    onClick={() => setTabIndex(index)}
-                  >
-                    {tab.title}
-                  </Button>
-                )
-              })}
-            </Container>
-
-            <Tab nft={nft} viewer_address={address} />
-          </div>
+      {nft.restricted && (
+        <div className={styles.restricted}>
+          Restricted OBJKT. Contact the Teia moderators on{' '}
+          <a
+            href="https://discord.gg/TKeybhYhNe"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Discord
+          </a>{' '}
+          to resolve the status. See the{' '}
+          <a
+            href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Teia Terms and Conditions
+          </a>
+          .
         </div>
-      </>
+      )}
+      {nft.underReview && (
+        <div className={styles.restricted}>
+          OBJKT under review. Contact the Teia moderators on{' '}
+          <a
+            href="https://discord.gg/TKeybhYhNe"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Discord
+          </a>{' '}
+          to resolve the status.
+        </div>
+      )}
+      <div
+        style={{
+          position: 'relative',
+          display: 'block',
+          width: '100%',
+        }}
+        className="objkt-display"
+      >
+        <div className={objkt_classes}>
+          <RenderMediaType nft={nft} interactive />
+        </div>
+        <ItemInfo nft={nft} />
 
-      <div style={{ height: '40px' }}></div>
+        <Tabs
+          tabs={TABS}
+          className={styles.profile_tabs}
+          props={{ nft, viewer_address: address }}
+          filter={(tab, index) => {
+            // if nft.owners exist and this is a private route, try to hide the tab.
+            // if nft.owners fails, always show route!
+
+            if (nft?.restricted && tab.restricted) {
+              return null
+            }
+
+            if (nft?.holdings && tab.private) {
+              let holders_arr = nft.holdings.map((e) => e.holder_address)
+
+              if (
+                holders_arr.includes(address) === false &&
+                nft.artist_address !== address &&
+                nft.artist_address !== proxy
+              ) {
+                // user is not the creator now owns a copy of the object. hide
+
+                return null
+              }
+            }
+            return tab
+          }}
+        />
+      </div>
     </Page>
   )
 }

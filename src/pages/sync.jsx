@@ -43,9 +43,7 @@ export default function Sync() {
     <Page title="">
       <Container>
         <p>requesting permissions</p>
-        <Button primary to="/sync">
-          try again?
-        </Button>
+        <Button to="/sync">try again?</Button>
         <LoadingContainer />
       </Container>
     </Page>

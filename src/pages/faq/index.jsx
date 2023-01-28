@@ -7,9 +7,7 @@ export const FAQ = () => {
   const Question = ({ text, link }) => {
     return (
       <li className={styles.buttons}>
-        <Button primary href={link}>
-          {text}
-        </Button>
+        <Button href={link}>{text}</Button>
       </li>
     )
   }

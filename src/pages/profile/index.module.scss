@@ -39,12 +39,12 @@
 }
 
 .menu {
-  display: flex;
+  // display: flex;
   min-width: 335px;
   width: 100%;
   max-width: var(--max-width-internal);
   //padding: 6px 0;
-  border-bottom: 1px solid var(--border-color);
+  // border-bottom: 1px solid var(--border-color);
   transition: border-color #{$theme-duration} ease-out;
   & > * {
     margin-right: 1em;

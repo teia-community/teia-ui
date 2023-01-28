@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
-import { useParams, Route, Routes } from 'react-router-dom'
+import { useParams, Route, Routes, useSearchParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { getUser } from '@data/api'
 import { GetUserMetadata } from '@data/api'
@@ -14,7 +14,7 @@ import Creations from './creations'
 import Collections from './collections'
 import styles from '@style'
 import { ErrorComponent } from '@atoms/error'
-import { Tab } from '@atoms/tab'
+import { Tabs } from '@atoms/tab'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -53,10 +53,23 @@ export default function Display() {
   const { address, id: subjkt } = useParams()
   const { walletBlockMap } = useSettings()
 
+  const [showRestricted, setShowRestricted] = useState()
+
+  let [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('show') === 'true') {
+      setShowRestricted(true)
+    } else {
+      setShowRestricted(false)
+    }
+  }, [searchParams])
+
   const isRestrictedUser = useMemo(
     () => walletBlockMap.get(address) === 1,
     [address, walletBlockMap]
   )
+
   // TODO (mel): properly remove all this once migrated to the filter panel.
   const [showFilters /*setShowFilters*/] = useState(false)
   const { data: user, error } = useSWR(
@@ -78,15 +91,28 @@ export default function Display() {
     return <Loading />
   }
 
+  const TABS = [
+    { title: 'Creations', to: '' },
+    { title: 'Collection', to: 'collection' },
+    { title: 'Collabs', to: 'collabs' },
+  ]
+
   return (
     <Page feed title={user.alias}>
       <Profile user={user} />
 
       {user.address.substr(0, 2) !== 'KT' && (
         <div className={styles.menu}>
-          <Tab to={''}>Creations</Tab>
-          <Tab to={`collection`}>Collection</Tab>
-          <Tab to={`collabs`}>Collabs</Tab>
+          {/* <Tab selected={here[here.length - 1] === ''} to={''}>
+            Creations
+          </Tab>
+          <Tab selected={here.slice(2) === 'collection'} to={`collection`}>
+            Collection
+          </Tab>
+          <Tab selected={here.slice(2) === 'collabs'} to={`collabs`}>
+            Collabs
+          </Tab> */}
+          <Tabs tabs={TABS} />
 
           {/* <div className={styles.filter}>
               <Button
@@ -114,20 +140,30 @@ export default function Display() {
       )}
 
       {isRestrictedUser && (
-        <div className={styles.restricted}>Restricted account</div>
+        <div className={styles.restricted}>
+          Restricted account {showRestricted ? '(bypassed)' : ''}
+        </div>
       )}
 
       <Routes>
         <Route
           index
           element={
-            <Creations showFilters={showFilters} address={user.address} />
+            <Creations
+              show_restricted={showRestricted}
+              showFilters={showFilters}
+              address={user.address}
+            />
           }
         />
         <Route
           path="/collection"
           element={
-            <Collections showFilters={showFilters} address={user.address} />
+            <Collections
+              show_restricted={showRestricted}
+              showFilters={showFilters}
+              address={user.address}
+            />
           }
         />
         <Route

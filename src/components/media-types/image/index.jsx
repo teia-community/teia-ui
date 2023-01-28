@@ -80,16 +80,14 @@ export const ImageComponent = ({
       />
     </div>
   ) : (
-    <div>
-      <LazyLoadImage
-        className={`${styles.style} ${isSmol ? styles.smol : ''}`}
-        src={src}
-        effect="opacity"
-        alt={`object ${nft.token_id} image`}
-        onLoad={onLoad}
-        onError={onError}
-      />
-    </div>
+    <LazyLoadImage
+      className={`${styles.style} ${isSmol ? styles.smol : ''}`}
+      src={src}
+      effect="opacity"
+      alt={`object ${nft.token_id} image`}
+      onLoad={onLoad}
+      onError={onError}
+    />
   )
 }
 

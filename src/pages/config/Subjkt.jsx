@@ -58,7 +58,6 @@ export const Subjkt = () => {
 
       // Maybe use proxy address here
       const cur_address = proxyAddress || address || acc?.address
-      console.log(address)
       if (cur_address) {
         setAddress(cur_address)
         const res = await fetchTz(cur_address)

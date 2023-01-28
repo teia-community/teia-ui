@@ -30,9 +30,9 @@ const Checkbox = ({
 
   const handleCheck = useCallback(
     (e) => {
-      const { checked } = e.target
-      setChecked(checked)
-      onCheck?.(checked)
+      const c = e.target.checked
+      setChecked(c)
+      onCheck?.(c)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [checked]

@@ -1,5 +1,11 @@
+@import '@styles/variables.scss';
+
+.container {
+  width: 100%;
+}
+
 .tab {
-  padding: 10px;
+  padding: 0 10px 4px 0;
   //border-bottom: 1px solid var(--gray-20);
 
   &:hover,
@@ -9,4 +15,21 @@
     margin-bottom: -1px;
     border-bottom: 1px solid var(--gray-60);
   }
+}
+
+.tabs {
+  align-self: flex-start;
+  z-index: 5;
+  button,
+  a {
+    font-size: $font-body;
+    padding: 0.15em 12px;
+  }
+}
+
+.line {
+  z-index: 0;
+  align-self: flex-start;
+
+  margin-bottom: 40px;
 }
