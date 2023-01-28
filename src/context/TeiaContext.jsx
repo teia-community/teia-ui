@@ -14,13 +14,18 @@ import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCanc
 import { fetchJSON } from '@utils'
 
 import {
-  MARKETPLACE_CONTRACT_V1,
-  MARKETPLACE_CONTRACT_TEIA,
-  MAIN_MARKETPLACE_CONTRACT,
-  MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
-  SWAP_TYPE_TEIA,
-  SWAP_TYPE_HEN,
   BURN_ADDRESS,
+  HEN_CONTRACT_FA2,
+  MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE,
+  MAIN_MARKETPLACE_CONTRACT,
+  MARKETPLACE_CONTRACT_TEIA,
+  MARKETPLACE_CONTRACT_V1,
+  PROXY_FACTORY_CONTRACT,
+  SIGNING_CONTRACT,
+  SUBJKT_CONTRACT,
+  SWAP_TYPE_HEN,
+  SWAP_TYPE_TEIA,
+  UNREGISTRY_CONTRACT,
 } from '@constants'
 import ls from 'local-storage'
 import axios from 'axios'
@@ -240,7 +245,7 @@ class TeiaContextProviderClass extends Component {
           const collabSwapCall = await createLambdaSwapCall(
             proxyContract,
             MAIN_MARKETPLACE_CONTRACT,
-            this.state.objkts,
+            HEN_CONTRACT_FA2,
             objkt_id,
             this.state.proxyAddress,
             objkt_amount,
@@ -268,7 +273,7 @@ class TeiaContextProviderClass extends Component {
           const batch = await Tezos.wallet.batch(operations)
           return await batch.send()
         }
-        const objktsAddress = this.state.objkts
+        const objktsAddress = HEN_CONTRACT_FA2
         const [objktsContract, marketplaceContract] = await Promise.all([
           Tezos.wallet.at(objktsAddress),
           Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
@@ -315,7 +320,7 @@ class TeiaContextProviderClass extends Component {
 
         const [objktsContract, marketplaceContract, mainMarketplaceContract] =
           await Promise.all([
-            Tezos.wallet.at(this.state.objkts),
+            Tezos.wallet.at(HEN_CONTRACT_FA2),
             Tezos.wallet.at(swap.contract_address), // this can be either v1, v2 or teia
             Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
           ])
@@ -332,7 +337,7 @@ class TeiaContextProviderClass extends Component {
           ...createSwapCalls(
             objktsContract,
             mainMarketplaceContract,
-            this.state.objkts,
+            HEN_CONTRACT_FA2,
             MAIN_MARKETPLACE_CONTRACT,
             objkt_id,
             from,
@@ -475,7 +480,7 @@ class TeiaContextProviderClass extends Component {
 
         // call mint method
         return await Tezos.wallet
-          .at(this.state.proxyAddress || this.state.v1)
+          .at(this.state.proxyAddress || MARKETPLACE_CONTRACT_V1)
           .then((c) =>
             c.methods
               .mint_OBJKT(
@@ -564,7 +569,7 @@ class TeiaContextProviderClass extends Component {
 
       sign: async (objkt_id) => {
         await Tezos.wallet
-          .at(this.state.signingContractAddress)
+          .at(SIGNING_CONTRACT)
           .then((c) =>
             c.methods.sign(objkt_id).send({ amount: 0, storageLimit: 310 })
           )
@@ -595,7 +600,7 @@ class TeiaContextProviderClass extends Component {
 
       burn: async (objkt_id, amount) => {
         const tz = await wallet.client.getActiveAccount()
-        const objktsOrProxy = this.state.proxyAddress || this.state.objkts
+        const objktsOrProxy = this.state.proxyAddress || HEN_CONTRACT_FA2
         const addressFrom = this.state.proxyAddress || tz.address
 
         console.log('Using', objktsOrProxy, 'for burn')
@@ -688,8 +693,7 @@ class TeiaContextProviderClass extends Component {
        * @returns {any}
        * */
       registry: async (alias, metadata) => {
-        const subjktAddressOrProxy =
-          this.state.proxyAddress || this.state.subjkt
+        const subjktAddressOrProxy = this.state.proxyAddress || SUBJKT_CONTRACT
 
         return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
           c.methods
@@ -714,7 +718,7 @@ class TeiaContextProviderClass extends Component {
       },
 
       unregister: async () => {
-        return await Tezos.wallet.at(this.state.unregistry).then((c) => {
+        return await Tezos.wallet.at(UNREGISTRY_CONTRACT).then((c) => {
           c.methods.sign(undefined).send({ amount: 0 })
         })
       },
@@ -729,12 +733,13 @@ class TeiaContextProviderClass extends Component {
       updateMessage: (message) => this.setState({ message }),
 
       setAccount: async () => {
+        const current =
+          Tezos !== undefined
+            ? await wallet.client.getActiveAccount()
+            : undefined
         this.setState({
-          acc:
-            Tezos !== undefined
-              ? await wallet.client.getActiveAccount()
-              : undefined,
-          address: await wallet.client.getActiveAccount(),
+          acc: current,
+          address: current?.address,
         })
       },
 
@@ -971,7 +976,7 @@ class TeiaContextProviderClass extends Component {
 
         // Blockchain ops
         await Tezos.wallet
-          .at(this.state.proxyFactoryAddress)
+          .at(PROXY_FACTORY_CONTRACT)
           .then((c) =>
             c.methods.create_proxy(packed, 'hic_proxy').send({ amount: 0 })
           )

@@ -23,8 +23,8 @@ export const VectorComponent = ({
   let _viewer_ = false
   let _objkt_ = false
 
-  if (context.address?.address) {
-    _viewer_ = context.address.address
+  if (context.address) {
+    _viewer_ = context.address
   }
 
   if (objktID) {
