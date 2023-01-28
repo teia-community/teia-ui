@@ -214,22 +214,19 @@ span[data-tooltip][data-position='top']:after {
   margin-bottom: 4px;
 }
 
-.restricted,
-.restricted > * {
-  color: var(--background-color);
-  text-align: center;
-  font-size: 1em;
-  padding: 0.75em;
-  cursor: default;
-}
-
 .restricted {
-  background: var(--text-color);
-}
+  --text-color: var(--gray-0);
+  --background-color: var(--gray-90);
 
-.restricted a {
-  padding: 0em;
-  cursor: pointer;
+  padding: 15px;
+  background-color: var(--background-color);
+  text-align: center;
+  cursor: default;
+  color: var(--text-color);
+
+  p {
+    font-size: $font-small;
+  }
 }
 
 .blur {
