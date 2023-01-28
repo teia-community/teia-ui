@@ -69,6 +69,7 @@ const Button = ({
         className={({ isActive }) =>
           isActive ? `${styles.active} ${classes}` : classes
         }
+        end
       >
         {children}
       </NavLink>
