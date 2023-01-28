@@ -2,6 +2,7 @@ import React, { memo, useState } from 'react'
 import styles from '@style'
 import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
+import Button from '@atoms/button/Button'
 
 function DropdownButton({
   menuID,
@@ -34,7 +35,7 @@ function DropdownButton({
   }
   return (
     <motion.div className={`${className ? className : ''} ${containerClasses}`}>
-      <motion.button
+      <Button
         className={classes}
         data-toggle={menuID}
         onClick={() => {
@@ -44,7 +45,7 @@ function DropdownButton({
       >
         {label}
         {icon}
-      </motion.button>
+      </Button>
       <AnimatePresence>
         {children &&
           open &&

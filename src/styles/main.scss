@@ -24,6 +24,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 15px;
+  @media screen and (min-width: 1215px) {
+    padding: 0;
+  }
 }
 h1,
 h2,

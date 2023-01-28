@@ -24,6 +24,13 @@
     // width: 600px;
     left: unset;
   }
+  @include respond-to('desktop') {
+    // width: 600px;
+    width: unset;
+  }
+  @media screen and (max-width: 1215px) {
+    width: calc(100% - 30px);
+  }
 }
 
 .vertical {
@@ -72,10 +79,6 @@
   svg > path {
     fill: var(--background-color);
   }
-}
-
-.header_button:hover {
-  filter: brightness(1.2);
 }
 
 .left {

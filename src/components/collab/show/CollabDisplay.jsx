@@ -123,7 +123,7 @@ export const CollabDisplay = () => {
                 {description && (
                   <p className={descriptionClass}>{description}</p>
                 )}
-                <Button primary href={`https://tzkt.io/${address}`}>
+                <Button href={`https://tzkt.io/${address}`}>
                   {walletPreview(address)}
                 </Button>
               </div>

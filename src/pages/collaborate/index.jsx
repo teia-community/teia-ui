@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Page, Container } from '@atoms/layout'
-import { Button } from '@atoms/button'
+import React from 'react'
+import { Page } from '@atoms/layout'
 import { CollabDisplay } from '@components/collab/show/CollabDisplay'
 import { CreateCollaboration } from './create'
-import { TeiaContext } from '@context/TeiaContext'
 import { CollabContractsOverview } from './manage'
-import { useParams } from 'react-router'
+import { Tabs } from '@atoms/tab/Tabs'
 
 const TABS = [
   { title: 'Manage', component: CollabContractsOverview },
@@ -13,44 +11,23 @@ const TABS = [
 ]
 
 const Collaborate = () => {
-  const [tabIndex, setTabIndex] = useState(0)
-  const Tab = TABS[tabIndex].component
-
   // We watch for this being created so we can change from create to manage
-  const { originationOpHash, banner } = useContext(TeiaContext)
+  // const { originationOpHash, banner } = useContext(TeiaContext)
 
-  const { action } = useParams()
+  // const { action } = useParams()
 
-  useEffect(() => {
-    const tabIndex = TABS.findIndex((t) => t.title === action)
-    setTabIndex(Math.max(tabIndex, 0))
-  }, [action])
-
+  // TODO(mel): change tab
   // If an address is created, update the tab
-  useEffect(() => {
-    console.debug({ originationOpHash })
-    if (originationOpHash) {
-      setTabIndex(0)
-    }
-  }, [originationOpHash])
+  // useEffect(() => {
+  //   console.debug({ originationOpHash })
+  //   if (originationOpHash) {
+  //     setTabIndex(0)
+  //   }
+  // }, [originationOpHash])
 
   return (
-    <Page title="proxy" large={banner != null}>
-      <Container>
-        {TABS.map((tab, index) => {
-          return (
-            <Button
-              primary
-              selected={tabIndex === index}
-              key={tab.title}
-              onClick={() => setTabIndex(index)}
-            >
-              {tab.title}
-            </Button>
-          )
-        })}
-      </Container>
-      <Tab />
+    <Page title="proxy">
+      <Tabs tabs={TABS} />
     </Page>
   )
 }

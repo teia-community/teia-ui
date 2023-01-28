@@ -1,7 +1,8 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { Link } from 'react-router-dom'
+import { /*Link*/ NavLink } from 'react-router-dom'
 import { memo } from 'react'
+import { motion } from 'framer-motion'
 
 /**
  * Core button style (used for links, buttons, and <a>)
@@ -24,16 +25,16 @@ const Button = ({
   href = null,
   onClick = () => null,
   children,
+  className,
   alt,
   disabled,
+  selected,
   fit,
   full,
   box,
   shadow_box,
-  primary,
+  secondary,
   style,
-  selected,
-  className,
 }) => {
   const _classes = classnames({
     [styles.container]: true,
@@ -41,7 +42,7 @@ const Button = ({
     [styles.fit]: fit,
     [styles.full]: full,
     [styles.selected]: selected,
-    [styles.primary]: primary,
+    [styles.primary]: !secondary,
   })
 
   const classes = `${_classes} ${className ? className : ''}`
@@ -53,17 +54,30 @@ const Button = ({
     children = <div className={styles.shadow_box}>{children}</div>
   }
 
+  // if (to !== null) {
+  //   return (
+  //     <Link aria-label={alt} to={to} className={classes}>
+  //       {children}
+  //     </Link>
+  //   )
+  // }
   if (to !== null) {
     return (
-      <Link aria-label={alt} to={to} className={classes}>
+      <NavLink
+        aria-label={alt}
+        to={to}
+        className={({ isActive }) =>
+          isActive ? `${styles.active} ${classes}` : classes
+        }
+      >
         {children}
-      </Link>
+      </NavLink>
     )
   }
 
   if (href !== null) {
     return (
-      <a
+      <motion.a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -71,18 +85,18 @@ const Button = ({
         aria-label={alt}
       >
         {children}
-      </a>
+      </motion.a>
     )
   }
   return (
-    <button
+    <motion.button
       style={style}
       aria-label={alt}
       onClick={onClick}
       className={classes}
     >
       {children}
-    </button>
+    </motion.button>
   )
 }
 

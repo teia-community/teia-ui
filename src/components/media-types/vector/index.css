@@ -12,4 +12,5 @@
 
 .objktview .vector-container {
   pointer-events: all;
+  width: 50%;
 }
