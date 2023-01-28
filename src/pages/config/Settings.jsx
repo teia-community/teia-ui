@@ -6,7 +6,6 @@ import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import Select from '@atoms/select/index'
 import { THEMES, THEME_OPTIONS } from '@constants'
-import { Line } from '@atoms/line'
 
 export const Settings = () => {
   const {
@@ -20,12 +19,13 @@ export const Settings = () => {
 
   return (
     <Page>
-      <h1>Local Settings</h1>
-      <p>
-        Those settings are non portable and only stored in your current browser
-        cache.
-      </p>
-      <Line />
+      <div className={styles.info}>
+        <h1>Local Settings</h1>
+        <p>
+          Those settings are non portable and only stored in your current
+          browser cache.
+        </p>
+      </div>
       <div className={styles.localSettings}>
         <div className={styles.fields}>
           <Checkbox

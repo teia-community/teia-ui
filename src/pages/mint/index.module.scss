@@ -14,6 +14,14 @@
   // );
 }
 
+.attributes_checkboxes {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1em;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
 ::selection {
   background: var(--text-color);
   color: var(--background-color);

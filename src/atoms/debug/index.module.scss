@@ -3,14 +3,24 @@
   position: fixed;
   pointer-events: none;
   top: 0;
+  left: 0;
   z-index: 2000;
   h1 {
     font-size: 256px;
     opacity: 0.5;
   }
   p {
-    font-size: 20px;
     opacity: 0.5;
+  }
+}
+.name {
+  font-weight: bold;
+  color: royalblue;
+}
+.storage {
+  padding: 2em;
+  h3 {
+    color: blueviolet;
   }
 }
 .debug_center,
