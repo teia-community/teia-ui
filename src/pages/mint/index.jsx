@@ -12,20 +12,21 @@ import { prepareFile, prepareDirectory } from '@data/ipfs'
 import { prepareFilesFromZIP } from '@utils/html'
 import { useLocalStorage } from 'react-use'
 import {
-  ALLOWED_MIMETYPES,
-  ALLOWED_FILETYPES_LABEL,
-  ALLOWED_COVER_MIMETYPES,
   ALLOWED_COVER_FILETYPES_LABEL,
-  MINT_FILESIZE,
-  MIMETYPE,
-  MAX_EDITIONS,
-  MIN_ROYALTIES,
-  MAX_ROYALTIES,
+  ALLOWED_COVER_MIMETYPES,
+  ALLOWED_FILETYPES_LABEL,
+  ALLOWED_MIMETYPES,
   COVER_COMPRESSOR_OPTIONS,
-  THUMBNAIL_COMPRESSOR_OPTIONS,
-  LICENSE_TYPES_OPTIONS,
   LANGUAGES_OPTIONS,
+  LICENSE_TYPES_OPTIONS,
+  MAX_EDITIONS,
+  MAX_ROYALTIES,
+  METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
   METADATA_CONTENT_RATING_MATURE,
+  MIMETYPE,
+  MIN_ROYALTIES,
+  MINT_FILESIZE,
+  THUMBNAIL_COMPRESSOR_OPTIONS,
 } from '@constants'
 import {
   fetchGraphQL,
@@ -56,11 +57,11 @@ const GENERATE_DISPLAY_AND_THUMBNAIL = true
 
 export const Mint = () => {
   const {
-    mint,
     acc,
-    setAccount,
     getBalance,
+    mint,
     proxyAddress,
+    setAccount,
     setFeedback,
     showFeedback,
     syncTaquito,
@@ -191,7 +192,7 @@ export const Mint = () => {
     // Metadata accessibility
     const accessibility = photosensitiveSeizureWarning
       ? {
-          hazards: ['flashing'],
+          hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
         }
       : null
 
