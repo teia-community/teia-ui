@@ -39,8 +39,8 @@ export const HTMLComponent = (props) => {
     _creator_ = artistAddress
   }
 
-  if (context.address?.address) {
-    _viewer_ = context.address.address
+  if (context.address) {
+    _viewer_ = context.address
   }
 
   if (objktID) {
