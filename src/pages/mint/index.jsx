@@ -601,13 +601,7 @@ export const Mint = () => {
             >
               <Line />
             </Select>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                paddingTop: '30px',
-              }}
-            >
+            <div className={styles.attributes_checkboxes}>
               <Checkbox
                 label="NSFW"
                 checked={nsfw}
@@ -621,7 +615,7 @@ export const Mint = () => {
                 label="Photo Sensitive Seizure Warning"
               />
             </div>
-            <span className="horizontal-line" />
+            <Line />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button onClick={clearFields} fit>
                 Clear Fields
