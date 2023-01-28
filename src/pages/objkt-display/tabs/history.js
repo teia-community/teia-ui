@@ -16,16 +16,13 @@ function UsernameAndLink({ event, attr }) {
     <>
       {get(event, `${attr}_profile.name`) ? (
         <span>
-          <Button
-            primary
-            href={`/${encodeURI(get(event, `${attr}_profile.name`))}`}
-          >
+          <Button href={`/${encodeURI(get(event, `${attr}_profile.name`))}`}>
             {get(event, `${attr}_profile.name`)}
           </Button>
         </span>
       ) : (
         <span>
-          <Button primary href={`/tz/${get(event, `${attr}_address`)}`}>
+          <Button href={`/tz/${get(event, `${attr}_address`)}`}>
             {walletPreview(get(event, `${attr}_address`))}
           </Button>
         </span>
@@ -229,7 +226,7 @@ export const History = ({ nft }) => {
                   from={<UsernameAndLink event={e} attr="from" />}
                   to={
                     <span>
-                      <Button primary href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
+                      <Button href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
                         Burn Address
                       </Button>
                     </span>

@@ -5,6 +5,7 @@
   @include resetButton();
   font-family: var(--text-font);
   word-break: normal;
+  font-size: $font-small;
 
   &.fit {
     display: contents;
@@ -25,6 +26,10 @@
       width: fit-content;
     }
   }
+
+  & > button {
+    background-color: royalblue;
+  }
 }
 
 .primary {
@@ -32,7 +37,8 @@
   transition: color #{$theme-duration} ease-out;
   font-weight: 700;
 
-  &.selected {
+  &.selected,
+  &.active {
     // fake bold to avoid shift... 96% support, no Opera or IE
     -webkit-text-stroke: 0.5px var(--text-color);
     border-bottom: 1px solid var(--text-color);
@@ -91,19 +97,25 @@
   }
 }
 
+$border: 2px;
+
 .shadow_box {
   opacity: inherit;
   cursor: pointer;
 
-  padding: 4px 16px;
-
+  padding: $border 16px;
   width: 100%;
+
   color: var(--text-color);
   background-color: var(--gray-15);
-  border-right: 2px solid var(--text-color);
-  border-bottom: 2px solid var(--text-color);
+  border-right: $border solid var(--text-color);
   transition: border-color #{$theme-duration} ease-out,
     color #{$theme-duration} ease-out;
+
+  &:hover {
+    border-bottom: $border solid var(--text-color);
+    padding-bottom: 0px;
+  }
 }
 
 .primary__purchase {

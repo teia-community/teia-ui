@@ -10,7 +10,7 @@ const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
-export default function Collections({ showFilters, address }) {
+export default function Collections({ showFilters, show_restricted, address }) {
   const [filter, setFilter] = useState(FILTER_ALL)
   const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
@@ -31,6 +31,7 @@ export default function Collections({ showFilters, address }) {
       )}
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
       <TokenCollection
+        show_restricted={show_restricted}
         namespace="collections"
         swrParams={[address]}
         variables={{ address }}

@@ -7,6 +7,7 @@ import styles from '@style'
 import { TeiaContext } from '@context/TeiaContext'
 import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from 'hooks/use-settings'
+import { Line } from '@atoms/line/index'
 
 // TODO: add support for all kind of listings
 function ListingRow({
@@ -35,7 +36,7 @@ function ListingRow({
     <div className={styles.swap}>
       <div className={styles.issuer}>
         {listing.amount_left} ed.&nbsp;
-        <Button primary to={`/tz/${listing.seller_address}`}>
+        <Button to={`/tz/${listing.seller_address}`}>
           {get(listing, 'seller_profile.name') ||
             walletPreview(listing.seller_address)}
         </Button>
@@ -147,7 +148,7 @@ export const Listings = ({
           />
         )
       })}
-      <hr className={styles.nomobile} />
+      <Line />
     </div>
   )
 }

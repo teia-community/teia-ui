@@ -12,7 +12,7 @@ const FILTER_PRIMARY = 'PRIMARY'
 const FILTER_SECONDARY = 'SECONDARY'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
-export default function Creations({ showFilters, address }) {
+export default function Creations({ showFilters, show_restricted, address }) {
   const [filter, setFilter] = useState(FILTER_ALL)
   const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
@@ -35,6 +35,7 @@ export default function Creations({ showFilters, address }) {
       )}
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
       <TokenCollection
+        show_restricted={show_restricted}
         namespace="creations"
         swrParams={[address]}
         variables={{ address }}

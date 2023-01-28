@@ -77,17 +77,13 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
             <Page pageNumber={pageNumber} />
 
             <div className={styles.pdfNav}>
-              <Button primary disabled={pageNumber <= 1} onClick={previousPage}>
+              <Button disabled={pageNumber <= 1} onClick={previousPage}>
                 Prev «
               </Button>
               <p>
                 Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
               </p>
-              <Button
-                primary
-                disabled={pageNumber >= numPages}
-                onClick={nextPage}
-              >
+              <Button disabled={pageNumber >= numPages} onClick={nextPage}>
                 >» Next
               </Button>
             </div>

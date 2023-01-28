@@ -64,6 +64,7 @@ function MasonryView({ tokens }) {
 function TokenCollection({
   query,
   namespace,
+  show_restricted = false,
   feeds_menu = false,
   disable = false,
   variables = {},
@@ -146,10 +147,11 @@ function TokenCollection({
     tokenPath,
     keyPath,
   })
-    .filter(
-      (token) =>
-        walletBlockMap.get(token.artist_address) !== 1 &&
-        objktBlockMap.get(token.id) !== 1
+    .filter((token) =>
+      show_restricted
+        ? true
+        : walletBlockMap.get(token.artist_address) !== 1 &&
+          objktBlockMap.get(token.id) !== 1
     )
     .map((token) => {
       return {

@@ -2,41 +2,41 @@ import styles from '@style'
 import { memo } from 'react'
 
 export const TeiaLabel = () => (
-  <span
+  <div
     className={`${styles.swapLabel} ${styles.teiaLabel}`}
     title="buy this listing and support teia"
   >
     TEIA
-  </span>
+  </div>
 )
 export const HENLabel = () => (
-  <span
+  <div
     className={styles.swapLabel}
     title="this listing is through the original HEN contract"
   >
     H=N
-  </span>
+  </div>
 )
 
 export const OBJKTLabel = () => (
-  <span className={styles.swapLabel} title="This swap is through OBJKT.com">
+  <div className={styles.swapLabel} title="This swap is through OBJKT.com">
     Objkt.com
-  </span>
+  </div>
 )
 
 export const RestrictedLabel = () => (
-  <span
+  <div
     className={styles.swapLabel}
     title="This swap is made by a restricted wallet."
   >
     Restricted
-  </span>
+  </div>
 )
 
 export const VersumLabel = () => (
-  <span className={styles.swapLabel} title="This swap is through versum.xyz">
+  <div className={styles.swapLabel} title="This swap is through versum.xyz">
     Versum.xyz
-  </span>
+  </div>
 )
 
 const MarketplaceLabel = ({ listing, nft }) => {

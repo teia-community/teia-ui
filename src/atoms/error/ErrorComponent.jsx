@@ -9,12 +9,10 @@ const ErrorComponent = ({ title = 'Ooops!', message }) => {
         <h1>{title}</h1>
         <p>{message}</p>
       </div>
-      <Button primary href="https://github.com/teia-community/teia-ui/issues">
+      <Button href="https://github.com/teia-community/teia-ui/issues">
         <strong>Report Issue</strong>
       </Button>
-      <Button primary to="/">
-        Go back home
-      </Button>
+      <Button to="/">Go back home</Button>
     </div>
   )
 }

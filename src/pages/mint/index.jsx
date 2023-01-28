@@ -10,6 +10,7 @@ import { Upload } from '@components/upload'
 import { Preview } from '@components/preview'
 import { prepareFile, prepareDirectory } from '@data/ipfs'
 import { prepareFilesFromZIP } from '@utils/html'
+import { useLocalStorage } from 'react-use'
 import {
   ALLOWED_MIMETYPES,
   ALLOWED_FILETYPES_LABEL,
@@ -67,27 +68,33 @@ export const Mint = () => {
 
   const { ignoreUriMap } = useSettings()
 
+  /*states*/
   const [balance, setBalance] = useState(-1.0)
   const [step, setStep] = useState(0)
-  const [title, setTitle] = useState()
   const [mintName, setMintName] = useState('')
-  const [description, setDescription] = useState()
-  const [tags, setTags] = useState()
-  const [amount, setAmount] = useState()
-  const [royalties, setRoyalties] = useState()
-  /** @type {import("@types").useState<import("@types").FileMint>} */
-  const [file, setFile] = useState() // the uploaded file
-  const [cover, setCover] = useState() // the uploaded or generated cover image
-  const [thumbnail, setThumbnail] = useState() // the uploaded or generated cover image
   const [needsCover, setNeedsCover] = useState(false)
+
   const [collabs, setCollabs] = useState([])
   const [selectCollab, setSelectCollab] = useState(false)
-  const [rights, setRights] = useState('') // To allow the artist to specify the asset rights.
-  const [rightUri, setRightUri] = useState() // A URI to a statement of rights.
-  const [language, setLanguage] = useState() // The language of the intellectual content of the asset.
-  const [nsfw, setNsfw] = useState(false) // Not Safe For Work flag
+
+  const [file, setFile] = useState() // the uploaded file
+  const [cover, setCover] = useState() // the uploaded or generated cover image
+
+  /*form*/
+  const [title, setTitle] = useLocalStorage('objkt:title', '')
+  const [description, setDescription] = useLocalStorage('objkt:description', '')
+  const [tags, setTags] = useLocalStorage('objkt:tags', '')
+  const [amount, setAmount] = useLocalStorage('objkt:amount', 0)
+  const [royalties, setRoyalties] = useLocalStorage('objkt:royalties')
+
+  /** @type {import("@types").useState<import("@types").FileMint>} */
+  const [thumbnail, setThumbnail] = useLocalStorage('objkt:thumbnail') // the uploaded or generated cover image
+  const [rights, setRights] = useLocalStorage('objkt:rights', '') // To allow the artist to specify the asset rights.
+  const [rightUri, setRightUri] = useLocalStorage('objkt:right_uri', '') // A URI to a statement of rights.
+  const [language, setLanguage] = useLocalStorage('objkt:language', '') // The language of the intellectual content of the asset.
+  const [nsfw, setNsfw] = useLocalStorage('objkt:nsfw', false) // Not Safe For Work flag
   const [photosensitiveSeizureWarning, setPhotosensitiveSeizureWarning] =
-    useState(false) // Photosensitivity flag
+    useLocalStorage('objkt:photosensitiveSeizureWarning', false) // Photosensitivity flag
 
   // On mount, see if there are available collab contracts
   useEffect(() => {
@@ -102,7 +109,7 @@ export const Mint = () => {
         setCollabs(managedCollabs || [])
       }
     })
-    if (acc && hasStoredFields()) restoreFields()
+    // if (acc && hasStoredFields()) restoreFields()
     if (acc?.address) {
       getBalance(acc.address).then((bal) => {
         setBalance(bal)
@@ -124,7 +131,6 @@ export const Mint = () => {
       address: currentAddress,
     }).then(({ data, errors }) => {
       if (data) {
-        // TODO: test if this works
         setMintName(_.get(data, 'teia_users.0.name') || currentAddress)
       }
     })
@@ -359,7 +365,6 @@ export const Mint = () => {
 
       return true
     }
-
     return false
   }
 
@@ -371,15 +376,12 @@ export const Mint = () => {
   }
 
   const handleFileUpload = async (props) => {
-    setFile(props)
-
-    if (GENERATE_DISPLAY_AND_THUMBNAIL) {
-      if (props.mimeType.indexOf('image') === 0) {
-        setNeedsCover(false)
-        await generateCoverAndThumbnail(props)
-      } else {
-        setNeedsCover(true)
-      }
+    if (props.mimeType.indexOf('image') === 0) {
+      setNeedsCover(false)
+      await generateCoverAndThumbnail(props)
+      setFile(props)
+    } else {
+      setNeedsCover(true)
     }
   }
 
@@ -390,10 +392,10 @@ export const Mint = () => {
       setThumbnail(props)
       return
     }
-
+    console.debug('Generating cover')
     const cover = await generateCompressedImage(props, COVER_COMPRESSOR_OPTIONS)
     setCover(cover)
-
+    console.debug('Generating thumbnail')
     const thumb = await generateCompressedImage(
       props,
       THUMBNAIL_COMPRESSOR_OPTIONS
@@ -423,92 +425,22 @@ export const Mint = () => {
   const handleValidation = () => {
     if (
       amount == null ||
-      amount <= 0 ||
-      amount > MAX_EDITIONS ||
-      royalties == null ||
-      royalties < MIN_ROYALTIES ||
-      royalties > MAX_ROYALTIES ||
+      parseInt(amount) <= 0 ||
+      parseInt(amount) > MAX_EDITIONS ||
+      parseFloat(royalties) == null ||
+      parseFloat(royalties) < MIN_ROYALTIES ||
+      parseFloat(royalties) > MAX_ROYALTIES ||
       !handleRightsValidation() ||
       !file
     ) {
       return true
     }
-    if (GENERATE_DISPLAY_AND_THUMBNAIL) {
-      if (cover && thumbnail) {
-        return false
-      }
-    } else {
+
+    if (cover && thumbnail) {
       return false
     }
+
     return true
-  }
-
-  const mintKeys = [
-    'objkt::title',
-    'objkt::description',
-    'objkt::tags',
-    'objkt::edition_count',
-    'objkt::royalties',
-    'objkt::rights',
-    'objkt::rights_uri',
-    'objkt::language',
-    'objkt::nsfw',
-    'objkt::photosensitive_seizure_warning',
-  ]
-
-  const restoreFields = () => {
-    try {
-      const title = window.localStorage.getItem('objkt::title') || ''
-      const description =
-        window.localStorage.getItem('objkt::description') || ''
-      const tags = window.localStorage.getItem('objkt::tags') || ''
-      const edition_count =
-        window.localStorage.getItem('objkt::edition_count') || undefined
-      const royalties =
-        window.localStorage.getItem('objkt::royalties') || undefined
-      let rights = window.localStorage.getItem('objkt::rights') || undefined
-      rights = rights ? JSON.parse(rights) : 'null'
-      const rights_uri = window.localStorage.getItem('objkt::rights_uri') || ''
-      let language = window.localStorage.getItem('objkt::language')
-      language = language ? JSON.parse(language) : 'null'
-      const nsfw = window.localStorage.getItem('objkt::nsfw') === 'true'
-      const photoSeizureWarning =
-        window.localStorage.getItem('objkt::photosensitive_seizure_warning') ===
-        'true'
-
-      console.debug('Restoring fields from localStorage', {
-        title,
-        description,
-        tags,
-        edition_count,
-        royalties,
-        rights,
-        rights_uri,
-        language,
-        nsfw,
-        photoSeizureWarning,
-      })
-
-      setTitle(title)
-      setDescription(description)
-      setTags(tags)
-      setAmount(edition_count)
-      setRoyalties(royalties)
-
-      setRights(rights)
-      setRightUri(rights_uri)
-      setLanguage(language)
-      setNsfw(nsfw)
-      setPhotosensitiveSeizureWarning(photoSeizureWarning)
-    } catch (e) {
-      console.warn(
-        'Something went wrong while restoring mint fields, skipping and deleting fields in localStorage'
-      )
-      console.groupCollapsed('expand for details')
-      console.error(e)
-      console.groupEnd()
-      clearFields(true)
-    }
   }
 
   const clearFields = (full = false) => {
@@ -527,17 +459,6 @@ export const Mint = () => {
       setCover(null)
       setFile(null)
     }
-
-    mintKeys.forEach((k) => window.localStorage.removeItem(k))
-  }
-
-  const hasStoredFields = () => {
-    for (const key of mintKeys) {
-      if (window.localStorage.getItem(key)) {
-        return true
-      }
-    }
-    return false
   }
 
   // const proxyDisplay = proxyName || proxyAddress
@@ -576,10 +497,7 @@ export const Mint = () => {
 
             <Input
               type="text"
-              onChange={(e) => {
-                setTitle(e.target.value)
-                window.localStorage.setItem('objkt::title', e.target.value)
-              }}
+              onChange={setTitle}
               placeholder="Max 500 characters (optional)"
               label="Title"
               value={title}
@@ -606,17 +524,18 @@ export const Mint = () => {
 
             <Input
               type="text"
-              onChange={(e) => {
-                setTags(e.target.value)
-                window.localStorage.setItem('objkt::tags', e.target.value)
-              }}
+              onChange={setTags}
               onBlur={(e) => {
                 const tags = _.join(
-                  _.uniq(e.target.value.split(',').map((tag) => tag.trim())),
+                  _.uniq(
+                    e.target.value
+                      .split(',')
+                      .map((tag) => tag.trim())
+                      .filter((n) => n)
+                  ),
                   ','
                 )
                 setTags(tags)
-                window.localStorage.setItem('objkt::tags', tags)
               }}
               placeholder="Comma separated. example: illustration, digital (optional)"
               label="Tags"
@@ -628,13 +547,7 @@ export const Mint = () => {
               type="number"
               min={1}
               max={MAX_EDITIONS}
-              onChange={(e) => {
-                setAmount(e.target.value)
-                window.localStorage.setItem(
-                  'objkt::edition_count',
-                  e.target.value
-                )
-              }}
+              onChange={setAmount}
               onBlur={(e) => {
                 limitNumericField(e.target, 1, MAX_EDITIONS)
                 setAmount(e.target.value)
@@ -650,10 +563,7 @@ export const Mint = () => {
               type="number"
               min={MIN_ROYALTIES}
               max={MAX_ROYALTIES}
-              onChange={(e) => {
-                setRoyalties(e.target.value)
-                window.localStorage.setItem('objkt::royalties', e.target.value)
-              }}
+              onChange={setRoyalties}
               onBlur={(e) => {
                 limitNumericField(e.target, MIN_ROYALTIES, MAX_ROYALTIES)
                 setRoyalties(e.target.value)
@@ -668,23 +578,14 @@ export const Mint = () => {
               label="License"
               value={rights}
               placeholder="(optional)"
-              onChange={(e) => {
-                setRights(e)
-                window.localStorage.setItem('objkt::rights', JSON.stringify(e))
-              }}
+              onChange={setRights}
               options={LICENSE_TYPES_OPTIONS}
             />
 
             {rights.value === 'custom' && (
               <Input
                 type="text"
-                onChange={(e) => {
-                  setRightUri(e.target.value)
-                  window.localStorage.setItem(
-                    'objkt::rights_uri',
-                    e.target.value
-                  )
-                }}
+                onChange={setRightUri}
                 placeholder="The URI to the custom license"
                 label="Custom license URI"
                 value={rightUri}
@@ -696,13 +597,7 @@ export const Mint = () => {
               placeholder="(optional)"
               options={LANGUAGES_OPTIONS}
               value={language}
-              onChange={(e) => {
-                setLanguage(e)
-                window.localStorage.setItem(
-                  'objkt::language',
-                  JSON.stringify(e)
-                )
-              }}
+              onChange={setLanguage}
             >
               <Line />
             </Select>
@@ -716,31 +611,19 @@ export const Mint = () => {
               <Checkbox
                 label="NSFW"
                 checked={nsfw}
-                onCheck={(v) => {
-                  setNsfw(v)
-                  window.localStorage.setItem(
-                    'objkt::nsfw',
-                    v ? 'true' : 'false'
-                  )
-                }}
+                onCheck={setNsfw}
                 name="nsfw"
               />
               <Checkbox
                 checked={photosensitiveSeizureWarning}
-                onCheck={(v) => {
-                  setPhotosensitiveSeizureWarning(v)
-                  window.localStorage.setItem(
-                    'objkt::photosensitive_seizure_warning',
-                    v ? 'true' : 'false'
-                  )
-                }}
+                onCheck={setPhotosensitiveSeizureWarning}
                 name="photosens"
                 label="Photo Sensitive Seizure Warning"
               />
             </div>
             <span className="horizontal-line" />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button primary onClick={clearFields} fit>
+              <Button onClick={clearFields} fit>
                 Clear Fields
               </Button>
             </div>
@@ -774,7 +657,7 @@ export const Mint = () => {
         {step === 1 && (
           <>
             <div style={{ display: 'flex' }}>
-              <Button primary onClick={() => setStep(0)} fit>
+              <Button onClick={() => setStep(0)} fit>
                 <strong>Back</strong>
               </Button>
             </div>
@@ -804,10 +687,7 @@ export const Mint = () => {
           </>
         )}
 
-        <Button
-          primary
-          href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions"
-        >
+        <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions">
           Terms & Conditions
         </Button>
         <hr />
