@@ -16,6 +16,10 @@ import useLocalSettings from '@hooks/use-local-settings'
 import { useKeyboard } from '@hooks/use-keyboard'
 import { Loading } from '@atoms/loading/index'
 import { ErrorComponent } from '@atoms/error'
+import {
+  METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
+  METADATA_CONTENT_RATING_MATURE,
+} from '@constants'
 
 /**
  * Single view, vertical feed
@@ -53,12 +57,19 @@ function MasonryView({ tokens }) {
     </ResponsiveMasonry>
   )
 }
+/**
+ * @typedef {import("@types").NFT} NFT
+ */
 
 // TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
 /**
  * Main feed component that can be either in Single or Masonry mode.
  * @param {Object} tkProps - The props
  * @param {[import("graphql-request").gql]} tkProps.query - The graphql query
+ * @param {number} tkProps.itemsPerLoad - Batch size
+ * @param {number} tkProps.maxItems - Max items to fetch from the indexer
+ * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} tkProps.extractTokensFromResponse - Function to filter the response
+ * @param {([NFT]) => [NFT]} tkProps.postProcessTokens - Final filter pass over tokens?
  * @returns {React.ReactElement} The feed
  */
 function TokenCollection({
@@ -156,8 +167,17 @@ function TokenCollection({
     .map((token) => {
       return {
         ...token,
-        isNSFW: nsfwMap.get(token.token_id) === 1,
-        isPhotosensitive: photosensitiveMap.get(token.token_id) === 1,
+        isNSFW:
+          nsfwMap.get(token.token_id) === 1 ||
+          token.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE,
+
+        isPhotosensitive:
+          photosensitiveMap.get(token.token_id) === 1 ||
+          (token.teia_meta?.accessibility?.hazards
+            ? token.teia_meta.accessibility.hazards.includes(
+                METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
+              )
+            : false),
       }
     })
 
