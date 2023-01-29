@@ -34,16 +34,14 @@ export const Preview = ({
       : tags.replace(/\s/g, '').split(',')
     : []
   return (
-    <div className={styles.container}>
+    <>
       {isHTML(mimeType) && <HTMLWarning />}
       <div className={styles.media}>
         <RenderMediaType
+          displayView
           nft={{ mime_type: mimeType }}
           previewUri={previewUri}
           previewDisplayUri={previewDisplayUri}
-          interactive
-          preview
-          displayView
         />
       </div>
       <div className={styles.info}>
@@ -91,6 +89,6 @@ export const Preview = ({
           <strong>Royalties:</strong> {royalties}%
         </div>
       </div>
-    </div>
+    </>
   )
 }

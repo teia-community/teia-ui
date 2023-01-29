@@ -18,33 +18,27 @@ const allowed_features =
 const sandbox_features =
   'allow-scripts allow-same-origin allow-modals allow-pointer-lock'
 
+/**
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const HTMLComponent = (props) => {
-  const {
-    artifactUri,
-    displayUri,
-    previewUri,
-    artistAddress,
-    objktID,
-    onDetailView,
-    preview,
-    displayView,
-  } = props
+  const { artifactUri, displayUri, previewUri, nft, displayView } = props
   const context = useContext(TeiaContext)
 
   let _creator_ = false
   let _viewer_ = false
   let _objectId_ = false
 
-  if (artistAddress) {
-    _creator_ = artistAddress
+  if (nft.artist_address) {
+    _creator_ = nft.artist_address
   }
 
   if (context.address) {
     _viewer_ = context.address
   }
 
-  if (objktID) {
-    _objectId_ = String(objktID)
+  if (nft.token_id) {
+    _objectId_ = String(nft.token_id)
   }
 
   // preview
@@ -85,7 +79,7 @@ export const HTMLComponent = (props) => {
     }
   }
 
-  if (preview && !unpackedFiles.current && !unpacking.current) {
+  if (previewUri && !unpackedFiles.current && !unpacking.current) {
     unpackZipFiles()
   }
 
@@ -111,10 +105,10 @@ export const HTMLComponent = (props) => {
 
   const classes = classnames({
     [styles.container]: true,
-    [styles.interactive]: onDetailView,
+    [styles.interactive]: displayView,
   })
 
-  if (preview) {
+  if (previewUri) {
     // creator is viewer in preview
     _creator_ = _viewer_
 
@@ -123,7 +117,7 @@ export const HTMLComponent = (props) => {
         <div className={classes}>
           <iframe
             ref={iframeRef}
-            title={`interactive object ${objktID}`}
+            title={`interactive object ${nft.token_id}`}
             src={`https://teia-community.github.io/teia-ui/gh-pages/html-preview/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
             sandbox={sandbox_features}
             allow={allowed_features}
@@ -137,49 +131,28 @@ export const HTMLComponent = (props) => {
     }
   }
 
-  if (!onDetailView) {
-    return (
-      <div className={classes}>
-        <div className={styles.preview}>
-          <img src={displayUri} alt={`interactive object ${objktID}`} />
-          <div className={styles.button}>
-            <Button alt="View Generative Token">
-              <GenerativeIcon />
-            </Button>
-          </div>
+  return displayView ? (
+    <div>
+      <iframe
+        className={`${styles.html} zip-embed`}
+        title={`interactive object ${nft.token_id}`}
+        src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
+        sandbox={sandbox_features}
+        allow={allowed_features}
+      />
+    </div>
+  ) : (
+    <div className={classes}>
+      <div className={styles.preview}>
+        <img src={displayUri} alt={`interactive object ${nft.token_id}`} />
+        <div className={styles.button}>
+          <Button alt="View Generative Token">
+            <GenerativeIcon />
+          </Button>
         </div>
       </div>
-    )
-  }
-
-  if (displayView) {
-    return (
-      <div>
-        <iframe
-          className={styles.html}
-          title={`interactive object ${objktID}`}
-          src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox={sandbox_features}
-          allow={allowed_features}
-        />
-      </div>
-    )
-  }
-  try {
-    return (
-      <div>
-        <iframe
-          className={`${styles.html} zip-embed`}
-          title={`interactive object ${objktID}`}
-          src={`${artifactUri}/?creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
-          sandbox={sandbox_features}
-          allow={allowed_features}
-        />
-      </div>
-    )
-  } catch (err) {
-    return undefined
-  }
+    </div>
+  )
 }
 
 export default HTMLComponent

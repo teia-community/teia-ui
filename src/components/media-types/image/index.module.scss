@@ -1,10 +1,11 @@
 @import '@styles/layout.scss';
 .style {
-  min-width: 200px;
+  //min-width: 200px;
   min-height: 300px;
+  // min-inline-size: 200px;
   max-height: 60vh;
   max-width: 100%;
-  display: block;
+
   margin: 0 auto;
   border: none;
 }
