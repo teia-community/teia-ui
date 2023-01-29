@@ -5,10 +5,14 @@
   @include resetButton();
   font-family: var(--text-font);
   word-break: normal;
-  font-size: $font-small;
+  font-size: $font-body;
 
   &.fit {
     display: contents;
+  }
+
+  &.small {
+    font-size: $font-small;
   }
 
   &.disabled,

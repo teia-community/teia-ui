@@ -5,9 +5,9 @@
   display: flex;
   align-items: center;
   flex-direction: row;
-  font-size: $font-small;
+  font-size: $font-body;
   justify-content: space-between;
-  margin: 10px 0;
+  margin-top: 10px;
   word-break: normal;
   width: 100%;
   display: flex;
@@ -19,7 +19,13 @@
     text-overflow: ellipsis;
   }
 }
-
+.price_box {
+  display: flex;
+  align-items: center;
+  svg {
+    transform: translateY(2px);
+  }
+}
 .container {
   display: flex;
   font-size: $font-small;
@@ -185,10 +191,6 @@ span[data-tooltip][data-position='top']:after {
   justify-content: flex-end;
   width: 100%;
   text-align: center;
-}
-
-.tz {
-  font-size: $font-small;
 }
 
 .infos_left,
