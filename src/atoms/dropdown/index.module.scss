@@ -20,16 +20,11 @@
   //padding: 1rem;
   transition: height var(--speed) ease;
   transition: width var(--speed) ease;
+  width: calc(100% - 30px);
   @include respond-to('tablet') {
     // width: 600px;
     left: unset;
-  }
-  @include respond-to('desktop') {
-    // width: 600px;
     width: unset;
-  }
-  @media screen and (max-width: 1215px) {
-    width: calc(100% - 30px);
   }
 }
 
