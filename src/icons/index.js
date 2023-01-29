@@ -32,6 +32,7 @@ export { FullScreenEnter, FullScreenExit } from './fullscreen-icon'
 export { default as TezosIcon } from './tezos'
 
 // SVGs Basic Components
+export { ReactComponent as ConfigIcon } from './svgs/config.svg'
 export { ReactComponent as ChevronIcon } from './svgs/chevron.svg'
 export { ReactComponent as EventIcon } from './svgs/events.svg'
 export { ReactComponent as FiltersIcon } from './svgs/filters.svg'
