@@ -26,6 +26,7 @@ const Button = ({
   onClick = () => null,
   children,
   className,
+  style,
   alt,
   disabled,
   selected,
@@ -34,13 +35,14 @@ const Button = ({
   box,
   shadow_box,
   secondary,
-  style,
+  small,
 }) => {
   const _classes = classnames({
     [styles.container]: true,
     [styles.disabled]: disabled,
     [styles.fit]: fit,
     [styles.full]: full,
+    [styles.small]: small,
     [styles.selected]: selected,
     [styles.primary]: !secondary,
   })

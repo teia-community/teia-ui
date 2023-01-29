@@ -135,7 +135,11 @@ export const Header = () => {
             )}
             {!context.collapsed && context.proxyAddress && (
               <div className={styles.mr}>
-                <Button onClick={() => context.setProxyAddress(null)} secondary>
+                <Button
+                  small
+                  onClick={() => context.setProxyAddress(null)}
+                  secondary
+                >
                   Exit collab
                 </Button>
               </div>

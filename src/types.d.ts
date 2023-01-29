@@ -54,16 +54,18 @@ export type TeiaMeta = {
 }
 
 export type Shareholder = {
-  contract_address: string
+  // contract_address: string
   shareholder_address: string
-  shares: string
+  shareholder_profile: ArtistProfile
+  shares: number
   holder_type: ShareholderType
 }
 
 export type SplitContract = {
-  contract_address: string
+  // contract_address?: string
   administrator_address: string
-  total_shares: string
+  total_shares?: string
+  shareholders: [Shareholder]
 }
 
 export type Signature = {
@@ -146,6 +148,7 @@ export type TokenResponse = {
 export type ArtistProfile = {
   name?: string
   is_split: boolean
+  split_contract?: SplitContract
 }
 
 export type LocalSettingsContext = {

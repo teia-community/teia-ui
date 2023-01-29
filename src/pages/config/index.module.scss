@@ -10,6 +10,12 @@
     flex-direction: row;
   }
 }
+.title_line {
+  padding-top: 10px;
+  margin-bottom: 20px;
+  width: 25%;
+}
+
 .fields {
   flex-direction: column;
   align-items: stretch;
@@ -26,10 +32,16 @@
   justify-content: center;
 }
 .info {
-  width: 50%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   p {
     font-size: $font-small;
+  }
+  @include respond-to('tablet') {
+    width: 50%;
   }
 }
 .explainer {

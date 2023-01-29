@@ -5,6 +5,7 @@ import { isNumber } from 'lodash'
 import styles from '@style'
 import Editions from './Editions'
 import useLocalSettings from '@hooks/use-local-settings'
+import { TezosIcon } from '@icons/index'
 // import { PATH } from '@constants'
 
 /**
@@ -20,10 +21,10 @@ const ItemInfoCompact = ({ nft }) => {
     : null
 
   const price = (
-    <span>
+    <div className={styles.price_box}>
       {_price}
-      <span className={styles.tz}>ꜩ</span>
-    </span>
+      <TezosIcon width={16} height={16} />
+    </div>
   )
 
   return (
