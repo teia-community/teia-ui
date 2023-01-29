@@ -20,7 +20,7 @@ import { sample_events } from './sample_events'
 import { useMedia } from 'react-use'
 import EventCard from './events/EventCard'
 import { Line } from '@atoms/line'
-import { ConfigIcon } from '@icons/index'
+import { ConfigIcon } from '@icons'
 
 export const Header = () => {
   const context = useContext(TeiaContext)

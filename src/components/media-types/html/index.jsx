@@ -8,7 +8,7 @@ import {
   validateFiles,
 } from '@utils/html'
 import styles from '@style'
-import GenerativeIcon from '@icons/generative'
+import { GenerativeIcon } from '@icons'
 // import './styles.css'
 
 const uid = Math.round(Math.random() * 1e8).toString()

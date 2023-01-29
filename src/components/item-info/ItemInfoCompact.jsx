@@ -5,7 +5,7 @@ import { isNumber } from 'lodash'
 import styles from '@style'
 import Editions from './Editions'
 import useLocalSettings from '@hooks/use-local-settings'
-import { TezosIcon } from '@icons/index'
+import { TezosIcon } from '@icons'
 // import { PATH } from '@constants'
 
 /**
