@@ -141,7 +141,7 @@ function TokenCollection({
   }
 
   if (!data) {
-    return <Loading />
+    return <Loading message={`Loading Feed ${namespace}`} />
   }
   if (walletBlockMap === undefined) {
     return (
