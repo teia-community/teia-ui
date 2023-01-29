@@ -82,9 +82,7 @@ export const Burn = ({ nft }) => {
                 type="number"
                 placeholder="OBJKTs to burn"
                 value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value)
-                }}
+                onChange={setAmount}
                 onBlur={(e) => {
                   if (parseInt(e.target.value) >= totalOwned) {
                     setAmount(totalOwned)
