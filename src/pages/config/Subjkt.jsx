@@ -10,6 +10,7 @@ import { uploadFileToIPFSProxy } from '@data/ipfs'
 import { TeiaContext } from '@context/TeiaContext'
 import _ from 'lodash'
 import styles from '@style'
+import { Line } from '@atoms/line/index'
 
 const query_tz = `
 query addressQuery($address: String!) {
@@ -261,6 +262,7 @@ export const Subjkt = () => {
     !loading && (
       <Page>
         <h1>Subjkt Settings</h1>
+        <Line className={styles.title_line} />
         <div className={styles.subjkt_editor}>
           <div className={styles.fields}>
             <Identicon address={address} logo={identicon} />

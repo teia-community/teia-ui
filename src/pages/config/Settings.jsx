@@ -6,6 +6,7 @@ import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import Select from '@atoms/select/index'
 import { THEMES, THEME_OPTIONS } from '@constants'
+import { Line } from '@atoms/line/index'
 
 export const Settings = () => {
   const {
@@ -25,6 +26,7 @@ export const Settings = () => {
           Those settings are non portable and only stored in your current
           browser cache.
         </p>
+        <Line className={styles.title_line} />
       </div>
       <div className={styles.localSettings}>
         <div className={styles.fields}>
