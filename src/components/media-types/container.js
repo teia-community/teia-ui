@@ -7,7 +7,7 @@ import { iOS } from '@utils/os'
 import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import './style.css'
-import { FullScreenEnter, FullScreenExit } from '@icons'
+import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -118,7 +118,11 @@ export const Container = ({
             role="button"
             aria-label="fullscreen"
           >
-            {context.fullscreen ? <FullScreenEnter /> : <FullScreenExit />}
+            {context.fullscreen ? (
+              <FullScreenEnterIcon />
+            ) : (
+              <FullScreenExitIcon />
+            )}
           </div>
         )}
       </div>
