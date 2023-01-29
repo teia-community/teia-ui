@@ -24,20 +24,13 @@ import { useMemo } from 'react'
  */
 
 /**
- * @param {Object} renderOptions - The options for the media renderer
- * @param {import("@types").NFT} renderOptions.nft - The nft to render
- * @param {boolean} renderOptions.preview
- * @param {string} renderOptions.previewUri
- * @param {boolean} renderOptions.interactive
- * @param {boolean} renderOptions.displayView - use the display/preview image
- *
+ * @param {import("@types").RenderMediaProps} renderOptions - The options for the media renderer
+
  */
 export const RenderMediaType = ({
   nft,
-  preview,
   previewUri,
   previewDisplayUri,
-  interactive,
   displayView,
 }) => {
   const parsedArtifactUri = useMemo(
@@ -48,13 +41,13 @@ export const RenderMediaType = ({
     [nft]
   )
   const parsedDisplayUri = useMemo(() => {
-    if (preview) {
+    if (previewDisplayUri) {
       return previewDisplayUri
     }
     return nft.display_uri
       ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
       : ''
-  }, [nft, preview, previewDisplayUri])
+  }, [nft, previewDisplayUri])
 
   if (!nft) {
     console.error('No nft to render')
@@ -70,14 +63,12 @@ export const RenderMediaType = ({
     case MIMETYPE.TIFF:
     case MIMETYPE.WEBP:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <ImageComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            onDetailView={interactive}
-            preview={preview}
             displayView={displayView}
+            previewUri={previewUri}
             nft={nft}
           />
         </Container>
@@ -86,16 +77,13 @@ export const RenderMediaType = ({
     /* VECTOR */
     case MIMETYPE.SVG:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <VectorComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            preview={preview}
-            artistAddress={nft.artist_address}
-            objktID={nft.token_id}
-            onDetailView={interactive}
             displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
           />
         </Container>
       )
@@ -106,17 +94,16 @@ export const RenderMediaType = ({
     case MIMETYPE.ZIP1:
     case MIMETYPE.ZIP2:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <HTMLComponent
+            // artistAddress={nft.artist_address}
+            // creator={nft.creator}
+            // objktID={nft.token_id}
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            artistAddress={nft.artist_address}
-            creator={nft.creator}
-            objktID={nft.token_id}
-            preview={preview}
-            onDetailView={interactive}
             displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
           />
         </Container>
       )
@@ -126,14 +113,12 @@ export const RenderMediaType = ({
     case MIMETYPE.QUICKTIME:
     case MIMETYPE.WEBM:
       return (
-        <Container interactive={interactive} nofullscreen nft={nft}>
+        <Container displayView={displayView} nofullscreen nft={nft}>
           <VideoComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            preview={preview}
-            onDetailView={interactive}
             displayView={displayView}
+            previewUri={previewUri}
             nft={nft}
           />
         </Container>
@@ -142,15 +127,12 @@ export const RenderMediaType = ({
     case MIMETYPE.GLB:
     case MIMETYPE.GLTF:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <GLBComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            preview={preview}
-            onDetailView={interactive}
             displayView={displayView}
-            objktID={nft.token_id}
+            previewUri={previewUri}
             nft={nft}
           />
         </Container>
@@ -162,29 +144,25 @@ export const RenderMediaType = ({
     case MIMETYPE.WAV:
     case MIMETYPE.XWAV:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <AudioComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            preview={preview}
-            onDetailView={interactive}
             displayView={displayView}
-            objktID={nft.token_id}
+            previewUri={previewUri}
+            nft={nft}
           />
         </Container>
       )
     /* PDF */
     case MIMETYPE.PDF:
       return (
-        <Container interactive={interactive} nft={nft}>
+        <Container displayView={displayView} nft={nft}>
           <PdfComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
-            previewUri={previewUri}
-            preview={preview}
-            onDetailView={interactive}
             displayView={displayView}
+            previewUri={previewUri}
             nft={nft}
           />
         </Container>
@@ -193,12 +171,11 @@ export const RenderMediaType = ({
     case MIMETYPE.MD:
       return (
         <MD
-          previewUri={previewUri}
-          preview={preview}
           artifactUri={parsedArtifactUri}
           displayUri={parsedDisplayUri}
           displayView={displayView}
-          objktID={nft.token_id}
+          previewUri={previewUri}
+          nft={nft}
         />
       )
 

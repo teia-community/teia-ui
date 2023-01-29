@@ -26,7 +26,7 @@ export const FeedItem = ({ nft }) => {
   return (
     <div className={containerClasses}>
       <Link alt={`OBJKT ${nft.token_id}`} to={`${PATH.OBJKT}/${nft.token_id}`}>
-        <RenderMediaType nft={nft} displayView />
+        <RenderMediaType nft={nft} />
       </Link>
       {!zen && (
         <div className={styles.token_infos_container}>

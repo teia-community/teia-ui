@@ -27,15 +27,14 @@ import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
  * @param {React.ReactNode} containerOptions.children
  * @param {boolean} containerOptions.nofullscreen
  * @param {boolean} containerOptions.interactive - In "detailed" view?
- * @param {flex} containerOptions.flex - Use a flex container
  *
  **/
 export const Container = ({
-  children = null,
-  interactive,
-  nofullscreen = false,
   nft,
-  flex = false,
+  children = null,
+  displayView,
+  nofullscreen = false,
+  //flex = false,
 }) => {
   const context = useContext(TeiaContext)
   const domElement = useRef()
@@ -90,12 +89,12 @@ export const Container = ({
   const classes = classnames({
     [styles.container]: true,
     [styles.fullscreen]: context.fullscreen,
-    [styles.flex]: interactive,
+    [styles.flex]: displayView,
   })
 
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, { inView, interactive })
+      return React.cloneElement(child, { inView, displayView })
     }
     return child
   })
@@ -105,7 +104,7 @@ export const Container = ({
       <div ref={domElement} className={classes}>
         {childrenWithProps}
 
-        {interactive && !iOS && !nofullscreen && (
+        {displayView && !iOS && !nofullscreen && (
           <div
             onClick={toggleFullScreen}
             className={

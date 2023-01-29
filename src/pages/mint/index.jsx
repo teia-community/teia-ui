@@ -382,6 +382,7 @@ export const Mint = () => {
       await generateCoverAndThumbnail(props)
       setFile(props)
     } else {
+      setFile(props)
       setNeedsCover(true)
     }
   }

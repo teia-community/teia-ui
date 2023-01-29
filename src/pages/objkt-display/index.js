@@ -168,7 +168,7 @@ export const ObjktDisplay = () => {
         className="objkt-display"
       >
         <div className={objkt_classes}>
-          <RenderMediaType nft={nft} interactive />
+          <RenderMediaType nft={nft} displayView />
         </div>
         <ItemInfo nft={nft} />
 

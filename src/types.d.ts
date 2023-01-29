@@ -203,3 +203,23 @@ export type FeedEvent = {
   /** external link */
   link: string
 }
+
+type SharedMediaProps = {
+  /**The nft to render */
+  nft: NFT
+  /** Preview "data" to pass to the Preview component */
+  previewUri
+  /** Detailed view, full quality.*/
+  displayView: string
+}
+export type RenderMediaProps = SharedMediaProps
+
+export type MediaTypeProps = SharedMediaProps & {
+  /** Resolved gateway URL for the Artifact of the token */
+  artifactUri: string
+  /** Resolved gateway URL for the cover image / thumbnail */
+  displayUri: string
+
+  /** Some intersection observer setup by the media container */
+  inView: boolean
+}

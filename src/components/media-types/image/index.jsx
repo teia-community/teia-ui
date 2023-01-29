@@ -1,18 +1,14 @@
 import React, { useState } from 'react'
-import get from 'lodash/get'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from '@style'
 
 /**
- * @param {Object} imageComponentOptions
- * @param {import("@types").NFT} imageComponentOptions.nft
- **/
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const ImageComponent = ({
   artifactUri,
   displayUri,
   previewUri,
-  onDetailView,
-  preview,
   displayView,
   nft,
 }) => {
@@ -20,16 +16,14 @@ export const ImageComponent = ({
 
   let src
 
-  if (preview) {
+  if (previewUri) {
     src = previewUri
-  } else if (onDetailView) {
+  } else if (displayView) {
     src = artifactUri
   } else if (process.env.REACT_APP_IMGPROXY && nft?.teia_meta?.preview_uri) {
     src = `${process.env.REACT_APP_IMGPROXY}${nft.teia_meta.preview_uri}`
-  } else if (displayUri) {
-    src = displayUri
   } else {
-    src = artifactUri
+    src = displayUri
   }
 
   const onError = (error) => {
@@ -62,24 +56,27 @@ export const ImageComponent = ({
   // }, [src])
 
   return displayView ? (
+    <>
+      <LazyLoadImage
+        className={`${styles.style} ${isSmol ? styles.smol : ''}`}
+        src={src}
+        effect="opacity"
+        alt={`object ${nft.token_id} image`}
+        onLoad={onLoad}
+        onError={onError}
+      />
+    </>
+  ) : (
     <div className={styles.container}>
       <LazyLoadImage
-        className={styles.image}
+        className={`${styles.image} ${isSmol ? styles.smol : ''}`}
         src={src}
+        effect="opacity"
         onLoad={onLoad}
         alt={`object ${nft.token_id} image`}
         onError={onError}
       />
     </div>
-  ) : (
-    <LazyLoadImage
-      className={`${styles.style} ${isSmol ? styles.smol : ''}`}
-      src={src}
-      effect="opacity"
-      alt={`object ${nft.token_id} image`}
-      onLoad={onLoad}
-      onError={onError}
-    />
   )
 }
 

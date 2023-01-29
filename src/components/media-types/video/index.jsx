@@ -3,15 +3,12 @@ import { iOS } from '@utils/os'
 import styles from '@style'
 
 /**
- * @param {Object} videoComponentOptions
- * @param {import("@types").NFT} videoComponentOptions.nft
- **/
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const VideoComponent = ({
   artifactUri,
   displayUri,
   previewUri,
-  preview,
-  interactive,
   inView,
   displayView,
   nft,
@@ -55,12 +52,12 @@ export const VideoComponent = ({
     <video
       ref={domElement}
       className={styles.displayviewVideo}
-      autoPlay={inView}
+      autoPlay
       playsInline
       muted
       loop
-      controls={interactive}
-      src={preview ? previewUri : artifactUri}
+      controls
+      src={previewUri ? previewUri : artifactUri}
       poster={displayUri}
       title={`video object ${nft.token_id}`}
     />
@@ -73,8 +70,7 @@ export const VideoComponent = ({
         playsInline
         muted
         loop
-        controls={interactive}
-        src={preview ? previewUri : artifactUri}
+        src={previewUri ? previewUri : artifactUri}
         poster={displayUri}
         title={`video object ${nft.token_id}`}
       />

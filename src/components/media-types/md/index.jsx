@@ -5,6 +5,9 @@ import { Button } from '@atoms/button'
 import styles from '@style'
 const axios = require('axios')
 
+/**
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const MD = ({
   displayView,
   displayUri,

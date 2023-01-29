@@ -17,20 +17,18 @@ const options = {
 }
 
 /**
- * @param {Object} pdfComponentOptions
- * @param {import("@types").NFT} pdfComponentOptions.nft
- **/
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const PdfComponent = ({
   artifactUri,
   displayUri,
   previewUri,
-  preview,
-  onDetailView,
+  displayView,
   nft,
 }) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
-  const [loading, setLoading] = useState(onDetailView)
+  const [loading, setLoading] = useState(displayView)
   const context = useContext(TeiaContext)
 
   function onDocumentLoadSuccess({ numPages }) {
@@ -63,10 +61,10 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
 
   return (
     <>
-      {onDetailView && (
+      {displayView && (
         <div className={styles.container}>
           <Document
-            file={preview ? previewUri : artifactUri}
+            file={previewUri ? previewUri : artifactUri}
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             onItemClick={onItemClick}
@@ -90,16 +88,14 @@ see it on [IPFS](${HashToURL(nft.artifact_uri)})`)
           </Document>
         </div>
       )}
-      {(!onDetailView || loading) && (
+      {(!displayView || loading) && (
         <AnimatePresence>
           <ImageComponent
             // key={`img-${nft.token_id}`}
             artifactUri={displayUri}
             displayUri={displayUri}
             previewUri={previewUri}
-            onDetailView={onDetailView}
-            preview={preview}
-            displayView={!onDetailView}
+            displayView={!displayView}
             nft={nft}
           />
           {loading && (
