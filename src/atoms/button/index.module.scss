@@ -3,6 +3,15 @@
 
 .container {
   @include resetButton();
+
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  gap: 0.5rem;
+  word-break: keep-all;
+  cursor: pointer;
+  transition: var(--body-transition) filter 300ms;
+
   font-family: var(--text-font);
   word-break: normal;
   font-size: $font-body;
@@ -39,7 +48,6 @@
 .primary {
   color: var(--text-color);
   transition: color #{$theme-duration} ease-out;
-  font-weight: 700;
 
   &.selected,
   &.active {
@@ -106,6 +114,8 @@ $border: 2px;
 .shadow_box {
   opacity: inherit;
   cursor: pointer;
+
+  font-weight: 700;
 
   padding: $border 16px;
   width: 100%;
