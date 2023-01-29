@@ -89,7 +89,11 @@ export default function Display() {
   }
 
   if (!user) {
-    return <Loading />
+    return (
+      <Page title="loading">
+        <Loading message="Getting user profile" />
+      </Page>
+    )
   }
 
   const TABS = [
