@@ -23,7 +23,7 @@ const ItemInfoCompact = ({ nft }) => {
   const price = (
     <div className={styles.price_box}>
       {_price}
-      <TezosIcon width={16} height={16} />
+      <TezosIcon size={16} />
     </div>
   )
 

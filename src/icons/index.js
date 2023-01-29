@@ -29,9 +29,9 @@ export { default as MintedIcon } from './minted'
 export { default as SwapIcon } from './swap'
 export { default as TradeIcon } from './trade'
 export { FullScreenEnter, FullScreenExit } from './fullscreen-icon'
+export { default as TezosIcon } from './tezos'
 
 // SVGs Basic Components
-export { ReactComponent as TezosIcon } from './svgs/tezos.svg'
 export { ReactComponent as ChevronIcon } from './svgs/chevron.svg'
 export { ReactComponent as EventIcon } from './svgs/events.svg'
 export { ReactComponent as FiltersIcon } from './svgs/filters.svg'
