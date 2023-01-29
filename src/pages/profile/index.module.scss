@@ -30,6 +30,7 @@
     justify-self: end;
   }
   .socials {
+    display: flex;
     margin-top: 8px;
   }
   @include respond-to('desktop') {
