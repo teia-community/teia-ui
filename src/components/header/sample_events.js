@@ -28,6 +28,7 @@ you can find the source code on [github](https://github.com/ciphrd/public-contra
     feed: 'iran',
     link: 'https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran',
     subtitle: '25 October - 1st January 2022',
-    content: '',
+    content:
+      'In the wake of the historic protests against the killing of young Iranian women, Teia has set up a charity fundraiser in solidarity with the protests and to raise awareness for womens rights in Iran.',
   },
 ]
