@@ -10,7 +10,7 @@ const Input = ({
   max,
   maxlength = 500,
   label,
-  onChange = () => null,
+  onChange = (value) => null,
   onBlur = () => null,
   onWheel = () => null,
   disabled,
