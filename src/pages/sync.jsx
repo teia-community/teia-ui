@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'
-import { LoadingContainer } from '@atoms/loading'
+import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 
 export default function Sync() {
@@ -42,9 +42,8 @@ export default function Sync() {
   return (
     <Page title="">
       <Container>
-        <p>requesting permissions</p>
+        <Loading message="Requesting Permissions" />
         <Button to="/sync">try again?</Button>
-        <LoadingContainer />
       </Container>
     </Page>
   )
