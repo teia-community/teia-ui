@@ -18,6 +18,7 @@
 }
 
 .tabs {
+  display: flex;
   align-self: flex-start;
   z-index: 5;
   button,

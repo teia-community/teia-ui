@@ -20,6 +20,7 @@ import { sample_events } from './sample_events'
 import { useMedia } from 'react-use'
 import EventCard from './events/EventCard'
 import { Line } from '@atoms/line'
+import { ConfigIcon } from '@icons/index'
 
 export const Header = () => {
   const context = useContext(TeiaContext)
@@ -124,17 +125,22 @@ export const Header = () => {
           </Button>
           <div className={styles.right}>
             {!context.collapsed && (
-              <Button
-                onClick={() => {
-                  handleRoute('/settings')
-                }}
-                className={styles.config_button}
-              >
-                config
-              </Button>
+              <>
+                <Button
+                  small
+                  onClick={() => {
+                    handleRoute('/settings')
+                  }}
+                  className={styles.config_button}
+                >
+                  <ConfigIcon width={16} height={16} />
+                  Config
+                </Button>
+                <Line className={styles.separator} vertical />
+              </>
             )}
             {!context.collapsed && context.proxyAddress && (
-              <div className={styles.mr}>
+              <>
                 <Button
                   small
                   onClick={() => context.setProxyAddress(null)}
@@ -142,7 +148,8 @@ export const Header = () => {
                 >
                   Exit collab
                 </Button>
-              </div>
+                <Line className={styles.separator} vertical />
+              </>
             )}
 
             <Button
