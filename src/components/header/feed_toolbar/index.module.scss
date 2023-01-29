@@ -51,13 +51,16 @@
   flex-direction: column;
   margin-top: 10px;
   margin-bottom: 20px;
-  width: 180px;
+  width: 100%;
   padding: 0 20px;
   & > * {
     margin-bottom: 8px;
   }
   & > button:hover {
     text-decoration: underline;
+  }
+  @include respond-to('tablet') {
+    width: 180px;
   }
 }
 

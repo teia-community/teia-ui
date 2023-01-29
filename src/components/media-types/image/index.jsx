@@ -24,14 +24,8 @@ export const ImageComponent = ({
     src = previewUri
   } else if (onDetailView) {
     src = artifactUri
-  } else if (
-    process.env.REACT_APP_IMGPROXY &&
-    get(nft, 'teia_meta.preview_uri')
-  ) {
-    src = `${process.env.REACT_APP_IMGPROXY}${get(
-      nft,
-      'teia_meta.preview_uri'
-    )}`
+  } else if (process.env.REACT_APP_IMGPROXY && nft?.teia_meta?.preview_uri) {
+    src = `${process.env.REACT_APP_IMGPROXY}${nft.teia_meta.preview_uri}`
   } else if (displayUri) {
     src = displayUri
   } else {
@@ -39,11 +33,9 @@ export const ImageComponent = ({
   }
 
   const onError = (error) => {
-    // if (nft.mime_type === MIMETYPE.GIF) {
-    //   setIsVideo(true)
-    // }
     console.error(error)
   }
+
   const onLoad = ({ target: img }) => {
     // Do whatever you want here
     const w = img.naturalWidth
