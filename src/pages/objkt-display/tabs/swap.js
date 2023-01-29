@@ -47,15 +47,16 @@ export const Swap = ({ nft }) => {
 
   const found = useMemo(
     () =>
-      nft.token_holders?.find(
+      nft.holdings?.find(
         (e) =>
-          e.holder_id === acc?.address ||
-          (e.holder_id === proxyAddress && acc?.address === proxyAdminAddress)
+          e.holder_address === acc?.address ||
+          (e.holder_address === proxyAddress &&
+            acc?.address === proxyAdminAddress)
       ),
     [nft, acc, proxyAddress, proxyAdminAddress]
   )
 
-  const totalOwned = useMemo(() => found?.quantity || 0, [found])
+  const totalOwned = useMemo(() => found?.amount || 0, [found])
 
   const handleSubmit = async () => {
     console.debug({ amount, price })

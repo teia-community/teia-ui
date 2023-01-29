@@ -27,9 +27,9 @@ export const Transfer = ({ nft }) => {
   // How many editions are held by the contract?
   const editionsHeld = useMemo(
     () =>
-      nft.token_holders?.find(
+      nft.holdings?.find(
         (e) =>
-          e.holder_id === senderAddress &&
+          e.holder_address === senderAddress &&
           (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
       ),
     [nft, acc, proxyAdminAddress, senderAddress]
@@ -106,7 +106,7 @@ export const Transfer = ({ nft }) => {
 
   const validTxs = txs.filter((t) => t.to_ && t.amount)
 
-  const tokenCount = editionsHeld ? editionsHeld.quantity : 0
+  const tokenCount = editionsHeld ? editionsHeld.amount : 0
 
   return (
     <Container>
