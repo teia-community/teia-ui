@@ -109,6 +109,8 @@ export type NFT = {
   artifact_uri: string
   /** This is null for non collab tokens? */
   royalties?: [string: string]
+  royalties_total: number
+
   royalty_receivers?: [RoyaltyReceiver]
 
   /** the creator tz address */

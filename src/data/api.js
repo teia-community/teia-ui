@@ -25,6 +25,7 @@ fragment baseTokenFields on tokens {
     preview_uri
   }
   royalties
+  royalties_total
   mime_type
   price
   listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {

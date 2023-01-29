@@ -77,7 +77,7 @@ export const Swap = ({ nft }) => {
     // swap is valid call API
     console.debug(
       address,
-      nft.royalties,
+      nft.royalties_total,
       parseFloat(price) * 1000000,
       id,
       nft.artist_address,
@@ -85,7 +85,7 @@ export const Swap = ({ nft }) => {
     )
     console.log([
       address,
-      nft.royalties,
+      nft.royalties_total,
       parseFloat(price) * 1e6,
       id,
       nft.artist_address,
@@ -96,7 +96,7 @@ export const Swap = ({ nft }) => {
         // when taquito returns a success/fail message
         const answer = await swap(
           address,
-          nft.royalties,
+          nft.royalties_total / 1000,
           parseFloat(price) * 1e6,
           id,
           nft.artist_address,
