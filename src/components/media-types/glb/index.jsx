@@ -3,16 +3,16 @@
 
 import React /*  useRef, useState */ from 'react'
 import styles from '@style'
-import { ImageComponent } from '../image/index'
+import { ImageComponent } from '../image'
 
+/**
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const GLBComponent = ({
   artifactUri,
   displayUri,
   previewUri,
-  preview,
-  onDetailView,
   displayView,
-  objktID,
   nft,
 }) => {
   // const ref = useRef()
@@ -20,10 +20,10 @@ export const GLBComponent = ({
   // const [height, setHeight] = useState('100px')
 
   let props = {
-    src: preview ? previewUri : artifactUri,
+    src: previewUri ? previewUri : artifactUri,
   }
 
-  if (onDetailView) {
+  if (displayView) {
     props = {
       ...props,
       autoplay: true,
@@ -53,6 +53,12 @@ export const GLBComponent = ({
   //   }
   // }, [width, height])
   return displayView ? (
+    <model-viewer {...props} title={`GLB object ${nft.toke}`}>
+      <button slot="ar-button" className={styles.arButton}>
+        AR
+      </button>
+    </model-viewer>
+  ) : (
     // <div className={styles.container} ref={ref}>
     //   <model-viewer
     //     {...props}
@@ -66,19 +72,11 @@ export const GLBComponent = ({
     // </div>
     <ImageComponent
       // key={`img-${objktID}`}
-      artifactUri={artifactUri}
       previewUri={previewUri}
-      onDetailView={false}
-      displayUri
-      displayView={true}
+      displayUri={displayUri}
+      displayView={false}
       nft={nft}
     />
-  ) : (
-    <model-viewer {...props} title={`GLB object ${objktID}`}>
-      <button slot="ar-button" className={styles.arButton}>
-        AR
-      </button>
-    </model-viewer>
   )
 }
 

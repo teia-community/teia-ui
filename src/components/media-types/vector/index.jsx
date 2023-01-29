@@ -4,19 +4,19 @@ import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import './index.css'
 
+/**
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
 export const VectorComponent = ({
   artifactUri,
   previewUri,
-  artistAddress,
-  objktID,
-  onDetailView,
-  preview,
   displayView,
+  nft,
 }) => {
   const context = useContext(TeiaContext)
   const classes = classnames({
     [styles.container]: true,
-    [styles.interactive]: onDetailView,
+    [styles.interactive]: displayView,
     [styles.display]: displayView,
   })
 
@@ -27,18 +27,18 @@ export const VectorComponent = ({
     _viewer_ = context.address
   }
 
-  if (objktID) {
-    _objkt_ = objktID
+  if (nft.token_id) {
+    _objkt_ = nft.token_id
   }
 
-  const path = preview
+  const path = previewUri
     ? previewUri
-    : `${artifactUri}?creator=${artistAddress}&viewer=${_viewer_}&objkt=${_objkt_}`
+    : `${artifactUri}?creator=${nft.artist_address}&viewer=${_viewer_}&objkt=${_objkt_}`
 
   return displayView ? (
     <div className={classes}>
       <iframe
-        title={`SVG object ${objktID}`}
+        title={`SVG object ${nft.token_id}`}
         src={path}
         sandbox="allow-scripts"
         scrolling="no"
@@ -48,7 +48,7 @@ export const VectorComponent = ({
     <div className={`${classes} vector-container`}>
       <iframe
         className={`${styles.vector} vector`}
-        title={`SVG object ${objktID}`}
+        title={`SVG object ${nft.token_id}`}
         src={path}
         sandbox="allow-scripts"
         scrolling="no"
