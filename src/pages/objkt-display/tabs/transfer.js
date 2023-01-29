@@ -15,24 +15,25 @@ import { Button } from '@atoms/button'
  */
 export const Transfer = ({ nft }) => {
   //const [title, setTitle] = useState()
-  const { transfer, setFeedback, acc, proxyAddress } = useContext(TeiaContext)
+  const { transfer, setFeedback, address, proxyAddress } =
+    useContext(TeiaContext)
 
-  const senderAddress = proxyAddress || acc?.address
+  const senderAddress = proxyAddress || address
 
   // See if the creator of this token is also the admin
-  const proxyAdminAddress = nft.creator?.is_split
-    ? nft.creator.shares[0].administrator
+  const proxyAdminAddress = nft.artist_profile?.is_split
+    ? nft.artist_profile.split_contract.administrator_address
     : null
-
+  //
   // How many editions are held by the contract?
   const editionsHeld = useMemo(
     () =>
       nft.holdings?.find(
         (e) =>
           e.holder_address === senderAddress &&
-          (acc?.address === senderAddress || acc?.address === proxyAdminAddress)
+          (address === senderAddress || address === proxyAdminAddress)
       ),
-    [nft, acc, proxyAdminAddress, senderAddress]
+    [nft, address, proxyAdminAddress, senderAddress]
   )
 
   // The basic schema for a transaction
