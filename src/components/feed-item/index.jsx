@@ -1,11 +1,11 @@
 import React from 'react'
 import { PATH } from '@constants'
-import { Button } from '@atoms/button'
 import { ItemInfoCompact } from '@components/item-info'
 import { RenderMediaType } from '@components/media-types'
 import styles from '@style'
 import classnames from 'classnames'
 import useLocalSettings from '@hooks/use-local-settings'
+import { Link } from 'react-router-dom'
 
 /**
  * @param {Object} feedOptions - The options for the feed item
@@ -25,14 +25,9 @@ export const FeedItem = ({ nft }) => {
 
   return (
     <div className={containerClasses}>
-      <Button
-        alt={`OBJKT ${nft.token_id}`}
-        to={`${PATH.OBJKT}/${nft.token_id}`}
-      >
-        <div>
-          <RenderMediaType nft={nft} displayView />
-        </div>
-      </Button>
+      <Link alt={`OBJKT ${nft.token_id}`} to={`${PATH.OBJKT}/${nft.token_id}`}>
+        <RenderMediaType nft={nft} displayView />
+      </Link>
       {!zen && (
         <div className={styles.token_infos_container}>
           <ItemInfoCompact nft={nft} />
