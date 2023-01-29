@@ -11,10 +11,10 @@
   }
 }
 .fields {
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
+  align-items: stretch;
+  display: flex;
+  width: 80%;
 }
 .localSettings {
   width: 100%;

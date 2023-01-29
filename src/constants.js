@@ -150,6 +150,8 @@ export const THEMES = {
   light: 'Light',
   kawai: 'Kawai',
   aqua: 'Aqua',
+  coffee: 'Coffee',
+  midnight: 'Midnight',
   // noui: 'No UI (Expert Mode)',
 }
 
