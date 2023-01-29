@@ -17,7 +17,7 @@ export const Swap = ({ nft }) => {
   const { id } = useParams()
   const {
     swap,
-    acc,
+    address,
     progress,
     setProgress,
     proxyAddress,
@@ -41,21 +41,20 @@ export const Swap = ({ nft }) => {
     }
   }
 
-  const proxyAdminAddress = nft.creator?.is_split
-    ? nft.creator.shares[0].administrator
+  const proxyAdminAddress = nft.artist_profile?.is_split
+    ? nft.artist_profile.split_contract.administrator_address
     : null
 
   const found = useMemo(
     () =>
       nft.holdings?.find(
         (e) =>
-          e.holder_address === acc?.address ||
-          (e.holder_address === proxyAddress &&
-            acc?.address === proxyAdminAddress)
+          e.holder_address === address ||
+          (e.holder_address === proxyAddress && address === proxyAdminAddress)
       ),
-    [nft, acc, proxyAddress, proxyAdminAddress]
+    [nft, address, proxyAddress, proxyAdminAddress]
   )
-
+  console.log({ nft, found })
   const totalOwned = useMemo(() => found?.amount || 0, [found])
 
   const handleSubmit = async () => {
@@ -77,7 +76,7 @@ export const Swap = ({ nft }) => {
     setMessage('Preparing swap')
     // swap is valid call API
     console.debug(
-      acc.address,
+      address,
       nft.royalties,
       parseFloat(price) * 1000000,
       id,
@@ -89,7 +88,7 @@ export const Swap = ({ nft }) => {
       try {
         // when taquito returns a success/fail message
         const answer = await swap(
-          acc.address,
+          address,
           nft.royalties,
           parseFloat(price) * 1e6,
           id,

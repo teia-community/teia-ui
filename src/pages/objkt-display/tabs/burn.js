@@ -24,8 +24,8 @@ export const Burn = ({ nft }) => {
   } = useContext(TeiaContext)
   const [amount, setAmount] = useState('')
 
-  const proxyAdminAddress = nft.creator?.is_split
-    ? nft.creator.shares[0].administrator
+  const proxyAdminAddress = nft.artist_profile?.is_split
+    ? nft.artist_profile.split_contract.administrator_address
     : null
 
   const found = useMemo(
