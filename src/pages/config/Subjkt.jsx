@@ -82,15 +82,6 @@ export const Subjkt = () => {
     init().catch(console.error)
   }, [])
 
-  const handleChange = (e) => {
-    if (e.target.name === 'subjkt' && !e.target.checkValidity()) {
-      console.debug(e.target.pattern)
-      e.target.value = e.target.value.replace(/[^a-z0-9-._]/g, '')
-    }
-    console.debug('set', e.target.name, 'to', e.target.value)
-    this.setState({ [e.target.name]: e.target.value })
-  }
-
   const name_exists = async () => {
     if (!subjkt) return false
 
@@ -272,17 +263,20 @@ export const Subjkt = () => {
             <Input
               name="subjkt"
               value={subjkt}
-              onChange={handleChange}
+              onChange={setSubjkt}
+              onBlur={(e) => {
+                setSubjkt(e.target.value.replace(/[^a-z0-9-._]/g, ''))
+              }}
               placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
               label="Username"
               pattern="^[a-z0-9-._]*$"
             />
             <Input
               name="description"
-              onChange={handleChange}
+              value={description}
+              onChange={setDescription}
               placeholder="(Max length 500 characters)"
               label="Description"
-              value={description}
             />
           </div>
         </div>

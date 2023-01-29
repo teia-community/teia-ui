@@ -30,7 +30,7 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
           placeholder="OBJKT quantity"
           min={1}
           value={tx.amount}
-          onChange={(event) => _update('amount', event.target.value)}
+          onChange={(value) => _update('amount', value)}
         />
       </td>
       <td>
@@ -39,7 +39,7 @@ export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
           label="Recipient"
           placeholder="to address (tz...)"
           value={tx.to_}
-          onChange={(event) => _update('to_', event.target.value)}
+          onChange={(value) => _update('to_', value)}
           onKeyPress={_handleKeyPress}
         />
       </td>

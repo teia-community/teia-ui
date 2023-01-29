@@ -25,8 +25,8 @@ export const Swap = ({ nft }) => {
     showFeedback,
     setMessage,
   } = useContext(TeiaContext)
-  const [amount, setAmount] = useState()
-  const [price, setPrice] = useState()
+  const [amount, setAmount] = useState('')
+  const [price, setPrice] = useState('')
   //const [progress, setProgress] = useState(false)
   const [currency, setCurrency] = useState('tez')
 
@@ -80,10 +80,17 @@ export const Swap = ({ nft }) => {
       nft.royalties,
       parseFloat(price) * 1000000,
       id,
-      nft.creator.address,
+      nft.artist_address,
       parseFloat(amount)
     )
-
+    console.log([
+      address,
+      nft.royalties,
+      parseFloat(price) * 1e6,
+      id,
+      nft.artist_address,
+      parseFloat(amount),
+    ])
     if (currency === 'tez') {
       try {
         // when taquito returns a success/fail message
@@ -92,12 +99,13 @@ export const Swap = ({ nft }) => {
           nft.royalties,
           parseFloat(price) * 1e6,
           id,
-          nft.creator.address,
+          nft.artist_address,
           parseFloat(amount)
         )
         setProgress(false)
         setMessage(answer.description)
       } catch (e) {
+        console.error(e)
         setProgress(false)
         setMessage(`Error: ${e}`)
       }
@@ -129,7 +137,7 @@ export const Swap = ({ nft }) => {
                 min={1}
                 value={amount}
                 /* max={total_amount - sales} */
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={setAmount}
                 onBlur={(e) => {
                   if (parseInt(e.target.value) > totalOwned) {
                     setAmount(totalOwned)
@@ -144,7 +152,8 @@ export const Swap = ({ nft }) => {
                     type="number"
                     placeholder="Price per OBJKT"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    initial={0}
+                    onChange={setPrice}
                     onBlur={(e) => {
                       const val = parseFloat(e.target.value)
                       if (val > 1e4) {

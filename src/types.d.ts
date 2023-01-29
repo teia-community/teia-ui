@@ -93,7 +93,7 @@ export type Listing = {
 }
 export type RoyaltyReceiver = {
   receiver_address: string
-  royalties: string
+  royalties: [string: string]
 }
 
 export type NFT = {
@@ -107,11 +107,12 @@ export type NFT = {
   thumbnail_uri?: string
   display_uri?: string
   artifact_uri: string
-  royalties?: string
+  /** This is null for non collab tokens? */
+  royalties?: [string: string]
   royalty_receivers?: [RoyaltyReceiver]
 
   /** the creator tz address */
-  creator: string
+  // creator: string
   /** the mimetype of the token metadata */
   mime_type: string
   /** the artifact IPFS URI */
