@@ -6,7 +6,7 @@ import { walletPreview } from '@utils/string'
 import { TeiaContext } from '@context/TeiaContext'
 import { useContext } from 'react'
 import { MenuItem } from './MenuItem'
-import { Toggle, toggleType } from '@atoms/toggles'
+import { Toggle } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
 import { Line } from '@atoms/line'
 
@@ -58,17 +58,8 @@ export const MainMenu = () => {
             need_sync
           />
           <div className={styles.state_buttons}>
-            <Toggle
-              kind={toggleType.BOX}
-              onToggle={toggleTheme}
-              toggled={theme === 'dark'}
-            />
-            <Toggle
-              kind={toggleType.BOX}
-              label="ZEN"
-              onToggle={setZen}
-              toggled={zen}
-            />
+            <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} />
+            <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
           </div>
         </div>
       </nav>

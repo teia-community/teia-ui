@@ -7,7 +7,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import { motion } from 'framer-motion'
 import classnames from 'classnames'
-import { Toggle, toggleType } from '@atoms/toggles'
+import { Toggle } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
 import { RotatingLogo } from '@atoms/logo'
 import useSettings from '@hooks/use-settings'
@@ -74,6 +74,8 @@ export const Footer = ({ menu, pin }) => {
                   route="faq"
                 />
               </ul>
+              <Line vertical />
+
               <ul className={styles.menu_right}>
                 <li className={styles.address}>
                   {walletPreview(context.acc?.address)}
@@ -105,17 +107,8 @@ export const Footer = ({ menu, pin }) => {
               </ul>
             </div>
             <div className={styles.state_buttons}>
-              <Toggle
-                kind={toggleType.BOX}
-                onToggle={toggleTheme}
-                initial={theme === 'dark'}
-              />
-              <Toggle
-                kind={toggleType.BOX}
-                label="ZEN"
-                onToggle={setZen}
-                toggled={zen}
-              />
+              <Toggle box onToggle={toggleTheme} initial={theme === 'dark'} />
+              <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
             </div>
           </>
         )}

@@ -577,6 +577,7 @@ export const Mint = () => {
               <Line />
             </Input>
             <Select
+              alt="license selection"
               label="License"
               value={rights}
               placeholder="(optional)"
@@ -595,6 +596,7 @@ export const Mint = () => {
             )}
             <Line />
             <Select
+              alt="token language"
               label="Language"
               placeholder="(optional)"
               options={LANGUAGES_OPTIONS}
