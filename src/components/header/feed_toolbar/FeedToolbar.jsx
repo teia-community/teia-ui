@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
-import { Toggle, toggleType } from '@atoms/toggles'
+import { IconToggle } from '@atoms/toggles'
 import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 
 // import { Input } from '@atoms/input'
@@ -17,7 +17,7 @@ import { Line } from '@atoms/line'
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
 //     <div className={styles.media_type}>
-//       <Toggle kind={toggleType.BOX} label={label} />
+//       <Toggle box label={label} />
 //       <p className={styles.tagline}>{tagline}</p>
 //     </div>
 //   )
@@ -72,6 +72,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
       {feeds_menu && (
         <div className={styles.feeds_area}>
           <DropdownButton
+            alt="feeds selection dropdown"
             menuID="feeds"
             icon={<ChevronIcon />}
             label={feedLabel}
@@ -107,19 +108,19 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
         </div>
       )}
       <div className={styles.view_mode_area}>
-        <Toggle
-          kind={toggleType.MINIMAL}
+        <IconToggle
+          alt={'single view mode'}
           toggled={viewMode === 'single'}
-          onToggle={() => {
+          onClick={() => {
             setViewMode('single')
           }}
-          label={<SingleViewIcon />}
+          icon={<SingleViewIcon />}
         />
-        <Toggle
-          kind={toggleType.MINIMAL}
+        <IconToggle
+          alt={'masonry view mode'}
           toggled={viewMode === 'masonry'}
-          onToggle={() => setViewMode('masonry')}
-          label={<MasonryIcon />}
+          onClick={() => setViewMode('masonry')}
+          icon={<MasonryIcon />}
         />
       </div>
       {/* KEEP */}
@@ -194,26 +195,26 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
                 <p className={styles.tagline}>Events</p>
                 <div className={styles.tags}>
                   <Toggle
-                    kind={toggleType.BOX}
+                    box
                     key="pakistan"
                     label="Pakistan"
                   />
-                  <Toggle kind={toggleType.BOX} key="ukraine" label="Ukraine" />
-                  <Toggle kind={toggleType.BOX} key="iran" label="Iran" />
+                  <Toggle box key="ukraine" label="Ukraine" />
+                  <Toggle box key="iran" label="Iran" />
                 </div>
                 <p className={styles.tagline}>Popular</p>
                 <div className={styles.tags}>
                   <Toggle
-                    kind={toggleType.BOX}
+                    box
                     key="pixelart"
                     label="pixelart"
                   />
                   <Toggle
-                    kind={toggleType.BOX}
+                    box
                     key="generativeart"
                     label="generativeart"
                   />
-                  <Toggle kind={toggleType.BOX} key="gan" label="gan" />
+                  <Toggle box key="gan" label="gan" />
                 </div>
               </motion.div>
             </motion.div>

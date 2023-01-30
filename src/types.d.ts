@@ -14,11 +14,6 @@ export type FileMint = {
 }
 export type UploadCallback = (arg: FileMint) => void
 
-export enum ToggleKind {
-  BOX = 'box',
-  MINIMAL = 'minimal',
-}
-
 /**
  * WIP
  * Basic Types used in jsdoc.

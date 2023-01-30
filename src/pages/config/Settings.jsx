@@ -31,16 +31,23 @@ export const Settings = () => {
       <div className={styles.localSettings}>
         <div className={styles.fields}>
           <Checkbox
+            alt={`click to ${
+              nsfwFriendly ? 'disable' : 'enable'
+            } the bluring of NSFW tokens on feeds`}
             checked={nsfwFriendly}
             onCheck={setNsfwFriendly}
             label={'Allow NSFW on feeds'}
           />
           <Checkbox
+            alt={`click to ${
+              photosensitiveFriendly ? 'disable' : 'enable'
+            } the bluring of photosensitive tokens on feeds`}
             checked={photosensitiveFriendly}
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
           />
           <Select
+            alt="theme selection"
             label="Theme"
             value={{ label: THEMES[theme], value: theme }}
             onChange={(e) => setTheme(e.value)}

@@ -41,6 +41,7 @@ const theme = (theme) => ({
 })
 const Select = ({
   label,
+  alt,
   value,
   defaultValue,
   options,
@@ -53,6 +54,7 @@ const Select = ({
   <label className={styles.label}>
     <p>{label}</p>
     <ReactSelect
+      aria-label={alt || label}
       styles={style}
       theme={theme}
       className={styles.container}

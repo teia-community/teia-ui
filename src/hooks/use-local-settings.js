@@ -1,4 +1,4 @@
-import { LocalSettingsContext } from '@context/LocalSettingsProvider'
+import { LocalSettingsContext } from '@context/LocalSettings'
 import { useContext } from 'react'
 
 /**

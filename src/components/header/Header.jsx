@@ -91,6 +91,7 @@ export const Header = () => {
         >
           <div className={styles.left}>
             <DropdownButton
+              alt={'events dropdown'}
               className={styles.events_button}
               icon={<EventIcon />}
               menuID="events"
@@ -111,7 +112,7 @@ export const Header = () => {
           </div>
 
           <Button
-            alt="main teia logo"
+            alt="teia logo"
             onClick={() => {
               if (location.pathname === '/') {
                 setLogoSeed(Math.random() * 100)
@@ -127,6 +128,7 @@ export const Header = () => {
             {!context.collapsed && (
               <>
                 <Button
+                  alt={'local settings'}
                   small
                   onClick={() => {
                     handleRoute('/settings')
@@ -142,6 +144,7 @@ export const Header = () => {
             {!context.collapsed && context.proxyAddress && (
               <>
                 <Button
+                  alt={'exit collab'}
                   small
                   onClick={() => context.setProxyAddress(null)}
                   secondary
@@ -155,7 +158,15 @@ export const Header = () => {
             <Button
               onClick={handleSyncUnsync}
               secondary
-              alt={`wallet account ending in ${accountPreview}`}
+              alt={
+                !context.collapsed
+                  ? accountPreview
+                    ? 'unsync'
+                    : 'sync'
+                  : accountPreview
+                  ? `wallet account ending in ${accountPreview}`
+                  : 'sync wallet'
+              }
             >
               {isWide && button}
             </Button>
