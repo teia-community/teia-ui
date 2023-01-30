@@ -8,6 +8,7 @@ function DropdownButton({
   menuID,
   direction = 'right',
   label,
+  alt,
   icon,
   toggled,
   children,
@@ -36,6 +37,7 @@ function DropdownButton({
   return (
     <motion.div className={`${className ? className : ''} ${containerClasses}`}>
       <Button
+        alt={alt}
         className={classes}
         data-toggle={menuID}
         onClick={() => {

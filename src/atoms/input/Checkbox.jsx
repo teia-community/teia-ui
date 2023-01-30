@@ -10,7 +10,6 @@ import { memo } from 'react'
  * @param {boolean} checkboxProps.initial - The initial value
  * @param {boolean} checkboxProps.checked - If set the control becomes controlled
  * @param {boolean} checkboxProps.style - Style object (as a last resort)
- * @param {import("@types").ToggleKind} checkboxProps.kind - The type of toggle
  * @param {React.EffectCallback} checkboxProps.onCheck
  * @param {boolean} checkboxProps.disabled - Disables the checkbox
  *
@@ -18,6 +17,7 @@ import { memo } from 'react'
 const Checkbox = ({
   name,
   label,
+  alt,
   initial,
   onCheck = () => null,
   onBlur = () => null,
@@ -41,6 +41,7 @@ const Checkbox = ({
     <label className={styles.check_container}>
       {label}
       <input
+        aria-label={alt || name}
         defaultChecked={initial}
         type="checkbox"
         name={name}

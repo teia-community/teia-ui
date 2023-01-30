@@ -1,7 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
 import styles from '@style'
-import { toggleType } from './index'
 import { useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 
@@ -11,9 +10,9 @@ import { useControlled } from '@hooks/use-controlled'
  * @param {string} coreToggleProps.label - The text or icon used for the toggle
  * @param {boolean} coreToggleProps.initial - The initial value
  * @param {boolean} coreToggleProps.toggled - If set the control becomes controlled
- * @param {boolean} coreToggleProps.style - Style object (as a last resort)
- * @param {import("@types").ToggleKind} coreToggleProps.kind - The type of toggle
- * @param {React.EffectCallback} coreToggleProps.onToggle
+ * @param {React.CSSProperties} coreToggleProps.style - Style object (as a last resort)
+ * @param {string} iconToggleProps.alt - Accessibility name for the toggle
+ * @param {(v:boolean) => void} coreToggleProps.onToggle
  *
  */
 export const Toggle = ({
@@ -21,9 +20,10 @@ export const Toggle = ({
   initial,
   toggled: toggledProp,
   style = {},
+  alt,
+  box,
   onToggle,
   className,
-  kind = toggleType.MINIMAL,
 }) => {
   const [toggled, setToggled] = useControlled(toggledProp, initial)
 
@@ -38,8 +38,7 @@ export const Toggle = ({
 
   const classes = classnames({
     [styles.base_toggle]: true,
-    [styles.box_toggle]: kind === toggleType.BOX,
-    [styles.minimal_toggle]: kind === toggleType.MINIMAL,
+    [styles.box_toggle]: box,
     [styles.toggled]: toggled,
   })
 
@@ -48,7 +47,9 @@ export const Toggle = ({
       <input
         defaultChecked={initial}
         checked={toggledProp}
-        aria-label={typeof label === 'string' ? label : 'icon-toggle'}
+        aria-label={
+          alt ? alt : typeof label === 'string' ? label : 'icon-toggle'
+        }
         aria-checked={toggled}
         type="checkbox"
         onChange={handleToggle}
