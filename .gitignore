@@ -42,3 +42,7 @@ amplifytools.xcconfig
 .next
 
 .dev
+/test-results/
+/playwright-report/
+/playwright/.cache/
+screenshot/

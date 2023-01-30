@@ -102,5 +102,8 @@
     "url": "^0.11.0",
     "vite": "^4.0.0"
   },
-  "module": "commonjs"
+  "module": "commonjs",
+  "optionalDependencies": {
+    "@playwright/test": "^1.30.0"
+  }
 }
