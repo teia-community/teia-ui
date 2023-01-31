@@ -3,20 +3,38 @@ const axios = require('axios')
 
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
-  fa2_address
-  token_id
-  name
-  description
-  editions
-  minted_at
-  thumbnail_uri
-  display_uri
   artifact_uri
+  display_uri
+  thumbnail_uri
   metadata_uri
+
   artist_address
   artist_profile {
     name
     is_split
+  }
+  description
+  editions
+  fa2_address
+  listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {
+    amount
+    amount_left
+    contract_address
+    price
+    status
+    type
+  }
+  mime_type
+  minted_at
+  name
+  price
+  
+  royalties
+  royalties_total
+ 
+  royalty_receivers {
+    receiver_address
+    royalties
   }
   teia_meta {
     accessibility
@@ -24,22 +42,7 @@ fragment baseTokenFields on tokens {
     is_signed
     preview_uri
   }
-  royalties
-  royalties_total
-  mime_type
-  price
-  listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {
-    type
-    contract_address
-    amount
-    amount_left
-    price
-    status
-  }
-  royalty_receivers {
-    receiver_address
-    royalties
-  }
+  token_id
 }
 `
 

@@ -34,9 +34,11 @@ export const ObjktDisplay = () => {
   const proxy = context.proxyAddress
   const { nsfwMap, underReviewMap } = useSettings()
 
+  /** @type {{data:import('@types').NFT, error:Error}} */
   const { data: nft, error } = useSWR(
     ['/token', id],
     async () => {
+      /** @type {import('@types').NFT}*/
       const objkt = await fetchObjktDetails(id)
 
       if (!objkt) {
@@ -120,6 +122,8 @@ export const ObjktDisplay = () => {
       </Page>
     )
   }
+
+  console.log(nft)
   return (
     <Page className={styles.profile_page} title={nft?.name}>
       {error && (

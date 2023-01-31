@@ -19,12 +19,14 @@ export type UploadCallback = (arg: FileMint) => void
  * Basic Types used in jsdoc.
  */
 // TODO(mel): Cleanup and complete
+
+/** Enum of supported listing types */
 export enum ListingType {
-  TEIA,
-  HEN,
-  OBJK,
-  VERSUM,
-  HICETDONO,
+  TEIA = 'TEIA',
+  HEN = 'HEN',
+  OBJK = 'OBJK',
+  VERSUM = 'VERSUM',
+  HICETDONO = 'HICETDONO',
 }
 
 export enum EventType {
@@ -72,18 +74,18 @@ export type Signature = {
 export type ListingStatus = {}
 
 export type Listing = {
-  amount_left: number
   amount: number
-  ask_id: string
-  swap_id: string
-  offer_id: string
+  amount_left: number
+  ask_id?: string
   contract_address: string
-  key: string
+  key?: string
+  offer_id?: string
   /** The price in mutez */
   price: number
-  seller_address: string
-  seller_profile: string
+  seller_address?: string
+  seller_profile?: string
   status: ListingStatus
+  swap_id?: string
   type: ListingType
 }
 export type RoyaltyReceiver = {
@@ -91,50 +93,59 @@ export type RoyaltyReceiver = {
   royalties: [string: string]
 }
 
-export type NFT = {
-  /** the token id */
-  token_id: string
-  /** The fa2 address? */
-  fa2_address: string
-  name?: string
-  description?: string
-  minted_at: string
-  thumbnail_uri?: string
-  display_uri?: string
-  artifact_uri: string
-  /** This is null for non collab tokens? */
-  royalties?: [string: string]
-  royalties_total: number
-
-  royalty_receivers?: [RoyaltyReceiver]
-
-  /** the creator tz address */
-  // creator: string
-  /** the mimetype of the token metadata */
-  mime_type: string
+export type NFTBase = {
   /** the artifact IPFS URI */
   artifact_uri: string
   /** the display IPFS URI a.k.a cover image */
   display_uri: string
-  /** List of addresses owning that token */
-  token_holders: [string]
+  thumbnail_uri: string
+  metadata_uri: string
 
-  /** These are artifacts of TokenCollection, where the check logic happens. */
-  isNSFW?: boolean
-  isPhotosensitive?: boolean
+  /** the creator tz address */
+  artist_address: string
+  artist_profile: ArtistProfile
 
-  /** This is an artifact of ??, where the key logic happens. */
-  key?: string
+  description?: string
+
+  /** The total number of editions existing */
+  editions: number
+
+  /** The fa2 address */
+  fa2_address: string
+
+  /** Active listings */
+  listings: [Listing]
+
+  /** the mimetype of the token metadata */
+  mime_type: string
+
+  minted_at: string
+  name?: string
+  price: number
+  /** This is null for non collab tokens? */
+  royalties?: [string: string]
+  royalties_total: number
+  royalty_receivers?: [RoyaltyReceiver]
 
   teia_meta?: TeiaMeta
 
-  listings: [Listing]
-
-  artist_address: string
-  artist_profile: ArtistProfile
-  teia_meta: TeiaMeta
-  price: number
+  /** List of addresses currently owning that token */
+  token_holders?: [string]
+  /** the token id */
+  token_id: string
 }
+
+/** These are artifacts of TokenCollection, where the check logic happens. */
+export type NFTFiltered = {
+  isNSFW?: boolean
+  isPhotosensitive?: boolean
+}
+
+export type NFT = NFTBase &
+  NFTFiltered & {
+    /** This is an artifact of ??, where the key logic happens. */
+    key?: string
+  }
 
 export type TokenResponse = {
   postProcessTokens: ([NFT]) => [NFT]
@@ -155,7 +166,7 @@ export type LocalSettingsContext = {
   /**Set the feed view mode */
   setViewMode: (mode: 'single' | 'masonry') => void
   /**Delete the localstorage for the feed view mode */
-  rmViewMode: () => void
+  // rmViewMode: () => void
   /**Utility function to toggle the view mode*/
   toggleViewMode: () => void
   /**The NSFW preference (true == show them unblurred) */
@@ -169,13 +180,13 @@ export type LocalSettingsContext = {
   /**Set the Photosensitive preference*/
   setPhotosensitiveFriendly: (boolean) => void
   /**Delete the localstorage for the Photosensitive preference */
-  rmPhotosensitiveFriendly: () => void
+  // rmPhotosensitiveFriendly: () => void
   /**The zen preference*/
   zen: boolean
   /**Set the zen preference*/
   setZen: (boolean) => void
   /**Delete the localstorage for the zen preference */
-  rmZen: () => void
+  // rmZen: () => void
   /**Utility function to toggle the zen preference */
   toggleZen: () => void
   /**The theme preference*/
@@ -183,7 +194,7 @@ export type LocalSettingsContext = {
   /**Set the theme preference*/
   setTheme: (theme: 'light' | 'dark') => void
   /**Delete the localstorage for the theme preference */
-  rmTheme: () => void
+  // rmTheme: () => void
   /**Utility function to toggle the current theme */
   toggleTheme: () => void
 }
