@@ -6,22 +6,25 @@ import { useLocalStorage } from 'react-use'
 export const LocalSettingsContext = createContext()
 
 export const LocalSettingsProvider = (props) => {
-  const [viewMode, setViewMode, rmViewMode] = useLocalStorage(
+  const [viewMode, setViewMode /*rmViewMode*/] = useLocalStorage(
     'settings:viewMode',
     'single'
   )
-  const [nsfwFriendly, setNsfwFriendly, rmNsfwFriendly] = useLocalStorage(
+  const [nsfwFriendly, setNsfwFriendly /*rmNsfwFriendly*/] = useLocalStorage(
     'settings:nsfwFriendly',
     false
   )
   const [
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
-    rmPhotosensitiveFriendly,
+    // rmPhotosensitiveFriendly,
   ] = useLocalStorage('settings:photosensitiveFriendly', false)
 
-  const [theme, setTheme, rmTheme] = useLocalStorage('settings:theme', 'dark')
-  const [zen, setZen, rmZen] = useLocalStorage('settings:zen', false)
+  const [theme, setTheme /*, rmTheme*/] = useLocalStorage(
+    'settings:theme',
+    'dark'
+  )
+  const [zen, setZen /*, rmZen*/] = useLocalStorage('settings:zen', false)
 
   useEffect(() => {
     const root = document.documentElement
@@ -48,21 +51,21 @@ export const LocalSettingsProvider = (props) => {
       value={{
         viewMode,
         setViewMode,
-        rmViewMode,
+        // rmViewMode,
         toggleViewMode,
         nsfwFriendly,
         setNsfwFriendly,
-        rmNsfwFriendly,
+        // rmNsfwFriendly,
         photosensitiveFriendly,
         setPhotosensitiveFriendly,
-        rmPhotosensitiveFriendly,
+        // rmPhotosensitiveFriendly,
         zen,
         setZen,
-        rmZen,
+        // rmZen,
         toggleZen,
         theme,
         setTheme,
-        rmTheme,
+        // rmTheme,
         toggleTheme,
       }}
     >
