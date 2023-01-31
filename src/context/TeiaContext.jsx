@@ -537,10 +537,10 @@ class TeiaContextProviderClass extends Component {
       collect: async (listing) => {
         if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
           return await Tezos.wallet
-            .at(this.state.proxyAddress || listing.contract_address)
+            .at(listing.contract_address)
             .then((c) =>
-              c.methods.collect(parseFloat(listing.swap_id)).send({
-                amount: parseFloat(listing.price),
+              c.methods.collect(parseInt(listing.swap_id)).send({
+                amount: parseInt(listing.price),
                 mutez: true,
                 storageLimit: 350,
               })
