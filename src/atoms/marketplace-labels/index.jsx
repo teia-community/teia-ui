@@ -1,45 +1,53 @@
 import styles from '@style'
 import { memo } from 'react'
 
+const ListingLabel = ({ children, className, label, alt, tooltip }) => {
+  return (
+    <div
+      className={`${styles.swapLabel} ${className ? className : ''}`}
+      title={tooltip ? tooltip : alt}
+      aria-label={alt}
+    >
+      {label}
+    </div>
+  )
+}
+
 export const TeiaLabel = () => (
-  <div
-    className={`${styles.swapLabel} ${styles.teiaLabel}`}
-    title="buy this listing and support teia"
-  >
-    TEIA
-  </div>
-)
-export const HENLabel = () => (
-  <div
-    className={styles.swapLabel}
-    title="this listing is through the original HEN contract"
-  >
-    H=N
-  </div>
+  <ListingLabel
+    label="TEIA"
+    className={styles.teiaLabel}
+    alt="buy this listing and support teia"
+  />
 )
 
+export const HENLabel = () => (
+  <ListingLabel
+    label="H=N"
+    alt="this listing is through the original HEN contract"
+  />
+)
 export const OBJKTLabel = () => (
-  <div className={styles.swapLabel} title="This swap is through OBJKT.com">
-    Objkt.com
-  </div>
+  <ListingLabel label="Objkt.com" alt="This swap is through OBJKT.com" />
 )
 
 export const RestrictedLabel = () => (
-  <div
-    className={styles.swapLabel}
-    title="This swap is made by a restricted wallet."
-  >
-    Restricted
-  </div>
+  <ListingLabel
+    label="Restricted"
+    alt="This swap is made by a restricted wallet."
+  />
 )
 
 export const VersumLabel = () => (
-  <div className={styles.swapLabel} title="This swap is through versum.xyz">
-    Versum.xyz
-  </div>
+  <ListingLabel label="Versum.xyz" alt="This swap is through versum.xyz" />
 )
 
-const MarketplaceLabel = ({ listing, nft }) => {
+/**
+ * Dynamic label from listing type.
+ * @param {{listing:import('@types').Listing}} options
+ * @returns {JSX.Element | null}
+ */
+const MarketplaceLabel = ({ listing }) => {
   if (listing.type.startsWith('TEIA')) {
     return <TeiaLabel />
   }
