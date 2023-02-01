@@ -16,10 +16,9 @@
   //transform: translateX(-45%);
   background-color: var(--background-color);
   border: 1px solid var(--text-color);
-  //border-radius: var(--border-radius);
   //padding: 1rem;
-  transition: height var(--speed) ease;
-  transition: width var(--speed) ease;
+  transition: height $theme-duration ease;
+  transition: width $theme-duration ease;
   width: calc(100% - 30px);
   @include respond-to('tablet') {
     // width: 600px;
@@ -34,7 +33,6 @@
 
 .header_button {
   z-index: 100;
-  --button-size: calc(var(--nav-size) * 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
