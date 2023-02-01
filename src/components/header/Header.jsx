@@ -4,7 +4,7 @@ import { walletPreview } from '@utils/string'
 
 import { useLocation, useNavigate } from 'react-router'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '@style'
