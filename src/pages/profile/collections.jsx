@@ -5,13 +5,18 @@ import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { TeiaContext } from '@context/TeiaContext'
+import { useOutletContext } from 'react-router'
 
 const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
-export default function Collections({ showFilters, show_restricted, address }) {
+export default function Collections() {
+  const { showFilters, show_restricted, address } = useOutletContext()
+
   const [filter, setFilter] = useState(FILTER_ALL)
+
+  //TODO(mel): remove this dependency
   const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
     setProfileFeed(true)

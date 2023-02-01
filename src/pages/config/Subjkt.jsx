@@ -10,7 +10,7 @@ import { uploadFileToIPFSProxy } from '@data/ipfs'
 import { TeiaContext } from '@context/TeiaContext'
 import _ from 'lodash'
 import styles from '@style'
-import { Line } from '@atoms/line/index'
+import { Line } from '@atoms/line'
 
 const query_tz = `
 query addressQuery($address: String!) {

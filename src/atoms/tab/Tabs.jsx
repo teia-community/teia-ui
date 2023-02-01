@@ -1,9 +1,9 @@
 //tabs [{title:string, component:ReactComponent}]
 
-import { useMemo, useState } from 'react'
-import { Tab } from './index'
+import { useMemo } from 'react'
 import styles from '@style'
-import { Line } from '@atoms/line/index'
+import { Line } from '@atoms/line'
+import Button from '@atoms/button/Button'
 
 // function Tab({ children, to }) {
 //   return (
@@ -26,7 +26,7 @@ import { Line } from '@atoms/line/index'
 
 /**
  * A taboption object
- * @typedef {{title:string,component?:import('react').ReactElement, to?:string}} TabOptions
+ * @typedef {{title:string, to?:string}} TabOptions
  */
 
 /**
@@ -41,33 +41,26 @@ export const Tabs = ({ tabs, className, filter, props = {} }) => {
     () => (filter ? tabs.map(filter) : tabs),
     [tabs, filter]
   )
-  const [tabIndex, setTabIndex] = useState(0)
-
-  const Component = useMemo(
-    () => !tabs[tabIndex]?.to && tabs[tabIndex]?.component,
-    [tabIndex, tabs]
-  )
 
   return (
     <div className={`${styles.container} ${className ? className : ''}`}>
       <div className={styles.tabs}>
         {filtered_tabs.map((tab, index) =>
           tab ? (
-            <Tab
+            <Button
+              preventScrollReset
               key={tab.title}
-              selected={tab?.to === undefined ? tabIndex === index : null}
-              onTo={() => setTabIndex(index)}
+              className={styles.tab}
               to={tab?.to}
             >
               {tab.title}
-            </Tab>
+            </Button>
           ) : (
             ''
           )
         )}
       </div>
       <Line className={styles.line} />
-      {Component && <Component {...props} />}
     </div>
   )
 }

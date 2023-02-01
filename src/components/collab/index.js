@@ -5,6 +5,7 @@ import { CollaboratorTable } from './create/CollaboratorTable'
 import { ShareAllocationNotice } from './create/ShareAllocationNotice'
 import { collaboratorTemplate } from '@constants'
 
+//TODO(mel): move this to an SVG or IconCache
 const CloseIcon = () => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145.2 145.2">
