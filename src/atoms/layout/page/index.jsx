@@ -8,6 +8,7 @@ import { useTitle } from 'hooks/use-title'
 import { Footer } from '@components/footer'
 
 import { IconCache } from '@utils/with-icon'
+import { containerVariants } from '@utils/motion'
 
 export const Page = ({ title = '', children = null, feed, className, top }) => {
   const classes = classnames({
@@ -22,12 +23,7 @@ export const Page = ({ title = '', children = null, feed, className, top }) => {
   // }, [y])
 
   useTitle(title)
-  // motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.333 } },
-    exit: { opacity: 0, transition: { ease: 'easeInOut' } },
-  }
+
   return (
     <IconCache.Provider value={{}}>
       <FeedbackComponent />

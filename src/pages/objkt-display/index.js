@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useMemo } from 'react'
 import set from 'lodash/set'
-import { useParams } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { TeiaContext } from '@context/TeiaContext'
-import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
+import { MIMETYPE, METADATA_CONTENT_RATING_MATURE, PATH } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
@@ -16,15 +16,6 @@ import './style.css'
 import useSettings from '@hooks/use-settings'
 import { ErrorComponent } from '@atoms/error'
 import { Tabs } from '@atoms/tab/Tabs'
-
-const TABS = [
-  { title: 'Info', component: Info },
-  { title: 'Listings', component: Collectors },
-  { title: 'History', component: History },
-  { title: 'Swap', component: Swap, private: true, restricted: true }, // private tab (users only see if they are the creators or own a copy)
-  { title: 'Burn', component: Burn, private: true }, // private tab (users only see if they are the creators or own a copy)
-  { title: 'Transfer', component: Transfer, private: true }, // private tab (users only see if they are the creators or own a copy)
-]
 
 export const ObjktDisplay = () => {
   const { id } = useParams()
@@ -122,6 +113,44 @@ export const ObjktDisplay = () => {
       </Page>
     )
   }
+  const shared_props = { nft, viewer_address: address }
+  const TABS = [
+    {
+      title: 'Info',
+      to: ``,
+      component: <Info {...shared_props} />,
+      index: true,
+    },
+    {
+      title: 'Listings',
+      to: `/listings`,
+      component: <Collectors {...shared_props} />,
+    },
+    {
+      title: 'History',
+      to: `/history`,
+      component: <History {...shared_props} />,
+    },
+    {
+      title: 'Swap',
+      to: `/swap`,
+      component: <Swap {...shared_props} />,
+      private: true,
+      restricted: true,
+    },
+    {
+      title: 'Burn',
+      to: `/burn`,
+      component: <Burn {...shared_props} />,
+      private: true,
+    },
+    {
+      title: 'Transfer',
+      to: `/transfer`,
+      component: <Transfer {...shared_props} />,
+      private: true,
+    },
+  ]
 
   return (
     <Page className={styles.profile_page} title={nft?.name}>
@@ -174,36 +203,48 @@ export const ObjktDisplay = () => {
           <RenderMediaType nft={nft} displayView />
         </div>
         <ItemInfo nft={nft} />
+      </div>
+      <Tabs
+        tabs={TABS.map((t) => ({
+          ...t,
+          to: `${PATH.OBJKT}/${nft.token_id}${t.to}`,
+        }))}
+        className={styles.profile_tabs}
+        filter={(tab, index) => {
+          // if nft.owners exist and this is a private route, try to hide the tab.
+          // if nft.owners fails, always show route!
 
-        <Tabs
-          tabs={TABS}
-          className={styles.profile_tabs}
-          props={{ nft, viewer_address: address }}
-          filter={(tab, index) => {
-            // if nft.owners exist and this is a private route, try to hide the tab.
-            // if nft.owners fails, always show route!
+          if (nft?.restricted && tab.restricted) {
+            return null
+          }
 
-            if (nft?.restricted && tab.restricted) {
+          if (nft?.holdings && tab.private) {
+            let holders_arr = nft.holdings.map((e) => e.holder_address)
+
+            if (
+              holders_arr.includes(address) === false &&
+              nft.artist_address !== address &&
+              nft.artist_address !== proxy
+            ) {
+              // user is not the creator now owns a copy of the object. hide
+
               return null
             }
+          }
+          return tab
+        }}
+      />
 
-            if (nft?.holdings && tab.private) {
-              let holders_arr = nft.holdings.map((e) => e.holder_address)
-
-              if (
-                holders_arr.includes(address) === false &&
-                nft.artist_address !== address &&
-                nft.artist_address !== proxy
-              ) {
-                // user is not the creator now owns a copy of the object. hide
-
-                return null
-              }
-            }
-            return tab
-          }}
-        />
-      </div>
+      <Routes>
+        {TABS.map((tab) => (
+          <Route
+            key={tab.title}
+            index={tab?.index}
+            path={tab.to}
+            element={tab.component}
+          />
+        ))}
+      </Routes>
     </Page>
   )
 }
