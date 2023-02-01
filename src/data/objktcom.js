@@ -2,7 +2,7 @@ import get from 'lodash/get'
 import padEnd from 'lodash/padEnd'
 import { HEN_CONTRACT_FA2 } from '@constants'
 const query_objktcom_asks = `
-query getTokenAsks($tokenId: String! $fa2: String!) {
+query getTokenAsks($tokenId: String!, $fa2: String!) {
   token(where: {token_id: {_eq: $tokenId}, fa_contract: {_eq: $fa2}}) {
     creators {
       creator_address
@@ -12,15 +12,19 @@ query getTokenAsks($tokenId: String! $fa2: String!) {
       amount
       decimals
     }
-    asks(
+    listings(
       order_by: {price: asc}
-      where: {price: {_gt: 0}, _or: [{status: {_eq: "active"}, currency_id: {_eq: 1}, seller: {owner_operators: {token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}, allowed: {_eq: true}}, held_tokens: {quantity: {_gt: "0"}, token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}}}}, {contract_version: {_lt: 4}, status: {_eq: "active"}}]}
+      where: {
+        price: {_gt: 0},
+        _or: [
+          {marketplace_contract: {_eq: "KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC"}, status: {_eq: "active"}, currency_id: {_eq: 1}, seller: {owner_operators: {token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}, allowed: {_eq: true}}, held_tokens: {quantity: {_gt: "0"}, token: {fa_contract: {_eq: $fa2}, token_id: {_eq: $tokenId}}}}},
+          {marketplace_contract: {_eq: "KT1FvqJwEDWb1Gwc55Jd1jjTHRVWbYKUUpyq"}, status: {_eq: "active"}}
+        ]}
     ) {
       id
       amount
       amount_left
       price
-      contract_version
       seller_address
       shares
       seller {
@@ -77,15 +81,15 @@ export async function fetchObjktcomAsks(id) {
   const creatorAddresses = (token.creators || []).map(
     ({ creator_address }) => creator_address
   )
-  const asks = token.asks || []
+  const listings = token.listings || []
   const firstRoyalties = (token.royalties || [])[0]
 
   if (!firstRoyalties) {
-    // for some reason the token has no royalties set, ignore asks in this case
+    // for some reason the token has no royalties set, ignore listings in this case
     return []
   }
 
-  return asks.filter((ask) => {
+  return listings.filter((ask) => {
     const isPrimarySale = creatorAddresses.includes(ask.seller_address)
 
     // always keep the ask in the result-set if it was created by the artist
