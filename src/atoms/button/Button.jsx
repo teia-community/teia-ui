@@ -38,6 +38,7 @@ const Button = ({
   shadow_box,
   secondary,
   small,
+  preventScrollReset,
 }) => {
   const _classes = classnames({
     [styles.container]: true,
@@ -72,6 +73,7 @@ const Button = ({
         to={to}
         state={state}
         onClick={onTo}
+        preventScrollReset={preventScrollReset}
         className={({ isActive }) =>
           isActive ? `${styles.active} ${classes}` : classes
         }

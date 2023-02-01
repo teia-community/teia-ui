@@ -3,7 +3,7 @@ import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack5'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
-import { ImageComponent } from '../image/index'
+import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
 import { TeiaContext } from '@context/TeiaContext'
 import { AnimatePresence } from 'framer-motion'

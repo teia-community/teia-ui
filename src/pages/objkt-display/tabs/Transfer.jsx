@@ -5,6 +5,7 @@ import styles from '@components/collab/index.module.scss'
 import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
+import { useOutletContext } from 'react-router'
 
 /**
  * The Transfer Tab
@@ -13,7 +14,8 @@ import { Button } from '@atoms/button'
  * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
-export const Transfer = ({ nft }) => {
+export const Transfer = () => {
+  const { nft } = useOutletContext()
   //const [title, setTitle] = useState()
   const { transfer, setFeedback, address, proxyAddress } =
     useContext(TeiaContext)

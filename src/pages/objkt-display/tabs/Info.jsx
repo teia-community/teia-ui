@@ -11,6 +11,7 @@ import {
 } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
+import { useOutletContext } from 'react-router'
 
 /**
  * The Info Tab
@@ -19,7 +20,8 @@ import { Line } from '@atoms/line'
  * @param {string} viewer_address - The current viewer if logged in.
  * @returns {any}
  */
-export const Info = ({ nft, viewer_address }) => {
+export const Info = () => {
+  const { nft, viewer_address } = useOutletContext()
   const artifact_ipfs_url =
     HashToURL(nft.artifact_uri) +
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${

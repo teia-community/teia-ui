@@ -7,7 +7,7 @@ import styles from '@style'
 import { TeiaContext } from '@context/TeiaContext'
 import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from 'hooks/use-settings'
-import { Line } from '@atoms/line/index'
+import { Line } from '@atoms/line'
 
 // TODO: add support for all kind of listings
 function ListingRow({

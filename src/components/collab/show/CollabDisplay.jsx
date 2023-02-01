@@ -15,7 +15,7 @@ import { CollaboratorType } from '@constants'
 import ParticipantList from '../manage/ParticipantList'
 import { useContext, useEffect } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
-import { Loading } from '@atoms/loading/index'
+import { Loading } from '@atoms/loading'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()

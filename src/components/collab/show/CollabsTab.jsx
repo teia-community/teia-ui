@@ -6,8 +6,11 @@ import { BaseTokenFieldsFragment } from '@data/api'
 import TokenCollection from '@atoms/token-collection'
 import collabStyles from '../index.module.scss'
 import classNames from 'classnames'
+import { useOutletContext } from 'react-router'
 
-export const CollabsTab = ({ wallet }) => {
+export const CollabsTab = () => {
+  const { address } = useOutletContext()
+
   const [hasUnverifiedTokens, setHasUnverifiedTokens] = useState(false)
   const [showUnverified, setShowUnverified] = useState(false)
   const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
@@ -29,8 +32,8 @@ export const CollabsTab = ({ wallet }) => {
 
       <TokenCollection
         namespace="collabs"
-        swrParams={[wallet]}
-        variables={{ address: wallet }}
+        swrParams={[address]}
+        variables={{ address }}
         emptyMessage="no collabs"
         maxItems={null}
         extractTokensFromResponse={(data) => {

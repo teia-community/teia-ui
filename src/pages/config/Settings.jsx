@@ -4,9 +4,9 @@ import { Page } from '@atoms/layout'
 import { Checkbox } from '@atoms/input'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
-import Select from '@atoms/select/index'
+import Select from '@atoms/select'
 import { THEMES, THEME_OPTIONS } from '@constants'
-import { Line } from '@atoms/line/index'
+import { Line } from '@atoms/line'
 
 export const Settings = () => {
   const {
