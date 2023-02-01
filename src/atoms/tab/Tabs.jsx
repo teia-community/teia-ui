@@ -43,7 +43,10 @@ export const Tabs = ({ tabs, className, filter, props = {} }) => {
   )
   const [tabIndex, setTabIndex] = useState(0)
 
-  const Component = useMemo(() => tabs[tabIndex]?.component, [tabIndex, tabs])
+  const Component = useMemo(
+    () => !tabs[tabIndex]?.to && tabs[tabIndex]?.component,
+    [tabIndex, tabs]
+  )
 
   return (
     <div className={`${styles.container} ${className ? className : ''}`}>

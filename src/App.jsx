@@ -46,7 +46,7 @@ const App = () => {
             <Route path="/sync" element={<Sync />} />
             <Route exact path="/mint" element={<Mint />} />
             <Route path="/collaborate" element={<Collaborate />} />
-            <Route path="/objkt/:id" element={<ObjktDisplay />} />
+            <Route path="/objkt/:id/*" element={<ObjktDisplay />} />
             <Route exact path="/subjkt" element={<Subjkt />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route path="/tags/:tag" element={<Tags />} />

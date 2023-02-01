@@ -36,3 +36,9 @@ export const containerMenu = {
     },
   },
 }
+
+export const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.333 } },
+  exit: { opacity: 0, transition: { ease: 'easeInOut' } },
+}
