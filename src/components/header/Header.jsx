@@ -29,6 +29,8 @@ export const Header = () => {
   const isWide = useMedia('(min-width: 600px)')
 
   const [logoSeed, setLogoSeed] = useState(3)
+  /** the header is a bit larger just on home */
+  const [onHome, setOnHome] = useState(location.pathname !== '/')
 
   useEffect(() => {
     context.setAccount()
@@ -36,6 +38,10 @@ export const Header = () => {
 
   const [button, setButton] = useState('Sync')
   const [accountPreview, setAccountPreview] = useState('')
+
+  useEffect(() => {
+    setOnHome(location.pathname === '/')
+  }, [location.key])
 
   // on Menu Toggle or Sign in
   useEffect(() => {
@@ -85,8 +91,8 @@ export const Header = () => {
       <AnimatePresence>{!context.collapsed && <MainMenu />}</AnimatePresence>
       <header className={`${styles.container}`}>
         <div
-          className={`${styles.content} ${
-            context.collapsed ? '' : styles.fill_bg
+          className={`${styles.grid} ${onHome ? styles.large : null} ${
+            !context.collapsed ? styles.fill_bg : null
           }`}
         >
           <div className={styles.left}>
@@ -110,15 +116,11 @@ export const Header = () => {
               </DropDown>
             </DropdownButton>
           </div>
-
           <Button
             alt="teia logo"
+            to={!onHome ? '/' : null}
             onClick={() => {
-              if (location.pathname === '/') {
-                setLogoSeed(Math.random() * 100)
-              } else {
-                handleRoute('/')
-              }
+              setLogoSeed(Math.random() * 100)
             }}
           >
             {/* <p className={styles.logo}>TEIA</p> */}
@@ -130,9 +132,8 @@ export const Header = () => {
                 <Button
                   alt={'local settings'}
                   small
-                  onClick={() => {
-                    handleRoute('/settings')
-                  }}
+                  to="/settings"
+                  onTo={() => context.collapseMenu(true)}
                   className={styles.config_button}
                 >
                   <ConfigIcon width={16} height={16} />
