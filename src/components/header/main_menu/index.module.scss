@@ -78,7 +78,7 @@
   @include respond-to('desktop') {
     padding-right: 30px;
   }
-  button {
+  a {
     text-align: right;
     align-self: flex-end;
   }
