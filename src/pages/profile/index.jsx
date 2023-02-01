@@ -2,16 +2,13 @@ import React, { useState, useMemo, useEffect } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
-import { CollabsTab } from '@components/collab/show/CollabsTab'
-import { useParams, Route, Routes, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams, Outlet } from 'react-router-dom'
 import useSWR from 'swr'
 import { getUser } from '@data/api'
 import { GetUserMetadata } from '@data/api'
 import useSettings from '@hooks/use-settings'
 import { validateAddress, ValidationResult } from '@taquito/utils'
 import Profile from './profile'
-import Creations from './creations'
-import Collections from './collections'
 import styles from '@style'
 import { ErrorComponent } from '@atoms/error'
 import { Tabs } from '@atoms/tab'
@@ -103,15 +100,11 @@ export default function Display() {
   ]
 
   return (
-    <Page
-      feed
-      title={user.alias}
-      top={
-        <>
-          <Profile user={user} />
-          {user.address.substr(0, 2) !== 'KT' && (
-            <div className={styles.menu}>
-              {/* <Tab selected={here[here.length - 1] === ''} to={''}>
+    <Page feed title={user.alias}>
+      <Profile user={user} />
+      {user.address.substr(0, 2) !== 'KT' && (
+        <div className={styles.menu}>
+          {/* <Tab selected={here[here.length - 1] === ''} to={''}>
         Creations
       </Tab>
       <Tab selected={here.slice(2) === 'collection'} to={`collection`}>
@@ -120,9 +113,9 @@ export default function Display() {
       <Tab selected={here.slice(2) === 'collabs'} to={`collabs`}>
         Collabs
       </Tab> */}
-              <Tabs tabs={TABS} />
+          <Tabs tabs={TABS} />
 
-              {/* <div className={styles.filter}>
+          {/* <div className={styles.filter}>
           <Button
             onClick={() => {
               setShowFilters(!showFilters)
@@ -144,56 +137,30 @@ export default function Display() {
               </svg>
           </Button>
         </div> */}
-            </div>
-          )}
+        </div>
+      )}
+      {isRestrictedUser && (
+        <div className={styles.restricted}>
+          <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
+          <p>
+            {' '}
+            Contact the Teia moderators on{' '}
+            <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
+            resolve the status.
+          </p>
+          <p>
+            {' '}
+            See the{' '}
+            <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
+              Teia Terms and Conditions
+            </Button>
+          </p>
+        </div>
+      )}
 
-          {isRestrictedUser && (
-            <div className={styles.restricted}>
-              <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
-              <p>
-                {' '}
-                Contact the Teia moderators on{' '}
-                <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
-                resolve the status.
-              </p>
-              <p>
-                {' '}
-                See the{' '}
-                <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
-                  Teia Terms and Conditions
-                </Button>
-              </p>
-            </div>
-          )}
-        </>
-      }
-    >
-      <Routes>
-        <Route
-          index
-          element={
-            <Creations
-              show_restricted={showRestricted}
-              showFilters={showFilters}
-              address={user.address}
-            />
-          }
-        />
-        <Route
-          path="/collection"
-          element={
-            <Collections
-              show_restricted={showRestricted}
-              showFilters={showFilters}
-              address={user.address}
-            />
-          }
-        />
-        <Route
-          path="/collabs"
-          element={<CollabsTab wallet={user.address} onLoaded={() => {}} />}
-        />
-      </Routes>
+      <Outlet
+        context={{ showRestricted, showFilters, address: user.address }}
+      />
     </Page>
   )
 }

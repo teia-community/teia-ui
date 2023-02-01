@@ -5,6 +5,7 @@ import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
 import { Loading } from '@atoms/loading'
 import styles from '@style'
+import { useOutletContext } from 'react-router'
 
 /**
  * The Burn Tab
@@ -12,7 +13,9 @@ import styles from '@style'
  * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
-export const Burn = ({ nft }) => {
+export const Burn = () => {
+  const { nft } = useOutletContext()
+
   const {
     burn,
     acc,

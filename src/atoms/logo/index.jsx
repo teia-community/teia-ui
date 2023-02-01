@@ -5,7 +5,7 @@ import React from 'react'
 import { memo } from 'react'
 import { useMemo } from 'react'
 import { RotatingLogoSVG } from '@icons'
-import { randomSeed } from '@utils/index'
+import { randomSeed } from '@utils'
 export const RotatingLogoRemote = ({ className, seed = 1 }) => {
   const { theme } = useLocalSettings()
   const { logos } = useSettings()

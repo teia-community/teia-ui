@@ -14,7 +14,7 @@ import React from 'react'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import { useKeyboard } from '@hooks/use-keyboard'
-import { Loading } from '@atoms/loading/index'
+import { Loading } from '@atoms/loading'
 import { ErrorComponent } from '@atoms/error'
 import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,

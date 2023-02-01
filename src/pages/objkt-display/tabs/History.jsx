@@ -10,6 +10,7 @@ import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
 import { IconCache } from '@utils/with-icon'
 import Button from '@atoms/button/Button'
+import { useOutletContext } from 'react-router'
 
 function UsernameAndLink({ event, attr }) {
   return (
@@ -98,8 +99,9 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
  * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
-export const History = ({ nft }) => {
-  console.debug('nft.events', nft.events)
+export const History = () => {
+  const { nft } = useOutletContext()
+  console.debug('nft.events', nft?.events)
 
   return (
     <Container>

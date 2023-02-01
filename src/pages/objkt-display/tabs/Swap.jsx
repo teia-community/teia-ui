@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
@@ -13,7 +13,8 @@ import styles from '@style'
  * @param {{nft:import('@types').NFT}} props
  * @returns {any}
  */
-export const Swap = ({ nft }) => {
+export const Swap = () => {
+  const { nft } = useOutletContext()
   const { id } = useParams()
   const {
     swap,
