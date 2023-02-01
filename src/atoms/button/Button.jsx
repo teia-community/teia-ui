@@ -1,7 +1,6 @@
 import classnames from 'classnames'
 import styles from '@style'
 import { /*Link*/ NavLink } from 'react-router-dom'
-import { memo } from 'react'
 import { motion } from 'framer-motion'
 
 /**
