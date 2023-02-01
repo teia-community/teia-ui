@@ -21,6 +21,7 @@ export const MenuItem = ({ label, route, need_sync, className }) => {
             }
           : `/${route}`
       }
+      onTo={() => context.collapseMenu(true)}
     >
       {label}
     </Button>

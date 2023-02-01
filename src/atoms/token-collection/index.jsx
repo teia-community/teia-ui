@@ -196,7 +196,7 @@ function TokenCollection({
       <IconCache.Provider value={{}}>
         <FeedToolbar feeds_menu={feeds_menu} />
         <InfiniteScroll
-          className={`${viewMode === 'masonry' && styles.infinite_scroll}`}
+          className={`${styles.infinite_scroll}`}
           loadMore={() => {
             setSearchParams({
               ...Object.fromEntries(searchParams),

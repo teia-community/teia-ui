@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 /**
  * Core button style (used for links, buttons, and <a>)
  * @param {Object} buttonProps
- * @param {string} buttonProps.to - If provided return a "Link"
+ * @param {string} buttonProps.to - If provided return a "NavLink"
  * @param {string} buttonProps.href - If provided return a "a"
  * @param {boolean} buttonProps.disabled - Disables the button
  * @param {boolean} buttonProps.fit - (Style) Fit
@@ -16,14 +16,15 @@ import { motion } from 'framer-motion'
  * @param {boolean} buttonProps.box - (Style) Box (adds nesting)
  * @param {string} buttonProps.className - Extra classes to apply to the button
  * @param {string} buttonProps.alt - Used for accessibility (aria-label)
- * @param {React.EffectCallback} buttonProps.onClick - onClick callback
+ * @param {React.EffectCallback} buttonProps.onClick - onClick callback, ignore if to is provided
+ * @param {React.EffectCallback} buttonProps.onTo - onClick for NavLinks
  * @param {React.ReactNode} buttonProps.children - children
- *
  */
 const Button = ({
   to = null,
   href = null,
   onClick = () => null,
+  onTo = () => null,
   children,
   className,
   style,
@@ -68,6 +69,7 @@ const Button = ({
       <NavLink
         aria-label={alt}
         to={to}
+        onClick={onTo}
         className={({ isActive }) =>
           isActive ? `${styles.active} ${classes}` : classes
         }
@@ -103,4 +105,4 @@ const Button = ({
   )
 }
 
-export default memo(Button)
+export default Button
