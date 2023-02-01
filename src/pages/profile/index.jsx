@@ -103,66 +103,71 @@ export default function Display() {
   ]
 
   return (
-    <Page feed title={user.alias}>
-      <Profile user={user} />
+    <Page
+      feed
+      title={user.alias}
+      top={
+        <>
+          <Profile user={user} />
+          {user.address.substr(0, 2) !== 'KT' && (
+            <div className={styles.menu}>
+              {/* <Tab selected={here[here.length - 1] === ''} to={''}>
+        Creations
+      </Tab>
+      <Tab selected={here.slice(2) === 'collection'} to={`collection`}>
+        Collection
+      </Tab>
+      <Tab selected={here.slice(2) === 'collabs'} to={`collabs`}>
+        Collabs
+      </Tab> */}
+              <Tabs tabs={TABS} />
 
-      {user.address.substr(0, 2) !== 'KT' && (
-        <div className={styles.menu}>
-          {/* <Tab selected={here[here.length - 1] === ''} to={''}>
-            Creations
-          </Tab>
-          <Tab selected={here.slice(2) === 'collection'} to={`collection`}>
-            Collection
-          </Tab>
-          <Tab selected={here.slice(2) === 'collabs'} to={`collabs`}>
-            Collabs
-          </Tab> */}
-          <Tabs tabs={TABS} />
-
-          {/* <div className={styles.filter}>
-              <Button
-                onClick={() => {
-                  setShowFilters(!showFilters)
-                }}
+              {/* <div className={styles.filter}>
+          <Button
+            onClick={() => {
+              setShowFilters(!showFilters)
+            }}
+          >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-filter"
               >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-filter"
-                  >
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                  </svg>
-              </Button>
-            </div> */}
-        </div>
-      )}
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+          </Button>
+        </div> */}
+            </div>
+          )}
 
-      {isRestrictedUser && (
-        <div className={styles.restricted}>
-          <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
-          <p>
-            {' '}
-            Contact the Teia moderators on{' '}
-            <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
-            resolve the status.
-          </p>
-          <p>
-            {' '}
-            See the{' '}
-            <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
-              Teia Terms and Conditions
-            </Button>
-          </p>
-        </div>
-      )}
-
+          {isRestrictedUser && (
+            <div className={styles.restricted}>
+              <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
+              <p>
+                {' '}
+                Contact the Teia moderators on{' '}
+                <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
+                resolve the status.
+              </p>
+              <p>
+                {' '}
+                See the{' '}
+                <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
+                  Teia Terms and Conditions
+                </Button>
+              </p>
+            </div>
+          )}
+        </>
+      }
+    >
       <Routes>
         <Route
           index

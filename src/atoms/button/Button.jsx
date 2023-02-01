@@ -16,6 +16,7 @@ import { motion } from 'framer-motion'
  * @param {boolean} buttonProps.box - (Style) Box (adds nesting)
  * @param {string} buttonProps.className - Extra classes to apply to the button
  * @param {string} buttonProps.alt - Used for accessibility (aria-label)
+ * @param {string} buttonProps.state - Additional state object passed to the Navlinks only.
  * @param {React.EffectCallback} buttonProps.onClick - onClick callback, ignore if to is provided
  * @param {React.EffectCallback} buttonProps.onTo - onClick for NavLinks
  * @param {React.ReactNode} buttonProps.children - children
@@ -25,6 +26,7 @@ const Button = ({
   href = null,
   onClick = () => null,
   onTo = () => null,
+  state,
   children,
   className,
   style,
@@ -69,6 +71,7 @@ const Button = ({
       <NavLink
         aria-label={alt}
         to={to}
+        state={state}
         onClick={onTo}
         className={({ isActive }) =>
           isActive ? `${styles.active} ${classes}` : classes
