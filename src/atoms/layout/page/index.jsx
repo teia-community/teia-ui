@@ -9,7 +9,7 @@ import { Footer } from '@components/footer'
 
 import { IconCache } from '@utils/with-icon'
 
-export const Page = ({ title = '', children = null, feed, className }) => {
+export const Page = ({ title = '', children = null, feed, className, top }) => {
   const classes = classnames({
     [styles.container]: true,
     [styles.feed]: feed,
@@ -32,6 +32,7 @@ export const Page = ({ title = '', children = null, feed, className }) => {
     <IconCache.Provider value={{}}>
       <FeedbackComponent />
       <Header />
+      {top && top}
       <motion.main
         initial="hidden"
         animate="visible"

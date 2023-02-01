@@ -53,7 +53,7 @@ export const Tabs = ({ tabs, className, filter, props = {} }) => {
             <Tab
               key={tab.title}
               selected={tab?.to === undefined ? tabIndex === index : null}
-              onClick={() => setTabIndex(index)}
+              onTo={() => setTabIndex(index)}
               to={tab?.to}
             >
               {tab.title}
