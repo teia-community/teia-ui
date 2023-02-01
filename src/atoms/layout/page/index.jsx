@@ -28,15 +28,17 @@ export const Page = ({ title = '', children = null, feed, className, top }) => {
     <IconCache.Provider value={{}}>
       <FeedbackComponent />
       <Header />
-      {top && top}
-      <motion.main
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        variants={containerVariants}
-        className={`${classes} ${className ? className : ''}`}
-      >
-        <div className={styles.content}>{children}</div>
+      <motion.main className={`${classes} ${className ? className : ''}`}>
+        {top && top}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+          className={styles.content}
+        >
+          {children}
+        </motion.div>
       </motion.main>
       <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>
     </IconCache.Provider>
