@@ -13,14 +13,8 @@ export const MenuItem = ({ label, route, need_sync, className }) => {
       className={`${
         need_sync && !context.acc?.address ? styles.disabled : ''
       } ${className ? className : ''} `}
-      to={
-        need_sync
-          ? {
-              pathname: '/sync',
-              data: `/${route}`,
-            }
-          : `/${route}`
-      }
+      to={need_sync ? '/sync' : `/${route}`}
+      state={need_sync ? `/${route}` : null}
       onTo={() => context.collapseMenu(true)}
     >
       {label}

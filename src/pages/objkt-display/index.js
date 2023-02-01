@@ -123,7 +123,6 @@ export const ObjktDisplay = () => {
     )
   }
 
-  console.log(nft)
   return (
     <Page className={styles.profile_page} title={nft?.name}>
       {error && (

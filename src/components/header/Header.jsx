@@ -4,7 +4,7 @@ import { walletPreview } from '@utils/string'
 
 import { useLocation, useNavigate } from 'react-router'
 
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '@style'
@@ -30,18 +30,15 @@ export const Header = () => {
 
   const [logoSeed, setLogoSeed] = useState(3)
   /** the header is a bit larger just on home */
-  const [onHome, setOnHome] = useState(location.pathname !== '/')
+  const [onHome, setOnHome] = useState()
 
   useEffect(() => {
     context.setAccount()
+    setOnHome(location.pathname === '/')
   }, [])
 
   const [button, setButton] = useState('Sync')
   const [accountPreview, setAccountPreview] = useState('')
-
-  useEffect(() => {
-    setOnHome(location.pathname === '/')
-  }, [location.key])
 
   // on Menu Toggle or Sign in
   useEffect(() => {
@@ -119,6 +116,9 @@ export const Header = () => {
           <Button
             alt="teia logo"
             to={!onHome ? '/' : null}
+            onTo={() => {
+              setOnHome(onHome)
+            }}
             onClick={() => {
               setLogoSeed(Math.random() * 100)
             }}
