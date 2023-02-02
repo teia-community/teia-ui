@@ -10,14 +10,15 @@ import useSettings from '@hooks/use-settings'
 import { validateAddress, ValidationResult } from '@taquito/utils'
 import Profile from './profile'
 import styles from '@style'
-import { ErrorComponent } from '@atoms/error'
 import { Tabs } from '@atoms/tab'
 import Button from '@atoms/button/Button'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
   if (!holder && type !== 'user_address') {
-    throw new Error(`user ${addressOrSubjkt} not found`)
+    throw new Error(`SUBJKT ${addressOrSubjkt} is not registered`, {
+      cause: 'User not found',
+    })
   } else if (
     !holder &&
     validateAddress(addressOrSubjkt) === ValidationResult.VALID
@@ -25,6 +26,12 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
     holder = {
       user_address: addressOrSubjkt,
     }
+  }
+
+  if (!holder?.user_address) {
+    throw new Error(`Invalid or missing Tz address: ${addressOrSubjkt}`, {
+      cause: 'Address not found',
+    })
   }
 
   const userMetadata = (await GetUserMetadata(holder.user_address)).data
@@ -81,8 +88,8 @@ export default function Display() {
   }, [user?.address, walletBlockMap])
 
   if (error) {
-    // TODO: find a nice way to display errors.
-    return <ErrorComponent title="Route Error" message={error.message} />
+    // return <ErrorComponent title="Route Error" message={error.message} />
+    throw error
   }
 
   if (!user) {
