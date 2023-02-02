@@ -15,6 +15,7 @@ export function IranFeed() {
         </>
       }
       contractAddress={IRAN_FUNDING_CONTRACT}
+      cause="Iran"
       namepsace="iran-feed"
       tags={['tezos4iran', '#tezos4iran']}
       infoUrl="https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran"
@@ -32,6 +33,7 @@ export function PakistanFeed() {
         </>
       }
       contractAddress={PAKISTAN_FUNDING_CONTRACT}
+      cause="Pakistan"
       namepsace="pakistan-feed"
       infoUrl="https://github.com/teia-community/teia-docs/wiki/Pakistan-Fundraiser"
     />
@@ -48,6 +50,7 @@ export function UkraineFeed() {
         </>
       }
       contractAddress={UKRAINE_FUNDING_CONTRACT}
+      cause="Ukraine"
       namepsace="ukraine-feed"
       infoUrl="https://github.com/teia-community/teia-docs/wiki/Ukranian-Fundraising"
     />

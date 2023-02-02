@@ -11,6 +11,7 @@ function FundFeed({
   introText,
   infoUrl,
   contractAddress,
+  cause,
   namepsace,
   tags = null,
 }) {
@@ -25,6 +26,7 @@ function FundFeed({
       </div>
       <TokenCollection
         feeds_menu
+        label={`Fundraise for ${cause}`}
         namespace={namepsace}
         maxItems={600}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {

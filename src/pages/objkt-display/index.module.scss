@@ -1,5 +1,6 @@
 @import '@styles/layout.scss';
 @import '@styles/variables.scss';
+
 .objktview {
   position: relative;
   overflow: hidden;
@@ -55,6 +56,7 @@
 }
 .profile_tabs {
   margin-top: 35px;
+  margin-bottom: 40px;
 }
 
 .infos_attributes_flex {

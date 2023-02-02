@@ -10,11 +10,9 @@ import { useOutletContext } from 'react-router'
 /**
  * The Transfer Tab
  * This allow the user to send tokens to a specific address.
- * @function
- * @param {{nft:import('@types').NFT}} props
- * @returns {any}
  */
 export const Transfer = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
   //const [title, setTitle] = useState()
   const { transfer, setFeedback, address, proxyAddress } =
