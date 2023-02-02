@@ -9,11 +9,9 @@ import styles from '@style'
 
 /**
  * The Swap Tab
- * @function
- * @param {{nft:import('@types').NFT}} props
- * @returns {any}
  */
 export const Swap = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
   const { id } = useParams()
   const {

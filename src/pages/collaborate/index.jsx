@@ -5,7 +5,7 @@ import { CreateCollaboration } from './create'
 import { CollabContractsOverview } from './manage'
 import { Tabs } from '@atoms/tab/Tabs'
 import { Outlet } from 'react-router'
-
+import styles from '@style'
 /**@type {import('@atoms/tab/Tabs').TabOptions} */
 const TABS = [
   { title: 'Manage', to: '' },
@@ -29,7 +29,7 @@ const Collaborate = () => {
 
   return (
     <Page title="proxy">
-      <Tabs tabs={TABS} />
+      <Tabs className={styles.tabs} tabs={TABS} />
       <Outlet />
     </Page>
   )

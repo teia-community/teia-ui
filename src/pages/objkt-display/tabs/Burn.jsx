@@ -9,11 +9,9 @@ import { useOutletContext } from 'react-router'
 
 /**
  * The Burn Tab
- * @function
- * @param {{nft:import('@types').NFT}} props
- * @returns {any}
  */
 export const Burn = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
 
   const {

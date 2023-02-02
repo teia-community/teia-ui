@@ -13,14 +13,12 @@ import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useOutletContext } from 'react-router'
 
+//TODO(mel) refactor this...
 /**
  * The Info Tab
- * @function
- * @param {{nft:import('@types').NFT}} props
- * @param {string} viewer_address - The current viewer if logged in.
- * @returns {any}
  */
 export const Info = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft, viewer_address } = useOutletContext()
   const artifact_ipfs_url =
     HashToURL(nft.artifact_uri) +

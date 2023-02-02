@@ -5,7 +5,7 @@ function SearchFeed() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('term') || ''
 
-  return <TagFeed namespace="search-feed" tag={searchTerm} />
+  return <TagFeed label="Search" namespace="search-feed" tag={searchTerm} />
 }
 
 export default SearchFeed

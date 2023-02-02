@@ -4,10 +4,11 @@ import { BaseTokenFieldsFragment } from '@data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
-function MimeTypeFeed({ namespace, mimeTypes }) {
+function MimeTypeFeed({ label, namespace, mimeTypes }) {
   return (
     <TokenCollection
       feeds_menu
+      label={label}
       namespace={namespace}
       maxItems={600}
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
@@ -36,6 +37,7 @@ export function GlbFeed() {
 export function AudioFeed() {
   return (
     <MimeTypeFeed
+      label="Audio OBJKTs"
       namespace="audio-feed"
       mimeTypes={[
         'audio/ogg',
@@ -49,12 +51,19 @@ export function AudioFeed() {
 }
 
 export function VideoFeed() {
-  return <MimeTypeFeed namespace="video-feed" mimeTypes={['video/mp4']} />
+  return (
+    <MimeTypeFeed
+      label="Video OBJKTs"
+      namespace="video-feed"
+      mimeTypes={['video/mp4']}
+    />
+  )
 }
 
 export function ImageFeed() {
   return (
     <MimeTypeFeed
+      label="Image OBJKTs"
       namespace="image-feed"
       mimeTypes={['image/jpeg', 'image/png', 'image/jpg']}
     />
@@ -64,6 +73,7 @@ export function ImageFeed() {
 export function HtmlSvgFeed() {
   return (
     <MimeTypeFeed
+      label="Interactive OBJKTs (HTML or SVG)"
       namespace="html-svg-feed"
       mimeTypes={['application/x-directory', 'image/svg+xml']}
     />
@@ -71,5 +81,11 @@ export function HtmlSvgFeed() {
 }
 
 export function GifFeed() {
-  return <MimeTypeFeed namespace="gif-feed" mimeTypes={['image/gif']} />
+  return (
+    <MimeTypeFeed
+      label="GIF OBJKTs"
+      namespace="gif-feed"
+      mimeTypes={['image/gif']}
+    />
+  )
 }
