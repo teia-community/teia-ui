@@ -9,6 +9,8 @@ import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
 import useLocalSettings from '@hooks/use-local-settings'
 import { Line } from '@atoms/line'
+import { THEMES, THEME_OPTIONS } from '@constants'
+import Select from '@atoms/select'
 
 /**
  * The main global menu.
@@ -17,7 +19,7 @@ import { Line } from '@atoms/line'
 export const MainMenu = () => {
   const context = useContext(TeiaContext)
 
-  const { zen, setZen, theme, toggleTheme } = useLocalSettings()
+  const { zen, setZen, theme, setTheme } = useLocalSettings()
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
@@ -58,8 +60,14 @@ export const MainMenu = () => {
             need_sync
           />
           <div className={styles.state_buttons}>
-            <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} />
+            {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
+            <Select
+              alt="theme selection"
+              value={{ label: THEMES[theme], value: theme }}
+              onChange={(e) => setTheme(e.value)}
+              options={THEME_OPTIONS}
+            />
           </div>
         </div>
       </nav>

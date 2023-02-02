@@ -14,8 +14,9 @@ const Textarea = ({
   onBlur = () => null,
   disabled,
   value,
+  className,
 }) => (
-  <div className={styles.container}>
+  <div className={`${styles.container} ${className || ''}`}>
     <label htmlFor={name}>
       <p>{label}</p>
       <textarea

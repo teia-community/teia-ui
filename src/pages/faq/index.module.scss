@@ -37,7 +37,8 @@
 }
 
 .faq__outer__container {
-  margin: 0 20px;
+  padding-top: 80px;
+  width: 100%;
 
   @include respond-to('desktop') {
     margin: 0;

@@ -8,7 +8,7 @@ const content = raw('../../lang/en/about.md')
 
 export function About() {
   return (
-    <Page title="about" large>
+    <Page title="about">
       <Markdown
         options={{
           overrides: {

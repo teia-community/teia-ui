@@ -62,6 +62,13 @@ const ItemInfo = ({ nft }) => {
   )
   return (
     <>
+      {/* SHOW SIGNING UI IF COLLABORATOR */}
+      {isCollab && isCoreParticipant && !userHasSigned && (
+        // <div className={styles.container}>
+        <SigningUI id={nft.token_id} hasSigned={false} />
+        // </div>
+      )}
+
       <div className={styles.container}>
         <div className={styles.edition}>
           <div className={collabStyles.relative}>
@@ -80,13 +87,6 @@ const ItemInfo = ({ nft }) => {
           <Editions prefix="Editions:" nft={nft} />
         </div>
       </div>
-
-      {/* SHOW SIGNING UI IF COLLABORATOR */}
-      {isCollab && isCoreParticipant && !userHasSigned && (
-        <div className={styles.container} style={{ paddingTop: 0 }}>
-          <SigningUI id={nft.token_id} hasSigned={false} />
-        </div>
-      )}
 
       {!restricted && (
         <div className={`${styles.spread} ${styles.objkt_details_container}`}>

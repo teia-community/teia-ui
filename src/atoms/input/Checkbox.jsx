@@ -25,6 +25,7 @@ const Checkbox = ({
   disabled,
   checked: checkedProp,
   autoFocus = false,
+  className,
 }) => {
   const [checked, setChecked] = useControlled(checkedProp, initial)
 
@@ -38,7 +39,7 @@ const Checkbox = ({
     [checked]
   )
   return (
-    <label className={styles.check_container}>
+    <label className={`${styles.check_container} ${className || ''}`}>
       {label}
       <input
         aria-label={alt || name}

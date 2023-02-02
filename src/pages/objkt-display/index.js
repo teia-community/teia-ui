@@ -214,7 +214,6 @@ export const ObjktDisplay = () => {
               nft.artist_address !== proxy
             ) {
               // user is not the creator now owns a copy of the object. hide
-
               return null
             }
           }
@@ -223,16 +222,6 @@ export const ObjktDisplay = () => {
       />
       <div className={styles.tab_area}>
         <Outlet context={{ nft, viewer_address: address }} />
-        {/* <Routes>
-          {TABS.map((tab) => (
-            <Route
-              key={tab.title}
-              index={tab?.index}
-              path={tab.to}
-              element={tab.component}
-            />
-          ))}
-        </Routes> */}
       </div>
     </Page>
   )

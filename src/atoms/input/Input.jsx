@@ -19,6 +19,7 @@ const Input = ({
   defaultValue,
   pattern,
   onKeyPress,
+  className,
 }) => {
   const [value, setValue] = useControlled(valueProp, defaultValue)
   const handleInput = useCallback(
@@ -32,7 +33,7 @@ const Input = ({
   )
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${className || ''}`}>
       <label htmlFor={name}>
         <p>{label}</p>
         <input
