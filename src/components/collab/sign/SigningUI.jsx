@@ -3,7 +3,6 @@ import { TeiaContext } from '../../../context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '../index.module.scss'
 
-// TODO: test if this still works
 export const SigningUI = ({ id, hasSigned }) => {
   const context = useContext(TeiaContext)
 
@@ -16,7 +15,7 @@ export const SigningUI = ({ id, hasSigned }) => {
   ) : (
     <div className={styles.border}>
       <div className={styles.flexBetween}>
-        <p style={{ width: '50%' }}>
+        <p>
           You are a core participant in this work but you haven’t signed it yet
         </p>
         <Button shadow_box onClick={() => sign()}>

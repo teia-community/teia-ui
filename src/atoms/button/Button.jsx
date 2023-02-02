@@ -1,9 +1,8 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { /*Link*/ NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
-//TODO(mel): Clean & maybe split this
 /**
  * Core button style (used for links, buttons, and <a>)
  * @param {Object} buttonProps
@@ -16,7 +15,6 @@ import { motion } from 'framer-motion'
  * @param {boolean} buttonProps.box - (Style) Box (adds nesting)
  * @param {string} buttonProps.className - Extra classes to apply to the button
  * @param {string} buttonProps.alt - Used for accessibility (aria-label)
- * @param {string} buttonProps.state - Additional state object passed to the Navlinks only.
  * @param {React.EffectCallback} buttonProps.onClick - onClick callback, ignore if to is provided
  * @param {React.EffectCallback} buttonProps.onTo - onClick for NavLinks
  * @param {React.ReactNode} buttonProps.children - children
@@ -26,7 +24,6 @@ const Button = ({
   href = null,
   onClick = () => null,
   onTo = () => null,
-  state,
   children,
   className,
   style,
@@ -39,8 +36,8 @@ const Button = ({
   shadow_box,
   secondary,
   small,
-  preventScrollReset,
   activeClass,
+  ...props
 }) => {
   const _classes = classnames({
     [styles.container]: true,
@@ -73,14 +70,13 @@ const Button = ({
       <NavLink
         aria-label={alt}
         to={to}
-        state={state}
         onClick={onTo}
-        preventScrollReset={preventScrollReset}
         className={({ isActive }) =>
           isActive
             ? `${styles.active} ${classes} ${activeClass || ''}`
             : classes
         }
+        {...props}
         end
       >
         {children}
@@ -91,6 +87,7 @@ const Button = ({
   if (href !== null) {
     return (
       <motion.a
+        style={style}
         href={href}
         target="_blank"
         rel="noopener noreferrer"

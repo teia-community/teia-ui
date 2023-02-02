@@ -104,24 +104,24 @@ export function Home({ isSearch = false }) {
       {isSearch ? (
         <SearchFeed />
       ) : (
-        <Routes>
+        <Routes path="*">
           <Route index element={<RecentSalesFeed />} />
           <Route
-            path="/tezospride"
+            path="tezospride"
             element={<TagFeed tag="tezospride" namespace="tezospride" />}
           />
-          <Route path="/iran" element={<IranFeed />} />
-          <Route path="/pakistan" element={<PakistanFeed />} />
-          <Route path="/ukraine" element={<UkraineFeed />} />
-          <Route path="/random" element={<RandomFeed />} />
-          <Route path="/newobjkts" element={<NewObjktsFeed />} />
-          <Route path="/glb" element={<GlbFeed />} />
-          <Route path="/video" element={<VideoFeed />} />
-          <Route path="/image" element={<ImageFeed />} />
-          <Route path="/audio" element={<AudioFeed />} />
-          <Route path="/html-svg" element={<HtmlSvgFeed />} />
-          <Route path="/gif" element={<GifFeed />} />
-          <Route path="/friends/:address" element={<FriendsFeed />} />
+          <Route path="iran" element={<IranFeed />} />
+          <Route path="pakistan" element={<PakistanFeed />} />
+          <Route path="ukraine" element={<UkraineFeed />} />
+          <Route path="random" element={<RandomFeed />} />
+          <Route path="newobjkts" element={<NewObjktsFeed />} />
+          <Route path="glb" element={<GlbFeed />} />
+          <Route path="video" element={<VideoFeed />} />
+          <Route path="image" element={<ImageFeed />} />
+          <Route path="audio" element={<AudioFeed />} />
+          <Route path="html-svg" element={<HtmlSvgFeed />} />
+          <Route path="gif" element={<GifFeed />} />
+          <Route path="friends/:address" element={<FriendsFeed />} />
         </Routes>
       )}
     </Page>
