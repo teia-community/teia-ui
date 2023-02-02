@@ -4,7 +4,7 @@ import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 
-function RecentSalesFeed() {
+export function RecentSalesFeed() {
   return (
     <TokenCollection
       feeds_menu

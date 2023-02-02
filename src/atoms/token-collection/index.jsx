@@ -15,7 +15,6 @@ import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import { useKeyboard } from '@hooks/use-keyboard'
 import { Loading } from '@atoms/loading'
-import { ErrorComponent } from '@atoms/error'
 import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
   METADATA_CONTENT_RATING_MATURE,
@@ -145,12 +144,9 @@ function TokenCollection({
     return <Loading message={`Loading ${label}`} />
   }
   if (walletBlockMap === undefined) {
-    return (
-      <ErrorComponent
-        title="Could not retrieve lists"
-        message="Please try again in a few minutes."
-      />
-    )
+    throw new Error('Please try again in a few minutes.', {
+      cause: 'Could not retrieve the ban list',
+    })
   }
 
   const tokens = extractTokensFromResponse(data, {

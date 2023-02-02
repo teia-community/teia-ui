@@ -6,7 +6,7 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
 // TODO: Fetch last ID from the indexer
-function RandomFeed({ firstId = 196, lastId = 1_592_463, max = 200 }) {
+export function RandomFeed({ firstId = 196, lastId = 1_592_463, max = 200 }) {
   const tokenIds = useMemo(() => {
     const uniqueIds = new Set()
 
