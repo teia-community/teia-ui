@@ -9,6 +9,7 @@
   //border-bottom: 1px solid var(--gray-20);
 
   &:hover,
+  &.active,
   &.selected {
     text-decoration: none;
     // offset the bottom line by the border size.
@@ -29,8 +30,5 @@
 }
 
 .line {
-  z-index: 0;
   align-self: flex-start;
-
-  margin-bottom: 40px;
 }

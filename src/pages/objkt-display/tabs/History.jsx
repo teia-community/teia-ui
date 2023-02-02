@@ -100,6 +100,7 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
  * @returns {any}
  */
 export const History = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
   console.debug('nft.events', nft?.events)
 

@@ -74,6 +74,7 @@ function MasonryView({ tokens }) {
  */
 function TokenCollection({
   query,
+  label,
   namespace,
   show_restricted = false,
   feeds_menu = false,
@@ -141,7 +142,7 @@ function TokenCollection({
   }
 
   if (!data) {
-    return <Loading message={`Loading Feed ${namespace}`} />
+    return <Loading message={`Loading ${label}`} />
   }
   if (walletBlockMap === undefined) {
     return (

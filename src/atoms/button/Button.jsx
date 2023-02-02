@@ -3,6 +3,7 @@ import styles from '@style'
 import { /*Link*/ NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
+//TODO(mel): Clean & maybe split this
 /**
  * Core button style (used for links, buttons, and <a>)
  * @param {Object} buttonProps
@@ -39,6 +40,7 @@ const Button = ({
   secondary,
   small,
   preventScrollReset,
+  activeClass,
 }) => {
   const _classes = classnames({
     [styles.container]: true,
@@ -75,7 +77,9 @@ const Button = ({
         onClick={onTo}
         preventScrollReset={preventScrollReset}
         className={({ isActive }) =>
-          isActive ? `${styles.active} ${classes}` : classes
+          isActive
+            ? `${styles.active} ${classes} ${activeClass || ''}`
+            : classes
         }
         end
       >

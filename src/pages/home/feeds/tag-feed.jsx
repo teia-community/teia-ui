@@ -7,6 +7,7 @@ function TagFeed({ tag, ...otherProps }) {
   return (
     <TokenCollection
       feeds_menu
+      label={tag}
       variables={{ tag }}
       swrParams={[tag]}
       maxItems={600}

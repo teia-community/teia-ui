@@ -3,6 +3,7 @@ import styles from '@style'
 import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 import Button from '@atoms/button/Button'
+import { useTwemoji } from '@hooks/use-twemoji'
 
 function DropdownButton({
   menuID,
@@ -16,6 +17,8 @@ function DropdownButton({
   className,
 }) {
   const [open, setOpen] = useState(false)
+
+  useTwemoji()
 
   const toggle = () => {
     setOpen(!open)

@@ -37,6 +37,7 @@ export default function Collections() {
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
       <TokenCollection
         show_restricted={show_restricted}
+        label="Artist's Collection"
         namespace="collections"
         swrParams={[address]}
         variables={{ address }}

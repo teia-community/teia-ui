@@ -28,7 +28,7 @@ export const MainMenu = () => {
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
         </div>
-        <Line vertical />
+        <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
           <li className={styles.address}>
             {walletPreview(context.acc?.address)}

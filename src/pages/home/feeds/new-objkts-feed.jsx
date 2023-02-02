@@ -8,6 +8,7 @@ function NewObjktsFeed() {
   return (
     <TokenCollection
       feeds_menu
+      label="New OBJKTs"
       namespace="new-objkts-feed"
       maxItems={600}
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}

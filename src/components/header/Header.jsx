@@ -131,7 +131,6 @@ export const Header = () => {
               <>
                 <Button
                   alt={'local settings'}
-                  small
                   to="/settings"
                   onTo={() => context.collapseMenu(true)}
                   className={styles.config_button}
@@ -139,7 +138,7 @@ export const Header = () => {
                   <ConfigIcon width={16} height={16} />
                   Config
                 </Button>
-                <Line className={styles.separator} vertical />
+                {/* <Line className={styles.separator} vertical /> */}
               </>
             )}
             {!context.collapsed && context.proxyAddress && (

@@ -7,6 +7,6 @@ export const Line = ({ vertical, className, style }) => {
     [styles.horizontal]: !vertical,
   })
   return (
-    <hr style={style} className={`${classes} ${className ? className : ''}`} />
+    <hr style={style} className={`${className ? className : ''} ${classes} `} />
   )
 }

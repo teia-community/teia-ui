@@ -51,6 +51,7 @@ export const Tabs = ({ tabs, className, filter, props = {} }) => {
               preventScrollReset
               key={tab.title}
               className={styles.tab}
+              activeClass={styles.active}
               to={tab?.to}
             >
               {tab.title}

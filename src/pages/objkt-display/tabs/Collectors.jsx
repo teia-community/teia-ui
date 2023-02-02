@@ -6,11 +6,8 @@ import { TeiaContext } from '@context/TeiaContext'
 import { Listings } from '@components/listings'
 import { useOutletContext } from 'react-router'
 
-/**
- * @param {Object} collectorsOptions
- * @param {import("@types").NFT} collectorsOptions.nft
- **/
 export const Collectors = () => {
+  /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
 
   const { syncTaquito, collect, acc, cancel, cancelv1, reswap } =

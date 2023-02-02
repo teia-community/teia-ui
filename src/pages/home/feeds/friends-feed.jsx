@@ -48,6 +48,7 @@ export function FriendsFeed() {
     <TokenCollection
       feeds_menu
       disable={!wallets}
+      label="Friends Feed"
       namespace="friends"
       variables={{ wallets }}
       swrParams={[param.address]}

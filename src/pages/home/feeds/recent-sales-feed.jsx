@@ -8,6 +8,7 @@ function RecentSalesFeed() {
   return (
     <TokenCollection
       feeds_menu
+      label="Recent Sales"
       namespace="recent-sales-feed"
       resultsPath="events"
       tokenPath="token"

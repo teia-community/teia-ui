@@ -31,6 +31,7 @@ export const CollabsTab = () => {
       ) : null}
 
       <TokenCollection
+        label="Artist's Collabs"
         namespace="collabs"
         swrParams={[address]}
         variables={{ address }}
