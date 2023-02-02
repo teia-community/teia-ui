@@ -34,6 +34,7 @@ const locationMap = new Map([
   ['/feed/pakistan', '🇵🇰 Pakistan'],
   ['/feed/iran', '🇮🇷 Iran'],
   ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
+  // separator
   ['---mime_feeds', 'mime_feeds'],
   ['/feed/image', 'Image'],
   ['/feed/video', 'Video'],
@@ -41,6 +42,7 @@ const locationMap = new Map([
   ['/feed/glb', '3D'],
   ['/feed/html-svg', 'HTML & SVG'],
   ['/feed/gif', 'GIF'],
+  ['/feed/pdf', 'PDF'],
 ])
 
 const locationNeedSync = ['/feed/friends']

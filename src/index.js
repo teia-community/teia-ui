@@ -28,6 +28,7 @@ import {
   RandomFeed,
   RecentSalesFeed,
   TagFeed,
+  PdfFeed,
 } from '@pages/home/feeds'
 import { Mint } from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -75,6 +76,7 @@ const router = createBrowserRouter(
           path="tezospride"
           element={<TagFeed tag="tezospride" namespace="tezospride" />}
         />
+
         <Route path="iran" element={<IranFeed />} />
         <Route path="pakistan" element={<PakistanFeed />} />
         <Route path="ukraine" element={<UkraineFeed />} />
@@ -85,6 +87,8 @@ const router = createBrowserRouter(
         <Route path="image" element={<ImageFeed />} />
         <Route path="audio" element={<AudioFeed />} />
         <Route path="html-svg" element={<HtmlSvgFeed />} />
+        <Route path="pdf" element={<PdfFeed />} />
+
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />
       </Route>
