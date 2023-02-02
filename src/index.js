@@ -50,14 +50,14 @@ const display_routes = (
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/*" element={<App />}>
-      <Route index element={<Home />} />
+      <Route path="/*" index element={<Home />} />
       <Route path="feed/*" element={<Home />} />
       <Route path="search/*" element={<Home isSearch />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
       </Route>
 
-      <Route path=":id" element={<Display />}>
+      <Route path=":id/*" element={<Display />}>
         {display_routes}
       </Route>
       <Route path="kt/:id" element={<CollabDisplay />} />
@@ -68,11 +68,11 @@ const router = createBrowserRouter(
 
       <Route path="sync" element={<Sync />} />
       <Route exact path="mint" element={<Mint />} />
-      <Route path="collaborate" element={<Collaborate />}>
+      <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
       </Route>
-      <Route path="objkt/:id" element={<ObjktDisplay />}>
+      <Route path="objkt/:id/*" element={<ObjktDisplay />}>
         <Route index element={<Info />} />
         <Route path="listings" element={<Collectors />} />
         <Route path="history" element={<History />} />

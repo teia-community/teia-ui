@@ -44,7 +44,7 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
-import { Line } from '@atoms/line'
+import { Line as CoreLine } from '@atoms/line'
 
 const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
@@ -54,6 +54,8 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
 }`
 
 const GENERATE_DISPLAY_AND_THUMBNAIL = true
+
+const Line = () => <CoreLine className={styles.line} />
 
 export const Mint = () => {
   const {
@@ -498,6 +500,7 @@ export const Mint = () => {
             )}
 
             <Input
+              className={styles.field}
               type="text"
               onChange={setTitle}
               placeholder="Max 500 characters (optional)"
@@ -508,6 +511,7 @@ export const Mint = () => {
             </Input>
 
             <Textarea
+              className={styles.field}
               type="text"
               style={{ whiteSpace: 'pre' }}
               onChange={(e) => {
@@ -525,6 +529,7 @@ export const Mint = () => {
             </Textarea>
 
             <Input
+              className={styles.field}
               type="text"
               onChange={setTags}
               onBlur={(e) => {
@@ -546,6 +551,7 @@ export const Mint = () => {
               <Line />
             </Input>
             <Input
+              className={styles.field}
               type="number"
               min={1}
               max={MAX_EDITIONS}
@@ -562,6 +568,7 @@ export const Mint = () => {
             </Input>
 
             <Input
+              className={styles.field}
               type="number"
               min={MIN_ROYALTIES}
               max={MAX_ROYALTIES}
@@ -577,6 +584,7 @@ export const Mint = () => {
               <Line />
             </Input>
             <Select
+              className={styles.field}
               alt="license selection"
               label="License"
               value={rights}
@@ -587,6 +595,7 @@ export const Mint = () => {
 
             {rights.value === 'custom' && (
               <Input
+                className={styles.field}
                 type="text"
                 onChange={setRightUri}
                 placeholder="The URI to the custom license"
@@ -596,6 +605,7 @@ export const Mint = () => {
             )}
             <Line />
             <Select
+              className={styles.field}
               alt="token language"
               label="Language"
               placeholder="(optional)"

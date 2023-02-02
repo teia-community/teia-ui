@@ -117,6 +117,7 @@ export const Header = () => {
             alt="teia logo"
             to={!onHome ? '/' : null}
             onTo={() => {
+              context.collapseMenu(true)
               setOnHome(onHome)
             }}
             onClick={() => {
@@ -143,6 +144,7 @@ export const Header = () => {
             )}
             {!context.collapsed && context.proxyAddress && (
               <>
+                <Line className={styles.separator} vertical />
                 <Button
                   alt={'exit collab'}
                   small

@@ -49,9 +49,10 @@ const Select = ({
   disabled,
   children,
   placeholder,
+  className,
   ...props
 }) => (
-  <label className={styles.label}>
+  <label className={`${styles.label} ${className || ''}`}>
     <p>{label}</p>
     <ReactSelect
       aria-label={alt || label}
