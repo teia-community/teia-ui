@@ -13,17 +13,12 @@ const App = () => {
   if (isLoading) {
     return <Preloading />
   }
-
   return (
     <TeiaProvider>
       <LocalSettingsProvider>
         <Debug />
         {/* <ScrollToTop /> */}
-        <ScrollRestoration
-          getKey={(location, matches) => {
-            return location.key
-          }}
-        />
+        <ScrollRestoration getKey={(location, matches) => location.key} />
         <AnimatePresence exitBeforeEnter initial={false}>
           <Outlet />
         </AnimatePresence>

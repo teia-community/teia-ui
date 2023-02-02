@@ -199,10 +199,13 @@ function TokenCollection({
         <InfiniteScroll
           className={`${styles.infinite_scroll}`}
           loadMore={() => {
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              [namespace]: limit + itemsPerLoad,
-            })
+            setSearchParams(
+              {
+                ...Object.fromEntries(searchParams),
+                [namespace]: limit + itemsPerLoad,
+              },
+              { preventScrollReset: true }
+            )
           }}
           hasMore={limit < tokens.length}
         >
