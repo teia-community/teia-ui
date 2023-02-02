@@ -16,7 +16,7 @@ export const Burn = () => {
 
   const {
     burn,
-    acc,
+    address,
     proxyAddress,
     message,
     setMessage,
@@ -33,11 +33,10 @@ export const Burn = () => {
     () =>
       nft.holdings?.find(
         (e) =>
-          e.holder_address === acc?.address ||
-          (e.holder_address === proxyAddress &&
-            acc?.address === proxyAdminAddress)
+          e.holder_address === address ||
+          (e.holder_address === proxyAddress && address === proxyAdminAddress)
       ),
-    [nft, acc, proxyAddress, proxyAdminAddress]
+    [nft, address, proxyAddress, proxyAdminAddress]
   )
 
   const totalOwned = useMemo(() => found?.amount || 0, [found])

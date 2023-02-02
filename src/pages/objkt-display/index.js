@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useMemo } from 'react'
 import set from 'lodash/set'
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { TeiaContext } from '@context/TeiaContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
@@ -49,8 +49,7 @@ const TABS = [
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(TeiaContext)
-  const location = useLocation()
-  const address = context.acc?.address
+  const address = context.address
   const proxy = context.proxyAddress
   const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
 

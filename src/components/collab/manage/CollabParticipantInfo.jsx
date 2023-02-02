@@ -9,7 +9,7 @@ import ParticipantList from './ParticipantList'
 import { Link } from 'react-router-dom'
 
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
-  const { proxyAddress, setProxyAddress, acc } = useContext(TeiaContext)
+  const { proxyAddress, setProxyAddress, address } = useContext(TeiaContext)
   const {
     administrator_address,
     contract_address,
@@ -17,7 +17,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
     shareholders,
   } = collabData
 
-  const isAdmin = acc?.address === administrator_address
+  const isAdmin = address === administrator_address
 
   // Core participants
   const coreParticipants = shareholders.filter(

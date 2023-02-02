@@ -37,31 +37,36 @@ export const Header = () => {
     setOnHome(location.pathname === '/')
   }, [])
 
-  const [button, setButton] = useState('Sync')
+  const [syncLabel, setSyncLabel] = useState('Sync')
   const [accountPreview, setAccountPreview] = useState('')
 
   // on Menu Toggle or Sign in
   useEffect(() => {
-    if (context.acc?.address) {
+    if (context.address) {
       // is menu closed?
       if (context.collapsed) {
         const proxyAddress = context.proxyAddress
           ? ` (${context.proxyName || walletPreview(context.proxyAddress)})`
           : ''
-        setButton(walletPreview(context.acc.address) + proxyAddress)
+        const userName = context.userInfo?.name
+          ? `(${context.userInfo.name})`
+          : ''
+        setSyncLabel(
+          walletPreview(context.address) + (proxyAddress || userName)
+        )
         setAccountPreview(
-          button
-            .slice(button.length - 5, button.length)
+          syncLabel
+            .slice(syncLabel.length - 5, syncLabel.length)
             .split('')
             .join(' ')
         )
       } else {
-        setButton('Unsync')
+        setSyncLabel('Unsync')
       }
     } else {
-      setButton('Sync')
+      setSyncLabel('Sync')
     }
-  }, [context.acc?.address, context.collapsed])
+  }, [context.address, context.collapsed])
 
   const handleRoute = (path, data) => {
     context.collapseMenu(true)
@@ -69,7 +74,7 @@ export const Header = () => {
   }
 
   const handleSyncUnsync = () => {
-    if (context.acc?.address) {
+    if (context.address) {
       if (context.collapsed) {
         handleRoute('/sync', '/tz')
       } else {
@@ -170,7 +175,7 @@ export const Header = () => {
                   : 'sync wallet'
               }
             >
-              {isWide && button}
+              {isWide && syncLabel}
             </Button>
             <Button
               alt={`${context.collapsed ? 'show' : 'hide'} menu`}
