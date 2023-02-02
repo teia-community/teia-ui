@@ -10,9 +10,9 @@ export const MenuItem = ({ label, route, need_sync, className }) => {
 
   return (
     <Button
-      className={`${
-        need_sync && !context.acc?.address ? styles.disabled : ''
-      } ${className ? className : ''} `}
+      className={`${need_sync && !context.address ? styles.disabled : ''} ${
+        className ? className : ''
+      } `}
       to={need_sync ? '/sync' : `/${route}`}
       state={need_sync ? `/${route}` : null}
       onTo={() => context.collapseMenu(true)}

@@ -59,7 +59,7 @@ const Line = () => <CoreLine className={styles.line} />
 
 export const Mint = () => {
   const {
-    acc,
+    address,
     getBalance,
     mint,
     proxyAddress,
@@ -103,7 +103,7 @@ export const Mint = () => {
   useEffect(() => {
     // On boot, see what addresses the synced address can manage
     fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
-      address: acc?.address,
+      address: address,
     }).then(({ data, errors }) => {
       if (data) {
         // const shareholderInfo = data.shareholder.map(s => s.split_contract);
@@ -112,14 +112,13 @@ export const Mint = () => {
         setCollabs(managedCollabs || [])
       }
     })
-    // if (acc && hasStoredFields()) restoreFields()
-    if (acc?.address) {
-      getBalance(acc.address).then((bal) => {
+    if (address) {
+      getBalance(address).then((bal) => {
         setBalance(bal)
       })
     }
     updateName()
-  }, [acc]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     updateName()
@@ -128,7 +127,7 @@ export const Mint = () => {
 
   /** Resolves the minter name */
   const updateName = () => {
-    const currentAddress = proxyAddress || acc?.address
+    const currentAddress = proxyAddress || address
 
     fetchGraphQL(getNameForAddress, 'GetNameForAddress', {
       address: currentAddress,
@@ -141,7 +140,7 @@ export const Mint = () => {
 
   const handleMint = async () => {
     // check sync status
-    if (!acc) {
+    if (!address) {
       setFeedback({
         visible: true,
         message: 'Sync your wallet',
@@ -185,9 +184,7 @@ export const Mint = () => {
     })
 
     // if proxyContract is selected, using it as a the minterAddress:
-    const minterAddress = proxyAddress || acc.address
-    // ztepler: I have not understand the difference between acc.address and getAuth here
-    //    so I am using acc.address (minterAddress) in both nftCid.address and in mint call
+    const minterAddress = proxyAddress || address
 
     console.debug({ minterAddress })
 
@@ -346,7 +343,7 @@ export const Mint = () => {
 
     // TODO: test if this still works correctly
     const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
-      address: proxyAddress || acc.address,
+      address: proxyAddress || address,
       ids: [uri0, uri1],
     })
 
@@ -465,8 +462,6 @@ export const Mint = () => {
     }
   }
 
-  // const proxyDisplay = proxyName || proxyAddress
-  // const mintingAs = proxyDisplay || (acc?.name || acc?.address)
   const flexBetween = classNames(collabStyles.flex, collabStyles.flexBetween)
 
   return (

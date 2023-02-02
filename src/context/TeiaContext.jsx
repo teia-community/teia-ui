@@ -30,6 +30,7 @@ import {
 import ls from 'local-storage'
 import axios from 'axios'
 import verify from '@utils/verify'
+import { getUser } from '@data/api'
 
 export const TeiaContext = createContext()
 
@@ -404,23 +405,6 @@ class TeiaContextProviderClass extends Component {
 
       setAddress: (address) => this.setState({ address }),
 
-      // Local storage auth
-      setAuth: (address) => {
-        ls.set('auth', address)
-      },
-
-      updateLs: (key, value) => {
-        ls.set(key, value)
-      },
-
-      getLs: (key) => {
-        return ls.get(key)
-      },
-
-      getAuth: () => {
-        return ls.get('auth')
-      },
-
       client: null,
 
       // Signed in collab address (if applicable)
@@ -577,7 +561,7 @@ class TeiaContextProviderClass extends Component {
       },
 
       transfer: async (txs) => {
-        const { proxyAddress, objkts, acc } = this.state
+        const { proxyAddress, objkts, address } = this.state
 
         const contract = proxyAddress || objkts
 
@@ -585,7 +569,7 @@ class TeiaContextProviderClass extends Component {
           c.methods
             .transfer([
               {
-                from_: proxyAddress || acc?.address,
+                from_: proxyAddress || address,
                 txs,
               },
             ])
@@ -728,7 +712,7 @@ class TeiaContextProviderClass extends Component {
       /* taquito */
       Tezos: null,
       wallet: null,
-      acc: null,
+      userInfo: null,
 
       updateMessage: (message) => this.setState({ message }),
 
@@ -738,7 +722,9 @@ class TeiaContextProviderClass extends Component {
             ? await wallet.client.getActiveAccount()
             : undefined
         this.setState({
-          acc: current,
+          userInfo:
+            current?.address &&
+            (await getUser(current.address, 'user_address')),
           address: current?.address,
         })
       },
@@ -759,14 +745,13 @@ class TeiaContextProviderClass extends Component {
           await wallet.requestPermissions({ network })
           activeAccount = await wallet.client.getActiveAccount()
         }
-
+        const current = await wallet.getPKH()
         this.setState({
           Tezos,
-          address: await wallet.getPKH(),
-          acc: activeAccount,
+          address: current,
+          userInfo: current && (await getUser(current)),
           wallet,
         })
-        this.state.setAuth(await wallet.getPKH())
         // console.log(this.state)
         return activeAccount.address
       },
@@ -777,6 +762,7 @@ class TeiaContextProviderClass extends Component {
         await wallet.client.clearActiveAccount()
         this.setState({
           address: undefined,
+          userInfo: undefined,
           acc: undefined,
         })
       },

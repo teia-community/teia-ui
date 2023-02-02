@@ -1,10 +1,9 @@
 import get from 'lodash/get'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
 import styles from '@style'
-import { TeiaContext } from '@context/TeiaContext'
 import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from 'hooks/use-settings'
 import { Line } from '@atoms/line'
@@ -19,16 +18,15 @@ function ListingRow({
   setReswapPrices,
   reswap,
   cancel,
-  acc,
+  address,
   proxyAdminAddress,
   rowId,
 }) {
   const { walletBlockMap } = useSettings()
 
   const isOwnSwap =
-    listing.seller_address === acc?.address ||
-    (proxyAdminAddress === acc?.address &&
-      listing.seller_address === proxyAddress)
+    listing.seller_address === address ||
+    (proxyAdminAddress === address && listing.seller_address === proxyAddress)
 
   console.debug('isOwnSwap', isOwnSwap)
 
@@ -111,6 +109,8 @@ function ListingRow({
 export const Listings = ({
   id,
   listings,
+  address,
+  proxyAddress,
   handleCollect,
   handleCollectObjktcomAsk,
   cancel,
@@ -118,7 +118,6 @@ export const Listings = ({
   restricted,
   reswap,
 }) => {
-  const { acc, proxyAddress } = useContext(TeiaContext)
   const [reswapPrices, setReswapPrices] = useState({})
   const listingsWithKeys = listings.map((listing) => ({
     ...listing,
@@ -134,7 +133,7 @@ export const Listings = ({
             rowId={listing.key}
             listing={listing}
             restricted={restricted}
-            acc={acc}
+            address={address}
             proxyAdminAddress={proxyAdminAddress}
             proxyAddress={proxyAddress}
             reswapPrices={reswapPrices}
