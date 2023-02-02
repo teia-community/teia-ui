@@ -50,8 +50,7 @@ export const RenderMediaType = ({
   }, [nft, previewDisplayUri])
 
   if (!nft) {
-    console.error('No nft to render')
-    return
+    throw Error('No nft to render')
   }
 
   switch (nft.mime_type) {

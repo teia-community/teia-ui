@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { iOS } from '@utils/os'
 import styles from '@style'
+import ImageComponent from '../image/index'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -16,6 +17,9 @@ export const VideoComponent = ({
   const domElement = useRef()
 
   useEffect(() => {
+    if (!displayView) {
+      return
+    }
     const isVideoAvailable = (video) => iOS || video.readyState > 2
 
     const isVideoPlaying = (video) =>
@@ -46,7 +50,7 @@ export const VideoComponent = ({
         }
       }
     }
-  }, [inView])
+  }, [inView, displayView])
 
   return displayView ? (
     <video
@@ -62,19 +66,27 @@ export const VideoComponent = ({
       title={`video object ${nft.token_id}`}
     />
   ) : (
-    <div className={styles.container}>
-      <video
-        ref={domElement}
-        className={styles.video}
-        autoPlay={inView}
-        playsInline
-        muted
-        loop
-        src={previewUri ? previewUri : artifactUri}
-        poster={displayUri}
-        title={`video object ${nft.token_id}`}
-      />
-    </div>
+    <ImageComponent
+      artifactUri={artifactUri}
+      displayUri={displayUri}
+      previewUri={previewUri}
+      inView={inView}
+      displayView={displayView}
+      nft={nft}
+    />
+    // <div className={styles.container}>
+    //   <video
+    //     ref={domElement}
+    //     className={styles.video}
+    //     autoPlay={inView}
+    //     playsInline
+    //     muted
+    //     loop
+    //     src={previewUri ? previewUri : displayUri}
+    //     poster={displayUri}
+    //     title={`video object ${nft.token_id}`}
+    //   />
+    // </div>
   )
 }
 

@@ -1,7 +1,8 @@
+import { Line } from '@atoms/line/index'
 import React from 'react'
 // import { PauseIcon, PlayIcon } from './icons'
 // import { Visualiser } from './visualiser'
-// import styles from '@style'
+import styles from '@style'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -39,32 +40,28 @@ export const AudioComponent = ({
   // }, [play, userTouched])
 
   return displayView ? (
-    <>
-      <span>
-        <img
-          style={{ width: '100%' }}
-          src={displayUri}
-          alt={`cover for audio object ${nft.token_id}`}
-        />
-        <br />
-        <audio
-          style={{ width: '100%' }}
-          src={previewUri ? previewUri : artifactUri}
-          controls
-        />
-      </span>
-    </>
+    <div className={styles.container}>
+      <img
+        style={{ width: '100%' }}
+        src={displayUri}
+        alt={`cover for audio object ${nft.token_id}`}
+      />
+      <Line />
+      <audio
+        style={{ width: '100%' }}
+        src={previewUri ? previewUri : artifactUri}
+        controls
+      />
+    </div>
   ) : (
     <div>
-      <div>
-        <img alt={`cover for audio object ${nft.token_id}`} src={displayUri} />
-        <br />
-        <audio
-          style={{ display: 'block', margin: '0 auto' }}
-          src={previewUri ? previewUri : artifactUri}
-          controls
-        />
-      </div>
+      <img alt={`cover for audio object ${nft.token_id}`} src={displayUri} />
+      <br />
+      <audio
+        style={{ display: 'block', margin: '0 auto' }}
+        src={previewUri ? previewUri : artifactUri}
+        controls
+      />
     </div>
   )
 }

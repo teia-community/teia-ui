@@ -7,6 +7,7 @@ export {
   HtmlSvgFeed,
   ImageFeed,
   VideoFeed,
+  PdfFeed,
 } from './mime-type-feed'
 
 export { IranFeed, PakistanFeed, UkraineFeed } from './fund-feeds'

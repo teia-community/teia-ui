@@ -31,7 +31,13 @@ function MimeTypeFeed({ label, namespace, mimeTypes }) {
 export default MimeTypeFeed
 
 export function GlbFeed() {
-  return <MimeTypeFeed namespace="glb-feed" mimeTypes={['model/gltf-binary']} />
+  return (
+    <MimeTypeFeed
+      label="3D OBJKTs"
+      namespace="glb-feed"
+      mimeTypes={['model/gltf-binary']}
+    />
+  )
 }
 
 export function AudioFeed() {
@@ -56,6 +62,16 @@ export function VideoFeed() {
       label="Video OBJKTs"
       namespace="video-feed"
       mimeTypes={['video/mp4']}
+    />
+  )
+}
+
+export function PdfFeed() {
+  return (
+    <MimeTypeFeed
+      label="PDF OBJKTs"
+      namespace="pdf-feed"
+      mimeTypes={['application/pdf']}
     />
   )
 }

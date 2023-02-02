@@ -1,3 +1,4 @@
+@import '@styles/variables.scss';
 @import '@styles/layout.scss';
 
 .flex {
@@ -15,6 +16,7 @@
   position: relative;
   min-width: 100px;
   min-height: 100px;
+  max-height: $max-token-height;
   // max-height: 60vh;
   @include respond-to('tablet') {
     min-width: 200px;
@@ -22,6 +24,7 @@
   }
   display: flex;
   justify-content: center;
+  align-items: center;
   &.fullscreen {
     position: fixed;
     top: 0;
