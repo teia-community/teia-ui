@@ -5,14 +5,14 @@ import styles from '@style'
 import { useContext } from 'react'
 
 const CheapestButton = ({ listing }) => {
-  const { syncTaquito, collect, acc } = useContext(TeiaContext)
+  const { syncTaquito, collect, address } = useContext(TeiaContext)
   return listing ? (
     <div className={styles.main_swap}>
       <MarketplaceLabel listing={listing} />
 
       <Button
         onClick={() => {
-          if (acc == null) {
+          if (address == null) {
             syncTaquito()
           } else {
             collect(listing)

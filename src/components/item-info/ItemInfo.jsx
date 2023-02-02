@@ -20,7 +20,7 @@ import Editions from './Editions'
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
 const ItemInfo = ({ nft }) => {
-  const { acc } = useContext(TeiaContext)
+  const { address } = useContext(TeiaContext)
 
   const { walletBlockMap } = useSettings()
   const [showSignStatus, setShowSignStatus] = useState(false)
@@ -41,14 +41,14 @@ const ItemInfo = ({ nft }) => {
   const isCoreParticipant = isCollab
     ? shareholders.some(
         ({ shareholder_address, holder_type }) =>
-          acc?.address === shareholder_address &&
+          address === shareholder_address &&
           holder_type === CollaboratorType.CORE_PARTICIPANT
       )
     : false
 
   // Show the signing UI if required
   const userHasSigned = nft.signatures.find(
-    (sig) => sig.shareholder_address === acc?.address
+    (sig) => sig.shareholder_address === address
   )
   const coreParticipants = isCollab
     ? shareholders.filter(

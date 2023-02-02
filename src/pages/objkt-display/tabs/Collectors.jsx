@@ -10,11 +10,18 @@ export const Collectors = () => {
   /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
 
-  const { syncTaquito, collect, acc, cancel, cancelv1, reswap } =
-    useContext(TeiaContext)
+  const {
+    syncTaquito,
+    collect,
+    proxyAddress,
+    address,
+    cancel,
+    cancelv1,
+    reswap,
+  } = useContext(TeiaContext)
 
   const handleCollect = (listing) => {
-    if (acc === null) {
+    if (address === null) {
       syncTaquito()
     } else {
       collect(listing)
@@ -33,7 +40,8 @@ export const Collectors = () => {
             id={nft.token_id}
             listings={nft.listings}
             handleCollect={handleCollect}
-            acc={acc}
+            address={address}
+            proxyAddress={proxyAddress}
             proxyAdminAddress={proxyAdminAddress}
             cancel={cancel}
             cancelv1={cancelv1}

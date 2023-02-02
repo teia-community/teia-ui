@@ -54,11 +54,10 @@ export const Subjkt = () => {
 
   useEffect(() => {
     const init = async () => {
-      const address = await context.syncTaquito()
-      const { acc, proxyAddress } = context
+      const { address, proxyAddress } = context
 
       // Maybe use proxy address here
-      const cur_address = proxyAddress || address || acc?.address
+      const cur_address = proxyAddress || address
       if (cur_address) {
         setAddress(cur_address)
         const res = await fetchTz(cur_address)

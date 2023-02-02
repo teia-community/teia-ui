@@ -78,7 +78,7 @@ export const Footer = ({ menu, pin }) => {
 
               <ul className={styles.menu_right}>
                 <li className={styles.address}>
-                  {walletPreview(context.acc?.address)}
+                  {walletPreview(context.address)}
                 </li>
                 <MenuItem
                   className={styles.menu_label}

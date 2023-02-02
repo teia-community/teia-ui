@@ -32,9 +32,7 @@ export const MainMenu = () => {
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
-          <li className={styles.address}>
-            {walletPreview(context.acc?.address)}
-          </li>
+          <li className={styles.address}>{walletPreview(context.address)}</li>
           <MenuItem
             className={styles.menu_label}
             label="Mint"

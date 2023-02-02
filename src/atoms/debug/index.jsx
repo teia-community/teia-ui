@@ -76,13 +76,12 @@ export const Debug = () => {
             <h3>Context Extra Storage</h3>
             <LocalKey name="language" />
             <LocalKey name="collab_name" />
-            <LocalKey name="auth" />
             <LocalKey name="beacon:sdk_version" />
             <LocalKey name="beacon:active-account" />
 
             <Line />
             <h3>Context Debug</h3>
-            <ContextValue name="acc" />
+            <ContextValue name="userInfo" />
             <ContextValue name="address" />
             <ContextValue name="proxyAddress" />
             <ContextValue name="proxyName" />

@@ -11,17 +11,17 @@ export default function Sync() {
 
   useEffect(() => {
     const init = async () => {
-      if (!context.acc) {
+      if (!context.address) {
         await context.syncTaquito()
       }
       await context.setAccount()
     }
     init().catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.acc])
+  }, [context.address])
 
   const locationSync = (state) => {
-    const address = context.proxyAddress || context.acc.address
+    const address = context.proxyAddress || context.address
     switch (state) {
       case '/tz':
       case '/feed/friends':
@@ -35,7 +35,7 @@ export default function Sync() {
         return '/'
     }
   }
-  if (context.acc) {
+  if (context.address) {
     return <Navigate to={locationSync(location.state)} replace />
   }
 

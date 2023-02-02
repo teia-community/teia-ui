@@ -10,7 +10,7 @@ import classNames from 'classnames'
 import { Button, Secondary } from '@atoms/button'
 
 export const CreateCollaboration = () => {
-  const { acc } = useContext(TeiaContext)
+  const { address } = useContext(TeiaContext)
 
   // Core collaborators and beneficiaries
   const [editCollaborators, setEditCollaborators] = useState(true)
@@ -85,7 +85,7 @@ export const CreateCollaboration = () => {
   const showCollaboratorsTable =
     editCollaborators || validCollaborators.length > 0
 
-  if (!acc) {
+  if (!address) {
     return (
       <Container>Please sync your wallet to create a collaboration</Container>
     )

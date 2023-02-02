@@ -9,7 +9,7 @@ import { CollabList } from '@components/collab/manage/CollabList'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const {
-    acc,
+    address,
     originatedContract,
     originationOpHash,
     findOriginatedContractFromOpHash,
@@ -38,7 +38,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   }, [originationOpHash, timerEndDate, checkInterval])
 
   useEffect(() => {
-    if (!acc) {
+    if (!address) {
       return
     }
 
@@ -47,7 +47,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
 
     // On boot, see what addresses the synced address can manage
     fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
-      address: acc.address,
+      address,
     }).then(({ data }) => {
       setLoadingCollabs(false)
 
@@ -56,20 +56,20 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
       }
       const allCollabs = data.split_contracts || []
       const adminCollabs = allCollabs.filter(
-        (c) => c.administrator_address === acc.address
+        (c) => c.administrator_address === address
       )
       const participantCollabs = allCollabs.filter(
-        (c) => c.administrator_address !== acc.address
+        (c) => c.administrator_address !== address
       )
 
       // Show admin followed by participant
       const availableCollabs = showAdminOnly
-        ? allCollabs.filter((c) => c.administrator_address === acc.address)
+        ? allCollabs.filter((c) => c.administrator_address === address)
         : [...adminCollabs, ...participantCollabs]
 
       setCollabs(availableCollabs)
     })
-  }, [acc, originatedContract, showAdminOnly])
+  }, [address, originatedContract, showAdminOnly])
 
   const _onTimerComplete = () => {
     findOriginatedContractFromOpHash(originationOpHash)
