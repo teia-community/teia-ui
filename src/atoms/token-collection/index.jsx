@@ -141,7 +141,7 @@ function TokenCollection({
   }
 
   if (!data) {
-    return <Loading message={`Loading ${label}`} />
+    return <Loading message={`Loading ${label || namespace}`} />
   }
   if (walletBlockMap === undefined) {
     throw new Error('Please try again in a few minutes.', {
