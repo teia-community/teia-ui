@@ -8,7 +8,7 @@ export const LocalSettingsContext = createContext()
 export const LocalSettingsProvider = (props) => {
   const [viewMode, setViewMode /*rmViewMode*/] = useLocalStorage(
     'settings:viewMode',
-    'single'
+    'masonry'
   )
   const [nsfwFriendly, setNsfwFriendly /*rmNsfwFriendly*/] = useLocalStorage(
     'settings:nsfwFriendly',
