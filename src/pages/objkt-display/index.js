@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useMemo } from 'react'
 import set from 'lodash/set'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { TeiaContext } from '@context/TeiaContext'
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
@@ -13,7 +13,6 @@ import { ItemInfo } from '@components/item-info'
 import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
-import { ErrorComponent } from '@atoms/error'
 import { Tabs } from '@atoms/tab/Tabs'
 
 const TABS = [
@@ -46,13 +45,14 @@ const TABS = [
     private: true,
   },
 ]
+
 export const ObjktDisplay = () => {
   const { id } = useParams()
   const context = useContext(TeiaContext)
-  const { walletBlockMap } = useSettings()
+  const location = useLocation()
   const address = context.acc?.address
   const proxy = context.proxyAddress
-  const { nsfwMap, underReviewMap } = useSettings()
+  const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
 
   /** @type {{data:import('@types').NFT, error:Error}} */
   const { data: nft, error } = useSWR(
@@ -62,7 +62,19 @@ export const ObjktDisplay = () => {
       const objkt = await fetchObjktDetails(id)
 
       if (!objkt) {
-        throw new Error('unknown objkt')
+        let isnum = /^\d+$/.test(id)
+        if (isnum) {
+          throw new Error(`Cannot find an OBJKT with id: ${id}`, {
+            cause: 'Unknown OBJKT',
+          })
+        }
+
+        throw new Error(
+          `Received a non numeric token_id: ${id}.
+          This can happen if the requested SUBJKT is conflicting with a protected route. 
+          You can still access it by its address (tz/<tz-address>)`,
+          { cause: 'Conflicting route' }
+        )
       }
 
       if (nsfwMap.get(objkt.token_id) === 1) {
@@ -143,11 +155,12 @@ export const ObjktDisplay = () => {
     )
   }
 
+  if (error) {
+    throw error //new Error('Error Fetching OBJKTs for {}')
+  }
+
   return (
     <Page className={styles.profile_page} title={nft?.name}>
-      {error && (
-        <ErrorComponent title="Error Fetching OBJKTs" message={error} />
-      )}
       {nft.restricted && (
         <div className={styles.restricted}>
           Restricted OBJKT. Contact the Teia moderators on{' '}

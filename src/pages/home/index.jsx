@@ -3,8 +3,7 @@
 import React from 'react'
 import { Page } from '@atoms/layout'
 import {
-  Routes,
-  Route,
+  useOutlet,
   // NavLink,
   // createSearchParams,
   // useNavigate,
@@ -13,21 +12,7 @@ import {
 // import { Input } from '@atoms/input'
 
 // import SubjktsSearchResults from './subjkts-search-results'
-import RecentSalesFeed from './feeds/recent-sales-feed'
-import NewObjktsFeed from './feeds/new-objkts-feed'
-import { PakistanFeed, IranFeed, UkraineFeed } from './feeds/fund-feeds'
-import RandomFeed from './feeds/random-feed'
-import {
-  GlbFeed,
-  VideoFeed,
-  HtmlSvgFeed,
-  GifFeed,
-  ImageFeed,
-  AudioFeed,
-} from './feeds/mime-type-feed'
-import TagFeed from './feeds/tag-feed'
-import SearchFeed from './feeds/search-feed'
-import { FriendsFeed } from './feeds/friends-feed'
+import { RecentSalesFeed, SearchFeed } from './feeds'
 
 // import styles from '@style'
 
@@ -50,10 +35,10 @@ import { FriendsFeed } from './feeds/friends-feed'
 // }
 
 export function Home({ isSearch = false }) {
+  const outlet = useOutlet()
   // const [searchParams] = useSearchParams()
   // const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
   // const navigate = useNavigate()
-
   return (
     <Page feed title="Home">
       {/*
@@ -101,29 +86,7 @@ export function Home({ isSearch = false }) {
         {isSearch ? <SubjktsSearchResults /> : null}
       </Container>
        */}
-      {isSearch ? (
-        <SearchFeed />
-      ) : (
-        <Routes path="*">
-          <Route index element={<RecentSalesFeed />} />
-          <Route
-            path="tezospride"
-            element={<TagFeed tag="tezospride" namespace="tezospride" />}
-          />
-          <Route path="iran" element={<IranFeed />} />
-          <Route path="pakistan" element={<PakistanFeed />} />
-          <Route path="ukraine" element={<UkraineFeed />} />
-          <Route path="random" element={<RandomFeed />} />
-          <Route path="newobjkts" element={<NewObjktsFeed />} />
-          <Route path="glb" element={<GlbFeed />} />
-          <Route path="video" element={<VideoFeed />} />
-          <Route path="image" element={<ImageFeed />} />
-          <Route path="audio" element={<AudioFeed />} />
-          <Route path="html-svg" element={<HtmlSvgFeed />} />
-          <Route path="gif" element={<GifFeed />} />
-          <Route path="friends/:address" element={<FriendsFeed />} />
-        </Routes>
-      )}
+      {isSearch ? <SearchFeed /> : outlet || <RecentSalesFeed />}
     </Page>
   )
 }

@@ -4,7 +4,7 @@ import { BaseTokenFieldsFragment } from '@data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
-function NewObjktsFeed() {
+export function NewObjktsFeed() {
   return (
     <TokenCollection
       feeds_menu

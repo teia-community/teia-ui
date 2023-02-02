@@ -1,5 +1,7 @@
+import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
 import { Tags } from '@components/tags'
+import { LocalSettingsProvider, TeiaProvider } from '@context'
 import { About } from '@pages/about'
 import {
   CollabContractsOverview,
@@ -11,6 +13,22 @@ import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
+import FriendsFeed from '@pages/home/feeds/friends-feed'
+import {
+  IranFeed,
+  PakistanFeed,
+  UkraineFeed,
+  AudioFeed,
+  GifFeed,
+  GlbFeed,
+  HtmlSvgFeed,
+  ImageFeed,
+  VideoFeed,
+  NewObjktsFeed,
+  RandomFeed,
+  RecentSalesFeed,
+  TagFeed,
+} from '@pages/home/feeds'
 import { Mint } from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
 import {
@@ -41,25 +59,37 @@ import './styles/index.scss'
 const display_routes = (
   <>
     <Route index element={<Creations />} />
-    <Route path="collection" element={<Collections />} />
-    <Route path="collabs" element={<CollabsTab />} />
+    <Route exact path="collection" element={<Collections />} />
+    <Route exact path="collabs" element={<CollabsTab />} />
   </>
 )
 
 //TODO(mel): Check/Update site map / robot.txt
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/*" element={<App />}>
+    <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
-      <Route path="feed/*" element={<Home />} />
+      <Route path="feed/*" element={<Home />}>
+        <Route index element={<RecentSalesFeed />} />
+        <Route
+          path="tezospride"
+          element={<TagFeed tag="tezospride" namespace="tezospride" />}
+        />
+        <Route path="iran" element={<IranFeed />} />
+        <Route path="pakistan" element={<PakistanFeed />} />
+        <Route path="ukraine" element={<UkraineFeed />} />
+        <Route path="random" element={<RandomFeed />} />
+        <Route path="newobjkts" element={<NewObjktsFeed />} />
+        <Route path="glb" element={<GlbFeed />} />
+        <Route path="video" element={<VideoFeed />} />
+        <Route path="image" element={<ImageFeed />} />
+        <Route path="audio" element={<AudioFeed />} />
+        <Route path="html-svg" element={<HtmlSvgFeed />} />
+        <Route path="gif" element={<GifFeed />} />
+        <Route path="friends/:address" element={<FriendsFeed />} />
+      </Route>
       <Route path="search/*" element={<Home isSearch />} />
-      <Route path="tz/:address/*" element={<Display />}>
-        {display_routes}
-      </Route>
 
-      <Route path=":id/*" element={<Display />}>
-        {display_routes}
-      </Route>
       <Route path="kt/:id" element={<CollabDisplay />} />
       <Route path="collab/:name" element={<CollabDisplay />} />
       <Route exact path="about" element={<About />} />
@@ -80,16 +110,27 @@ const router = createBrowserRouter(
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
       </Route>
-      <Route exact path="subjkt" element={<Subjkt />} />
-      <Route exact path="settings" element={<Settings />} />
+      <Route path="subjkt/*" element={<Subjkt />} />
+      <Route path="settings/*" element={<Settings />} />
       <Route path="tags/:tag" element={<Tags />} />
+      <Route path="tz/:address/*" element={<Display />}>
+        {display_routes}
+      </Route>
+
+      <Route path=":id/*" element={<Display />}>
+        {display_routes}
+      </Route>
     </Route>
   )
 )
 
 ReactDOM.render(
   // <React.StrictMode>
-  <RouterProvider router={router} />,
+  <TeiaProvider>
+    <LocalSettingsProvider>
+      <RouterProvider router={router} />
+    </LocalSettingsProvider>
+  </TeiaProvider>,
   // </React.StrictMode>,
   document.getElementById('root')
 )
