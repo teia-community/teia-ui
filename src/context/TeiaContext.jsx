@@ -355,10 +355,6 @@ class TeiaContextProviderClass extends Component {
         return await batch.send()
       },
 
-      // fullscreen. DO NOT CHANGE!
-      fullscreen: false,
-      setFullscreen: (fullscreen) => this.setState({ fullscreen }),
-
       // --------------------
       // feedback component
       // --------------------

@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import screenfull from 'screenfull'
 import { useInView } from 'react-intersection-observer'
 import classnames from 'classnames'
 import { iOS } from '@utils/os'
-import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import './style.css'
 import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
@@ -26,7 +25,7 @@ import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
  * @param {import("@types").NFT} containerOptions.nft
  * @param {React.ReactNode} containerOptions.children
  * @param {boolean} containerOptions.nofullscreen
- * @param {boolean} containerOptions.interactive - In "detailed" view?
+ * @param {boolean} containerOptions.displayView - On OBJKT display
  *
  **/
 export const Container = ({
@@ -36,8 +35,8 @@ export const Container = ({
   nofullscreen = false,
   //flex = false,
 }) => {
-  const context = useContext(TeiaContext)
   const domElement = useRef()
+  const [fullscreen, setFullscreen] = useState()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -58,9 +57,9 @@ export const Container = ({
       }
 
       if (screenfull.isFullscreen) {
-        context.setFullscreen(true)
+        setFullscreen(true)
       } else {
-        context.setFullscreen(false)
+        setFullscreen(false)
       }
       // simulates resize to fix GLB player
       window.dispatchEvent(new Event('resize'))
@@ -88,7 +87,7 @@ export const Container = ({
 
   const classes = classnames({
     [styles.container]: true,
-    [styles.fullscreen]: context.fullscreen,
+    [styles.fullscreen]: fullscreen,
     [styles.flex]: displayView,
   })
 
@@ -110,18 +109,14 @@ export const Container = ({
             className={
               styles.icon +
               ' svg-icon ' +
-              (context.fullscreen ? styles.icon_fullscreen : '')
+              (fullscreen ? styles.icon_fullscreen : '')
             }
             onKeyPress={toggleFullScreen}
             tabIndex="0"
             role="button"
             aria-label="fullscreen"
           >
-            {context.fullscreen ? (
-              <FullScreenEnterIcon />
-            ) : (
-              <FullScreenExitIcon />
-            )}
+            {fullscreen ? <FullScreenEnterIcon /> : <FullScreenExitIcon />}
           </div>
         )}
       </div>
