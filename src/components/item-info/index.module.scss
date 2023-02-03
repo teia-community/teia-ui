@@ -5,6 +5,7 @@
   display: flex;
   align-items: center;
   flex-direction: row;
+  flex-wrap: wrap;
   font-size: $font-body;
   justify-content: space-between;
   margin-top: 10px;

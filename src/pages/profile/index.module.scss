@@ -12,7 +12,7 @@
 //     }
 //   }
 // }
-
+//TODO: remove all unused / merge collab profile
 .profile {
   display: grid;
 
@@ -23,11 +23,27 @@
 
   .info {
     grid-area: Details;
+    .user {
+      font-size: 24px;
+      @include respond-to('desktop') {
+        font-size: 30px;
+      }
+    }
+    p {
+      font-size: $font-small;
+      @include respond-to('desktop') {
+        font-size: unset;
+      }
+    }
   }
 
   .user_pfp {
     grid-area: Photo;
     justify-self: end;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    justify-content: center;
   }
   .socials {
     display: flex;
@@ -131,10 +147,6 @@
   .cardCollectPrice {
     color: var(--background-color);
   }
-}
-
-.user {
-  font-size: 30px;
 }
 
 .tag {

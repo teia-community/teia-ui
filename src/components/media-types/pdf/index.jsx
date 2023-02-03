@@ -78,11 +78,11 @@ export const PdfComponent = memo(function ({
   const cover = (
     <AnimatePresence>
       <ImageComponent
-        // key={`img-${nft.token_id}`}
+        key={`img-${nft.token_id}`}
         artifactUri={displayUri}
         displayUri={displayUri}
         previewUri={previewUri}
-        displayView={!displayView}
+        displayView={false}
         nft={nft}
       />
       {loading && (
