@@ -169,13 +169,15 @@ export const RenderMediaType = ({
 
     case MIMETYPE.MD:
       return (
-        <MD
-          artifactUri={parsedArtifactUri}
-          displayUri={parsedDisplayUri}
-          displayView={displayView}
-          previewUri={previewUri}
-          nft={nft}
-        />
+        <Container displayView={displayView} nft={nft}>
+          <MD
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        </Container>
       )
 
     default:
