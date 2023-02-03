@@ -1,32 +1,15 @@
 @import '@styles/layout.scss';
+@import '@styles/variables.scss';
 
-.hidden {
-  opacity: 0;
-  transition: opacity 1s;
-}
 .container {
   position: relative;
   display: block;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-
-  &:after {
-    content: '';
-    display: block;
-  }
-
-  iframe {
-    border: none;
-  }
-
-  canvas {
-    max-width: 100%;
-    max-height: 80vh;
-    // margin: 0 auto;
-    // height: auto !important;
-    // width: auto !important;
-  }
+  flex-grow: 1;
+  min-height: 60vh;
+  max-height: $max-token-height;
+  // overflow: hidden;
 
   .pdfNav {
     position: relative;
@@ -40,4 +23,14 @@
       margin: 6px 12px;
     }
   }
+}
+
+.previous_page {
+  position: absolute !important;
+  z-index: 50;
+  // border: 10px solid pink;
+  opacity: 1;
+}
+.hidden {
+  opacity: 0;
 }

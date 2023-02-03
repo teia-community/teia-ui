@@ -1,9 +1,11 @@
 @import '@styles/layout.scss';
+@import '@styles/variables.scss';
+
 .style {
   //min-width: 200px;
   min-height: 300px;
   // min-inline-size: 200px;
-  max-height: 60vh;
+  max-height: $max-token-height;
   max-width: 100%;
 
   margin: 0 auto;

@@ -59,8 +59,28 @@
 //   }
 // }
 
+.feed_container,
+.container {
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+  audio {
+    width: 100%;
+  }
+}
+
 .container {
   img {
     max-height: calc($max-token-height - 20vh);
+  }
+}
+.feed_container {
+  .button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
   }
 }

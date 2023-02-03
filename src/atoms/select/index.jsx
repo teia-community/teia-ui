@@ -24,7 +24,9 @@ const style = {
   menu: (provided, state) => ({
     ...provided,
     backgroundColor: 'var(--background-color)',
+    zIndex: 9999,
   }),
+  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   singleValue: (provided, state) => ({
     ...provided,
     color: 'var(--text-color)',
