@@ -1,9 +1,8 @@
-import { Line } from '@atoms/line/index'
-import React from 'react'
-// import { PauseIcon, PlayIcon } from './icons'
+import React, { useEffect, useRef, useState } from 'react'
 // import { Visualiser } from './visualiser'
 import styles from '@style'
-
+import { PlayIcon, PauseIcon } from '@icons'
+import Button from '@atoms/button/Button'
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
@@ -16,11 +15,16 @@ export const AudioComponent = ({
 }) => {
   // const visualiser = useRef()
   // const [userTouched, setUserTouched] = useState(false)
-  // const [play, setPlay] = useState(false)
-  // const togglePlay = () => {
-  //   setUserTouched(true)
-  //   setPlay(!play)
-  // }
+  const audioElement = useRef()
+  const [play, setPlay] = useState(false)
+  const togglePlay = () => {
+    setPlay(!play)
+  }
+
+  useEffect(() => {
+    if (play) audioElement.current.play()
+    else audioElement.current.pause()
+  }, [play])
 
   // user interaction
   // useEffect(() => {
@@ -41,27 +45,22 @@ export const AudioComponent = ({
 
   return displayView ? (
     <div className={styles.container}>
-      <img
-        style={{ width: '100%' }}
-        src={displayUri}
-        alt={`cover for audio object ${nft.token_id}`}
-      />
-      <Line />
-      <audio
-        style={{ width: '100%' }}
-        src={previewUri ? previewUri : artifactUri}
-        controls
-      />
+      <img src={displayUri} alt={`cover for audio object ${nft.token_id}`} />
+
+      <audio src={previewUri ? previewUri : artifactUri} controls />
     </div>
   ) : (
-    <div>
+    <div className={styles.feed_container}>
       <img alt={`cover for audio object ${nft.token_id}`} src={displayUri} />
-      <br />
-      <audio
-        style={{ display: 'block', margin: '0 auto' }}
-        src={previewUri ? previewUri : artifactUri}
-        controls
-      />
+      <Button className={styles.button} onClick={togglePlay}>
+        {play ? (
+          <PauseIcon width={64} height={64} />
+        ) : (
+          <PlayIcon width={64} height={64} />
+        )}
+      </Button>
+
+      <audio ref={audioElement} src={previewUri ? previewUri : artifactUri} />
     </div>
   )
 }
