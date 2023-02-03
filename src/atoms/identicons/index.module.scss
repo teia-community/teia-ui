@@ -5,7 +5,7 @@
     border-radius: 100%;
     padding: 1px;
     width: 127.5px;
-    height: 127.5px;
+    height: auto;
     //border: 1px solid var(--text-color);
     transition: border-color #{$theme-duration} ease-out;
 

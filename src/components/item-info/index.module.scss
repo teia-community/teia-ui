@@ -190,6 +190,8 @@ span[data-tooltip][data-position='top']:after {
 
 .main_swap {
   display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
   justify-content: flex-end;
   width: 100%;
   text-align: center;

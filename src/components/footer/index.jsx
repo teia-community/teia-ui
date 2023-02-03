@@ -106,10 +106,12 @@ export const Footer = ({ menu, pin }) => {
                 />
               </ul>
             </div>
-            <div className={styles.state_buttons}>
-              <Toggle box onToggle={toggleTheme} initial={theme === 'dark'} />
-              <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
-            </div>
+            {false && (
+              <div className={styles.state_buttons}>
+                <Toggle box onToggle={toggleTheme} initial={theme === 'dark'} />
+                <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
+              </div>
+            )}
           </>
         )}
 
