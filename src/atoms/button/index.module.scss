@@ -52,8 +52,8 @@
   &.selected,
   &.active {
     // fake bold to avoid shift... 96% support, no Opera or IE
-    // -webkit-text-stroke: 0.5px var(--text-color);
-    font-weight: bold;
+    -webkit-text-stroke: 0.5px var(--text-color);
+    //font-weight: bold;
     // margin-bottom: -1px;
     // border-bottom: 1px solid var(--gray-60);
   }
