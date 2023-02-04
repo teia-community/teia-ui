@@ -48,8 +48,7 @@ export const EventCard = ({ event }) => {
         <Markdown>{event.content}</Markdown>
         {event.link && (
           <a target="_blank" rel="noreferrer" href={event.link}>
-            {' '}
-            More info >>
+            {'More info >> '}
           </a>
         )}
       </motion.div>

@@ -4,7 +4,7 @@ import { Header } from '@components/header'
 import { FeedbackComponent } from '@components/feedback'
 import styles from '@style'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTitle } from 'hooks/use-title'
+import { useTitle } from '@hooks/use-title'
 import { Footer } from '@components/footer'
 
 import { IconCache } from '@utils/with-icon'

@@ -1,7 +1,7 @@
 import { Input } from '@atoms/input'
 import styles from '../../collab/index.module.scss'
 import { Button, Secondary } from '@atoms/button'
-import { CloseIcon } from '../index'
+import { CloseIcon } from '@icons'
 
 export const TxRow = ({ tx, onUpdate, onAdd, onRemove }) => {
   const _update = (key, value) => {

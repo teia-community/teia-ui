@@ -37,7 +37,7 @@ import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 import { CollabContractsOverview } from '../collaborate'
 import styles from '@style'
-import useSettings from 'hooks/use-settings'
+import useSettings from '@hooks/use-settings'
 import {
   extensionFromMimetype,
   generateCompressedImage,

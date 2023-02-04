@@ -14,12 +14,13 @@ const hex2buf = (hex) =>
   )
 
 const b58cdecode = (enc, prefix) => {
-  const bs58check = require('bs58check')
-  bs58check.decode(enc).slice(prefix.length)
+  return import('bs58check').then((bs58check) =>
+    bs58check.decode(enc).slice(prefix.length)
+  )
 }
 
 export const verify = async (bytes, sig, pk) => {
-  const _sodium = require('libsodium-wrappers')
+  const _sodium = await import('libsodium-wrappers')
   const sodium = await _sodium.await
   return sodium.crypto_sign_verify_detached(
     sig,

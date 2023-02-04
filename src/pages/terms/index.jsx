@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Page, Container } from '@atoms/layout'
 
 import Markdown from 'markdown-to-jsx'
-import useLanguage from 'hooks/use-language'
+import useLanguage from '@hooks/use-language'
 
 export const Terms = () => {
   // eslint-disable-next-line no-unused-vars

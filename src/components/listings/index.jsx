@@ -5,7 +5,7 @@ import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
-import useSettings from 'hooks/use-settings'
+import useSettings from '@hooks/use-settings'
 import { Line } from '@atoms/line'
 
 // TODO: add support for all kind of listings

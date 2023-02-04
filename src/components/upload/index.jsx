@@ -3,8 +3,6 @@ import useLanguage from '@hooks/use-language'
 import { getMimeType } from '@utils/sanitise'
 import styles from '@style'
 
-const Buffer = require('buffer').Buffer
-
 /**
  * Upload component
  * @param {Object} uploadProps
