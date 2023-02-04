@@ -95,11 +95,7 @@ export const PdfComponent = memo(function ({
       )}
     </AnimatePresence>
   )
-  console.log({
-    pageLoading,
-    pageNumber,
-    renderedPageNumber,
-  })
+
   // const loading = renderedPageNumber !== pageNumber
   if (!displayView) return cover
   return (

@@ -13,6 +13,7 @@ export const VideoComponent = ({
   inView,
   displayView,
   nft,
+  forceVideo: force,
 }) => {
   const domElement = useRef()
 
@@ -52,20 +53,23 @@ export const VideoComponent = ({
     }
   }, [inView, displayView])
 
-  return displayView ? (
-    <video
-      ref={domElement}
-      className={styles.displayviewVideo}
-      autoPlay
-      playsInline
-      muted
-      loop
-      controls
-      src={previewUri ? previewUri : artifactUri}
-      poster={displayUri}
-      title={`video object ${nft.token_id}`}
-    />
-  ) : (
+  if (displayView || force)
+    return (
+      <video
+        ref={domElement}
+        className={styles.displayviewVideo}
+        autoPlay
+        playsInline
+        muted
+        loop
+        controls={displayView}
+        src={previewUri ? previewUri : artifactUri}
+        poster={displayUri}
+        title={`video object ${nft.token_id}`}
+      />
+    )
+
+  return (
     <ImageComponent
       artifactUri={artifactUri}
       displayUri={displayUri}
