@@ -3,6 +3,7 @@ import base from 'base-x'
 import styles from '@style'
 import { HashToURL } from '@utils'
 import { memo } from 'react'
+import { Buffer } from 'buffer'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -78,7 +79,7 @@ function dummyAddress() {
 function avatar(address) {
   address = address ? address : dummyAddress()
   const decoded = base58.decode(address.trim().substr(3))
-  const hex = decoded.toString('hex')
+  const hex = Buffer.from(decoded).toString('hex')
   const check = hex.split('').reduce((sum, x) => sum + parseInt(x, 16), 0)
   const sum = hex
     .split('')
@@ -364,6 +365,7 @@ export const Identicon = ({ address = '', logo }) => {
   }
 
   const [path, xsa] = avatar(address)
+  console.log({ path, xsa })
   const identicon = identicons[xsa % identicons.length](path, address)
 
   return <div className={styles.identicon}>{identicon}</div>

@@ -21,7 +21,7 @@ export const RotatingLogoRemote = ({ className, seed = 1 }) => {
     <div className={`${styles.logo} ${className ? className : ''}`}>
       {true && theme !== 'unset' && logo && (
         <img
-          src={`${process.env.REACT_APP_LOGOS}/logos${
+          src={`${import.meta.env.VITE_LOGOS}/logos${
             logo.themable ? `/${theme}` : ''
           }${logo.collection ? `/${logo.collection}` : ''}/${logo.name}`}
           alt="teia-logo"

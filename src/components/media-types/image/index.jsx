@@ -20,8 +20,8 @@ export const ImageComponent = ({
     src = previewUri
   } else if (displayView) {
     src = artifactUri
-  } else if (process.env.REACT_APP_IMGPROXY && nft?.teia_meta?.preview_uri) {
-    src = `${process.env.REACT_APP_IMGPROXY}${nft.teia_meta.preview_uri}`
+  } else if (import.meta.env.VITE_IMGPROXY && nft?.teia_meta?.preview_uri) {
+    src = `${import.meta.env.VITE_IMGPROXY}${nft.teia_meta.preview_uri}`
   } else {
     src = displayUri
   }

@@ -6,6 +6,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
 import { useOutletContext } from 'react-router'
+import { Buffer } from 'buffer'
 
 /**
  * The Transfer Tab
@@ -122,17 +123,19 @@ export const Transfer = () => {
             each.
           </p>
           <p>You currently have {tokenCount} editions available.</p>
-          <div className={tableStyle}>
-            {txs.map((tx, index) => (
-              <TxRow
-                key={`transfer-${index}`}
-                tx={tx}
-                onUpdate={(tx) => _update(index, tx)}
-                onAdd={_addTransfer}
-                onRemove={index < txs.length - 1 ? _deleteTransfer : null}
-              />
-            ))}
-          </div>
+          <table className={tableStyle}>
+            <tbody>
+              {txs.map((tx, index) => (
+                <TxRow
+                  key={`transfer-${index}`}
+                  tx={tx}
+                  onUpdate={(tx) => _update(index, tx)}
+                  onAdd={_addTransfer}
+                  onRemove={index < txs.length - 1 ? _deleteTransfer : null}
+                />
+              ))}
+            </tbody>
+          </table>
 
           {/* <div className={styles.upload_container}>
                     <label>

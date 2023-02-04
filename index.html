@@ -31,7 +31,7 @@
     <link rel="shortcut icon" href="/icons/favicon.ico?v=1" />
     <link rel="preconnect" href="https://cache.teia.rocks" />
     <link rel="preconnect" href="https://raw.githubusercontent.com" />
-    <meta name="build-commit" content="%REACT_APP_BUILD_COMMIT%" />
+    <meta name="build-commit" content="<%=BUILD_COMMIT%>" />
     <meta name="msapplication-TileColor" content="#ffc40d" />
     <meta name="msapplication-config" content="/icons/browserconfig.xml?v=1" />
     <meta name="theme-color" content="#ffffff" />
@@ -68,5 +68,7 @@
       >You need to enable JavaScript to run this app.</noscript
     >
     <div id="root"></div>
+    <script type="module" src="/src/node_polyfill.js"></script>
+    <script type="module" src="/src/index.jsx"></script>
   </body>
 </html>

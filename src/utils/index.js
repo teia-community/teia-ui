@@ -39,7 +39,7 @@ export const fetchJSON = async (url) => {
  */
 const CIDToURL = (
   cid,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
   options
 ) => {
   if (cid == null) {
@@ -84,7 +84,7 @@ const CIDToURL = (
  */
 export const HashToURL = (
   hash,
-  type = process.env.REACT_APP_IPFS_DEFAULT_GATEWAY,
+  type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
   options
 ) => {
   // when on preview the hash might be undefined.

@@ -16,7 +16,7 @@ const App = () => {
       {process.env.NODE_ENV === 'development' && <Debug />}
       {/* <ScrollToTop /> */}
       <ScrollRestoration getKey={(location, matches) => location.key} />
-      <AnimatePresence exitBeforeEnter initial={false}>
+      <AnimatePresence mode="wait" initial={false}>
         <Outlet />
       </AnimatePresence>
     </>

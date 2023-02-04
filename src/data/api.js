@@ -46,7 +46,7 @@ fragment baseTokenFields on tokens {
 `
 
 export async function fetchGraphQL(operationsDoc, operationName, variables) {
-  const result = await fetch(process.env.REACT_APP_TEIA_GRAPHQL_API, {
+  const result = await fetch(import.meta.env.VITE_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
@@ -246,7 +246,7 @@ export async function fetchObjktDetails(id) {
  * Get User claims from their tzprofile
  */
 const GetUserClaims = async (walletAddr) => {
-  return await axios.post(process.env.REACT_APP_TZPROFILES_GRAPHQL_API, {
+  return await axios.post(import.meta.env.VITE_TZPROFILES_GRAPHQL_API, {
     query: `query MyQuery { tzprofiles_by_pk(account: "${walletAddr}") { valid_claims } }`,
     variables: null,
     operationName: 'MyQuery',

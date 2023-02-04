@@ -119,7 +119,7 @@ function TokenCollection({
     disable ? null : [namespace, ...swrParams],
     async (ns) => {
       return typeof query === 'string'
-        ? request(process.env.REACT_APP_TEIA_GRAPHQL_API, query, {
+        ? request(import.meta.env.VITE_TEIA_GRAPHQL_API, query, {
             ...variables,
             ...(maxItems ? { limit: maxItems } : {}),
           })

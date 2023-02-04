@@ -46,3 +46,23 @@ amplifytools.xcconfig
 /playwright-report/
 /playwright/.cache/
 screenshot/
+
+# react-pdf
+public/standard_fonts
+public/cmaps
+public/pdf.worker.min.js
+
+
+
+
+src/icons/svgs/rotating_logos/julioglatt_01.svg
+src/icons/svgs/rotating_logos/julioglatt_02.svg
+src/icons/svgs/rotating_logos/julioglatt_03.svg
+src/icons/svgs/rotating_logos/julioglatt_04.svg
+src/icons/svgs/rotating_logos/julioglatt_05.svg
+src/icons/svgs/rotating_logos/julioglatt_06.svg
+src/icons/svgs/rotating_logos/merchantcoppola_01.svg
+src/icons/svgs/rotating_logos/serg_alec_horomox_01.svg
+src/icons/svgs/rotating_logos/slinkous_01.svg
+src/icons/svgs/rotating_logos/somfay_01.svg
+src/icons/svgs/rotating_logos/somfay_02.svg
