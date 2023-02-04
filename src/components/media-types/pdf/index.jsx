@@ -132,13 +132,13 @@ export const PdfComponent = memo(function ({
         <>
           <div className={styles.pdfNav}>
             <Button disabled={pageNumber <= 1} onClick={previousPage}>
-              Prev «
+              {'Prev «'}
             </Button>
             <p>
               Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
             </p>
             <Button disabled={pageNumber >= numPages} onClick={nextPage}>
-              >» Next
+              {'>» Next'}
             </Button>
           </div>
         </>

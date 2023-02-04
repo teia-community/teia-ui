@@ -1,6 +1,5 @@
 import { HEN_CONTRACT_FA2 } from '@constants'
-const axios = require('axios')
-
+import axios from 'axios'
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
   artifact_uri

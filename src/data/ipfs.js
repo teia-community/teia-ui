@@ -1,8 +1,7 @@
 import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 
 import mime from 'mime-types'
-const { Buffer } = require('buffer')
-const axios = require('axios')
+import axios from 'axios'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder

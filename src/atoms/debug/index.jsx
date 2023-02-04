@@ -10,7 +10,7 @@ import { get } from 'lodash'
 const LocalKey = ({ name }) => {
   return (
     <p>
-      <span className={styles.name}>{name} -></span>{' '}
+      <span className={styles.name}>{`${name} -> `}</span>
       {localStorage.getItem(name)}
     </p>
   )
@@ -41,7 +41,7 @@ export const Debug = () => {
   const ContextValue = ({ name }) => {
     return (
       <p>
-        <span className={styles.name}>{name} -></span>{' '}
+        <span className={styles.name}>{`${name} -> `}</span>
         {JSON.stringify(get(ctx, name))}
       </p>
     )

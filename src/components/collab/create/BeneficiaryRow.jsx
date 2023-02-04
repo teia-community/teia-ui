@@ -4,7 +4,7 @@ import { TipSelector } from './TipSelector'
 import styles from '../index.module.scss'
 import inputStyles from '@atoms/input/index.module.scss'
 import classNames from 'classnames'
-import { CloseIcon } from '..'
+import { CloseIcon } from '@icons'
 import { GetUserMetadata } from '@data/api'
 
 export const BeneficiaryRow = ({
