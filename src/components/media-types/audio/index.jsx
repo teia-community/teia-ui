@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from '@style'
 import { PlayIcon, PauseIcon } from '@icons'
 import Button from '@atoms/button/Button'
+import { PATH } from '@constants'
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
@@ -22,6 +23,7 @@ export const AudioComponent = ({
   }
 
   useEffect(() => {
+    if (!audioElement.current) return
     if (play) audioElement.current.play()
     else audioElement.current.pause()
   }, [play])
@@ -51,10 +53,12 @@ export const AudioComponent = ({
     </div>
   ) : (
     <div className={styles.feed_container}>
-      <img alt={`cover for audio object ${nft.token_id}`} src={displayUri} />
+      <Button to={`${PATH.OBJKT}/${nft.token_id}`}>
+        <img alt={`cover for audio object ${nft.token_id}`} src={displayUri} />
+      </Button>
       <Button className={styles.button} onClick={togglePlay}>
         {play ? (
-          <PauseIcon width={64} height={64} />
+          <PauseIcon fill="red" width={64} height={64} />
         ) : (
           <PlayIcon width={64} height={64} />
         )}
