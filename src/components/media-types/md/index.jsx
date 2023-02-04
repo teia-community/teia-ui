@@ -3,7 +3,8 @@ import Markdown from 'markdown-to-jsx'
 import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import styles from '@style'
-const axios = require('axios')
+
+import axios from 'axios'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
