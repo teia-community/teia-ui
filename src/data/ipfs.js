@@ -2,6 +2,7 @@ import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 
 import mime from 'mime-types'
 import axios from 'axios'
+import { Buffer } from 'buffer'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder
@@ -24,7 +25,7 @@ export async function uploadFileToIPFSProxy(file) {
   form.append('asset', new File([file.blob], file.path, { type: file_type }))
 
   const res = await axios.post(
-    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/single`,
+    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`,
     form,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -51,7 +52,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   })
 
   const res = await axios.post(
-    `${process.env.REACT_APP_IPFS_UPLOAD_PROXY}/multiple`,
+    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/multiple`,
     form,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
