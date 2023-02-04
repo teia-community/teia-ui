@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { HashToURL } from '@utils'
 import { MIMETYPE } from '@constants'
 
@@ -33,6 +33,7 @@ export const RenderMediaType = ({
   previewDisplayUri,
   displayView,
 }) => {
+  const [forceArtifact, setForceArtifact] = useState(false)
   const parsedArtifactUri = useMemo(
     () =>
       nft.artifact_uri
@@ -44,9 +45,13 @@ export const RenderMediaType = ({
     if (previewDisplayUri) {
       return previewDisplayUri
     }
-    return nft.display_uri
-      ? HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
-      : ''
+    if (nft.display_uri)
+      return HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
+
+    if (nft.mime_type.startsWith('video')) {
+      setForceArtifact(true)
+      return HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
+    }
   }, [nft, previewDisplayUri])
 
   if (!nft) {
@@ -119,6 +124,7 @@ export const RenderMediaType = ({
             displayView={displayView}
             previewUri={previewUri}
             nft={nft}
+            forceVideo={forceArtifact}
           />
         </Container>
       )
