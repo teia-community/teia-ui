@@ -58,9 +58,9 @@ export const AudioComponent = ({
       </Button>
       <Button className={styles.button} onClick={togglePlay}>
         {play ? (
-          <PauseIcon fill="red" width={64} height={64} />
+          <PauseIcon fill="var(--gray-10)" width={64} height={64} />
         ) : (
-          <PlayIcon width={64} height={64} />
+          <PlayIcon fill="var(--gray-10)" width={64} height={64} />
         )}
       </Button>
 
