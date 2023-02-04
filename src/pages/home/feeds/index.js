@@ -8,6 +8,7 @@ export {
   ImageFeed,
   VideoFeed,
   PdfFeed,
+  MarkdownFeed,
 } from './mime-type-feed'
 
 export { IranFeed, PakistanFeed, UkraineFeed } from './fund-feeds'

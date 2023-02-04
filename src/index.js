@@ -29,6 +29,7 @@ import {
   RecentSalesFeed,
   TagFeed,
   PdfFeed,
+  MarkdownFeed,
 } from '@pages/home/feeds'
 import { Mint } from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -88,6 +89,7 @@ const router = createBrowserRouter(
         <Route path="audio" element={<AudioFeed />} />
         <Route path="html-svg" element={<HtmlSvgFeed />} />
         <Route path="pdf" element={<PdfFeed />} />
+        <Route path="md" element={<MarkdownFeed />} />
 
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />
