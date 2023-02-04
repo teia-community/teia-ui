@@ -39,7 +39,7 @@ export const RotatingLogo = ({ className, seed = 1 }) => {
   }, [seed])
   return (
     <div>
-      <Logo width="132px" />
+      <Logo fill="var(--text-color)" width="132px" />
     </div>
   )
 }
