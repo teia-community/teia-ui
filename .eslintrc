@@ -3,5 +3,6 @@
   "plugins": ["jsx-a11y"],
   "rules": {
     "jsx-a11y/media-has-caption": "off"
-  }
+  },
+  "ignorePatterns": ["**/*.html"]
 }

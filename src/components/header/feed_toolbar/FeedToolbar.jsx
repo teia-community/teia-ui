@@ -43,6 +43,7 @@ const locationMap = new Map([
   ['/feed/html-svg', 'HTML & SVG'],
   ['/feed/gif', 'GIF'],
   ['/feed/pdf', 'PDF'],
+  ['/feed/md', 'Markdown'],
 ])
 
 const locationNeedSync = ['/feed/friends']

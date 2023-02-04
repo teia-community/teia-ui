@@ -76,6 +76,16 @@ export function PdfFeed() {
   )
 }
 
+export function MarkdownFeed() {
+  return (
+    <MimeTypeFeed
+      label="Markdown OBJKTs"
+      namespace="md-feed"
+      mimeTypes={['text/markdown']}
+    />
+  )
+}
+
 export function ImageFeed() {
   return (
     <MimeTypeFeed
