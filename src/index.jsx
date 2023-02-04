@@ -47,7 +47,7 @@ import Creations from '@pages/profile/creations'
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -130,15 +130,14 @@ const router = createBrowserRouter(
   )
 )
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <TeiaProvider>
     <LocalSettingsProvider>
       <RouterProvider router={router} />
     </LocalSettingsProvider>
-  </TeiaProvider>,
+  </TeiaProvider>
   // </React.StrictMode>,
-  document.getElementById('root')
 )
 
 // If you want your app to work offline and load faster, you can change

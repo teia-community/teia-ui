@@ -11,6 +11,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import _ from 'lodash'
 import styles from '@style'
 import { Line } from '@atoms/line'
+import { Buffer } from 'buffer'
 
 const query_tz = `
 query addressQuery($address: String!) {
