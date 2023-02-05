@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
-
+import eslintPlugin from 'vite-plugin-eslint'
 import { splitVendorChunkPlugin } from 'vite'
 import { copySync } from 'fs-extra'
 import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
@@ -80,6 +80,7 @@ export default defineConfig(({ mode }) => {
     clearScreen: prod,
     appType: 'mpa',
     plugins: [
+      eslintPlugin(),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
