@@ -41,10 +41,11 @@
     "vite-plugin-ejs": "^1.6.4"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "analyze": "source-map-explorer 'build/assets/*.js'",
     "start": "vite",
     "serve": "vite preview",
     "build": "vite build",
+    "build-dev": "vite --mode development build",
     "test": "vite test",
     "screenshots": "playwright test",
     "eject": "react-scripts eject",
