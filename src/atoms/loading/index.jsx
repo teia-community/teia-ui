@@ -1,7 +1,6 @@
 import styles from '@style'
-import { memo } from 'react'
 
-export const Loading = memo(({ message }) => {
+export const Loading = ({ message }) => {
   return (
     <div className={styles.container}>
       <div className={styles.loader}>
@@ -10,4 +9,4 @@ export const Loading = memo(({ message }) => {
       </div>
     </div>
   )
-})
+}
