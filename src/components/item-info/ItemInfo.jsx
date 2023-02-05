@@ -76,7 +76,13 @@ const ItemInfo = ({ nft }) => {
               {isCollab ? (
                 <CollabIssuerInfo creator={nft.artist_profile} />
               ) : (
-                <Button to={`${PATH.ISSUER}/${nft.artist_address}`}>
+                <Button
+                  to={
+                    nft.artist_profile?.name
+                      ? `/${nft.artist_profile.name}`
+                      : `${PATH.ISSUER}/${nft.artist_address}`
+                  }
+                >
                   {nft.artist_profile?.name
                     ? nft.artist_profile.name
                     : walletPreview(nft.artist_address)}
