@@ -14,7 +14,10 @@
   }
 
   &.blur {
-    filter: blur(1.1rem);
+    img,
+    video {
+      filter: blur(1.1rem);
+    }
   }
   &.photo_protect {
     filter: blur(0.3em) brightness(0.2) grayscale(1);

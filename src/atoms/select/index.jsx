@@ -44,6 +44,7 @@ const Select = ({
   label,
   alt,
   value,
+  search = false,
   defaultValue,
   options,
   onChange = () => null,
@@ -65,6 +66,8 @@ const Select = ({
       options={options}
       disabled={disabled}
       placeholder={placeholder}
+      isSearchable={search}
+      menuPortalTarget={document.querySelector('body')}
       value={value === (null || undefined) ? '' : value}
       {...props}
     />
