@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from '@atoms/button'
 import { Container } from '@atoms/layout'
 import styles from '@style'

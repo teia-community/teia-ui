@@ -1,4 +1,3 @@
-import React from 'react'
 import { Page } from '@atoms/layout'
 import styles from '@style'
 import { ReactComponent as AboutMD } from '../../lang/en/about.md'

@@ -1,7 +1,6 @@
 import useLocalSettings from '@hooks/use-local-settings'
 import useSettings from '@hooks/use-settings'
 import styles from '@style'
-import React from 'react'
 import { memo } from 'react'
 import { useMemo } from 'react'
 import { RotatingLogoSVG } from '@icons'

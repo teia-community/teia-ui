@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 // import { Visualiser } from './visualiser'
 import styles from '@style'
 import { PlayIcon, PauseIcon } from '@icons'

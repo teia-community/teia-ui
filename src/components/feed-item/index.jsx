@@ -1,4 +1,3 @@
-import React from 'react'
 import { PATH } from '@constants'
 import { ItemInfoCompact } from '@components/item-info'
 import { RenderMediaType } from '@components/media-types'

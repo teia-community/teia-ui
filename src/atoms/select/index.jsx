@@ -1,4 +1,3 @@
-import React from 'react'
 import styles from '@style'
 import ReactSelect from 'react-select'
 import { memo } from 'react'

@@ -91,7 +91,7 @@ const blobToDataURL = async (blob) => {
  * @returns {Promise<File|Blob>}
  */
 export const compressImage = (file, options) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     new Compressor(file, {
       ...options,
       success(blob) {
