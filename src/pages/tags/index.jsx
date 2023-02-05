@@ -8,9 +8,7 @@ export const Tags = () => {
 
   return (
     <Page title={`Tag ${tag}`}>
-      <div className="tag-view">
-        <TagFeed tag={tag} namespace={`tag_${tag}`} />
-      </div>
+      <TagFeed tag={tag} namespace={`tag_${tag}`} />
     </Page>
   )
 }

@@ -1,6 +1,6 @@
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
 import { CollabsTab } from '@components/collab/show/CollabsTab'
-import { Tags } from '@components/tags'
+import { Tags } from '@pages/tags/index'
 import { LocalSettingsProvider, TeiaProvider } from '@context'
 import { About } from '@pages/about'
 import {
