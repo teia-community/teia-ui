@@ -19,13 +19,12 @@
     cursor: pointer;
   }
   img {
-    // padding-right: 1em;
     margin-right: 0.5em;
   }
 }
 
 .feed_info {
-  border: 0.5px white solid;
+  border: 1px var(--gray-10) solid;
   width: 100%;
   margin: auto;
   padding: 1em;
