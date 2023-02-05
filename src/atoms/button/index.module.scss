@@ -14,7 +14,7 @@
 
   font-family: var(--text-font);
   word-break: normal;
-  font-size: $font-body;
+  font-size: var(--font-body);
 
   &.fit {
     display: contents;
@@ -118,6 +118,7 @@ $border: 2px;
   cursor: pointer;
 
   font-weight: 700;
+  text-align: center;
 
   padding: $border 16px;
   width: 100%;

@@ -89,6 +89,7 @@ export const Container = ({
     [styles.container]: true,
     [styles.fullscreen]: fullscreen,
     [styles.flex]: displayView,
+    [styles.feed]: !displayView,
   })
 
   const childrenWithProps = React.Children.map(children, (child) => {

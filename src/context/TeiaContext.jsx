@@ -820,15 +820,19 @@ class TeiaContextProviderClass extends Component {
       collapsed: true,
 
       toggleMenu: () => {
-        document.body.style.overflowY = this.state.collapsed ? 'scroll' : null
-        document.body.style.position = this.state.collapsed ? 'fixed' : null
+        for (const item of [document.body.parentElement]) {
+          item.style.overflowY = this.state.collapsed ? 'scroll' : null
+          item.style.position = this.state.collapsed ? 'fixed' : null
+        }
         this.setState({ collapsed: !this.state.collapsed })
       },
 
       collapseMenu: (collapsed) => {
         this.setState({ collapsed })
-        document.body.style.overflowY = collapsed ? null : 'scroll'
-        document.body.style.position = collapsed ? null : 'fixed'
+        for (const item of [document.body.parentElement]) {
+          item.style.overflowY = collapsed ? null : 'scroll'
+          item.style.position = collapsed ? null : 'fixed'
+        }
       },
 
       getStyle: (style) =>

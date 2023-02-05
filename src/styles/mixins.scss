@@ -7,7 +7,7 @@
   user-select: none;
   background-color: transparent;
   cursor: pointer;
-  font-size: $font-body;
+  font-size: var(--font-body);
 
   &:focus {
     outline: 0;

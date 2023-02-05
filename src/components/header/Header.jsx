@@ -21,6 +21,7 @@ import { useMedia } from 'react-use'
 import EventCard from './events/EventCard'
 import { Line } from '@atoms/line'
 import { ConfigIcon } from '@icons'
+import classNames from 'classnames'
 
 export const Header = () => {
   const context = useContext(TeiaContext)
@@ -88,16 +89,18 @@ export const Header = () => {
     }
   }
 
+  const container_classes = classNames({
+    [styles.grid]: true,
+    // [styles.large]: onHome,
+    [styles.fill_bg]: !context.collapsed,
+  })
+
   return (
     <>
       <EventBanner />
       <AnimatePresence>{!context.collapsed && <MainMenu />}</AnimatePresence>
       <header className={`${styles.container}`}>
-        <div
-          className={`${styles.grid} ${onHome ? styles.large : null} ${
-            !context.collapsed ? styles.fill_bg : null
-          }`}
-        >
+        <div className={container_classes}>
           <div className={styles.left}>
             <DropdownButton
               alt={'events dropdown'}

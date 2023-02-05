@@ -15,8 +15,14 @@
   }
 }
 .content {
+  padding: 1em;
+  text-align: center;
   position: relative;
   pointer-events: all;
+
+  @include respond-to('tablet') {
+    text-align: right;
+  }
 
   width: 100%;
   max-width: var(--max-width-internal);
@@ -28,8 +34,8 @@
 
   grid-template-areas:
     'Copyright Copyright'
-    'Menu Tools';
-  gap: 0px 10px;
+    'Menu Menu';
+  gap: 20px 10px;
   align-items: flex-start;
 
   @include respond-to('tablet') {

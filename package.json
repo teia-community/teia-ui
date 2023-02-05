@@ -46,6 +46,7 @@
     "serve": "vite preview",
     "build": "vite build",
     "test": "vite test",
+    "screenshots": "playwright test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
     "prepare": "husky install",

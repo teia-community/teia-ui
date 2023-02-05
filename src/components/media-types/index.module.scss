@@ -13,7 +13,9 @@
 .container {
   /* FOR DEBUG (keep) */
   /*background-color: var(--gray-10);*/
-
+  &.feed {
+    overflow: hidden;
+  }
   position: relative;
   min-width: 100px;
   min-height: 100px;

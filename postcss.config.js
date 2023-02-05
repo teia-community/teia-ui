@@ -4,7 +4,7 @@ const cssnano = require('cssnano')
 module.exports = {
   plugins: [
     cssnano({ preset: 'default' }),
-    fixFlex,
+    fixFlex(),
     postcssPresetEnv({
       autoprefixer: {
         flexbox: 'no-2009',

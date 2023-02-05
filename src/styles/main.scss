@@ -2,6 +2,12 @@
 @import 'typography.scss';
 @import 'mixins.scss';
 
+:root {
+  --font-body: 13px;
+  @include respond-to('desktop') {
+    --font-body: 16px;
+  }
+}
 html {
   margin: 0;
   padding: 0;
@@ -16,7 +22,8 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   transition: var(--body-transition);
-  font-size: $font-body;
+  font-size: var(--font-body);
+
   line-height: 150%;
   width: 100%;
 }
@@ -43,26 +50,26 @@ p {
   line-height: 150%;
 }
 h1 {
-  font-size: 32px;
+  font-size: 24px;
   line-height: 125%;
-  @include respond-to('phone') {
-    font-size: 24px;
+  @include respond-to('desktop') {
+    font-size: 32px;
   }
 }
 
 h2 {
-  font-size: 26px;
+  font-size: 22px;
   line-height: 125%;
-  @include respond-to('phone') {
-    font-size: 22px;
+  @include respond-to('dekstop') {
+    font-size: 26px;
   }
 }
 
 h3 {
-  font-size: 23px;
+  font-size: 20px;
   line-height: 125%;
-  @include respond-to('phone') {
-    font-size: 20px;
+  @include respond-to('desktop') {
+    font-size: 23px;
   }
 }
 
