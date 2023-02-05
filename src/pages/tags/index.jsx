@@ -7,7 +7,7 @@ export const Tags = () => {
   const { tag } = useParams()
 
   return (
-    <Page title={`Tag ${tag}`}>
+    <Page feed title={`Tag ${tag}`}>
       <TagFeed tag={tag} namespace={`tag_${tag}`} />
     </Page>
   )
