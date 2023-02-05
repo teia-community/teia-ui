@@ -37,6 +37,7 @@ const ItemInfoCompact = ({ nft }) => {
       </Button> */}
       <Button
         className={styles.artist}
+        activeClass={styles.active}
         alt={`Go to artist page of token #${nft.token_id}`}
         to={
           nft.artist_profile?.name
