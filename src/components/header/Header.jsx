@@ -26,22 +26,27 @@ export const Header = () => {
   const context = useContext(TeiaContext)
   const navigate = useNavigate()
   const location = useLocation()
+
   const isWide = useMedia('(min-width: 600px)')
 
   const [logoSeed, setLogoSeed] = useState(3)
   /** the header is a bit larger just on home */
   const [onHome, setOnHome] = useState()
 
+  const [syncLabel, setSyncLabel] = useState('Sync')
+  const [walletLabel, setWalletLabel] = useState('')
+
+  const [accountPreview, setAccountPreview] = useState('')
+
   useEffect(() => {
     context.setAccount()
     setOnHome(location.pathname === '/')
   }, [])
 
-  const [syncLabel, setSyncLabel] = useState('Sync')
-  const [accountPreview, setAccountPreview] = useState('')
-
   // on Menu Toggle or Sign in
   useEffect(() => {
+    setSyncLabel(context.address ? 'Unsync' : 'Sync')
+
     if (context.address) {
       // is menu closed?
       if (context.collapsed) {
@@ -51,20 +56,16 @@ export const Header = () => {
         const userName = context.userInfo?.name
           ? `(${context.userInfo.name})`
           : ''
-        setSyncLabel(
-          walletPreview(context.address) + (proxyAddress || userName)
+        setWalletLabel(
+          () => walletPreview(context.address) + (proxyAddress || userName)
         )
-        setAccountPreview(
+        setAccountPreview(() =>
           syncLabel
             .slice(syncLabel.length - 5, syncLabel.length)
             .split('')
             .join(' ')
         )
-      } else {
-        setSyncLabel('Unsync')
       }
-    } else {
-      setSyncLabel('Sync')
     }
   }, [context.address, context.collapsed])
 
@@ -141,7 +142,7 @@ export const Header = () => {
                   onTo={() => context.collapseMenu(true)}
                   className={styles.config_button}
                 >
-                  <ConfigIcon width={16} height={16} />
+                  <ConfigIcon fill="var(--text-color)" width={16} height={16} />
                   {isWide && 'Config'}
                 </Button>
                 {/* <Line className={styles.separator} vertical /> */}
@@ -164,6 +165,7 @@ export const Header = () => {
 
             <Button
               onClick={handleSyncUnsync}
+              className={styles.sync_label}
               secondary
               alt={
                 !context.collapsed
@@ -175,7 +177,12 @@ export const Header = () => {
                   : 'sync wallet'
               }
             >
-              {isWide && syncLabel}
+              {/* {isWide && syncLabel} */}
+              {!context.collapsed ? (
+                <span key="synclabel">{syncLabel}</span>
+              ) : (
+                <span key="">{walletLabel}</span>
+              )}
             </Button>
             <Button
               alt={`${context.collapsed ? 'show' : 'hide'} menu`}
