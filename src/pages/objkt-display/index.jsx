@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import set from 'lodash/set'
 import { Outlet, useParams } from 'react-router-dom'
 import useSWR from 'swr'

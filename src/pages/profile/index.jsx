@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'

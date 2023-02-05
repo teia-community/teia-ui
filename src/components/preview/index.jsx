@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tags } from '../tags'
 import { MIMETYPE } from '@constants'
 import { RenderMediaType } from '../media-types'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { HashToURL } from '@utils'
 import { MIMETYPE } from '@constants'
 

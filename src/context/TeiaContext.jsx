@@ -1,4 +1,4 @@
-import React, { createContext, Component } from 'react'
+import { createContext, Component } from 'react'
 // import { createContext, useContextSelector } from 'use-context-selector'
 import { BeaconWallet } from '@taquito/beacon-wallet'
 import { TezosToolkit, OpKind, MichelCodecPacker } from '@taquito/taquito'

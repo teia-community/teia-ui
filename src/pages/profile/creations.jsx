@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { gql } from 'graphql-request'
 import get from 'lodash/get'
 import { BaseTokenFieldsFragment } from '@data/api'

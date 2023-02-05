@@ -6,7 +6,7 @@ import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
 import { useOutletContext } from 'react-router'
-import { Buffer } from 'buffer'
+// import { Buffer } from 'buffer'
 
 /**
  * The Transfer Tab

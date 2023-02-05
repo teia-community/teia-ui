@@ -98,6 +98,7 @@ export default defineConfig(({ mode }) => {
       global: 'globalThis',
     },
     server: {
+      host: true,
       port: 3000,
     },
     build: {

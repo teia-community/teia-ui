@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { TeiaContext } from '@context/TeiaContext'
 import { Page, Container } from '@atoms/layout'

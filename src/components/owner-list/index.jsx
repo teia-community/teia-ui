@@ -1,4 +1,3 @@
-import React from 'react'
 import get from 'lodash/get'
 import { Button } from '@atoms/button'
 import { MARKETPLACE_CONTRACT_V1, BURN_ADDRESS } from '@constants'

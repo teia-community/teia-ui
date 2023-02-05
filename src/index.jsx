@@ -46,7 +46,6 @@ import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,

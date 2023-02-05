@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import classNames from 'classnames'
 import get from 'lodash/get'
 import { PATH } from '@constants'

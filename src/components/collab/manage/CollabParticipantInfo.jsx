@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import get from 'lodash/get'
 import { TeiaContext } from '@context'
 import { Button } from '@atoms/button'

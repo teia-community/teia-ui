@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import styles from '@components/collab/index.module.scss'

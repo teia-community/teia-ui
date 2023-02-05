@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import { getMimeType } from '@utils/sanitise'
 import styles from '@style'

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import get from 'lodash/get'
 import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'

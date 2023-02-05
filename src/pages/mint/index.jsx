@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ipfsHash from 'ipfs-only-hash'
 import _ from 'lodash'
 import { TeiaContext } from '@context/TeiaContext'
@@ -600,6 +600,7 @@ export const Mint = () => {
             )}
             <Line />
             <Select
+              search
               className={styles.field}
               alt="token language"
               label="Language"

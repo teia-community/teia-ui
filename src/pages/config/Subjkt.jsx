@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import get from 'lodash/get'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Page } from '@atoms/layout'
 import { Input } from '@atoms/input'
 import { Button } from '@atoms/button'

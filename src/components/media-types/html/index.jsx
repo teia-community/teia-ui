@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from 'react'
+import { useContext, useState, useRef, useEffect } from 'react'
 import classnames from 'classnames'
 import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'

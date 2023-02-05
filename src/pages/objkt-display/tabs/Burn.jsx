@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react'
+import { useState, useContext, useMemo } from 'react'
 import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'

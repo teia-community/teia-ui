@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react'
 import { Page } from '@atoms/layout'
 import { Checkbox } from '@atoms/input'
 import styles from '@style'

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { walletPreview } from '@utils/string'
 
 import { useLocation, useNavigate } from 'react-router'

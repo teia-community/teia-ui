@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import styles from '@style'
 import { MenuItem } from '@components/header/main_menu/MenuItem'

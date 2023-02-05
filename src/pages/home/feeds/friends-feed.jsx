@@ -1,4 +1,3 @@
-import React from 'react'
 import useSWR from 'swr'
 import uniq from 'lodash/uniq'
 import TokenCollection from '@atoms/token-collection'

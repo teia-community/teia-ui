@@ -1,4 +1,3 @@
-import React from 'react'
 import { Container } from '@atoms/layout'
 import { Tags } from '@components/tags'
 import styles from '@style'
