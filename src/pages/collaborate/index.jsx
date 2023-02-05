@@ -1,4 +1,3 @@
-import React from 'react'
 import { Page } from '@atoms/layout'
 import { CollabDisplay } from '@components/collab/show/CollabDisplay'
 import { CreateCollaboration } from './create'

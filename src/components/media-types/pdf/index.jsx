@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useRef, useState } from 'react'
+import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack5'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
@@ -95,7 +95,11 @@ export const PdfComponent = memo(function ({
       )}
     </AnimatePresence>
   )
-
+  // console.log({
+  //   pageLoading,
+  //   pageNumber,
+  //   renderedPageNumber,
+  // })
   // const loading = renderedPageNumber !== pageNumber
   if (!displayView) return cover
   return (
@@ -108,14 +112,14 @@ export const PdfComponent = memo(function ({
         title={`PDF object ${nft.token_id}`}
         options={options}
       >
-        <Page
-          key={`ren-${renderedPageNumber}`}
-          className={`${styles.previous_page} ${
-            renderedPageNumber === pageNumber ? styles.hidden : ''
-          }`}
-          pageNumber={renderedPageNumber || 1}
-          height={height}
-        />
+        {renderedPageNumber && renderedPageNumber !== pageNumber && (
+          <Page
+            key={`ren-${renderedPageNumber}`}
+            className={styles.previous_page}
+            pageNumber={renderedPageNumber}
+            height={height}
+          />
+        )}
         <Page
           key={pageNumber}
           className={styles.page}

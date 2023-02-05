@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
@@ -49,7 +49,7 @@ function ListingRow({
           walletBlockMap.get(listing.seller_address) !== 1 &&
           !isOwnSwap && (
             <Button shadow_box onClick={() => onCollectClick(listing)}>
-              Collect for {parseFloat(listing.price / 1e6)} tez
+              {`Collect for ${parseFloat(listing.price / 1e6)} tez`}
             </Button>
           )}
         {isOwnSwap &&

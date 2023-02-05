@@ -49,7 +49,7 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
     "prepare": "husky install",
-    "lint": "eslint src --ext .js"
+    "lint": "eslint src --ext .js,.jsx"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -76,8 +76,9 @@
     "buffer": "^6.0.3",
     "cross-env": "^7.0.3",
     "cssnano": "^5.1.14",
-    "eslint": "^8.22.0",
+    "eslint": "^8.33.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.32.2",
     "fs-extra": "^11.1.0",
     "husky": "^7.0.4",
     "libsodium-wrappers": "^0.7.8",

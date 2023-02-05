@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { iOS } from '@utils/os'
 import styles from '@style'
 import ImageComponent from '../image/index'

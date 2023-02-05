@@ -1,7 +1,6 @@
 // TODO (mel): Cleanup the parameters for all media-types.
 // TODO (mel): fix glb in all view, use cover in feeds
 
-import React /*  useRef, useState */ from 'react'
 import styles from '@style'
 import { ImageComponent } from '../image'
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import get from 'lodash/get'
 import isNumber from 'lodash/isNumber'
 import { Container } from '@atoms/layout'

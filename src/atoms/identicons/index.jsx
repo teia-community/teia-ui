@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import base from 'base-x'
 import styles from '@style'
 import { HashToURL } from '@utils'

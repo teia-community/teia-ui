@@ -1,4 +1,3 @@
-import React from 'react'
 import { Outlet, ScrollRestoration } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
 import { Loading as Preloading } from '@atoms/loading'

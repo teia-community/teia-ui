@@ -1,4 +1,3 @@
-import React from 'react'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import styles from '@style'

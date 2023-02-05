@@ -1,4 +1,3 @@
-import React from 'react'
 import classnames from 'classnames'
 import { Header } from '@components/header'
 import { FeedbackComponent } from '@components/feedback'

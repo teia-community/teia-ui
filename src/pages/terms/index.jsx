@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Page, Container } from '@atoms/layout'
 
 import Markdown from 'markdown-to-jsx'
