@@ -5,7 +5,7 @@ import { fetchGraphQL } from '@data/api'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { gql } from 'graphql-request'
 import { useParams } from 'react-router'
-
+import styles from '@style'
 async function fetchAllFrensAddresses(address) {
   const { errors, data } = await fetchGraphQL(
     `
@@ -44,30 +44,39 @@ export function FriendsFeed() {
   )
 
   return (
-    <TokenCollection
-      feeds_menu
-      disable={!wallets}
-      label="Friends Feed"
-      namespace="friends"
-      variables={{ wallets }}
-      swrParams={[param.address]}
-      query={gql`
-        ${BaseTokenFieldsFragment}
-        query frensGallery($wallets: [String!], $limit: Int!) {
-          tokens(
-            where: {
-              editions: { _gt: 0 }
-              artist_address: { _in: $wallets }
-              metadata_status: { _eq: "processed" }
-            }
-            order_by: { minted_at: desc }
-            limit: $limit
-          ) {
-            ...baseTokenFields
+    <>
+      <div className={styles.feed_info}>
+        <p>
+          {
+            'This feed show OBJKTs of your collectors and artists you collected from.'
           }
-        }
-      `}
-    />
+        </p>
+      </div>
+      <TokenCollection
+        feeds_menu
+        disable={!wallets}
+        label="Friends Feed"
+        namespace="friends"
+        variables={{ wallets }}
+        swrParams={[param.address]}
+        query={gql`
+          ${BaseTokenFieldsFragment}
+          query frensGallery($wallets: [String!], $limit: Int!) {
+            tokens(
+              where: {
+                editions: { _gt: 0 }
+                artist_address: { _in: $wallets }
+                metadata_status: { _eq: "processed" }
+              }
+              order_by: { minted_at: desc }
+              limit: $limit
+            ) {
+              ...baseTokenFields
+            }
+          }
+        `}
+      />
+    </>
   )
 }
 
