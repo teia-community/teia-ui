@@ -6,7 +6,6 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
-import { AnimatePresence } from 'framer-motion'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
 const options = {
@@ -29,9 +28,9 @@ export const PdfComponent = memo(function ({
   const [pageNumber, setPageNumber] = useState(1)
   const [renderedPageNumber, setRenderedPageNumber] = useState(null)
   const [loading, setLoading] = useState(displayView)
-  const [pageLoading, setPageLoading] = useState(false)
 
   const [height, setHeight] = useState(null)
+
   // const [loading, setLoading] = useState(displayView)
 
   const container = useRef()
@@ -50,7 +49,6 @@ export const PdfComponent = memo(function ({
   }
 
   function changePage(offset) {
-    setPageLoading(true)
     setPageNumber((prevPageNumber) => prevPageNumber + offset)
   }
 
@@ -72,11 +70,10 @@ export const PdfComponent = memo(function ({
       setHeight(container.current.clientHeight)
     }
     setRenderedPageNumber(pageNumber)
-    setPageLoading(false)
   }
 
   const cover = (
-    <AnimatePresence>
+    <>
       <ImageComponent
         key={`img-${nft.token_id}`}
         artifactUri={displayUri}
@@ -93,10 +90,9 @@ export const PdfComponent = memo(function ({
           Loading PDF...
         </p>
       )}
-    </AnimatePresence>
+    </>
   )
   // console.log({
-  //   pageLoading,
   //   pageNumber,
   //   renderedPageNumber,
   // })
@@ -114,7 +110,7 @@ export const PdfComponent = memo(function ({
       >
         {renderedPageNumber && renderedPageNumber !== pageNumber && (
           <Page
-            key={`ren-${renderedPageNumber}`}
+            key={`${renderedPageNumber}`}
             className={styles.previous_page}
             pageNumber={renderedPageNumber}
             height={height}
@@ -129,19 +125,17 @@ export const PdfComponent = memo(function ({
         />
       </Document>
       {!loading && (
-        <>
-          <div className={styles.pdfNav}>
-            <Button disabled={pageNumber <= 1} onClick={previousPage}>
-              {'Prev «'}
-            </Button>
-            <p>
-              Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-            </p>
-            <Button disabled={pageNumber >= numPages} onClick={nextPage}>
-              {'>» Next'}
-            </Button>
-          </div>
-        </>
+        <div className={styles.pdfNav}>
+          <Button disabled={pageNumber <= 1} onClick={previousPage}>
+            {'Prev «'}
+          </Button>
+          <p>
+            Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
+          </p>
+          <Button disabled={pageNumber >= numPages} onClick={nextPage}>
+            {'>» Next'}
+          </Button>
+        </div>
       )}
     </div>
   )
