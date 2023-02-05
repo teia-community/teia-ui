@@ -28,7 +28,7 @@ export const FeedItem = ({ nft }) => {
         <RenderMediaType nft={nft} />
       ) : (
         <Link
-          alt={`OBJKT ${nft.token_id}`}
+          aria-label={`OBJKT ${nft.token_id}`}
           to={`${PATH.OBJKT}/${nft.token_id}`}
         >
           <RenderMediaType nft={nft} />

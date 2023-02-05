@@ -52,7 +52,7 @@ export const GLBComponent = ({
   //   }
   // }, [width, height])
   return displayView ? (
-    <model-viewer {...props} title={`GLB object ${nft.toke}`}>
+    <model-viewer {...props} title={`GLB object ${nft.token_id}`}>
       <button slot="ar-button" className={styles.arButton}>
         AR
       </button>

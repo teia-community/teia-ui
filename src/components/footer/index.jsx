@@ -66,20 +66,20 @@ export const Footer = ({ menu, pin }) => {
         {menu && (
           <>
             <div className={styles.menus}>
-              <ul className={styles.menu_left}>
+              <div className={styles.menu_left}>
                 <MenuItem className={styles.menu_label} route="about" />
                 <MenuItem
                   className={styles.menu_label}
                   label="F.A.Q"
                   route="faq"
                 />
-              </ul>
+              </div>
               <Line vertical />
 
-              <ul className={styles.menu_right}>
-                <li className={styles.address}>
+              <div className={styles.menu_right}>
+                <div className={styles.address}>
                   {walletPreview(context.address)}
-                </li>
+                </div>
                 <MenuItem
                   className={styles.menu_label}
                   label="Mint"
@@ -104,7 +104,7 @@ export const Footer = ({ menu, pin }) => {
                   route="subjkt"
                   need_sync
                 />
-              </ul>
+              </div>
             </div>
             {false && (
               <div className={styles.state_buttons}>
