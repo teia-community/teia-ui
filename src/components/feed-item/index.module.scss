@@ -12,7 +12,10 @@
     width: 100%;
     margin-bottom: 2em;
   }
-
+  img,
+  video {
+    object-fit: contain;
+  }
   &.blur {
     img,
     video {
@@ -20,11 +23,14 @@
     }
   }
   &.photo_protect {
-    filter: blur(0.3em) brightness(0.2) grayscale(1);
-  }
-  &.photo_protect:hover {
-    // filter: blur(1.1rem);
-    filter: unset;
+    img,
+    video {
+      filter: blur(0.3em) brightness(0.2) grayscale(1);
+      &:hover {
+        // filter: blur(1.1rem);
+        filter: unset;
+      }
+    }
   }
 
   &.masonry {

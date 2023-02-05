@@ -71,7 +71,7 @@ export const ImageComponent = ({
       <LazyLoadImage
         className={`${styles.image} ${isSmol ? styles.smol : ''}`}
         src={src}
-        height={600}
+        width={600}
         onLoad={onLoad}
         alt={`object ${nft.token_id} image`}
         onError={onError}
