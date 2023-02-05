@@ -3,14 +3,11 @@ import { Page } from '@atoms/layout'
 import { Checkbox } from '@atoms/input'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
-import Select from '@atoms/select'
-import { THEMES, THEME_OPTIONS } from '@constants'
+import { ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 
 export const Settings = () => {
   const {
-    theme,
-    setTheme,
     nsfwFriendly,
     setNsfwFriendly,
     photosensitiveFriendly,
@@ -32,7 +29,7 @@ export const Settings = () => {
           <Checkbox
             alt={`click to ${
               nsfwFriendly ? 'disable' : 'enable'
-            } the bluring of NSFW tokens on feeds`}
+            } the blurring of NSFW tokens on feeds`}
             checked={nsfwFriendly}
             onCheck={setNsfwFriendly}
             label={'Allow NSFW on feeds'}
@@ -40,18 +37,12 @@ export const Settings = () => {
           <Checkbox
             alt={`click to ${
               photosensitiveFriendly ? 'disable' : 'enable'
-            } the bluring of photosensitive tokens on feeds`}
+            } the blurring of photosensitive tokens on feeds`}
             checked={photosensitiveFriendly}
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
           />
-          <Select
-            alt="theme selection"
-            label="Theme"
-            value={{ label: THEMES[theme], value: theme }}
-            onChange={(e) => setTheme(e.value)}
-            options={THEME_OPTIONS}
-          />
+          <ThemeSelection />
         </div>
       </div>
     </Page>
