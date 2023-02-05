@@ -20,6 +20,9 @@
     text-overflow: ellipsis;
   }
 }
+.active {
+  display: none;
+}
 .price_box {
   display: flex;
   align-items: center;
