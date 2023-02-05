@@ -49,8 +49,6 @@ export { default as IndexerStatusIcon } from './indexer_status'
 
 export {
   BurnIcon,
-  FullScreenEnterIcon,
-  FullScreenExitIcon,
   GenerativeIcon,
   MintedIcon,
   SwapIcon,
@@ -68,3 +66,5 @@ export { ReactComponent as SingleViewIcon } from './svgs/single_view.svg'
 export { ReactComponent as PlayIcon } from './svgs/play.svg'
 export { ReactComponent as PauseIcon } from './svgs/pause.svg'
 export { ReactComponent as CloseIcon } from './svgs/close.svg'
+export { ReactComponent as FullScreenEnterIcon } from './svgs/fullscreen_enter.svg'
+export { ReactComponent as FullScreenExitIcon } from './svgs/fullscreen_exit.svg'
