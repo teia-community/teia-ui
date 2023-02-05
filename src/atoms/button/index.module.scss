@@ -135,17 +135,6 @@ $border: 2px;
   }
 }
 
-.primary__purchase {
-  width: calc(100vw - 2em);
-
-  margin: 1em 0;
-
-  @include respond-to('desktop') {
-    width: auto;
-    margin: 0;
-  }
-}
-
 .left {
   text-align: left;
 }

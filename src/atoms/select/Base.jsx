@@ -28,6 +28,7 @@ const style = {
   menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   singleValue: (provided, state) => ({
     ...provided,
+    overflow: 'visible',
     color: 'var(--text-color)',
   }),
 }

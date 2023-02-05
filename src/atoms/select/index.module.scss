@@ -20,7 +20,7 @@ select:focus ~ .container {
 
 .label {
   display: block;
-
+  width: 100%;
   p {
     color: var(--text-color);
     letter-spacing: $letter-spacing;
