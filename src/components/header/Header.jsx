@@ -22,6 +22,7 @@ import EventCard from './events/EventCard'
 import { Line } from '@atoms/line'
 import { ConfigIcon } from '@icons'
 import classNames from 'classnames'
+import { PATH } from '@constants'
 
 export const Header = () => {
   const context = useContext(TeiaContext)
@@ -78,7 +79,11 @@ export const Header = () => {
   const handleSyncUnsync = () => {
     if (context.address) {
       if (context.collapsed) {
-        handleRoute('/sync', '/tz')
+        if (context.userInfo?.name) {
+          handleRoute(`/${context.userInfo.name}`)
+        } else {
+          handleRoute(`${PATH.ISSUER}/${context.address}`)
+        }
       } else {
         // disconnect wallet
         context.disconnect()
