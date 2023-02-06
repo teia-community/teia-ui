@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { decorators } from './shared'
 import { RotatingLogo } from '@atoms/logo'
 
 const meta: Meta<typeof RotatingLogo> = {
@@ -7,8 +6,6 @@ const meta: Meta<typeof RotatingLogo> = {
   component: RotatingLogo,
   tags: ['autodocs'],
   argTypes: {},
-
-  decorators: [decorators.theme],
 }
 
 export default meta
