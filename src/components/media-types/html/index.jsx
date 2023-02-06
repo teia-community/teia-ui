@@ -33,7 +33,7 @@ export const HTMLComponent = (props) => {
     _creator_ = nft.artist_address
   }
 
-  if (context.address) {
+  if (context?.address) {
     _viewer_ = context.address
   }
 

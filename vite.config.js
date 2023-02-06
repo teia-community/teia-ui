@@ -76,11 +76,17 @@ const teiaAliases = {
 export default defineConfig(({ mode }) => {
   const prod = mode === 'production'
 
+  let prod_plugs = []
+
+  if (prod) {
+    prod_plugs.push(eslintPlugin())
+  }
+
   return {
     clearScreen: prod,
     appType: 'mpa',
     plugins: [
-      eslintPlugin(),
+      ...prod_plugs,
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
