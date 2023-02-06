@@ -461,7 +461,11 @@ export const Mint = () => {
     setFile(null)
   }
 
-  const flexBetween = classNames(collabStyles.flex, collabStyles.flexBetween)
+  const flexBetween = classNames(
+    collabStyles.flex,
+    collabStyles.flexBetween,
+    styles.collab_bar
+  )
 
   return (
     <Page title="Mint" large>
@@ -634,6 +638,7 @@ export const Mint = () => {
             <Upload
               label="Upload OBJKT"
               key={file?.file?.name}
+              file={file}
               allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
               onChange={handleFileUpload}
             />
@@ -641,6 +646,7 @@ export const Mint = () => {
             {file && needsCover && (
               <Upload
                 label="Upload cover image"
+                file={cover}
                 allowedTypes={ALLOWED_COVER_MIMETYPES}
                 allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
                 onChange={generateCoverAndThumbnail}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import { getMimeType } from '@utils/sanitise'
 import styles from '@style'
@@ -14,6 +14,7 @@ import { Buffer } from 'buffer'
  */
 export const Upload = ({
   label,
+  file: stateFile,
   allowedTypes,
   allowedTypesLabel,
   onChange = () => null,
@@ -21,6 +22,10 @@ export const Upload = ({
   const { language } = useLanguage()
   const [title, setTitle] = useState(label)
 
+  useEffect(() => {
+    if (stateFile) setTitle(stateFile.file.name)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const onFileChange = async (e) => {
     const { files } = e.target
 
