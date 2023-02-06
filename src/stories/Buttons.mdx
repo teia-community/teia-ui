@@ -1,0 +1,14 @@
+import { Canvas, Meta, Story } from '@storybook/blocks'
+
+import * as ButtonsStories from './Buttons.stories'
+import * as DropdownStories from './Dropdown.stories'
+
+<Meta of={ButtonsStories} />
+
+# Buttons
+
+## Primary
+
+<Canvas withToolbar>
+  <Story of={ButtonsStories.ShadowBox} />
+</Canvas>

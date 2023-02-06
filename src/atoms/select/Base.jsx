@@ -3,7 +3,7 @@ import ReactSelect from 'react-select'
 import { memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 
-import { style, theme } from './styles'
+import { style as select_style, theme } from './styles'
 
 const Select = ({
   label,
@@ -17,6 +17,7 @@ const Select = ({
   children,
   placeholder,
   className,
+  style,
   ...props
 }) => {
   const [value, setValue] = useControlled(gValue, defaultValue)
@@ -29,12 +30,13 @@ const Select = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [value]
   )
+
   return (
-    <label className={`${styles.label} ${className || ''}`}>
+    <label style={style} className={`${styles.label} ${className || ''}`}>
       <p>{label}</p>
       <ReactSelect
         aria-label={alt || label}
-        styles={style}
+        styles={select_style}
         theme={theme}
         className={styles.container}
         classNamePrefix="react_select"

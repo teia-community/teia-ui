@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { decorators } from './shared'
 import DropdownButton from '@atoms/dropdown/DropdownButton'
 import { EventIcon } from '@icons/index'
 import { DropDown } from '@atoms/dropdown/index'
@@ -10,8 +9,6 @@ const meta: Meta<typeof DropDown> = {
   component: DropDown,
   tags: ['autodocs'],
   argTypes: {},
-
-  decorators: [decorators.theme],
 }
 
 export default meta
