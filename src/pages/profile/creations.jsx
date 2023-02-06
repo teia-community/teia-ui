@@ -7,6 +7,7 @@ import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 import { TeiaContext } from '@context/TeiaContext'
 import { useOutletContext } from 'react-router'
+import { orderBy } from 'lodash'
 
 const FILTER_ALL = 'ALL'
 const FILTER_PRIMARY = 'PRIMARY'
@@ -44,7 +45,24 @@ export default function Creations() {
         variables={{ address }}
         emptyMessage="no creations"
         maxItems={null}
-        postProcessTokens={(tokens) => {
+        extractTokensFromResponse={(data) => {
+          const tokens = data.artist_tokens
+          const collab_tokens = data.artist_single_collabs
+            .map((collab) => {
+              if (collab?.split_contract?.created_tokens) {
+                if (collab.split_contract.shareholders.length === 1) {
+                  return collab?.split_contract?.created_tokens
+                }
+              }
+              return []
+            })
+            .flat()
+
+          return orderBy([...tokens, ...collab_tokens], ['minted_at'])
+            .reverse()
+            .map((token) => ({ ...token, key: token.token_id }))
+        }}
+        postProcessTokens={({ artist_tokens: tokens }) => {
           if (filter === FILTER_PRIMARY) {
             return tokens.filter(
               (token) =>
@@ -71,7 +89,7 @@ export default function Creations() {
         query={gql`
             ${BaseTokenFieldsFragment}
             query creatorGallery($address: String!) {
-              tokens(
+              artist_tokens: tokens(
                 where: {
                   artist_address: { _eq: $address }
                   editions: { _gt: 0 }
@@ -82,6 +100,22 @@ export default function Creations() {
               ) {
                 ...baseTokenFields
                 lowest_price_listing
+              }
+              artist_single_collabs: teia_shareholders(
+                where: { 
+                  shareholder_address: { _eq: $address}, 
+                  holder_type: { _eq: "core_participant" } 
+                }) {
+                split_contract{
+                  shareholders(where:{holder_type:{_eq:"core_participant"}}) {
+                    shareholder_address
+                  }
+                  created_tokens(where:{editions:{_gt:"0"}, teia_meta:{is_signed:{_eq:true}}}){
+                    ...baseTokenFields
+                  }
+                
+                
+                }
               }
             }
           `}
