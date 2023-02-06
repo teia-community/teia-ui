@@ -62,7 +62,7 @@ export default function Creations() {
             .reverse()
             .map((token) => ({ ...token, key: token.token_id }))
         }}
-        postProcessTokens={({ artist_tokens: tokens }) => {
+        postProcessTokens={(tokens) => {
           if (filter === FILTER_PRIMARY) {
             return tokens.filter(
               (token) =>

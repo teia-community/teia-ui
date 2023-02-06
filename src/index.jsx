@@ -1,5 +1,4 @@
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
-import { CollabsTab } from '@components/collab/show/CollabsTab'
 import { Tags } from '@pages/tags/index'
 import { LocalSettingsProvider, TeiaProvider } from '@context'
 import { About } from '@pages/about'
@@ -44,6 +43,8 @@ import {
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
+import Collabs from '@pages/profile/collabs'
+
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
 import ReactDOM from 'react-dom/client'
@@ -61,7 +62,7 @@ const display_routes = (
   <>
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
-    <Route exact path="collabs" element={<CollabsTab />} />
+    <Route exact path="collabs" element={<Collabs />} />
   </>
 )
 

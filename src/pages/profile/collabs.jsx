@@ -4,29 +4,26 @@ import { gql } from 'graphql-request'
 import orderBy from 'lodash/orderBy'
 import { BaseTokenFieldsFragment } from '@data/api'
 import TokenCollection from '@atoms/token-collection'
-import collabStyles from '../index.module.scss'
-import classNames from 'classnames'
 import { useOutletContext } from 'react-router'
+import Checkbox from '@atoms/input/Checkbox'
+import styles from '@style'
 
-export const CollabsTab = () => {
+export default function Collabs() {
   const { address } = useOutletContext()
 
   const [hasUnverifiedTokens, setHasUnverifiedTokens] = useState(false)
   const [showUnverified, setShowUnverified] = useState(false)
-  const toolbarStyles = classNames(collabStyles.flex, collabStyles.mb2)
 
   return (
     <>
       {hasUnverifiedTokens ? (
-        <div className={toolbarStyles}>
-          <label>
-            <input
-              type="checkbox"
-              onChange={() => setShowUnverified(!showUnverified)}
-              checked={showUnverified}
-            />
-            include unverified OBJKTs
-          </label>
+        <div className={styles.tools}>
+          <Checkbox
+            small
+            checked={showUnverified}
+            onCheck={setShowUnverified}
+            label="Include unverified OBJKTs"
+          />
         </div>
       ) : null}
 

@@ -1,5 +1,6 @@
 import { useControlled } from '@hooks/use-controlled'
 import styles from '@style'
+import classNames from 'classnames'
 import { useCallback } from 'react'
 import { memo } from 'react'
 
@@ -26,6 +27,7 @@ const Checkbox = ({
   checked: checkedProp,
   autoFocus = false,
   className,
+  small,
 }) => {
   const [checked, setChecked] = useControlled(checkedProp, initial)
 
@@ -38,8 +40,14 @@ const Checkbox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [checked]
   )
+
+  const classes = classNames({
+    [styles.check_container]: true,
+    [styles.small]: small,
+  })
+
   return (
-    <label className={`${styles.check_container} ${className || ''}`}>
+    <label className={`${classes} ${className || ''}`}>
       {label}
       <input
         aria-label={alt || name}
