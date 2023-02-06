@@ -51,7 +51,9 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
     "prepare": "husky install",
-    "lint": "eslint src --ext .js,.jsx"
+    "lint": "eslint src --ext .js,.jsx",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -70,6 +72,13 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.18.6",
+    "@storybook/addon-essentials": "^7.0.0-beta.43",
+    "@storybook/addon-interactions": "^7.0.0-beta.43",
+    "@storybook/addon-links": "^7.0.0-beta.43",
+    "@storybook/blocks": "^7.0.0-beta.43",
+    "@storybook/react": "^7.0.0-beta.43",
+    "@storybook/react-vite": "^7.0.0-beta.43",
+    "@storybook/testing-library": "^0.0.14-next.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
@@ -91,8 +100,10 @@
     "postcss-preset-env": "^7.8.3",
     "prettier": "^2.6.0",
     "process": "^0.11.10",
+    "prop-types": "^15.8.1",
     "rollup-plugin-polyfill-node": "^0.12.0",
     "source-map-explorer": "^2.5.3",
+    "storybook": "^7.0.0-beta.43",
     "stylelint": "^14.16.1",
     "stylelint-config-standard-scss": "^6.1.0",
     "typescript": "^4.7.4",
