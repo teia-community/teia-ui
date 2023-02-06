@@ -428,6 +428,7 @@ export const Mint = () => {
       amount === '' ||
       parseInt(amount) <= 0 ||
       parseInt(amount) > MAX_EDITIONS ||
+      royalties === '' ||
       parseFloat(royalties) == null ||
       parseFloat(royalties) < MIN_ROYALTIES ||
       parseFloat(royalties) > MAX_ROYALTIES ||
