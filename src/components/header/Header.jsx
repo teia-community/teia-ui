@@ -181,7 +181,7 @@ export const Header = () => {
               }
             >
               {/* {isWide && syncLabel} */}
-              {!context.collapsed ? (
+              {!context.collapsed || !context.address ? (
                 <span key="synclabel">{syncLabel}</span>
               ) : (
                 <span key="">{walletLabel}</span>
