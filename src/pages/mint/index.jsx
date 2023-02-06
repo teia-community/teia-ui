@@ -315,7 +315,7 @@ export const Mint = () => {
       const success = await mint(minterAddress, amount, nftCid, royalties)
       console.debug('success', success)
       if (success) {
-        clearFields(true)
+        clearFields()
       }
       setStep(0)
     } catch (e) {
@@ -425,7 +425,7 @@ export const Mint = () => {
   }
   const handleValidation = () => {
     if (
-      amount == null ||
+      amount === '' ||
       parseInt(amount) <= 0 ||
       parseInt(amount) > MAX_EDITIONS ||
       parseFloat(royalties) == null ||
@@ -444,7 +444,7 @@ export const Mint = () => {
     return true
   }
 
-  const clearFields = (full = false) => {
+  const clearFields = () => {
     setTitle('')
     setDescription('')
     setTags('')
@@ -456,10 +456,8 @@ export const Mint = () => {
     setPhotosensitiveSeizureWarning(false)
     setLanguage('')
 
-    if (full) {
-      setCover(null)
-      setFile(null)
-    }
+    setCover(null)
+    setFile(null)
   }
 
   const flexBetween = classNames(collabStyles.flex, collabStyles.flexBetween)
@@ -634,6 +632,7 @@ export const Mint = () => {
 
             <Upload
               label="Upload OBJKT"
+              key={file?.file?.name}
               allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
               onChange={handleFileUpload}
             />

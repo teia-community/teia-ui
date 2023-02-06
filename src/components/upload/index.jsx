@@ -23,8 +23,12 @@ export const Upload = ({
 
   const onFileChange = async (e) => {
     const { files } = e.target
-    const file = files[0]
 
+    const file = files[0]
+    if (!file) {
+      setTitle(label)
+      return
+    }
     setTitle(file.name)
     const mimeType = file.type === '' ? await getMimeType(file) : file.type
     const buffer = Buffer.from(await file.arrayBuffer())
