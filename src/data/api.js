@@ -25,6 +25,7 @@ fragment baseTokenFields on tokens {
   }
   mime_type
   minted_at
+  metadata_status
   name
   price
   

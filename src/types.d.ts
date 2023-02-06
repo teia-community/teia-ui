@@ -100,6 +100,7 @@ export type NFTBase = {
   display_uri: string
   thumbnail_uri: string
   metadata_uri: string
+  metadata_status: 'processed' | 'unprocessed' | 'error'
 
   /** the creator tz address */
   artist_address: string

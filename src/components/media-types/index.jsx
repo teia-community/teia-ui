@@ -41,6 +41,24 @@ export const RenderMediaType = ({
         : '',
     [nft]
   )
+  if (!nft) {
+    throw Error(`No OBJKT to render`)
+  }
+  if (nft.metadata_status === 'unprocessed') {
+    throw Error(`The OBJKT #${nft.token_id} is being processed`, {
+      cause: 'Processing Metadata',
+    })
+  }
+  if (nft.metadata_status === 'error') {
+    throw Error(
+      `The OBJKT #${nft.token_id} failed to index, 
+      if this persists for more than a day please log an issue.`,
+      {
+        cause: 'Metadata Error',
+      }
+    )
+  }
+
   const parsedDisplayUri = useMemo(() => {
     if (previewDisplayUri) {
       return previewDisplayUri
@@ -48,15 +66,11 @@ export const RenderMediaType = ({
     if (nft.display_uri)
       return HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
 
-    if (nft.mime_type.startsWith('video')) {
+    if (nft.mime_type?.startsWith('video')) {
       setForceArtifact(true)
       return HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     }
   }, [nft, previewDisplayUri])
-
-  if (!nft) {
-    throw Error('No nft to render')
-  }
 
   switch (nft.mime_type) {
     /* IMAGES */

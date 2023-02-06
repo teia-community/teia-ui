@@ -41,8 +41,8 @@ export const MainMenu = () => {
           <MenuItem
             className={styles.menu_label}
             label="Assets"
-            route="tz"
-            need_sync
+            route={`${context.userInfo?.name}` || 'tz'}
+            need_sync={context.address === undefined}
           />
           <MenuItem
             className={styles.menu_label}
