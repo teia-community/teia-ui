@@ -1,7 +1,6 @@
 import { FeedItem } from '@components/feed-item/index'
 import { fetchObjktDetails } from '@data/api'
 import type { Meta, StoryObj } from '@storybook/react'
-import { decorators } from './shared'
 
 const meta: Meta<typeof FeedItem> = {
   title: 'Components/FeedItem',
@@ -10,14 +9,12 @@ const meta: Meta<typeof FeedItem> = {
   tags: ['autodocs'],
 
   argTypes: {},
-
-  decorators: [decorators.theme],
 }
 
 export default meta
 type Story = StoryObj<typeof FeedItem>
 
-export const Image = {
+export const Image: Story = {
   render: (args, { loaded: { data } }) => <FeedItem nft={data} />,
   loaders: [
     async () => ({
@@ -25,7 +22,7 @@ export const Image = {
     }),
   ],
 }
-export const Glb = {
+export const Glb: Story = {
   render: (args, { loaded: { data } }) => <FeedItem nft={data} />,
   loaders: [
     async () => ({
@@ -33,7 +30,7 @@ export const Glb = {
     }),
   ],
 }
-export const Interactive = {
+export const Interactive: Story = {
   render: (args, { loaded: { data } }) => <FeedItem nft={data} />,
   loaders: [
     async () => ({
@@ -41,7 +38,7 @@ export const Interactive = {
     }),
   ],
 }
-export const Smol = {
+export const Smol: Story = {
   render: (args, { loaded: { data } }) => <FeedItem nft={data} />,
   loaders: [
     async () => ({
