@@ -37,8 +37,9 @@ export const RotatingLogo = ({ className, seed = 1 }) => {
     ]
   }, [seed])
   return (
-    <div>
+    <div className={styles.container}>
       <Logo fill="var(--text-color)" width="132px" />
+      <p className={styles.beta}>BETA</p>
     </div>
   )
 }

@@ -17,3 +17,16 @@
     height: 32px;
   }
 }
+
+// only use for the beta this can be removed all together once release
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .beta {
+    color: var(--gray-50);
+    font-size: $font-xsmall;
+    padding-top: 0.5em;
+  }
+}
