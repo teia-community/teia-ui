@@ -1,50 +1,14 @@
 import styles from '@style'
 import ReactSelect from 'react-select'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
+import { useControlled } from '@hooks/use-controlled'
 
-const style = {
-  option: (provided, state) => ({
-    ...provided,
-    color: state.isSelected ? 'var(--background-color)' : 'var(--text-color)',
-    backgroundColor: state.isSelected
-      ? 'var(--text-color)'
-      : 'var(--background-color)',
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
-    padding: '0px',
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    color: state.isSelected ? 'red' : 'var(--text-color)',
-    backgroundColor: 'var(--background-color)',
-    border: 'none',
-  }),
-  menu: (provided, state) => ({
-    ...provided,
-    backgroundColor: 'var(--background-color)',
-    zIndex: 9999,
-  }),
-  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
-  singleValue: (provided, state) => ({
-    ...provided,
-    overflow: 'visible',
-    color: 'var(--text-color)',
-  }),
-}
+import { style, theme } from './styles'
 
-const theme = (theme) => ({
-  ...theme,
-  colors: {
-    ...theme.colors,
-    text: 'var(--background-color)',
-    primary: 'var(--text-color)',
-  },
-})
 const Select = ({
   label,
   alt,
-  value,
+  value: gValue,
   search = false,
   defaultValue,
   options,
@@ -54,26 +18,38 @@ const Select = ({
   placeholder,
   className,
   ...props
-}) => (
-  <label className={`${styles.label} ${className || ''}`}>
-    <p>{label}</p>
-    <ReactSelect
-      aria-label={alt || label}
-      styles={style}
-      theme={theme}
-      className={styles.container}
-      classNamePrefix="react_select"
-      onChange={onChange}
-      options={options}
-      disabled={disabled}
-      placeholder={placeholder}
-      isSearchable={search}
-      menuPortalTarget={document.querySelector('body')}
-      value={value === (null || undefined) ? '' : value}
-      {...props}
-    />
-    {children}
-  </label>
-)
+}) => {
+  const [value, setValue] = useControlled(gValue, defaultValue)
+
+  const handleChange = useCallback(
+    (e) => {
+      setValue(e)
+      onChange(e)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [value]
+  )
+  return (
+    <label className={`${styles.label} ${className || ''}`}>
+      <p>{label}</p>
+      <ReactSelect
+        aria-label={alt || label}
+        styles={style}
+        theme={theme}
+        className={styles.container}
+        classNamePrefix="react_select"
+        onChange={handleChange}
+        options={options}
+        disabled={disabled}
+        placeholder={placeholder}
+        isSearchable={search}
+        menuPortalTarget={document.querySelector('body')}
+        value={value === (null || undefined) ? '' : value}
+        {...props}
+      />
+      {children}
+    </label>
+  )
+}
 
 export default memo(Select)
