@@ -33,7 +33,7 @@ export const Warning = ({ onInteract }) => {
           Flashing content)
         </p>
         <p>
-          By clicking accept, those filters will be removed only for this
+          By clicking enable, those filters will be removed only for this
           profile
         </p>
         <p>
