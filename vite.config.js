@@ -127,6 +127,7 @@ export default defineConfig(({ mode }) => {
         'readable-stream': 'vite-compatible-readable-stream',
         stream: 'vite-compatible-readable-stream',
         path: require.resolve('path-browserify'),
+        util: 'rollup-plugin-node-polyfills/polyfills/util',
         ...teiaAliases,
       },
     },
