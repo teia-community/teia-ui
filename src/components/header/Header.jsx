@@ -79,10 +79,13 @@ export const Header = () => {
   const handleSyncUnsync = () => {
     if (context.address) {
       if (context.collapsed) {
-        if (context.userInfo?.name) {
-          handleRoute(`/${context.userInfo.name}`)
+        const name = context.proxyName || context.userInfo?.name
+        const address = context.proxyAddress || context.address
+
+        if (name) {
+          handleRoute(`/${name}`)
         } else {
-          handleRoute(`${PATH.ISSUER}/${context.address}`)
+          handleRoute(`${PATH.ISSUER}/${address}`)
         }
       } else {
         // disconnect wallet

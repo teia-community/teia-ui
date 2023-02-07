@@ -20,6 +20,9 @@ export const MainMenu = () => {
 
   const { zen, setZen } = useLocalSettings()
 
+  const currentName = context.proxyName || context.userInfo?.name
+  const currentAddress = context.proxyAddress || context.address
+
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
     <motion.div className={styles.menu} {...fadeIn()}>
@@ -41,8 +44,8 @@ export const MainMenu = () => {
           <MenuItem
             className={styles.menu_label}
             label="Assets"
-            route={`${context.userInfo?.name}` || 'tz'}
-            need_sync={context.address === undefined}
+            route={`${currentName || currentAddress}` || 'tz'}
+            need_sync={!currentName || !currentAddress}
           />
           <MenuItem
             className={styles.menu_label}
