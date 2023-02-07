@@ -112,9 +112,8 @@ export default function Creations() {
                   }
                   created_tokens(where:{editions:{_gt:"0"}, teia_meta:{is_signed:{_eq:true}}}){
                     ...baseTokenFields
+                    lowest_price_listing
                   }
-                
-                
                 }
               }
             }
