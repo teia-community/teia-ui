@@ -74,7 +74,8 @@ function TokenCollection({
   query,
   label,
   namespace,
-  show_restricted = false,
+  showRestricted = false,
+  overrideProtections = false,
   feeds_menu = false,
   disable = false,
   variables = {},
@@ -155,7 +156,7 @@ function TokenCollection({
     keyPath,
   })
     .filter((token) =>
-      show_restricted
+      showRestricted
         ? true
         : walletBlockMap.get(token.artist_address) !== 1 &&
           objktBlockMap.get(token.id) !== 1
@@ -164,16 +165,18 @@ function TokenCollection({
       return {
         ...token,
         isNSFW:
-          nsfwMap.get(token.token_id) === 1 ||
-          token.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE,
+          !overrideProtections &&
+          (nsfwMap.get(token.token_id) === 1 ||
+            token.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE),
 
         isPhotosensitive:
-          photosensitiveMap.get(token.token_id) === 1 ||
-          (token.teia_meta?.accessibility?.hazards
-            ? token.teia_meta.accessibility.hazards.includes(
-                METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
-              )
-            : false),
+          !overrideProtections &&
+          (photosensitiveMap.get(token.token_id) === 1 ||
+            (token.teia_meta?.accessibility?.hazards
+              ? token.teia_meta.accessibility.hazards.includes(
+                  METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
+                )
+              : false)),
       }
     })
 

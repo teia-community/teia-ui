@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
@@ -12,6 +12,8 @@ import Profile from './profile'
 import styles from '@style'
 import { Tabs } from '@atoms/tab'
 import Button from '@atoms/button/Button'
+import useLocalSettings from '@hooks/use-local-settings'
+import { Warning } from './warning'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -57,13 +59,24 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 export default function Display() {
   const { address, id: subjkt } = useParams()
   const { walletBlockMap } = useSettings()
+  const [overridePopup, setOverridePopup] = useState()
 
   const [showRestricted, setShowRestricted] = useState()
+  const [overrideProtections, setOverrideProtections] = useState()
 
   let [searchParams] = useSearchParams()
 
+  const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings()
+
+  useLayoutEffect(() => {
+    if (searchParams.get('yolo') !== null) {
+      if (!nsfwFriendly || !photosensitiveFriendly) setOverridePopup(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
-    if (searchParams.get('show') === 'true') {
+    if (searchParams.get('show') !== null) {
       setShowRestricted(true)
     } else {
       setShowRestricted(false)
@@ -108,21 +121,21 @@ export default function Display() {
 
   return (
     <Page feed title={user.alias}>
-      <Profile user={user} />
-      {user.address.substr(0, 2) !== 'KT' && (
-        <div className={styles.menu}>
-          {/* <Tab selected={here[here.length - 1] === ''} to={''}>
-        Creations
-      </Tab>
-      <Tab selected={here.slice(2) === 'collection'} to={`collection`}>
-        Collection
-      </Tab>
-      <Tab selected={here.slice(2) === 'collabs'} to={`collabs`}>
-        Collabs
-      </Tab> */}
-          <Tabs tabs={TABS} />
+      {overridePopup ? (
+        <Warning
+          onInteract={(e) => {
+            setOverrideProtections(e)
+            setOverridePopup(false)
+          }}
+        />
+      ) : (
+        <>
+          <Profile user={user} />
+          {user.address.substr(0, 2) !== 'KT' && (
+            <div className={styles.menu}>
+              <Tabs tabs={TABS} />
 
-          {/* <div className={styles.filter}>
+              {/* <div className={styles.filter}>
           <Button
             onClick={() => {
               setShowFilters(!showFilters)
@@ -144,30 +157,37 @@ export default function Display() {
               </svg>
           </Button>
         </div> */}
-        </div>
-      )}
-      {isRestrictedUser && (
-        <div className={styles.restricted}>
-          <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
-          <p>
-            {' '}
-            Contact the Teia moderators on{' '}
-            <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
-            resolve the status.
-          </p>
-          <p>
-            {' '}
-            See the{' '}
-            <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
-              Teia Terms and Conditions
-            </Button>
-          </p>
-        </div>
-      )}
+            </div>
+          )}
+          {isRestrictedUser && (
+            <div className={styles.restricted}>
+              <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
+              <p>
+                {' '}
+                Contact the Teia moderators on{' '}
+                <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
+                resolve the status.
+              </p>
+              <p>
+                {' '}
+                See the{' '}
+                <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
+                  Teia Terms and Conditions
+                </Button>
+              </p>
+            </div>
+          )}
 
-      <Outlet
-        context={{ showRestricted, showFilters, address: user.address }}
-      />
+          <Outlet
+            context={{
+              showRestricted,
+              overrideProtections,
+              showFilters,
+              address: user.address,
+            }}
+          />
+        </>
+      )}
     </Page>
   )
 }

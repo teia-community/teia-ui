@@ -1,6 +1,10 @@
 @import '@styles/variables.scss';
 @import '@styles/mixins.scss';
 
+.strong {
+  font-weight: bold;
+}
+
 .container {
   @include resetButton();
 
@@ -15,6 +19,11 @@
   font-family: var(--text-font);
   word-break: normal;
   font-size: var(--font-body);
+
+  &.inline {
+    display: inline;
+    padding: 0em 0.5em;
+  }
 
   &.fit {
     display: contents;

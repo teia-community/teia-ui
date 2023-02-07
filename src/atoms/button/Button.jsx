@@ -33,9 +33,11 @@ const Button = ({
   fit,
   full,
   box,
+  strong,
   shadow_box,
   secondary,
   small,
+  inline,
   activeClass,
   ...props
 }) => {
@@ -45,6 +47,9 @@ const Button = ({
     [styles.fit]: fit,
     [styles.full]: full,
     [styles.small]: small,
+    [styles.strong]: strong,
+    [styles.inline]: inline,
+
     [styles.selected]: selected,
     [styles.primary]: !secondary,
   })
@@ -93,6 +98,7 @@ const Button = ({
         rel="noopener noreferrer"
         className={classes}
         aria-label={alt}
+        {...props}
       >
         {children}
       </motion.a>
@@ -104,6 +110,7 @@ const Button = ({
       aria-label={alt}
       onClick={onClick}
       className={classes}
+      {...props}
     >
       {children}
     </motion.button>

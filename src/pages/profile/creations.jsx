@@ -15,7 +15,8 @@ const FILTER_SECONDARY = 'SECONDARY'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Creations() {
-  const { showFilters, show_restricted, address } = useOutletContext()
+  const { showFilters, showRestricted, overrideProtections, address } =
+    useOutletContext()
   const [filter, setFilter] = useState(FILTER_ALL)
   const { setProfileFeed } = useContext(TeiaContext)
   useEffect(() => {
@@ -38,7 +39,8 @@ export default function Creations() {
       )}
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
       <TokenCollection
-        show_restricted={show_restricted}
+        showRestricted={showRestricted}
+        overrideProtections={overrideProtections}
         label="Artist's Creations"
         namespace="creations"
         swrParams={[address]}

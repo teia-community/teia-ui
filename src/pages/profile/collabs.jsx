@@ -9,7 +9,8 @@ import Checkbox from '@atoms/input/Checkbox'
 import styles from '@style'
 
 export default function Collabs() {
-  const { address } = useOutletContext()
+  const { /*showFilters,*/ showRestricted, address, overrideProtections } =
+    useOutletContext()
 
   const [hasUnverifiedTokens, setHasUnverifiedTokens] = useState(false)
   const [showUnverified, setShowUnverified] = useState(false)
@@ -28,6 +29,8 @@ export default function Collabs() {
       ) : null}
 
       <TokenCollection
+        showRestricted={showRestricted}
+        overrideProtections={overrideProtections}
         label="Artist's Collabs"
         namespace="collabs"
         swrParams={[address]}
