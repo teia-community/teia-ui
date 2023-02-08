@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTitle } from '@hooks/use-title'
 import { Footer } from '@components/footer'
 
-import { IconCache } from '@utils/with-icon'
 import { containerVariants } from '@utils/motion'
 
 export const Page = ({ title = '', children = null, feed, className, top }) => {

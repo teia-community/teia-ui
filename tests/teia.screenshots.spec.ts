@@ -36,12 +36,10 @@ const cycleThemes = async (
 
 test('screenshots feeds menu', async ({ page }, workerInfo) => {
   await page.goto(baseUrl)
-  await page.waitForLoadState()
-
+  await page.waitForLoadState('networkidle')
   await page
     .getByRole('button', { name: 'feeds selection dropdown' })
-    .click({ timeout: 2500 })
-
+    .click({ timeout: 5000 })
   await page.waitForTimeout(theme_duration)
 
   await cycleThemes(page, async (theme: string) => {

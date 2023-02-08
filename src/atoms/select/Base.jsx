@@ -1,10 +1,15 @@
 import styles from '@style'
 import ReactSelect from 'react-select'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 
 import { style as select_style, theme } from './styles'
 
+/**
+ * This is a wrapper of React Select with teia's styling, and useControlled
+ * @param {*} param0
+ * @returns
+ */
 const Select = ({
   label,
   alt,
@@ -54,4 +59,4 @@ const Select = ({
   )
 }
 
-export default memo(Select)
+export default Select

@@ -1,0 +1,14 @@
+import { Canvas, Meta, Story } from '@storybook/blocks'
+
+import * as FeedItemStories from './FeedItem.stories'
+
+<Meta of={FeedItemStories} />
+
+# Feed Item
+
+For now it's a grid, that reacts to some logic in the feed.
+It will soon be changed to use `@container` so the logic is only done in CSS
+
+<Canvas columns={2} withSource="open" withToolbar>
+  <Story of={FeedItemStories.Interactive} />
+</Canvas>

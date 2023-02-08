@@ -80,7 +80,9 @@ export const Mint = () => {
   const [collabs, setCollabs] = useState([])
   const [selectCollab, setSelectCollab] = useState(false)
 
+  /** @type {import("@types").useState<import("@types").FileMint>} */
   const [file, setFile] = useState() // the uploaded file
+  /** @type {import("@types").useState<import("@types").FileMint>} */
   const [cover, setCover] = useState() // the uploaded or generated cover image
 
   /*form*/
