@@ -10,6 +10,7 @@ import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
+import filterReplace from 'vite-plugin-filter-replace'
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
@@ -87,6 +88,15 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
+      filterReplace([
+        {
+          filter: 'node_modules/@airgap/beacon-ui/dist/esm/utils/qr.js',
+          replace: {
+            from: "import * as qrcode from 'qrcode-generator';",
+            to: "import qrcode from 'qrcode-generator';",
+          },
+        },
+      ]),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
