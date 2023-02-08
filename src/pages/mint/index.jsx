@@ -53,8 +53,6 @@ const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
   }
 }`
 
-const GENERATE_DISPLAY_AND_THUMBNAIL = true
-
 const Line = () => <CoreLine className={styles.line} />
 
 export const Mint = () => {
@@ -280,7 +278,7 @@ export const Mint = () => {
           files,
           cover,
           thumbnail,
-          generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
+          generateDisplayUri: true,
           rights: rights.value,
           rightUri,
           language: language?.value,
@@ -298,7 +296,7 @@ export const Mint = () => {
           file,
           cover,
           thumbnail,
-          generateDisplayUri: GENERATE_DISPLAY_AND_THUMBNAIL,
+          generateDisplayUri: true,
           rights: rights.value,
           rightUri,
           language: language?.value,
@@ -516,10 +514,6 @@ export const Mint = () => {
               style={{ whiteSpace: 'pre' }}
               onChange={(e) => {
                 setDescription(e.target.value)
-                window.localStorage.setItem(
-                  'objkt::description',
-                  e.target.value
-                )
               }}
               placeholder="Max 5000 characters (optional)"
               label="Description"
