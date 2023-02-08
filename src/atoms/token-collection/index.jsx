@@ -9,7 +9,6 @@ import { useSearchParams } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
 import laggy from '@utils/swr-laggy-middleware'
 import { FeedToolbar } from '@components/header/feed_toolbar/FeedToolbar'
-import { IconCache } from '@utils/with-icon'
 import styles from '@style'
 import useLocalSettings from '@hooks/use-local-settings'
 import { useKeyboard } from '@hooks/use-keyboard'
@@ -192,28 +191,26 @@ function TokenCollection({
 
   return (
     <div className={styles.feed_container}>
-      <IconCache.Provider value={{}}>
-        <FeedToolbar feeds_menu={feeds_menu} />
-        <InfiniteScroll
-          className={`${styles.infinite_scroll}`}
-          loadMore={() => {
-            setSearchParams(
-              {
-                ...Object.fromEntries(searchParams),
-                [namespace]: limit + itemsPerLoad,
-              },
-              { preventScrollReset: true }
-            )
-          }}
-          hasMore={limit < tokens.length}
-        >
-          {viewMode === 'single' ? (
-            <SingleView tokens={limitedTokens} />
-          ) : (
-            <MasonryView tokens={limitedTokens} />
-          )}
-        </InfiniteScroll>
-      </IconCache.Provider>
+      <FeedToolbar feeds_menu={feeds_menu} />
+      <InfiniteScroll
+        className={`${styles.infinite_scroll}`}
+        loadMore={() => {
+          setSearchParams(
+            {
+              ...Object.fromEntries(searchParams),
+              [namespace]: limit + itemsPerLoad,
+            },
+            { preventScrollReset: true }
+          )
+        }}
+        hasMore={limit < tokens.length}
+      >
+        {viewMode === 'single' ? (
+          <SingleView tokens={limitedTokens} />
+        ) : (
+          <MasonryView tokens={limitedTokens} />
+        )}
+      </InfiniteScroll>
     </div>
   )
 }

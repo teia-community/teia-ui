@@ -7,7 +7,6 @@ import { getTimeAgo } from '@utils/time'
 import styles from '@style'
 import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
-import { IconCache } from '@utils/with-icon'
 import Button from '@atoms/button/Button'
 import { useOutletContext } from 'react-router'
 
@@ -105,164 +104,162 @@ export const History = () => {
 
   return (
     <Container>
-      <IconCache.Provider value={{}}>
-        <div className={styles.history__container}>
-          <div className={styles.history__labels}>
-            <div
-              className={styles.history__event}
-              style={{ width: 'calc(10% + 35px)' }}
-            >
-              Event
-            </div>
-            <div className={styles.history__from}>From</div>
-            <div className={styles.history__to}>To</div>
-            <div className={styles.history__ed}>Ed.</div>
-            <div className={styles.history__price}>Price</div>
-            <div className={styles.history__date}>Time</div>
+      <div className={styles.history__container}>
+        <div className={styles.history__labels}>
+          <div
+            className={styles.history__event}
+            style={{ width: 'calc(10% + 35px)' }}
+          >
+            Event
           </div>
-          {nft.events.map((e) => {
-            if (e.implements === 'SALE') {
-              return (
-                <HistoryRow
-                  key={`t-${e.id}`}
-                  eventType={
-                    <>
-                      <TradeIcon size={14} viewBox={16} />
-                      <a
-                        href={`https://tzkt.io/${e.ophash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Trade
-                      </a>
-                    </>
-                  }
-                  from={<UsernameAndLink event={e} attr="seller" />}
-                  to={<UsernameAndLink event={e} attr="buyer" />}
-                  editions={1}
-                  timestamp={e.timestamp}
-                  price={e.price}
-                />
-              )
-            }
-            if (
-              ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2', 'VERSUM_SWAP'].includes(
-                e.type
-              )
-            ) {
-              return (
-                <HistoryRow
-                  key={`t-${e.id}`}
-                  eventType={
-                    <>
-                      <SwapIcon size={14} viewBox={16} />
-                      <a
-                        href={`https://tzkt.io/${e.ophash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Swap
-                      </a>
-                    </>
-                  }
-                  from={<UsernameAndLink event={e} attr="seller" />}
-                  editions={e.amount}
-                  timestamp={e.timestamp}
-                  price={e.price}
-                />
-              )
-            }
-            if (
-              e.type === 'FA2_TRANSFER' &&
-              e.to_address !== BURN_ADDRESS &&
-              !nft.events.some(
-                (ev) =>
-                  (ev.implements === 'SALE' ||
-                    [
-                      'TEIA_SWAP',
-                      'HEN_SWAP',
-                      'HEN_SWAP_V2',
-                      'VERSUM_SWAP',
-                    ].includes(ev.type)) &&
-                  e.ophash === ev.ophash
-              )
-            ) {
-              return (
-                <HistoryRow
-                  key={`t-${e.id}`}
-                  eventType={
-                    <>
-                      <TradeIcon size={14} viewBox={16} />
-                      <a
-                        href={`https://tzkt.io/${e.ophash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Transfer
-                      </a>
-                    </>
-                  }
-                  from={<UsernameAndLink event={e} attr="from" />}
-                  to={<UsernameAndLink event={e} attr="to" />}
-                  editions={e.amount}
-                  timestamp={e.timestamp}
-                />
-              )
-            }
-            if (e.type === 'FA2_TRANSFER' && e.to_address === BURN_ADDRESS) {
-              return (
-                <HistoryRow
-                  key={`t-${e.id}`}
-                  eventType={
-                    <>
-                      <BurnIcon size={14} viewBox={16} />
-                      <a
-                        href={`https://tzkt.io/${e.ophash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Burn
-                      </a>
-                    </>
-                  }
-                  from={<UsernameAndLink event={e} attr="from" />}
-                  to={
-                    <span>
-                      <Button href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
-                        Burn Address
-                      </Button>
-                    </span>
-                  }
-                  editions={e.amount}
-                  timestamp={e.timestamp}
-                />
-              )
-            }
-
-            if (e.type === 'HEN_MINT') {
-              return (
-                <HistoryRow
-                  key={`t-${e.id}`}
-                  eventType={
-                    <>
-                      <MintedIcon size={14} viewBox={16} />
-                      <div className={styles.history__mint__op}>Minted</div>
-                    </>
-                  }
-                  editions={e.editions}
-                  timestamp={e.timestamp}
-                />
-              )
-            }
-
-            return null
-          })}
-
-          <div className={styles.history__royalties}>
-            {formatRoyalties(nft)} Royalties
-          </div>
+          <div className={styles.history__from}>From</div>
+          <div className={styles.history__to}>To</div>
+          <div className={styles.history__ed}>Ed.</div>
+          <div className={styles.history__price}>Price</div>
+          <div className={styles.history__date}>Time</div>
         </div>
-      </IconCache.Provider>
+        {nft.events.map((e) => {
+          if (e.implements === 'SALE') {
+            return (
+              <HistoryRow
+                key={`t-${e.id}`}
+                eventType={
+                  <>
+                    <TradeIcon size={14} viewBox={16} />
+                    <a
+                      href={`https://tzkt.io/${e.ophash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Trade
+                    </a>
+                  </>
+                }
+                from={<UsernameAndLink event={e} attr="seller" />}
+                to={<UsernameAndLink event={e} attr="buyer" />}
+                editions={1}
+                timestamp={e.timestamp}
+                price={e.price}
+              />
+            )
+          }
+          if (
+            ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2', 'VERSUM_SWAP'].includes(
+              e.type
+            )
+          ) {
+            return (
+              <HistoryRow
+                key={`t-${e.id}`}
+                eventType={
+                  <>
+                    <SwapIcon size={14} viewBox={16} />
+                    <a
+                      href={`https://tzkt.io/${e.ophash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Swap
+                    </a>
+                  </>
+                }
+                from={<UsernameAndLink event={e} attr="seller" />}
+                editions={e.amount}
+                timestamp={e.timestamp}
+                price={e.price}
+              />
+            )
+          }
+          if (
+            e.type === 'FA2_TRANSFER' &&
+            e.to_address !== BURN_ADDRESS &&
+            !nft.events.some(
+              (ev) =>
+                (ev.implements === 'SALE' ||
+                  [
+                    'TEIA_SWAP',
+                    'HEN_SWAP',
+                    'HEN_SWAP_V2',
+                    'VERSUM_SWAP',
+                  ].includes(ev.type)) &&
+                e.ophash === ev.ophash
+            )
+          ) {
+            return (
+              <HistoryRow
+                key={`t-${e.id}`}
+                eventType={
+                  <>
+                    <TradeIcon size={14} viewBox={16} />
+                    <a
+                      href={`https://tzkt.io/${e.ophash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Transfer
+                    </a>
+                  </>
+                }
+                from={<UsernameAndLink event={e} attr="from" />}
+                to={<UsernameAndLink event={e} attr="to" />}
+                editions={e.amount}
+                timestamp={e.timestamp}
+              />
+            )
+          }
+          if (e.type === 'FA2_TRANSFER' && e.to_address === BURN_ADDRESS) {
+            return (
+              <HistoryRow
+                key={`t-${e.id}`}
+                eventType={
+                  <>
+                    <BurnIcon size={14} viewBox={16} />
+                    <a
+                      href={`https://tzkt.io/${e.ophash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Burn
+                    </a>
+                  </>
+                }
+                from={<UsernameAndLink event={e} attr="from" />}
+                to={
+                  <span>
+                    <Button href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
+                      Burn Address
+                    </Button>
+                  </span>
+                }
+                editions={e.amount}
+                timestamp={e.timestamp}
+              />
+            )
+          }
+
+          if (e.type === 'HEN_MINT') {
+            return (
+              <HistoryRow
+                key={`t-${e.id}`}
+                eventType={
+                  <>
+                    <MintedIcon size={14} viewBox={16} />
+                    <div className={styles.history__mint__op}>Minted</div>
+                  </>
+                }
+                editions={e.editions}
+                timestamp={e.timestamp}
+              />
+            )
+          }
+
+          return null
+        })}
+
+        <div className={styles.history__royalties}>
+          {formatRoyalties(nft)} Royalties
+        </div>
+      </div>
     </Container>
   )
 }

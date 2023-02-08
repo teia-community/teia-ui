@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import _ from 'lodash'
+import hash from 'fnv1a'
 
 export const IconCache = React.createContext({})
 export const useIconCache = () => React.useContext(IconCache)
@@ -13,7 +13,7 @@ const withIcon = (icon) => {
     let id
 
     if (!cachedId) {
-      id = _.uniqueId('icon-')
+      id = 'icon-' + hash(icon).toString(16)
       cache[icon] = id
     }
 

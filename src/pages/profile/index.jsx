@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
+import { useState, useMemo, useLayoutEffect } from 'react'
 import get from 'lodash/get'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
@@ -72,16 +72,9 @@ export default function Display() {
     if (searchParams.get('yolo') !== null) {
       if (!nsfwFriendly || !photosensitiveFriendly) setOverridePopup(true)
     }
+    setShowRestricted(searchParams.get('show') !== null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    if (searchParams.get('show') !== null) {
-      setShowRestricted(true)
-    } else {
-      setShowRestricted(false)
-    }
-  }, [searchParams])
 
   // TODO (mel): properly remove all this once migrated to the filter panel.
   const [showFilters /*setShowFilters*/] = useState(false)
@@ -101,7 +94,6 @@ export default function Display() {
   }, [user?.address, walletBlockMap])
 
   if (error) {
-    // return <ErrorComponent title="Route Error" message={error.message} />
     throw error
   }
 

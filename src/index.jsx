@@ -57,6 +57,7 @@ import {
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import './styles/index.scss'
+import { IconCache } from '@utils/with-icon'
 
 const display_routes = (
   <>
@@ -134,7 +135,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <TeiaProvider>
     <LocalSettingsProvider>
-      <RouterProvider router={router} />
+      <IconCache.Provider value={{}}>
+        <RouterProvider router={router} />
+      </IconCache.Provider>
     </LocalSettingsProvider>
   </TeiaProvider>
   // </React.StrictMode>,

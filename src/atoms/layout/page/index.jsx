@@ -24,7 +24,7 @@ export const Page = ({ title = '', children = null, feed, className, top }) => {
   useTitle(title)
 
   return (
-    <IconCache.Provider value={{}}>
+    <>
       <FeedbackComponent />
       <Header />
       <motion.main
@@ -37,6 +37,6 @@ export const Page = ({ title = '', children = null, feed, className, top }) => {
         <motion.div className={styles.content}>{children}</motion.div>
       </motion.main>
       <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>
-    </IconCache.Provider>
+    </>
   )
 }
