@@ -1,7 +1,4 @@
 import Button from '@atoms/button/Button'
-import { Textarea } from '@atoms/input/index'
-import Input from '@atoms/input/Input'
-import Select from '@atoms/select/Base'
 import { get, kebabCase } from 'lodash'
 import React, { memo } from 'react'
 import { useForm } from 'react-hook-form'
