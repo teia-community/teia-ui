@@ -1,14 +1,14 @@
 // DEV SAMPLES
 export const sample_events = [
-    {
+  {
     title: 'TezQuakeAid - Earthquake Relief',
-    icon: '🇹🇷 🇸🇾 ',
+    icon: '',
     feed: 'empty',
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
     subtitle: '8st February 2023 - tbd',
     content:
       'The earthquakes in Turkey and Syria in February 2023 have caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
-  },  
+  },
   {
     title: 'Tezos for Iran',
     icon: '🇮🇷 ',
@@ -18,7 +18,7 @@ export const sample_events = [
     content:
       'In the wake of the historic protests against the killing of young Iranian women, Teia has set up a charity fundraiser in solidarity with the protests and to raise awareness for womens rights in Iran.',
   },
-    {
+  {
     title: 'Pakistan Fundraiser',
     icon: '🇵🇰 ',
     feed: 'pakistan',
@@ -40,5 +40,4 @@ set up a [shared donation contract](https://tzkt.io/KT1DWnLiUkNtAQDErXxudFEH63JC
 that will redirect tezos to multiple charity orgs (listed below) in support of Ukraine relief, and we want to help support this initiative.
 you can find the source code on [github](https://github.com/ciphrd/public-contracts/blob/master/donations_ukraine.py)`,
   },
-
 ]
