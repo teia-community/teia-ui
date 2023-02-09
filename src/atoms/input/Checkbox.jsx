@@ -1,7 +1,7 @@
 import { useControlled } from '@hooks/use-controlled'
 import styles from '@style'
 import classNames from 'classnames'
-import { useCallback } from 'react'
+import { forwardRef, useCallback } from 'react'
 import { memo } from 'react'
 
 /**
@@ -15,54 +15,60 @@ import { memo } from 'react'
  * @param {boolean} checkboxProps.disabled - Disables the checkbox
  *
  */
-const Checkbox = ({
-  name,
-  label,
-  alt,
-  initial,
-  onCheck = () => null,
-  onBlur = () => null,
-  onWheel = () => null,
-  disabled,
-  checked: checkedProp,
-  autoFocus = false,
-  className,
-  small,
-}) => {
-  const [checked, setChecked] = useControlled(checkedProp, initial)
-
-  const handleCheck = useCallback(
-    (e) => {
-      const c = e.target.checked
-      setChecked(c)
-      onCheck?.(c)
+const Checkbox = forwardRef(
+  (
+    {
+      name,
+      label,
+      alt,
+      initial,
+      onCheck = () => null,
+      onBlur = () => null,
+      onWheel = () => null,
+      disabled,
+      checked: checkedProp,
+      autoFocus = false,
+      className,
+      small,
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [checked]
-  )
+    ref
+  ) => {
+    const [checked, setChecked] = useControlled(checkedProp, initial)
 
-  const classes = classNames({
-    [styles.check_container]: true,
-    [styles.small]: small,
-  })
+    const handleCheck = useCallback(
+      (e) => {
+        const c = e.target.checked
+        setChecked(c)
+        onCheck?.(c)
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [checked]
+    )
 
-  return (
-    <label className={`${classes} ${className || ''}`}>
-      {label}
-      <input
-        aria-label={alt || name}
-        defaultChecked={initial}
-        type="checkbox"
-        name={name}
-        onChange={handleCheck}
-        onBlur={onBlur}
-        onWheel={onWheel}
-        checked={checkedProp}
-        aria-checked={checked}
-      />
-      <span className={styles.checkmark} />
-    </label>
-  )
-}
+    const classes = classNames({
+      [styles.check_container]: true,
+      [styles.small]: small,
+    })
+
+    return (
+      <label className={`${classes} ${className || ''}`}>
+        {label}
+        <input
+          ref={ref}
+          aria-label={alt || name}
+          defaultChecked={initial}
+          type="checkbox"
+          name={name}
+          onChange={handleCheck}
+          onBlur={onBlur}
+          onWheel={onWheel}
+          checked={checkedProp}
+          aria-checked={checked}
+        />
+        <span className={styles.checkmark} />
+      </label>
+    )
+  }
+)
 
 export default memo(Checkbox)

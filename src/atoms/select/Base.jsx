@@ -44,7 +44,7 @@ const Select = forwardRef(
       <label style={style} className={`${styles.label} ${className || ''}`}>
         <p>{label}</p>
         <ReactSelect
-          ref={ref}
+          inputRef={ref}
           aria-label={alt || label}
           styles={select_style}
           theme={theme}
