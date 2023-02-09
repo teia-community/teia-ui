@@ -17,6 +17,7 @@ import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
+import { IconCache } from '@utils/with-icon'
 
 /**
  * Single view, vertical feed
@@ -192,25 +193,27 @@ function TokenCollection({
   return (
     <div className={styles.feed_container}>
       <FeedToolbar feeds_menu={feeds_menu} />
-      <InfiniteScroll
-        className={`${styles.infinite_scroll}`}
-        loadMore={() => {
-          setSearchParams(
-            {
-              ...Object.fromEntries(searchParams),
-              [namespace]: limit + itemsPerLoad,
-            },
-            { preventScrollReset: true }
-          )
-        }}
-        hasMore={limit < tokens.length}
-      >
-        {viewMode === 'single' ? (
-          <SingleView tokens={limitedTokens} />
-        ) : (
-          <MasonryView tokens={limitedTokens} />
-        )}
-      </InfiniteScroll>
+      <IconCache.Provider value={{}}>
+        <InfiniteScroll
+          className={`${styles.infinite_scroll}`}
+          loadMore={() => {
+            setSearchParams(
+              {
+                ...Object.fromEntries(searchParams),
+                [namespace]: limit + itemsPerLoad,
+              },
+              { preventScrollReset: true }
+            )
+          }}
+          hasMore={limit < tokens.length}
+        >
+          {viewMode === 'single' ? (
+            <SingleView tokens={limitedTokens} />
+          ) : (
+            <MasonryView tokens={limitedTokens} />
+          )}
+        </InfiniteScroll>
+      </IconCache.Provider>
     </div>
   )
 }
