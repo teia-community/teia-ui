@@ -29,6 +29,7 @@ import {
   TagFeed,
   PdfFeed,
   MarkdownFeed,
+  QuakeFeed,
 } from '@pages/home/feeds'
 import { Mint } from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -79,6 +80,8 @@ const router = createBrowserRouter(
           element={<TagFeed tag="tezospride" namespace="tezospride" />}
         />
 
+        <Route path="iran" element={<IranFeed />} />
+        <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />
         <Route path="pakistan" element={<PakistanFeed />} />
         <Route path="ukraine" element={<UkraineFeed />} />

@@ -31,13 +31,17 @@ export const EventCard = ({ event }) => {
       <motion.h1 variants={itemVariants}>
         {event.feed ? (
           <Button to={`/feed/${event.feed}`}>
-            {event.title} -{' '}
-            <span className={styles.event_icon}>{event.icon}</span>
+            {event.title}{' '}
+            {event.icon && (
+              <span className={styles.event_icon}>{event.icon}</span>
+            )}
           </Button>
         ) : (
           <>
-            {event.title} -{' '}
-            <span className={styles.event_icon}>{event.icon}</span>
+            {event.title}
+            {event.icon && (
+              <span className={styles.event_icon}>{event.icon}</span>
+            )}
           </>
         )}
       </motion.h1>

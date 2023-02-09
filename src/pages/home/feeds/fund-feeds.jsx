@@ -1,6 +1,7 @@
 import {
   IRAN_FUNDING_CONTRACT,
   PAKISTAN_FUNDING_CONTRACT,
+  QUAKE_FUNDING_CONTRACT,
   UKRAINE_FUNDING_CONTRACT,
 } from '@constants'
 import FundFeed from './fund-feed'
@@ -53,6 +54,18 @@ export function UkraineFeed() {
       cause="Ukraine"
       namepsace="ukraine-feed"
       infoUrl="https://github.com/teia-community/teia-docs/wiki/Ukranian-Fundraising"
+    />
+  )
+}
+
+export function QuakeFeed() {
+  return (
+    <FundFeed
+      contractAddress={QUAKE_FUNDING_CONTRACT}
+      cause="Turkey and Syria Earthquakes"
+      namepsace="quake-feed"
+      tags={['TezQuakeAid', '#TezQuakeAid']}
+      infoUrl="https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671"
     />
   )
 }
