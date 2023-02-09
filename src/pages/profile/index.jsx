@@ -155,15 +155,19 @@ export default function Display() {
             <div className={styles.restricted}>
               <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
               <p>
-                {' '}
-                Contact the Teia moderators on{' '}
-                <Button href="https://discord.gg/TKeybhYhNe">Discord</Button> to
-                resolve the status.
+                Contact the Teia moderators on
+                <Button small inline href="https://discord.gg/TKeybhYhNe">
+                  Discord
+                </Button>
+                to resolve the status.
               </p>
               <p>
-                {' '}
-                See the{' '}
-                <Button href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions">
+                See the
+                <Button
+                  inline
+                  small
+                  href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#3-terms-and-conditions---account-restrictions"
+                >
                   Teia Terms and Conditions
                 </Button>
               </p>

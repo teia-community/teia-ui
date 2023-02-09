@@ -116,6 +116,7 @@ export const Header = () => {
               icon={<EventIcon />}
               menuID="events"
               label={isWide ? 'Events' : ''}
+              id={`events-${location.pathname}`}
             >
               {/* <EventMenu events={sample_events} /> */}
               <DropDown menuID="events" vertical>

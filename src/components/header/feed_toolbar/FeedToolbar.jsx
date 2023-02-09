@@ -30,6 +30,7 @@ const locationMap = new Map([
   ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
+  ['/feed/quake-aid', 'Quake Aid'],
   ['/feed/ukraine', '🇺🇦 Ukraine'],
   ['/feed/pakistan', '🇵🇰 Pakistan'],
   ['/feed/iran', '🇮🇷 Iran'],
