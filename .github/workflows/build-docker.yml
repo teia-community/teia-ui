@@ -33,3 +33,6 @@ jobs:
       - name: Restart containers
         run: |
           curl -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
+      - name: Check deployed version
+        run: |
+          sleep 10; curl -Is "${{ vars.WEBSITE_URL }}" | grep "x-teia-commit-hash: ${{ github.sha }}"
