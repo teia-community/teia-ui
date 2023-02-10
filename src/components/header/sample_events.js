@@ -3,7 +3,7 @@ export const sample_events = [
   {
     title: 'TezQuakeAid - Earthquake Relief',
     icon: '',
-    feed: 'empty',
+    feed: 'quake-aid',
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
     subtitle: '8st February 2023 - tbd',
     content:
