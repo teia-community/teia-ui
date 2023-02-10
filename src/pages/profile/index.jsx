@@ -58,7 +58,7 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
 export default function Display() {
   const { address, id: subjkt } = useParams()
-  const { walletBlockMap } = useSettings()
+  const { walletBlockMap, underReviewMap } = useSettings()
   const [overridePopup, setOverridePopup] = useState()
 
   const [showRestricted, setShowRestricted] = useState()
@@ -92,6 +92,11 @@ export default function Display() {
     if (!user?.address) return false
     return walletBlockMap.get(user.address) === 1
   }, [user?.address, walletBlockMap])
+
+  const isUnderReviewUser = useMemo(() => {
+    if (!user?.address) return false
+    return underReviewMap.get(user.address) === 1
+  }, [user?.address, underReviewMap])
 
   if (error) {
     throw error
@@ -151,9 +156,12 @@ export default function Display() {
         </div> */}
             </div>
           )}
-          {isRestrictedUser && (
+          {(isRestrictedUser || isUnderReviewUser) && (
             <div className={styles.restricted}>
-              <h1>Restricted account {showRestricted ? '(bypassed)' : ''}</h1>
+              <h1>
+                {isUnderReviewUser ? 'Under review' : 'Restricted'} account
+                {showRestricted ? '(bypassed)' : ''}
+              </h1>
               <p>
                 Contact the Teia moderators on
                 <Button small inline href="https://discord.gg/TKeybhYhNe">

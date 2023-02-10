@@ -59,6 +59,8 @@ const mapFromList = (input_list) => {
   return out_map
 }
 
+const report_url = (name) => `${import.meta.env.VITE_TEIA_REPORT}/${name}`
+
 /**
  * Fetches the various lists
  * @returns {SettingsData}
@@ -76,16 +78,16 @@ async function fetchSettings() {
     ignoreUriResponse,
     feedIgnoreUriResponse,
   ] = await Promise.all([
-    axios.get(import.meta.env.VITE_BLOCKLIST_OBJKT), // loads blocked objkt
+    axios.get(report_url('restricted_objkt.json')), // loads blocked objkt
     axios.get(`${import.meta.env.VITE_LOGOS}/logos.json`), // list of logos we rotate through
     axios.get(`${import.meta.env.VITE_LOGOS}/logos_pride.json`), // list of logos for the pride month
-    axios.get(import.meta.env.VITE_TEIA_RESTRICTED_LIST), // Teia list of restricted accounts
-    axios.get(import.meta.env.VITE_TEIA_PERMITTED_LIST), // Teia list of acccounts that override HEN's restricted list
-    axios.get(import.meta.env.VITE_TEIA_NSFW_LIST), // Teia list of NSFW tokens that are added by the moderation team
-    axios.get(import.meta.env.VITE_TEIA_PHOTOSENSITIVE_LIST), // Teia list of Photosensitive tokens that are added by the moderation team
-    axios.get(import.meta.env.VITE_TEIA_UNDER_REVIEW_LIST), // Teia list of under review accounts added by the moderation team
-    axios.get(import.meta.env.VITE_TEIA_IGNORE_URI_LIST), // Teia list of uri to ignore added by the moderation team
-    axios.get(import.meta.env.VITE_TEIA_FEED_IGNORE_LIST), // Teia list of wallets to ignore only from feeds (created to avoid fundraiser tag abusers)
+    axios.get(report_url('restricted.json')), // Teia list of restricted accounts
+    axios.get(report_url('permitted.json')), // Teia list of accounts that override HEN's restricted list
+    axios.get(report_url('nsfw.json')), // Teia list of NSFW tokens that are added by the moderation team
+    axios.get(report_url('photosensitive.json')), // Teia list of Photosensitive tokens that are added by the moderation team
+    axios.get(report_url('under_review.json')), // Teia list of under review accounts added by the moderation team
+    axios.get(report_url('ignore_uri.json')), // Teia list of uri to ignore added by the moderation team
+    axios.get(report_url('fund_feed_ignored_addresses.json')), // Teia list of wallets to ignore only from feeds (created to avoid fundraiser tag abusers)
   ])
 
   const logoPacks = [logosResponse, logosPrideResponse]
