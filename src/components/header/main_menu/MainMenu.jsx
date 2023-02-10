@@ -34,7 +34,7 @@ export const MainMenu = () => {
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
-          <li className={styles.address}>{walletPreview(context.address)}</li>
+          <div className={styles.address}>{walletPreview(context.address)}</div>
           <MenuItem
             className={styles.menu_label}
             label="Mint"

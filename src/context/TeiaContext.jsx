@@ -27,7 +27,6 @@ import {
   SWAP_TYPE_TEIA,
   UNREGISTRY_CONTRACT,
 } from '@constants'
-import ls from 'local-storage'
 import axios from 'axios'
 import verify from '@utils/verify'
 import { getUser } from '@data/api'
@@ -405,8 +404,8 @@ class TeiaContextProviderClass extends Component {
 
       // Signed in collab address (if applicable)
       // We will retrieve from local storage
-      proxyAddress: ls.get('collab_address'),
-      proxyName: ls.get('collab_name'),
+      proxyAddress: null,
+      proxyName: null,
 
       // This will be set after creating a new collab
       // but we don't want to auto-sign in
@@ -419,14 +418,10 @@ class TeiaContextProviderClass extends Component {
           proxyAddress,
           proxyName,
         })
-
-        // Store in local storage too for retrieval later
-        ls.set('collab_address', proxyAddress)
-        ls.set('collab_name', proxyName)
       },
 
       mint: async (tz, amount, cid, royalties) => {
-        // show feedback component with followind message and progress indicator
+        // show feedback component with following message and progress indicator
 
         console.debug('CID', cid)
 
@@ -730,6 +725,12 @@ class TeiaContextProviderClass extends Component {
           type: 'mainnet',
           rpcUrl: import.meta.env.VITE_TEZOS_RPC,
         }
+
+        // Set the client theme
+        const theme = JSON.parse(localStorage.getItem('settings:theme'))
+        await wallet.client.setColorMode(
+          ['midnight', 'dark'].includes(theme) ? 'dark' : 'light'
+        )
 
         // We check the storage and only do a permission request if we don't have an active account yet
         // This piece of code should be called on startup to "load" the current address from the user
