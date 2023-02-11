@@ -5,9 +5,24 @@ import {
   MAX_ROYALTIES,
   MIN_ROYALTIES,
 } from '@constants'
-import { join, uniq } from 'lodash'
+import { get, join, kebabCase, uniq } from 'lodash'
 
-const fields = [
+export const defaultValues = {
+  title: '',
+  description: '',
+  tags: '',
+  editions: '',
+  royalties: '',
+  license: '',
+  custom_license_uri: '',
+  language: '',
+  nsfw: false,
+  photosensitive: false,
+  artifact: null,
+  cover: null,
+}
+
+export const fields = [
   {
     label: 'Title',
     type: 'text',
@@ -50,14 +65,14 @@ const fields = [
     type: 'number',
     placeholder: `No. editions, 1-${MAX_EDITIONS}`,
     rules: {
-      required: 'You need at least 1 editions',
+      required: 'You need at least 1 edition',
       min: {
         value: 1,
-        message: 'You need at least 1 editions',
+        message: 'You need at least 1 edition',
       },
       max: {
         value: MAX_EDITIONS,
-        message: `You can only mint ${MAX_EDITIONS} tokens at once.`,
+        message: `You can only mint ${MAX_EDITIONS} editions at once.`,
       },
     },
   },
@@ -85,8 +100,27 @@ const fields = [
     options: LICENSE_TYPES_OPTIONS,
   },
   {
+    label: 'Custom license URI',
+    name: 'custom_license_uri',
+    enable_if: 'useCustomLicense',
+    placeholder: 'The URI to the custom license',
+    type: 'text',
+    rules: {
+      required: true,
+      valueAs: (f) => f.value,
+      pattern: {
+        value:
+          /((https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})|(ipfs:\/\/.*))/g,
+        message: 'Invalid url (supports http, https or ipfs)',
+      },
+    },
+  },
+  {
     label: 'Language',
     placeholder: '(optional)',
+    rules: {
+      valueAs: (f) => f.value,
+    },
     type: 'select-search',
     alt: 'token language',
     options: LANGUAGES_OPTIONS,
@@ -97,12 +131,46 @@ const fields = [
   },
   {
     label: 'Photo Sensitive Seizure Warning',
+    name: 'photosensitive',
     type: 'checkbox',
   },
   {
     label: 'Upload OBJKT',
+    name: 'artifact',
     type: 'file',
+    watch: true,
+    rules: {
+      required: 'No file selected',
+    },
+  },
+  {
+    label: 'Upload Cover image',
+    name: 'cover',
+    type: 'file',
+    watch: true,
+    enable_if: 'needsCover',
+    rules: {
+      required: true,
+    },
   },
 ]
 
-export default fields
+const getFields = (deps) => {
+  // return () => {
+  const keys = Object.keys(deps)
+  return fields
+    .map((f) => {
+      f.name = f.name || kebabCase(f.label)
+      return f
+    })
+    .filter((f) => {
+      if (f.enable_if && keys.includes(f.enable_if)) {
+        return get(deps, f.enable_if)
+      }
+
+      return true
+    })
+}
+// }
+
+export default getFields
