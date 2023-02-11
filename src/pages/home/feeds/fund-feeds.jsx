@@ -61,6 +61,12 @@ export function UkraineFeed() {
 export function QuakeFeed() {
   return (
     <FundFeed
+      introText={
+        <>
+          Tezos community initiative to support those affected by the recent
+          earthquake in Turkey and Syria.
+        </>
+      }
       contractAddress={QUAKE_FUNDING_CONTRACT}
       cause="Turkey and Syria Earthquakes"
       namepsace="quake-feed"
