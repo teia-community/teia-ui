@@ -404,8 +404,8 @@ class TeiaContextProviderClass extends Component {
 
       // Signed in collab address (if applicable)
       // We will retrieve from local storage
-      proxyAddress: null,
-      proxyName: null,
+      proxyAddress: localStorage.getItem('proxyAddress'),
+      proxyName: localStorage.getItem('proxyName'),
 
       // This will be set after creating a new collab
       // but we don't want to auto-sign in
@@ -418,6 +418,13 @@ class TeiaContextProviderClass extends Component {
           proxyAddress,
           proxyName,
         })
+
+        // Local storage
+        if (proxyAddress) localStorage.setItem('proxyAddress', proxyAddress)
+        else localStorage.removeItem('proxyAddress')
+
+        if (proxyName) localStorage.setItem('proxyName', proxyName)
+        else localStorage.removeItem('proxyName')
       },
 
       mint: async (tz, amount, cid, royalties) => {
