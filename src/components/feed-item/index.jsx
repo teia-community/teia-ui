@@ -3,8 +3,9 @@ import { ItemInfoCompact } from '@components/item-info'
 import { RenderMediaType } from '@components/media-types'
 import styles from '@style'
 import classnames from 'classnames'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { Link } from 'react-router-dom'
+import { shallow } from 'zustand/shallow'
 
 /**
  * @param {Object} feedOptions - The options for the feed item
@@ -12,8 +13,12 @@ import { Link } from 'react-router-dom'
  * @returns {React.ReactElement} The feed item
  */
 export const FeedItem = ({ nft }) => {
-  const { zen, viewMode, nsfwFriendly, photosensitiveFriendly } =
-    useLocalSettings()
+  const [nsfwFriendly, photosensitiveFriendly] = useLocalSettings(
+    (state) => [state.nsfwFriendly, state.photosensitiveFriendly],
+    shallow
+  )
+  const zen = useLocalSettings((st) => st.zen)
+  const viewMode = useLocalSettings((st) => st.viewMode)
 
   const containerClasses = classnames({
     [styles.container]: true,

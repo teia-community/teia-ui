@@ -1,11 +1,12 @@
-import { useContext, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Container } from '@atoms/layout'
 import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/index.module.scss'
-import { TeiaContext } from '@context/TeiaContext'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
 import { useOutletContext } from 'react-router'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 // import { Buffer } from 'buffer'
 
 /**
@@ -15,9 +16,12 @@ import { useOutletContext } from 'react-router'
 export const Transfer = () => {
   /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
-  //const [title, setTitle] = useState()
-  const { transfer, setFeedback, address, proxyAddress } =
-    useContext(TeiaContext)
+
+  const [address, proxyAddress, transfer] = useUserStore((st) => [
+    st.address,
+    st.proxyAddress,
+    st.transfer,
+  ])
 
   const senderAddress = proxyAddress || address
 
@@ -94,7 +98,7 @@ export const Transfer = () => {
     */
 
   const onClick = () => {
-    setFeedback({
+    useModalStore.setState({
       message: 'Transfering tokens',
       progress: true,
       confirm: false,

@@ -1,9 +1,11 @@
 import { THEMES, THEME_OPTIONS } from '@constants'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import Select from './Base'
 
 export const ThemeSelection = (props) => {
-  const { theme, setTheme } = useLocalSettings()
+  const theme = useLocalSettings((st) => st.theme)
+  const setTheme = useLocalSettings((st) => st.setTheme)
+
   return (
     <Select
       alt="theme selection"

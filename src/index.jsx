@@ -1,6 +1,6 @@
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
 import { Tags } from '@pages/tags/index'
-import { LocalSettingsProvider, TeiaProvider } from '@context'
+import { TeiaProvider } from '@context'
 import { About } from '@pages/about'
 import {
   CollabContractsOverview,
@@ -137,11 +137,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <TeiaProvider>
-    <LocalSettingsProvider>
-      <IconCache.Provider value={{}}>
-        <RouterProvider router={router} />
-      </IconCache.Provider>
-    </LocalSettingsProvider>
+    <IconCache.Provider value={{}}>
+      <RouterProvider router={router} />
+    </IconCache.Provider>
   </TeiaProvider>
   // </React.StrictMode>,
 )

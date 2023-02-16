@@ -3,25 +3,28 @@ import { fadeIn } from '@utils/motion'
 import styles from '@style'
 import { motion } from 'framer-motion'
 import { walletPreview } from '@utils/string'
-import { TeiaContext } from '@context/TeiaContext'
-import { useContext } from 'react'
+import { useUserStore } from '@context/userStore'
+
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
-import useLocalSettings from '@hooks/use-local-settings'
 import { Line } from '@atoms/line'
 import { ThemeSelection } from '@atoms/select'
+import { shallow } from 'zustand/shallow'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 /**
  * The main global menu.
  * @returns {React.ReactElement}
  */
 export const MainMenu = () => {
-  const context = useContext(TeiaContext)
+  const [address, proxyName, proxyAddress, userInfo] = useUserStore(
+    (st) => [st.address, st.proxyName, st.proxyAddress, st.userInfo],
+    shallow
+  )
+  const [zen, setZen] = useLocalSettings((st) => [st.zen, st.setZen])
 
-  const { zen, setZen } = useLocalSettings()
-
-  const currentName = context.proxyName || context.userInfo?.name
-  const currentAddress = context.proxyAddress || context.address
+  const currentName = proxyName || userInfo?.name
+  const currentAddress = proxyAddress || address
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
@@ -34,7 +37,7 @@ export const MainMenu = () => {
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
-          <div className={styles.address}>{walletPreview(context.address)}</div>
+          <div className={styles.address}>{walletPreview(address)}</div>
           <MenuItem
             className={styles.menu_label}
             label="Mint"

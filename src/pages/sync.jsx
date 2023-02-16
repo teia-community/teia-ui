@@ -1,31 +1,39 @@
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { TeiaContext } from '@context/TeiaContext'
-import { Page, Container } from '@atoms/layout'
+
+import { useUserStore } from '@context/userStore'
+
+import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
+import { shallow } from 'zustand/shallow'
 
 export default function Sync() {
   const location = useLocation()
-  const context = useContext(TeiaContext)
+
+  const [address, setAccount, proxyAddress, sync] = useUserStore(
+    (st) => [st.address, st.setAccount, st.proxyAddress, st.sync],
+    shallow
+  )
 
   useEffect(() => {
     const init = async () => {
-      if (!context.address) {
-        await context.syncTaquito()
+      if (!address) {
+        await sync()
       }
-      await context.setAccount()
+      await setAccount()
     }
     init().catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.address])
+  }, [address])
 
   const locationSync = (state) => {
-    const address = context.proxyAddress || context.address
+    //TODO(mel): is proxy compatible with friends?
+    const tg_address = proxyAddress || address
     switch (state) {
       case '/tz':
       case '/feed/friends':
-        return `${state}/${address}`
+        return `${state}/${tg_address}`
       case '/settings':
       case '/subjkt':
       case '/mint':
@@ -35,16 +43,14 @@ export default function Sync() {
         return '/'
     }
   }
-  if (context.address) {
+  if (address) {
     return <Navigate to={locationSync(location.state)} replace />
   }
 
   return (
     <Page title="">
-      <Container>
-        <Loading message="Requesting Permissions" />
-        <Button to="/sync">try again?</Button>
-      </Container>
+      <Loading message="Requesting Permissions" />
+      <Button to="/sync">try again?</Button>
     </Page>
   )
 }

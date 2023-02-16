@@ -3,10 +3,10 @@ import { walletPreview } from '@utils/string'
 import { isNumber } from 'lodash'
 import styles from '@style'
 import Editions from './Editions'
-import useLocalSettings from '@hooks/use-local-settings'
 import { TezosIcon } from '@icons'
 import { PATH } from '@constants'
 import { useParams } from 'react-router'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 const Price = ({ price }) => (
   <div className={styles.price_box}>
@@ -19,7 +19,7 @@ const Price = ({ price }) => (
  * @param {import("@types").NFT} itemInfoCompactOptions.nft
  **/
 const ItemInfoCompact = ({ nft }) => {
-  const { zen, viewMode } = useLocalSettings()
+  const [zen, viewMode] = useLocalSettings((st) => [st.zen, st.viewMode])
 
   const param = useParams()
 

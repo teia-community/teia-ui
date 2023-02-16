@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { walletPreview } from '@utils/string'
 
 import { useLocation, useNavigate } from 'react-router'
 
 import { AnimatePresence } from 'framer-motion'
-import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
@@ -23,9 +22,60 @@ import { Line } from '@atoms/line'
 import { ConfigIcon } from '@icons'
 import classNames from 'classnames'
 import { PATH } from '@constants'
+import { useLocalSettings } from '@context/localSettingsStore'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
+import { shallow } from 'zustand/shallow'
+
+const setDataTheme = (theme) => {
+  const root = document.documentElement
+  root.setAttribute('data-theme', theme)
+}
 
 export const Header = () => {
-  const context = useContext(TeiaContext)
+  const [
+    address,
+    setAccount,
+    proxyName,
+    proxyAddress,
+    userInfo,
+    unsync,
+    sync,
+    setProxyAddress,
+  ] = useUserStore(
+    (st) => [
+      st.address,
+      st.setAccount,
+      st.proxyName,
+      st.proxyAddress,
+      st.userInfo,
+      st.unsync,
+      st.sync,
+      st.setProxyAddress,
+    ],
+    shallow
+  )
+  const [collapsed, setCollapsed, toggleMenu] = useModalStore(
+    (st) => [st.collapsed, st.setCollapsed, st.toggleMenu],
+    shallow
+  )
+
+  // Subscribe to theme changes using zustand
+  useEffect(() => {
+    const unsub = useLocalSettings.subscribe((st) => st.theme, setDataTheme, {
+      fireImmediately: true,
+    })
+    return unsub
+  }, [])
+
+  useEffect(() => {
+    const item = document.body.parentElement
+    if (item) {
+      item.style.overflowY = collapsed ? '' : 'scroll'
+      item.style.position = collapsed ? '' : 'fixed'
+    }
+  }, [collapsed])
+
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -41,72 +91,74 @@ export const Header = () => {
   const [accountPreview, setAccountPreview] = useState('')
 
   useEffect(() => {
-    context.setAccount()
+    setAccount()
     setOnHome(location.pathname === '/')
   }, [])
 
   // on Menu Toggle or Sign in
   useEffect(() => {
-    setSyncLabel(context.address ? 'Unsync' : 'Sync')
-
-    if (context.address) {
-      // is menu closed?
-      if (context.collapsed) {
-        const proxyAddress = context.proxyAddress
-          ? ` (${context.proxyName || walletPreview(context.proxyAddress)})`
-          : ''
-        const userName = context.userInfo?.name
-          ? `(${context.userInfo.name})`
-          : ''
-        setWalletLabel(
-          () => walletPreview(context.address) + (proxyAddress || userName)
-        )
-        setAccountPreview(() =>
-          syncLabel
-            .slice(syncLabel.length - 5, syncLabel.length)
-            .split('')
-            .join(' ')
-        )
+    const updateTitle = ([address, proxyAddress, proxyName]) => {
+      setSyncLabel(address ? 'Unsync' : 'Sync')
+      if (address) {
+        // is menu closed?
+        if (collapsed) {
+          const proxy = proxyAddress
+            ? ` (${proxyName || walletPreview(proxyAddress)})`
+            : ''
+          const userName = userInfo?.name ? `(${userInfo.name})` : ''
+          setWalletLabel(() => walletPreview(address) + (proxy || userName))
+          setAccountPreview(() =>
+            syncLabel
+              .slice(syncLabel.length - 5, syncLabel.length)
+              .split('')
+              .join(' ')
+          )
+        }
       }
     }
-  }, [context.address, context.collapsed])
+
+    return useUserStore.subscribe(
+      (st) => [st.address, st.proxyAddress, st.proxyName],
+      updateTitle
+    )
+  }, [])
 
   const handleRoute = (path, data) => {
-    context.collapseMenu(true)
+    setCollapsed(true)
     navigate(path, { state: data })
   }
 
   const handleSyncUnsync = () => {
-    if (context.address) {
-      if (context.collapsed) {
-        const name = context.proxyName || context.userInfo?.name
-        const address = context.proxyAddress || context.address
+    if (address) {
+      if (collapsed) {
+        const name = proxyName || userInfo?.name
+        const current_address = proxyAddress || address
 
         if (name) {
           handleRoute(`/${name}`)
         } else {
-          handleRoute(`${PATH.ISSUER}/${address}`)
+          handleRoute(`${PATH.ISSUER}/${current_address}`)
         }
       } else {
         // disconnect wallet
-        context.disconnect()
+        unsync()
       }
     } else {
       // connect wallet
-      context.syncTaquito()
+      sync()
     }
   }
 
   const container_classes = classNames({
     [styles.grid]: true,
     // [styles.large]: onHome,
-    [styles.fill_bg]: !context.collapsed,
+    [styles.fill_bg]: !collapsed,
   })
 
   return (
     <>
       <EventBanner />
-      <AnimatePresence>{!context.collapsed && <MainMenu />}</AnimatePresence>
+      <AnimatePresence>{!collapsed && <MainMenu />}</AnimatePresence>
       <header className={`${styles.container}`}>
         <div className={container_classes}>
           <div className={styles.left}>
@@ -135,7 +187,7 @@ export const Header = () => {
             alt="teia logo"
             to={!onHome ? '/' : null}
             onTo={() => {
-              context.collapseMenu(true)
+              setCollapsed(true)
               setOnHome(onHome)
             }}
             onClick={() => {
@@ -146,12 +198,12 @@ export const Header = () => {
             <RotatingLogo seed={logoSeed} className={styles.logo} />
           </Button>
           <div className={styles.right}>
-            {!context.collapsed && (
+            {!collapsed && (
               <>
                 <Button
                   alt={'local settings'}
                   to="/settings"
-                  onTo={() => context.collapseMenu(true)}
+                  onTo={() => setCollapsed(true)}
                   className={styles.config_button}
                 >
                   <ConfigIcon fill="var(--text-color)" width={16} height={16} />
@@ -160,13 +212,13 @@ export const Header = () => {
                 {/* <Line className={styles.separator} vertical /> */}
               </>
             )}
-            {!context.collapsed && context.proxyAddress && (
+            {!collapsed && proxyAddress && (
               <>
                 <Line className={styles.separator} vertical />
                 <Button
                   alt={'exit collab'}
                   small
-                  onClick={() => context.setProxyAddress(null)}
+                  onClick={() => setProxyAddress(null)}
                   secondary
                 >
                   Exit collab
@@ -180,7 +232,7 @@ export const Header = () => {
               className={styles.sync_label}
               secondary
               alt={
-                !context.collapsed
+                !collapsed
                   ? accountPreview
                     ? 'unsync'
                     : 'sync'
@@ -190,18 +242,18 @@ export const Header = () => {
               }
             >
               {/* {isWide && syncLabel} */}
-              {!context.collapsed || !context.address ? (
+              {!collapsed || !address ? (
                 <span key="synclabel">{syncLabel}</span>
               ) : (
                 <span key="">{walletLabel}</span>
               )}
             </Button>
             <Button
-              alt={`${context.collapsed ? 'show' : 'hide'} menu`}
-              onClick={context.toggleMenu}
+              alt={`${collapsed ? 'show' : 'hide'} menu`}
+              onClick={toggleMenu}
               secondary
             >
-              <Menu isOpen={!context.collapsed} />
+              <Menu isOpen={!collapsed} />
             </Button>
           </div>
         </div>

@@ -1,12 +1,14 @@
 import Button from '@atoms/button/Button'
 import Checkbox from '@atoms/input/Checkbox'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useState } from 'react'
 import styles from './warning.module.scss'
 
 export const Warning = ({ onInteract }) => {
   const [remember, setRemember] = useState(false)
-  const { setNsfwFriendly, setPhotosensitiveFriendly } = useLocalSettings()
+  const { setNsfwFriendly, setPhotosensitiveFriendly } = useLocalSettings(
+    (st) => [st.setNsfwFriendly, st.setPhotosensitiveFriendly]
+  )
 
   const handleInteract = (v) => {
     onInteract(v)

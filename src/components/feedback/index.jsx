@@ -1,16 +1,21 @@
-import { useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { TeiaContext } from '@context'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { fadeIn } from '@utils/motion'
 import styles from '@style'
 import Markdown from 'markdown-to-jsx'
+import { useModalStore } from '@context/modalStore'
 
 export const FeedbackComponent = () => {
-  const context = useContext(TeiaContext)
-  const { visible, message, progress, confirm, confirmCallback } =
-    context.feedback
+  const [visible, message, progress, confirm, confirmCallback] = useModalStore(
+    (st) => [
+      st.visible,
+      st.message,
+      st.progress,
+      st.confirm,
+      st.confirmCallback,
+    ]
+  )
 
   return (
     <AnimatePresence>

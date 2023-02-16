@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import get from 'lodash/get'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Page } from '@atoms/layout'
 import { Input } from '@atoms/input'
 import { Button } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
 import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
-import { TeiaContext } from '@context/TeiaContext'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 import _ from 'lodash'
 import styles from '@style'
 import { Line } from '@atoms/line'
@@ -45,24 +46,24 @@ async function fetchTz(address) {
 }
 
 export const Subjkt = () => {
-  const context = useContext(TeiaContext)
   const [loading, setLoading] = useState(true)
-  const [address, setAddress] = useState('')
+  // const [address, setAddress] = useState('')
   const [subjkt, setSubjkt] = useState('')
   const [description, setDescription] = useState('')
   const [identicon, setIdenticon] = useState('')
   const [selectedFile, setSelectedFile] = useState('')
 
+  const [address, proxyAddress, registry] = useUserStore((st) => [
+    st.address,
+    st.proxyAddress,
+    st.registry,
+  ])
+
+  const cur_address = proxyAddress || address
   useEffect(() => {
     const init = async () => {
-      const { address, proxyAddress } = context
-
-      // Maybe use proxy address here
-      const cur_address = proxyAddress || address
       if (cur_address) {
-        setAddress(cur_address)
         const res = await fetchTz(cur_address)
-        context.setSubjktInfo(res)
         console.debug('Subjkt Infos:', res)
 
         if (res) {
@@ -79,7 +80,7 @@ export const Subjkt = () => {
       }
       setLoading(false)
     }
-    init().catch(console.error)
+    init() //.catch((e) => throw new Error(e.message))
   }, [])
 
   const name_exists = async () => {
@@ -105,13 +106,13 @@ export const Subjkt = () => {
 
     console.error(`name exists and is registered to ${holder.user_address}`)
 
-    context.setFeedback({
+    useModalStore.setState({
       visible: true,
       message: `The provided name is already registered by ${holder.user_address}`,
       progress: false,
       confirm: true,
       confirmCallback: () => {
-        context.setFeedback({ visible: false })
+        useModalStore.setState({ visible: false })
       },
     })
 
@@ -124,7 +125,7 @@ export const Subjkt = () => {
       return
     }
 
-    context.setFeedback({
+    useModalStore.setState({
       visible: true,
       message: 'uploading SUBJKT',
       progress: true,
@@ -134,7 +135,7 @@ export const Subjkt = () => {
     if (selectedFile) {
       const [file] = selectedFile
 
-      context.setFeedback({
+      useModalStore.setState({
         message: 'uploading indenticon',
       })
 
@@ -149,7 +150,7 @@ export const Subjkt = () => {
       description,
       identicon,
     })
-    context.setFeedback({
+    useModalStore.setState({
       message: 'uploading metadatas',
     })
 
@@ -161,11 +162,11 @@ export const Subjkt = () => {
     })
 
     if (subjkt_meta_cid == null) {
-      context.setFeedback({
+      useModalStore.setState({
         confirm: true,
         message: 'Error uploading metadatas',
         confirmCallback: () => {
-          context.setFeedback({ visible: false })
+          useModalStore.setState({ visible: false })
         },
       })
       console.error('Error uploading metadatas file to IPFS')
@@ -173,20 +174,20 @@ export const Subjkt = () => {
     }
     console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
-    context.setFeedback({
+    useModalStore.setState({
       message: 'minting SUBJKT',
       progress: true,
       confirm: false,
     })
 
-    await context.registry(subjkt, subjkt_meta_cid)
+    await registry(subjkt, subjkt_meta_cid)
 
-    context.setFeedback({
+    useModalStore.setState({
       message: 'SUBJKT Minted',
       progress: false,
       confirm: true,
       confirmCallback: () => {
-        context.setFeedback({ visible: false })
+        useModalStore.setState({ visible: false })
       },
     })
   }

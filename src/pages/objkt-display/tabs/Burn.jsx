@@ -1,11 +1,12 @@
-import { useState, useContext, useMemo } from 'react'
-import { TeiaContext } from '@context/TeiaContext'
+import { useState, useMemo } from 'react'
 import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
 import { Loading } from '@atoms/loading'
 import styles from '@style'
 import { useOutletContext } from 'react-router'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 
 /**
  * The Burn Tab
@@ -13,16 +14,16 @@ import { useOutletContext } from 'react-router'
 export const Burn = () => {
   /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
+  const [burn, address, proxyAddress] = useUserStore((st) => [
+    st.burn,
+    st.address,
+    st.proxyAddress,
+  ])
+  const [modalVisible, message] = useModalStore((st) => [
+    st.visible,
+    st.message,
+  ])
 
-  const {
-    burn,
-    address,
-    proxyAddress,
-    message,
-    setMessage,
-    setProgress,
-    progress,
-  } = useContext(TeiaContext)
   const [amount, setAmount] = useState('')
 
   const proxyAdminAddress = nft.artist_profile?.is_split
@@ -58,15 +59,18 @@ export const Burn = () => {
       `Are you sure you want to burn ${amount} of ${totalOwned}?`
     )
     if (r) {
-      setProgress(true)
-      setMessage('Burning OBJKT')
+      useModalStore.setState({
+        progress: true,
+        message: 'Burning OBJKT',
+      })
+
       burn(nft.token_id, amount)
     }
   }
 
   return (
     <>
-      {!progress ? (
+      {!modalVisible ? (
         <div>
           <Container>
             <div className={styles.container}>
@@ -88,7 +92,7 @@ export const Burn = () => {
                     setAmount(totalOwned)
                   }
                 }}
-                disabled={progress}
+                // disabled={modalVisible}
               />
             </div>
           </Container>
@@ -126,10 +130,9 @@ export const Burn = () => {
               top: '35%',
             }}
           >
-            {' '}
             {message}
           </p>
-          {progress && <Loading />}
+          <Loading />
         </div>
       )}
     </>

@@ -38,28 +38,25 @@ import Button from '@atoms/button/Button'
  */
 export const Tabs = ({ tabs, className, filter, props = {} }) => {
   const filtered_tabs = useMemo(
-    () => (filter ? tabs.map(filter) : tabs),
+    () => (filter ? tabs.map(filter).filter((v) => v) : tabs),
     [tabs, filter]
   )
 
   return (
     <div className={`${styles.container} ${className ? className : ''}`}>
       <div className={styles.tabs}>
-        {filtered_tabs.map((tab, index) =>
-          tab ? (
-            <Button
-              preventScrollReset
-              key={tab.title}
-              className={styles.tab}
-              activeClass={styles.active}
-              to={tab?.to}
-            >
-              {tab.title}
-            </Button>
-          ) : (
-            ''
-          )
-        )}
+        {filtered_tabs.map((tab, index) => (
+          <Button
+            preventScrollReset
+            key={tab.title}
+            className={styles.tab}
+            activeClass={styles.active}
+            disabled={tab.disabled}
+            to={tab?.to}
+          >
+            {tab.title}
+          </Button>
+        ))}
       </div>
       <Line className={styles.line} />
     </div>

@@ -46,7 +46,11 @@ fragment baseTokenFields on tokens {
 }
 `
 
-export async function fetchGraphQL(operationsDoc, operationName, variables) {
+export async function fetchGraphQL(
+  operationsDoc: string,
+  operationName: string,
+  variables: { [key: string]: any }
+) {
   const result = await fetch(import.meta.env.VITE_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
@@ -170,7 +174,7 @@ query objkt($id: String!) {
 }
 `
 
-export async function getUser(addressOrName, type = 'user_address') {
+export async function getUser(addressOrName: string, type = 'user_address') {
   const { data } = await fetchGraphQL(
     `
   query addressQuery($addressOrName: String!) {
@@ -192,7 +196,10 @@ export async function getUser(addressOrName, type = 'user_address') {
   return data?.teia_users?.length ? data.teia_users[0] : null
 }
 
-export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
+export async function fetchCollabCreations(
+  addressOrSubjkt: string,
+  type = 'address'
+) {
   const { data } = await fetchGraphQL(
     `
     ${BaseTokenFieldsFragment}
@@ -236,7 +243,7 @@ export async function fetchCollabCreations(addressOrSubjkt, type = 'address') {
   return data
 }
 
-export async function fetchObjktDetails(id) {
+export async function fetchObjktDetails(id: string) {
   const { data } = await fetchGraphQL(query_objkt, 'objkt', {
     id,
   })
@@ -246,7 +253,7 @@ export async function fetchObjktDetails(id) {
 /**
  * Get User claims from their tzprofile
  */
-const GetUserClaims = async (walletAddr) => {
+const GetUserClaims = async (walletAddr: string) => {
   return await axios.post(import.meta.env.VITE_TZPROFILES_GRAPHQL_API, {
     query: `query MyQuery { tzprofiles_by_pk(account: "${walletAddr}") { valid_claims } }`,
     variables: null,
@@ -254,13 +261,29 @@ const GetUserClaims = async (walletAddr) => {
   })
 }
 
+interface TzpMetadata {
+  alias?: string
+  tzprofile?: string
+  twitter?: string
+  discord?: string
+  github?: string
+  dns?: string
+}
+interface TzktMetadata {
+  twitter?: string
+  alias?: string
+}
+
+interface TzktData {
+  data?: TzktMetadata
+}
 /**
  * Get User Metadata
  */
-export const GetUserMetadata = async (walletAddr) => {
-  const tzktData = {}
+export const GetUserMetadata = async (walletAddr: string) => {
+  const tzktData: TzktData = {}
 
-  const tzpData = {}
+  const tzpData: TzpMetadata = {}
   try {
     const claims = await GetUserClaims(walletAddr)
     if (claims.data.data.tzprofiles_by_pk !== null)
@@ -289,7 +312,7 @@ export const GetUserMetadata = async (walletAddr) => {
           tzpData.dns = claimJSON.credentialSubject.sameAs.slice(4)
         }
       }
-  } catch (e) {
+  } catch (e: any) {
     console.error(e, e.stack)
   }
 

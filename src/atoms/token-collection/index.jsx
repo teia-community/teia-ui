@@ -10,7 +10,7 @@ import useSettings from '@hooks/use-settings'
 import laggy from '@utils/swr-laggy-middleware'
 import { FeedToolbar } from '@components/header/feed_toolbar/FeedToolbar'
 import styles from '@style'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useKeyboard } from '@hooks/use-keyboard'
 import { Loading } from '@atoms/loading'
 import {
@@ -18,6 +18,7 @@ import {
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
 import { IconCache } from '@utils/with-icon'
+import { shallow } from 'zustand/shallow'
 
 /**
  * Single view, vertical feed
@@ -103,7 +104,12 @@ function TokenCollection({
   const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
     useSettings()
 
-  const { viewMode, toggleViewMode, toggleZen } = useLocalSettings()
+  // const { viewMode, toggleViewMode, toggleZen } = useLocalSettings()
+
+  const [viewMode, toggleViewMode, toggleZen] = useLocalSettings(
+    (state) => [state.viewMode, state.toggleViewMode, state.toggleZen],
+    shallow
+  )
   useKeyboard('v', toggleViewMode)
   useKeyboard('z', toggleZen)
 

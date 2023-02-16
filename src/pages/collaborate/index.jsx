@@ -3,8 +3,10 @@ import { CollabDisplay } from '@components/collab/show/CollabDisplay'
 import { CreateCollaboration } from './create'
 import { CollabContractsOverview } from './manage'
 import { Tabs } from '@atoms/tab/Tabs'
-import { Outlet } from 'react-router'
+import { Outlet, useNavigate } from 'react-router'
 import styles from '@style'
+import { useCollabStore } from '@context/collabStore'
+import { useEffect } from 'react'
 /**@type {import('@atoms/tab/Tabs').TabOptions} */
 const TABS = [
   { title: 'Manage', to: '' },
@@ -13,18 +15,25 @@ const TABS = [
 
 const Collaborate = () => {
   // We watch for this being created so we can change from create to manage
-  // const { originationOpHash, banner } = useContext(TeiaContext)
+  const navigate = useNavigate()
 
   // const { action } = useParams()
 
-  // TODO(mel): change tab on collab creation
   // If an address is created, update the tab
-  // useEffect(() => {
-  //   console.debug({ originationOpHash })
-  //   if (originationOpHash) {
-  //     setTabIndex(0)
-  //   }
-  // }, [originationOpHash])
+  useEffect(() => {
+    const clb = (originationOpHash) => {
+      console.debug({ originationOpHash })
+      if (originationOpHash) {
+        navigate('/')
+      }
+    }
+    const unsubscribe = useCollabStore.subscribe(
+      (st) => st.originationOpHash,
+      clb
+    )
+    return unsubscribe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Page title="proxy">

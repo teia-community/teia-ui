@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { gql } from 'graphql-request'
 import get from 'lodash/get'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
-import { TeiaContext } from '@context/TeiaContext'
+
 import { useOutletContext } from 'react-router'
 import { orderBy } from 'lodash'
 
@@ -18,10 +18,6 @@ export default function Creations() {
   const { showFilters, showRestricted, overrideProtections, address } =
     useOutletContext()
   const [filter, setFilter] = useState(FILTER_ALL)
-  const { setProfileFeed } = useContext(TeiaContext)
-  useEffect(() => {
-    setProfileFeed(true)
-  }, [setProfileFeed])
 
   return (
     <>

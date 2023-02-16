@@ -12,6 +12,13 @@ import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useOutletContext } from 'react-router'
 
+const Attribute = ({ label, value }) => {
+  return (
+    <div className={styles.info_attributes}>
+      {label}:<p>{value}</p>
+    </div>
+  )
+}
 //TODO(mel) refactor this...
 /**
  * The Info Tab
@@ -43,23 +50,20 @@ export const Info = () => {
       <Container>
         <div className={styles.infos_attributes_container}>
           <div className={styles.infos_attributes_flex}>
-            <div className={styles.info_attributes}>
-              Mimetype:<p>{nft.mime_type}</p>
-            </div>
+            <Attribute label="Mimetype" value={nft.mime_type} />
             {nft.language && (
-              <div className={styles.info_attributes}>
-                Language:<p>{LANGUAGES[nft.language]}</p>
-              </div>
+              <Attribute label="Language" value={LANGUAGES[nft.language]} />
             )}
-            {nft.content_rating && (
-              <div className={styles.info_attributes}>
-                Content Rating:
-                {nft.content_rating === METADATA_CONTENT_RATING_MATURE ? (
-                  <p>NSFW (Mature)</p>
-                ) : (
-                  <p>Unknown Rating</p>
-                )}
-              </div>
+            {(nft.teia_meta.content_rating || nft.isNSFW) && (
+              <Attribute
+                label="Content Rating"
+                value={
+                  nft.content_rating === METADATA_CONTENT_RATING_MATURE ||
+                  nft.isNSFW
+                    ? 'NSFW (Mature)'
+                    : 'Unknown Rating'
+                }
+              />
             )}
 
             <div className={styles.info_attributes}>
