@@ -1,10 +1,16 @@
+import { NFT } from '@types'
 import * as _ from 'lodash'
 
-export function rnd(min, max) {
+export function rnd(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export function shuffle(a) {
+/**
+ *
+ * @param
+ * @returns
+ */
+export function shuffle(a: [string]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[a[i], a[j]] = [a[j], a[i]]
@@ -17,12 +23,12 @@ export function shuffle(a) {
  * @param {number} seed
  * @returns
  */
-export function randomSeed(seed) {
+export function randomSeed(seed: number) {
   let s = Math.sin(seed) * 1e4
   return (s -= Math.floor(s))
 }
 
-export const fetchJSON = async (url) => {
+export const fetchJSON = async (url: string) => {
   try {
     return await fetch(url).then(async (res) => await res.json())
   } catch (err) {
@@ -30,18 +36,23 @@ export const fetchJSON = async (url) => {
   }
 }
 
-/**
- * Converts an ipfs hash to ipfs url
- * @param {string} cid
- * @param {'CDN' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
- * @param {HashToURLOptions} [options]
- * @returns {string}
- */
+type IPFSGateway =
+  | 'CDN'
+  | 'CLOUDFLARE'
+  | 'PINATA'
+  | 'IPFS'
+  | 'DWEB'
+  | 'NFTSTORAGE'
+
+interface CIDtoURLOptions {
+  size: 'raw' | 'small' | 'medium'
+}
+
 const CIDToURL = (
-  cid,
-  type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
-  options
-) => {
+  cid: string,
+  type: IPFSGateway = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
+  options: CIDtoURLOptions
+): string => {
   if (cid == null) {
     return ''
   }
@@ -72,10 +83,6 @@ const CIDToURL = (
 }
 
 /**
- * @typedef { {size?: string} } HashToURLOptions
- */
-
-/**
  * Converts an ipfs hash to ipfs url
  * @param {string} hash
  * @param {'CDN' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
@@ -83,9 +90,9 @@ const CIDToURL = (
  * @returns {string}
  */
 export const HashToURL = (
-  hash,
+  hash: string,
   type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
-  options
+  options: CIDtoURLOptions
 ) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
@@ -98,7 +105,7 @@ export const HashToURL = (
   return CIDToURL(CID, type, options)
 }
 
-export function formatRoyalties(nft) {
+export function formatRoyalties(nft: NFT) {
   const royalties = _.get(nft, 'royalty_receivers.0.royalties')
 
   if (!_.isNumber(royalties)) {

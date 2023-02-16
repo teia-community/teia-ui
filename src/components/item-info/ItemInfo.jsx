@@ -1,9 +1,10 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import classNames from 'classnames'
 import get from 'lodash/get'
 import { PATH } from '@constants'
 import { Button, Secondary } from '@atoms/button'
-import { TeiaContext } from '@context/TeiaContext'
+import { useUserStore } from '@context/userStore'
+
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 import collabStyles from '../collab/index.module.scss'
@@ -20,7 +21,7 @@ import Editions from './Editions'
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
 const ItemInfo = ({ nft }) => {
-  const { address } = useContext(TeiaContext)
+  const address = useUserStore((st) => st.address)
 
   const { walletBlockMap } = useSettings()
   const [showSignStatus, setShowSignStatus] = useState(false)

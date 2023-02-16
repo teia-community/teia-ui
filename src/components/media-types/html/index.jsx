@@ -1,6 +1,6 @@
-import { useContext, useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import classnames from 'classnames'
-import { TeiaContext } from '@context/TeiaContext'
+
 import { Button } from '@atoms/button'
 import {
   dataRUIToBuffer,
@@ -10,6 +10,8 @@ import {
 import styles from '@style'
 import { GenerativeIcon } from '@icons'
 // import './styles.css'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 
 const uid = Math.round(Math.random() * 1e8).toString()
 
@@ -23,7 +25,9 @@ const sandbox_features =
  */
 export const HTMLComponent = (props) => {
   const { artifactUri, displayUri, previewUri, nft, displayView } = props
-  const context = useContext(TeiaContext)
+
+  const address = useUserStore((st) => st.address)
+  const showModal = useModalStore((st) => st.show)
 
   let _creator_ = false
   let _viewer_ = false
@@ -33,8 +37,8 @@ export const HTMLComponent = (props) => {
     _creator_ = nft.artist_address
   }
 
-  if (context?.address) {
-    _viewer_ = context.address
+  if (address) {
+    _viewer_ = address
   }
 
   if (nft.token_id) {
@@ -73,7 +77,7 @@ export const HTMLComponent = (props) => {
 
       unpacking.current = false
     } catch (e) {
-      context.showFeedback(`Couldn't unpack ZIP file: ${e}`)
+      showModal(`Couldn't unpack ZIP file: ${e}`)
       console.error(e)
       return
     }

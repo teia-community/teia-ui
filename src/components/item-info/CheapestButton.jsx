@@ -1,11 +1,14 @@
 import { Button } from '@atoms/button'
 import MarketplaceLabel from '@atoms/marketplace-labels'
-import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
-import { useContext } from 'react'
+import { useUserStore } from '@context/userStore'
 
 const CheapestButton = ({ listing }) => {
-  const { syncTaquito, collect, address } = useContext(TeiaContext)
+  const [address, sync, collect] = useUserStore((st) => [
+    st.address,
+    st.sync,
+    st.collect,
+  ])
   return listing ? (
     <div className={styles.main_swap}>
       <MarketplaceLabel listing={listing} />
@@ -13,7 +16,7 @@ const CheapestButton = ({ listing }) => {
       <Button
         onClick={() => {
           if (address == null) {
-            syncTaquito()
+            sync()
           } else {
             collect(listing)
           }

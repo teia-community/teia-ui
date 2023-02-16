@@ -1,6 +1,5 @@
-import { useState, useEffect, Fragment, useContext } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { groupShareTotal, validAddress } from '@utils/collab'
-import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { CollaboratorTable, BeneficiariesUI } from '@components/collab'
 import AddCollaboratorsButton from '@components/collab/create/AddCollaboratorsButton'
@@ -8,9 +7,10 @@ import { ReviewStage } from '@components/collab/create/ReviewStage'
 import styles from '@style'
 import classNames from 'classnames'
 import { Button, Secondary } from '@atoms/button'
+import { useUserStore } from '@context/userStore'
 
 export const CreateCollaboration = () => {
-  const { address } = useContext(TeiaContext)
+  const address = useUserStore((st) => st.address)
 
   // Core collaborators and beneficiaries
   const [editCollaborators, setEditCollaborators] = useState(true)

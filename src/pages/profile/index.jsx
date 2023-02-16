@@ -12,8 +12,8 @@ import Profile from './profile'
 import styles from '@style'
 import { Tabs } from '@atoms/tab'
 import Button from '@atoms/button/Button'
-import useLocalSettings from '@hooks/use-local-settings'
 import { Warning } from './warning'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -66,7 +66,10 @@ export default function Display() {
 
   let [searchParams] = useSearchParams()
 
-  const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings()
+  const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings((st) => [
+    st.nsfwFriendly,
+    st.photosensitiveFriendly,
+  ])
 
   useLayoutEffect(() => {
     if (searchParams.get('yolo') !== null) {

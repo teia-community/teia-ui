@@ -1,19 +1,30 @@
-import { useState, useContext, useEffect } from 'react'
-import { TeiaContext } from '@context/TeiaContext'
+import { useState, useEffect } from 'react'
 import { Container } from '@atoms/layout'
 import styles from '@components/collab/index.module.scss'
 import { fetchGraphQL, getCollabsForAddress } from '@data/api'
 // import { Input } from '@atoms/input'
 import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
 import { CollabList } from '@components/collab/manage/CollabList'
+import { useUserStore } from '@context/userStore'
+import { useCollabStore } from '@context/collabStore'
+import { shallow } from 'zustand/shallow'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
-  const {
-    address,
+  const address = useUserStore((st) => st.address)
+
+  const [
     originatedContract,
     originationOpHash,
     findOriginatedContractFromOpHash,
-  } = useContext(TeiaContext)
+  ] = useCollabStore(
+    (st) => [
+      st.originatedContract,
+      st.originationOpHash,
+      st.findOriginatedContractFromOpHash,
+    ],
+    shallow
+  )
+
   const [collabs, setCollabs] = useState([])
   // const [managedCollabs, setManagedCollabs] = useState([])
   const [loadingCollabs, setLoadingCollabs] = useState(true)

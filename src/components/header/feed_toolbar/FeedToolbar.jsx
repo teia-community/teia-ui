@@ -5,14 +5,14 @@ import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { IconToggle } from '@atoms/toggles'
 import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 
-// import { Input } from '@atoms/input'
-import { /*useContext, */ useState } from 'react'
-import { Button /*Primary*/ } from '@atoms/button'
-// import { TeiaContext } from '@context/TeiaContext'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useState } from 'react'
+import { Button } from '@atoms/button'
+
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useLocation, useNavigate } from 'react-router'
 import { useEffect } from 'react'
 import { Line } from '@atoms/line'
+import { shallow } from 'zustand/shallow'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -52,8 +52,11 @@ const locationPaths = [...locationMap.keys()]
 
 export const FeedToolbar = ({ feeds_menu = false }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
-  // const context = useContext(TeiaContext)
-  const { viewMode, setViewMode } = useLocalSettings()
+
+  const [viewMode, setViewMode] = useLocalSettings(
+    (st) => [st.viewMode, st.setViewMode],
+    shallow
+  )
   const location = useLocation()
   const [feedLabel, setFeedLabel] = useState('Recent Sales')
 

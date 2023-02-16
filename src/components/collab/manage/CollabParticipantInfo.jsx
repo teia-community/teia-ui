@@ -1,15 +1,20 @@
-import { Fragment, useContext } from 'react'
+import { Fragment } from 'react'
 import get from 'lodash/get'
-import { TeiaContext } from '@context'
 import { Button } from '@atoms/button'
 import classNames from 'classnames'
 import styles from '../index.module.scss'
 import { CollaboratorType, PATH } from '@constants'
 import ParticipantList from './ParticipantList'
 import { Link } from 'react-router-dom'
+import { useUserStore } from '@context/userStore'
 
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
-  const { proxyAddress, setProxyAddress, address } = useContext(TeiaContext)
+  const [proxyAddress, address] = useUserStore((st) => [
+    st.proxyAddress,
+    st.setProxyAddress,
+    st.address,
+  ])
+
   const {
     administrator_address,
     contract_address,
@@ -68,14 +73,27 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
           {contract_address !== proxyAddress && isAdmin && (
             <Button
               shadow_box
-              onClick={() => setProxyAddress(contract_address, name)}
+              onClick={() =>
+                useUserStore.setState({
+                  proxyAddress: contract_address,
+                  proxyName: name,
+                })
+              }
             >
               sign in
             </Button>
           )}
 
           {contract_address === proxyAddress && isAdmin && (
-            <Button shadow_box onClick={() => setProxyAddress(null)}>
+            <Button
+              shadow_box
+              onClick={() =>
+                useUserStore.setState({
+                  proxyAddress: undefined,
+                  proxyName: undefined,
+                })
+              }
+            >
               sign out
             </Button>
           )}

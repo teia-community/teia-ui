@@ -1,8 +1,7 @@
-import { useContext } from 'react'
 import classnames from 'classnames'
-import { TeiaContext } from '@context/TeiaContext'
 import styles from '@style'
 import './index.css'
+import { useUserStore } from '@context/userStore'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -13,7 +12,7 @@ export const VectorComponent = ({
   displayView,
   nft,
 }) => {
-  const context = useContext(TeiaContext)
+  const address = useUserStore((st) => st.address)
   const classes = classnames({
     [styles.container]: true,
     [styles.interactive]: displayView,
@@ -23,8 +22,8 @@ export const VectorComponent = ({
   let _viewer_ = false
   let _objkt_ = false
 
-  if (context.address) {
-    _viewer_ = context.address
+  if (address) {
+    _viewer_ = address
   }
 
   if (nft.token_id) {

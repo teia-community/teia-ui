@@ -1,13 +1,12 @@
-import { useContext } from 'react'
-import { TeiaContext } from '../../../context/TeiaContext'
 import { Button } from '@atoms/button'
 import styles from '../index.module.scss'
+import { useCollabStore } from '@context/collabStore'
 
 export const SigningUI = ({ id, hasSigned }) => {
-  const context = useContext(TeiaContext)
+  const sign = useCollabStore((st) => st.sign)
 
-  const sign = () => {
-    context.sign(id).then((response) => console.log(response))
+  const do_sign = () => {
+    sign(id).then((response) => console.log(response))
   }
 
   return hasSigned ? (
@@ -18,7 +17,7 @@ export const SigningUI = ({ id, hasSigned }) => {
         <p>
           You are a core participant in this work but you haven’t signed it yet
         </p>
-        <Button shadow_box onClick={() => sign()}>
+        <Button shadow_box onClick={do_sign}>
           sign work now
         </Button>
       </div>

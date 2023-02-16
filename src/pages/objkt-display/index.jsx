@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import set from 'lodash/set'
 import { Outlet, useParams } from 'react-router-dom'
 import useSWR from 'swr'
-import { TeiaContext } from '@context/TeiaContext'
+
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
@@ -14,6 +14,8 @@ import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
 import { Tabs } from '@atoms/tab/Tabs'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 
 const TABS = [
   {
@@ -48,9 +50,13 @@ const TABS = [
 
 export const ObjktDisplay = () => {
   const { id } = useParams()
-  const context = useContext(TeiaContext)
-  const address = context.address
-  const proxy = context.proxyAddress
+
+  const address = useUserStore((st) => st.address)
+  const proxy = useUserStore((st) => st.proxyAddress)
+  const [modalVisible, message] = useModalStore((st) => [
+    st.visible,
+    st.message,
+  ])
   const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
 
   /** @type {{data:import('@types').NFT, error:Error}} */
@@ -79,9 +85,6 @@ export const ObjktDisplay = () => {
       if (nsfwMap.get(objkt.token_id) === 1) {
         set(objkt, 'teia_meta.content_rating', METADATA_CONTENT_RATING_MATURE)
       }
-
-      // TODO: is really needed?
-      await context.setAccount()
 
       objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
       objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
@@ -135,7 +138,7 @@ export const ObjktDisplay = () => {
   if (loading) {
     return <Page title={nft?.name}>{loading && <Loading />}</Page>
   }
-  if (context.progress) {
+  if (modalVisible) {
     return (
       <Page title={nft?.name}>
         <div>
@@ -146,9 +149,9 @@ export const ObjktDisplay = () => {
               top: '45%',
             }}
           >
-            {context.message}
+            {message}
           </p>
-          {context.progress && <Loading />}
+          <Loading />
         </div>
       </Page>
     )

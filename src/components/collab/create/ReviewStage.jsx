@@ -1,10 +1,9 @@
-import { useContext } from 'react'
 import { Container } from '@atoms/layout'
 import styles from '../index.module.scss'
 import { groupShareTotal } from '@utils/collab'
 import { Button } from '@atoms/button'
-import { TeiaContext } from '@context/TeiaContext'
 import { Fragment } from 'react'
+import { useCollabStore } from '@context/collabStore'
 
 export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
   const totalShares =
@@ -14,7 +13,7 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
   const bNum = beneficiaries.length
 
   // Proxy contract creation function
-  const { originateProxy } = useContext(TeiaContext) // use mockProxy instead for fake return data
+  const [originateProxy] = useCollabStore((st) => st.originateProxy) // use mockProxy instead for fake return data
 
   const originateContract = async () => {
     // shares should be object where keys are addresses and

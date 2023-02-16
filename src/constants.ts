@@ -16,7 +16,7 @@ export const PATH = {
 export const MINT_MIN_LIMIT = 1
 export const MINT_FILESIZE = 2000
 
-export const MIMETYPE = {
+export const MIMETYPE: { [key: string]: string } = {
   BMP: 'image/bmp',
   FLAC: 'audio/flac',
   GIF: 'image/gif',
@@ -130,7 +130,7 @@ export const THUMBNAIL_COMPRESSOR_OPTIONS = {
   maxHeight: 350,
 }
 
-export const LICENSE_TYPES = {
+export const LICENSE_TYPES: { [key: string]: string } = {
   none: 'None (All rights reserved)',
   'cc-by-4.0': 'CC-BY-4.0 (Attribution)',
   'cc-by-sa-4.0': 'CC BY-SA 4.0 (Attribution ShareAlike)',
@@ -146,7 +146,7 @@ export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => ({
   value: k,
 }))
 
-export const THEMES = {
+export const THEMES: { [key: string]: string } = {
   dark: 'Dark',
   light: 'Light',
   kawai: 'Kawai',
@@ -161,7 +161,7 @@ export const THEME_OPTIONS = Object.keys(THEMES).map((m) => ({
   value: m,
 }))
 
-export const LANGUAGES = {
+export const LANGUAGES: { [key: string]: string } = {
   none: 'None',
   af: 'Afrikaans (Afrikaans)',
   sq: 'Albanian (shqipe)',

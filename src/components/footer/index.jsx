@@ -1,23 +1,29 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import styles from '@style'
 import { MenuItem } from '@components/header/main_menu/MenuItem'
 import { walletPreview } from '@utils/string'
-import { TeiaContext } from '@context/TeiaContext'
 import { Button } from '@atoms/button'
 import { motion } from 'framer-motion'
 import classnames from 'classnames'
 import { Toggle } from '@atoms/toggles'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { RotatingLogo } from '@atoms/logo'
 import useSettings from '@hooks/use-settings'
 import { Line } from '@atoms/line'
+import { shallow } from 'zustand/shallow'
+import { useUserStore } from '@context/userStore'
 
 export const Footer = ({ menu, pin }) => {
   const { language } = useLanguage()
-  const context = useContext(TeiaContext)
+  const address = useUserStore((st) => st.address)
   const [logoSeed, setLogoSeed] = useState(3)
-  const { zen, setZen, theme, toggleTheme } = useLocalSettings()
+  const [zen, setZen] = useLocalSettings((st) => [st.zen, st.setZen], shallow)
+  const [theme, toggleTheme] = useLocalSettings(
+    (st) => [st.theme, st.setTheme],
+    shallow
+  )
+
   const { logos } = useSettings()
 
   const transition = () => {
@@ -77,9 +83,7 @@ export const Footer = ({ menu, pin }) => {
               <Line vertical />
 
               <div className={styles.menu_right}>
-                <div className={styles.address}>
-                  {walletPreview(context.address)}
-                </div>
+                <div className={styles.address}>{walletPreview(address)}</div>
                 <MenuItem
                   className={styles.menu_label}
                   label="Mint"

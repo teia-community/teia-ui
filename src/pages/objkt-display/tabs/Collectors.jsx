@@ -1,28 +1,28 @@
-import { useContext } from 'react'
 import get from 'lodash/get'
 import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'
-import { TeiaContext } from '@context/TeiaContext'
 import { Listings } from '@components/listings'
 import { useOutletContext } from 'react-router'
+import { useUserStore } from '@context/userStore'
 
 export const Collectors = () => {
   /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
 
-  const {
-    syncTaquito,
-    collect,
-    proxyAddress,
-    address,
-    cancel,
-    cancelv1,
-    reswap,
-  } = useContext(TeiaContext)
+  const [address, proxyAddress, sync, collect, cancel, cancelv1, reswap] =
+    useUserStore((st) => [
+      st.address,
+      st.proxyAddress,
+      st.sync,
+      st.collect,
+      st.cancel,
+      st.cancelv1,
+      st.reswap,
+    ])
 
   const handleCollect = (listing) => {
     if (address === null) {
-      syncTaquito()
+      sync()
     } else {
       collect(listing)
     }

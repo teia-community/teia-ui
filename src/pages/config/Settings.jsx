@@ -2,7 +2,7 @@
 import { Page } from '@atoms/layout'
 import { Checkbox } from '@atoms/input'
 import styles from '@style'
-import useLocalSettings from '@hooks/use-local-settings'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 
@@ -12,7 +12,12 @@ export const Settings = () => {
     setNsfwFriendly,
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
-  } = useLocalSettings()
+  } = useLocalSettings((st) => [
+    st.nsfwFriendly,
+    st.setNsfwFriendly,
+    st.photosensitiveFriendly,
+    st.setPhotosensitiveFriendly,
+  ])
 
   return (
     <Page>

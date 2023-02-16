@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 import { BaseTokenFieldsFragment } from '@data/api'
-import { TeiaContext } from '@context/TeiaContext'
+
 import { useOutletContext } from 'react-router'
 
 const FILTER_ALL = 'ALL'
@@ -17,11 +17,6 @@ export default function Collections() {
 
   const [filter, setFilter] = useState(FILTER_ALL)
 
-  //TODO(mel): remove this dependency
-  const { setProfileFeed } = useContext(TeiaContext)
-  useEffect(() => {
-    setProfileFeed(true)
-  }, [setProfileFeed])
   return (
     <>
       {showFilters && (

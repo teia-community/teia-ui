@@ -13,17 +13,11 @@ import collabStyles from '../index.module.scss'
 import classNames from 'classnames'
 import { CollaboratorType } from '@constants'
 import ParticipantList from '../manage/ParticipantList'
-import { useContext, useEffect } from 'react'
-import { TeiaContext } from '@context/TeiaContext'
 import { Loading } from '@atoms/loading'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
 
-  const { setProfileFeed } = useContext(TeiaContext)
-  useEffect(() => {
-    setProfileFeed(true)
-  }, [setProfileFeed])
   const { data, error } = useSWR(
     !id || !name ? ['/contract', id, name] : null,
     async () => {

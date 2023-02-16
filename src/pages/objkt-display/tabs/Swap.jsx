@@ -1,11 +1,12 @@
-import { useState, useContext, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
-import { TeiaContext } from '@context/TeiaContext'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Input } from '@atoms/input'
 import { Button } from '@atoms/button'
 import styles from '@style'
+import { useModalStore } from '@context/modalStore'
+import { useUserStore } from '@context/userStore'
 
 /**
  * The Swap Tab
@@ -14,16 +15,19 @@ export const Swap = () => {
   /** @type {{nft:import('@types').NFT}} */
   const { nft } = useOutletContext()
   const { id } = useParams()
-  const {
-    swap,
-    address,
-    progress,
-    setProgress,
-    proxyAddress,
-    message,
-    showFeedback,
-    setMessage,
-  } = useContext(TeiaContext)
+
+  const [address, proxyAddress, swap] = useUserStore((st) => [
+    st.address,
+    st.proxyAddress,
+    st.swap,
+  ])
+
+  const [visible, progress, message] = useModalStore((st) => [
+    st.visible,
+    st.progress,
+    st.message,
+  ])
+  const showFeedback = useModalStore((st) => st.show)
   const [amount, setAmount] = useState('')
   const [price, setPrice] = useState('')
   //const [progress, setProgress] = useState(false)
@@ -71,8 +75,11 @@ export const Swap = () => {
       )
       return
     }
-    setProgress(true)
-    setMessage('Preparing swap')
+    useModalStore.setState({
+      progress: true,
+      message: 'Preparing swap',
+    })
+
     // swap is valid call API
     console.debug(
       address,
@@ -101,12 +108,19 @@ export const Swap = () => {
           nft.artist_address,
           parseFloat(amount)
         )
-        setProgress(false)
-        setMessage(answer.description)
+        useModalStore.setState({
+          progress: false,
+          visible: true,
+          message: answer.description,
+          confirm: true,
+        })
       } catch (e) {
         console.error(e)
-        setProgress(false)
-        setMessage(`Error: ${e}`)
+        useModalStore.setState({
+          progress: false,
+          visible: true,
+          message: `Error: ${e}`,
+        })
       }
     }
   }
@@ -117,7 +131,7 @@ export const Swap = () => {
 
   return (
     <>
-      {!progress ? (
+      {!visible ? (
         <div>
           <Container>
             <div className={styles.container}>
@@ -194,7 +208,7 @@ export const Swap = () => {
         <Container>
           <div>
             <p>{message}</p>
-            {progress && <Loading />}
+            <Loading />
           </div>
         </Container>
       )}
