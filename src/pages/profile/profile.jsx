@@ -6,6 +6,9 @@ import styles from '@style'
 
 export default function Profile({ user }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
+  const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
+    successDuration: 2500,
+  })
 
   return (
     <div className={styles.container}>
@@ -18,10 +21,12 @@ export default function Profile({ user }) {
 
           {user.description && <p>{user.description}</p>}
 
-          <div>
+          <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <Button href={`https://tzkt.io/${user.address}`}>
               {walletPreview(user.address)}
             </Button>
+            <Button className={styles.square} onClick={setAddressCopied} />
+            {isAddressCopied && 'Copied!'}
           </div>
 
           <div className={styles.socials}>
