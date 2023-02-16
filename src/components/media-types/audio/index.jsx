@@ -49,7 +49,12 @@ export const AudioComponent = ({
     <div className={styles.container}>
       <img src={displayUri} alt={`cover for audio object ${nft.token_id}`} />
 
-      <audio src={previewUri ? previewUri : artifactUri} controls />
+      <audio
+        playsInline
+        autoPlay={displayView}
+        src={previewUri ? previewUri : artifactUri}
+        controls
+      />
     </div>
   ) : (
     <div className={styles.feed_container}>
