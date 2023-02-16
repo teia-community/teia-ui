@@ -60,7 +60,7 @@ export const VideoComponent = ({
         className={styles.displayviewVideo}
         autoPlay
         playsInline
-        muted
+        muted={!displayView}
         loop
         controls={displayView}
         src={previewUri ? previewUri : artifactUri}
