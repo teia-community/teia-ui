@@ -12,6 +12,20 @@
 //     }
 //   }
 // }
+
+.square {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--text-color);
+  border-radius: 20%;
+  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: 1px 1px var(--text-color);
+
+  &:hover {
+    box-shadow: 3px 3px var(--text-color);
+  }
+}
+
 //TODO: remove all unused / merge collab profile
 .profile {
   display: grid;
