@@ -44,6 +44,7 @@ export function Home({ isSearch = false }) {
   const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
   const navigate = useNavigate()
+
   return (
     <Page feed={!isSearch} title="Home">
       {isSearch && (
@@ -90,8 +91,16 @@ export function Home({ isSearch = false }) {
         </div>
       </Container>
       */}
-      {isSearch ? <SubjktsSearchResults /> : null}
-      {isSearch ? <SearchFeed /> : outlet || <RecentSalesFeed />}
+      {isSearch && searchParams.get('term') ? <SubjktsSearchResults /> : null}
+      {isSearch ? (
+        searchParams.get('term') ? (
+          <SearchFeed />
+        ) : (
+          <h1>Enter a search term</h1>
+        )
+      ) : (
+        outlet || <RecentSalesFeed />
+      )}
     </Page>
   )
 }

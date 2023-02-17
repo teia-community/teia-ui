@@ -52,16 +52,22 @@ interface UserState {
   address?: string
   /** The current collab address */
   proxyAddress?: string
+  /** The resolved name of the current collab  */
   proxyName?: string
+  /** TODO: remove this or userinfo  */
   subjktInfo?: SubjktInfo
+  /** User base info */
   userInfo?: any
   /** Wallet sync  */
   sync: () => Promise<string | undefined>
+  /** Wallet unsync  */
   unsync: () => void
+  /** Register SUBJKT  */
   registry: (
     alias: string,
     metadata_cid: string
   ) => Promise<string | TransactionWalletOperation>
+  /** Swap token  */
   swap: (
     from: string,
     royalties: number,
@@ -70,7 +76,9 @@ interface UserState {
     creator: string,
     objkt_amount: number
   ) => void
+  /** Burn Token */
   burn: (objkt_id: string, amount: number) => void
+  /** Reswap Token */
   reswap: (
     price: number,
     swap: {
@@ -82,6 +90,7 @@ interface UserState {
       royalties: any
     }
   ) => void
+  /** Collect token */
   collect: (listing: {
     type: string
     contract_address: string
@@ -89,10 +98,15 @@ interface UserState {
     price: string
     ask_id: any
   }) => void
+  /** Cancel Swap */
   cancel: (contract: string, swap_id: string) => void
+  /** Cancel Swap from V1 */
   cancelv1: (swapid: string) => void
+  /** Retrieve account from localStorage (beacon mechanism) */
   setAccount: () => void
+  /** Set the proxy address */
   setProxyAddress: (address?: string) => void
+  /** Mint the token */
   mint: (
     tz: string,
     amount: number,
@@ -107,7 +121,7 @@ interface TzkTAccount {
 
 interface Tx {
   to_?: string
-  amout?: number
+  amount?: number
   token_id: string
 }
 
