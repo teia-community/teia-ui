@@ -101,8 +101,12 @@ const router = createBrowserRouter(
       </Route>
       <Route path="search/*" element={<Home isSearch />} />
 
-      <Route path="kt/:id" element={<CollabDisplay />} />
-      <Route path="collab/:name" element={<CollabDisplay />} />
+      <Route path="kt/:address" element={<Display />}>
+        <Route index element={<CollabDisplay />} />
+      </Route>
+      <Route path="collab/:name" element={<Display />}>
+        <Route index element={<CollabDisplay />} />
+      </Route>
       <Route exact path="about" element={<About />} />
       <Route exact path="terms" element={<Terms />} />
       <Route exact path="faq" element={<FAQ />} />
@@ -131,7 +135,7 @@ const router = createBrowserRouter(
         {display_routes}
       </Route>
 
-      <Route path=":id/*" element={<Display />}>
+      <Route path=":name/*" element={<Display />}>
         {display_routes}
       </Route>
     </Route>
