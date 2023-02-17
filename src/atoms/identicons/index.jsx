@@ -5,7 +5,7 @@ import { HashToURL } from '@utils'
 import { memo } from 'react'
 import { Buffer } from 'buffer'
 import classNames from 'classnames'
-
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
 
@@ -388,18 +388,36 @@ export const Identicon = ({ address = '', logo, className }) => {
   }, [logo])
 
   const [isVideo, setIsVideo] = useState(false)
+  const [isSmol, setSmol] = useState(false)
 
-  const classes = classNames(styles.identicon, className)
+  const classes = classNames(
+    styles.identicon,
+    className,
+    isSmol ? styles.smol : ''
+  )
+
+  const onLoad = ({ target: img }) => {
+    // Do whatever you want here
+    const w = img.naturalWidth
+    const h = img.naturalHeight
+    if (w + h < 256) {
+      setSmol(true)
+    }
+  }
 
   if (resolvedLogo) {
     return isVideo ? (
       <video className={classes} alt="identicon" src={resolvedLogo} />
     ) : (
-      <img
+      <LazyLoadImage
         className={classes}
         src={resolvedLogo}
         alt="identicon"
-        onError={() => setIsVideo(true)}
+        onLoad={onLoad}
+        onError={(e) => {
+          console.error(e)
+          setIsVideo(true)
+        }}
       />
     )
   }

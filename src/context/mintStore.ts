@@ -123,6 +123,7 @@ export const useMintStore = create<MintState>()(
 
             useModalStore.setState({
               visible: false,
+              progress: false,
             })
             return
           }
