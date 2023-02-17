@@ -1,17 +1,26 @@
 import { Checkbox, Input, Textarea } from '@atoms/input'
 import { Line } from '@atoms/line'
 import Select from '@atoms/select/Base'
-import { kebabCase } from 'lodash'
 import styles from '@style'
 import { memo } from 'react'
 import { Upload } from '@components/upload/index'
 import { ALLOWED_FILETYPES_LABEL } from '@constants'
 import { Controller } from 'react-hook-form'
+import classNames from 'classnames'
 
-const FieldError = memo(({ error }) => <p className={styles.error}>{error}</p>)
+const FieldError = memo(({ error, text }) => {
+  const classes = classNames({
+    [styles.error]: true,
+    [styles.text_field_error]: text,
+  })
+  return <p className={classes}>{error}</p>
+})
 
-export const FormFields = ({ field, error, register, control }) => {
-  const name = field.name || kebabCase(field.label)
+/**
+ * Wrapper of atoms to react form with local storage support
+ */
+export const FormFields = ({ value, field, error, register, control }) => {
+  const name = field.name
 
   switch (field.type) {
     case 'text':
@@ -25,7 +34,7 @@ export const FormFields = ({ field, error, register, control }) => {
           {...register(name, field.rules)}
         >
           <Line />
-          {error && <FieldError error={error.message} />}
+          {error && <FieldError text error={error.message} />}
         </Input>
       )
     case 'textarea':
@@ -37,7 +46,7 @@ export const FormFields = ({ field, error, register, control }) => {
           {...register(name, field.rules)}
         >
           <Line />
-          {error && <FieldError error={error.message} />}
+          {error && <FieldError text error={error.message} />}
         </Textarea>
       )
     case 'select':
@@ -47,35 +56,61 @@ export const FormFields = ({ field, error, register, control }) => {
           control={control}
           defaultValue={field.defaultValue}
           name={name}
+          rules={field.rules}
           render={({ field: { onChange, value, name, ref } }) => (
             <Select
               inputRef={ref}
               className={styles.field}
               options={field.options}
+              value={value}
               search={field.type === 'select-search'}
               label={field.label}
-              onChange={(val) => onChange(val.value)}
+              placeholder={field.placeholder}
+              onChange={onChange}
             />
           )}
         />
       )
     case 'checkbox':
       return (
-        <Checkbox
-          className={styles.field}
-          label={field.label}
-          {...register(name, field.rules)}
+        <Controller
+          control={control}
+          defaultValue={field.defaultValue}
+          name={name}
+          rules={field.rules}
+          render={({ field: { onChange, value, name, ref } }) => (
+            <Checkbox
+              ref={ref}
+              className={styles.field}
+              label={field.label}
+              checked={value}
+              onCheck={(v) => onChange(v)}
+            />
+          )}
         />
       )
 
     case 'file':
       return (
-        <Upload
-          label={field.label}
-          placeholder={field.placeholder}
-          className={styles.field}
-          allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
-          {...register(name, field.rules)}
+        <Controller
+          control={control}
+          defaultValue={field.defaultValue}
+          name={name}
+          rules={field.rules}
+          render={({ field: { onChange, value, name, ref } }) => (
+            <Upload
+              ref={ref}
+              name={name}
+              file={value?.file}
+              label={field.label}
+              placeHolder={value ? value?.file?.name : field.placeHolder}
+              className={styles.field}
+              onChange={onChange}
+              allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
+            >
+              {error && <FieldError error={error.message} />}
+            </Upload>
+          )}
         />
       )
     default:

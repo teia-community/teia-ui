@@ -1,16 +1,25 @@
-type useState<T> = [T, React.Dispatch<T>]
+export interface Format {
+  mimeType: string
+  fileSize: number
+  fileName: string
+  dimensions?: {
+    value: string
+    unit: string
+  }
+}
 
 export type FileMint = {
   /** The title of the file */
-  title: string
+  title?: string
   /** The file mimetype */
   mimeType: string
   /** The file object */
-  file: File
+  file?: File
   /** The buffer extracted from the file. */
-  buffer: Buffer
-  /** The file reader (actually an ArrayBuffer?!) */
-  reader: ArrayBuffer
+  buffer: ArrayBuffer
+  /** The file reader*/
+  reader: string | ArrayBuffer | null
+  format?: Format
 }
 export type UploadCallback = (arg: FileMint) => void
 
@@ -21,22 +30,22 @@ export type UploadCallback = (arg: FileMint) => void
 // TODO(mel): Cleanup and complete
 
 /** Enum of supported listing types */
-export enum ListingType {
-  TEIA = 'TEIA',
-  HEN = 'HEN',
-  OBJK = 'OBJK',
-  VERSUM = 'VERSUM',
-  HICETDONO = 'HICETDONO',
-}
+// export enum ListingType {
+//   TEIA = 'TEIA',
+//   HEN = 'HEN',
+//   OBJK = 'OBJK',
+//   VERSUM = 'VERSUM',
+//   HICETDONO = 'HICETDONO',
+// }
 
-export enum EventType {
-  HEN_MINT,
-  TEIA_SWAP,
-  HEN_SWAP,
-  HEN_SWAP_V2,
-  VERSUM_SWAP,
-  FA2_TRANSFER,
-}
+// export enum EventType {
+//   HEN_MINT,
+//   TEIA_SWAP,
+//   HEN_SWAP,
+//   HEN_SWAP_V2,
+//   VERSUM_SWAP,
+//   FA2_TRANSFER,
+// }
 export type MetadataAccessibility = {
   /** resource that is physiologically dangerous to some users.*/
   hazards: [string]
@@ -55,7 +64,7 @@ export type Shareholder = {
   shareholder_address: string
   shareholder_profile: ArtistProfile
   shares: number
-  holder_type: ShareholderType
+  // holder_type: ShareholderType
 }
 
 export type SplitContract = {

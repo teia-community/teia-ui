@@ -135,7 +135,8 @@ export const fields = [
     type: 'checkbox',
   },
   {
-    label: 'Upload OBJKT',
+    label: 'Artifact',
+    placeHolder: 'Upload OBJKT',
     name: 'artifact',
     type: 'file',
     watch: true,
@@ -144,13 +145,14 @@ export const fields = [
     },
   },
   {
-    label: 'Upload Cover image',
+    label: 'Cover Image',
+    placeHolder: 'Upload Cover image',
     name: 'cover',
     type: 'file',
     watch: true,
     enable_if: 'needsCover',
     rules: {
-      required: true,
+      required: 'No cover provided',
     },
   },
 ]
