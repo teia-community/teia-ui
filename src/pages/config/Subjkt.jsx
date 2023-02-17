@@ -257,7 +257,11 @@ export const Subjkt = () => {
         <Line className={styles.title_line} />
         <div className={styles.subjkt_editor}>
           <div className={styles.fields}>
-            <Identicon address={address} logo={identicon} />
+            <Identicon
+              className={styles.identicon}
+              address={address}
+              logo={identicon}
+            />
             <input type="file" onChange={onFileChange} title="avatar file" />
           </div>
           <div className={styles.fields}>

@@ -92,7 +92,7 @@ const CIDToURL = (
 export const HashToURL = (
   hash: string,
   type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
-  options: CIDtoURLOptions
+  options: CIDtoURLOptions = { size: 'raw' }
 ) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used

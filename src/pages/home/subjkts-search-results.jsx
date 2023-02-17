@@ -4,8 +4,9 @@ import uniqBy from 'lodash/uniqBy'
 import { fetchGraphQL } from '@data/api'
 import { useSearchParams, Link } from 'react-router-dom'
 import laggy from '@utils/swr-laggy-middleware'
-import { HashToURL } from '@utils/index'
 import styles from '@style'
+import { Identicon } from '@atoms/identicons'
+import { Line } from '@atoms/line'
 function SubjktsSearchResults() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('term') || ''
@@ -52,22 +53,25 @@ function SubjktsSearchResults() {
   }
 
   return (
-    <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
-      {holders.map(({ name, metadata }) => (
-        <div key={name} style={{ marginTop: '10px' }}>
-          <Link to={`/${name}`}>
-            {metadata.data?.identicon && (
-              <img
-                width={16}
-                height={16}
-                className={styles.subjkt_icon}
-                src={HashToURL(metadata.data?.identicon)}
-                alt={name}
-              />
-            )}
-            {name}
-          </Link>{' '}
-          {get(metadata, 'data.description')}
+    <div className={styles.container}>
+      {holders.map(({ user_address, name, metadata }) => (
+        <div key={name} className={styles.subjkt_result}>
+          <div className={styles.flex}>
+            <Link className={styles.user_box} to={`/${name}`}>
+              {metadata.data && (
+                <Identicon
+                  className={styles.subjkt_icon}
+                  address={user_address}
+                  logo={metadata.data?.identicon}
+                />
+              )}
+              <p className={styles.user}>{name}</p>
+            </Link>{' '}
+            <p className={styles.description}>
+              {get(metadata, 'data.description')}
+            </p>
+          </div>
+          <Line key={`${name}-line`} />
         </div>
       ))}
     </div>
