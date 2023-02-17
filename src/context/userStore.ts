@@ -105,7 +105,7 @@ interface UserState {
   /** Retrieve account from localStorage (beacon mechanism) */
   setAccount: () => void
   /** Set the proxy address */
-  setProxyAddress: (address?: string) => void
+  resetProxy: () => void
   /** Mint the token */
   mint: (
     tz: string,
@@ -205,7 +205,9 @@ export const useUserStore = create<UserState>()(
             return parseFloat(res.data.balance) / 1e6
           }
         },
-        setProxyAddress: (address) => set({ proxyAddress: address }),
+        resetProxy: () =>
+          set({ proxyAddress: undefined, proxyName: undefined }),
+
         registry: async (alias: string, metadata_cid: string) => {
           const subjktAddressOrProxy = get().proxyAddress || SUBJKT_CONTRACT
 
