@@ -4,7 +4,8 @@ import uniqBy from 'lodash/uniqBy'
 import { fetchGraphQL } from '@data/api'
 import { useSearchParams, Link } from 'react-router-dom'
 import laggy from '@utils/swr-laggy-middleware'
-
+import { HashToURL } from '@utils/index'
+import styles from '@style'
 function SubjktsSearchResults() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('term') || ''
@@ -54,7 +55,18 @@ function SubjktsSearchResults() {
     <div style={{ maxHeight: '200px', overflow: 'scroll' }}>
       {holders.map(({ name, metadata }) => (
         <div key={name} style={{ marginTop: '10px' }}>
-          <Link to={`/${name}`}>{name}</Link>{' '}
+          <Link to={`/${name}`}>
+            {metadata.data?.identicon && (
+              <img
+                width={16}
+                height={16}
+                className={styles.subjkt_icon}
+                src={HashToURL(metadata.data?.identicon)}
+                alt={name}
+              />
+            )}
+            {name}
+          </Link>{' '}
           {get(metadata, 'data.description')}
         </div>
       ))}
