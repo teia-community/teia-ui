@@ -62,7 +62,7 @@ const mapFromList = (input_list) => {
 const report_url = (name) => `${import.meta.env.VITE_TEIA_REPORT}/${name}`
 
 /**
- * Fetches the various lists
+ * Fetches the various lists cached with SWR
  * @returns {SettingsData}
  */
 async function fetchSettings() {

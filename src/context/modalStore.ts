@@ -27,7 +27,7 @@ export const useModalStore = create<ModalStore>()(
     collapsed: true,
     visible: false,
     message: '',
-    progress: true,
+    progress: false,
     confirm: true,
     confirmCallback: () => set({ visible: false }),
     show: (message) => {
