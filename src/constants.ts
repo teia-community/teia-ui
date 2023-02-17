@@ -318,7 +318,31 @@ export const TabIndex = {
 // TODO - get this manageable on-chain
 export const ossProjects = [
   {
-    name: 'WG3.2 (collab contract team)',
+    name: 'TezQuakeAid Turkey/Syria Fundraiser',
+    address: 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g',
+  },
+  {
+    name: 'Tezos4Iran Fundraiser',
+    address: 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge',
+  },
+  {
+    name: 'SavePakistan Fundraiser',
+    address: 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z',
+  },
+  {
+    name: 'Ukraine Relief Fundraiser',
+    address: 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx',
+  },
+  {
+    name: 'Teia Fountain Donations',
+    address: 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG',
+  },
+  {
+    name: 'Community Representation/Equity Donations (Multisig)',
+    address: 'KT1TGJGjh9oMntcny4J7eVn1NDPgCXimHqss',
+  },
+  {
+    name: 'WG3.2 (collab contract dev team)',
     address: 'KT1BBYzfuYjgRdeHJ79vG3fZd8cHW9ueCEcN',
   },
   {
@@ -328,30 +352,6 @@ export const ossProjects = [
   {
     name: 'three.js',
     address: 'tz1ZUohCAkGjp7vPjQcC4VWcpgYZR1t3Si5C',
-  },
-  {
-    name: 'Teia infrastructure run by TezTools (servers, indexer, maintenance)',
-    address: 'tz1Q7fCeswrECCZthfzx2joqkoTdyin8DDg8',
-  },
-  {
-    name: 'Teia Fountain Donations (Multisig)',
-    address: 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG',
-  },
-  {
-    name: 'Community Representation/Equity Donations (Multisig)',
-    address: 'KT1TGJGjh9oMntcny4J7eVn1NDPgCXimHqss',
-  },
-  {
-    name: 'Ukraine Relief Smart Contract',
-    address: 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx',
-  },
-  {
-    name: 'Pakistan Relief Smart Contract',
-    address: 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z',
-  },
-  {
-    name: 'Tezos for Iran',
-    address: 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge',
   },
 ]
 
