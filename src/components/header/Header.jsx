@@ -41,7 +41,7 @@ export const Header = () => {
     userInfo,
     unsync,
     sync,
-    setProxyAddress,
+    resetProxy,
   ] = useUserStore(
     (st) => [
       st.address,
@@ -51,7 +51,7 @@ export const Header = () => {
       st.userInfo,
       st.unsync,
       st.sync,
-      st.setProxyAddress,
+      st.resetProxy,
     ],
     shallow
   )
@@ -218,7 +218,7 @@ export const Header = () => {
                 <Button
                   alt={'exit collab'}
                   small
-                  onClick={() => setProxyAddress(null)}
+                  onClick={() => resetProxy()}
                   secondary
                 >
                   Exit collab
