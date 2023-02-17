@@ -3,12 +3,16 @@ import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
 import styles from '@style'
+import { useDisplayStore } from '.'
+import ParticipantList from '@components/collab/manage/ParticipantList'
 
 export default function Profile({ user }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
   const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
     successDuration: 2500,
   })
+
+  const coreParticipants = useDisplayStore((st) => st.coreParticipants)
 
   return (
     <div className={styles.container}>
@@ -25,6 +29,9 @@ export default function Profile({ user }) {
 
           {user.description && <p>{user.description}</p>}
 
+          {coreParticipants && coreParticipants.length > 0 && (
+            <ParticipantList title={false} participants={coreParticipants} />
+          )}
           <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <Button href={`https://tzkt.io/${user.address}`}>
               {walletPreview(user.address)}

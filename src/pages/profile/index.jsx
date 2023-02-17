@@ -14,6 +14,8 @@ import { Tabs } from '@atoms/tab'
 import Button from '@atoms/button/Button'
 import { Warning } from './warning'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { create } from 'zustand'
+import { subscribeWithSelector } from 'zustand/middleware'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -55,9 +57,14 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
   return user
 }
+export const useDisplayStore = create(
+  subscribeWithSelector((get, set) => ({
+    coreParticipants: undefined,
+  }))
+)
 
 export default function Display() {
-  const { address, id: subjkt } = useParams()
+  const { address, name: subjkt } = useParams()
   const { walletBlockMap, underReviewMap } = useSettings()
   const [overridePopup, setOverridePopup] = useState()
 

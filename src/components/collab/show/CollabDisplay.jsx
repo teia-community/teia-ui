@@ -2,18 +2,12 @@ import { Navigate, useParams } from 'react-router'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { PATH } from '@constants'
-import { Page, Container } from '@atoms/layout'
-import { Button } from '@atoms/button'
 import TokenCollection from '@atoms/token-collection'
-import styles from '@pages/profile/index.module.scss'
-import { walletPreview } from '@utils/string'
-import Identicon from '@atoms/identicons'
 import { fetchCollabCreations } from '@data/api'
-import collabStyles from '../index.module.scss'
-import classNames from 'classnames'
 import { CollaboratorType } from '@constants'
-import ParticipantList from '../manage/ParticipantList'
 import { Loading } from '@atoms/loading'
+import { useDisplayStore } from '@pages/profile'
+import { useEffect } from 'react'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
@@ -40,13 +34,16 @@ export const CollabDisplay = () => {
       revalidateOnFocus: false,
     }
   )
+  useEffect(() => {
+    useDisplayStore.setState({
+      coreParticipants: get(data?.split_contract, 'shareholders', []).filter(
+        ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
+      ),
+    })
+  }, [data?.split_contract])
 
   if (error) {
-    return (
-      <Container>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      </Container>
-    )
+    return <pre>{JSON.stringify(error, null, 2)}</pre>
   }
 
   if (!data) {
@@ -54,31 +51,7 @@ export const CollabDisplay = () => {
   }
 
   const { split_contract, tokens } = data
-
-  const headerClass = classNames(
-    styles.profile,
-    collabStyles.mb4,
-    collabStyles.pb2,
-    collabStyles.borderBottom
-  )
-
-  const infoPanelClass = classNames(collabStyles.flex, collabStyles.flexBetween)
-  const displayName =
-    get(split_contract, 'contract_profile.name') ||
-    get(split_contract, 'contract_address')
   const address = get(split_contract, 'contract_address')
-  const description = get(
-    split_contract,
-    'contract_profile.metadata.data.description',
-    ''
-  )
-  const logo = get(split_contract, 'contract_profile.metadata.data.identicon')
-  const descriptionClass = classNames(collabStyles.pt1, collabStyles.muted)
-
-  // Core participants
-  const coreParticipants = get(split_contract, 'shareholders').filter(
-    ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
-  )
 
   const oldContractAddresses = [
     'KT1CSfR6kx3uwDEXpwuCPnqp3MhpzfPmnLKj',
@@ -90,54 +63,15 @@ export const CollabDisplay = () => {
   }
 
   return (
-    <Page title={`Collab: ${displayName}`}>
+    <>
       {/* <CollabHeader collaborators={collaborators} /> */}
-      <Container>
-        <div className={headerClass}>
-          <Identicon
-            className={styles.identicon}
-            address={address}
-            logo={logo}
-          />
 
-          <div className={infoPanelClass} style={{ flex: 1 }}>
-            <div>
-              <div className={styles.info}>
-                <h2>
-                  <strong>{displayName}</strong>
-                </h2>
-              </div>
-
-              <div className={styles.info}>
-                {coreParticipants.length > 0 && (
-                  <ParticipantList
-                    title={false}
-                    participants={coreParticipants}
-                  />
-                )}
-              </div>
-
-              <div className={styles.info}>
-                {description && (
-                  <p className={descriptionClass}>{description}</p>
-                )}
-                <Button href={`https://tzkt.io/${address}`}>
-                  {walletPreview(address)}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      <Container xlarge>
-        <TokenCollection
-          namespace="collab-tokens"
-          emptyMessage="This collab has no OBJKT creations to display"
-          swrParams={[address]}
-          query={{ tokens }}
-        />
-      </Container>
-    </Page>
+      <TokenCollection
+        namespace="collab-tokens"
+        emptyMessage="This collab has no OBJKT creations to display"
+        swrParams={[address]}
+        query={{ tokens }}
+      />
+    </>
   )
 }
