@@ -1,8 +1,13 @@
 // TODO (mel & xat) - best way to handle filter composition?
 // import { useEffect, useState } from 'react'
+import { Input } from '@atoms/input'
 import { Page } from '@atoms/layout'
+import { useState } from 'react'
 import {
+  createSearchParams,
+  useNavigate,
   useOutlet,
+  useSearchParams,
   // NavLink,
   // createSearchParams,
   // useNavigate,
@@ -12,6 +17,7 @@ import {
 
 // import SubjktsSearchResults from './subjkts-search-results'
 import { RecentSalesFeed, SearchFeed } from './feeds'
+import SubjktsSearchResults from './subjkts-search-results'
 
 // import styles from '@style'
 
@@ -35,18 +41,17 @@ import { RecentSalesFeed, SearchFeed } from './feeds'
 
 export function Home({ isSearch = false }) {
   const outlet = useOutlet()
-  // const [searchParams] = useSearchParams()
-  // const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
-  // const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
+  const navigate = useNavigate()
   return (
-    <Page feed title="Home">
-      {/*
-      <Container>
-       <Input
+    <Page feed={!isSearch} title="Home">
+      {isSearch && (
+        <Input
           type="text"
           name="search"
-          onChange={(ev) => {
-            setSearchTerm(ev.target.value)
+          onChange={(value) => {
+            setSearchTerm(value)
           }}
           placeholder="Search ↵"
           onKeyPress={(e) => {
@@ -63,7 +68,8 @@ export function Home({ isSearch = false }) {
             }
           }}
           value={searchTerm}
-        /> */}
+        />
+      )}
       {/* <div style={{ marginTop: '15px' }}>
           <div>
             <FilterLink to="/feed/iran">🇮🇷 iran</FilterLink>
@@ -82,9 +88,9 @@ export function Home({ isSearch = false }) {
             <FilterLink to="/">recent sales</FilterLink>
           </div>
         </div>
-        {isSearch ? <SubjktsSearchResults /> : null}
       </Container>
-       */}
+      */}
+      {isSearch ? <SubjktsSearchResults /> : null}
       {isSearch ? <SearchFeed /> : outlet || <RecentSalesFeed />}
     </Page>
   )
