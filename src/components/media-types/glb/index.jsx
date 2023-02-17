@@ -3,7 +3,7 @@
 
 import styles from '@style'
 import { ImageComponent } from '../image'
-
+import '@google/model-viewer'
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
