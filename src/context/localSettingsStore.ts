@@ -9,7 +9,7 @@ type ViewMode = 'single' | 'masonry'
 
 type Themes = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
 
-const rpc_nodes = [
+export const rpc_nodes = [
   'https://mainnet.api.tez.ie',
   'https://mainnet.smartpy.io',
   'https://rpc.tzbeta.net',
