@@ -4,6 +4,7 @@ import styles from '@style'
 import { HashToURL } from '@utils'
 import { memo } from 'react'
 import { Buffer } from 'buffer'
+import classNames from 'classnames'
 
 const alphabet58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = base(alphabet58)
@@ -65,7 +66,7 @@ function dummyAddress() {
   // encode addressArray using Base58
   const base58Address = base58.encode(addressArray)
   const address = prefix.prefix + base58Address
-  console.debug(`Random address: ${address}`)
+  // console.debug(`Random address: ${address}`)
 
   return address
 }
@@ -145,13 +146,21 @@ function avatar(address) {
 }
 
 const identicons = [
-  (path, _address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, _address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path id="path" d={`${path}`} />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter
         id={`filter${address}`}
         x="0%"
@@ -179,8 +188,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feTurbulence
           type="turbulence"
@@ -205,8 +218,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feTurbulence
           type="turbulence"
@@ -230,8 +247,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feTurbulence
           type="turbulence"
@@ -254,8 +275,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feTurbulence
           type="turbulence"
@@ -278,8 +303,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feMorphology operator="erode" radius="1" />
       </filter>
@@ -290,8 +319,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feMorphology operator="dilate" radius="1.2" />
       </filter>
@@ -302,8 +335,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`} x="0" y="0" width="100%" height="100%">
         <feTile in="SourceGraphic" x="16" y="16" width="98" height="98" />
         <feTile />
@@ -315,8 +352,12 @@ const identicons = [
       />
     </svg>
   ),
-  (path, address) => (
-    <svg viewBox={`0 0 ${s} ${s}`} xmlns="http://www.w3.org/2000/svg">
+  (path, address, className) => (
+    <svg
+      className={className}
+      viewBox={`0 0 ${s} ${s}`}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <filter id={`filter${address}`}>
         <feTurbulence
           type="turbulence"
@@ -341,34 +382,33 @@ const identicons = [
   ),
 ]
 
-export const Identicon = ({ address = '', logo }) => {
+export const Identicon = ({ address = '', logo, className }) => {
   const resolvedLogo = useMemo(() => {
-    return logo ? HashToURL(logo, 'CDN', { size: 'medium' }) : ''
+    return logo ? HashToURL(logo, 'CDN', { size: 'raw' }) : ''
   }, [logo])
 
   const [isVideo, setIsVideo] = useState(false)
 
+  const classes = classNames(styles.identicon, className)
+
   if (resolvedLogo) {
     return isVideo ? (
-      <div className={styles.identicon}>
-        <video alt="identicon" src={resolvedLogo} />
-      </div>
+      <video className={classes} alt="identicon" src={resolvedLogo} />
     ) : (
-      <div className={styles.identicon}>
-        <img
-          src={resolvedLogo}
-          alt="identicon"
-          onError={() => setIsVideo(true)}
-        />
-      </div>
+      <img
+        className={classes}
+        src={resolvedLogo}
+        alt="identicon"
+        onError={() => setIsVideo(true)}
+      />
     )
   }
 
   const [path, xsa] = avatar(address)
-  console.log({ path, xsa })
-  const identicon = identicons[xsa % identicons.length](path, address)
 
-  return <div className={styles.identicon}>{identicon}</div>
+  const identicon = identicons[xsa % identicons.length](path, address, classes)
+
+  return identicon
 }
 
 export default memo(Identicon)

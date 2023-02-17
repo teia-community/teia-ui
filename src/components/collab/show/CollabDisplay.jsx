@@ -94,7 +94,11 @@ export const CollabDisplay = () => {
       {/* <CollabHeader collaborators={collaborators} /> */}
       <Container>
         <div className={headerClass}>
-          <Identicon address={address} logo={logo} />
+          <Identicon
+            className={styles.identicon}
+            address={address}
+            logo={logo}
+          />
 
           <div className={infoPanelClass} style={{ flex: 1 }}>
             <div>

@@ -14,7 +14,11 @@ export default function Profile({ user }) {
     <div className={styles.container}>
       <div className={styles.profile}>
         <div className={styles.user_pfp}>
-          <Identicon address={user.address} logo={user.identicon} />
+          <Identicon
+            className={styles.identicon}
+            address={user.address}
+            logo={user.identicon}
+          />
         </div>
         <div className={styles.info}>
           <p className={styles.user}>{user.subjkt || user.alias}</p>
