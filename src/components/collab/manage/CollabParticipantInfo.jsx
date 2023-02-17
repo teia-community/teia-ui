@@ -11,7 +11,6 @@ import { useUserStore } from '@context/userStore'
 export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
   const [proxyAddress, address] = useUserStore((st) => [
     st.proxyAddress,
-    st.setProxyAddress,
     st.address,
   ])
 
@@ -57,7 +56,6 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
 
   // TODO: Sort out better path naming in constants file for /kt vs. /collab
   const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${contract_address}`
-
   return (
     <li className={listStyle} key={contract_address}>
       <div className={styles.fullWidth}>

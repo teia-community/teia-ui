@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
-interface ModalOptions {
-  visible?: boolean
-  message?: string
-  progress?: boolean
-  confirm?: boolean
-  confirmCallback?: () => void
-}
+// interface ModalOptions {
+//   visible?: boolean
+//   message?: string
+//   progress?: boolean
+//   confirm?: boolean
+//   confirmCallback?: () => void
+// }
 interface ModalStore {
   /** main menu collapsed state */
   collapsed: boolean
@@ -19,6 +19,7 @@ interface ModalStore {
   show: (message: string) => void
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
+  step: (title: string, message: string) => void
 }
 
 export const useModalStore = create<ModalStore>()(
@@ -44,5 +45,13 @@ export const useModalStore = create<ModalStore>()(
     },
     setCollapsed: (collapse: boolean) => set({ collapsed: collapse }),
     toggleMenu: () => set({ collapsed: !get().collapsed }),
+    step: (title, message) => {
+      set({
+        progress: true,
+        visible: true,
+        message: `# ${title}
+${message}`,
+      })
+    },
   }))
 )

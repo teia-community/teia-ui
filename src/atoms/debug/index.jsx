@@ -1,12 +1,12 @@
 import { useKeyboard } from '@hooks/use-keyboard'
 import { DebugCenter } from './DebugCenter'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '@style'
 import { Line } from '@atoms/line'
 import { useInterval } from 'react-use'
-import { TeiaContext } from '@context/TeiaContext'
 import { get } from 'lodash'
+import { useUserStore } from '@context/userStore'
 const LocalKey = ({ name }) => {
   return (
     <p>
@@ -19,8 +19,7 @@ const LocalKey = ({ name }) => {
 export const Debug = () => {
   const [show, setShow] = useState(false)
   useKeyboard('shift + d', () => setShow(!show))
-  const ctx = useContext(TeiaContext)
-
+  const userStore = useUserStore()
   const v = {
     show: {
       x: 0,
@@ -42,7 +41,7 @@ export const Debug = () => {
     return (
       <p>
         <span className={styles.name}>{`${name} -> `}</span>
-        {JSON.stringify(get(ctx, name))}
+        {JSON.stringify(get(userStore, name))}
       </p>
     )
   }

@@ -3,6 +3,9 @@ import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 import mime from 'mime-types'
 import axios from 'axios'
 import { Buffer } from 'buffer'
+import { fetchGraphQL } from './api'
+import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder
@@ -13,13 +16,18 @@ import { Buffer } from 'buffer'
 
 /**
  * Upload a single file through the IPFS proxy.
- * @param {FileHolder} file
+ * @param {{blob:Blob, path:string, size:number}} file
  * @returns {Promise<string>}
  */
 export async function uploadFileToIPFSProxy(file) {
+  const { step } = useModalStore.getState()
+
   const form = new FormData()
 
   const file_type = mime.lookup(file.path)
+  const total_size = file.size ? ` (${(file.size / 1e6).toFixed(1)}mb)` : ''
+  step('Preparing OBJKT', `uploading ${file.path}${total_size} as ${file_type}`)
+
   console.debug(`uploading ${file.path} as ${file_type}`)
 
   form.append('asset', new File([file.blob], file.path, { type: file_type }))
@@ -29,6 +37,14 @@ export async function uploadFileToIPFSProxy(file) {
     form,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (pe) => {
+        const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
+        step(
+          'Preparing OBJKT',
+          `uploading ${file.path}${total_size} as ${file_type}
+## ${progress}%`
+        )
+      },
     }
   )
   return res.data.cid
@@ -62,6 +78,43 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   return res.data.cid
 }
 
+const isDoubleMint = async (uri) => {
+  const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
+    tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
+      token_id
+    }
+  }`
+  const { proxyAddress, address } = useUserStore.getState()
+  const { show } = useModalStore.getState()
+  const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
+    address: proxyAddress || address,
+    ids: [uri],
+  })
+
+  console.debug(data)
+
+  if (errors) {
+    show(`GraphQL Error: ${JSON.stringify(errors)}`)
+    return true
+  } else if (data) {
+    if (!data.tokens) return false
+    const areAllTokensBurned = data.tokens.every(
+      ({ editions }) => editions === 0
+    )
+
+    if (areAllTokensBurned) {
+      return false
+    }
+
+    show(
+      `Duplicate mint detected: [#${data.tokens[0].token_id}](/objkt/${data.tokens[0].token_id}) is already minted`
+    )
+
+    return true
+  }
+  return false
+}
+
 export const prepareFile = async ({
   name,
   description,
@@ -70,7 +123,6 @@ export const prepareFile = async ({
   file,
   cover,
   thumbnail,
-  generateDisplayUri,
   rights,
   rightUri,
   language,
@@ -78,13 +130,24 @@ export const prepareFile = async ({
   contentRating,
   formats,
 }) => {
-  console.debug('generateDisplayUri', generateDisplayUri)
+  //TODO: clean
+  const { step } = useModalStore.getState()
+
+  const generateDisplayUri = !file.mimeType.startsWith('image')
+  // const cid = await uploadFileToIPFSProxy(file)
+
   const cid = await uploadFileToIPFSProxy({
     blob: new Blob([file.buffer]),
     path: file.file.name,
   })
-  console.debug(`Successfully uploaded file to IPFS: ${cid}`)
+
+  step('Preparing OBJKT', `Successfully uploaded file to IPFS: ${cid}`)
   const uri = `ipfs://${cid}`
+
+  /** We cannot pre-compute the hash with nft.storage, but at least they seem to match when reuploading them*/
+  if (await isDoubleMint(uri)) {
+    throw Error('Double Mint', { reason: 'You already minted the same token.' })
+  }
 
   if (formats.length > 0) {
     formats[0].uri = uri
@@ -93,11 +156,12 @@ export const prepareFile = async ({
 
   // upload cover image
   let displayUri = ''
-  if (generateDisplayUri) {
+  if (generateDisplayUri && cover) {
     const coverCid = await uploadFileToIPFSProxy({
       blob: new Blob([cover.buffer]),
       path: `cover_${cover.file ? cover.file.name : cover.format.fileName}`,
     })
+    step('Preparing OBJKT', `Successfully uploaded cover to IPFS: ${coverCid}`)
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
     displayUri = `ipfs://${coverCid}`
     if (cover?.format) {
@@ -111,7 +175,7 @@ export const prepareFile = async ({
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  if (generateDisplayUri) {
+  if (generateDisplayUri && thumbnail) {
     const thumbnailCid = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
       path: `thumbnail_${
@@ -143,12 +207,12 @@ export const prepareFile = async ({
     contentRating,
     formats,
   })
-
+  step('Preparing OBJKT', 'Uploading metadata file')
   console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
     blob: new Blob([Buffer.from(metadata)]),
-    path: 'metadata',
+    path: 'metadata.json',
   })
 }
 
@@ -169,6 +233,11 @@ export const prepareDirectory = async ({
   formats,
 }) => {
   const hashes = await uploadFilesToDirectory(files)
+  const { step } = useModalStore.getState()
+  step(
+    'Preparing OBJKT',
+    `Successfully uploaded directory to IPFS: ${hashes.directory}`
+  )
   console.debug(`Successfully uploaded directory to IPFS:`, hashes.directory)
   const uri = `ipfs://${hashes.directory}`
 
@@ -184,6 +253,8 @@ export const prepareDirectory = async ({
       blob: new Blob([cover.buffer]),
       path: `cover_${cover.format.fileName}`,
     })
+    step('Preparing OBJKT', `Successfully uploaded cover to IPFS`)
+
     console.debug(`Successfully uploaded cover to IPFS: ${displayCid}`)
     displayUri = `ipfs://${displayCid}`
     if (cover?.format) {

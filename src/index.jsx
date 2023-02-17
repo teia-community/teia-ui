@@ -1,6 +1,5 @@
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
 import { Tags } from '@pages/tags/index'
-import { TeiaProvider } from '@context'
 import { About } from '@pages/about'
 import {
   CollabContractsOverview,
@@ -31,7 +30,7 @@ import {
   MarkdownFeed,
   QuakeFeed,
 } from '@pages/home/feeds'
-import { Mint } from '@pages/mint'
+import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
 import {
   Info,
@@ -59,6 +58,8 @@ import App from './App'
 import * as serviceWorker from './serviceWorker'
 import './styles/index.scss'
 import { IconCache } from '@utils/with-icon'
+import { Preview } from '@components/preview/index'
+import MintForm from '@components/form/MintForm'
 
 const display_routes = (
   <>
@@ -107,7 +108,10 @@ const router = createBrowserRouter(
       <Route exact path="faq" element={<FAQ />} />
 
       <Route path="sync" element={<Sync />} />
-      <Route exact path="mint" element={<Mint />} />
+      <Route exact path="mint/*" element={<Mint />}>
+        <Route index element={<MintForm />} />
+        <Route path="preview" element={<Preview />} />
+      </Route>
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
@@ -136,11 +140,11 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
-  <TeiaProvider>
-    <IconCache.Provider value={{}}>
-      <RouterProvider router={router} />
-    </IconCache.Provider>
-  </TeiaProvider>
+
+  <IconCache.Provider value={{}}>
+    <RouterProvider router={router} />
+  </IconCache.Provider>
+
   // </React.StrictMode>,
 )
 

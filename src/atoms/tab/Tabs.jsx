@@ -36,7 +36,7 @@ import Button from '@atoms/button/Button'
  * @param {(tab:TabOptions, index:number) => [TabOptions] } tabsProps.filter - A method to filter out the tabs
  *
  */
-export const Tabs = ({ tabs, className, filter, props = {} }) => {
+export const Tabs = ({ tabs, className, filter, onClick, props = {} }) => {
   const filtered_tabs = useMemo(
     () => (filter ? tabs.map(filter).filter((v) => v) : tabs),
     [tabs, filter]

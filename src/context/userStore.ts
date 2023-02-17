@@ -93,6 +93,12 @@ interface UserState {
   cancelv1: (swapid: string) => void
   setAccount: () => void
   setProxyAddress: (address?: string) => void
+  mint: (
+    tz: string,
+    amount: number,
+    cid: string,
+    royalties: number
+  ) => Promise<boolean>
 }
 
 interface TzkTAccount {
@@ -457,6 +463,93 @@ export const useUserStore = create<UserState>()(
           console.debug(list)
           const batch = Tezos.wallet.batch(list)
           return await batch.send()
+        },
+        mint: async (tz, amount, cid, royalties) => {
+          // show feedback component with following message and progress indicator
+          const { show } = useModalStore.getState()
+          const { proxyAddress } = get()
+          console.debug('CID', cid)
+
+          useModalStore.setState({
+            visible: true,
+            message: 'minting OBJKT',
+            progress: true,
+            confirm: false,
+          })
+
+          const handleOpStatus = async (op: TransactionWalletOperation) => {
+            try {
+              const status = await op.status()
+              console.debug('op', status)
+              if (status === 'applied') {
+                show('OBJKT minted successfully')
+                return { handled: true, error: false }
+              } else if (status === 'backtracked') {
+                show('the transaction was backtracked. try minting again')
+                return { handled: true, error: true }
+              }
+            } catch (error) {
+              console.error(error)
+            }
+            return { handled: false, error: false }
+          }
+
+          const DEFAULT_ERROR_MESSAGE = 'an error occurred ❌'
+
+          // call mint method
+          return await Tezos.wallet
+            .at(proxyAddress || MARKETPLACE_CONTRACT_V1)
+            .then((c) =>
+              c.methods
+                .mint_OBJKT(
+                  tz,
+                  amount,
+                  `ipfs://${cid}`
+                    .split('')
+                    .reduce(
+                      (hex, c) =>
+                        (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
+                      ''
+                    ),
+                  royalties * 10
+                )
+                .send({ amount: 0, storageLimit: 310 })
+            )
+            .then((op) => {
+              useModalStore.setState({
+                visible: true,
+                message: 'confirming transaction',
+                progress: true,
+                confirm: false,
+              })
+              return op
+                .confirmation(1)
+                .then(async () => {
+                  const { handled, error } = await handleOpStatus(op)
+                  if (!handled) {
+                    show(DEFAULT_ERROR_MESSAGE)
+                  }
+                  return !error
+                })
+                .catch(async (err) => {
+                  console.error(err)
+                  const { handled, error } = await handleOpStatus(op)
+                  if (!handled) {
+                    const message =
+                      err.message === 'Confirmation polling timed out'
+                        ? 'a timeout occurred, but the mint might have succeeded'
+                        : DEFAULT_ERROR_MESSAGE
+                    show(message)
+                    return !error
+                  }
+                  return false
+                })
+            })
+            .catch((error) => {
+              console.error(error)
+              show(DEFAULT_ERROR_MESSAGE)
+              return false
+            })
         },
       }),
       {

@@ -1,6 +1,7 @@
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import styles from '@style'
+import { getMimeType } from '@utils/sanitise'
 // import { Buffer } from 'buffer'
 
 /**
@@ -16,39 +17,41 @@ export const Upload = forwardRef(
     {
       label,
       file: stateFile,
+      placeHolder,
       allowedTypes,
       allowedTypesLabel,
+      children,
       onChange = () => null,
       ...extra
     },
     ref
   ) => {
     const { language } = useLanguage()
-    // const [title, setTitle] = useState(label)
+    const [title, setTitle] = useState(placeHolder)
 
-    // const onFileChange = async (e) => {
-    //   const { files } = e.target
+    const onFileChange = async (e) => {
+      const { files } = e.target
 
-    //   const file = files[0]
-    //   if (!file) {
-    //     setTitle(label)
-    //     return
-    //   }
-    //   setTitle(file.name)
-    //   const mimeType = file.type === '' ? await getMimeType(file) : file.type
-    //   const buffer = Buffer.from(await file.arrayBuffer())
+      const file = files[0]
+      if (!file) {
+        setTitle(placeHolder)
+        return
+      }
+      setTitle(file.name)
+      const mimeType = file.type === '' ? await getMimeType(file) : file.type
+      const buffer = Buffer.from(await file.arrayBuffer())
 
-    //   // set reader for preview
-    //   const reader = new FileReader()
-    //   reader.addEventListener('load', (e) => {
-    //     onChange({ title, mimeType, file, buffer, reader: e.target.result })
-    //   })
-    //   reader.readAsDataURL(file)
-    // }
+      // set reader for preview
+      const reader = new FileReader()
+      reader.addEventListener('load', (e) => {
+        onChange({ title, mimeType, file, buffer, reader: e.target.result })
+      })
+      reader.readAsDataURL(file)
+    }
 
     const props = {
       type: 'file',
-      name: 'file',
+      name: extra.name || 'file',
     }
 
     if (allowedTypes) {
@@ -57,13 +60,15 @@ export const Upload = forwardRef(
 
     return (
       <div className={styles.container}>
+        <strong>{label}</strong>
         <label>
-          {label}
-          <input {...props} ref={ref} onChange={onChange} {...extra} />
+          {title}
+          <input {...props} ref={ref} onChange={onFileChange} {...extra} />
         </label>
         <div className={styles.allowed}>
           {language.mint.supports}:&nbsp;{allowedTypesLabel}
         </div>
+        {children}
       </div>
     )
   }

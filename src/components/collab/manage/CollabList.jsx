@@ -31,30 +31,6 @@ export const CollabList = ({ description, collabs }) => {
           />
         ))}
       </ul>
-
-      {/* {!addAddressManually && (
-                            <Button onClick={() => setAddAddressManually(true)}>
-                                <Secondary>
-                                    add address manually
-                                </Secondary>
-                            </Button>
-                        )}
-
-                        {addAddressManually && (
-                            <div className={headerStyle}>
-                                <Input
-                                    type="text"
-                                    label="KT address"
-                                    onChange={event => setManualAddress(event.target.value)}
-                                    placeholder="KT..."
-                                    value={manualAddress}
-                                    autoFocus={true}
-                                />
-                                <Button shadow_box onClick={() => setProxyAddress(manualAddress)}>
-                                        sign in 
-                                </Button>
-                            </div>
-                        )} */}
     </div>
   )
 }
