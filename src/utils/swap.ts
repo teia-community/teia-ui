@@ -4,30 +4,45 @@ import {
   SWAP_TYPE_TEIA,
   teiaSwapSchema,
 } from '@constants'
-import { MichelCodecPacker, OpKind } from '@taquito/taquito'
+import {
+  ContractAbstraction,
+  MichelCodecPacker,
+  OpKind,
+  Wallet,
+} from '@taquito/taquito'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import { Parser } from '@taquito/michel-codec'
-import { Schema } from '@taquito/michelson-encoder'
+import {
+  MichelsonMap,
+  MichelsonMapKey,
+  Schema,
+} from '@taquito/michelson-encoder'
 
 export const Packer = new MichelCodecPacker()
 
-export const packData = (rawData, schema) => {
+export const packData = (
+  rawData: MichelsonMap<MichelsonMapKey, unknown>,
+  schema: string
+) => {
   const parser = new Parser()
   const michelsonType = parser.parseData(schema)
-  const parsedSchema = new Schema(michelsonType)
-  const data = parsedSchema.Encode(rawData)
+  if (michelsonType) {
+    const parsedSchema = new Schema(michelsonType)
+    const data = parsedSchema.Encode(rawData)
 
-  return {
-    data,
-    type: michelsonType,
+    return {
+      data,
+      type: michelsonType,
+    }
   }
+  throw Error('Cannot pack data', { cause: 'invalid schema' })
 }
 
 export function createAddOperatorCall(
-  objktsContract,
-  objkt_id,
-  ownerAddress,
-  operatorAddress
+  objktsContract: ContractAbstraction<Wallet>,
+  objkt_id: string,
+  ownerAddress: string,
+  operatorAddress: string
 ) {
   return {
     kind: OpKind.TRANSACTION,
@@ -46,10 +61,10 @@ export function createAddOperatorCall(
 }
 
 export function createRemoveOperatorCall(
-  objktsContract,
-  objkt_id,
-  ownerAddress,
-  operatorAddress
+  objktsContract: ContractAbstraction<Wallet>,
+  objkt_id: string,
+  ownerAddress: string,
+  operatorAddress: string
 ) {
   return {
     kind: OpKind.TRANSACTION,
@@ -68,14 +83,14 @@ export function createRemoveOperatorCall(
 }
 
 export function createSwapCall(
-  marketplaceContract,
-  objktsAddress,
-  objkt_id,
-  ownerAddress,
-  objkt_amount,
-  xtz_per_objkt,
-  royalties,
-  creator,
+  marketplaceContract: ContractAbstraction<Wallet>,
+  objktsAddress: string,
+  objkt_id: string,
+  ownerAddress: string,
+  objkt_amount: number,
+  xtz_per_objkt: number,
+  royalties: number,
+  creator: string,
   type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
 ) {
   if (type === SWAP_TYPE_TEIA) {
@@ -85,9 +100,9 @@ export function createSwapCall(
         .swap(
           objktsAddress,
           parseFloat(objkt_id),
-          parseFloat(objkt_amount),
-          parseFloat(xtz_per_objkt),
-          parseFloat(royalties),
+          objkt_amount,
+          xtz_per_objkt,
+          royalties,
           creator
         )
         .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
@@ -98,29 +113,23 @@ export function createSwapCall(
     return {
       kind: OpKind.TRANSACTION,
       ...marketplaceContract.methods
-        .swap(
-          creator,
-          parseFloat(objkt_amount),
-          parseFloat(objkt_id),
-          parseFloat(royalties),
-          parseFloat(xtz_per_objkt)
-        )
+        .swap(creator, objkt_amount, objkt_id, royalties, xtz_per_objkt)
         .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
     }
   }
 }
 
 export function createSwapCalls(
-  objktsContract,
-  marketplaceContract,
-  objktsAddress,
-  operatorAddress,
-  objkt_id,
-  ownerAddress,
-  objkt_amount,
-  xtz_per_objkt,
-  royalties,
-  creator,
+  objktsContract: ContractAbstraction<Wallet>,
+  marketplaceContract: ContractAbstraction<Wallet>,
+  objktsAddress: string,
+  operatorAddress: string,
+  objkt_id: string,
+  ownerAddress: string,
+  objkt_amount: number,
+  xtz_per_objkt: number,
+  royalties: number,
+  creator: string,
   type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
 ) {
   return [
@@ -151,24 +160,24 @@ export function createSwapCalls(
 }
 
 export async function createLambdaSwapCall(
-  collabContract,
-  marketplaceAddress,
-  objktsAddress,
-  objkt_id,
-  ownerAddress,
-  objkt_amount,
-  xtz_per_objkt,
-  royalties,
-  creator
+  collabContract: ContractAbstraction<Wallet>,
+  marketplaceAddress: string,
+  objktsAddress: string,
+  objkt_id: string,
+  ownerAddress: string,
+  objkt_amount: number,
+  xtz_per_objkt: number,
+  royalties: number,
+  creator: string
 ) {
   const data = {
     marketplaceAddress,
     params: {
       fa2: objktsAddress,
       objkt_id: parseFloat(objkt_id),
-      objkt_amount: parseFloat(objkt_amount),
-      royalties: parseFloat(royalties),
-      xtz_per_objkt: parseFloat(xtz_per_objkt),
+      objkt_amount: objkt_amount,
+      royalties: royalties,
+      xtz_per_objkt: xtz_per_objkt,
       creator,
     },
   }
