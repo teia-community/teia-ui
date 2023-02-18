@@ -4,11 +4,8 @@ import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
-import { useModalStore } from '@context/modalStore'
 import { useObjktDisplayContext } from '..'
-import type { Tx } from '@types'
-// import { validateAddress } from '@taquito/utils'
-// import { Buffer } from 'buffer'
+import type { TxWithIndex } from '@types'
 
 /**
  * The Transfer Tab
@@ -22,8 +19,6 @@ export const Transfer = () => {
     st.proxyAddress,
     st.transfer,
   ])
-  const show = useModalStore((st) => st.show)
-  const step = useModalStore((st) => st.step)
 
   const senderAddress = proxyAddress || address
 
@@ -44,80 +39,36 @@ export const Transfer = () => {
   )
 
   // The basic schema for a transaction
-  const txSchema: Tx = {
+  const txSchema: TxWithIndex = {
+    index: 0,
     to_: undefined,
     amount: undefined,
     token_id: nft.token_id,
   }
 
-  const [txs, setTxs] = useState<Tx[]>([
+  const [txs, setTxs] = useState<TxWithIndex[]>([
     {
       ...txSchema,
     },
   ])
+  const tableStyle = classNames(styles.table, styles.mt3, styles.mb3)
+  const validTxs = txs.filter((t) => t?.to_ && t?.amount)
 
-  // const _update = (index, pt) => {
-  //   console.log('update transfer', { pt, index, to: pt.to_, amount: pt.amount })
-  //   const updatedTxs = [...txs]
-
-  //   updatedTxs[index] = {
-  //     ...txSchema,
-  //     to_: pt.to_,
-  //     amount: pt.amount,
-  //   }
-
-  //   setTxs(updatedTxs)
-  // }
-
-  const addTransfer = (tx: Tx) => {
-    console.log('adding transfers')
-    console.log({ tx })
-
-    setTxs([...txs, tx])
-  }
-  console.log(txs)
-
-  const _deleteTransfer = ({ address }: { address: string }) => {
+  const addTransfer = (tx: TxWithIndex) => {
     const updatedTxs = [...txs]
-    const toDeleteIndex = updatedTxs.findIndex((t) => t.address === address)
-    updatedTxs.splice(toDeleteIndex, 1)
+    updatedTxs[tx.index] = tx
+    setTxs([...updatedTxs, { ...txSchema, index: updatedTxs.length }])
+  }
+
+  const deleteTransfer = (tx: TxWithIndex) => {
+    const updatedTxs = [...txs]
+    delete updatedTxs[tx.index]
     setTxs(updatedTxs)
   }
 
-  /*
-    const handleUpload = async (event) => {
-        const { files } = event.target
-        const file = files[0]
-
-        setTitle(file.name)
-        const mimeType = file.type !== '' ? file.type : await getMimeType(file)
-        const buffer = Buffer.from(await file.arrayBuffer())
-
-        // set reader for preview
-        const reader = new FileReader()
-        reader.addEventListener('load', event => {
-            console.log(file, event.target.result, buffer, mimeType);
-            // onChange({ title, mimeType, file, buffer, reader: e.target.result })
-        })
-
-        reader.readAsDataURL(file)
-    }
-    */
-
   const onClick = () => {
-    step('Transfering tokens', 'Waiting for confirmation')
-
-    const validTxs = txs.filter((tx) => tx.to_ && tx.amount)
-    if (validTxs.length > 0) {
-      transfer(validTxs)
-    } else {
-      show('Transfering tokens', 'Not a valid')
-    }
+    transfer(validTxs)
   }
-
-  const tableStyle = classNames(styles.table, styles.mt3, styles.mb3)
-
-  //const validTxs = txs.filter((t) => t.to_ && t.amount)
 
   const tokenCount = editionsHeld ? editionsHeld.amount : 0
   return (
@@ -128,6 +79,7 @@ export const Transfer = () => {
         </div>
       ) : (
         <div className={styles.container}>
+          <h1>Transfer (count: {validTxs.length})</h1>
           <p>
             Add addresses below along with how many tokens you wish to send to
             each.
@@ -140,25 +92,17 @@ export const Transfer = () => {
                   key={`transfer-${index}`}
                   tx={tx}
                   index={index}
-                  // onUpdate={(tx) => _update(index, tx)}
                   onAdd={addTransfer}
-                  onRemove={index < txs.length - 1 ? _deleteTransfer : null}
+                  onRemove={index < txs.length - 1 ? deleteTransfer : undefined}
                 />
               ))}
             </tbody>
           </table>
 
-          {/* <div className={styles.upload_container}>
-                    <label>
-                        <span>Upload CSV</span>
-                        <input type="file" name="file" onChange={handleUpload} />
-                    </label>
-                </div> */}
-
           <Button
             alt={'Click to transfer the token to the selected wallets'}
             onClick={onClick}
-            disabled={false /*validTxs.length === 0*/}
+            disabled={validTxs.length === 0}
             shadow_box
             className={styles.btnSecondary}
           >

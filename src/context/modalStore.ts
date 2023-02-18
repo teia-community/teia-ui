@@ -1,3 +1,4 @@
+import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
@@ -17,6 +18,7 @@ interface ModalStore {
   confirm: boolean
   confirmCallback?: () => void
   show: (title: string, message?: string) => void
+  showError: <T>(title: string, error: T) => void
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
   step: (title: string, message?: string) => void
@@ -44,6 +46,17 @@ ${message}`,
           })
         },
       })
+    },
+
+    showError(title, error) {
+      const show = get().show
+      console.error(error)
+      if (error instanceof Error) {
+        show(`${title} (Error)`, error.message)
+      }
+      if (error instanceof ParametersInvalidBeaconError) {
+        show(`${title} (${error.title})`, error.description)
+      }
     },
     setCollapsed: (collapse: boolean) => set({ collapsed: collapse }),
     toggleMenu: () => set({ collapsed: !get().collapsed }),

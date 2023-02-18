@@ -85,6 +85,7 @@ function ListingRow({
               {`Collect for ${listing.price / 1e6} tez`}
             </Button>
           )}
+
         {isOwnSwap &&
           (listing.type.startsWith('TEIA') ||
             listing.type.startsWith('HEN')) && (

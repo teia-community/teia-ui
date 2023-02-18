@@ -112,7 +112,7 @@ export const Container = ({
               ' svg-icon ' +
               (fullscreen ? styles.icon_fullscreen : '')
             }
-            onKeyPress={toggleFullScreen}
+            onKeyDown={toggleFullScreen}
             tabIndex="0"
             role="button"
             aria-label="fullscreen"

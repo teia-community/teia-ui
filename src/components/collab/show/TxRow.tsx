@@ -2,36 +2,22 @@ import { Input } from '@atoms/input'
 import styles from '../../collab/index.module.scss'
 import { Button } from '@atoms/button'
 import { CloseIcon } from '@icons'
-import { useState } from 'react'
+import { KeyboardEvent, useState } from 'react'
 import { validateAddress } from '@taquito/utils'
 import { useModalStore } from '@context/modalStore'
-import type { Tx } from '@types'
+import type { TxWithIndex } from '@types'
 
 interface TxRowProps {
-  tx: Tx
+  tx: TxWithIndex
   index: number
-  onUpdate: (tx: Tx) => void
-  onAdd: (tx: Tx & { index: number }) => void
-  onRemove: (tx: Tx) => void
+  onAdd: (tx: TxWithIndex) => void
+  onRemove?: (tx: TxWithIndex) => void
 }
 
-export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }: TxRowProps) => {
+export const TxRow = ({ tx, index, onAdd, onRemove }: TxRowProps) => {
   const [amount, setAmount] = useState('')
   const [destination, setDestination] = useState('')
-
-  const [valid, setValid] = useState(false)
-
-  // TODO(mel): clean
   const show = useModalStore((st) => st.show)
-
-  // const _update = (key, value) => {
-  //   const updatedTx = {
-  //     ...tx,
-  //     [key]: value,
-  //   }
-  //   onUpdate(updatedTx)
-  //   console.log({ key, value })
-  // }
 
   const handleAdd = () => {
     if (validateAddress(destination)) {
@@ -45,9 +31,8 @@ export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }: TxRowProps) => {
       show('Transfer', `Invalid address ${destination}`)
     }
   }
-
   // Handle return key
-  const _handleKeyPress = (event: KeyboardEvent) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
       handleAdd()
     }
@@ -63,8 +48,9 @@ export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }: TxRowProps) => {
           placeholder="OBJKT quantity"
           min={1}
           value={amount}
-          onChange={setAmount}
-          //onChange={(value) => _update('amount', value)}
+          onChange={(v) => {
+            if (typeof v === 'number') setAmount(v.toString())
+          }}
         />
       </td>
       <td>
@@ -73,20 +59,33 @@ export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }: TxRowProps) => {
           label="Recipient"
           placeholder="to address (tz...)"
           value={destination}
-          onChange={setDestination}
-          onKeyPress={_handleKeyPress}
+          onChange={(v) => {
+            if (typeof v === 'string') {
+              setDestination(v)
+            }
+          }}
+          onKeyDown={handleKeyDown}
         />
       </td>
       {onRemove && (
         <td className={styles.actionCell}>
-          <Button fit onClick={onRemove}>
+          <Button
+            alt={'Click to delete this transfer'}
+            fit
+            onClick={() => onRemove(tx)}
+          >
             <CloseIcon width={16} />
           </Button>
         </td>
       )}
       {!onRemove && destination && amount && (
         <td className={styles.actionCell} align="center">
-          <Button fit shadow_box onClick={handleAdd}>
+          <Button
+            alt={'Add transfer to batch list'}
+            fit
+            shadow_box
+            onClick={handleAdd}
+          >
             add
           </Button>
         </td>

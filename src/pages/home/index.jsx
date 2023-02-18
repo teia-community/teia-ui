@@ -55,7 +55,7 @@ export function Home({ isSearch = false }) {
             setSearchTerm(value)
           }}
           placeholder="Search ↵"
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               navigate(
                 {
