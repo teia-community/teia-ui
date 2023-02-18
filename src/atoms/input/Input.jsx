@@ -32,9 +32,14 @@ const Input = forwardRef(
           onChange(e)
           return
         }
-        const v = e.target.value
-        setValue(v)
-        onChange(v)
+        const v = type === 'number' ? e.target.valueAsNumber : e.target.value
+        if (isNaN(v)) {
+          setValue(v.toString())
+          onChange(v.toString())
+        } else {
+          setValue(v)
+          onChange(v)
+        }
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [value]

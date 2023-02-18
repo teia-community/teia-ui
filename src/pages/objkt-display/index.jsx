@@ -53,8 +53,9 @@ export const ObjktDisplay = () => {
 
   const address = useUserStore((st) => st.address)
   const proxy = useUserStore((st) => st.proxyAddress)
-  const [modalVisible, message] = useModalStore((st) => [
+  const [modalVisible, modalProgress, message] = useModalStore((st) => [
     st.visible,
+    st.progress,
     st.message,
   ])
   const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
@@ -138,7 +139,7 @@ export const ObjktDisplay = () => {
   if (loading) {
     return <Page title={nft?.name}>{loading && <Loading />}</Page>
   }
-  if (modalVisible) {
+  if (modalVisible && modalProgress) {
     return (
       <Page title={nft?.name}>
         <div>
@@ -160,6 +161,7 @@ export const ObjktDisplay = () => {
   if (error) {
     throw error //new Error('Error Fetching OBJKTs for {}')
   }
+  console.log(nft)
 
   return (
     <Page className={styles.profile_page} title={nft?.name}>

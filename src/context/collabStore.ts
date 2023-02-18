@@ -29,12 +29,11 @@ export const useCollabStore = create<CollabState>()(
       (set, get) => ({
         originatedContract: undefined,
         findOriginatedContractFromOpHash: async (hash) => {
-          useModalStore.setState({
-            visible: true,
-            message: 'Checking network for collab contract',
-            progress: true,
-            confirm: false,
-          })
+          const step = useModalStore.getState().step
+          const closeModal = useModalStore.getState().close
+          const showModal = useModalStore.getState().show
+
+          step('Checking network for collab contract')
 
           axios
             .get(`https://api.tzkt.io/v1/operations/originations/${hash}`)
@@ -60,35 +59,23 @@ export const useCollabStore = create<CollabState>()(
                 )
 
                 // We have got our contract address
-                useModalStore.setState({
-                  visible: true,
-                  message: 'Collaborative contract created successfully',
-                  progress: true,
-                  confirm: false,
-                })
+                step('Collaborative contract created successfully')
 
                 setTimeout(() => {
-                  useModalStore.setState({
-                    visible: false,
-                  })
+                  closeModal()
                 }, 2000)
               } else {
                 console.log('missing data')
 
                 // We have got our contract address
-                useModalStore.setState({
-                  message:
-                    'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address',
-                  progress: true,
-                  confirm: true,
-                })
+                showModal(
+                  'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address'
+                )
               }
 
               // Hide after 2 seconds
               setTimeout(() => {
-                useModalStore.setState({
-                  visible: false,
-                })
+                closeModal()
               }, 2000)
             })
         },
@@ -101,6 +88,9 @@ export const useCollabStore = create<CollabState>()(
             .then((op) => console.log(op))
         },
         originateProxy: async (participantData: any) => {
+          const step = useModalStore.getState().step
+          const showModal = useModalStore.getState().show
+
           console.log('originateProxy', participantData)
 
           // Clear any existing calls
@@ -110,12 +100,7 @@ export const useCollabStore = create<CollabState>()(
           })
 
           // Show progress during creation
-          useModalStore.setState({
-            visible: true,
-            message: 'creating collaborative contract',
-            progress: true,
-            confirm: false,
-          })
+          step('Originate', 'creating collaborative contract')
 
           const participantMap = MichelsonMap.fromLiteral(participantData)
           const packDataParams = packData(participantMap, createProxySchema)
@@ -138,16 +123,7 @@ export const useCollabStore = create<CollabState>()(
               })
             })
             .catch((e) => {
-              useModalStore.setState({
-                message: e.message || 'an error occurred',
-                progress: false,
-                confirm: true,
-                confirmCallback: () => {
-                  useModalStore.setState({
-                    visible: false,
-                  })
-                },
-              })
+              showModal('Originate (Error)', e.message || 'an error occurred')
             })
         },
       }),

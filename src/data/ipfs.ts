@@ -6,6 +6,7 @@ import { Buffer } from 'buffer'
 import { fetchGraphQL } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { FileMint } from '@types'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder
@@ -19,7 +20,7 @@ import { useModalStore } from '@context/modalStore'
  * @param {{blob:Blob, path:string, size:number}} file
  * @returns {Promise<string>}
  */
-export async function uploadFileToIPFSProxy(file) {
+export async function uploadFileToIPFSProxy(file: FileMint) {
   const { step } = useModalStore.getState()
 
   const form = new FormData()
@@ -55,7 +56,7 @@ export async function uploadFileToIPFSProxy(file) {
  * @param {Array<FileHolder>} files
  * @returns {Promise<string>}
  */
-export async function uploadMultipleFilesToIPFSProxy(files) {
+export async function uploadMultipleFilesToIPFSProxy(files: [FileMint]) {
   const form = new FormData()
 
   files.forEach((file) => {
@@ -78,7 +79,7 @@ export async function uploadMultipleFilesToIPFSProxy(files) {
   return res.data.cid
 }
 
-const isDoubleMint = async (uri) => {
+const isDoubleMint = async (uri: string) => {
   const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
     tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
       token_id
@@ -115,6 +116,21 @@ const isDoubleMint = async (uri) => {
   return false
 }
 
+interface PrepareProps {
+  name: string
+  description: string
+  tags: string
+  address: string
+  file: FileMint
+  cover: FileMint
+  thumbnail: FileMint
+  rights: string
+  rightUri?: string
+  language?: string
+  accessibility: string
+  contentRating: string
+  formats: any
+}
 export const prepareFile = async ({
   name,
   description,
@@ -129,7 +145,7 @@ export const prepareFile = async ({
   accessibility,
   contentRating,
   formats,
-}) => {
+}: PrepareProps) => {
   //TODO: clean
   const { step } = useModalStore.getState()
 
@@ -138,7 +154,7 @@ export const prepareFile = async ({
 
   const cid = await uploadFileToIPFSProxy({
     blob: new Blob([file.buffer]),
-    path: file.file.name,
+    path: file.file?.name,
   })
 
   step('Preparing OBJKT', `Successfully uploaded file to IPFS: ${cid}`)
@@ -146,7 +162,7 @@ export const prepareFile = async ({
 
   /** We cannot pre-compute the hash with nft.storage, but at least they seem to match when reuploading them*/
   if (await isDoubleMint(uri)) {
-    throw Error('Double Mint', { reason: 'You already minted the same token.' })
+    throw Error('Double Mint', { cause: 'You already minted the same token.' })
   }
 
   if (formats.length > 0) {
@@ -159,7 +175,7 @@ export const prepareFile = async ({
   if (generateDisplayUri && cover) {
     const coverCid = await uploadFileToIPFSProxy({
       blob: new Blob([cover.buffer]),
-      path: `cover_${cover.file ? cover.file.name : cover.format.fileName}`,
+      path: `cover_${cover.file ? cover.file.name : cover.format?.fileName}`,
     })
     step('Preparing OBJKT', `Successfully uploaded cover to IPFS: ${coverCid}`)
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
@@ -179,7 +195,7 @@ export const prepareFile = async ({
     const thumbnailCid = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
       path: `thumbnail_${
-        thumbnail.file ? thumbnail.file.name : thumbnail.format.fileName
+        thumbnail.file ? thumbnail.file.name : thumbnail.format?.fileName
       }`,
     })
     thumbnailUri = `ipfs://${thumbnailCid}`
@@ -231,6 +247,21 @@ export const prepareDirectory = async ({
   accessibility,
   contentRating,
   formats,
+}: {
+  name: string
+  description: string
+  tags: string
+  address: string
+  files: string
+  cover: string
+  thumbnail: string
+  generateDisplayUri: string
+  rights: string
+  rightUri: string
+  language: string
+  accessibility: string
+  contentRating: string
+  formats: string
 }) => {
   const hashes = await uploadFilesToDirectory(files)
   const { step } = useModalStore.getState()

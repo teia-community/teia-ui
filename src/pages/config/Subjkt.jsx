@@ -59,6 +59,8 @@ export const Subjkt = () => {
     st.registry,
   ])
 
+  const show = useModalStore((st) => st.show)
+
   const cur_address = proxyAddress || address
   useEffect(() => {
     const init = async () => {
@@ -106,15 +108,10 @@ export const Subjkt = () => {
 
     console.error(`name exists and is registered to ${holder.user_address}`)
 
-    useModalStore.setState({
-      visible: true,
-      message: `The provided name is already registered by ${holder.user_address}`,
-      progress: false,
-      confirm: true,
-      confirmCallback: () => {
-        useModalStore.setState({ visible: false })
-      },
-    })
+    show(
+      'Subjkt',
+      `The provided name is already registered by ${holder.user_address}`
+    )
 
     return true
   }

@@ -3,7 +3,7 @@ import axios from 'axios'
 import flatten from 'lodash/flatten'
 
 /**
- * @typedef { Map<string, string> } ListMap
+ * @typedef { Map<string, number> } ListMap
  * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap} } SettingsData
  * @typedef { {data: SettingsData, error:Error, isLoading:boolean} } UseSettingsResult
  */

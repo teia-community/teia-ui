@@ -104,7 +104,9 @@ export const useMintStore = create<MintState>()(
             nsfw,
             reset,
           } = get()
-          const { show } = useModalStore.getState()
+          const show = useModalStore.getState().show
+          const step = useModalStore.getState().step
+          const close = useModalStore.getState().close
 
           if (!artifact || !artifact.file) {
             return
@@ -112,19 +114,9 @@ export const useMintStore = create<MintState>()(
 
           // check sync status
           if (!address) {
-            useModalStore.setState({
-              visible: true,
-              message: 'Sync your wallet',
-              progress: true,
-              confirm: false,
-            })
-
+            step('Sync Required', 'Sync your wallet')
             await sync()
-
-            useModalStore.setState({
-              visible: false,
-              progress: false,
-            })
+            close()
             return
           }
 
@@ -148,13 +140,7 @@ export const useMintStore = create<MintState>()(
           }
 
           // setStep(2)
-
-          useModalStore.setState({
-            visible: true,
-            message: 'Preparing OBJKT',
-            progress: true,
-            confirm: false,
-          })
+          step('Mint', 'Preparing OBJKT')
 
           // if proxyContract is selected, using it as a the minterAddress:
           const minterAddress = proxyAddress || address
