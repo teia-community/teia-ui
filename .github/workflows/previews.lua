@@ -17,7 +17,6 @@ function _M.findProfileDetails(search)
     profile['name'] = _M.clean(data['name'])
     profile['description'] = _M.clean(data['metadata']['data']['description'])
     profile['image'] = _M.clean(data['metadata']['data']['identicon'])
-    profile['image_backup'] = ''
     return profile
 end
 
