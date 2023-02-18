@@ -3,7 +3,7 @@ import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { fadeIn } from '@utils/motion'
 import styles from '@style'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@components/markdown'
 import { useModalStore } from '@context/modalStore'
 
 export const FeedbackComponent = () => {

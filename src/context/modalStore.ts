@@ -16,10 +16,11 @@ interface ModalStore {
   progress: boolean
   confirm: boolean
   confirmCallback?: () => void
-  show: (message: string) => void
+  show: (title: string, message?: string) => void
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
-  step: (title: string, message: string) => void
+  step: (title: string, message?: string) => void
+  close: () => void
 }
 
 export const useModalStore = create<ModalStore>()(
@@ -29,10 +30,11 @@ export const useModalStore = create<ModalStore>()(
     message: '',
     progress: false,
     confirm: true,
-    confirmCallback: () => set({ visible: false }),
-    show: (message) => {
+    confirmCallback: () => get().close(),
+    show: (title, message) => {
       set({
-        message,
+        message: `# ${title}
+${message}`,
         progress: false,
         visible: true,
         confirm: true,
@@ -49,8 +51,16 @@ export const useModalStore = create<ModalStore>()(
       set({
         progress: true,
         visible: true,
+        confirm: false,
         message: `# ${title}
 ${message}`,
+      })
+    },
+
+    close: () => {
+      set({
+        visible: false,
+        progress: false,
       })
     },
   }))

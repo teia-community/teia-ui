@@ -46,6 +46,14 @@ export type UploadCallback = (arg: FileMint) => void
 //   VERSUM_SWAP,
 //   FA2_TRANSFER,
 // }
+
+export type ListingType =
+  | 'TEIA_SWAP'
+  | 'HEN_SWAP'
+  | 'HEN_SWAP_V2'
+  | 'OBJKT_ASK'
+  | 'OBJKT_ASK_V2'
+  | 'VERSUM_SWAP'
 export type MetadataAccessibility = {
   /** resource that is physiologically dangerous to some users.*/
   hazards: [string]
@@ -87,16 +95,18 @@ export type Listing = {
   amount_left: number
   ask_id?: string
   contract_address: string
-  key?: string
+  end_price?: number
+  key: number
   offer_id?: string
-  /** The price in mutez */
   price: number
-  seller_address?: string
-  seller_profile?: string
-  status: ListingStatus
-  swap_id?: string
+  seller_address: string
+  seller_profile: ArtistProfile
+  start_price?: number
+  status: string // "active" ||
+  swap_id: number
   type: ListingType
 }
+
 export type RoyaltyReceiver = {
   receiver_address: string
   royalties: [string: string]
@@ -145,6 +155,7 @@ export type NFTBase = {
   token_id: string
 }
 
+// TODO(mel): use separate NFT types depending on the stage
 /** These are artifacts of TokenCollection, where the check logic happens. */
 export type NFTFiltered = {
   isNSFW?: boolean
@@ -155,6 +166,9 @@ export type NFT = NFTBase &
   NFTFiltered & {
     /** This is an artifact of ??, where the key logic happens. */
     key?: string
+  } & {
+    /** artifact of only objkt display for now... */
+    restricted?: boolean
   }
 
 export type TokenResponse = {

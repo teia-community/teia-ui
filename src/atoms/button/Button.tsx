@@ -1,29 +1,50 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { NavLink } from 'react-router-dom'
+import { NavLink, To } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import React from 'react'
+
+interface ButtonProps {
+  /**Used for accessibility (aria-label) */
+  alt: string
+  /** If provided return a "NavLink" */
+  to?: To
+  /** If provided return a "a" */
+  href?: string
+  /**onClick callback, ignore if to is provided */
+  onClick?: () => void
+  /**@deprecated onClick for NavLinks */
+  onTo?: () => void
+  children?: string | React.ReactElement
+  /**Extra classes to apply to the button */
+  className?: string
+  style?: React.CSSProperties
+  /** Disables the button */
+  disabled?: boolean
+  selected?: boolean
+  /**(Style) Fit */
+  fit?: boolean
+  /**(Style) Full */
+  full?: boolean
+  /**(Style) Box (adds nesting) */
+  box?: boolean
+  strong?: boolean
+  /**(Style) Shadow Box (adds nesting)*/
+  shadow_box?: boolean
+  secondary?: boolean
+  small?: boolean
+  inline?: boolean
+  activeClass?: string
+}
 
 /**
  * Core button style (used for links, buttons, and <a>)
- * @param {Object} buttonProps
- * @param {string} buttonProps.to - If provided return a "NavLink"
- * @param {string} buttonProps.href - If provided return a "a"
- * @param {boolean} buttonProps.disabled - Disables the button
- * @param {boolean} buttonProps.fit - (Style) Fit
- * @param {boolean} buttonProps.full - (Style) Full
- * @param {boolean} buttonProps.shadow_box - (Style) Box (adds nesting)
- * @param {boolean} buttonProps.box - (Style) Box (adds nesting)
- * @param {string} buttonProps.className - Extra classes to apply to the button
- * @param {string} buttonProps.alt - Used for accessibility (aria-label)
- * @param {React.EffectCallback} buttonProps.onClick - onClick callback, ignore if to is provided
- * @param {React.EffectCallback} buttonProps.onTo - onClick for NavLinks
- * @param {React.ReactNode} buttonProps.children - children
  */
 const Button = ({
-  to = null,
-  href = null,
-  onClick = () => null,
-  onTo = () => null,
+  to,
+  href,
+  onClick,
+  onTo,
   children,
   className,
   style,
@@ -40,7 +61,7 @@ const Button = ({
   inline,
   activeClass,
   ...props
-}) => {
+}: ButtonProps) => {
   const _classes = classnames({
     [styles.container]: true,
     [styles.disabled]: disabled,
@@ -70,7 +91,7 @@ const Button = ({
   //     </Link>
   //   )
   // }
-  if (to !== null) {
+  if (to !== undefined) {
     return (
       <NavLink
         aria-label={alt}
@@ -89,7 +110,7 @@ const Button = ({
     )
   }
 
-  if (href !== null) {
+  if (href !== undefined) {
     return (
       <motion.a
         style={style}

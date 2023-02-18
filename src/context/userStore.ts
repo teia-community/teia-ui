@@ -35,6 +35,9 @@ import {
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
+import { Listing, NFT } from '@types'
+import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
+import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
 
 interface SubjktMeta {
   identicon?: string
@@ -75,21 +78,15 @@ interface UserState {
     objkt_id: string,
     creator: string,
     objkt_amount: number
-  ) => void
+  ) => Promise<BatchWalletOperation | undefined>
   /** Burn Token */
   burn: (objkt_id: string, amount: number) => void
   /** Reswap Token */
   reswap: (
+    nft: NFT,
     price: number,
-    swap: {
-      token: { id: any; creator_id: any }
-      creator_id: any
-      contract_address: string
-      id: string
-      amount_left: any
-      royalties: any
-    }
-  ) => void
+    swap: Listing
+  ) => Promise<BatchWalletOperation | undefined>
   /** Collect token */
   collect: (listing: {
     type: string
@@ -99,7 +96,7 @@ interface UserState {
     ask_id: any
   }) => void
   /** Cancel Swap */
-  cancel: (contract: string, swap_id: string) => void
+  cancel: (contract: string, swap_id: number) => void
   /** Cancel Swap from V1 */
   cancelv1: (swapid: string) => void
   /** Retrieve account from localStorage (beacon mechanism) */
@@ -241,6 +238,10 @@ export const useUserStore = create<UserState>()(
           objkt_amount
         ) => {
           const { proxyAddress } = get()
+          const show = useModalStore.getState().show
+          const step = useModalStore.getState().step
+
+          step('Swap', 'Preparing swap')
           if (proxyAddress) {
             /* collab contract swap case */
             const proxyContract = await Tezos.wallet.at(proxyAddress)
@@ -295,12 +296,26 @@ export const useUserStore = create<UserState>()(
             creator,
             MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
           )
-
-          const batch = Tezos.wallet.batch(operations)
-          return await batch.send()
+          try {
+            const batch = Tezos.wallet.batch(operations)
+            const answer = await batch.send()
+            show(
+              'Swap Successful',
+              `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
+            )
+          } catch (e) {
+            console.error(e)
+            if (e instanceof Error) {
+              show('Swap (Error)', e.message)
+            }
+            if (e instanceof ParametersInvalidBeaconError) {
+              show(`Swap (${e.title})`, e.description)
+            }
+          }
         },
         burn: async (objkt_id: string, amount: number) => {
           const { proxyAddress } = get()
+          const close = useModalStore.getState().close
           const tz = await wallet.client.getActiveAccount()
           const objktsOrProxy = proxyAddress || HEN_CONTRACT_FA2
           const addressFrom = proxyAddress || tz?.address
@@ -323,9 +338,10 @@ export const useUserStore = create<UserState>()(
               ])
               .send()
           )
-          useModalStore.setState({ progress: false, visible: false })
+          close()
         },
         transfer: async (txs: [Tx]) => {
+          const close = useModalStore.getState().close
           const { proxyAddress, address } = get()
 
           const contract = proxyAddress || HEN_CONTRACT_FA2
@@ -341,10 +357,7 @@ export const useUserStore = create<UserState>()(
               .send()
           )
 
-          useModalStore.setState({
-            progress: false,
-            visible: false,
-          })
+          close()
         },
         collect: async (listing) => {
           if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
@@ -395,7 +408,7 @@ export const useUserStore = create<UserState>()(
             /* collab contract cancel swap for Teia Marketplace case */
             const data = {
               marketplaceAddress: contract_address,
-              swap_id: parseFloat(swap_id),
+              swap_id: swap_id,
             }
             const preparedCancel = packData(data, teiaCancelSwapSchema)
             const { packed } = await Packer.packData(preparedCancel)
@@ -414,32 +427,40 @@ export const useUserStore = create<UserState>()(
             .at(proxyAddress || contract_address)
             .then((c) =>
               c.methods
-                .cancel_swap(parseFloat(swap_id))
+                .cancel_swap(swap_id)
                 .send({ amount: 0, storageLimit: 310 })
             )
             .catch((e) => e)
         },
-        reswap: async (price, swap) => {
-          // TODO: this function currently does not take collab contracts to account
+        reswap: async (nft, price, swap) => {
+          // // TODO: this function currently does not take collab contracts to account
           const { proxyAddress } = get()
+          const step = useModalStore.getState().step
+          const close = useModalStore.getState().close
+          const show = useModalStore.getState().show
 
-          const objkt_id = swap.token.id
-          const creator = swap.token.creator_id
-          const from = swap.creator_id
+          step('Reswaping', `reswaping ${nft.token_id} for ${price}tz`)
 
+          console.log({ nft, price, swap })
+          const objkt_id = nft.token_id
+          const creator = nft.artist_address
+          const from = swap.seller_address
+
+          let proxyContract = undefined
           if (proxyAddress) {
-            useModalStore.setState({
-              message: 'reswapping is not yet supported in collab mode',
-              progress: false,
-              visible: true,
-              confirm: true,
-              confirmCallback: () => {
-                useModalStore.setState({
-                  visible: false,
-                })
-              },
-            })
-            return
+            // useModalStore.setState({
+            //   message: 'reswapping is not yet supported in collab mode',
+            //   progress: false,
+            //   visible: true,
+            //   confirm: true,
+            //   confirmCallback: () => {
+            //     useModalStore.setState({
+            //       visible: false,
+            //     })
+            //   },
+            // })
+            // return
+            proxyContract = await Tezos.wallet.at(proxyAddress)
           }
 
           const [objktsContract, marketplaceContract, mainMarketplaceContract] =
@@ -449,12 +470,14 @@ export const useUserStore = create<UserState>()(
               Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
             ])
 
+          const current_contract = proxyContract || marketplaceContract
+          console.log(current_contract.methodsObject)
           const list = [
             // cancel current swap
             {
               kind: OpKind.TRANSACTION,
-              ...marketplaceContract.methods
-                .cancel_swap(parseFloat(swap.id))
+              ...current_contract.methods
+                .cancel_swap(swap.swap_id)
                 .toTransferParams({
                   amount: 0,
                   mutez: true,
@@ -471,27 +494,38 @@ export const useUserStore = create<UserState>()(
               from,
               swap.amount_left,
               price,
-              swap.royalties,
+              nft.royalties_total / 1e3,
               creator,
               MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
             ),
           ]
           console.debug(list)
-          const batch = Tezos.wallet.batch(list)
-          return await batch.send()
+          try {
+            const batch = Tezos.wallet.batch(list)
+            const answer = await batch.send()
+            if (answer.opHash) {
+              show(
+                'Reswap Successful',
+                `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
+              )
+            }
+            return answer
+          } catch (e) {
+            if (e instanceof Error) show(`Reswap Error`, e.message)
+            if (e instanceof ParametersInvalidBeaconError)
+              show(`Reswap Error (${e.title})`, e.description)
+            console.error(e)
+          }
         },
         mint: async (tz, amount, cid, royalties) => {
           // show feedback component with following message and progress indicator
           const { show } = useModalStore.getState()
           const { proxyAddress } = get()
           console.debug('CID', cid)
+          const step = useModalStore.getState().step
+          const close = useModalStore.getState().close
 
-          useModalStore.setState({
-            visible: true,
-            message: 'minting OBJKT',
-            progress: true,
-            confirm: false,
-          })
+          step('Mint', 'minting OBJKT')
 
           const handleOpStatus = async (op: TransactionWalletOperation) => {
             try {
@@ -532,12 +566,7 @@ export const useUserStore = create<UserState>()(
                 .send({ amount: 0, storageLimit: 310 })
             )
             .then((op) => {
-              useModalStore.setState({
-                visible: true,
-                message: 'confirming transaction',
-                progress: true,
-                confirm: false,
-              })
+              step('Mint', 'confirming transaction')
               return op
                 .confirmation(1)
                 .then(async () => {
@@ -555,9 +584,10 @@ export const useUserStore = create<UserState>()(
                       err.message === 'Confirmation polling timed out'
                         ? 'a timeout occurred, but the mint might have succeeded'
                         : DEFAULT_ERROR_MESSAGE
-                    show(message)
+                    show('Mint (Error)', message)
                     return !error
                   }
+
                   return false
                 })
             })
