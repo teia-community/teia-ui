@@ -5,6 +5,9 @@
     "eslint:recommended",
     "plugin:react/jsx-runtime"
   ],
+  "globals": {
+    "JSX": "readonly"
+  },
   "root": true,
   "plugins": ["jsx-a11y"],
   "rules": {

@@ -87,7 +87,7 @@ interface UserState {
   /** Cancel Swap */
   cancel: (contract: string, swap_id: number) => void
   /** Cancel Swap from V1 */
-  cancelv1: (swapid: string) => void
+  cancelV1: (swapid: string) => void
   /** Retrieve account from localStorage (beacon mechanism) */
   setAccount: () => void
   /** Set the proxy address */
@@ -220,6 +220,7 @@ export const useUserStore = create<UserState>()(
         ) => {
           const { proxyAddress } = get()
           const show = useModalStore.getState().show
+          const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
 
           step('Swap', 'Preparing swap')
@@ -285,13 +286,7 @@ export const useUserStore = create<UserState>()(
               `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
             )
           } catch (e) {
-            console.error(e)
-            if (e instanceof Error) {
-              show('Swap (Error)', e.message)
-            }
-            if (e instanceof ParametersInvalidBeaconError) {
-              show(`Swap (${e.title})`, e.description)
-            }
+            showError('Swap', e)
           }
         },
         burn: async (objkt_id: string, amount: number) => {
@@ -322,57 +317,86 @@ export const useUserStore = create<UserState>()(
           close()
         },
         transfer: async (txs) => {
-          const close = useModalStore.getState().close
+          const show = useModalStore.getState().show
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Transferring tokens', 'Waiting for confirmation')
           const { proxyAddress, address } = get()
 
           const contract = proxyAddress || HEN_CONTRACT_FA2
 
-          await Tezos.wallet.at(contract).then(async (c) =>
-            c.methods
-              .transfer([
-                {
-                  from_: proxyAddress || address,
-                  txs,
-                },
-              ])
-              .send()
-          )
+          try {
+            const answer = await Tezos.wallet.at(contract).then(async (c) =>
+              c.methods
+                .transfer([
+                  {
+                    from_: proxyAddress || address,
+                    txs,
+                  },
+                ])
+                .send()
+            )
 
-          close()
-        },
-        collect: async (listing) => {
-          if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
-            return await Tezos.wallet
-              .at(listing.contract_address)
-              .then((c) =>
-                c.methods.collect(parseInt(listing.swap_id)).send({
-                  amount: parseInt(listing.price),
-                  mutez: true,
-                  storageLimit: 350,
-                })
-              )
-              .catch((e) => e)
-          } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
-            return await Tezos.wallet.at(listing.contract_address).then((c) =>
-              c.methods.fulfill_ask(listing.ask_id).send({
-                amount: parseInt(listing.price),
-                mutez: true,
-                storageLimit: 350,
-              })
+            show(
+              'Transfer Successful',
+              `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
             )
-          } else if (['VERSUM_SWAP'].includes(listing.type)) {
-            return await Tezos.wallet.at(listing.contract_address).then((c) =>
-              c.methods.collect_swap('1', listing.swap_id).send({
-                amount: parseInt(listing.price),
-                mutez: true,
-                storageLimit: 350,
-              })
-            )
-          } else {
-            throw new Error('unsupported listing')
+          } catch (e) {
+            showError('Transfer', e)
           }
         },
-        cancelv1: async (swap_id) => {
+        collect: async (listing) => {
+          const show = useModalStore.getState().show
+          const showError = useModalStore.getState().showError
+
+          let answer = undefined
+
+          try {
+            if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
+              answer = await Tezos.wallet
+                .at(listing.contract_address)
+                .then((c) =>
+                  c.methods.collect(parseInt(listing.swap_id)).send({
+                    amount: parseInt(listing.price),
+                    mutez: true,
+                    storageLimit: 350,
+                  })
+                )
+            } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
+              answer = await Tezos.wallet
+                .at(listing.contract_address)
+                .then((c) =>
+                  c.methods.fulfill_ask(listing.ask_id).send({
+                    amount: parseInt(listing.price),
+                    mutez: true,
+                    storageLimit: 350,
+                  })
+                )
+            } else if (['VERSUM_SWAP'].includes(listing.type)) {
+              answer = await Tezos.wallet
+                .at(listing.contract_address)
+                .then((c) =>
+                  c.methods.collect_swap('1', listing.swap_id).send({
+                    amount: parseInt(listing.price),
+                    mutez: true,
+                    storageLimit: 350,
+                  })
+                )
+            }
+            if (answer?.opHash) {
+              show(
+                'Collect Successful',
+                `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
+              )
+            } else {
+              show('Collect Error', 'unsupported listing')
+            }
+          } catch (e) {
+            showError('Collect', e)
+          }
+        },
+        cancelV1: async (swap_id) => {
           return await Tezos.wallet
             .at(MARKETPLACE_CONTRACT_V1)
             .then((c) =>

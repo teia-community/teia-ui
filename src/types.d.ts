@@ -184,6 +184,10 @@ export interface Tx {
   token_id: string
 }
 
+export interface TxWithIndex extends Tx {
+  index: number
+}
+
 // TODO(mel): use separate NFT types depending on the stage
 /** These are artifacts of TokenCollection, where the check logic happens. */
 export type NFTFiltered = {
