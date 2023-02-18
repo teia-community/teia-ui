@@ -32,8 +32,7 @@ function _M.findTokenDetails(search)
     token['id'] = _M.clean(data['token_id'])
     token['name'] = _M.clean(data['name'])
     token['description'] = _M.clean(data['description'])
-    token['image'] = _M.clean(data['display_uri'])
-    token['image_backup'] = _M.clean(data['artifact_uri'])
+    token['image'] = (data['display_uri'] ~= ngx.null and _M.clean(data['display_uri']) or _M.clean(data['artifact_uri']))
     return token
 end
 
@@ -50,13 +49,13 @@ function _M.injectOpenGraphTags(body, info)
         '<meta property="og:type" content="website" />' ..
         '<meta property="og:title" content="' .. info['name'] .. '" />' ..
         '<meta property="og:description" content="' .. info['description'] .. '" />' ..
-        '<meta property="og:image" content="' .. (info['image'] and info['image'] or info['image_backup']) .. '" />' ..
+        '<meta property="og:image" content="' .. info['image'] .. '" />' ..
         '<meta property="og:url" content="' .. url .. '" />' ..
         '<meta name="twitter:card" content="summary_large_image" />' ..
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
         '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
         '<meta name="twitter:description" content="' .. info['description'] .. '" />' ..
-        '<meta name="twitter:image" content="' .. (info['image'] and info['image'] or info['image_backup']) .. '" />'
+        '<meta name="twitter:image" content="' .. info['image'] .. '" />'
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', 'https://cache.teia.rocks/ipfs/')
     return ngx.re.gsub(body, '<head>', '<head>' .. openGraphTags)
