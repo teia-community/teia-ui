@@ -2,23 +2,18 @@ import get from 'lodash/get'
 import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'
 import { Listings } from '@components/listings'
-import { useOutletContext } from 'react-router'
 import { useUserStore } from '@context/userStore'
+import { useObjktDisplayContext } from '..'
 
 export const Collectors = () => {
   /** @type {{nft:import('@types').NFT}} */
-  const { nft } = useOutletContext()
+  const { nft } = useObjktDisplayContext()
 
-  const [address, proxyAddress, sync, collect, cancel, cancelv1, reswap] =
-    useUserStore((st) => [
-      st.address,
-      st.proxyAddress,
-      st.sync,
-      st.collect,
-      st.cancel,
-      st.cancelv1,
-      st.reswap,
-    ])
+  const [address, sync, collect] = useUserStore((st) => [
+    st.address,
+    st.sync,
+    st.collect,
+  ])
 
   const handleCollect = (listing) => {
     if (address === null) {
@@ -37,16 +32,9 @@ export const Collectors = () => {
       {nft.listings.length > 0 && (
         <Container>
           <Listings
-            id={nft.token_id}
-            listings={nft.listings}
+            nft={nft}
             handleCollect={handleCollect}
-            address={address}
-            proxyAddress={proxyAddress}
             proxyAdminAddress={proxyAdminAddress}
-            cancel={cancel}
-            cancelv1={cancelv1}
-            restricted={nft.restricted}
-            reswap={reswap}
           />
         </Container>
       )}

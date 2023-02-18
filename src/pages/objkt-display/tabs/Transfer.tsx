@@ -3,10 +3,11 @@ import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 import { Button } from '@atoms/button'
-import { useOutletContext } from 'react-router'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import { validateAddress } from '@taquito/utils'
+import { useObjktDisplayContext } from '..'
+import type { Tx } from '@types'
+// import { validateAddress } from '@taquito/utils'
 // import { Buffer } from 'buffer'
 
 /**
@@ -14,8 +15,7 @@ import { validateAddress } from '@taquito/utils'
  * This allow the user to send tokens to a specific address.
  */
 export const Transfer = () => {
-  /** @type {{nft:import('@types').NFT}} */
-  const { nft } = useOutletContext()
+  const { nft } = useObjktDisplayContext()
 
   const [address, proxyAddress, transfer] = useUserStore((st) => [
     st.address,
@@ -23,12 +23,13 @@ export const Transfer = () => {
     st.transfer,
   ])
   const show = useModalStore((st) => st.show)
+  const step = useModalStore((st) => st.step)
 
   const senderAddress = proxyAddress || address
 
   // See if the creator of this token is also the admin
   const proxyAdminAddress = nft.artist_profile?.is_split
-    ? nft.artist_profile.split_contract.administrator_address
+    ? nft.artist_profile?.split_contract?.administrator_address
     : null
   //
   // How many editions are held by the contract?
@@ -43,39 +44,40 @@ export const Transfer = () => {
   )
 
   // The basic schema for a transaction
-  const txSchema = {
+  const txSchema: Tx = {
     to_: undefined,
     amount: undefined,
     token_id: nft.token_id,
   }
 
-  const [txs, setTxs] = useState([
+  const [txs, setTxs] = useState<Tx[]>([
     {
       ...txSchema,
     },
   ])
 
-  const _update = (index, pt) => {
-    console.log('update transfer', { pt, index, to: pt.to_, amount: pt.amount })
-    const updatedTxs = [...txs]
+  // const _update = (index, pt) => {
+  //   console.log('update transfer', { pt, index, to: pt.to_, amount: pt.amount })
+  //   const updatedTxs = [...txs]
 
-    updatedTxs[index] = {
-      ...txSchema,
-      to_: pt.to_,
-      amount: pt.amount,
-    }
+  //   updatedTxs[index] = {
+  //     ...txSchema,
+  //     to_: pt.to_,
+  //     amount: pt.amount,
+  //   }
 
-    setTxs(updatedTxs)
-  }
+  //   setTxs(updatedTxs)
+  // }
 
-  const addTransfer = (tx) => {
+  const addTransfer = (tx: Tx) => {
     console.log('adding transfers')
     console.log({ tx })
 
     setTxs([...txs, tx])
   }
   console.log(txs)
-  const _deleteTransfer = ({ address }) => {
+
+  const _deleteTransfer = ({ address }: { address: string }) => {
     const updatedTxs = [...txs]
     const toDeleteIndex = updatedTxs.findIndex((t) => t.address === address)
     updatedTxs.splice(toDeleteIndex, 1)
@@ -103,19 +105,19 @@ export const Transfer = () => {
     */
 
   const onClick = () => {
-    useModalStore.setState({
-      message: 'Transfering tokens',
-      progress: true,
-      confirm: false,
-      visible: true,
-    })
+    step('Transfering tokens', 'Waiting for confirmation')
+
     const validTxs = txs.filter((tx) => tx.to_ && tx.amount)
-    transfer(validTxs)
+    if (validTxs.length > 0) {
+      transfer(validTxs)
+    } else {
+      show('Transfering tokens', 'Not a valid')
+    }
   }
 
   const tableStyle = classNames(styles.table, styles.mt3, styles.mb3)
 
-  // const validTxs = txs.filter((t) => t.to_ && t.amount)
+  //const validTxs = txs.filter((t) => t.to_ && t.amount)
 
   const tokenCount = editionsHeld ? editionsHeld.amount : 0
   return (
@@ -154,6 +156,7 @@ export const Transfer = () => {
                 </div> */}
 
           <Button
+            alt={'Click to transfer the token to the selected wallets'}
             onClick={onClick}
             disabled={false /*validTxs.length === 0*/}
             shadow_box

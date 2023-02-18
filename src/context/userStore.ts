@@ -35,20 +35,9 @@ import {
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
-import { Listing, NFT } from '@types'
+import type { Listing, NFT, SubjktInfo, Tx, TzkTAccount } from '@types'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
-
-interface SubjktMeta {
-  identicon?: string
-  description?: string
-}
-
-interface SubjktInfo {
-  userAddress: string
-  name?: string
-  metadata: SubjktMeta // this is actually nested in data?
-}
 
 interface UserState {
   /** The user tezos address */
@@ -103,6 +92,8 @@ interface UserState {
   setAccount: () => void
   /** Set the proxy address */
   resetProxy: () => void
+  /**Transfer tokens */
+  transfer: (txs: Tx[]) => void
   /** Mint the token */
   mint: (
     tz: string,
@@ -110,16 +101,6 @@ interface UserState {
     cid: string,
     royalties: number
   ) => Promise<boolean>
-}
-
-interface TzkTAccount {
-  balance: string
-}
-
-interface Tx {
-  to_?: string
-  amount?: number
-  token_id: string
 }
 
 export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
@@ -340,7 +321,7 @@ export const useUserStore = create<UserState>()(
           )
           close()
         },
-        transfer: async (txs: [Tx]) => {
+        transfer: async (txs) => {
           const close = useModalStore.getState().close
           const { proxyAddress, address } = get()
 
@@ -439,7 +420,7 @@ export const useUserStore = create<UserState>()(
           const close = useModalStore.getState().close
           const show = useModalStore.getState().show
 
-          step('Reswaping', `reswaping ${nft.token_id} for ${price}tz`)
+          step('Reswaping', `reswaping ${nft.token_id} for ${price / 1e6}tz`)
 
           console.log({ nft, price, swap })
           const objkt_id = nft.token_id

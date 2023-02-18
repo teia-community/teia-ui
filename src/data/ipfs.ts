@@ -56,7 +56,7 @@ export async function uploadFileToIPFSProxy(file: FileMint) {
  * @param {Array<FileHolder>} files
  * @returns {Promise<string>}
  */
-export async function uploadMultipleFilesToIPFSProxy(files: [FileMint]) {
+export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
   const form = new FormData()
 
   files.forEach((file) => {

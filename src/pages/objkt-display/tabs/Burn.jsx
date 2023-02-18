@@ -4,16 +4,15 @@ import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
 import { Loading } from '@atoms/loading'
 import styles from '@style'
-import { useOutletContext } from 'react-router'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { useObjktDisplayContext } from '..'
 
 /**
  * The Burn Tab
  */
 export const Burn = () => {
-  /** @type {{nft:import('@types').NFT}} */
-  const { nft } = useOutletContext()
+  const { nft } = useObjktDisplayContext()
   const [burn, address, proxyAddress] = useUserStore((st) => [
     st.burn,
     st.address,

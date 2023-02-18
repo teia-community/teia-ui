@@ -1,3 +1,5 @@
+import { flipObject } from './utils'
+
 export const BANNER_URL =
   'https://raw.githubusercontent.com/teia-community/teia-status/main'
 
@@ -66,6 +68,8 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
   .join(', ')
 
+//- Mint stuff
+
 export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.JPEG,
   MIMETYPE.PNG,
@@ -74,12 +78,9 @@ export const ALLOWED_COVER_MIMETYPES = [
 ]
 
 export const ALLOWED_COVER_FILETYPES_LABEL = ['jpeg, png, gif']
-
 export const MAX_EDITIONS = 10000 // Limited by contract
-
-export const MIN_ROYALTIES = 10 // Limited by contract
-
-export const MAX_ROYALTIES = 25 // Limited by contract
+export const MIN_ROYALTIES = 10
+export const MAX_ROYALTIES = 25
 
 export const IPFS_DEFAULT_THUMBNAIL_URI =
   'ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc'
@@ -87,11 +88,23 @@ export const IPFS_DEFAULT_THUMBNAIL_URI =
 export const MARKETPLACE_CONTRACT_V1 = 'KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9'
 export const MARKETPLACE_CONTRACT_V2 = 'KT1HbQepzV1nVGg8QVznG7z4RcHseD5kwqBn'
 export const MARKETPLACE_CONTRACT_TEIA = 'KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w'
-
 export const MARKETPLACE_CONTRACT_OBJKTCOM_V1 =
   'KT1FvqJwEDWb1Gwc55Jd1jjTHRVWbYKUUpyq'
 export const MARKETPLACE_CONTRACT_OBJKTCOM_V4 =
   'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC'
+
+export const MARKETPLACE_CONTRACTS_FROM_NAME = {
+  'HEN v1 Marketplace': MARKETPLACE_CONTRACT_V1,
+  'HEN v2 Marketplace': MARKETPLACE_CONTRACT_V2,
+  'Teia Marketplace': MARKETPLACE_CONTRACT_TEIA,
+  'OBJKT v1 Marketplace': MARKETPLACE_CONTRACT_OBJKTCOM_V1,
+  'OBJKT v4 Marketplace': MARKETPLACE_CONTRACT_OBJKTCOM_V4,
+  'Crunchy Burner': 'KT1CZMurPAjSfZqcn6LBUNUhG4byE6AJgDT6',
+}
+
+export const MARKETPLACE_CONTRACTS_TO_NAME = flipObject(
+  MARKETPLACE_CONTRACTS_FROM_NAME
+)
 
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
 
