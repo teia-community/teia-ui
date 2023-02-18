@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Container } from '@atoms/layout'
 import { TxRow } from '@components/collab/show/TxRow'
 import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
@@ -7,6 +6,7 @@ import { Button } from '@atoms/button'
 import { useOutletContext } from 'react-router'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { validateAddress } from '@taquito/utils'
 // import { Buffer } from 'buffer'
 
 /**
@@ -22,6 +22,7 @@ export const Transfer = () => {
     st.proxyAddress,
     st.transfer,
   ])
+  const show = useModalStore((st) => st.show)
 
   const senderAddress = proxyAddress || address
 
@@ -54,22 +55,26 @@ export const Transfer = () => {
     },
   ])
 
-  const _update = (index, { to_, amount }) => {
+  const _update = (index, pt) => {
+    console.log('update transfer', { pt, index, to: pt.to_, amount: pt.amount })
     const updatedTxs = [...txs]
 
     updatedTxs[index] = {
       ...txSchema,
-      to_,
-      amount: Number(amount),
+      to_: pt.to_,
+      amount: pt.amount,
     }
 
     setTxs(updatedTxs)
   }
 
-  const _addTransfer = () => {
-    setTxs([...txs, { ...txSchema }])
-  }
+  const addTransfer = (tx) => {
+    console.log('adding transfers')
+    console.log({ tx })
 
+    setTxs([...txs, tx])
+  }
+  console.log(txs)
   const _deleteTransfer = ({ address }) => {
     const updatedTxs = [...txs]
     const toDeleteIndex = updatedTxs.findIndex((t) => t.address === address)
@@ -110,12 +115,11 @@ export const Transfer = () => {
 
   const tableStyle = classNames(styles.table, styles.mt3, styles.mb3)
 
-  const validTxs = txs.filter((t) => t.to_ && t.amount)
+  // const validTxs = txs.filter((t) => t.to_ && t.amount)
 
   const tokenCount = editionsHeld ? editionsHeld.amount : 0
-
   return (
-    <Container>
+    <>
       {tokenCount === 0 ? (
         <div className={styles.container}>
           <p>No editions found to transfer.</p>
@@ -133,8 +137,9 @@ export const Transfer = () => {
                 <TxRow
                   key={`transfer-${index}`}
                   tx={tx}
-                  onUpdate={(tx) => _update(index, tx)}
-                  onAdd={_addTransfer}
+                  index={index}
+                  // onUpdate={(tx) => _update(index, tx)}
+                  onAdd={addTransfer}
                   onRemove={index < txs.length - 1 ? _deleteTransfer : null}
                 />
               ))}
@@ -150,7 +155,7 @@ export const Transfer = () => {
 
           <Button
             onClick={onClick}
-            disabled={validTxs.length === 0}
+            disabled={false /*validTxs.length === 0*/}
             shadow_box
             className={styles.btnSecondary}
           >
@@ -158,6 +163,6 @@ export const Transfer = () => {
           </Button>
         </div>
       )}
-    </Container>
+    </>
   )
 }
