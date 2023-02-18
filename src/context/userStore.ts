@@ -14,7 +14,7 @@ import {
 import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
 import { getUser } from '@data/api'
-import axios from 'axios'
+
 import {
   BURN_ADDRESS,
   HEN_CONTRACT_FA2,
@@ -35,7 +35,7 @@ import {
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
-import type { Listing, NFT, SubjktInfo, Tx, TzkTAccount } from '@types'
+import type { Listing, NFT, SubjktInfo, Tx } from '@types'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
 
@@ -94,6 +94,8 @@ interface UserState {
   resetProxy: () => void
   /**Transfer tokens */
   transfer: (txs: Tx[]) => void
+  /** Get the balance for the given address (or current user if not provided) */
+  getBalance: (address?: string) => Promise<number>
   /** Mint the token */
   mint: (
     tz: string,
@@ -102,8 +104,9 @@ interface UserState {
     royalties: number
   ) => Promise<boolean>
 }
-
+// const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
 export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
+
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
@@ -175,18 +178,26 @@ export const useUserStore = create<UserState>()(
             address: current?.address,
           })
         },
-        getBalance: async (address: string) => {
-          const res = await axios.get<TzkTAccount>(
-            `https://api.tzkt.io/v1/accounts/${address}`
-          )
-          if (res && res.data.balance) {
-            return parseFloat(res.data.balance) / 1e6
+        getBalance: async (address) => {
+          if (address) {
+            const balance = await Tezos.tz.getBalance(address)
+            return balance.toNumber()
           }
+          const user_address = get().address
+          const proxyAddress = get().proxyAddress
+          if (user_address) {
+            const balance = await Tezos.tz.getBalance(
+              proxyAddress || user_address
+            )
+            return balance.toNumber()
+          }
+
+          return -1
         },
         resetProxy: () =>
           set({ proxyAddress: undefined, proxyName: undefined }),
 
-        registry: async (alias: string, metadata_cid: string) => {
+        registry: async (alias, metadata_cid) => {
           const subjktAddressOrProxy = get().proxyAddress || SUBJKT_CONTRACT
 
           return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
@@ -320,6 +331,7 @@ export const useUserStore = create<UserState>()(
           const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
+          const close = useModalStore.getState().close
 
           step('Transferring tokens', 'Waiting for confirmation')
           const { proxyAddress, address } = get()
@@ -327,27 +339,32 @@ export const useUserStore = create<UserState>()(
           const contract = proxyAddress || HEN_CONTRACT_FA2
 
           try {
-            const answer = await Tezos.wallet.at(contract).then(async (c) =>
-              c.methods
-                .transfer([
-                  {
-                    from_: proxyAddress || address,
-                    txs,
-                  },
-                ])
-                .send()
-            )
+            const connect = await Tezos.wallet.at(contract)
+
+            const op = await connect.methods
+              .transfer([
+                {
+                  from_: proxyAddress || address,
+                  txs,
+                },
+              ])
+              .send()
+
+            const confirm = await op.confirmation()
 
             show(
-              'Transfer Successful',
-              `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
+              confirm.completed ? 'Transfer Successful' : 'Transfer Error',
+              `[see on tzkt.io](https://tzkt.io/${op.opHash})`
             )
           } catch (e) {
             showError('Transfer', e)
+          } finally {
+            close()
           }
         },
         collect: async (listing) => {
           const show = useModalStore.getState().show
+          const close = useModalStore.getState().close
           const showError = useModalStore.getState().showError
 
           let answer = undefined
@@ -385,15 +402,19 @@ export const useUserStore = create<UserState>()(
                 )
             }
             if (answer?.opHash) {
+              const confirm = await answer.confirmation()
+
               show(
-                'Collect Successful',
+                confirm ? 'Collect Successful' : 'Collect Error',
                 `[see on tzkt.io](https://tzkt.io/${answer.opHash})`
               )
             } else {
               show('Collect Error', 'unsupported listing')
             }
-          } catch (e) {
-            showError('Collect', e)
+          } catch (error) {
+            showError('Collect', error)
+          } finally {
+            close()
           }
         },
         cancelV1: async (swap_id) => {
@@ -441,7 +462,7 @@ export const useUserStore = create<UserState>()(
           // // TODO: this function currently does not take collab contracts to account
           const { proxyAddress } = get()
           const step = useModalStore.getState().step
-          const close = useModalStore.getState().close
+          // const close = useModalStore.getState().close
           const show = useModalStore.getState().show
 
           step('Reswaping', `reswaping ${nft.token_id} for ${price / 1e6}tz`)
@@ -528,7 +549,7 @@ export const useUserStore = create<UserState>()(
           const { proxyAddress } = get()
           console.debug('CID', cid)
           const step = useModalStore.getState().step
-          const close = useModalStore.getState().close
+          // const close = useModalStore.getState().close
 
           step('Mint', 'minting OBJKT')
 

@@ -23,11 +23,10 @@ export const Swap = () => {
     st.swap,
   ])
 
-  const [visible, progress, message, step, show] = useModalStore((st) => [
+  const [visible, progress, message, show] = useModalStore((st) => [
     st.visible,
     st.progress,
     st.message,
-    st.step,
     st.show,
   ])
 

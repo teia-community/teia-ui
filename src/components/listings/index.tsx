@@ -8,7 +8,6 @@ import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from '@hooks/use-settings'
 import { Line } from '@atoms/line'
 import { Listing, NFT } from '@types'
-import { useModalStore } from '@context/modalStore'
 import { useUserStore } from '@context/userStore'
 
 // TODO: add support for all kind of listings
@@ -42,7 +41,7 @@ function ListingRow({
   rowId: string
 }) {
   const { walletBlockMap } = useSettings()
-  const [show, closeModal] = useModalStore((st) => [st.show, st.close])
+  // const [show, closeModal] = useModalStore((st) => [st.show, st.close])
   const [address, proxyAddress] = useUserStore((st) => [
     st.address,
     st.proxyAddress,

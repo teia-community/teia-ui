@@ -147,7 +147,14 @@ function TokenCollection({
   }
 
   if (!data) {
-    return <Loading message={`Loading ${label || namespace}`} />
+    return (
+      <div className={styles.feed_container}>
+        <FeedToolbar feeds_menu={feeds_menu} />
+        <div className={styles.load_container}>
+          <Loading message={`Loading ${label || namespace}`} />
+        </div>
+      </div>
+    )
   }
   if (walletBlockMap === undefined) {
     throw new Error('Please try again in a few minutes.', {
@@ -188,8 +195,11 @@ function TokenCollection({
 
   if (!tokens.length) {
     return (
-      <div className={styles.empty_section}>
-        <h1>{emptyMessage}</h1>
+      <div className={styles.feed_container}>
+        <FeedToolbar feeds_menu={feeds_menu} />
+        <div className={styles.empty_section}>
+          <h1>{emptyMessage}</h1>
+        </div>
       </div>
     )
   }
