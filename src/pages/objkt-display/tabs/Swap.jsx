@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useOutletContext, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Input } from '@atoms/input'
@@ -7,13 +7,14 @@ import { Button } from '@atoms/button'
 import styles from '@style'
 import { useModalStore } from '@context/modalStore'
 import { useUserStore } from '@context/userStore'
+import { useObjktDisplayContext } from '..'
 
 /**
  * The Swap Tab
  */
 export const Swap = () => {
   /** @type {{nft:import('@types').NFT}} */
-  const { nft } = useOutletContext()
+  const { nft } = useObjktDisplayContext()
   const { id } = useParams()
 
   const [address, proxyAddress, swap] = useUserStore((st) => [
@@ -22,12 +23,14 @@ export const Swap = () => {
     st.swap,
   ])
 
-  const [visible, progress, message] = useModalStore((st) => [
+  const [visible, progress, message, step, show] = useModalStore((st) => [
     st.visible,
     st.progress,
     st.message,
+    st.step,
+    st.show,
   ])
-  const showFeedback = useModalStore((st) => st.show)
+
   const [amount, setAmount] = useState('')
   const [price, setPrice] = useState('')
   //const [progress, setProgress] = useState(false)
@@ -38,7 +41,7 @@ export const Swap = () => {
   const checkPrice = (value) => {
     console.debug(value)
     if (value <= 0.1) {
-      showFeedback(
+      show(
         `Price is really low (${value}ꜩ), for giveaways checkout hicetdono (dono.xtz.tools)`
       )
     }
@@ -57,28 +60,20 @@ export const Swap = () => {
       ),
     [nft, address, proxyAddress, proxyAdminAddress]
   )
-  console.log({ nft, found })
+
   const totalOwned = useMemo(() => found?.amount || 0, [found])
 
   const handleSubmit = async () => {
     console.debug({ amount, price })
     if (!amount) {
-      showFeedback(
-        `Please enter an OBJKT quantity to swap (current value: ${amount})`
-      )
+      show(`Please enter an OBJKT quantity to swap (current value: ${amount})`)
       return
     }
 
     if (price == null || price < 0) {
-      showFeedback(
-        `Please enter a price for the swap (current value: ${price})`
-      )
+      show(`Please enter a price for the swap (current value: ${price})`)
       return
     }
-    useModalStore.setState({
-      progress: true,
-      message: 'Preparing swap',
-    })
 
     // swap is valid call API
     console.debug(
@@ -98,30 +93,15 @@ export const Swap = () => {
       parseFloat(amount),
     ])
     if (currency === 'tez') {
-      try {
-        // when taquito returns a success/fail message
-        const answer = await swap(
-          address,
-          nft.royalties_total / 1000,
-          parseFloat(price) * 1e6,
-          id,
-          nft.artist_address,
-          parseFloat(amount)
-        )
-        useModalStore.setState({
-          progress: false,
-          visible: true,
-          message: answer.description,
-          confirm: true,
-        })
-      } catch (e) {
-        console.error(e)
-        useModalStore.setState({
-          progress: false,
-          visible: true,
-          message: `Error: ${e}`,
-        })
-      }
+      // when taquito returns a success/fail message
+      await swap(
+        address,
+        nft.royalties_total / 1000,
+        parseFloat(price) * 1e6,
+        id,
+        nft.artist_address,
+        parseFloat(amount)
+      )
     }
   }
 
@@ -169,8 +149,8 @@ export const Swap = () => {
                     onChange={setPrice}
                     onBlur={(e) => {
                       const val = parseFloat(e.target.value)
-                      if (val > 1e4) {
-                        setPrice(1e4)
+                      if (val > 1e6) {
+                        setPrice(1e6)
                       } else if (val < 0) {
                         setPrice(0)
                       }

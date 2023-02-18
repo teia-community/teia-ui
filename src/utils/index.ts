@@ -1,16 +1,15 @@
 import { NFT } from '@types'
 import * as _ from 'lodash'
 
+/** Flip key value to value key */
+export const flipObject = <T>(obj: { [key: string]: T }) =>
+  Object.fromEntries(Object.entries(obj).map((pair) => pair.reverse()))
+
 export function rnd(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/**
- *
- * @param
- * @returns
- */
-export function shuffle(a: [string]) {
+export function shuffle(a: string[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[a[i], a[j]] = [a[j], a[i]]
@@ -20,20 +19,10 @@ export function shuffle(a: [string]) {
 
 /**
  * A very basic random with seed
- * @param {number} seed
- * @returns
  */
 export function randomSeed(seed: number) {
   let s = Math.sin(seed) * 1e4
   return (s -= Math.floor(s))
-}
-
-export const fetchJSON = async (url: string) => {
-  try {
-    return await fetch(url).then(async (res) => await res.json())
-  } catch (err) {
-    console.error(err)
-  }
 }
 
 type IPFSGateway =

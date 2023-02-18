@@ -3,7 +3,7 @@ import styles from '@style'
 import React from 'react'
 
 interface LineProps {
-  vertical: boolean
+  vertical?: boolean
   className?: string
   style?: React.CSSProperties
 }

@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import { Button } from '@atoms/button'
-import { MARKETPLACE_CONTRACT_V1, BURN_ADDRESS } from '@constants'
+import { BURN_ADDRESS, MARKETPLACE_CONTRACTS_TO_NAME } from '@constants'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 
@@ -16,10 +16,12 @@ export const OwnerList = ({ owners }) => {
           {amount}&nbsp;ed.&nbsp;
           {get(holder_profile, 'name') ? (
             <Button to={`/${get(holder_profile, 'name')}`}>
-              {encodeURI(get(holder_profile, 'name'))}
+              {get(holder_profile, 'name')}
             </Button>
-          ) : holder_address === MARKETPLACE_CONTRACT_V1 ? (
-            <Button to={`/tz/${holder_address}`}>OBJKTSWAP V1</Button>
+          ) : MARKETPLACE_CONTRACTS_TO_NAME[holder_address] ? (
+            <Button to={`/tz/${holder_address}`}>
+              {MARKETPLACE_CONTRACTS_TO_NAME[holder_address]}
+            </Button>
           ) : (
             <Button to={`/tz/${holder_address}`}>
               {walletPreview(holder_address)}

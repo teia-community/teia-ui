@@ -10,7 +10,7 @@ import {
 } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
-import { useOutletContext } from 'react-router'
+import { useObjktDisplayContext } from '..'
 
 const Attribute = ({ label, value }) => {
   return (
@@ -24,8 +24,7 @@ const Attribute = ({ label, value }) => {
  * The Info Tab
  */
 export const Info = () => {
-  /** @type {{nft:import('@types').NFT}} */
-  const { nft, viewer_address } = useOutletContext()
+  const { nft, viewer_address } = useObjktDisplayContext()
   const artifact_ipfs_url =
     HashToURL(nft.artifact_uri) +
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${

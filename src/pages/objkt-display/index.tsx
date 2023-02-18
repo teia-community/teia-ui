@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo } from 'react'
 import set from 'lodash/set'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 
 import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
@@ -16,6 +16,16 @@ import useSettings from '@hooks/use-settings'
 import { Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { NFT } from '@types'
+
+type ObjktDisplayContext = {
+  nft: NFT
+  viewer_address: string
+}
+
+export const useObjktDisplayContext = () => {
+  return useOutletContext<ObjktDisplayContext>()
+}
 
 const TABS = [
   {

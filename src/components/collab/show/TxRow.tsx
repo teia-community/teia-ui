@@ -1,12 +1,21 @@
 import { Input } from '@atoms/input'
 import styles from '../../collab/index.module.scss'
-import { Button, Secondary } from '@atoms/button'
+import { Button } from '@atoms/button'
 import { CloseIcon } from '@icons'
 import { useState } from 'react'
 import { validateAddress } from '@taquito/utils'
 import { useModalStore } from '@context/modalStore'
+import type { Tx } from '@types'
 
-export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }) => {
+interface TxRowProps {
+  tx: Tx
+  index: number
+  onUpdate: (tx: Tx) => void
+  onAdd: (tx: Tx & { index: number }) => void
+  onRemove: (tx: Tx) => void
+}
+
+export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }: TxRowProps) => {
   const [amount, setAmount] = useState('')
   const [destination, setDestination] = useState('')
 
@@ -26,14 +35,19 @@ export const TxRow = ({ tx, index, onUpdate, onAdd, onRemove }) => {
 
   const handleAdd = () => {
     if (validateAddress(destination)) {
-      onAdd({ index, _to: destination, amount })
+      onAdd({
+        index,
+        to_: destination,
+        amount: parseInt(amount),
+        token_id: tx.token_id,
+      })
     } else {
       show('Transfer', `Invalid address ${destination}`)
     }
   }
 
   // Handle return key
-  const _handleKeyPress = (event) => {
+  const _handleKeyPress = (event: KeyboardEvent) => {
     if (event.code === 'Enter') {
       handleAdd()
     }

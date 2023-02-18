@@ -56,7 +56,7 @@ export type ListingType =
   | 'VERSUM_SWAP'
 export type MetadataAccessibility = {
   /** resource that is physiologically dangerous to some users.*/
-  hazards: [string]
+  hazards: string[]
 }
 export type TeiaMeta = {
   /** Accessibility metadatas */
@@ -79,7 +79,7 @@ export type SplitContract = {
   // contract_address?: string
   administrator_address: string
   total_shares?: string
-  shareholders: [Shareholder]
+  shareholders: Shareholder[]
 }
 
 export type Signature = {
@@ -89,6 +89,12 @@ export type Signature = {
 }
 
 export type ListingStatus = {}
+
+export interface Holding {
+  holder_address: string
+  amount: number
+  holder_profile: ArtistProfile
+}
 
 export type Listing = {
   amount: number
@@ -109,7 +115,7 @@ export type Listing = {
 
 export type RoyaltyReceiver = {
   receiver_address: string
-  royalties: [string: string]
+  royalties: [string: string][]
 }
 
 export type NFTBase = {
@@ -134,7 +140,9 @@ export type NFTBase = {
   fa2_address: string
 
   /** Active listings */
-  listings: [Listing]
+  listings: Listing[]
+
+  holdings: Holding[]
 
   /** the mimetype of the token metadata */
   mime_type: string
@@ -143,15 +151,36 @@ export type NFTBase = {
   name?: string
   price: number
   /** This is null for non collab tokens? */
-  royalties?: [string: string]
+  royalties?: [string: string][]
   royalties_total: number
-  royalty_receivers?: [RoyaltyReceiver]
+  royalty_receivers?: RoyaltyReceiver[]
 
   teia_meta?: TeiaMeta
 
   /** List of addresses currently owning that token */
-  token_holders?: [string]
+  token_holders?: string[]
   /** the token id */
+  token_id: string
+}
+
+export interface SubjktMeta {
+  identicon?: string
+  description?: string
+}
+
+export interface SubjktInfo {
+  userAddress: string
+  name?: string
+  metadata: SubjktMeta // this is actually nested in data?
+}
+
+export interface TzkTAccount {
+  balance: string
+}
+
+export interface Tx {
+  to_?: string
+  amount?: number
   token_id: string
 }
 
