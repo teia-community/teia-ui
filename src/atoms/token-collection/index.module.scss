@@ -7,6 +7,15 @@
   align-items: center;
 }
 
+.load_container {
+  max-height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30vh;
+}
+
 .feed_container {
   max-width: 1800px;
   min-height: 75vh;
