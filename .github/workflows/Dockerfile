@@ -8,7 +8,7 @@ RUN : \
     && npm install; npm run build \
     && echo "add_header x-teia-commit-hash $(git rev-parse HEAD);" > /header.conf
 
-FROM openresty/openresty:alpine-fat
+FROM openresty/openresty:alpine
 EXPOSE 80
 COPY .github/workflows/nginx.conf /etc/nginx/conf.d/default.conf
 COPY .github/workflows/previews.lua /lua/previews.lua
