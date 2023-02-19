@@ -87,7 +87,7 @@ export const ObjktDisplay = () => {
         }
 
         if (nsfwMap.get(objkt.token_id) === 1) {
-          set(objkt, 'teia_meta.content_rating', METADATA_CONTENT_RATING_MATURE)
+          objkt.isNSFW = true
         }
 
         objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
