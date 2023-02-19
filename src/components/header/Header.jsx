@@ -81,7 +81,7 @@ export const Header = () => {
 
   const isWide = useMedia('(min-width: 600px)')
 
-  const [logoSeed, setLogoSeed] = useState(Math.floor(Math.random() * 150))
+  const [logoSeed, setLogoSeed] = useState()
   /** the header is a bit larger just on home */
   const [onHome, setOnHome] = useState()
 
@@ -93,6 +93,7 @@ export const Header = () => {
   useEffect(() => {
     setAccount()
     setOnHome(location.pathname === '/')
+    setLogoSeed(Math.floor(Math.random() * 150))
   }, [])
 
   // on Menu Toggle or Sign in
