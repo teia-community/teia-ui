@@ -276,7 +276,6 @@ export const useUserStore = create<UserState>()(
           objkt_amount
         ) => {
           const { proxyAddress, handleOp } = get()
-          const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
 
