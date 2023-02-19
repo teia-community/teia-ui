@@ -41,18 +41,22 @@ interface LocalSettingsState {
   setPhotosensitiveFriendly: (v: boolean) => void
 }
 
+const defaultValues = {
+  viewMode: 'single' as ViewMode,
+  nsfwFriendly: false,
+  photosensitiveFriendly: false,
+  zen: false,
+  theme: 'dark' as Theme,
+  themeDark: 'dark' as Theme,
+  themeLight: 'light' as Theme,
+  rpcNode: rpc_nodes[0],
+}
+
 export const useLocalSettings = create<LocalSettingsState>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
-        viewMode: 'single',
-        nsfwFriendly: false,
-        photosensitiveFriendly: false,
-        zen: false,
-        theme: 'dark',
-        themeDark: 'dark',
-        themeLight: 'light',
-        rpcNode: rpc_nodes[0],
+        ...defaultValues,
         toggleViewMode: () =>
           set((state) => ({
             viewMode: state.viewMode === 'single' ? 'masonry' : 'single',
@@ -76,6 +80,20 @@ export const useLocalSettings = create<LocalSettingsState>()(
       {
         name: 'settings',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
+        version: 1,
+        partialize: (state) =>
+          Object.fromEntries(
+            Object.entries(state).filter(([key]) =>
+              Object.keys(defaultValues).includes(key)
+            )
+          ),
+        onRehydrateStorage: (state) => {
+          return (state, error) => {
+            if (error) {
+              console.error('an error happened during hydration', error)
+            }
+          }
+        },
       }
     )
   )

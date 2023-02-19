@@ -57,10 +57,10 @@ export const Info = () => {
               <Attribute
                 label="Content Rating"
                 value={
-                  nft.content_rating === METADATA_CONTENT_RATING_MATURE ||
-                  nft.isNSFW
+                  nft.teia_meta.content_rating ===
+                    METADATA_CONTENT_RATING_MATURE || nft.isNSFW
                     ? 'NSFW (Mature)'
-                    : 'Unknown Rating'
+                    : `Unknown Rating (${nft.teia_meta.content_rating})`
                 }
               />
             )}

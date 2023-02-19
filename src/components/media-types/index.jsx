@@ -49,15 +49,6 @@ export const RenderMediaType = ({
       cause: 'Processing Metadata',
     })
   }
-  if (nft.metadata_status === 'error') {
-    throw Error(
-      `The OBJKT #${nft.token_id} failed to index, 
-      if this persists for more than a day please log an issue.`,
-      {
-        cause: 'Metadata Error',
-      }
-    )
-  }
 
   const parsedDisplayUri = useMemo(() => {
     if (previewDisplayUri) {
@@ -71,6 +62,19 @@ export const RenderMediaType = ({
       return HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
     }
   }, [nft, previewDisplayUri])
+
+  if (nft.metadata_status === 'error') {
+    const err = Error(
+      `The OBJKT #${nft.token_id} failed to index, 
+      if this persists for more than a day please log an issue.`,
+      {
+        cause: 'Metadata Error',
+      }
+    )
+    console.error(err)
+    // throw err
+    return
+  }
 
   switch (nft.mime_type) {
     /* IMAGES */
