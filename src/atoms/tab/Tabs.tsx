@@ -2,26 +2,6 @@ import { useMemo } from 'react'
 import styles from '@style'
 import { Line } from '@atoms/line'
 import Button from '@atoms/button/Button'
-
-// function Tab({ children, to }) {
-//   return (
-//     <NavLink
-//       style={({ isActive }) =>
-//         isActive
-//           ? {
-//               textDecoration: 'underline',
-//             }
-//           : undefined
-//       }
-//       className="tag"
-//       to={to}
-//       end
-//     >
-//       {children}
-//     </NavLink>
-//   )
-// }
-
 export interface TabOptions {
   title: string
   to?: string

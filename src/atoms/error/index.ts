@@ -1,0 +1,1 @@
+export { RootErrorBoundary } from './RootErrorBoundary'

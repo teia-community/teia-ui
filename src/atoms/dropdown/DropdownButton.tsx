@@ -4,6 +4,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
+interface DropdownButtonProps {
+  menuID: string
+  direction: 'left' | 'right'
+  label: string
+  alt: string
+  icon?: React.ReactNode
+  toggled: boolean
+  children: React.ReactNode
+  onClick: () => void
+  className?: string
+}
+
+interface ChildProps {
+  left?: boolean
+}
 
 function DropdownButton({
   menuID,
@@ -15,7 +30,7 @@ function DropdownButton({
   children,
   onClick,
   className,
-}) {
+}: DropdownButtonProps) {
   const [open, setOpen] = useState(false)
 
   useTwemoji()
@@ -33,7 +48,7 @@ function DropdownButton({
   const containerClasses = classnames({
     [styles.menu_left]: direction === 'left',
   })
-  const props = {}
+  const props: ChildProps = {}
   if (direction === 'left') {
     props.left = true
   }
@@ -48,8 +63,10 @@ function DropdownButton({
           if (onClick) onClick()
         }}
       >
-        {label}
-        {icon}
+        <>
+          {label}
+          {icon}
+        </>
       </Button>
       <AnimatePresence>
         {children &&
