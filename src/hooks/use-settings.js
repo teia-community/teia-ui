@@ -4,7 +4,7 @@ import flatten from 'lodash/flatten'
 
 /**
  * @typedef { Map<string, number> } ListMap
- * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap} } SettingsData
+ * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap, photosensitiveMap:ListMap} } SettingsData
  * @typedef { {data: SettingsData, error:Error, isLoading:boolean} } UseSettingsResult
  */
 
