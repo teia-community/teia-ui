@@ -93,7 +93,7 @@ const Button = ({
   //     </Link>
   //   )
   // }
-  if (to !== undefined) {
+  if (to != null) {
     return (
       <NavLink
         aria-label={alt}
@@ -112,7 +112,7 @@ const Button = ({
     )
   }
 
-  if (href !== undefined) {
+  if (href != null) {
     return (
       <motion.a
         style={style}

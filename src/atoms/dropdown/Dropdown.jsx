@@ -12,7 +12,7 @@ import { useTwemoji } from '@hooks/use-twemoji'
 function DropDown({ children, setOpen, vertical, menuID, left }) {
   useBodyClass('overlay')
 
-  const dropdownRef = useRef(null)
+  const dropdownRef = useRef()
   useTwemoji()
   useClickOutside(
     dropdownRef,

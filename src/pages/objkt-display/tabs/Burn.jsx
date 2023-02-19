@@ -25,9 +25,8 @@ export const Burn = () => {
 
   const [amount, setAmount] = useState('')
 
-  const proxyAdminAddress = nft.artist_profile?.is_split
-    ? nft.artist_profile.split_contract.administrator_address
-    : null
+  const proxyAdminAddress =
+    nft.artist_profile?.split_contract?.administrator_address
 
   const found = useMemo(
     () =>

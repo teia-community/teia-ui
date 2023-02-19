@@ -1,4 +1,3 @@
-import get from 'lodash/get'
 import { Container } from '@atoms/layout'
 import { OwnerList } from '@components/owner-list'
 import { Listings } from '@components/listings'
@@ -16,16 +15,15 @@ export const Collectors = () => {
   ])
 
   const handleCollect = (listing) => {
-    if (address === null) {
+    if (address == null) {
       sync()
     } else {
       collect(listing)
     }
   }
 
-  const proxyAdminAddress = get(nft, 'artist_profile.is_split')
-    ? get(nft, 'artist_profile.split_contract.administrator_address')
-    : null
+  const proxyAdminAddress =
+    nft.artist_profile?.split_contract?.administrator_address
 
   return (
     <>

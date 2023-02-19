@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import styles from '@style'
 import { memo } from 'react'
 
-const Secondary = ({ children = null, selected, label = '' }) => {
+const Secondary = ({ children, selected, label = '' }) => {
   const classes = classnames({
     [styles.secondary]: true,
     [styles.selected]: selected,
