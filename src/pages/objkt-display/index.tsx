@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo } from 'react'
 import set from 'lodash/set'
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 
-import { MIMETYPE, METADATA_CONTENT_RATING_MATURE } from '@constants'
+import { METADATA_CONTENT_RATING_MATURE } from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
@@ -109,39 +108,6 @@ export const ObjktDisplay = () => {
 
   const loading = !nft && !error
 
-  const objkt_classes = useMemo(() => {
-    if (!nft) {
-      return ''
-    }
-
-    const classes = []
-
-    if (
-      nft.mime_type === MIMETYPE.DIRECTORY ||
-      nft.mime_type === MIMETYPE.SVG
-      // nft.mime === MIMETYPE.MD
-    ) {
-      classes.push('objktview-zipembed')
-      classes.push('objktview')
-      classes.push(styles.objktview)
-    } else if (
-      [
-        MIMETYPE.MP4,
-        MIMETYPE.OGV,
-        MIMETYPE.QUICKTIME,
-        MIMETYPE.WEBM,
-        MIMETYPE.PDF,
-      ].includes(nft.mime_type)
-    ) {
-      classes.push('no-fullscreen')
-    } else {
-      classes.push('objktview')
-      classes.push(styles.objktview)
-    }
-
-    return classes.join(' ')
-  }, [nft])
-
   if (loading) {
     return (
       <Page title="loading">
@@ -202,7 +168,7 @@ export const ObjktDisplay = () => {
           }}
           className="objkt-display"
         >
-          <div className={objkt_classes}>
+          <div>
             <RenderMediaType nft={nft} displayView />
           </div>
           <ItemInfo nft={nft} />
