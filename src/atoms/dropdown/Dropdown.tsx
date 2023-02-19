@@ -9,10 +9,25 @@ import { useClickOutside } from '@hooks/use-click-outside'
 import classnames from 'classnames'
 import { useTwemoji } from '@hooks/use-twemoji'
 
-function DropDown({ children, setOpen, vertical, menuID, left }) {
-  useBodyClass('overlay')
+interface DropdownProps {
+  menuID: string
+  /** Callback when dropdown closed/clicked outside */
+  setOpen: (isOpen: boolean) => void
+  children: JSX.Element | JSX.Element[]
+  vertical?: boolean
+  left?: boolean
+}
 
-  const dropdownRef = useRef()
+function DropDown({
+  children,
+  setOpen,
+  vertical,
+  menuID,
+  left,
+}: DropdownProps) {
+  useBodyClass('overlay')
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
   useTwemoji()
   useClickOutside(
     dropdownRef,

@@ -15,7 +15,7 @@ interface ButtonProps {
   onClick?: () => void
   /**@deprecated onClick for NavLinks */
   onTo?: () => void
-  children?: string | React.ReactElement
+  children?: string | React.ReactNode
   /**Extra classes to apply to the button */
   className?: string
   style?: React.CSSProperties
@@ -86,13 +86,6 @@ const Button = ({
     children = <div className={styles.shadow_box}>{children}</div>
   }
 
-  // if (to !== null) {
-  //   return (
-  //     <Link aria-label={alt} to={to} className={classes}>
-  //       {children}
-  //     </Link>
-  //   )
-  // }
   if (to != null) {
     return (
       <NavLink
