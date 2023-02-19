@@ -16,10 +16,21 @@ This repository is the frontend code of the open, community owned Tezos NFT Plat
 
 # Install
 
+Native
+
 ```bash
 git clone https://github.com/teia-community/teia-ui.git
+cd teia-ui
 npm install
 npm start
+```
+
+Or with docker-compose
+
+```bash
+git clone https://github.com/teia-community/teia-ui.git
+cd teia-ui
+docker-compose up -d
 ```
 
 Article about [setting up a clone/mirror of Teia (Wiki)](https://github.com/teia-community/teia-docs/wiki/How-to-set-up-a-Teia-Mirror)
