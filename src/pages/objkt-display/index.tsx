@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import set from 'lodash/set'
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 
