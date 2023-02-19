@@ -33,6 +33,11 @@ jobs:
       - name: Restart containers
         run: |
           curl -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
-      - name: Check deployed version
+      - name: Check deployed prod version
+        if: github.ref == 'refs/heads/main'
         run: |
           sleep 10; curl -Is "${{ vars.WEBSITE_URL }}" | grep "x-teia-commit-hash: ${{ github.sha }}"
+      - name: Check deployed preview version
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          sleep 10; curl -Is "${{ vars.WEBSITE_PREVIEW_URL }}" | grep "x-teia-commit-hash: ${{ github.sha }}"
