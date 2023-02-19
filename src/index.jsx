@@ -60,6 +60,7 @@ import './styles/index.scss'
 import { IconCache } from '@utils/with-icon'
 import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
+import { ListsFeed } from '@pages/home/feeds/lists-feed'
 
 const display_routes = (
   <>
@@ -76,6 +77,8 @@ const router = createBrowserRouter(
       <Route path="/*" index element={<Home />} />
       <Route path="feed/*" element={<Home />}>
         <Route index element={<RecentSalesFeed />} />
+        <Route path="lists" element={<ListsFeed />} />
+
         <Route
           path="tezospride"
           element={<TagFeed tag="tezospride" namespace="tezospride" />}
