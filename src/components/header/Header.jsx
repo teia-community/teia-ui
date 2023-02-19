@@ -81,7 +81,7 @@ export const Header = () => {
 
   const isWide = useMedia('(min-width: 600px)')
 
-  const [logoSeed, setLogoSeed] = useState(3)
+  const [logoSeed, setLogoSeed] = useState(Math.floor(Math.random() * 150))
   /** the header is a bit larger just on home */
   const [onHome, setOnHome] = useState()
 
