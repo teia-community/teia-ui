@@ -8,7 +8,20 @@ import { Footer } from '@components/footer'
 
 import { containerVariants } from '@utils/motion'
 
-export const Page = ({ title = '', children = null, feed, className, top }) => {
+interface PageProps {
+  title?: string
+  children?: JSX.Element | JSX.Element[]
+  feed?: boolean
+  className?: string
+  // top?: JSX.Element | JSX.Element[]
+}
+
+export const Page = ({
+  title,
+  children,
+  feed,
+  className /*, top*/,
+}: PageProps) => {
   const classes = classnames({
     [styles.container]: true,
     [styles.feed]: feed,
@@ -33,7 +46,9 @@ export const Page = ({ title = '', children = null, feed, className, top }) => {
         variants={containerVariants}
         className={`${classes} ${className ? className : ''}`}
       >
-        <motion.div className={styles.content}>{children}</motion.div>
+        <motion.div className={styles.content}>
+          <>{children}</>
+        </motion.div>
       </motion.main>
       <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>
     </>

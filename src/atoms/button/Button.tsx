@@ -6,7 +6,7 @@ import React from 'react'
 
 interface ButtonProps {
   /**Used for accessibility (aria-label) */
-  alt: string
+  alt?: string
   /** If provided return a "NavLink" */
   to?: To
   /** If provided return a "a" */
@@ -35,6 +35,8 @@ interface ButtonProps {
   small?: boolean
   inline?: boolean
   activeClass?: string
+  //props
+  [x: string]: any
 }
 
 /**

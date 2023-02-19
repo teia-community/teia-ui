@@ -21,7 +21,7 @@ interface ModalStore {
   showError: <T>(title: string, error: T) => void
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
-  step: (title: string, message?: string) => void
+  step: (title: string, message?: string, start?: boolean) => void
   close: () => void
 }
 
@@ -36,7 +36,7 @@ export const useModalStore = create<ModalStore>()(
     show: (title, message) => {
       set({
         message: `# ${title}
-${message}`,
+${message || ''}`,
         progress: false,
         visible: true,
         confirm: true,
@@ -60,7 +60,10 @@ ${message}`,
     },
     setCollapsed: (collapse: boolean) => set({ collapsed: collapse }),
     toggleMenu: () => set({ collapsed: !get().collapsed }),
-    step: (title, message) => {
+    step: (title, message, start) => {
+      if (start) {
+        window.scrollTo(0, 0)
+      }
       set({
         progress: true,
         visible: true,

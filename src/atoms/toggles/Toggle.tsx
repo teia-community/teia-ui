@@ -1,19 +1,19 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 
-/**
- * Core toggle used by variants
- * @param {Object} coreToggleProps
- * @param {string} coreToggleProps.label - The text or icon used for the toggle
- * @param {boolean} coreToggleProps.initial - The initial value
- * @param {boolean} coreToggleProps.toggled - If set the control becomes controlled
- * @param {React.CSSProperties} coreToggleProps.style - Style object (as a last resort)
- * @param {string} iconToggleProps.alt - Accessibility name for the toggle
- * @param {(v:boolean) => void} coreToggleProps.onToggle
- *
- */
+interface ToggleProps {
+  label?: string
+  initial?: boolean
+  toggled?: boolean
+  style?: React.CSSProperties
+  alt?: string
+  box?: boolean
+  onToggle?: (v: boolean) => void
+  className?: string
+}
+
 export const Toggle = ({
   label,
   initial,
@@ -23,12 +23,12 @@ export const Toggle = ({
   box,
   onToggle,
   className,
-}) => {
+}: ToggleProps) => {
   const [toggled, setToggled] = useControlled(toggledProp, initial)
 
   const handleToggle = useCallback(
-    (e) => {
-      const { checked } = e.target
+    (e: React.FormEvent<HTMLInputElement>) => {
+      const { checked } = e.target as HTMLInputElement
       setToggled(checked)
       onToggle?.(checked)
     },
@@ -39,6 +39,7 @@ export const Toggle = ({
     [styles.base_toggle]: true,
     [styles.box_toggle]: box,
     [styles.toggled]: toggled,
+    className,
   })
 
   return (

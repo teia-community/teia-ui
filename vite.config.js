@@ -123,6 +123,31 @@ export default defineConfig(({ mode }) => {
       sourcemap: !prod,
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
+        output: {
+          // manualChunks: processChunks,
+          manualChunks: {
+            three: ['three'],
+            contracts: [
+              '@taquito/beacon-wallet',
+              '@taquito/michelson-encoder',
+              '@stablelib/ed25519',
+              '@stablelib/nacl',
+              '@stablelib/x25519-session',
+              '@taquito/taquito',
+            ],
+            pdf: ['react-pdf', 'pdfjs-dist'],
+            ui: [
+              'classnames',
+              'prop-types',
+              'react',
+              'react-router-dom',
+              'react-dom',
+              'framer-motion',
+
+              'zustand',
+            ],
+          },
+        },
       },
     },
 

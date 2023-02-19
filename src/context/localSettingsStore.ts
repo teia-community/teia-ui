@@ -7,7 +7,7 @@ import {
 
 type ViewMode = 'single' | 'masonry'
 
-type Themes = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
+type Theme = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
   'https://mainnet.api.tez.ie',
@@ -27,16 +27,16 @@ interface LocalSettingsState {
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
   zen: boolean
-  theme: Themes
-  themeDark: Themes
-  themeLight: Themes
+  theme: Theme
+  themeDark: Theme
+  themeLight: Theme
   rpcNode: RPC_NODES
   toggleViewMode: () => void
   toggleZen: () => void
   setZen: (zen: boolean) => void
   toggleTheme: () => void
   setViewMode: (mode: ViewMode) => void
-  setTheme: (theme: Themes) => void
+  setTheme: (theme: Theme) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
 }
@@ -67,7 +67,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
                 : state.themeDark,
           })),
         setViewMode: (viewMode: ViewMode) => set({ viewMode }),
-        setTheme: (theme: Themes) => set({ theme }),
+        setTheme: (theme: Theme) => set({ theme }),
         setRpcNode: (rpcNode: RPC_NODES) => set({ rpcNode }),
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>

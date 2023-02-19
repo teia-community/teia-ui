@@ -54,17 +54,7 @@ export const Burn = () => {
       return
     }
 
-    const r = global.confirm(
-      `Are you sure you want to burn ${amount} of ${totalOwned}?`
-    )
-    if (r) {
-      useModalStore.setState({
-        progress: true,
-        message: 'Burning OBJKT',
-      })
-
-      burn(nft.token_id, amount)
-    }
+    burn(nft.token_id, amount)
   }
 
   return (

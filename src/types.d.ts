@@ -8,7 +8,24 @@ export interface Format {
   }
 }
 
+export type MintFormat = {
+  mimeType: string
+  fileSize: number
+  fileName: string
+  dimensions: {
+    value: string
+    unit: string
+  }
+  uri: string
+}
+
 export type FileMint = {
+  path: string
+  blob: Blob
+  size?: number
+}
+
+export type FileForm = {
   /** The title of the file */
   title?: string
   /** The file mimetype */
@@ -202,6 +219,8 @@ export type NFT = NFTBase &
   } & {
     /** artifact of only objkt display for now... */
     restricted?: boolean
+    /** artifact of... */
+    underReview?: boolean
   }
 
 export type TokenResponse = {
@@ -274,9 +293,9 @@ type SharedMediaProps = {
   /**The nft to render */
   nft: NFT
   /** Preview "data" to pass to the Preview component */
-  previewUri
+  previewUri?: string
   /** Detailed view, full quality.*/
-  displayView: string
+  displayView: boolean
 }
 export type RenderMediaProps = SharedMediaProps
 

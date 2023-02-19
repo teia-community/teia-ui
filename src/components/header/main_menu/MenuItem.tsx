@@ -4,7 +4,19 @@ import styles from '@style'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 
-export const MenuItem = ({ label, route, need_sync, className }) => {
+interface MenuItemProps {
+  label?: string
+  route: string
+  need_sync?: boolean
+  className?: string
+}
+
+export const MenuItem = ({
+  label,
+  route,
+  need_sync,
+  className,
+}: MenuItemProps) => {
   label = label ? label : capitalizeFirstLetter(route)
 
   const address = useUserStore((st) => st.address)

@@ -22,8 +22,8 @@ export const FeedbackComponent = () => {
       {visible && (
         <motion.div className={styles.container} {...fadeIn()}>
           <div className={styles.content}>
-            {progress && <Loading />}
             <Markdown className={styles.message}>{message}</Markdown>
+            <div className={styles.loader}>{progress && <Loading />}</div>
             {confirm && (
               <div className={styles.buttons}>
                 <Button shadow_box onClick={() => confirmCallback()}>
