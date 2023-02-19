@@ -185,11 +185,9 @@ function TokenCollection({
         isPhotosensitive:
           !overrideProtections &&
           (photosensitiveMap.get(token.token_id) === 1 ||
-            (token.teia_meta?.accessibility?.hazards
-              ? token.teia_meta.accessibility.hazards.includes(
-                  METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
-                )
-              : false)),
+            token.teia_meta?.accessibility?.hazards.includes(
+              METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
+            )),
       }
     })
 

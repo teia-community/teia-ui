@@ -3,7 +3,10 @@ import set from 'lodash/set'
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 
-import { METADATA_CONTENT_RATING_MATURE } from '@constants'
+import {
+  METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
+  METADATA_CONTENT_RATING_MATURE,
+} from '@constants'
 import { fetchObjktDetails } from '@data/api'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
@@ -62,13 +65,14 @@ export const ObjktDisplay = () => {
   const address = useUserStore((st) => st.address)
   const proxy = useUserStore((st) => st.proxyAddress)
 
-  const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
+  const { walletBlockMap, nsfwMap, photosensitiveMap, underReviewMap } =
+    useSettings()
 
   const { data: nft, error }: { data?: NFT; error?: Error } = useSWR(
     ['/token', id],
     async () => {
       if (id) {
-        const objkt = await fetchObjktDetails(id)
+        const objkt = (await fetchObjktDetails(id)) as NFT
 
         if (!objkt) {
           let isNum = /^\d+$/.test(id)
@@ -86,8 +90,19 @@ export const ObjktDisplay = () => {
           )
         }
 
-        if (nsfwMap.get(objkt.token_id) === 1) {
+        if (
+          nsfwMap.get(objkt.token_id) === 1 ||
+          objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
+        ) {
           objkt.isNSFW = true
+        }
+        if (
+          photosensitiveMap.get(objkt.token_id) === 1 ||
+          objkt.teia_meta?.accessibility?.hazards.includes(
+            METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
+          )
+        ) {
+          objkt.isPhotosensitive = true
         }
 
         objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1

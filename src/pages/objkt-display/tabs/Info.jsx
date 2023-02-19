@@ -3,11 +3,7 @@ import { Tags } from '@components/tags'
 import styles from '@style'
 import '../style.css'
 import { HashToURL } from '@utils'
-import {
-  LANGUAGES,
-  LICENSE_TYPES,
-  METADATA_CONTENT_RATING_MATURE,
-} from '@constants'
+import { LANGUAGES, LICENSE_TYPES } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
@@ -53,15 +49,13 @@ export const Info = () => {
             {nft.language && (
               <Attribute label="Language" value={LANGUAGES[nft.language]} />
             )}
-            {(nft.teia_meta.content_rating || nft.isNSFW) && (
+            {nft.isNSFW && (
+              <Attribute label="Content Rating" value={'NSFW (Mature)'} />
+            )}
+            {nft.isPhotosensitive && (
               <Attribute
-                label="Content Rating"
-                value={
-                  nft.teia_meta.content_rating ===
-                    METADATA_CONTENT_RATING_MATURE || nft.isNSFW
-                    ? 'NSFW (Mature)'
-                    : `Unknown Rating (${nft.teia_meta.content_rating})`
-                }
+                label="Accessibility Hazards"
+                value={'Photo Sensitive'}
               />
             )}
 
