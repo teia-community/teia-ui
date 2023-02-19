@@ -9,6 +9,7 @@ import { shallow } from 'zustand/shallow'
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { motion } from 'framer-motion'
+import { NFT } from '@types'
 /**
  * @param {Object} feedOptions - The options for the feed item
  * @param {import("@types").NFT} feedOptions.nft - The nft to render
@@ -26,7 +27,22 @@ const info_variants = {
     opacity: 0,
   },
 }
-export const FeedItem = ({ nft }) => {
+
+const TokenHover = ({ nft, visible }: { nft: NFT; visible: boolean }) => {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div {...info_variants} className={styles.hover_details}>
+          <h3>#{nft.token_id}</h3>
+          <h4>{nft.name}</h4>
+          <p>{nft.description}</p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+export const FeedItem = ({ nft }: { nft: NFT }) => {
   const [nsfwFriendly, photosensitiveFriendly] = useLocalSettings(
     (state) => [state.nsfwFriendly, state.photosensitiveFriendly],
     shallow
@@ -53,22 +69,20 @@ export const FeedItem = ({ nft }) => {
       // onMouseLeave={() => setHover(false)}
       className={containerClasses}
     >
-      <AnimatePresence>
-        {hover && (
-          <motion.div {...info_variants} className={styles.hover_details}>
-            <h1>{nft.name}</h1>
-            <p>{nft.description}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
       {nft.mime_type?.startsWith('audio') ? (
-        <RenderMediaType nft={nft} />
+        <RenderMediaType
+          details={<TokenHover nft={nft} visible={hover && !zen} />}
+          nft={nft}
+        />
       ) : (
         <Link
           aria-label={`OBJKT ${nft.token_id}`}
           to={`${PATH.OBJKT}/${nft.token_id}`}
         >
-          <RenderMediaType nft={nft} />
+          <RenderMediaType
+            details={<TokenHover nft={nft} visible={hover && !zen} />}
+            nft={nft}
+          />
         </Link>
       )}
       {!zen && (

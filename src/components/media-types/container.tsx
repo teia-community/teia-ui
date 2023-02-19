@@ -9,6 +9,7 @@ import './style.css'
 import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
 import { NFT } from '@types'
 import { Button } from '@atoms/button'
+import { MIMETYPE } from '@constants'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -34,20 +35,28 @@ export const Container = ({
   nft,
   children,
   displayView,
-  nofullscreen,
-}: //flex = false,
+}: // nofullscreen,
+//flex = false,
 {
   nft: NFT
   children: JSX.Element | JSX.Element[] | undefined
   displayView?: boolean
-  nofullscreen?: boolean
+  // nofullscreen?: boolean
 }) => {
   const domElement = useRef()
   const [fullscreen, setFullscreen] = useState<boolean>()
 
   const { ref, inView } = useInView({
     threshold: 0,
+    initialInView: false,
   })
+
+  const nofullscreen = [
+    MIMETYPE.MP4,
+    MIMETYPE.OGV,
+    MIMETYPE.QUICKTIME,
+    MIMETYPE.WEBM,
+  ].includes(nft.mime_type)
 
   const toggleFullScreen = () => {
     if (screenfull.isFullscreen) {

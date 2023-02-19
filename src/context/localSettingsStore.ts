@@ -4,6 +4,7 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
+import { useUserStore } from './userStore'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -20,7 +21,7 @@ export const rpc_nodes = [
   'custom',
 ] as const
 
-type RPC_NODES = typeof rpc_nodes[number]
+export type RPC_NODES = typeof rpc_nodes[number]
 
 interface LocalSettingsState {
   viewMode: ViewMode
@@ -39,6 +40,7 @@ interface LocalSettingsState {
   setTheme: (theme: Theme) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
+  setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
 }
 
 const defaultValues = {
@@ -72,7 +74,10 @@ export const useLocalSettings = create<LocalSettingsState>()(
           })),
         setViewMode: (viewMode: ViewMode) => set({ viewMode }),
         setTheme: (theme: Theme) => set({ theme }),
-        setRpcNode: (rpcNode: RPC_NODES) => set({ rpcNode }),
+        setRpcNode: async (rpcNode) => {
+          set({ rpcNode })
+          await useUserStore.getState().sync({ rpcNode })
+        },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),

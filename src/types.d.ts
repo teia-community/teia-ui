@@ -295,16 +295,19 @@ type SharedMediaProps = {
   /** Preview "data" to pass to the Preview component */
   previewUri?: string
   /** Detailed view, full quality.*/
-  displayView: boolean
+  displayView?: boolean
 }
 export type RenderMediaProps = SharedMediaProps
 
 export type MediaTypeProps = SharedMediaProps & {
   /** Resolved gateway URL for the Artifact of the token */
-  artifactUri: string
+  artifactUri?: string
   /** Resolved gateway URL for the cover image / thumbnail */
-  displayUri: string
+  displayUri?: string
 
   /** Some intersection observer setup by the media container */
-  inView: boolean
+  inView?: boolean
+
+  /** Older video tokens did not require a cover image, load the video in these cases. */
+  forceVideo?: boolean
 }

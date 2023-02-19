@@ -2,8 +2,8 @@
 import { Page } from '@atoms/layout'
 import { Checkbox } from '@atoms/input'
 import styles from '@style'
-import { useLocalSettings } from '@context/localSettingsStore'
-import { ThemeSelection } from '@atoms/select'
+import { rpc_nodes, useLocalSettings } from '@context/localSettingsStore'
+import { Select, ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 
 export const Settings = () => {
@@ -12,11 +12,15 @@ export const Settings = () => {
     setNsfwFriendly,
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
+    rpcNode,
+    setRpcNode,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
     st.photosensitiveFriendly,
     st.setPhotosensitiveFriendly,
+    st.rpcNode,
+    st.setRpcNode,
   ])
 
   return (
@@ -31,6 +35,9 @@ export const Settings = () => {
       </div>
       <div className={styles.localSettings}>
         <div className={styles.fields}>
+          <p>
+            <strong>Feed preferences</strong>
+          </p>
           <Checkbox
             alt={`click to ${
               nsfwFriendly ? 'disable' : 'enable'
@@ -47,7 +54,18 @@ export const Settings = () => {
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
           />
-          <ThemeSelection />
+          <Line />
+          <ThemeSelection label={'Theme'} />
+          <Line />
+
+          <Select
+            label={'RPC Node'}
+            value={{ label: rpcNode, value: rpcNode }}
+            options={rpc_nodes.map((e) => ({ label: e, value: e }))}
+            onChange={(e) => {
+              setRpcNode(e.value)
+            }}
+          />
         </div>
       </div>
     </Page>
