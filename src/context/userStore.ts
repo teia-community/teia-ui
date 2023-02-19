@@ -146,7 +146,6 @@ export const useUserStore = create<UserState>()(
           const showError = useModalStore.getState().showError
 
           const timeout = setTimeout(() => {
-            console.log('timeout')
             show(
               title,
               'Something seem to hang, did you abort the transaction?'
@@ -192,7 +191,6 @@ export const useUserStore = create<UserState>()(
           let activeAccount = await wallet.client.getActiveAccount()
 
           if (activeAccount === undefined) {
-            console.log('permissions')
             await wallet.requestPermissions({ network })
             activeAccount = await wallet.client.getActiveAccount()
           }
@@ -343,17 +341,7 @@ export const useUserStore = create<UserState>()(
           try {
             const batch = Tezos.wallet.batch(operations)
 
-            const timeout = setTimeout(() => {
-              console.log('timeout')
-              show(
-                'Swap',
-                'Something seem to hang, did you abort the transaction?'
-              )
-            }, 500)
-            const answer = await batch.send()
-            clearTimeout(timeout)
-            console.log('sent')
-            return await handleOp(answer, 'Swap')
+            return await handleOp(batch, 'Swap')
           } catch (e) {
             showError('Swap', e)
           }
@@ -361,13 +349,13 @@ export const useUserStore = create<UserState>()(
         burn: async (objkt_id: string, amount: number) => {
           const { proxyAddress, handleOp } = get()
           const step = useModalStore.getState().step
-          step('Burn', `Burning ${amount} edition of OBJKT #${objkt_id}`)
+          step('Burn', `Burning ${amount} edition of OBJKT #${objkt_id}`, true)
 
           const tz = await wallet.client.getActiveAccount()
           const objktsOrProxy = proxyAddress || HEN_CONTRACT_FA2
           const addressFrom = proxyAddress || tz?.address
 
-          console.log('Using', objktsOrProxy, 'for burn')
+          console.debug('Using', objktsOrProxy, 'for burn')
 
           const contract = await Tezos.wallet.at(objktsOrProxy)
           const batch = contract.methods.transfer([
@@ -390,7 +378,7 @@ export const useUserStore = create<UserState>()(
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
 
-          step('Transferring tokens', 'Waiting for confirmation')
+          step('Transferring tokens', 'Waiting for confirmation', true)
           const { proxyAddress, address } = get()
 
           const contract = proxyAddress || HEN_CONTRACT_FA2
@@ -458,7 +446,7 @@ export const useUserStore = create<UserState>()(
           const { proxyAddress, handleOp } = get()
           const step = useModalStore.getState().step
 
-          step('Cancel Swap', 'Waiting for wallet')
+          step('Cancel Swap', 'Waiting for wallet', true)
 
           const isSwapTeia = contract_address === MARKETPLACE_CONTRACT_TEIA
           if (proxyAddress && isSwapTeia) {
@@ -498,9 +486,13 @@ export const useUserStore = create<UserState>()(
           // const close = useModalStore.getState().close
           const show = useModalStore.getState().show
 
-          step('Reswaping', `reswaping ${nft.token_id} for ${price / 1e6}tz`)
+          step(
+            'Reswaping',
+            `reswaping ${nft.token_id} for ${price / 1e6}tz`,
+            true
+          )
 
-          console.log({ nft, price, swap })
+          console.debug({ nft, price, swap })
           const objkt_id = nft.token_id
           const creator = nft.artist_address
           const from = swap.seller_address
@@ -520,7 +512,7 @@ export const useUserStore = create<UserState>()(
             ])
 
           const current_contract = proxyContract || marketplaceContract
-          console.log(current_contract.methodsObject)
+
           const list = [
             // cancel current swap
             {
@@ -564,7 +556,7 @@ export const useUserStore = create<UserState>()(
           const { proxyAddress } = get()
           console.debug('CID', cid)
 
-          step('Mint', 'minting OBJKT')
+          step('Mint', 'minting OBJKT', true)
 
           // const DEFAULT_ERROR_MESSAGE = 'an error occurred ❌'
           const contract = await Tezos.wallet.at(

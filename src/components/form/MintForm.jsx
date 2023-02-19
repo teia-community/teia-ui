@@ -18,7 +18,6 @@ export default function MintForm() {
   const [needsCover, setNeedsCover] = useState(false)
 
   useEffect(() => {
-    console.log('artifact changed')
     if (artifact) setNeedsCover(!artifact?.mimeType?.startsWith('image'))
   }, [artifact])
 
@@ -42,7 +41,6 @@ export default function MintForm() {
       useCustomLicense: license?.value === 'custom',
     })
   }, [needsCover, license?.value])
-
   return (
     <motion.div
       style={{ width: '100%' }}
@@ -53,10 +51,12 @@ export default function MintForm() {
     >
       <CollabSwitch address={address} name={minterName} />
 
-      {balance > 0 && balance < 900 && (
+      {balance > 0 && balance / 1e6 < 0.7 && (
         <div className={styles.fundsWarning}>
           <p>
-            {`⚠️ You seem to be low on funds (${balance}ꜩ), mint will probably fail...`}
+            {`⚠️ You seem to be low on funds (${
+              balance / 1e6
+            }ꜩ), mint will probably fail...`}
           </p>
         </div>
       )}
