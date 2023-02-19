@@ -7,6 +7,8 @@ import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
 import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
+import { NFT } from '@types'
+import { Button } from '@atoms/button'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -30,13 +32,18 @@ import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
  **/
 export const Container = ({
   nft,
-  children = null,
+  children,
   displayView,
-  nofullscreen = false,
-  //flex = false,
+  nofullscreen,
+}: //flex = false,
+{
+  nft: NFT
+  children: JSX.Element | JSX.Element[] | undefined
+  displayView?: boolean
+  nofullscreen?: boolean
 }) => {
   const domElement = useRef()
-  const [fullscreen, setFullscreen] = useState()
+  const [fullscreen, setFullscreen] = useState<boolean>()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -105,20 +112,21 @@ export const Container = ({
         {childrenWithProps}
 
         {displayView && !iOS && !nofullscreen && (
-          <div
-            onClick={toggleFullScreen}
+          <Button
+            alt={'Fullscreen Button'}
             className={
               styles.icon +
               ' svg-icon ' +
               (fullscreen ? styles.icon_fullscreen : '')
             }
-            onKeyDown={toggleFullScreen}
-            tabIndex="0"
-            role="button"
-            aria-label="fullscreen"
+            onClick={toggleFullScreen}
           >
-            {fullscreen ? <FullScreenEnterIcon /> : <FullScreenExitIcon />}
-          </div>
+            {fullscreen ? (
+              <FullScreenEnterIcon width={32} />
+            ) : (
+              <FullScreenExitIcon width={32} />
+            )}
+          </Button>
         )}
       </div>
     </div>
