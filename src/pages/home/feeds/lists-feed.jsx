@@ -12,6 +12,13 @@ async function fetchList(url) {
   return data.data.map((e) => e.toString())
 }
 
+const lists = {
+  'NSFW List': 'https://lists.teia.art/nsfw.json',
+  'Photo Sensitive List': 'https://lists.teia.art/photosensitive.json',
+  'Restricted OBJKTs (deprecated)':
+    'https://lists.teia.art/restricted_objkt.json',
+}
+
 export function ListsFeed() {
   const [_url, _setUrl] = useState('')
   const [url, setUrl] = useState('')
@@ -28,9 +35,23 @@ export function ListsFeed() {
 
   return (
     <>
+      <div style={{ display: 'flex', gap: '1em' }}>
+        {Object.keys(lists).map((k) => (
+          <Button
+            box
+            onClick={() => {
+              setUrl(lists[k])
+              _setUrl(lists[k])
+            }}
+          >
+            {k}
+          </Button>
+        ))}
+      </div>
       <div
         style={{
           display: 'flex',
+          marginTop: '25px',
           alignItems: 'center',
           alignContent: 'center',
           justifyContent: 'center',
@@ -52,6 +73,7 @@ export function ListsFeed() {
           Search
         </Button>
       </div>
+
       {url && (
         <TokenCollection
           disable={!ids}
