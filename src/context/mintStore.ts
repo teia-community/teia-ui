@@ -301,6 +301,7 @@ export const useMintStore = create<MintState>()(
             }
           }
         },
+        version: 1,
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>

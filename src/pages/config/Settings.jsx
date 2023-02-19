@@ -7,12 +7,12 @@ import { ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 
 export const Settings = () => {
-  const {
+  const [
     nsfwFriendly,
     setNsfwFriendly,
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
-  } = useLocalSettings((st) => [
+  ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
     st.photosensitiveFriendly,

@@ -61,7 +61,7 @@ export const FeedItem = ({ nft }) => {
           </motion.div>
         )}
       </AnimatePresence>
-      {nft.mime_type.startsWith('audio') ? (
+      {nft.mime_type?.startsWith('audio') ? (
         <RenderMediaType nft={nft} />
       ) : (
         <Link
