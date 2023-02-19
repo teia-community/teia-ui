@@ -13,25 +13,25 @@ import { PdfComponent } from './pdf'
 import { Container } from './container'
 import { MD } from './md'
 import { useMemo } from 'react'
-
-/**
- * @typedef {{address:string,name:string}} Wallet
- */
+import { NFT } from '@types'
 
 /**
  * Method that handles the rendering of any of the supported
  * media types.
  */
 
-/**
- * @param {import("@types").RenderMediaProps} renderOptions - The options for the media renderer
-
- */
 export const RenderMediaType = ({
   nft,
   previewUri,
   previewDisplayUri,
   displayView,
+  details,
+}: {
+  nft: NFT
+  previewUri?: string
+  previewDisplayUri?: string
+  displayView?: boolean
+  details?: JSX.Element | JSX.Element[]
 }) => {
   const [forceArtifact, setForceArtifact] = useState(false)
   const parsedArtifactUri = useMemo(
@@ -63,6 +63,125 @@ export const RenderMediaType = ({
     }
   }, [nft, previewDisplayUri])
 
+  const Media = useMemo(() => {
+    switch (nft.mime_type) {
+      /* IMAGES */
+      case MIMETYPE.BMP:
+      case MIMETYPE.GIF:
+      case MIMETYPE.JPEG:
+      case MIMETYPE.PNG:
+      case MIMETYPE.TIFF:
+      case MIMETYPE.WEBP:
+        return (
+          <ImageComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      /* VECTOR */
+      case MIMETYPE.SVG:
+        return (
+          <VectorComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      /* HTML ZIP */
+      case MIMETYPE.DIRECTORY:
+      case MIMETYPE.ZIP:
+      case MIMETYPE.ZIP1:
+      case MIMETYPE.ZIP2:
+        return (
+          <HTMLComponent
+            // artistAddress={nft.artist_address}
+            // creator={nft.creator}
+            // objktID={nft.token_id}
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+      /* VIDEOS */
+      case MIMETYPE.MP4:
+      case MIMETYPE.OGV:
+      case MIMETYPE.QUICKTIME:
+      case MIMETYPE.WEBM:
+        return (
+          <VideoComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+            forceVideo={forceArtifact}
+          />
+        )
+      /* 3D */
+      case MIMETYPE.GLB:
+      case MIMETYPE.GLTF:
+        return (
+          <GLBComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+      /* AUDIO */
+      case MIMETYPE.MP3:
+      case MIMETYPE.OGA:
+      case MIMETYPE.FLAC:
+      case MIMETYPE.WAV:
+      case MIMETYPE.XWAV:
+        return (
+          <AudioComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+      /* PDF */
+      case MIMETYPE.PDF:
+        return (
+          <PdfComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      case MIMETYPE.MD:
+        return (
+          <MD
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      default:
+        return <UnknownComponent mimeType={nft.mime_type} />
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nft.mime_type])
+
   if (nft.metadata_status === 'error') {
     const err = Error(
       `The OBJKT #${nft.token_id} failed to index, 
@@ -76,135 +195,11 @@ export const RenderMediaType = ({
     return
   }
 
-  switch (nft.mime_type) {
-    /* IMAGES */
-    case MIMETYPE.BMP:
-    case MIMETYPE.GIF:
-    case MIMETYPE.JPEG:
-    case MIMETYPE.PNG:
-    case MIMETYPE.TIFF:
-    case MIMETYPE.WEBP:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <ImageComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
+  return (
+    <Container displayView={displayView} nft={nft}>
+      {details}
 
-    /* VECTOR */
-    case MIMETYPE.SVG:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <VectorComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-
-    /* HTML ZIP */
-    case MIMETYPE.DIRECTORY:
-    case MIMETYPE.ZIP:
-    case MIMETYPE.ZIP1:
-    case MIMETYPE.ZIP2:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <HTMLComponent
-            // artistAddress={nft.artist_address}
-            // creator={nft.creator}
-            // objktID={nft.token_id}
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-    /* VIDEOS */
-    case MIMETYPE.MP4:
-    case MIMETYPE.OGV:
-    case MIMETYPE.QUICKTIME:
-    case MIMETYPE.WEBM:
-      return (
-        <Container displayView={displayView} nofullscreen nft={nft}>
-          <VideoComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-            forceVideo={forceArtifact}
-          />
-        </Container>
-      )
-    /* 3D */
-    case MIMETYPE.GLB:
-    case MIMETYPE.GLTF:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <GLBComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-    /* AUDIO */
-    case MIMETYPE.MP3:
-    case MIMETYPE.OGA:
-    case MIMETYPE.FLAC:
-    case MIMETYPE.WAV:
-    case MIMETYPE.XWAV:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <AudioComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-    /* PDF */
-    case MIMETYPE.PDF:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <PdfComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-
-    case MIMETYPE.MD:
-      return (
-        <Container displayView={displayView} nft={nft}>
-          <MD
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        </Container>
-      )
-
-    default:
-      return <UnknownComponent mimeType={nft.mime_type} />
-  }
+      {Media}
+    </Container>
+  )
 }
