@@ -6,26 +6,33 @@ import { Buffer } from 'buffer'
 import { fetchGraphQL } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import { FileMint } from '@types'
+import { FileForm, FileMint, MintFormat } from '@types'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder
  */
 
-// const readJsonLines = require('read-json-lines-sync').default
-// const { getCoverImagePathFromBuffer } = require('../utils/html')
-
 /**
  * Upload a single file through the IPFS proxy.
- * @param {{blob:Blob, path:string, size:number}} file
- * @returns {Promise<string>}
  */
-export async function uploadFileToIPFSProxy(file: FileMint) {
-  const { step } = useModalStore.getState()
+export async function uploadFileToIPFSProxy(
+  file: FileMint
+): Promise<string | undefined> {
+  const step = useModalStore.getState().step
+  const show = useModalStore.getState().show
+
+  console.log(file)
 
   const form = new FormData()
 
   const file_type = mime.lookup(file.path)
+  if (!file_type) {
+    show(
+      'Filetype Error',
+      `Could not determine the type from file ${file.path}`
+    )
+    return
+  }
   const total_size = file.size ? ` (${(file.size / 1e6).toFixed(1)}mb)` : ''
   step('Preparing OBJKT', `uploading ${file.path}${total_size} as ${file_type}`)
 
@@ -53,18 +60,19 @@ export async function uploadFileToIPFSProxy(file: FileMint) {
 
 /**
  * Upload multiple files through the IPFS proxy
- * @param {Array<FileHolder>} files
- * @returns {Promise<string>}
  */
 export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
   const form = new FormData()
+  const step = useModalStore.getState().step
+
+  step('Preparing OBJKT', `uploading multiple files`)
 
   files.forEach((file) => {
     const file_type = mime.lookup(file.path)
     console.debug(`uploading ${file.path} as ${file_type}`)
     form.append(
       'assets',
-      new File([file.blob], encodeURI(file.path), { type: file_type })
+      new File([file.blob], encodeURI(file.path), { type: file_type || '' })
     )
   })
 
@@ -73,6 +81,14 @@ export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
     form,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (pe: ProgressEvent) => {
+        const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
+        step(
+          'Preparing OBJKT',
+          `uploading multiple files
+## ${progress}%`
+        )
+      },
     }
   )
 
@@ -100,7 +116,7 @@ const isDoubleMint = async (uri: string) => {
   } else if (data) {
     if (!data.tokens) return false
     const areAllTokensBurned = data.tokens.every(
-      ({ editions }) => editions === 0
+      ({ editions }: { editions: number }) => editions === 0
     )
 
     if (areAllTokensBurned) {
@@ -121,9 +137,9 @@ interface PrepareProps {
   description: string
   tags: string
   address: string
-  file: FileMint
-  cover: FileMint
-  thumbnail: FileMint
+  file: FileForm
+  cover: FileForm
+  thumbnail: FileForm
   rights: string
   rightUri?: string
   language?: string
@@ -147,14 +163,20 @@ export const prepareFile = async ({
   formats,
 }: PrepareProps) => {
   //TODO: clean
-  const { step } = useModalStore.getState()
+  const step = useModalStore.getState().step
+  const show = useModalStore.getState().show
 
   const generateDisplayUri = !file.mimeType.startsWith('image')
   // const cid = await uploadFileToIPFSProxy(file)
-
+  if (!file.file?.name) {
+    console.error('Incomplete item received', file)
+    show('No name for file', '')
+    return
+  }
   const cid = await uploadFileToIPFSProxy({
     blob: new Blob([file.buffer]),
-    path: file.file?.name,
+    path: file.file.name,
+    size: file.file?.size,
   })
 
   step('Preparing OBJKT', `Successfully uploaded file to IPFS: ${cid}`)
@@ -176,6 +198,7 @@ export const prepareFile = async ({
     const coverCid = await uploadFileToIPFSProxy({
       blob: new Blob([cover.buffer]),
       path: `cover_${cover.file ? cover.file.name : cover.format?.fileName}`,
+      size: cover.file?.size,
     })
     step('Preparing OBJKT', `Successfully uploaded cover to IPFS: ${coverCid}`)
     console.debug(`Successfully uploaded cover to IPFS: ${coverCid}`)
@@ -197,6 +220,7 @@ export const prepareFile = async ({
       path: `thumbnail_${
         thumbnail.file ? thumbnail.file.name : thumbnail.format?.fileName
       }`,
+      size: thumbnail.file?.size,
     })
     thumbnailUri = `ipfs://${thumbnailCid}`
     if (thumbnail?.format) {
@@ -206,6 +230,8 @@ export const prepareFile = async ({
       formats.push(format)
       console.debug('thumbnail format', format)
     }
+  } else {
+    console.debug('Using default thumbnail CID')
   }
 
   const metadata = await buildMetadataFile({
@@ -252,19 +278,21 @@ export const prepareDirectory = async ({
   description: string
   tags: string
   address: string
-  files: string
-  cover: string
-  thumbnail: string
+  files: FileForm[]
+  cover: FileForm
+  thumbnail: FileForm
   generateDisplayUri: string
   rights: string
   rightUri: string
   language: string
   accessibility: string
   contentRating: string
-  formats: string
+  formats: MintFormat[]
 }) => {
+  const step = useModalStore.getState().step
+
   const hashes = await uploadFilesToDirectory(files)
-  const { step } = useModalStore.getState()
+
   step(
     'Preparing OBJKT',
     `Successfully uploaded directory to IPFS: ${hashes.directory}`
@@ -276,13 +304,13 @@ export const prepareDirectory = async ({
     formats[0].uri = uri
     console.debug('file format', formats[0])
   }
-
+  console.log({ cover, thumbnail })
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
     const displayCid = await uploadFileToIPFSProxy({
       blob: new Blob([cover.buffer]),
-      path: `cover_${cover.format.fileName}`,
+      path: `cover_${cover.format?.fileName || 'format'}`,
     })
     step('Preparing OBJKT', `Successfully uploaded cover to IPFS`)
 
@@ -295,24 +323,29 @@ export const prepareDirectory = async ({
       formats.push(format)
       console.debug('cover format', format)
     }
-  } else if (hashes.cover) {
-    // TODO: Remove this once generateDisplayUri option is gone
-    displayUri = `ipfs://${hashes.cover}`
-    if (cover?.format) {
-      const format = JSON.parse(JSON.stringify(cover.format))
-      format.uri = displayUri
-      format.fileName = `cover_${format.fileName}`
-      formats.push(format)
-      console.debug('cover format', format)
-    }
   }
+  // else if (hashes.cover) {
+  //   // TODO: Remove this once generateDisplayUri option is gone
+  //   displayUri = `ipfs://${hashes.cover}`
+  //   if (cover?.format) {
+  //     const format = JSON.parse(JSON.stringify(cover.format))
+  //     format.uri = displayUri
+  //     format.fileName = `cover_${format.fileName}`
+  //     formats.push(format)
+  //     console.debug('cover format', format)
+  //   }
+  // }
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  if (generateDisplayUri) {
+  if (generateDisplayUri && thumbnail) {
     const thumbnailInfo = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
-      path: thumbnail.format.fileName,
+      path:
+        thumbnail.format?.fileName ||
+        thumbnail.title ||
+        thumbnail.file?.name ||
+        '',
     })
     thumbnailUri = `ipfs://${thumbnailInfo}`
     if (thumbnail?.format) {
@@ -350,10 +383,8 @@ export const prepareDirectory = async ({
 
 /**
  * Check if the given FileHolder is a directory.
- * @param {FileHolder} file
- * @returns {boolean}
  */
-function not_directory(file) {
+function not_directory(file: FileMint) {
   return file.blob.type !== MIMETYPE.DIRECTORY
 }
 
@@ -361,9 +392,8 @@ function not_directory(file) {
  * Uploads multiple files through the IPFS proxy,
  * grep the `index.html` for a cover image.
  * @param {Array<FileHolder>} files
- * @returns {{directory: string} }
  */
-async function uploadFilesToDirectory(files) {
+async function uploadFilesToDirectory(files: FileMint[]) {
   console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
 
@@ -409,8 +439,22 @@ async function buildMetadataFile({
   accessibility,
   contentRating,
   formats,
+}: {
+  name: string
+  description: string
+  tags: string
+  uri: string
+  address: string
+  displayUri: string
+  thumbnailUri: string
+  rights: string
+  rightUri?: string
+  language: string
+  accessibility: string
+  contentRating: string
+  formats: MintFormat[]
 }) {
-  const metadata = {
+  const metadata: TeiaMetadata = {
     name,
     description,
     tags: tags ? tags.replace(/\s/g, '').split(',') : [],
@@ -433,4 +477,27 @@ async function buildMetadataFile({
   if (language != null) metadata.language = language
 
   return JSON.stringify(metadata)
+}
+
+interface TeiaMetadata {
+  name: string
+  description: string
+  tags: string[]
+  symbol: string
+  artifactUri: string
+  displayUri: string
+  thumbnailUri: string
+  creators: string[]
+  formats: MintFormat[]
+  decimals: number
+  isBooleanAmount: boolean
+  shouldPreferSymbol: boolean
+  rights: string
+  date: string
+  mintingTool: string
+  //optional
+  accessibility?: string
+  contentRating?: string
+  rightUri?: string
+  language?: string
 }

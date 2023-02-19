@@ -79,7 +79,9 @@ export const Transfer = () => {
         </div>
       ) : (
         <div className={styles.container}>
-          <h1>Transfer (count: {validTxs.length})</h1>
+          <h2>
+            Transfer (count: {validTxs.length}/{tokenCount})
+          </h2>
           <p>
             Add addresses below along with how many tokens you wish to send to
             each.

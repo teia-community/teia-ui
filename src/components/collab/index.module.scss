@@ -83,8 +83,13 @@
 
 .actionCell {
   padding-top: 6px;
-  vertical-align: top;
+  // vertical-align: top;
   text-align: right;
+  text-align: center;
+  display: block;
+
+  margin: auto;
+  fill: var(--text-color);
 }
 
 .actionCell button {

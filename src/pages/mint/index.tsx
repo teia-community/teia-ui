@@ -1,5 +1,5 @@
 import { Page } from '@atoms/layout'
-import { Tabs } from '@atoms/tab/Tabs'
+import { type TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useMintStore } from '@context/mintStore'
 import { useUserStore } from '@context/userStore'
 import { AnimatePresence } from 'framer-motion'
@@ -7,8 +7,7 @@ import { useMemo } from 'react'
 import { FormProvider, useForm, useFormState } from 'react-hook-form'
 import { Outlet } from 'react-router'
 
-/**@type {import('@atoms/tab/Tabs').TabOptions} */
-let TABS = [
+let TABS: TabOptions[] = [
   { title: 'Edit', to: '' },
   { title: 'Preview', to: 'preview', disabled: true },
   { title: 'Mint', disabled: true },
@@ -59,12 +58,10 @@ export default function Mint() {
   }, [address])
 
   return (
-    <Page title="Mint" large>
+    <Page title="Mint">
+      <h1>MINT</h1>
+      <Tabs tabs={tabs} />
       <FormProvider {...methods}>
-        <h1>MINT</h1>
-
-        <Tabs tabs={tabs} />
-        {/* <Example /> */}
         <AnimatePresence mode="sync">
           <Outlet
             context={{

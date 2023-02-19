@@ -14,13 +14,18 @@ import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
 import { useUserStore } from '@context/userStore'
 
-export const Footer = ({ menu, pin }) => {
+interface FooterProps {
+  menu?: boolean
+  pin?: boolean
+}
+
+export const Footer = ({ menu, pin }: FooterProps) => {
   const { language } = useLanguage()
   const address = useUserStore((st) => st.address)
   const [logoSeed, setLogoSeed] = useState(3)
   const [zen, setZen] = useLocalSettings((st) => [st.zen, st.setZen], shallow)
   const [theme, toggleTheme] = useLocalSettings(
-    (st) => [st.theme, st.setTheme],
+    (st) => [st.theme, st.toggleTheme],
     shallow
   )
 
@@ -62,7 +67,10 @@ export const Footer = ({ menu, pin }) => {
         <div className={styles.logo}>
           Teia DAO LLC.
           {menu && (
-            <Button onClick={() => setLogoSeed(Math.random() * 100)}>
+            <Button
+              alt="teia rotating logo"
+              onClick={() => setLogoSeed(Math.random() * 100)}
+            >
               <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
             </Button>
           )}

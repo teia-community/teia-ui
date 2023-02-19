@@ -13,9 +13,8 @@ import { ItemInfo } from '@components/item-info'
 import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
-import { Tabs } from '@atoms/tab/Tabs'
+import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
-import { useModalStore } from '@context/modalStore'
 import { NFT } from '@types'
 
 type ObjktDisplayContext = {
@@ -63,47 +62,44 @@ export const ObjktDisplay = () => {
 
   const address = useUserStore((st) => st.address)
   const proxy = useUserStore((st) => st.proxyAddress)
-  const [modalVisible, modalProgress, message] = useModalStore((st) => [
-    st.visible,
-    st.progress,
-    st.message,
-  ])
+
   const { walletBlockMap, nsfwMap, underReviewMap } = useSettings()
 
-  /** @type {{data:import('@types').NFT, error:Error}} */
-  const { data: nft, error } = useSWR(
+  const { data: nft, error }: { data?: NFT; error?: Error } = useSWR(
     ['/token', id],
     async () => {
-      /** @type {import('@types').NFT}*/
-      const objkt = await fetchObjktDetails(id)
+      if (id) {
+        const objkt = await fetchObjktDetails(id)
 
-      if (!objkt) {
-        let isnum = /^\d+$/.test(id)
-        if (isnum) {
-          throw new Error(`Cannot find an OBJKT with id: ${id}`, {
-            cause: 'Unknown OBJKT',
-          })
-        }
+        if (!objkt) {
+          let isNum = /^\d+$/.test(id)
+          if (isNum) {
+            throw new Error(`Cannot find an OBJKT with id: ${id}`, {
+              cause: 'Unknown OBJKT',
+            })
+          }
 
-        throw new Error(
-          `Received a non numeric token_id: ${id}.
+          throw new Error(
+            `Received a non numeric token_id: ${id}.
           This can happen if the requested SUBJKT is conflicting with a protected route. 
           You can still access it by its address (tz/<tz-address>)`,
-          { cause: 'Conflicting route' }
+            { cause: 'Conflicting route' }
+          )
+        }
+
+        if (nsfwMap.get(objkt.token_id) === 1) {
+          set(objkt, 'teia_meta.content_rating', METADATA_CONTENT_RATING_MATURE)
+        }
+
+        objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
+        objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
+        objkt.listings = objkt.listings.filter(
+          ({ seller_address }: { seller_address: string }) =>
+            walletBlockMap.get(seller_address) !== 1
         )
+
+        return objkt
       }
-
-      if (nsfwMap.get(objkt.token_id) === 1) {
-        set(objkt, 'teia_meta.content_rating', METADATA_CONTENT_RATING_MATURE)
-      }
-
-      objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
-      objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
-      objkt.listings = objkt.listings.filter(
-        ({ seller_address }) => walletBlockMap.get(seller_address) !== 1
-      )
-
-      return objkt
     },
     {
       revalidateIfStale: false,
@@ -115,7 +111,7 @@ export const ObjktDisplay = () => {
 
   const objkt_classes = useMemo(() => {
     if (!nft) {
-      return []
+      return ''
     }
 
     const classes = []
@@ -143,27 +139,13 @@ export const ObjktDisplay = () => {
       classes.push(styles.objktview)
     }
 
-    return classes
+    return classes.join(' ')
   }, [nft])
 
   if (loading) {
-    return <Page title={nft?.name}>{loading && <Loading />}</Page>
-  }
-  if (modalVisible && modalProgress) {
     return (
-      <Page title={nft?.name}>
-        <div>
-          <p
-            style={{
-              position: 'absolute',
-              left: '46%',
-              top: '45%',
-            }}
-          >
-            {message}
-          </p>
-          <Loading />
-        </div>
+      <Page title="loading">
+        {loading && <Loading message="Loading OBJKT" />}
       </Page>
     )
   }
@@ -171,85 +153,89 @@ export const ObjktDisplay = () => {
   if (error) {
     throw error //new Error('Error Fetching OBJKTs for {}')
   }
-  console.log(nft)
 
+  if (!nft) {
+    return
+  }
   return (
     <Page className={styles.profile_page} title={nft?.name}>
-      {nft.restricted && (
-        <div className={styles.restricted}>
-          Restricted OBJKT. Contact the Teia moderators on{' '}
-          <a
-            href="https://discord.gg/TKeybhYhNe"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Discord
-          </a>{' '}
-          to resolve the status. See the{' '}
-          <a
-            href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Teia Terms and Conditions
-          </a>
-          .
+      <>
+        {nft.restricted ? (
+          <div className={styles.restricted}>
+            Restricted OBJKT. Contact the Teia moderators on{' '}
+            <a
+              href="https://discord.gg/TKeybhYhNe"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Discord
+            </a>{' '}
+            to resolve the status. See the{' '}
+            <a
+              href="https://github.com/teia-community/teia-docs/wiki/Core-Values-Code-of-Conduct-Terms-and-Conditions#content-moderation"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Teia Terms and Conditions
+            </a>
+            .
+          </div>
+        ) : null}
+        {nft.underReview && (
+          <div className={styles.restricted}>
+            OBJKT under review. Contact the Teia moderators on{' '}
+            <a
+              href="https://discord.gg/TKeybhYhNe"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Discord
+            </a>{' '}
+            to resolve the status.
+          </div>
+        )}
+        <div
+          style={{
+            position: 'relative',
+            display: 'block',
+            width: '100%',
+          }}
+          className="objkt-display"
+        >
+          <div className={objkt_classes}>
+            <RenderMediaType nft={nft} displayView />
+          </div>
+          <ItemInfo nft={nft} />
         </div>
-      )}
-      {nft.underReview && (
-        <div className={styles.restricted}>
-          OBJKT under review. Contact the Teia moderators on{' '}
-          <a
-            href="https://discord.gg/TKeybhYhNe"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Discord
-          </a>{' '}
-          to resolve the status.
-        </div>
-      )}
-      <div
-        style={{
-          position: 'relative',
-          display: 'block',
-          width: '100%',
-        }}
-        className="objkt-display"
-      >
-        <div className={objkt_classes}>
-          <RenderMediaType nft={nft} displayView />
-        </div>
-        <ItemInfo nft={nft} />
-      </div>
-      <Tabs
-        tabs={TABS}
-        className={styles.profile_tabs}
-        filter={(tab, index) => {
-          // if nft.owners exist and this is a private route, try to hide the tab.
-          // if nft.owners fails, always show route!
-          if (nft?.restricted && tab.restricted) {
-            return null
-          }
-
-          if (nft?.holdings && tab.private) {
-            let holders_arr = nft.holdings.map((e) => e.holder_address)
-
-            if (
-              holders_arr.includes(address) === false &&
-              nft.artist_address !== address &&
-              nft.artist_address !== proxy
-            ) {
-              // user is not the creator now owns a copy of the object. hide
+        <Tabs
+          tabs={TABS}
+          className={styles.profile_tabs}
+          filter={(tab: TabOptions) => {
+            // if nft.owners exist and this is a private route, try to hide the tab.
+            // if nft.owners fails, always show route!
+            if (nft?.restricted && tab.restricted) {
               return null
             }
-          }
-          return tab
-        }}
-      />
-      <div className={styles.tab_area}>
-        <Outlet context={{ nft, viewer_address: address }} />
-      </div>
+
+            if (nft?.holdings && tab.private) {
+              let holders_arr = nft.holdings.map((e) => e.holder_address)
+
+              if (
+                holders_arr.includes(address || 'UNSYNCED') === false &&
+                nft.artist_address !== address &&
+                nft.artist_address !== proxy
+              ) {
+                // user is not the creator now owns a copy of the object. hide
+                return null
+              }
+            }
+            return tab
+          }}
+        />
+        <div className={styles.tab_area}>
+          <Outlet context={{ nft, viewer_address: address }} />
+        </div>
+      </>
     </Page>
   )
 }

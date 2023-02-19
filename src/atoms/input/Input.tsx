@@ -43,7 +43,7 @@ interface InputProps {
     value: number | string | React.FormEvent<HTMLInputElement>
   ) => void
   onBlur?: () => void
-  onWheel?: () => void
+  // onWheel?: () => void
   disabled?: boolean
   value?: string
   children?: JSX.Element | JSX.Element[]
@@ -64,7 +64,7 @@ function Input(
     label,
     onChange = (value) => null,
     onBlur = () => null,
-    onWheel = () => null,
+    // onWheel = () => null,
     disabled,
     value: valueProp,
     children,
@@ -117,8 +117,7 @@ function Input(
           onChange={handleInput}
           onBlur={onBlur}
           pattern={pattern}
-          onWheel={onBlur}
-          // onWheel={(e) => e.target.blur()}
+          onWheel={(e) => (e.target as HTMLInputElement).blur()}
           onKeyDown={onKeyDown}
           autoComplete="off"
         />
