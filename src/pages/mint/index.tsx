@@ -3,7 +3,7 @@ import { type TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useMintStore } from '@context/mintStore'
 import { useUserStore } from '@context/userStore'
 import { AnimatePresence } from 'framer-motion'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, useFormState } from 'react-hook-form'
 import { Outlet } from 'react-router'
 
@@ -26,6 +26,8 @@ export default function Mint() {
   const proxyAddress = useUserStore((st) => st.proxyAddress)
   const proxyName = useUserStore((st) => st.proxyName)
 
+  const [balance, setBalance] = useState<number>()
+
   const { isValid, errors, isDirty } = useFormState({
     control: methods.control,
   })
@@ -45,16 +47,14 @@ export default function Mint() {
     return proxyName || proxyAddress || userInfo?.name || address
   }, [address, proxyAddress, proxyName, userInfo?.name])
 
-  // get the user balance
-  const balance = useMemo(() => {
-    if (address) {
-      return useUserStore
-        .getState()
-        .getBalance(address)
-        .then((bal) => {
-          return bal
-        })
+  useEffect(() => {
+    async function init() {
+      if (address) {
+        const b = await useUserStore.getState().getBalance(address)
+        setBalance(b)
+      }
     }
+    init()
   }, [address])
 
   return (

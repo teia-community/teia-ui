@@ -294,14 +294,10 @@ export const useMintStore = create<MintState>()(
         name: 'mint',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
         onRehydrateStorage: (state) => {
-          console.log('hydration starts')
-
           // optional
           return (state, error) => {
             if (error) {
               console.log('an error happened during hydration', error)
-            } else {
-              console.log('hydration finished')
             }
           }
         },

@@ -33,7 +33,7 @@ export const useCollabStore = create<CollabState>()(
           const closeModal = useModalStore.getState().close
           const showModal = useModalStore.getState().show
 
-          step('Checking network for collab contract')
+          step('Originating Contract', 'Checking network for collab contract')
 
           axios
             .get(`https://api.tzkt.io/v1/operations/originations/${hash}`)
@@ -59,16 +59,20 @@ export const useCollabStore = create<CollabState>()(
                 )
 
                 // We have got our contract address
-                step('Collaborative contract created successfully')
+                step(
+                  'Originating Contract',
+                  'Collaborative contract created successfully'
+                )
 
                 setTimeout(() => {
                   closeModal()
-                }, 2000)
+                }, 2500)
               } else {
                 console.log('missing data')
 
                 // We have got our contract address
                 showModal(
+                  'Originating Contract (Error)',
                   'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address'
                 )
               }

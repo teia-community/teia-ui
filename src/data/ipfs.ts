@@ -21,8 +21,6 @@ export async function uploadFileToIPFSProxy(
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
 
-  console.log(file)
-
   const form = new FormData()
 
   const file_type = mime.lookup(file.path)
@@ -304,7 +302,6 @@ export const prepareDirectory = async ({
     formats[0].uri = uri
     console.debug('file format', formats[0])
   }
-  console.log({ cover, thumbnail })
   // upload cover image
   let displayUri = ''
   if (generateDisplayUri) {
