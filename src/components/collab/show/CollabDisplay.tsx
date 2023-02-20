@@ -8,6 +8,7 @@ import { CollaboratorType } from '@constants'
 import { Loading } from '@atoms/loading'
 import { useDisplayStore } from '@pages/profile'
 import { useEffect } from 'react'
+import type { SplitContract } from '@types'
 
 export const CollabDisplay = () => {
   const { id, name } = useParams()
@@ -16,7 +17,7 @@ export const CollabDisplay = () => {
     !id || !name ? ['/contract', id, name] : null,
     async () => {
       const result = await fetchCollabCreations(
-        name || id,
+        name || id!,
         name ? 'subjkt' : 'address'
       )
 
@@ -26,7 +27,7 @@ export const CollabDisplay = () => {
 
       return {
         tokens: result.tokens,
-        split_contract: result.split_contracts[0],
+        split_contract: result.split_contracts[0] as SplitContract,
       }
     },
     {
@@ -47,25 +48,23 @@ export const CollabDisplay = () => {
   }
 
   if (!data) {
-    return <Loading />
+    return <Loading message={'Collab contract'} />
   }
 
   const { split_contract, tokens } = data
-  const address = get(split_contract, 'contract_address')
+  const address = split_contract?.contract_address
 
   const oldContractAddresses = [
     'KT1CSfR6kx3uwDEXpwuCPnqp3MhpzfPmnLKj',
     'KT1XhXv6jBpkahnvrtdiSi8foWXneWEjcz6F',
   ]
 
-  if (oldContractAddresses.indexOf(id) > -1) {
+  if (id && oldContractAddresses.indexOf(id) > -1) {
     return <Navigate to={`${PATH.ISSUER}/${id}`} replace />
   }
 
   return (
     <>
-      {/* <CollabHeader collaborators={collaborators} /> */}
-
       <TokenCollection
         namespace="collab-tokens"
         emptyMessage="This collab has no OBJKT creations to display"

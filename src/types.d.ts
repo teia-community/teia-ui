@@ -89,11 +89,11 @@ export type Shareholder = {
   shareholder_address: string
   shareholder_profile: ArtistProfile
   shares: number
-  // holder_type: ShareholderType
+  holder_type: 'admin' | 'creator' | 'benefactor' | 'core_participant'
 }
 
 export type SplitContract = {
-  // contract_address?: string
+  contract_address?: string
   administrator_address: string
   total_shares?: string
   shareholders: Shareholder[]
@@ -178,6 +178,8 @@ export type NFTBase = {
   token_holders?: string[]
   /** the token id */
   token_id: string
+
+  signatures?: Signature[]
 }
 
 export interface SubjktMeta {
@@ -232,6 +234,7 @@ export type TokenResponse = {
 
 export type ArtistProfile = {
   name?: string
+  user_address?: string
   is_split: boolean
   split_contract?: SplitContract
 }
