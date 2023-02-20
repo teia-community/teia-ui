@@ -92,9 +92,12 @@ export const Header = () => {
 
   useEffect(() => {
     setAccount()
-    setOnHome(location.pathname === '/')
     setLogoSeed(Math.floor(Math.random() * 150))
   }, [])
+
+  useEffect(() => {
+    setOnHome(location.pathname === '/')
+  }, [location.pathname])
 
   // on Menu Toggle or Sign in
   useEffect(() => {

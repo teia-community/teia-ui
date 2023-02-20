@@ -1,8 +1,15 @@
 import get from 'lodash/get'
 import { walletPreview } from '@utils/string'
 import styles from '../index.module.scss'
+import { Shareholder, Signature } from '@types'
 
-export const SigningSummary = ({ coreParticipants, signatures }) => {
+export const SigningSummary = ({
+  coreParticipants,
+  signatures,
+}: {
+  coreParticipants: Shareholder[]
+  signatures: Signature[]
+}) => {
   return (
     <div>
       <h2 className={styles.mb1}>

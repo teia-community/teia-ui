@@ -65,9 +65,7 @@ const ItemInfo = ({ nft }) => {
     <>
       {/* SHOW SIGNING UI IF COLLABORATOR */}
       {isCollab && isCoreParticipant && !userHasSigned && (
-        // <div className={styles.container}>
         <SigningUI id={nft.token_id} hasSigned={false} />
-        // </div>
       )}
 
       <div className={styles.container}>
