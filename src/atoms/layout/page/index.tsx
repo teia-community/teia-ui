@@ -1,5 +1,4 @@
 import classnames from 'classnames'
-import { Header } from '@components/header'
 import { FeedbackComponent } from '@components/feedback'
 import styles from '@style'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -38,7 +37,6 @@ export const Page = ({
   return (
     <>
       <FeedbackComponent />
-      <Header />
       <motion.main
         initial="hidden"
         animate="visible"
