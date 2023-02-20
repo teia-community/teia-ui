@@ -1,11 +1,12 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf/dist/esm/entry.vite'
+import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
+import { MediaTypeProps } from '@types'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
 const options = {
@@ -14,41 +15,38 @@ const options = {
   standardFontDataUrl: 'standard_fonts/',
 }
 
-/**
- * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
- */
 export const PdfComponent = memo(function ({
   artifactUri,
   displayUri,
   previewUri,
   displayView,
   nft,
-}) {
-  const [numPages, setNumPages] = useState(null)
+}: MediaTypeProps) {
+  const [numPages, setNumPages] = useState<number>()
   const [pageNumber, setPageNumber] = useState(1)
-  const [renderedPageNumber, setRenderedPageNumber] = useState(null)
+  const [renderedPageNumber, setRenderedPageNumber] = useState<number>()
   const [loading, setLoading] = useState(displayView)
 
-  const [height, setHeight] = useState(null)
+  const [height, setHeight] = useState<number>()
 
   // const [loading, setLoading] = useState(displayView)
 
-  const container = useRef()
+  const container = useRef<HTMLDivElement>(null)
 
   const file = useMemo(
     () => (previewUri ? previewUri : artifactUri),
     [previewUri, artifactUri]
   )
 
-  function onDocumentLoadSuccess({ numPages }) {
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages)
   }
 
-  function onDocumentLoadError(e) {
+  function onDocumentLoadError(e: Error) {
     throw Error(e.message, { cause: 'PDF Error' })
   }
 
-  function changePage(offset) {
+  function changePage(offset: number) {
     setPageNumber((prevPageNumber) => prevPageNumber + offset)
   }
 
@@ -67,7 +65,7 @@ export const PdfComponent = memo(function ({
   const onRender = () => {
     if (loading) {
       setLoading(false)
-      setHeight(container.current.clientHeight)
+      setHeight(container.current?.clientHeight)
     }
     setRenderedPageNumber(pageNumber)
   }
@@ -132,7 +130,10 @@ export const PdfComponent = memo(function ({
           <p>
             Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
           </p>
-          <Button disabled={pageNumber >= numPages} onClick={nextPage}>
+          <Button
+            disabled={numPages ? pageNumber >= numPages : false}
+            onClick={nextPage}
+          >
             {'>» Next'}
           </Button>
         </div>

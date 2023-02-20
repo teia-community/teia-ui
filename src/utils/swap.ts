@@ -9,6 +9,7 @@ import {
   MichelCodecPacker,
   OpKind,
   Wallet,
+  WalletParamsWithKind,
 } from '@taquito/taquito'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import { Parser } from '@taquito/michel-codec'
@@ -43,7 +44,7 @@ export function createAddOperatorCall(
   objkt_id: string,
   ownerAddress: string,
   operatorAddress: string
-) {
+): WalletParamsWithKind {
   return {
     kind: OpKind.TRANSACTION,
     ...objktsContract.methods
@@ -65,7 +66,7 @@ export function createRemoveOperatorCall(
   objkt_id: string,
   ownerAddress: string,
   operatorAddress: string
-) {
+): WalletParamsWithKind {
   return {
     kind: OpKind.TRANSACTION,
     ...objktsContract.methods
@@ -92,7 +93,7 @@ export function createSwapCall(
   royalties: number,
   creator: string,
   type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
-) {
+): WalletParamsWithKind {
   if (type === SWAP_TYPE_TEIA) {
     return {
       kind: OpKind.TRANSACTION,
@@ -117,6 +118,9 @@ export function createSwapCall(
         .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
     }
   }
+  throw Error('Invalid Swap Type', {
+    cause: 'Requested swap is neither a Teia or HEN swap',
+  })
 }
 
 export function createSwapCalls(
@@ -131,7 +135,7 @@ export function createSwapCalls(
   royalties: number,
   creator: string,
   type = MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
-) {
+): WalletParamsWithKind[] {
   return [
     createAddOperatorCall(
       objktsContract,
@@ -169,8 +173,8 @@ export async function createLambdaSwapCall(
   xtz_per_objkt: number,
   royalties: number,
   creator: string
-) {
-  const data = {
+): Promise<WalletParamsWithKind> {
+  const data: any = {
     marketplaceAddress,
     params: {
       fa2: objktsAddress,

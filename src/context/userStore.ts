@@ -3,10 +3,10 @@ import {
   OpKind,
   MichelCodecPacker,
   TezosToolkit,
-  TransactionWalletOperation,
   WalletOperationBatch,
   ContractMethod,
   Wallet,
+  WalletParamsWithKind,
 } from '@taquito/taquito'
 import { create } from 'zustand'
 import {
@@ -39,9 +39,9 @@ import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import type { Listing, NFT, SubjktInfo, Tx } from '@types'
-// import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
-// import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
 
+// type OperationReturn = Promise<string | TransactionWalletOperation | undefined>
+type OperationReturn = Promise<string | undefined>
 interface UserState {
   /** The user tezos address */
   address?: string
@@ -53,7 +53,7 @@ interface UserState {
   subjktInfo?: SubjktInfo
   /** User base info */
   userInfo?: any
-  /** Handle the operation confirmation and error */
+  /** Handle the operation confirmation and error and return the ophash */
   handleOp: (
     // op: TransactionWalletOperation | BatchWalletOperation,
     op_to_send: WalletOperationBatch | ContractMethod<Wallet>,
@@ -61,19 +61,16 @@ interface UserState {
     send_options?: {
       amount: number
       mutez?: boolean
-      storageLimit: number
+      storageLimit?: number
     }
-  ) => Promise<boolean>
+  ) => OperationReturn
   /** Wallet sync  */
-  sync: ({ rpcNode }: { rpcNode?: RPC_NODES }) => Promise<string | undefined>
+  sync: ({ rpcNode }: { rpcNode?: RPC_NODES }) => OperationReturn
   /** Wallet unsync  */
   unsync: () => void
   /** Register SUBJKT  */
-  registry: (
-    alias: string,
-    metadata_cid: string
-  ) => Promise<string | TransactionWalletOperation>
-  /** Swap token  */
+  registry: (alias: string, metadata_cid: string) => OperationReturn
+  /** Swap token returns the ophash  */
   swap: (
     from: string,
     royalties: number,
@@ -81,15 +78,11 @@ interface UserState {
     objkt_id: string,
     creator: string,
     objkt_amount: number
-  ) => Promise<boolean | undefined>
+  ) => OperationReturn
   /** Burn Token */
-  burn: (objkt_id: string, amount: number) => void
+  burn: (objkt_id: string, amount: number) => OperationReturn
   /** Reswap Token */
-  reswap: (
-    nft: NFT,
-    price: number,
-    swap: Listing
-  ) => Promise<boolean | undefined>
+  reswap: (nft: NFT, price: number, swap: Listing) => OperationReturn
   /** Collect token */
   collect: (listing: {
     type: string
@@ -97,17 +90,17 @@ interface UserState {
     swap_id: string
     price: string
     ask_id: any
-  }) => void
+  }) => OperationReturn
   /** Cancel Swap */
-  cancel: (contract: string, swap_id: number) => void
+  cancel: (contract: string, swap_id: number) => OperationReturn
   /** Cancel Swap from V1 */
-  cancelV1: (swapid: string) => void
+  cancelV1: (swapid: string) => OperationReturn
   /** Retrieve account from localStorage (beacon mechanism) */
   setAccount: () => void
   /** Set the proxy address */
   resetProxy: () => void
   /**Transfer tokens */
-  transfer: (txs: Tx[]) => void
+  transfer: (txs: Tx[]) => OperationReturn
   /** Get the balance for the given address (or current user if not provided) */
   getBalance: (address?: string) => Promise<number>
   /** Mint the token */
@@ -116,7 +109,7 @@ interface UserState {
     amount: number,
     cid: string,
     royalties: number
-  ) => Promise<boolean>
+  ) => OperationReturn
 }
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
 export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
@@ -145,6 +138,8 @@ export const useUserStore = create<UserState>()(
           const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
 
+          // After 15sec suggest the user to cancel, it will go on
+          // if they accept the tx
           const timeout = setTimeout(() => {
             show(
               title,
@@ -153,6 +148,7 @@ export const useUserStore = create<UserState>()(
           }, 15000)
 
           const op = await op_to_send.send(send_options)
+
           clearTimeout(timeout)
 
           try {
@@ -166,14 +162,11 @@ export const useUserStore = create<UserState>()(
               confirm.completed ? `${title} Successful` : `${title} Error`,
               `[see on tzkt.io](https://tzkt.io/${op.opHash})`
             )
-            return true
+            return op.opHash
           } catch (e) {
             showError('Transfer', e)
           }
-
-          return false
         },
-
         sync: async ({ rpcNode }) => {
           const network = {
             type: NetworkType.MAINNET,
@@ -245,30 +238,28 @@ export const useUserStore = create<UserState>()(
         },
         resetProxy: () =>
           set({ proxyAddress: undefined, proxyName: undefined }),
-
         registry: async (alias, metadata_cid) => {
+          const handleOp = get().handleOp
           const subjktAddressOrProxy = get().proxyAddress || SUBJKT_CONTRACT
 
-          return await Tezos.wallet.at(subjktAddressOrProxy).then((c) =>
-            c.methods
-              .registry(
-                `ipfs://${metadata_cid}`
-                  .split('')
-                  .reduce(
-                    (hex, c) =>
-                      (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
-                    ''
-                  ),
-                alias
-                  .split('')
-                  .reduce(
-                    (hex: string, c: string) =>
-                      (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
-                    ''
-                  )
+          const contract = await Tezos.wallet.at(subjktAddressOrProxy)
+          const op = contract.methods.registry(
+            `ipfs://${metadata_cid}`
+              .split('')
+              .reduce(
+                (hex, c) =>
+                  (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
+                ''
+              ),
+            alias
+              .split('')
+              .reduce(
+                (hex: string, c: string) =>
+                  (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
+                ''
               )
-              .send({ amount: 0 })
           )
+          return await handleOp(op, 'Subjkt Registration', { amount: 0 })
         },
         swap: async (
           from,
@@ -299,7 +290,7 @@ export const useUserStore = create<UserState>()(
               creator
             )
 
-            const operations = [
+            const operations: WalletParamsWithKind[] = [
               createAddOperatorCall(
                 proxyContract,
                 objkt_id,
@@ -453,7 +444,7 @@ export const useUserStore = create<UserState>()(
           const isSwapTeia = contract_address === MARKETPLACE_CONTRACT_TEIA
           if (proxyAddress && isSwapTeia) {
             /* collab contract cancel swap for Teia Marketplace case */
-            const data = {
+            const data: any = {
               marketplaceAddress: contract_address,
               swap_id: swap_id,
             }
@@ -481,11 +472,10 @@ export const useUserStore = create<UserState>()(
           })
         },
         reswap: async (nft, price, swap) => {
-          // // TODO: this function currently does not take collab contracts to account
+          // TODO: this function currently does not take collab contracts to account
           const { proxyAddress, handleOp } = get()
           const step = useModalStore.getState().step
           const showError = useModalStore.getState().showError
-          // const close = useModalStore.getState().close
           const show = useModalStore.getState().show
 
           step(
@@ -502,7 +492,7 @@ export const useUserStore = create<UserState>()(
           let proxyContract = undefined
           if (proxyAddress) {
             show('Reswap', 'reswapping is not yet supported in collab mode')
-            return false
+            return
             // proxyContract = await Tezos.wallet.at(proxyAddress)
           }
 
@@ -515,7 +505,7 @@ export const useUserStore = create<UserState>()(
 
           const current_contract = proxyContract || marketplaceContract
 
-          const list = [
+          const list: WalletParamsWithKind[] = [
             // cancel current swap
             {
               kind: OpKind.TRANSACTION,
@@ -545,14 +535,12 @@ export const useUserStore = create<UserState>()(
           console.debug(list)
           try {
             const batch = Tezos.wallet.batch(list)
-
             return await handleOp(batch, 'Reswap')
           } catch (e) {
             showError('Reswap', e)
           }
         },
         mint: async (tz, amount, cid, royalties) => {
-          // show feedback component with following message and progress indicator
           const handleOp = get().handleOp
           const step = useModalStore.getState().step
           const { proxyAddress } = get()
@@ -560,7 +548,6 @@ export const useUserStore = create<UserState>()(
 
           step('Mint', 'minting OBJKT', true)
 
-          // const DEFAULT_ERROR_MESSAGE = 'an error occurred ❌'
           const contract = await Tezos.wallet.at(
             proxyAddress || MARKETPLACE_CONTRACT_V1
           )
@@ -581,8 +568,6 @@ export const useUserStore = create<UserState>()(
             amount: 0,
             storageLimit: 310,
           })
-          // const status = await mint_op.confirmation()
-          // call mint method
         },
       }),
       {

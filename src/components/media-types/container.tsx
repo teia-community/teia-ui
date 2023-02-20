@@ -19,31 +19,18 @@ import { MIMETYPE } from '@constants'
 /**
  * This component handles fullscreen mode
  * and inView prop for lazy loading
- */
-
-/**
- * This component handles fullscreen mode
- * and inView prop for lazy loading
- * @param {Object} containerOptions
- * @param {import("@types").NFT} containerOptions.nft
- * @param {React.ReactNode} containerOptions.children
- * @param {boolean} containerOptions.nofullscreen
- * @param {boolean} containerOptions.displayView - On OBJKT display
- *
+y*
  **/
 export const Container = ({
   nft,
   children,
   displayView,
-}: // nofullscreen,
-//flex = false,
-{
+}: {
   nft: NFT
-  children: JSX.Element | JSX.Element[] | undefined
+  children: React.ReactNode
   displayView?: boolean
-  // nofullscreen?: boolean
 }) => {
-  const domElement = useRef()
+  const domElement = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState<boolean>()
 
   const { ref, inView } = useInView({
@@ -59,6 +46,7 @@ export const Container = ({
   ].includes(nft.mime_type)
 
   const toggleFullScreen = () => {
+    if (!domElement.current) return
     if (screenfull.isFullscreen) {
       screenfull.exit()
     } else {

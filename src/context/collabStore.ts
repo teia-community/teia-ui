@@ -12,7 +12,7 @@ import {
 } from 'zustand/middleware'
 
 import { useModalStore } from './modalStore'
-import { Tezos } from './userStore'
+import { Tezos, useUserStore } from './userStore'
 import { MichelsonMap } from '@taquito/michelson-encoder'
 import { packData, Packer } from '@utils/swap'
 interface CollabState {
@@ -83,17 +83,23 @@ export const useCollabStore = create<CollabState>()(
               }, 2000)
             })
         },
+
         sign: async (objkt_id) => {
-          await Tezos.wallet
-            .at(SIGNING_CONTRACT)
-            .then((c) =>
-              c.methods.sign(objkt_id).send({ amount: 0, storageLimit: 310 })
-            )
-            .then((op) => console.log(op))
+          const handleOp = useUserStore.getState().handleOp
+          const step = useModalStore.getState().step
+          step('Signing OBJKT', 'Waiting for wallet', true)
+          const contract = await Tezos.wallet.at(SIGNING_CONTRACT)
+
+          const op = contract.methods.sign(objkt_id)
+
+          return await handleOp(op, 'Signing OBJKT', {
+            amount: 0,
+            storageLimit: 310,
+          })
         },
         originateProxy: async (participantData: any) => {
           const step = useModalStore.getState().step
-          const showModal = useModalStore.getState().show
+          const handleOp = useUserStore.getState().handleOp
 
           console.log('originateProxy', participantData)
 
@@ -113,22 +119,13 @@ export const useCollabStore = create<CollabState>()(
           const { packed } = await Packer.packData(packDataParams)
 
           // Blockchain ops
-          await Tezos.wallet
-            .at(PROXY_FACTORY_CONTRACT)
-            .then((c) =>
-              c.methods.create_proxy(packed, 'hic_proxy').send({ amount: 0 })
-            )
-            .then((result) => {
-              console.log('Result of originate call', result)
+          const contract = await Tezos.wallet.at(PROXY_FACTORY_CONTRACT)
+          const op = contract.methods.create_proxy(packed, 'hic_proxy')
 
-              // Set the operation hash to trigger the countdown that checks for the originated contract
-              set({
-                originationOpHash: result.opHash,
-              })
-            })
-            .catch((e) => {
-              showModal('Originate (Error)', e.message || 'an error occurred')
-            })
+          const opHash = await handleOp(op, 'Originate', { amount: 0 })
+          set({
+            originationOpHash: opHash,
+          })
         },
       }),
       {
