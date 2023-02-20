@@ -105,7 +105,7 @@ export default defineConfig(({ mode }) => {
       // import md as ReactComponent
       mdPlugin({ mode: 'react' }),
       // our custom plugin
-      copyPdfData(),
+      //copyPdfData(),
       // EJS replacement in HTML
       ViteEjsPlugin({
         BUILD_COMMIT: commitHash,

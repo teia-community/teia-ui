@@ -1,6 +1,6 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf'
+import { Document, Page } from 'react-pdf/dist/esm/entry.vite'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
