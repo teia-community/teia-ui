@@ -42,6 +42,10 @@ import type { Listing, NFT, SubjktInfo, Tx } from '@types'
 
 // type OperationReturn = Promise<string | TransactionWalletOperation | undefined>
 type OperationReturn = Promise<string | undefined>
+
+interface SyncOptions {
+  rpcNode?: RPC_NODES
+}
 interface UserState {
   /** The user tezos address */
   address?: string
@@ -65,7 +69,7 @@ interface UserState {
     }
   ) => OperationReturn
   /** Wallet sync  */
-  sync: ({ rpcNode }: { rpcNode?: RPC_NODES }) => OperationReturn
+  sync: (opts?: SyncOptions) => OperationReturn
   /** Wallet unsync  */
   unsync: () => void
   /** Register SUBJKT  */
@@ -167,10 +171,10 @@ export const useUserStore = create<UserState>()(
             showError('Transfer', e)
           }
         },
-        sync: async ({ rpcNode }) => {
+        sync: async (opts) => {
           const network = {
             type: NetworkType.MAINNET,
-            rpcUrl: rpcNode || useLocalSettings.getState().rpcNode,
+            rpcUrl: opts?.rpcNode || useLocalSettings.getState().rpcNode,
           }
 
           // Set the client theme
