@@ -7,6 +7,7 @@ import laggy from '@utils/swr-laggy-middleware'
 import styles from '@style'
 import { Identicon } from '@atoms/identicons'
 import { Line } from '@atoms/line'
+import { gql } from 'graphql-request'
 function SubjktsSearchResults() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('term') || ''
@@ -15,11 +16,9 @@ function SubjktsSearchResults() {
     ['subjkts-search', searchTerm],
     async (ns, term) => {
       const result = await fetchGraphQL(
-        `
+        gql`
           query getSubjkts($subjkt: String!) {
-            teia_users(
-              where: { name: { _ilike: $subjkt } }
-            ) {
+            teia_users(where: { name: { _ilike: $subjkt } }) {
               user_address
               name
               metadata {

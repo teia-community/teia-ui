@@ -101,7 +101,7 @@ export const Header = () => {
 
   // on Menu Toggle or Sign in
   useEffect(() => {
-    const updateTitle = ([address, proxyAddress, proxyName]) => {
+    const updateTitle = ([address, proxyAddress, proxyName, userInfo]) => {
       setSyncLabel(address ? 'Unsync' : 'Sync')
       if (address) {
         // is menu closed?
@@ -122,7 +122,7 @@ export const Header = () => {
     }
 
     return useUserStore.subscribe(
-      (st) => [st.address, st.proxyAddress, st.proxyName],
+      (st) => [st.address, st.proxyAddress, st.proxyName, st.userInfo],
       updateTitle
     )
   }, [])
