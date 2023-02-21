@@ -2,10 +2,10 @@
 import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
-import { IconToggle } from '@atoms/toggles'
-import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
+import { IconToggle, Toggle } from '@atoms/toggles'
+import { SingleViewIcon, MasonryIcon, ChevronIcon, FiltersIcon } from '@icons'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { useLocalSettings } from '@context/localSettingsStore'
@@ -13,15 +13,17 @@ import { useLocation, useNavigate } from 'react-router'
 import { useEffect } from 'react'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
+import { Input } from '@atoms/input'
+import { useSearchParams } from 'react-router-dom'
 
-// const MediaFilter = ({ label, tagline }) => {
-//   return (
-//     <div className={styles.media_type}>
-//       <Toggle box label={label} />
-//       <p className={styles.tagline}>{tagline}</p>
-//     </div>
-//   )
-// }
+const MediaFilter = ({ label, tagline }) => {
+  return (
+    <div className={styles.media_type}>
+      <Toggle box label={label} />
+      <p className={styles.tagline}>{tagline}</p>
+    </div>
+  )
+}
 
 const locationMap = new Map([
   ['/', 'Recent Sales'],
@@ -51,7 +53,7 @@ const locationNeedSync = ['/feed/friends']
 const locationPaths = [...locationMap.keys()]
 
 export const FeedToolbar = ({ feeds_menu = false }) => {
-  // const [price, setPrice] = useState({ from: 0, to: 0 })
+  const [price, setPrice] = useState({ from: 0, to: 0 })
 
   const [viewMode, setViewMode] = useLocalSettings(
     (st) => [st.viewMode, st.setViewMode],
@@ -61,6 +63,8 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   const [feedLabel, setFeedLabel] = useState('Recent Sales')
 
   const navigate = useNavigate()
+
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     for (const pth of locationPaths.slice(1)) {
@@ -72,8 +76,18 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
     // return locationMap[location]
   }, [location])
 
+  const updateParams = useCallback(
+    (key, value) => {
+      setSearchParams({
+        ...Object.fromEntries(searchParams),
+        [key]: value,
+      })
+    },
+    [searchParams, setSearchParams]
+  )
+
   // TODO: finish the filtering logic
-  // const filters = false
+  const filters = true
   return (
     <motion.div className={styles.toolbar}>
       {feeds_menu && (
@@ -130,8 +144,37 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
           icon={<MasonryIcon />}
         />
       </div>
+      {true && (
+        <DropdownButton
+          direction="left"
+          menuID="sort"
+          icon={<FiltersIcon />}
+          label="Sort"
+          className={styles.sort_area}
+        >
+          <DropDown left menuID="sort">
+            <motion.div key="filters" className={styles.filters_container}>
+              <motion.div key="media" className={styles.filter_box}>
+                <Button onClick={() => updateParams('sort', 'price')} box fit>
+                  By Price
+                </Button>
+                <Button
+                  onClick={() => updateParams('sort', 'buy_date')}
+                  box
+                  fit
+                >
+                  By Last Purchase Date
+                </Button>
+                <Button onClick={() => updateParams('sort', 'id')} box fit>
+                  By ID Number
+                </Button>
+              </motion.div>
+            </motion.div>
+          </DropDown>
+        </DropdownButton>
+      )}
       {/* KEEP */}
-      {/* {filters && (
+      {filters && (
         <DropdownButton
           direction="left"
           menuID="filters"
@@ -164,78 +207,68 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
               </motion.div>
               <motion.div key="prices" className={styles.filter_box}>
                 <h1>Price</h1>
-                <div style={{ display: 'flex' }}>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={1e6}
-                    onChange={(e) => {
-                      console.log(e.target.value)
-                      setPrice({ ...price, from: e.target.value })
-                      console.log(price)
-                    }}
-                    placeholder={`0`}
-                    label="From"
-                    value={price.from}
-                  >
-                    <Line/>
-                  </Input>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={1e6}
-                    onChange={(e) => {
-                      console.log(e.target.value)
-                      setPrice({ ...price, to: e.target.value })
-                      console.log(price)
-                    }}
-                    placeholder={`0`}
-                    label="To"
-                    value={price.to}
-                  >
-                    <Line/>
-                  </Input>
+                <div>
+                  <div style={{ display: 'flex' }}>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={1e6}
+                      onChange={(e) => {
+                        console.log(e.target.value)
+                        setPrice({ ...price, from: e.target.value })
+                        console.log(price)
+                      }}
+                      placeholder={`0`}
+                      label="From"
+                      value={price.from}
+                    >
+                      <Line />
+                    </Input>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={1e6}
+                      onChange={(e) => {
+                        console.log(e.target.value)
+                        setPrice({ ...price, to: e.target.value })
+                        console.log(price)
+                      }}
+                      placeholder={`0`}
+                      label="To"
+                      value={price.to}
+                    >
+                      <Line />
+                    </Input>
+                  </div>
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <Toggle box label="Primary" />
+                    <Toggle box label="Secondary" />
+                  </div>
                 </div>
               </motion.div>
               <motion.div key="tags" className={styles.filter_box}>
                 <h1>Featured tags</h1>
                 <p className={styles.tagline}>Events</p>
                 <div className={styles.tags}>
-                  <Toggle
-                    box
-                    key="pakistan"
-                    label="Pakistan"
-                  />
+                  <Toggle box key="pakistan" label="Pakistan" />
                   <Toggle box key="ukraine" label="Ukraine" />
                   <Toggle box key="iran" label="Iran" />
                 </div>
                 <p className={styles.tagline}>Popular</p>
                 <div className={styles.tags}>
-                  <Toggle
-                    box
-                    key="pixelart"
-                    label="pixelart"
-                  />
-                  <Toggle
-                    box
-                    key="generativeart"
-                    label="generativeart"
-                  />
+                  <Toggle box key="pixelart" label="pixelart" />
+                  <Toggle box key="generativeart" label="generativeart" />
                   <Toggle box key="gan" label="gan" />
                 </div>
               </motion.div>
             </motion.div>
             <div key="confirm_box" className={styles.confirm_box}>
-              <Button>
-                Clear
-              </Button>
-              <Button onClick={() => context.closeDropdowns()}>
-                Ok
-              </Button>
+              <Button>Clear</Button>
+              {/* <Button onClick={() => context.closeDropdowns()}>Ok</Button> */}
             </div>
           </DropDown>
         </DropdownButton>
-      )} */}
+      )}
     </motion.div>
   )
 }
