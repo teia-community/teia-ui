@@ -4,7 +4,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 const meta: Meta<typeof Button> = {
   title: 'Atoms/Button',
   component: Button,
-
   argTypes: {
     onClick: { action: 'clicked' },
   },

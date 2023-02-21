@@ -1,0 +1,37 @@
+import { Canvas, Meta, Story } from '@storybook/blocks'
+
+import * as FeedbackStories from './Feedback.stories'
+import {
+  ArgsTable,
+  Description,
+  Primary,
+  PRIMARY_STORY,
+  Subtitle,
+  Title,
+} from '@storybook/blocks'
+
+<Meta of={FeedbackStories} />
+
+# Feedback
+
+Pretty rough for now, the feedback component is an HOC controlled by a
+[Zustand](https://zustand-demo.pmnd.rs/) store.
+
+`useModalStore`, the hook associated with the zustand store has a few methods, where `message` can be a markdown string.
+
+- `step(title:string,message:string, start?:boolean)`: A progress step without buttons, `start` is an optional bool to scroll to top.
+- `show(title:string,message:string)`: Show a dialog with a close button.
+
+## Random Notes
+
+- The `MintStore` and methods in `@data/ipfs` also make use of the feedback automatically and provide feedback.
+- The `UserStore` has a `handleOp` method that takes a [WalletOperationBatch](https://tezostaquito.io/typedoc/classes/_taquito_taquito.walletoperationbatch.html) or a [ContractMethod(Wallet)](https://tezostaquito.io/typedoc/classes/_taquito_taquito.contractmethod.html) and deals with sending the tx, reporting feedback to the user using the above methods. This is now shared by all the contract call on teia.
+
+<Canvas columns={1}>
+  {/* <Title/> */}
+  {/* <Subtitle /> */}
+  {/* <Description /> */}
+  {/* <Primary /> */}
+  {/* <ArgsTable story={FeedbackStories.Transactions} /> */}
+  <Story of={FeedbackStories.Transactions} />
+</Canvas>

@@ -19,32 +19,40 @@ const meta: Meta<typeof Select> = {
   tags: ['autodocs'],
 
   argTypes: {},
-  parameters: {
-    docs: {
-      page: () => (
-        <>
-          <Title />
-          <Subtitle />
-          <Description />
-          <Primary />
-          <ArgsTable story={PRIMARY_STORY} />
-          Check the other stories in the sidebar for examples
-          {/* <Stories /> */}
-        </>
-      ),
-    },
-  },
+  // parameters: {
+  //   docs: {
+  //     page: () => (
+  //       <>
+  //         <Title />
+  //         <Subtitle />
+  //         <Description />
+  //         <Primary />
+  //         <ArgsTable story={PRIMARY_STORY} />
+  //         Check the other stories in the sidebar for examples
+  //         {/* <Stories /> */}
+  //       </>
+  //     ),
+  //   },
+  // },
 }
 
 export default meta
 type Story = StoryObj<typeof Select>
 
 export const Base: Story = {
+  decorators: [
+    (Story, context) => (
+      <div>
+        <p>This select has search enabled. This is powered by react-select</p>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     options: LANGUAGES_OPTIONS,
     search: true,
   },
 }
 export const Themes = {
-  render: () => <ThemeSelection />,
+  render: () => <ThemeSelection apply />,
 }
