@@ -1,12 +1,20 @@
 import React, { memo } from 'react'
 import hash from 'fnv1a'
 
-export const IconCache = React.createContext({})
+// The HOC
+export const IconCache = React.createContext<{ [key: string]: string }>({})
+// The Hook
 export const useIconCache = () => React.useContext(IconCache)
 
-const withIcon = (icon) => {
-  const Icon = (props) => {
-    const { size = 30, viewBox = null } = props
+interface WithIconProps {
+  size: number
+  viewBox: number
+}
+
+// SVG Icon Cache system using refs
+const withIcon = (icon: string, defaultViewBox?: number) => {
+  const Icon = (props: WithIconProps) => {
+    const { size = 30, viewBox = defaultViewBox } = props
     const cache = useIconCache()
 
     const cachedId = cache[icon]
