@@ -10,7 +10,7 @@ export const ThemeSelection = (props) => {
     <Select
       alt="theme selection"
       value={{ label: THEMES[theme], value: theme }}
-      onChange={(e) => setTheme(e.value)}
+      onChange={(e) => setTheme(e.value, props.apply)}
       options={THEME_OPTIONS}
       {...props}
     />
