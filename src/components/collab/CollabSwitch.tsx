@@ -1,39 +1,49 @@
 import { Button } from '@atoms/button'
-import { fetchGraphQL, getCollabsForAddress } from '@data/api'
+import { apiSWR, fetchGraphQL } from '@data/api'
 import { CollabContractsOverview } from '@pages/collaborate/manage'
 import { useEffect, useState } from 'react'
 
 import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
+import { Teia_Split_Contracts } from 'gql'
+import { Loading } from '@atoms/loading'
 
-export const CollabSwitch = ({ address, name, className }) => {
-  const [collabs, setCollabs] = useState([])
+export const CollabSwitch = ({
+  address,
+  name,
+  className,
+}: {
+  address: string
+  name: string
+  className?: string
+}) => {
+  // const [collabs, setCollabs] = useState<Teia_Split_Contracts[]>()
   const [selectCollab, setSelectCollab] = useState(false)
 
-  useEffect(() => {
-    // On boot, see what addresses the synced address can manage
-    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
-      address: address,
-    }).then(({ data, errors }) => {
-      if (data) {
-        // const shareholderInfo = data.shareholder.map(s => s.split_contract);
-        // setCollabs(shareholderInfo || [])
-        const managedCollabs = data.split_contracts
-        setCollabs(managedCollabs || [])
-      }
-    })
-  }, [address])
+  const { data, error } = apiSWR.useGetCollabsForAddress('collab-switch', {
+    address,
+  })
+
+  if (error) {
+    throw error
+  }
 
   const flexBetween = classNames(
     collabStyles.flex,
     collabStyles.flexBetween,
     className
   )
+  if (!address) {
+    return 'Not logged in'
+  }
+  if (!data) {
+    return <Loading message={'loading collab switch'} />
+  }
 
   return (
     <>
       {/* User has collabs available */}
-      {collabs.length > 0 && (
+      {data.split_contracts.length > 0 && (
         <div className={flexBetween}>
           <p>
             <span style={{ opacity: 0.5 }}>minting as</span> {name}

@@ -3,7 +3,7 @@ import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 import mime from 'mime-types'
 import axios from 'axios'
 import { Buffer } from 'buffer'
-import { fetchGraphQL } from './api'
+import { api } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { FileForm, FileMint, MintFormat } from '@types'
@@ -94,40 +94,38 @@ export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
 }
 
 const isDoubleMint = async (uri: string) => {
-  const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
-    tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
-      token_id
-    }
-  }`
   const { proxyAddress, address } = useUserStore.getState()
   const { show } = useModalStore.getState()
-  const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
-    address: proxyAddress || address,
-    ids: [uri],
+
+  const res = await api.uriMintedByAddress({
+    address: proxyAddress || address || '',
+    uris: [uri],
   })
+  // await fetchGraphQL(uriQuery, 'uriQuery', {
+  //   address: proxyAddress || address,
+  //   ids: [uri],
+  // })
 
-  console.debug(data)
+  console.debug(res)
 
-  if (errors) {
-    show(`GraphQL Error: ${JSON.stringify(errors)}`)
-    return true
-  } else if (data) {
-    if (!data.tokens) return false
-    const areAllTokensBurned = data.tokens.every(
-      ({ editions }: { editions: number }) => editions === 0
-    )
+  // if (errors) {
+  //   show(`GraphQL Error: ${JSON.stringify(errors)}`)
+  //   return true
+  // } else if (data) {
+  if (!res.tokens) return false
+  const areAllTokensBurned = res.tokens.every((token) => token.editions === 0)
 
-    if (areAllTokensBurned) {
-      return false
-    }
-
-    show(
-      `Duplicate mint detected: [#${data.tokens[0].token_id}](/objkt/${data.tokens[0].token_id}) is already minted`
-    )
-
-    return true
+  if (areAllTokensBurned) {
+    return false
   }
-  return false
+
+  show(
+    `Duplicate mint detected: [#${res.tokens[0].token_id}](/objkt/${res.tokens[0].token_id}) is already minted`
+  )
+
+  return true
+  // }
+  // return false
 }
 
 interface PrepareProps {

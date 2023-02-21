@@ -1,50 +1,14 @@
-import { HEN_CONTRACT_FA2 } from '@constants'
+// import { HEN_CONTRACT_FA2 } from '@constants'
+// import axios from 'axios'
 import axios from 'axios'
-export const BaseTokenFieldsFragment = `
-fragment baseTokenFields on tokens {
-  artifact_uri
-  display_uri
-  thumbnail_uri
-  metadata_uri
+import { gql, GraphQLClient } from 'graphql-request'
+import { getSdk, getSdkWithHooks } from '../gql'
 
-  artist_address
-  artist_profile {
-    name
-    is_split
-  }
-  description
-  editions
-  fa2_address
-  listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {
-    amount
-    amount_left
-    contract_address
-    price
-    status
-    type
-  }
-  mime_type
-  minted_at
-  metadata_status
-  name
-  price
-  
-  royalties
-  royalties_total
- 
-  royalty_receivers {
-    receiver_address
-    royalties
-  }
-  teia_meta {
-    accessibility
-    content_rating
-    is_signed
-    preview_uri
-  }
-  token_id
-}
-`
+const client = new GraphQLClient(import.meta.env.VITE_TEIA_GRAPHQL_API)
+const clientTZP = new GraphQLClient(import.meta.env.VITE_TZPROFILES_GRAPHQL_API)
+export const api = getSdk(client)
+export const apiTzp = getSdk(clientTZP)
+export const apiSWR = getSdkWithHooks(client)
 
 export async function fetchGraphQL(
   operationsDoc: string,
@@ -54,7 +18,9 @@ export async function fetchGraphQL(
   const result = await fetch(import.meta.env.VITE_TEIA_GRAPHQL_API, {
     method: 'POST',
     body: JSON.stringify({
-      query: operationsDoc,
+      query: gql`
+        ${operationsDoc}
+      `,
       variables,
       operationName,
     }),
@@ -63,190 +29,54 @@ export async function fetchGraphQL(
   return await result.json()
 }
 
-export const getCollabsForAddress = `query GetCollabs($address: String!) {
-  split_contracts: teia_split_contracts(where: {_or: [{administrator_address: {_eq: $address}}, {shareholders: {shareholder_address: {_eq: $address}}}]}) {
-    contract_address
-    contract_profile {
+export const getNameForAddress = gql`
+  query GetNameForAddress($address: String!) {
+    teia_users(where: { user_address: { _eq: $address } }) {
       name
-      metadata {
-        data
-      }
-    }
-    administrator_address
-    shareholders {
-      shareholder_address
-      shareholder_profile {
-        name
-      }
-      shares
-      holder_type
     }
   }
-}`
-
-export const getNameForAddress = `query GetNameForAddress($address: String!) {
-  teia_users(where: {user_address: {_eq: $address}}) {
-    name
-  }
-}`
-
-// TODO: add all supported event types
-const query_objkt = `
-${BaseTokenFieldsFragment}
-query objkt($id: String!) {
-  tokens_by_pk(fa2_address: "${HEN_CONTRACT_FA2}", token_id: $id) {
-    ...baseTokenFields
-    artist_profile {
-      name
-      is_split
-      split_contract {
-        administrator_address
-        shareholders {
-          shareholder_address
-          shareholder_profile {
-            user_address
-            name
-          }
-          holder_type
-          shares
-        }
-      }
-    }
-    signatures {
-      shareholder_address
-    }
-    rights
-    right_uri
-    listings(where: {status: {_eq: "active"}}, order_by: {price: asc}) {
-      type
-      contract_address
-      amount
-      amount_left
-      swap_id
-      ask_id
-      offer_id
-      price
-      start_price
-      end_price
-      seller_address
-      seller_profile {
-        name
-      }
-      status
-    }
-    holdings(where: {amount: {_gt: "0"}}) {
-      holder_address
-      amount
-      holder_profile {
-        name
-      }
-    }
-    tags {
-      tag
-    }
-    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "VERSUM_SWAP", "FA2_TRANSFER"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
-      timestamp
-      implements
-      ophash
-      id
-      type
-      price
-      amount
-      editions
-      seller_address
-      seller_profile {
-        name
-      }
-      buyer_address
-      buyer_profile {
-        name
-      }
-      from_address
-      from_profile {
-        name
-      }
-      to_address
-      to_profile {
-        name
-      }
-    }
-  }
-}
 `
 
-export async function getUser(addressOrName: string, type = 'user_address') {
-  const { data } = await fetchGraphQL(
-    `
-  query addressQuery($addressOrName: String!) {
-    teia_users(where: { ${type}: {_eq: $addressOrName}}) {
-      user_address
-      name
-      metadata {
-        data
-      }
-    }
-  }
-  `,
-    'addressQuery',
-    {
-      addressOrName,
-    }
-  )
+// TODO: add all supported event types
 
+export async function getUser(addressOrSubjkt: string, type = 'user_address') {
+  // const { data } = await fetchGraphQL(
+  //   type === 'name' ? userByName : userByAddress,
+  //   'addressQuery',
+  //   {
+  //     addressOrSubjkt,
+  //   }
+  // )
+  const query = type === 'name' ? api.userByName : api.userByAddress
+  const data = await query({ addressOrSubjkt })
+  console.log({ data })
   return data?.teia_users?.length ? data.teia_users[0] : null
+
+  // return data?.teia_users?.length ? data.teia_users[0] : null
 }
 
 export async function fetchCollabCreations(
   addressOrSubjkt: string,
   type = 'address'
 ) {
-  const { data } = await fetchGraphQL(
-    `
-    ${BaseTokenFieldsFragment}
-    query GetCollabCreations($addressOrSubjkt: String!) {
-      tokens(where: {${
-        type === 'address'
-          ? `artist_address: {_eq: $addressOrSubjkt}`
-          : `artist_profile: {name: {_eq: $addressOrSubjkt }}`
-      }, editions: {_gt: "0"}}, order_by: {token_id: desc}) {
-        ...baseTokenFields
-        tags {
-          tag
-        }
-      }
-      split_contracts: teia_split_contracts(where: {${
-        type === 'address'
-          ? `contract_address: {_eq: $addressOrSubjkt}`
-          : `contract_profile: {name: {_eq: $addressOrSubjkt}}`
-      }}) {
-        administrator_address
-        shareholders {
-          shareholder_address
-          shareholder_profile {
-            name
-          }
-          holder_type
-        }
-        contract_address
-        contract_profile {
-          name
-          metadata {
-            data
-          }
-        }
-      }
-    }`,
-    'GetCollabCreations',
-    { addressOrSubjkt }
-  )
-
+  // const { data } = await fetchGraphQL(
+  //   type === 'address' ? collabCreationsFromAddress : collabCreationsFromName,
+  //   'GetCollabCreations',
+  //   { addressOrSubjkt }
+  // )
+  const query =
+    type === 'address'
+      ? api.collabCreationsFromAddress
+      : api.collabCreationsFromName
+  const data = await query({ addressOrSubjkt })
   return data
 }
 
 export async function fetchObjktDetails(id: string) {
-  const { data } = await fetchGraphQL(query_objkt, 'objkt', {
-    id,
-  })
+  // const { data } = await fetchGraphQL(query_objkt, 'objkt', {
+  //   id,
+  // })
+  const data = await api.objkt({ id })
   return data.tokens_by_pk
 }
 

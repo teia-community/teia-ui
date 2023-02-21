@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
-import { BaseTokenFieldsFragment } from '@data/api'
+import { BaseTokenFieldsFragment } from '@data/queries'
 
 import { useOutletContext } from 'react-router'
 

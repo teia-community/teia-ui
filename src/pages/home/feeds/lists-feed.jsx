@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import TokenCollection from '@atoms/token-collection'
-import { BaseTokenFieldsFragment } from '@data/api'
+import { BaseTokenFieldsFragment } from '@data/queries'
 import { gql } from 'graphql-request'
 import { Input } from '@atoms/input'
 import { useState } from 'react'

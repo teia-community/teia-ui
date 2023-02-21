@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
-import { BaseTokenFieldsFragment } from '@data/api'
+import { BaseTokenFieldsFragment } from '@data/queries'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 

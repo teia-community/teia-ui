@@ -3,7 +3,7 @@ import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import flatten from 'lodash/flatten'
 import TokenCollection from '@atoms/token-collection'
-import { BaseTokenFieldsFragment } from '@data/api'
+import { BaseTokenFieldsFragment } from '@data/queries'
 import styles from '@style'
 
 function FundFeed({

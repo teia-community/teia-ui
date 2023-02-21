@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
-import useSWR from 'swr'
 
 import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
   METADATA_CONTENT_RATING_MATURE,
 } from '@constants'
-import { fetchObjktDetails } from '@data/api'
+import { apiSWR } from '@data/api'
 import { Loading } from '@atoms/loading'
 import { Page } from '@atoms/layout'
 import { RenderMediaType } from '@components/media-types'
@@ -17,6 +16,8 @@ import useSettings from '@hooks/use-settings'
 import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
 import { NFT } from '@types'
+import laggy from '@utils/swr-laggy-middleware'
+import { useMemo } from 'react'
 
 type ObjktDisplayContext = {
   nft: NFT
@@ -67,78 +68,75 @@ export const ObjktDisplay = () => {
   const { walletBlockMap, nsfwMap, photosensitiveMap, underReviewMap } =
     useSettings()
 
-  const { data: nft, error }: { data?: NFT; error?: Error } = useSWR(
+  const { data, error } = apiSWR.useObjkt(
     ['/token', id],
-    async () => {
-      if (id) {
-        const objkt = (await fetchObjktDetails(id)) as NFT
-
-        if (!objkt) {
-          let isNum = /^\d+$/.test(id)
-          if (isNum) {
-            throw new Error(`Cannot find an OBJKT with id: ${id}`, {
-              cause: 'Unknown OBJKT',
-            })
-          }
-
-          throw new Error(
-            `Received a non numeric token_id: ${id}.
-          This can happen if the requested SUBJKT is conflicting with a protected route. 
-          You can still access it by its address (tz/<tz-address>)`,
-            { cause: 'Conflicting route' }
-          )
-        }
-
-        if (
-          nsfwMap.get(objkt.token_id) === 1 ||
-          objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
-        ) {
-          objkt.isNSFW = true
-        }
-        if (
-          photosensitiveMap.get(objkt.token_id) === 1 ||
-          objkt.teia_meta?.accessibility?.hazards.includes(
-            METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
-          )
-        ) {
-          objkt.isPhotosensitive = true
-        }
-
-        objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
-        objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
-        objkt.listings = objkt.listings.filter(
-          ({ seller_address }: { seller_address: string }) =>
-            walletBlockMap.get(seller_address) !== 1
-        )
-
-        return objkt
-      }
-    },
+    { id: id ? id : '-1' },
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
+      use: [laggy],
     }
   )
+  const nft = useMemo(() => {
+    if (data) {
+      const objkt = data.tokens_by_pk as NFT
+      if (!objkt && id) {
+        let isNum = /^\d+$/.test(id)
+        if (isNum) {
+          throw new Error(`Cannot find an OBJKT with id: ${id}`, {
+            cause: 'Unknown OBJKT',
+          })
+        }
 
-  const loading = !nft && !error
+        throw new Error(
+          `Received a non numeric token_id: ${id}.
+          This can happen if the requested SUBJKT is conflicting with a protected route.
+          You can still access it by its address (tz/<tz-address>)`,
+          { cause: 'Conflicting route' }
+        )
+      }
 
-  if (loading) {
-    return (
-      <Page title="loading">
-        {loading && <Loading message="Loading OBJKT" />}
-      </Page>
-    )
-  }
+      if (
+        nsfwMap.get(objkt.token_id) === 1 ||
+        objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
+      ) {
+        objkt.isNSFW = true
+      }
+      if (
+        photosensitiveMap.get(objkt.token_id) === 1 ||
+        objkt.teia_meta?.accessibility?.hazards.includes(
+          METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
+        )
+      ) {
+        objkt.isPhotosensitive = true
+      }
+
+      objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
+      objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
+      objkt.listings = objkt.listings.filter(
+        ({ seller_address }: { seller_address: string }) =>
+          walletBlockMap.get(seller_address) !== 1
+      )
+
+      return objkt
+    }
+  }, [data?.tokens_by_pk])
+  if (!id) return
 
   if (error) {
     throw error //new Error('Error Fetching OBJKTs for {}')
   }
 
   if (!nft) {
-    return
+    return (
+      <Page title="loading">
+        <Loading message="Loading OBJKT" />
+      </Page>
+    )
   }
+
   return (
-    <Page className={styles.profile_page} title={nft?.name}>
+    <Page className={styles.profile_page} title={nft.name}>
       <>
         {nft.restricted ? (
           <div className={styles.restricted}>

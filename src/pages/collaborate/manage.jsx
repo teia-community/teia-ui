@@ -1,95 +1,99 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { Container } from '@atoms/layout'
-import styles from '@components/collab/index.module.scss'
-import { fetchGraphQL, getCollabsForAddress } from '@data/api'
+import { apiSWR } from '@data/api'
 // import { Input } from '@atoms/input'
-import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
+// import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
 import { CollabList } from '@components/collab/manage/CollabList'
 import { useUserStore } from '@context/userStore'
 import { useCollabStore } from '@context/collabStore'
 import { shallow } from 'zustand/shallow'
+import { Loading } from '@atoms/loading'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const address = useUserStore((st) => st.address)
 
   const [
     originatedContract,
-    originationOpHash,
-    findOriginatedContractFromOpHash,
+    // originationOpHash,
+    // findOriginatedContractFromOpHash,
   ] = useCollabStore(
     (st) => [
       st.originatedContract,
-      st.originationOpHash,
-      st.findOriginatedContractFromOpHash,
+      // st.originationOpHash,
+      // st.findOriginatedContractFromOpHash,
     ],
     shallow
   )
 
-  const [collabs, setCollabs] = useState([])
+  // const [collabs, setCollabs] = useState([])
   // const [managedCollabs, setManagedCollabs] = useState([])
-  const [loadingCollabs, setLoadingCollabs] = useState(true)
+  // const [loadingCollabs, setLoadingCollabs] = useState(true)
 
-  const [checkInterval, setCheckInterval] = useState(30)
-  const [timerEndDate, setTimerEndDate] = useState()
+  // const [checkInterval, setCheckInterval] = useState(30)
+  // const [timerEndDate, setTimerEndDate] = useState()
 
   // TODO - maybe allow manual input of a KT address
   // const [addAddressManually, setAddAddressManually] = useState(false)
   // const [manualAddress, setManualAddress] = useState('')
 
-  useEffect(() => {
-    // const isChecking = originationOpHash && !checkingForOrigination
-    // setCheckingForOrigination(isChecking)
+  // useEffect(() => {
+  //   // const isChecking = originationOpHash && !checkingForOrigination
+  //   // setCheckingForOrigination(isChecking)
 
-    if (!(originationOpHash && !timerEndDate)) {
-      return
-    }
-    const timerDate = new Date()
-    timerDate.setTime(timerDate.getTime() + checkInterval * 1000)
-    setTimerEndDate(timerDate)
-  }, [originationOpHash, timerEndDate, checkInterval])
+  //   if (!(originationOpHash && !timerEndDate)) {
+  //     return
+  //   }
+  //   const timerDate = new Date()
+  //   timerDate.setTime(timerDate.getTime() + checkInterval * 1000)
+  //   setTimerEndDate(timerDate)
+  // }, [originationOpHash, timerEndDate, checkInterval])
 
-  useEffect(() => {
+  const { error, data } = apiSWR.useGetCollabsForAddress('/collabs-manage', {
+    address,
+  })
+  const collabs = useMemo(() => {
     if (!address) {
       return
     }
-
-    setLoadingCollabs(true)
     console.debug('Now checking for available collabs')
 
     // On boot, see what addresses the synced address can manage
-    fetchGraphQL(getCollabsForAddress, 'GetCollabs', {
-      address,
-    }).then(({ data }) => {
-      setLoadingCollabs(false)
+    if (!data) {
+      return
+    }
+    const allCollabs = data.split_contracts || []
+    const adminCollabs = allCollabs.filter(
+      (c) => c.administrator_address === address
+    )
+    const participantCollabs = allCollabs.filter(
+      (c) => c.administrator_address !== address
+    )
 
-      if (!data) {
-        return
-      }
-      const allCollabs = data.split_contracts || []
-      const adminCollabs = allCollabs.filter(
-        (c) => c.administrator_address === address
-      )
-      const participantCollabs = allCollabs.filter(
-        (c) => c.administrator_address !== address
-      )
+    // Show admin followed by participant
+    const availableCollabs = showAdminOnly
+      ? allCollabs.filter((c) => c.administrator_address === address)
+      : [...adminCollabs, ...participantCollabs]
 
-      // Show admin followed by participant
-      const availableCollabs = showAdminOnly
-        ? allCollabs.filter((c) => c.administrator_address === address)
-        : [...adminCollabs, ...participantCollabs]
-
-      setCollabs(availableCollabs)
-    })
-  }, [address, originatedContract, showAdminOnly])
-
-  const _onTimerComplete = () => {
-    findOriginatedContractFromOpHash(originationOpHash)
-    setCheckInterval(10)
+    return availableCollabs
+  }, [data, address, originatedContract, showAdminOnly])
+  if (!address) {
+    return
   }
+  if (!data) {
+    return <Loading message={'Loading Collabs'} />
+  }
+
+  if (error) {
+    throw error
+  }
+  // const _onTimerComplete = () => {
+  //   findOriginatedContractFromOpHash(originationOpHash)
+  //   // setCheckInterval(10)
+  // }
 
   return (
     <Container>
-      {originationOpHash && timerEndDate && (
+      {/* {originationOpHash && timerEndDate && (
         <p className={styles.mb3}>
           Collab contract creation in progress...{' '}
           <CountdownTimer
@@ -106,9 +110,9 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
           </p>
           <p>Address: {originatedContract.address}</p>
         </div>
-      )}
+      )} */}
 
-      {collabs.length > 0 && (
+      {collabs && collabs.length > 0 && (
         <CollabList
           description={
             showAdminOnly
@@ -126,13 +130,13 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
                     />
                 )} */}
 
-      {collabs.length === 0 && !originationOpHash && (
+      {/* {collabs.length === 0 && !originationOpHash && (
         <p>
           {loadingCollabs
             ? 'Looking for collabs...'
             : 'You aren’t part of any collaborations at the moment'}
         </p>
-      )}
+      )} */}
     </Container>
   )
 }
