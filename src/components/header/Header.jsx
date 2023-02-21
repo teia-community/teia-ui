@@ -27,11 +27,6 @@ import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { shallow } from 'zustand/shallow'
 
-const setDataTheme = (theme) => {
-  const root = document.documentElement
-  root.setAttribute('data-theme', theme)
-}
-
 export const Header = () => {
   const [
     address,
@@ -62,7 +57,8 @@ export const Header = () => {
 
   // Subscribe to theme changes using zustand
   useEffect(() => {
-    const unsub = useLocalSettings.subscribe((st) => st.theme, setDataTheme, {
+    const applyTheme = useLocalSettings.getState().applyTheme
+    const unsub = useLocalSettings.subscribe((st) => st.theme, applyTheme, {
       fireImmediately: true,
     })
     return unsub

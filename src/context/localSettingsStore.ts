@@ -8,7 +8,7 @@ import { useUserStore } from './userStore'
 
 type ViewMode = 'single' | 'masonry'
 
-type Theme = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
+export type Theme = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
   'https://mainnet.api.tez.ie',
@@ -37,7 +37,8 @@ interface LocalSettingsState {
   setZen: (zen: boolean) => void
   toggleTheme: () => void
   setViewMode: (mode: ViewMode) => void
-  setTheme: (theme: Theme) => void
+  setTheme: (theme: Theme, apply?: boolean) => void
+  applyTheme: (theme: Theme) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
@@ -73,7 +74,16 @@ export const useLocalSettings = create<LocalSettingsState>()(
                 : state.themeDark,
           })),
         setViewMode: (viewMode: ViewMode) => set({ viewMode }),
-        setTheme: (theme: Theme) => set({ theme }),
+        setTheme: (theme, apply) => {
+          set({ theme })
+          if (apply) {
+            get().applyTheme(theme)
+          }
+        },
+        applyTheme: (theme) => {
+          const root = document.documentElement
+          root.setAttribute('data-theme', theme)
+        },
         setRpcNode: async (rpcNode) => {
           set({ rpcNode })
           await useUserStore.getState().sync({ rpcNode })
