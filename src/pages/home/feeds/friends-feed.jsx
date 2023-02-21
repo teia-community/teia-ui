@@ -8,15 +8,22 @@ import { useParams } from 'react-router'
 import styles from '@style'
 async function fetchAllFrensAddresses(address) {
   const { errors, data } = await fetchGraphQL(
-    `
-    query collectorGallery($address: String!) {
-      holdings(where: {holder_address: {_eq: $address}, amount: { _gt: 0 }, token: { artist_address: { _neq: $address }}}, order_by: {token_id: desc}) {
-        token {
-          artist_address
+    gql`
+      query collectorGallery($address: String!) {
+        holdings(
+          where: {
+            holder_address: { _eq: $address }
+            amount: { _gt: 0 }
+            token: { artist_address: { _neq: $address } }
+          }
+          order_by: { token_id: desc }
+        ) {
+          token {
+            artist_address
+          }
         }
       }
-    }
-  `,
+    `,
     'collectorGallery',
     {
       address,

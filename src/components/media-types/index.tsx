@@ -192,7 +192,7 @@ export const RenderMediaType = ({
     )
     console.error(err)
     // throw err
-    return
+    return null
   }
 
   return (

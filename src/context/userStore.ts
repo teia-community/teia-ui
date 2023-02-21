@@ -161,7 +161,6 @@ export const useUserStore = create<UserState>()(
               `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})`
             )
             const confirm = await op.confirmation()
-
             show(
               confirm.completed ? `${title} Successful` : `${title} Error`,
               `[see on tzkt.io](https://tzkt.io/${op.opHash})`
@@ -189,18 +188,23 @@ export const useUserStore = create<UserState>()(
           let activeAccount = await wallet.client.getActiveAccount()
           if (
             activeAccount === undefined ||
-            activeAccount.network.rpcUrl !== network.rpcUrl
+            activeAccount?.network?.rpcUrl !== network.rpcUrl
           ) {
             await wallet.requestPermissions({ network })
             activeAccount = await wallet.client.getActiveAccount()
           }
           const current = await wallet.getPKH()
-          set({
-            address: current,
-            userInfo: current && (await getUser(current)),
-          })
+          if (current) {
+            const info = await getUser(current)
+            console.log('getting user info', info)
+            set({
+              address: current,
+              userInfo: await getUser(current),
+            })
+          }
+
           // console.log(this.state)
-          return activeAccount?.address
+          return current
         },
         unsync: async () => {
           // console.log('disconnect wallet')
@@ -208,8 +212,9 @@ export const useUserStore = create<UserState>()(
           await wallet.client.clearActiveAccount()
           set({
             address: undefined,
-            proxyAddress: undefined,
             userInfo: undefined,
+            proxyAddress: undefined,
+            proxyName: undefined,
           })
         },
         setAccount: async () => {
@@ -217,12 +222,12 @@ export const useUserStore = create<UserState>()(
             Tezos !== undefined
               ? await wallet.client.getActiveAccount()
               : undefined
-          set({
-            userInfo:
-              current?.address &&
-              (await getUser(current.address, 'user_address')),
-            address: current?.address,
-          })
+          if (current?.address) {
+            set({
+              userInfo: await getUser(current.address, 'user_address'),
+              address: current.address,
+            })
+          }
         },
         getBalance: async (address) => {
           if (address) {
@@ -263,7 +268,7 @@ export const useUserStore = create<UserState>()(
                 ''
               )
           )
-          return await handleOp(op, 'Subjkt Registration', { amount: 0 })
+          return await handleOp(op, 'Editing Profile', { amount: 0 })
         },
         swap: async (
           from,

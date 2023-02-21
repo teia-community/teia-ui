@@ -100,9 +100,9 @@ export type SplitContract = {
 }
 
 export type Signature = {
-  fa2_address: string
-  token_id: string
-  shareholder_address: string
+  fa2_address?: string
+  token_id?: string
+  shareholder_address?: string
 }
 
 export type ListingStatus = {}
@@ -119,7 +119,7 @@ export type Listing = {
   ask_id?: string
   contract_address: string
   end_price?: number
-  key: number
+  key?: number
   offer_id?: string
   price: number
   seller_address: string
@@ -235,7 +235,7 @@ export type TokenResponse = {
 export type ArtistProfile = {
   name?: string
   user_address?: string
-  is_split: boolean
+  is_split?: boolean
   split_contract?: SplitContract
 }
 

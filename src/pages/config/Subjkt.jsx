@@ -13,25 +13,26 @@ import _ from 'lodash'
 import styles from '@style'
 import { Line } from '@atoms/line'
 import { Buffer } from 'buffer'
+import { gql } from 'graphql-request'
 
-const query_tz = `
-query addressQuery($address: String!) {
-  teia_users(where: { user_address: {_eq: $address}}) {
-    user_address
-    name
-    metadata {
-      data
+const query_tz = gql`
+  query addressQuery($address: String!) {
+    teia_users(where: { user_address: { _eq: $address } }) {
+      user_address
+      name
+      metadata {
+        data
+      }
     }
   }
-}
 `
 
-const query_name_exist = `
-query nameExists($name: String!) {
-  teia_users(where: { name: {_eq: $name}}) {
-    user_address
+const query_name_exist = gql`
+  query nameExists($name: String!) {
+    teia_users(where: { name: { _eq: $name } }) {
+      user_address
+    }
   }
-}
 `
 
 async function fetchTz(address) {
@@ -122,19 +123,15 @@ export const Subjkt = () => {
       return
     }
 
-    useModalStore.setState({
-      visible: true,
-      message: 'uploading SUBJKT',
-      progress: true,
-      confirm: false,
-    })
+    const show = useModalStore.getState().show
+    const step = useModalStore.getState().step
+
+    step('Editing Profile', 'uploading SUBJKT')
 
     if (selectedFile) {
       const [file] = selectedFile
 
-      useModalStore.setState({
-        message: 'uploading indenticon',
-      })
+      step('Editing Profile', 'uploading identicon')
 
       const buffer = Buffer.from(await file.arrayBuffer())
       const picture_cid = await uploadFileToIPFSProxy({
@@ -147,9 +144,8 @@ export const Subjkt = () => {
       description,
       identicon,
     })
-    useModalStore.setState({
-      message: 'uploading metadatas',
-    })
+
+    step('Editing Profile', 'uploading metadatas')
 
     console.debug('Uploading metadatas file to IPFS', JSON.parse(meta))
 
@@ -159,34 +155,15 @@ export const Subjkt = () => {
     })
 
     if (subjkt_meta_cid == null) {
-      useModalStore.setState({
-        confirm: true,
-        message: 'Error uploading metadatas',
-        confirmCallback: () => {
-          useModalStore.setState({ visible: false })
-        },
-      })
+      show('Editing Profile (Error)', 'Error uploading SUBJKT')
       console.error('Error uploading metadatas file to IPFS')
       return
     }
     console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
-    useModalStore.setState({
-      message: 'minting SUBJKT',
-      progress: true,
-      confirm: false,
-    })
+    step('Editing Profile', 'Minting SUBJKT')
 
     await registry(subjkt, subjkt_meta_cid)
-
-    useModalStore.setState({
-      message: 'SUBJKT Minted',
-      progress: false,
-      confirm: true,
-      confirmCallback: () => {
-        useModalStore.setState({ visible: false })
-      },
-    })
   }
 
   // upload file

@@ -13,7 +13,7 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
   const bNum = beneficiaries.length
 
   // Proxy contract creation function
-  const [originateProxy] = useCollabStore((st) => st.originateProxy) // use mockProxy instead for fake return data
+  const originateProxy = useCollabStore((st) => st.originateProxy) // use mockProxy instead for fake return data
 
   const originateContract = async () => {
     // shares should be object where keys are addresses and
