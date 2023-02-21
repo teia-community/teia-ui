@@ -125,7 +125,7 @@ export const History = () => {
                 key={`t-${e.id}`}
                 eventType={
                   <>
-                    <TradeIcon size={14} viewBox={16} />
+                    <TradeIcon size={14} />
                     <a
                       href={`https://tzkt.io/${e.ophash}`}
                       target="_blank"
@@ -153,7 +153,7 @@ export const History = () => {
                 key={`t-${e.id}`}
                 eventType={
                   <>
-                    <SwapIcon size={14} viewBox={16} />
+                    <SwapIcon size={14} />
                     <a
                       href={`https://tzkt.io/${e.ophash}`}
                       target="_blank"
@@ -190,7 +190,7 @@ export const History = () => {
                 key={`t-${e.id}`}
                 eventType={
                   <>
-                    <TradeIcon size={14} viewBox={16} />
+                    <TradeIcon size={14} />
                     <a
                       href={`https://tzkt.io/${e.ophash}`}
                       target="_blank"
@@ -213,7 +213,7 @@ export const History = () => {
                 key={`t-${e.id}`}
                 eventType={
                   <>
-                    <BurnIcon size={14} viewBox={16} />
+                    <BurnIcon size={14} />
                     <a
                       href={`https://tzkt.io/${e.ophash}`}
                       target="_blank"
@@ -243,7 +243,7 @@ export const History = () => {
                 key={`t-${e.id}`}
                 eventType={
                   <>
-                    <MintedIcon size={14} viewBox={16} />
+                    <MintedIcon size={14} />
                     <div className={styles.history__mint__op}>Minted</div>
                   </>
                 }
