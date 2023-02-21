@@ -116,7 +116,7 @@ interface UserState {
   ) => OperationReturn
 }
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
-export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
+export const Tezos = new TezosToolkit(import.meta.env.VITE_TEZOS_RPC)
 
 const Packer = new MichelCodecPacker()
 
@@ -158,7 +158,8 @@ export const useUserStore = create<UserState>()(
           try {
             step(
               title,
-              `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})`
+              `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})
+              __closing this dialog has no effect on the transaction__`
             )
             const confirm = await op.confirmation()
             show(
@@ -430,8 +431,6 @@ export const useUserStore = create<UserState>()(
             }
           } catch (error) {
             showError('Collect', error)
-          } finally {
-            close()
           }
         },
         cancelV1: async (swap_id) => {

@@ -2,6 +2,7 @@ import '@styles/index.scss'
 import { themes } from '@storybook/theming'
 import { THEME_OPTIONS } from '@constants'
 import { decorators as shared } from '../src/stories/shared'
+
 export const globalTypes = {
   theme: {
     toolbar: {
