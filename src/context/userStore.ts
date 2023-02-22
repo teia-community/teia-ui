@@ -116,7 +116,7 @@ interface UserState {
   ) => OperationReturn
 }
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
-export const Tezos = new TezosToolkit(import.meta.env.VITE_TEZOS_RPC)
+export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
 
 const Packer = new MichelCodecPacker()
 
