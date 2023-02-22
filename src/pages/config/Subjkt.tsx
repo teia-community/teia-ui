@@ -176,7 +176,6 @@ export const Subjkt = () => {
   // upload file
 
   const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event)
     if (event.target.files) {
       const [file] = event.target.files
       setPreview(URL.createObjectURL(file))
