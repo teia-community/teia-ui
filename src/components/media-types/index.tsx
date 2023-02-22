@@ -15,24 +15,29 @@ import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
 
-/**
- * Method that handles the rendering of any of the supported
- * media types.
- */
+interface RenderMediaTypeProps {
+  /**The nft with the core fragments*/
+  nft: NFT
+  /**When minting this is a base64 (or ObjectURL) representation of the image/video */
+  previewUri?: string
+  /**When minting this is a base64 (or ObjectURL) representation of the cover image/video */
+  previewDisplayUri?: string
+  /**false on feeds, true on objkt detail view. */
+  displayView?: boolean
+  /**hacky way to pass the details hover for now... */
+  details?: JSX.Element | JSX.Element[]
+}
 
+/**
+ * Method that handles the rendering of any of the supported media types.
+ */
 export const RenderMediaType = ({
   nft,
   previewUri,
   previewDisplayUri,
   displayView,
   details,
-}: {
-  nft: NFT
-  previewUri?: string
-  previewDisplayUri?: string
-  displayView?: boolean
-  details?: JSX.Element | JSX.Element[]
-}) => {
+}: RenderMediaTypeProps) => {
   const [forceArtifact, setForceArtifact] = useState(false)
   const parsedArtifactUri = useMemo(
     () =>
