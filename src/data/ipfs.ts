@@ -7,6 +7,7 @@ import { fetchGraphQL } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { FileForm, FileMint, MintFormat } from '@types'
+import { gql } from 'graphql-request'
 
 /**
  * @typedef { {path: string?, blob: Blob} } FileHolder
@@ -95,11 +96,21 @@ export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
 }
 
 const isDoubleMint = async (uri: string) => {
-  const uriQuery = `query uriQuery($address: String!, $ids: [String!] = "") {
-    tokens(order_by: {minted_at: desc}, where: {metadata_status: { _eq: "processed" }, artifact_uri: {_in: $ids}, artist_address: {_eq: $address}}) {
-      token_id
+  const uriQuery = gql`
+    query uriQuery($address: String!, $ids: [String!] = "") {
+      tokens(
+        order_by: { minted_at: desc }
+        where: {
+          editions: { _gt: "0" }
+          metadata_status: { _eq: "processed" }
+          artifact_uri: { _in: $ids }
+          artist_address: { _eq: $address }
+        }
+      ) {
+        token_id
+      }
     }
-  }`
+  `
   const { proxyAddress, address } = useUserStore.getState()
   const { show } = useModalStore.getState()
   const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
