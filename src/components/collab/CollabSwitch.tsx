@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
-import { Teia_Split_Contracts } from 'gql'
+// import { Teia_Split_Contracts } from 'gql'
 import { Loading } from '@atoms/loading'
 
 export const CollabSwitch = ({
