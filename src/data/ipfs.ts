@@ -190,7 +190,7 @@ export const prepareFile = async ({
   }
 
   // upload cover image
-  let displayUri = ''
+  let displayUri = uri
   if (generateDisplayUri && cover) {
     const coverCid = await uploadFileToIPFSProxy({
       blob: new Blob([cover.buffer]),
@@ -211,7 +211,7 @@ export const prepareFile = async ({
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  if (generateDisplayUri && thumbnail) {
+  if (thumbnail) {
     const thumbnailCid = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
       path: `thumbnail_${
