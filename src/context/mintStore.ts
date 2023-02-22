@@ -100,7 +100,6 @@ export const useMintStore = create<MintState>()(
             description,
             tags,
             cover,
-            thumbnail,
             photosensitive,
             nsfw,
             reset,
