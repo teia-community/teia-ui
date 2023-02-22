@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import get from 'lodash/get'
-import { useEffect, useState } from 'react'
+import { type ChangeEvent, useEffect, useState } from 'react'
 import { Page } from '@atoms/layout'
 import { Input } from '@atoms/input'
 import { Button } from '@atoms/button'
@@ -35,7 +35,7 @@ const query_name_exist = gql`
   }
 `
 
-async function fetchTz(address) {
+async function fetchTz(address: string) {
   const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
     address,
   })
@@ -52,7 +52,10 @@ export const Subjkt = () => {
   const [subjkt, setSubjkt] = useState('')
   const [description, setDescription] = useState('')
   const [identicon, setIdenticon] = useState('')
-  const [selectedFile, setSelectedFile] = useState('')
+  const [selectedFile, setSelectedFile] = useState<FileList | null>()
+  const [preview, setPreview] = useState('')
+
+  const feedback_title = 'Editing Profile'
 
   const [address, proxyAddress, registry] = useUserStore((st) => [
     st.address,
@@ -105,7 +108,8 @@ export const Subjkt = () => {
 
     const holder = data.teia_users[0]
 
-    if (holder.user_address === address) return false
+    if (holder.user_address === address || holder.user_address === proxyAddress)
+      return false
 
     console.error(`name exists and is registered to ${holder.user_address}`)
 
@@ -123,29 +127,34 @@ export const Subjkt = () => {
       return
     }
 
+    let updated_identicon = identicon
+
     const show = useModalStore.getState().show
     const step = useModalStore.getState().step
 
-    step('Editing Profile', 'uploading SUBJKT')
+    step(feedback_title, 'uploading SUBJKT')
 
     if (selectedFile) {
       const [file] = selectedFile
 
-      step('Editing Profile', 'uploading identicon')
+      step(feedback_title, 'uploading identicon')
 
       const buffer = Buffer.from(await file.arrayBuffer())
-      const picture_cid = await uploadFileToIPFSProxy({
-        blob: new Blob([buffer]),
-        path: file.name,
-      })
-      setIdenticon(`ipfs://${picture_cid}`)
+      const picture_cid = await uploadFileToIPFSProxy(
+        {
+          blob: new Blob([buffer]),
+          path: file.name,
+        },
+        feedback_title
+      )
+      updated_identicon = `ipfs://${picture_cid}`
     }
     const meta = JSON.stringify({
       description,
-      identicon,
+      identicon: updated_identicon,
     })
 
-    step('Editing Profile', 'uploading metadatas')
+    step(feedback_title, 'uploading metadatas')
 
     console.debug('Uploading metadatas file to IPFS', JSON.parse(meta))
 
@@ -155,31 +164,43 @@ export const Subjkt = () => {
     })
 
     if (subjkt_meta_cid == null) {
-      show('Editing Profile (Error)', 'Error uploading SUBJKT')
+      show(`${feedback_title} (Error)`, 'Error uploading SUBJKT')
       console.error('Error uploading metadatas file to IPFS')
       return
     }
     console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
-    step('Editing Profile', 'Minting SUBJKT')
+    step(feedback_title, 'Minting SUBJKT')
+
+    setIdenticon(updated_identicon)
 
     await registry(subjkt, subjkt_meta_cid)
   }
 
   // upload file
 
-  const onFileChange = async (event) => {
-    setSelectedFile(event.target.files)
+  const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const [file] = event.target.files
+      setPreview(URL.createObjectURL(file))
+      setSelectedFile(event.target.files)
+    }
+    // const close = useModalStore.getState().close
     //const file_title = event.target.files[0].name
 
-    const [file] = event.target.files
+    // const blob = await file.arrayBuffer()
+    // setPreview(file.data.toString('base64'))
 
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const picture_cid = await uploadFileToIPFSProxy({
-      blob: new Blob([buffer]),
-      path: file.name,
-    })
-    setIdenticon(`ipfs://${picture_cid}`)
+    // const picture_cid = await uploadFileToIPFSProxy(
+    //   {
+    //     blob: new Blob([buffer]),
+    //     path: file.name,
+    //   },
+    //   feedback_title
+    // )
+
+    // setIdenticon(`ipfs://${picture_cid}`)
+    // close()
   }
 
   // const unregister = () => context.unregister()
@@ -228,13 +249,14 @@ export const Subjkt = () => {
     !loading && (
       <Page>
         <h1>Subjkt Settings</h1>
+
         <Line className={styles.title_line} />
         <div className={styles.subjkt_editor}>
           <div className={styles.fields}>
             <Identicon
               className={styles.identicon}
               address={address}
-              logo={identicon}
+              logo={preview || identicon}
             />
             <input type="file" onChange={onFileChange} title="avatar file" />
           </div>

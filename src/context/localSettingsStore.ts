@@ -4,7 +4,7 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { useUserStore } from './userStore'
+import { useModalStore } from './modalStore'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -85,8 +85,13 @@ export const useLocalSettings = create<LocalSettingsState>()(
           root.setAttribute('data-theme', theme)
         },
         setRpcNode: async (rpcNode) => {
+          const show = useModalStore.getState().show
           set({ rpcNode })
-          await useUserStore.getState().sync({ rpcNode })
+          show(
+            'RPC Node Changed',
+            'Please reload the page for it to take effect.'
+          )
+          // await useUserStore.getState().sync({ rpcNode })
         },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
