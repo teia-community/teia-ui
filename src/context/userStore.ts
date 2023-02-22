@@ -404,7 +404,6 @@ export const useUserStore = create<UserState>()(
         collect: async (listing) => {
           const handleOp = get().handleOp
           const show = useModalStore.getState().show
-          const close = useModalStore.getState().close
           const showError = useModalStore.getState().showError
 
           let batch = undefined
