@@ -5,25 +5,25 @@ import { apiSWR } from '@data/api'
 // import { CountdownTimer } from '@components/collab/manage/CountdownTimer'
 import { CollabList } from '@components/collab/manage/CollabList'
 import { useUserStore } from '@context/userStore'
-import { useCollabStore } from '@context/collabStore'
-import { shallow } from 'zustand/shallow'
+// import { useCollabStore } from '@context/collabStore'
+// import { shallow } from 'zustand/shallow'
 import { Loading } from '@atoms/loading'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const address = useUserStore((st) => st.address)
 
-  const [
-    originatedContract,
-    // originationOpHash,
-    // findOriginatedContractFromOpHash,
-  ] = useCollabStore(
-    (st) => [
-      st.originatedContract,
-      // st.originationOpHash,
-      // st.findOriginatedContractFromOpHash,
-    ],
-    shallow
-  )
+  // const [
+  //   originatedContract,
+  // originationOpHash,
+  // findOriginatedContractFromOpHash,
+  // ] = useCollabStore(
+  //   (st) => [
+  //     st.originatedContract,
+  // st.originationOpHash,
+  // st.findOriginatedContractFromOpHash,
+  //   ],
+  //   shallow
+  // )
 
   // const [collabs, setCollabs] = useState([])
   // const [managedCollabs, setManagedCollabs] = useState([])
@@ -75,7 +75,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
       : [...adminCollabs, ...participantCollabs]
 
     return availableCollabs
-  }, [data, address, originatedContract, showAdminOnly])
+  }, [data, address /*, originatedContract*/, showAdminOnly])
   if (!address) {
     return
   }

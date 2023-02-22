@@ -13,5 +13,12 @@
   "rules": {
     "jsx-a11y/media-has-caption": "off"
   },
-  "ignorePatterns": ["**/*.html", "node_polyfill.js"]
+
+  "ignorePatterns": [
+    "**/*.html",
+    "node_polyfill.js",
+    "src/stories/*",
+    ".storybook/*",
+    "src/gql/index.ts"
+  ]
 }

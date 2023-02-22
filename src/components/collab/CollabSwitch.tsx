@@ -1,7 +1,7 @@
 import { Button } from '@atoms/button'
-import { apiSWR, fetchGraphQL } from '@data/api'
+import { apiSWR } from '@data/api'
 import { CollabContractsOverview } from '@pages/collaborate/manage'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'

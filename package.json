@@ -44,9 +44,9 @@
     "test": "vite test",
     "screenshots": "playwright test",
     "eject": "react-scripts eject",
-    "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
+    "format": "prettier --write \"./src/**/*.{js,jsx,scss,ts,tsx}\"",
     "prepare": "husky install",
-    "lint": "eslint src --ext .js,.jsx",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

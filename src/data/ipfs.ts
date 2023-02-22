@@ -9,10 +9,6 @@ import { useModalStore } from '@context/modalStore'
 import { FileForm, FileMint, MintFormat } from '@types'
 
 /**
- * @typedef { {path: string?, blob: Blob} } FileHolder
- */
-
-/**
  * Upload a single file through the IPFS proxy.
  */
 export async function uploadFileToIPFSProxy(
@@ -102,17 +98,8 @@ const isDoubleMint = async (uri: string) => {
     address: proxyAddress || address || '',
     uris: [uri],
   })
-  // await fetchGraphQL(uriQuery, 'uriQuery', {
-  //   address: proxyAddress || address,
-  //   ids: [uri],
-  // })
-
   console.debug(res)
 
-  // if (errors) {
-  //   show(`GraphQL Error: ${JSON.stringify(errors)}`)
-  //   return true
-  // } else if (data) {
   if (!res.tokens) return false
   const areAllTokensBurned = res.tokens.every((token) => token.editions === 0)
 
@@ -129,21 +116,6 @@ const isDoubleMint = async (uri: string) => {
   // return false
 }
 
-interface PrepareProps {
-  name: string
-  description: string
-  tags: string
-  address: string
-  file: FileForm
-  cover: FileForm
-  thumbnail: FileForm
-  rights: string
-  rightUri?: string
-  language?: string
-  accessibility: string
-  contentRating: string
-  formats: any
-}
 export const prepareFile = async ({
   name,
   description,
@@ -270,22 +242,7 @@ export const prepareDirectory = async ({
   accessibility,
   contentRating,
   formats,
-}: {
-  name: string
-  description: string
-  tags: string
-  address: string
-  files: FileForm[]
-  cover: FileForm
-  thumbnail: FileForm
-  generateDisplayUri: string
-  rights: string
-  rightUri: string
-  language: string
-  accessibility: string
-  contentRating: string
-  formats: MintFormat[]
-}) => {
+}: PrepareDirectoryOptions) => {
   const step = useModalStore.getState().step
 
   const hashes = await uploadFilesToDirectory(files)
@@ -435,21 +392,7 @@ async function buildMetadataFile({
   accessibility,
   contentRating,
   formats,
-}: {
-  name: string
-  description: string
-  tags: string
-  uri: string
-  address: string
-  displayUri: string
-  thumbnailUri: string
-  rights: string
-  rightUri?: string
-  language: string
-  accessibility: string
-  contentRating: string
-  formats: MintFormat[]
-}) {
+}: BuildMetadataOptions) {
   const metadata: TeiaMetadata = {
     name,
     description,
@@ -475,6 +418,55 @@ async function buildMetadataFile({
   return JSON.stringify(metadata)
 }
 
+// TODO: Move types to each roots?
+
+interface PrepareProps {
+  name: string
+  description: string
+  tags: string
+  address: string
+  file: FileForm
+  cover: FileForm
+  thumbnail: FileForm
+  rights: string
+  rightUri?: string
+  language?: string
+  accessibility: string
+  contentRating: string
+  formats: any
+}
+
+interface PrepareDirectoryOptions {
+  name: string
+  description: string
+  tags: string
+  address: string
+  files: FileMint[]
+  cover: FileForm
+  thumbnail: FileForm
+  generateDisplayUri: string
+  rights: string
+  rightUri: string
+  language: string
+  accessibility: string
+  contentRating: string
+  formats: MintFormat[]
+}
+interface BuildMetadataOptions {
+  name: string
+  description: string
+  tags: string
+  uri: string
+  address: string
+  displayUri: string
+  thumbnailUri: string
+  rights: string
+  rightUri?: string
+  language?: string
+  accessibility: string
+  contentRating: string
+  formats: MintFormat[]
+}
 interface TeiaMetadata {
   name: string
   description: string
