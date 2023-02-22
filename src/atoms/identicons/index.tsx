@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { type ChangeEvent, useMemo, useState } from 'react'
 import base from 'base-x'
 import styles from '@style'
 import { HashToURL } from '@utils'
@@ -11,11 +11,11 @@ const base58 = base(alphabet58)
 
 const s = 64
 
-function bound(n, sq) {
+function bound(n: number, sq: number) {
   return Math.abs((sq - n) % sq)
 }
 
-function corner({ x, y }) {
+function corner({ x, y }: { x: number; y: number }) {
   const d = 13
   const d2 = d * 2
   const s2 = s - d
@@ -23,7 +23,7 @@ function corner({ x, y }) {
   return x + y < d || x + y > q || (x > s2 && y < d) || (y > s2 && x < d)
 }
 
-function newPath(path) {
+function newPath(path: string) {
   return path.substr(-2) !== 'M '
 }
 
@@ -31,7 +31,7 @@ function newPath(path) {
  * Generates a random valid Tezos address
  * @returns {string} - The generated address in the format prefix + base58
  */
-function dummyAddress() {
+function dummyAddress(): string {
   // prefix options
   const prefixes = [
     { tag: 0, curve: 0, prefix: 'tz1' },
@@ -51,7 +51,7 @@ function dummyAddress() {
   addressArray[0] = prefix.tag
 
   // if prefix.tag is 0, set second byte as prefix.curve
-  if (prefix.tag === 0) {
+  if (prefix.tag === 0 && prefix.curve) {
     addressArray[1] = prefix.curve
   }
 
@@ -77,10 +77,10 @@ function dummyAddress() {
  * @return {array} An array containing the path and the sum of the avatar
  * @throws {Error} If the provided address is not a valid Tezos address
  */
-function avatar(address) {
+function avatar(address: string): Array<any> {
   address = address ? address : dummyAddress()
   const decoded = base58.decode(address.trim().substr(3))
-  const hex = Buffer.from(decoded).toString('hex')
+  const hex = Buffer.from(decoded).toString('hex') as string
   const check = hex.split('').reduce((sum, x) => sum + parseInt(x, 16), 0)
   const sum = hex
     .split('')
@@ -144,9 +144,14 @@ function avatar(address) {
   }
   return [path, sum]
 }
+type IdenticonMethod = (
+  path?: string,
+  address?: string,
+  className?: string
+) => JSX.Element
 
-const identicons = [
-  (path, _address, className) => (
+const identicons: IdenticonMethod[] = [
+  (path, address, className) => (
     <svg
       className={className}
       viewBox={`0 0 ${s} ${s}`}
@@ -381,10 +386,26 @@ const identicons = [
     </svg>
   ),
 ]
+interface IdenticonProps {
+  address?: string
+  /** Either an ObjectURL | Base64 string or an IPFS hash */
+  logo?: string
+  className?: string
+}
 
-export const Identicon = ({ address = '', logo, className }) => {
+export const Identicon = ({
+  address = '',
+  logo,
+  className,
+}: IdenticonProps) => {
   const resolvedLogo = useMemo(() => {
-    return logo ? HashToURL(logo, 'CDN', { size: 'raw' }) : ''
+    if (logo) {
+      if (logo.startsWith('ipfs://')) {
+        return HashToURL(logo, 'CDN', { size: 'raw' })
+      }
+
+      return logo
+    }
   }, [logo])
 
   const [isVideo, setIsVideo] = useState(false)
@@ -396,7 +417,7 @@ export const Identicon = ({ address = '', logo, className }) => {
     isSmol ? styles.smol : ''
   )
 
-  const onLoad = ({ target: img }) => {
+  const onLoad = ({ target: img }: ChangeEvent<HTMLImageElement>) => {
     // Do whatever you want here
     const w = img.naturalWidth
     const h = img.naturalHeight
@@ -407,14 +428,14 @@ export const Identicon = ({ address = '', logo, className }) => {
 
   if (resolvedLogo) {
     return isVideo ? (
-      <video className={classes} alt="identicon" src={resolvedLogo} />
+      <video className={classes} aria-label="identicon" src={resolvedLogo} />
     ) : (
       <LazyLoadImage
         className={classes}
         src={resolvedLogo}
         alt="identicon"
         onLoad={onLoad}
-        onError={(e) => {
+        onError={(e: ErrorEvent) => {
           console.error(e)
           setIsVideo(true)
         }}

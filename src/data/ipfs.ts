@@ -16,7 +16,8 @@ import { FileForm, FileMint, MintFormat } from '@types'
  * Upload a single file through the IPFS proxy.
  */
 export async function uploadFileToIPFSProxy(
-  file: FileMint
+  file: FileMint,
+  title = 'Preparing OBJKT'
 ): Promise<string | undefined> {
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
@@ -32,7 +33,7 @@ export async function uploadFileToIPFSProxy(
     return
   }
   const total_size = file.size ? ` (${(file.size / 1e6).toFixed(1)}mb)` : ''
-  step('Preparing OBJKT', `uploading ${file.path}${total_size} as ${file_type}`)
+  step(title, `uploading ${file.path}${total_size} as ${file_type}`)
 
   console.debug(`uploading ${file.path} as ${file_type}`)
 
@@ -46,7 +47,7 @@ export async function uploadFileToIPFSProxy(
       onUploadProgress: (pe) => {
         const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
         step(
-          'Preparing OBJKT',
+          title,
           `uploading ${file.path}${total_size} as ${file_type}
 ## ${progress}%`
         )
