@@ -16,6 +16,7 @@ import {
 } from '@constants'
 import {
   extensionFromMimetype,
+  generateCoverAndThumbnail,
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
@@ -163,7 +164,14 @@ export const useMintStore = create<MintState>()(
             MIMETYPE.ZIP1,
             MIMETYPE.ZIP2,
           ].includes(artifact.mimeType)
+
           const formats = []
+
+          const generated = await generateCoverAndThumbnail(artifact)
+
+          let used_cover = cover || generated.cover
+          let used_thumb = generated.thumbnail
+
           if (artifact.mimeType.indexOf('image') === 0) {
             const format: Format = {
               mimeType: artifact.mimeType,
@@ -194,16 +202,18 @@ export const useMintStore = create<MintState>()(
           // TMP: skip GIFs to avoid making static
           if (artifact.mimeType !== MIMETYPE.GIF) {
             let coverIsGif = false
-            if (cover) {
-              coverIsGif = cover.mimeType === MIMETYPE.GIF
+            if (used_cover) {
+              coverIsGif = used_cover.mimeType === MIMETYPE.GIF
               const { imageWidth, imageHeight } = await getImageDimensions(
-                cover
+                used_cover
               )
-              cover.format = {
-                mimeType: cover.mimeType,
-                fileSize: cover.buffer.byteLength,
+              used_cover.format = {
+                mimeType: used_cover.mimeType,
+                fileSize: used_cover.buffer.byteLength,
                 fileName: `${removeExtension(artifact.file.name)}.${
-                  coverIsGif ? 'gif' : extensionFromMimetype(cover.mimeType)
+                  coverIsGif
+                    ? 'gif'
+                    : extensionFromMimetype(used_cover.mimeType)
                 }`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
@@ -211,16 +221,16 @@ export const useMintStore = create<MintState>()(
                 },
               }
             }
-            if (thumbnail && !coverIsGif) {
+            if (used_thumb && !coverIsGif) {
               const { imageWidth, imageHeight } = await getImageDimensions(
-                thumbnail
+                used_thumb
               )
-              thumbnail.format = {
-                mimeType: thumbnail.mimeType,
-                fileSize: thumbnail.buffer.byteLength,
+              used_thumb.format = {
+                mimeType: used_thumb.mimeType,
+                fileSize: used_thumb.buffer.byteLength,
                 fileName: `${removeExtension(
                   artifact.file.name
-                )}.${extensionFromMimetype(thumbnail.mimeType)}`,
+                )}.${extensionFromMimetype(used_thumb.mimeType)}`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
                   unit: 'px',
@@ -241,8 +251,8 @@ export const useMintStore = create<MintState>()(
               tags,
               address: minterAddress,
               files,
-              cover,
-              thumbnail,
+              cover: used_cover,
+              thumbnail: used_thumb,
               generateDisplayUri: true,
               rights: license?.value,
               rightUri: custom_license_uri,
@@ -259,8 +269,8 @@ export const useMintStore = create<MintState>()(
               tags,
               address: minterAddress,
               file: artifact,
-              cover,
-              thumbnail,
+              cover: used_cover,
+              thumbnail: used_thumb,
 
               rights: license?.value,
               rightUri: custom_license_uri,
