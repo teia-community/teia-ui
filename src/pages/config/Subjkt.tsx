@@ -127,6 +127,8 @@ export const Subjkt = () => {
       return
     }
 
+    let updated_identicon = identicon
+
     const show = useModalStore.getState().show
     const step = useModalStore.getState().step
 
@@ -145,11 +147,11 @@ export const Subjkt = () => {
         },
         feedback_title
       )
-      setIdenticon(`ipfs://${picture_cid}`)
+      updated_identicon = `ipfs://${picture_cid}`
     }
     const meta = JSON.stringify({
       description,
-      identicon,
+      identicon: updated_identicon,
     })
 
     step(feedback_title, 'uploading metadatas')
@@ -169,6 +171,8 @@ export const Subjkt = () => {
     console.debug('Uploaded metadatas file to IPFS', subjkt_meta_cid)
 
     step(feedback_title, 'Minting SUBJKT')
+
+    setIdenticon(updated_identicon)
 
     await registry(subjkt, subjkt_meta_cid)
   }

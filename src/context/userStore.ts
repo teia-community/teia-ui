@@ -159,8 +159,10 @@ export const useUserStore = create<UserState>()(
             step(
               title,
               `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})
-              __closing this dialog has no effect on the transaction__`
+              *closing this dialog has no effect on the transaction*`
             )
+            // skippable
+            useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
             show(
               confirm.completed ? `${title} Successful` : `${title} Error`,
