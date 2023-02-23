@@ -284,9 +284,9 @@ export const prepareDirectory = async ({
   contentRating,
   formats,
 }: {
-  name: string
-  description: string
-  tags: string
+  name?: string
+  description?: string
+  tags?: string
   address: string
   files: FileForm[]
   cover: FileForm

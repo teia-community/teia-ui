@@ -20,7 +20,7 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
-import { FileMint, Format } from '@types'
+import type { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
 
@@ -40,9 +40,9 @@ interface MintState {
   language?: SelectField
   nsfw: boolean
   photosensitive: boolean
-  cover?: FileMint
-  artifact?: FileMint
-  thumbnail?: FileMint
+  cover?: FileForm
+  artifact?: FileForm
+  thumbnail?: FileForm
   isValid: boolean
 
   reset: () => void
