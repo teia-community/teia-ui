@@ -166,7 +166,7 @@ export const useMintStore = create<MintState>()(
 
           const formats = []
 
-          const generated = await generateCoverAndThumbnail(artifact)
+          const generated = await generateCoverAndThumbnail(cover || artifact)
 
           let used_cover = cover || generated.cover
           let used_thumb = generated.thumbnail
