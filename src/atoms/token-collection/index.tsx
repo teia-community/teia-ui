@@ -20,13 +20,11 @@ import {
 import { IconCache } from '@utils/with-icon'
 import { shallow } from 'zustand/shallow'
 
-/**
- * Single view, vertical feed
- * @param {Object} feedProps - The options for the feed item
- * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
- * @returns {React.ReactElement} The feed
- */
-function SingleView({ tokens }) {
+import type { RequestDocument } from 'graphql-request'
+import { NFT } from '@types'
+
+/** Single view, vertical feed */
+function SingleView({ tokens }: { tokens: NFT[] }) {
   return (
     <div className={styles.single_view}>
       {tokens.map((token) => (
@@ -36,13 +34,8 @@ function SingleView({ tokens }) {
   )
 }
 
-/**
- * Massorny view feed
- * @param {Object} feedProps - The options for the feed item
- * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
- * @returns {React.ReactElement} The feed
- */
-function MasonryView({ tokens }) {
+/*** Masonry view feed*/
+function MasonryView({ tokens }: { tokens: NFT[] }) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
@@ -56,21 +49,31 @@ function MasonryView({ tokens }) {
     </ResponsiveMasonry>
   )
 }
-/**
- * @typedef {import("@types").NFT} NFT
- */
 
 // TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
-/**
- * Main feed component that can be either in Single or Masonry mode.
- * @param {Object} tkProps - The props
- * @param {[import("graphql-request").gql]} tkProps.query - The graphql query
- * @param {number} tkProps.itemsPerLoad - Batch size
- * @param {number} tkProps.maxItems - Max items to fetch from the indexer
- * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} tkProps.extractTokensFromResponse - Function to filter the response
- * @param {([NFT]) => [NFT]} tkProps.postProcessTokens - Final filter pass over tokens?
- * @returns {React.ReactElement} The feed
- */
+// /**
+
+interface TokenCollectionProps<ResponseData, TokensReturnType> {
+  query: RequestDocument
+  label: string
+  namespace: string
+  extractTokensFromResponse: (
+    data: ResponseData,
+    opts: PostProcess<TokensReturnType>
+  ) => TokensReturnType
+}
+
+interface PostProcess<TokensReturnType> {
+  postProcessTokens: (
+    resultsPath: string,
+    tokenPath: string,
+    keyPath: string
+  ) => TokensReturnType
+  resultsPath: string
+  tokenPath: string
+  keyPath: string
+}
+
 function TokenCollection({
   query,
   label,
@@ -99,7 +102,7 @@ function TokenCollection({
       }))
     )
   },
-}) {
+}: TokenCollectionProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
     useSettings()

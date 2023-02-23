@@ -123,6 +123,7 @@
     "vite-plugin-ejs": "^1.6.4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-filter-replace": "^0.1.10",
+    "vite-plugin-graphql-codegen": "^3.1.0",
     "vite-plugin-markdown": "^2.1.0",
     "vite-plugin-node-polyfills": "^0.7.0",
     "vite-plugin-node-stdlib-browser": "^0.1.1",
