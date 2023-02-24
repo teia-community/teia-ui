@@ -20,7 +20,7 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
-import { FileForm, Format } from '@types'
+import type { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
 import { SelectField } from '@atoms/select/types'
@@ -162,7 +162,7 @@ export const useMintStore = create<MintState>()(
 
           const formats = []
 
-          const generated = await generateCoverAndThumbnail(artifact)
+          const generated = await generateCoverAndThumbnail(cover || artifact)
 
           let used_cover = cover || generated.cover
           let used_thumb = generated.thumbnail
