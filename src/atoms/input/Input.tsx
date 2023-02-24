@@ -1,7 +1,8 @@
 import styles from '@style'
-import { memo, useCallback } from 'react'
+import { FocusEventHandler, memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 import React, { KeyboardEvent } from 'react'
+import { WithChildren } from '@types'
 type InputType =
   | 'button'
   | 'checkbox'
@@ -31,29 +32,27 @@ type InputType =
  * onChange when not using ref will return the parsed value
  * number for "number" inputs, string for the rest)
  */
-interface InputProps {
-  type: InputType
+interface InputProps<T> {
+  type?: InputType
   placeholder: string
   name?: string
   min?: number
   max?: number
   maxlength?: number
   label?: string
-  onChange?: (
-    value: number | string | React.FormEvent<HTMLInputElement>
-  ) => void
-  onBlur?: () => void
+  onChange?: (value: T) => void
+  onBlur?: FocusEventHandler<HTMLInputElement>
   // onWheel?: () => void
   disabled?: boolean
-  value?: string
-  children?: JSX.Element | JSX.Element[]
-  defaultValue?: string
+  value?: T
+  // children?: JSX.Element | JSX.Element[]
+  defaultValue?: T
   pattern?: string
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
   className?: string
 }
 
-function Input(
+function Input<T>(
   {
     type = 'text',
     placeholder = 'placeholder',
@@ -63,7 +62,7 @@ function Input(
     maxlength = 500,
     label,
     onChange = (value) => null,
-    onBlur = () => null,
+    onBlur,
     // onWheel = () => null,
     disabled,
     value: valueProp,
@@ -72,7 +71,7 @@ function Input(
     pattern,
     onKeyDown,
     className,
-  }: InputProps,
+  }: WithChildren<InputProps<T>>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) {
   const [value, setValue] = useControlled(valueProp, defaultValue)
@@ -80,7 +79,7 @@ function Input(
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
       if (ref) {
-        onChange(e)
+        onChange(e as T)
         return
       }
       const target = e.target as HTMLInputElement
@@ -93,7 +92,7 @@ function Input(
             : target.value
 
         setValue(v)
-        onChange(v)
+        onChange(v as T)
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,7 +111,7 @@ function Input(
           min={min}
           max={max}
           maxLength={maxlength}
-          defaultValue={defaultValue}
+          defaultValue={defaultValue as string}
           value={value}
           onChange={handleInput}
           onBlur={onBlur}
@@ -127,4 +126,4 @@ function Input(
   )
 }
 
-export default memo(React.forwardRef(Input))
+export default memo(React.forwardRef(Input)) as typeof Input

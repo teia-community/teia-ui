@@ -22,6 +22,7 @@ import { shallow } from 'zustand/shallow'
 
 import type { RequestDocument } from 'graphql-request'
 import { NFT } from '@types'
+import { getSdkWithHooks } from 'gql'
 
 /** Single view, vertical feed */
 function SingleView({ tokens }: { tokens: NFT[] }) {
@@ -53,8 +54,10 @@ function MasonryView({ tokens }: { tokens: NFT[] }) {
 // TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
 // /**
 
+type Query = keyof ReturnType<typeof getSdkWithHooks>
+
 interface TokenCollectionProps<ResponseData, TokensReturnType> {
-  query: RequestDocument
+  query: RequestDocument | Query
   label: string
   namespace: string
   extractTokensFromResponse: (

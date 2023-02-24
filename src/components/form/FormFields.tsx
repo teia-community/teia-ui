@@ -5,22 +5,46 @@ import styles from '@style'
 import { memo } from 'react'
 import { Upload } from '@components/upload/index'
 import { ALLOWED_FILETYPES_LABEL } from '@constants'
-import { Controller } from 'react-hook-form'
+import {
+  Control,
+  Controller,
+  FieldError,
+  FieldValues,
+  UseFormRegister,
+} from 'react-hook-form'
 import classNames from 'classnames'
+import getFields from '@pages/mint/fields'
+import { Unpacked } from '@types'
 
-const FieldError = memo(({ error, text }) => {
-  const classes = classNames({
-    [styles.error]: true,
-    [styles.text_field_error]: text,
-  })
-  return <p className={classes}>{error}</p>
-})
+const FormFieldError = memo(
+  ({ error, text }: { error?: string; text?: boolean }) => {
+    const classes = classNames({
+      [styles.error]: true,
+      [styles.text_field_error]: text,
+    })
+    return <p className={classes}>{error}</p>
+  }
+)
+
+interface FormFieldsProps<T> {
+  value: T
+  field: Unpacked<ReturnType<typeof getFields>>
+  error?: FieldError
+  register: UseFormRegister<FieldValues>
+  control: Control<FieldValues, any>
+}
 
 /**
  * Wrapper of atoms to react form with local storage support
  */
-export const FormFields = ({ value, field, error, register, control }) => {
-  const name = field.name
+export const FormFields = <T,>({
+  value,
+  field,
+  error,
+  register,
+  control,
+}: FormFieldsProps<T>) => {
+  const name = field.name || 'noname'
 
   switch (field.type) {
     case 'text':
@@ -30,11 +54,11 @@ export const FormFields = ({ value, field, error, register, control }) => {
           className={styles.field}
           type={field.type}
           label={field.label}
-          placeholder={field.placeholder}
+          placeholder={field.placeholder || ''}
           {...register(name, field.rules)}
         >
           <Line />
-          {error && <FieldError text error={error.message} />}
+          {error ? <FormFieldError text error={error.message} /> : null}
         </Input>
       )
     case 'textarea':
@@ -46,7 +70,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
           {...register(name, field.rules)}
         >
           <Line />
-          {error && <FieldError text error={error.message} />}
+          {error && <FormFieldError text error={error.message} />}
         </Textarea>
       )
     case 'select':
@@ -54,7 +78,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <Controller
           control={control}
-          defaultValue={field.defaultValue}
+          // defaultValue={field.defaultValue}
           name={name}
           rules={field.rules}
           render={({ field: { onChange, value, name, ref } }) => (
@@ -75,7 +99,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <Controller
           control={control}
-          defaultValue={field.defaultValue}
+          // defaultValue={field.defaultValue}
           name={name}
           rules={field.rules}
           render={({ field: { onChange, value, name, ref } }) => (
@@ -94,7 +118,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <Controller
           control={control}
-          defaultValue={field.defaultValue}
+          // defaultValue={field.defaultValue}
           name={name}
           rules={field.rules}
           render={({ field: { onChange, value, name, ref } }) => (
@@ -108,7 +132,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               onChange={onChange}
               allowedTypesLabel={ALLOWED_FILETYPES_LABEL}
             >
-              {error && <FieldError error={error.message} />}
+              {error && <FormFieldError error={error.message} />}
             </Upload>
           )}
         />

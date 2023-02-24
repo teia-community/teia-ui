@@ -9,7 +9,6 @@ import classnames from 'classnames'
 import { Toggle } from '@atoms/toggles'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { RotatingLogo } from '@atoms/logo'
-import useSettings from '@hooks/use-settings'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
 import { useUserStore } from '@context/userStore'
@@ -28,8 +27,6 @@ export const Footer = ({ menu, pin }: FooterProps) => {
     (st) => [st.theme, st.toggleTheme],
     shallow
   )
-
-  const { logos } = useSettings()
 
   const transition = () => {
     return {
@@ -71,7 +68,7 @@ export const Footer = ({ menu, pin }: FooterProps) => {
               alt="teia rotating logo"
               onClick={() => setLogoSeed(Math.random() * 100)}
             >
-              <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
+              <RotatingLogo seed={logoSeed} />
             </Button>
           )}
         </div>
@@ -91,7 +88,9 @@ export const Footer = ({ menu, pin }: FooterProps) => {
               <Line vertical />
 
               <div className={styles.menu_right}>
-                <div className={styles.address}>{walletPreview(address)}</div>
+                {address && (
+                  <div className={styles.address}>{walletPreview(address)}</div>
+                )}
                 <MenuItem
                   className={styles.menu_label}
                   label="Mint"

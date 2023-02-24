@@ -1,8 +1,13 @@
 import * as fflate from 'fflate'
 import mime from 'mime-types'
+
 import { MIMETYPE } from '@constants'
 
-export async function prepareFilesFromZIP(buffer) {
+interface FileBlobs {
+  [path: string]: Blob
+}
+
+export async function prepareFilesFromZIP(buffer: Uint8Array) {
   console.debug('Preparing files from ZIP')
   // unzip files
   let files = await unzipBuffer(buffer)
@@ -23,7 +28,7 @@ export async function prepareFilesFromZIP(buffer) {
   }
 
   // reformat
-  files = Object.entries(files).map((file) => {
+  let files_array = Object.entries(files).map((file) => {
     console.debug('Entry: ', file)
     return {
       path: file[0],
@@ -32,15 +37,15 @@ export async function prepareFilesFromZIP(buffer) {
   })
 
   // remove top level dir
-  files = files.filter((f) => f.path !== '')
+  files_array = files_array.filter((f) => f.path !== '')
 
-  return files
+  return files_array
 }
 
-export async function unzipBuffer(buffer) {
+export async function unzipBuffer(buffer: Uint8Array) {
   console.debug('Unzipping buffer')
-  let entries = fflate.unzipSync(buffer)
-  entries = Object.entries(entries).map((entry) => {
+  let unzipped = fflate.unzipSync(buffer)
+  let entries = Object.entries(unzipped).map((entry) => {
     console.debug('Entry: ', entry)
     return {
       path: entry[0],
@@ -49,7 +54,7 @@ export async function unzipBuffer(buffer) {
   })
 
   // Find root dir
-  let rootDir = null
+  let rootDir: string | null = null
   for (const entry of entries) {
     const filename = entry.path.replace(/^.*[\\/]/, '')
     if (filename === 'index.html') {
@@ -69,7 +74,7 @@ export async function unzipBuffer(buffer) {
 
   console.debug('Creating file map')
   // Create files map
-  const files = {}
+  const files: FileBlobs = {}
   entries.forEach((entry, index) => {
     const relPath =
       rootDir === '/' ? entry.path : entry.path.replace(`${rootDir}`, '')
@@ -85,14 +90,14 @@ export async function unzipBuffer(buffer) {
     }
 
     files[relPath] = new Blob([entry.buffer], {
-      type,
+      type: type || undefined,
     })
   })
 
   return files
 }
 
-export function injectCSPMetaTagIntoDataURI(dataURI) {
+export function injectCSPMetaTagIntoDataURI(dataURI: string) {
   // data URI -> HTML
   const prefix = 'data:text/html;base64,'
   const base64 = dataURI.replace(prefix, '')
@@ -105,7 +110,7 @@ export function injectCSPMetaTagIntoDataURI(dataURI) {
   return `${prefix}${btoa(safeHTML)}`
 }
 
-export function injectCSPMetaTagIntoBuffer(buffer) {
+export function injectCSPMetaTagIntoBuffer(buffer: ArrayBuffer) {
   // buffer -> HTML
   const html = new TextDecoder().decode(buffer)
 
@@ -116,7 +121,7 @@ export function injectCSPMetaTagIntoBuffer(buffer) {
   return new TextEncoder().encode(safeHTML)
 }
 
-export function injectCSPMetaTagIntoHTML(html) {
+export function injectCSPMetaTagIntoHTML(html: string) {
   // HTML -> doc
   const parser = new DOMParser()
   const doc = parser.parseFromString(html, 'text/html')
@@ -238,7 +243,7 @@ export function injectCSPMetaTagIntoHTML(html) {
   return `<!DOCTYPE html><html>${doc.documentElement.innerHTML}</html>`
 }
 
-export function getCoverImagePathFromBuffer(buffer) {
+export function getCoverImagePathFromBuffer(buffer: Buffer) {
   // buffer -> html
   const html = new TextDecoder().decode(buffer)
 
@@ -249,7 +254,7 @@ export function getCoverImagePathFromBuffer(buffer) {
   return getCoverImagePathFromDoc(doc)
 }
 
-function getCoverImagePathFromDoc(doc) {
+function getCoverImagePathFromDoc(doc: Document) {
   let meta = doc.head.querySelector('meta[property="cover-image"]')
   if (!meta) {
     meta = doc.head.querySelector('meta[property="og:image"]')
@@ -260,7 +265,7 @@ function getCoverImagePathFromDoc(doc) {
   return meta.getAttribute('content')
 }
 
-export async function validateFiles(files) {
+export async function validateFiles(files: FileBlobs) {
   // check for index.html file
   if (!files['index.html']) {
     return {
@@ -288,7 +293,7 @@ export async function validateFiles(files) {
   }
 }
 
-export function dataRUIToBuffer(dataURI) {
+export function dataRUIToBuffer(dataURI: string) {
   const parts = dataURI.split(',')
   const base64 = parts[1]
   const binaryStr = atob(base64)

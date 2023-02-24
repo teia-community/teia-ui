@@ -1,10 +1,23 @@
 import Button from '@atoms/button/Button'
+import getFields from '@pages/mint/fields'
 import { get } from 'lodash'
 import { memo } from 'react'
-import { useFormContext } from 'react-hook-form'
+import {
+  FieldError,
+  FieldValues,
+  SubmitHandler,
+  useFormContext,
+} from 'react-hook-form'
 import { FormFields } from './FormFields'
 
-function Form({ fields, defaultValues, children, onSubmit, onReset }) {
+interface FormProps {
+  defaultValues: { [key: string]: unknown }
+  onSubmit: SubmitHandler<FieldValues>
+  onReset: () => void
+  fields: ReturnType<typeof getFields>
+}
+
+function Form({ fields, defaultValues, onSubmit, onReset }: FormProps) {
   const {
     register,
     control,
@@ -25,7 +38,7 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
             value={value}
             control={control}
             field={f}
-            error={get(errors, f.name)}
+            error={get(errors, f.name || '') as FieldError}
           />
         )
       })}

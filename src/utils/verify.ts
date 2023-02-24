@@ -6,20 +6,22 @@ const prefixes = {
   edpk: new Uint8Array([13, 15, 37, 217]),
 }
 
-const hex2buf = (hex) =>
-  new Uint8Array(
-    hex.match(/[\da-f]{2}/gi).map(function (h) {
-      return parseInt(h, 16)
-    })
-  )
-
-const b58cdecode = (enc, prefix) => {
+const hex2buf = (hex: string) => {
+  const match = hex.match(/[\da-f]{2}/gi)
+  if (match)
+    return new Uint8Array(
+      match.map(function (h) {
+        return parseInt(h, 16)
+      })
+    )
+}
+const b58cdecode = (enc: string, prefix: Uint8Array) => {
   return import('bs58check').then((bs58check) =>
     bs58check.decode(enc).slice(prefix.length)
   )
 }
 
-export const verify = async (bytes, sig, pk) => {
+export const verify = async (bytes: string, sig, pk: string) => {
   const _sodium = await import('libsodium-wrappers')
   const sodium = await _sodium.await
   return sodium.crypto_sign_verify_detached(

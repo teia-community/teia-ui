@@ -7,12 +7,12 @@ import { useState } from 'react'
 import { Button } from '@atoms/button'
 import axios from 'axios'
 
-async function fetchList(url) {
-  const data = await axios.get(url)
-  return data.data.map((e) => e.toString())
+async function fetchList(url: string): Promise<string[]> {
+  const { data } = await axios.get<string[]>(url)
+  return data.map((e) => e.toString())
 }
 
-const lists = {
+const lists: { [key: string]: string } = {
   'NSFW List': 'https://lists.teia.art/nsfw.json',
   'Photo Sensitive List': 'https://lists.teia.art/photosensitive.json',
   'Restricted OBJKTs (deprecated)':

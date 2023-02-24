@@ -7,6 +7,7 @@ import { api } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { FileForm, FileMint, MintFormat } from '@types'
+import { pickBy } from 'lodash'
 
 /**
  * Upload a single file through the IPFS proxy.
@@ -415,7 +416,13 @@ async function buildMetadataFile({
   if (rights === 'custom') metadata.rightUri = rightUri
   if (language != null) metadata.language = language
 
-  return JSON.stringify(metadata)
+  // const cleaned = Object.keys(metadata).forEach(
+  //   (key) => get(metadata,key) === undefined && delete metadata[key]
+  // )
+
+  const cleaned_metas = pickBy(metadata, (v) => v !== undefined)
+
+  return JSON.stringify(cleaned_metas)
 }
 
 // TODO: Move types to each roots?
@@ -437,35 +444,35 @@ interface PrepareProps {
 }
 
 interface PrepareDirectoryOptions {
-  name: string
-  description: string
-  tags: string
+  name?: string
+  description?: string
+  tags?: string
   address: string
   files: FileMint[]
   cover: FileForm
   thumbnail: FileForm
-  generateDisplayUri: string
-  rights: string
-  rightUri: string
-  language: string
-  accessibility: string
-  contentRating: string
   formats: MintFormat[]
+  generateDisplayUri: string
+  rights?: string
+  rightUri?: string
+  language?: string
+  accessibility?: string
+  contentRating?: string
 }
 interface BuildMetadataOptions {
-  name: string
-  description: string
-  tags: string
+  name?: string
+  description?: string
+  tags?: string
   uri: string
   address: string
   displayUri: string
   thumbnailUri: string
-  rights: string
+  formats: MintFormat[]
+  rights?: string
   rightUri?: string
   language?: string
-  accessibility: string
-  contentRating: string
-  formats: MintFormat[]
+  accessibility?: string
+  contentRating?: string
 }
 interface TeiaMetadata {
   name: string

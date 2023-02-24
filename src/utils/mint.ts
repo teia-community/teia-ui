@@ -3,7 +3,7 @@ import {
   MIMETYPE,
   THUMBNAIL_COMPRESSOR_OPTIONS,
 } from '@constants'
-import { FileMint } from '@types'
+import type { FileForm } from '@types'
 import Compressor from 'compressorjs'
 
 /**
@@ -33,7 +33,7 @@ interface ImageDimensions {
 }
 
 export const getImageDimensions = async (
-  file: FileMint
+  file: FileForm
 ): Promise<ImageDimensions> => {
   return await new Promise((resolve, reject) => {
     if (file) {
@@ -52,15 +52,15 @@ export const getImageDimensions = async (
 }
 
 export const generateCompressedImage = async (
-  file: FileMint,
+  file: FileForm,
   options: Compressor.Options
-): Promise<FileMint | undefined> => {
+): Promise<FileForm | undefined> => {
   if (!file.file) return undefined
   const blob = await compressImage(file.file, options)
   const mimeType = blob.type
   const buffer = await blob.arrayBuffer()
   const reader = await blobToDataURL(blob)
-  return { mimeType, buffer, reader }
+  return { mimeType, buffer: new Uint8Array(buffer), reader }
 }
 
 const blobToDataURL = async (
@@ -92,8 +92,8 @@ export const compressImage = (
 }
 
 export const generateCoverAndThumbnail = async (
-  file: FileMint
-): Promise<{ cover?: FileMint; thumbnail?: FileMint }> => {
+  file: FileForm
+): Promise<{ cover?: FileForm; thumbnail?: FileForm }> => {
   // TMP: skip GIFs to avoid making static
   if (file.mimeType === MIMETYPE.GIF) {
     return {

@@ -103,7 +103,7 @@ export const PdfComponent = memo(function ({
         loading={cover}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={onDocumentLoadError}
-        title={`PDF object ${nft.token_id}`}
+        key={`PDF object ${nft.token_id}`}
         options={options}
       >
         {renderedPageNumber && renderedPageNumber !== pageNumber && (

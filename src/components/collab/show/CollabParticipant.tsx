@@ -1,11 +1,15 @@
-import get from 'lodash/get'
 import { PATH } from '@constants'
 import { Link } from 'react-router-dom'
 import styles from '../index.module.scss'
+import { Teia_Shareholders } from 'gql'
 
-export const CollabParticipant = ({ participant }) => {
-  const displayName = get(participant, 'shareholder_profile.name')
-    ? get(participant, 'shareholder_profile.name')
+export const CollabParticipant = ({
+  participant,
+}: {
+  participant: Teia_Shareholders
+}) => {
+  const displayName = participant.shareholder_profile?.name
+    ? participant.shareholder_profile.name
     : participant.shareholder_address
 
   return (

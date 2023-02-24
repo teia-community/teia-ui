@@ -1,12 +1,18 @@
 import { useRef, useEffect, useCallback } from 'react'
+import { SWRHook } from 'swr'
+import { Middleware, PublicConfiguration } from 'swr/dist/types'
 
 // taken from https://swr.vercel.app/docs/middleware#keep-previous-result
 
 // This is a SWR middleware for keeping the data even if key changes.
-function laggy(useSWRNext) {
-  return (key, fetcher, config) => {
+function laggy(useSWRNext: SWRHook) {
+  return (
+    key: string,
+    fetcher: (e: string) => any,
+    config: PublicConfiguration
+  ) => {
     // Use a ref to store previous returned data.
-    const laggyDataRef = useRef()
+    const laggyDataRef = useRef<ReturnType<typeof fetcher>>()
 
     // Actual SWR hook.
     const swr = useSWRNext(key, fetcher, config)
@@ -40,4 +46,4 @@ function laggy(useSWRNext) {
   }
 }
 
-export default laggy
+export default laggy as Middleware

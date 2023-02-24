@@ -27,7 +27,7 @@ export const CollabIssuerInfo = ({ creator }: { creator: ArtistProfile }) => {
       onBlur={() => setShowCollabSummary(false)}
     >
       <Button className={styles.issuerBtn} to={path}>
-        {name === '' ? walletPreview(user_address) : name}
+        {name === '' ? walletPreview(user_address!) : name}
       </Button>
 
       {showCollabSummary && (

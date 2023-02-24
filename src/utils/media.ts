@@ -2,25 +2,29 @@ import * as fflate from 'fflate'
 import mime from 'mime-types'
 import { ALLOWED_COVER_MIMETYPES } from '@constants'
 
-export async function unzipMedia(buffer) {
+export async function unzipMedia(buffer: Buffer) {
   // unzip into blobs
-  let entries = fflate.unzipSync(buffer)
-  entries = Object.entries(entries).map((entry) => {
+  let unzipped = fflate.unzipSync(buffer)
+  let entries = Object.entries(unzipped).map((entry) => {
     const fileName = getFileName(entry[0])
     return {
       fileName,
       buffer: entry[1],
+      mimeType: undefined as string | undefined,
     }
   })
 
   // keep only images/videos
   entries = entries
     .map((e) => {
-      e.mimeType = mime.lookup(e.fileName)
+      e.mimeType = mime.lookup(e.fileName) || undefined
       return e
     })
     .filter((e) => {
-      return ALLOWED_COVER_MIMETYPES.includes(e.mimeType)
+      if (e.mimeType) {
+        return ALLOWED_COVER_MIMETYPES.includes(e.mimeType)
+      }
+      return false
     })
 
   // format as: { meta, blob, reader }
@@ -42,7 +46,7 @@ export async function unzipMedia(buffer) {
   return media
 }
 
-export async function getMediaMetadata(blob) {
+export async function getMediaMetadata(blob: Blob) {
   if (blob.type.indexOf('image') === 0) {
     return await getImageMetadata(blob)
   } else if (blob.type.indexOf('video') === 0) {
@@ -52,7 +56,7 @@ export async function getMediaMetadata(blob) {
   }
 }
 
-export function getImageMetadata(blob) {
+export function getImageMetadata(blob: Blob) {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => {
@@ -72,7 +76,7 @@ export function getImageMetadata(blob) {
   })
 }
 
-export function getVideoMetadata(blob) {
+export function getVideoMetadata(blob: Blob) {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video')
     video.addEventListener(
@@ -98,7 +102,7 @@ export function getVideoMetadata(blob) {
   })
 }
 
-async function blobToDataURL(blob) {
+async function blobToDataURL(blob: Blob) {
   return new Promise((resolve, reject) => {
     let reader = new FileReader()
     reader.onerror = reject
@@ -107,7 +111,7 @@ async function blobToDataURL(blob) {
   })
 }
 
-function getFileName(path) {
+function getFileName(path: string) {
   const parts = path.split('/')
   return parts[parts.length - 1]
 }

@@ -1,3 +1,19 @@
+// UTILITIES
+
+import React from 'react'
+
+/** Utility type to extract a single type from an Array type */
+export type Unpacked<T> = T extends (infer U)[] ? U : T
+
+/** Wrapper type for React components with childrens */
+export type WithChildren<T = {}> = T & { children?: React.ReactNode }
+
+/** Wrapper type for React components with childrens (only React components aka clonable) */
+export type WithCompChildren<T = {}> = T & {
+  children?: React.ReactElement<any, string | React.JSXElementConstructor<any>>
+}
+
+// Global to tidy
 export interface Format {
   mimeType: string
   fileSize: number
@@ -33,7 +49,7 @@ export type FileForm = {
   /** The file object */
   file?: File
   /** The buffer extracted from the file. */
-  buffer: ArrayBuffer
+  buffer: Uint8Array
   /** The file reader*/
   reader: string | ArrayBuffer | null
   format?: Format

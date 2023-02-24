@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
+import { WithCompChildren } from '@types'
 interface DropdownButtonProps {
   menuID: string
   direction: 'left' | 'right'
@@ -11,7 +12,6 @@ interface DropdownButtonProps {
   alt: string
   icon?: React.ReactNode
   toggled: boolean
-  children: React.ReactNode
   onClick: () => void
   className?: string
 }
@@ -30,7 +30,7 @@ function DropdownButton({
   children,
   onClick,
   className,
-}: DropdownButtonProps) {
+}: WithCompChildren<DropdownButtonProps>) {
   const [open, setOpen] = useState(false)
 
   useTwemoji()

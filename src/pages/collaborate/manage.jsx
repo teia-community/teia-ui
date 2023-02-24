@@ -77,7 +77,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     return availableCollabs
   }, [data, address /*, originatedContract*/, showAdminOnly])
   if (!address) {
-    return
+    return null
   }
   if (!data) {
     return <Loading message={'Loading Collabs'} />

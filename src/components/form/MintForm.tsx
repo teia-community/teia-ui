@@ -9,9 +9,11 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { useModalStore } from '@context/modalStore'
+import { MintOutletContext } from '@pages/mint/types'
 
 export default function MintForm() {
-  const { artifact, license, minterName, address, balance } = useOutletContext()
+  const { artifact, license, minterName, address, balance } =
+    useOutletContext<MintOutletContext>()
   const navigate = useNavigate()
   const { control } = useFormContext()
   const { defaultValues } = useFormState({ control })

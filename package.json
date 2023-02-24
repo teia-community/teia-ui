@@ -36,6 +36,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/assets/*.js'",
+    "check-types": "tsc --noEmit",
     "gen-api": "graphql-codegen",
     "start": "vite",
     "serve": "vite preview",
@@ -86,6 +87,9 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/react-infinite-scroller": "^1.2.3",
+    "@types/react-lazy-load-image-component": "^1.5.2",
+    "@types/react-pdf": "^6.2.0",
     "@vitejs/plugin-react": "^3.1.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",

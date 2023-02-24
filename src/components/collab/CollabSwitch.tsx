@@ -34,7 +34,7 @@ export const CollabSwitch = ({
     className
   )
   if (!address) {
-    return 'Not logged in'
+    return <p>Not logged in</p>
   }
   if (!data) {
     return <Loading message={'loading collab switch'} />

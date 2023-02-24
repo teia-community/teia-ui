@@ -20,14 +20,10 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
-import { FileMint, Format } from '@types'
+import { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
-
-interface SelectField {
-  label?: string
-  value: string
-}
+import { SelectField } from '@atoms/select/types'
 
 interface MintState {
   title?: string
@@ -40,9 +36,9 @@ interface MintState {
   language?: SelectField
   nsfw: boolean
   photosensitive: boolean
-  cover?: FileMint
-  artifact?: FileMint
-  thumbnail?: FileMint
+  cover?: FileForm
+  artifact?: FileForm
+  thumbnail?: FileForm
   isValid: boolean
 
   reset: () => void

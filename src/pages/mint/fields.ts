@@ -48,7 +48,7 @@ export const fields = [
     type: 'text',
     placeholder: 'Comma separated. example: illustration, digital (optional)',
     rules: {
-      setValueAs: (v) =>
+      setValueAs: (v: string) =>
         join(
           uniq(
             v
@@ -107,7 +107,7 @@ export const fields = [
     type: 'text',
     rules: {
       required: true,
-      valueAs: (f) => f.value,
+      valueAs: (f: { value: string; label: string }) => f.value,
       pattern: {
         value:
           /((https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})|(ipfs:\/\/.*))/g,
@@ -119,7 +119,7 @@ export const fields = [
     label: 'Language',
     placeholder: '(optional)',
     rules: {
-      valueAs: (f) => f.value,
+      valueAs: (f: { value: string; label: string }) => f.value,
     },
     type: 'select-search',
     alt: 'token language',
@@ -157,7 +157,7 @@ export const fields = [
   },
 ]
 
-const getFields = (deps) => {
+const getFields = <T extends {}>(deps: T) => {
   // return () => {
   const keys = Object.keys(deps)
   return fields
