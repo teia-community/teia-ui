@@ -7,8 +7,8 @@ export const IconCache = React.createContext<{ [key: string]: string }>({})
 export const useIconCache = () => React.useContext(IconCache)
 
 interface WithIconProps {
-  size: number
-  viewBox: number
+  size?: number
+  viewBox?: number
 }
 
 // SVG Icon Cache system using refs

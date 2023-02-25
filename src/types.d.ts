@@ -1,6 +1,6 @@
 // UTILITIES
 
-import React from 'react'
+import type React from 'react'
 
 /** Utility type to extract a single type from an Array type */
 export type Unpacked<T> = T extends (infer U)[] ? U : T

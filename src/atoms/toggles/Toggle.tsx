@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import styles from '@style'
-import React, { useCallback } from 'react'
+import type React from 'react'
+import { useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 
 interface ToggleProps {

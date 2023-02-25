@@ -1,14 +1,9 @@
 import useSWR from 'swr'
 import axios from 'axios'
 import flatten from 'lodash/flatten'
+import type { SettingsData } from './types'
 
-/**
- * @typedef { Map<string, number> } ListMap
- * @typedef { {logos:[string], walletBlockMap:ListMap , nsfwMap: ListMap, underReviewMap:ListMap, ignoreUriMap:ListMap, feedIgnoreUriMap:ListMap, photosensitiveMap:ListMap} } SettingsData
- * @typedef { {data: SettingsData, error:Error, isLoading:boolean} } UseSettingsResult
- */
-
-function shuffleLogos(logos) {
+function shuffleLogos(logos: string[]) {
   // Shuffles the list daily
   const shuffledLogos = [...logos]
   let currentIndex = shuffledLogos.length
@@ -39,7 +34,10 @@ function shuffleLogos(logos) {
   return shuffledLogos
 }
 
-function filterWalletBlockList(restrictedLists, permittedLists) {
+function filterWalletBlockList(
+  restrictedLists: string[],
+  permittedLists: string[]
+) {
   const walletAllowList = flatten(permittedLists)
 
   // Override with permitted list
@@ -50,7 +48,7 @@ function filterWalletBlockList(restrictedLists, permittedLists) {
   return mapFromList(overiddenList)
 }
 
-const mapFromList = (input_list) => {
+const mapFromList = (input_list: string[]) => {
   const out_map = new Map()
   input_list.forEach((element) => {
     out_map.set(element, 1)
@@ -59,13 +57,10 @@ const mapFromList = (input_list) => {
   return out_map
 }
 
-const report_url = (name) => `${import.meta.env.VITE_TEIA_REPORT}/${name}`
+const report_url = (name: string) =>
+  `${import.meta.env.VITE_TEIA_REPORT}/${name}`
 
-/**
- * Fetches the various lists cached with SWR
- * @returns {SettingsData}
- */
-async function fetchSettings() {
+async function fetchSettings(): Promise<SettingsData> {
   const [
     objktBlockMapResponse,
     logosResponse,
@@ -93,7 +88,7 @@ async function fetchSettings() {
   const logoPacks = [logosResponse, logosPrideResponse]
 
   const logos = logoPacks.flatMap((logoPack) =>
-    logoPack.data.logos.map((logo) => ({
+    logoPack.data.logos.map((logo: string) => ({
       name: logo,
       themable: logoPack.data.themable,
       collection: logoPack.data.collection,
@@ -101,11 +96,13 @@ async function fetchSettings() {
   )
 
   const objktBlockMap = mapFromList(
-    objktBlockMapResponse.data.map((n) => n.toString())
+    objktBlockMapResponse.data.map((n: number) => n.toString())
   )
-  const nsfwMap = mapFromList(nsfwResponse.data.map((n) => n.toString()))
+  const nsfwMap = mapFromList(
+    nsfwResponse.data.map((n: number) => n.toString())
+  )
   const photosensitiveMap = mapFromList(
-    photosensitiveResponse.data.map((n) => n.toString())
+    photosensitiveResponse.data.map((n: number) => n.toString())
   )
   const underReviewMap = mapFromList(underReviewResponse.data)
   const ignoreUriMap = mapFromList(ignoreUriResponse.data)

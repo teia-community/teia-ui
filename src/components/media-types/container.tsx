@@ -7,7 +7,7 @@ import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
 import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
-import { NFT } from '@types'
+import type { NFT } from '@types'
 import { Button } from '@atoms/button'
 import { MIMETYPE } from '@constants'
 

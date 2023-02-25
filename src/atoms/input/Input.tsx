@@ -1,8 +1,10 @@
 import styles from '@style'
-import { FocusEventHandler, memo, useCallback } from 'react'
+import type { FocusEventHandler } from 'react'
+import { memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
-import React, { KeyboardEvent } from 'react'
-import { WithChildren } from '@types'
+import type { KeyboardEvent } from 'react'
+import React from 'react'
+import type { WithChildren } from '@types'
 type InputType =
   | 'button'
   | 'checkbox'

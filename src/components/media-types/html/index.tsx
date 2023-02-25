@@ -12,6 +12,8 @@ import { GenerativeIcon } from '@icons'
 // import './styles.css'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import type { MediaTypeProps } from '@types'
+import type { FileBlobs } from '@utils/types'
 
 const uid = Math.round(Math.random() * 1e8).toString()
 
@@ -20,18 +22,15 @@ const allowed_features =
 const sandbox_features =
   'allow-scripts allow-same-origin allow-modals allow-pointer-lock'
 
-/**
- * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
- */
-export const HTMLComponent = (props) => {
+export const HTMLComponent = (props: MediaTypeProps) => {
   const { artifactUri, displayUri, previewUri, nft, displayView } = props
 
   const address = useUserStore((st) => st.address)
   const showModal = useModalStore((st) => st.show)
 
-  let _creator_ = false
-  let _viewer_ = false
-  let _objectId_ = false
+  let _creator_
+  let _viewer_
+  let _objectId_
 
   if (nft.artist_address) {
     _creator_ = nft.artist_address
@@ -46,36 +45,41 @@ export const HTMLComponent = (props) => {
   }
 
   // preview
-  const iframeRef = useRef(null)
-  const unpackedFiles = useRef(null)
-  const unpacking = useRef(false)
-  const [validHTML, setValidHTML] = useState(null)
-  const [validationError, setValidationError] = useState(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [unpackedFiles, setUnpackedFiles] = useState<FileBlobs | null>(null)
+  const [unpacking, setUnpacking] = useState(false)
+  const [validHTML, setValidHTML] = useState(false)
+  const [validationError, setValidationError] = useState<string>()
 
   const unpackZipFiles = async () => {
-    unpacking.current = true
+    if (!previewUri)
+      throw Error('unpackZip can only be called in preview', {
+        cause: 'Wrong call to teia method',
+      })
 
+    setUnpacking(true)
     const buffer = dataRUIToBuffer(previewUri)
 
     try {
       const filesArr = await prepareFilesFromZIP(buffer)
       const files = filesArr.reduce(
-        (memo, f) => ({ ...memo, [f.path]: f.blob }),
+        (rest, f) => ({ ...rest, [f.path]: f.blob }),
         {}
       )
 
-      unpackedFiles.current = files
+      // unpackedFiles.current = files
+      setUnpackedFiles(files)
 
-      const result = await validateFiles(unpackedFiles.current)
+      const result = await validateFiles(files)
       if (result.error) {
         console.error(result.error)
         setValidationError(result.error)
       } else {
-        setValidationError(null)
+        setValidationError(undefined)
       }
       setValidHTML(result.valid)
 
-      unpacking.current = false
+      setUnpacking(false)
     } catch (e) {
       showModal(`Couldn't unpack ZIP file: ${e}`)
       console.error(e)
@@ -83,29 +87,30 @@ export const HTMLComponent = (props) => {
     }
   }
 
-  if (previewUri && !unpackedFiles.current && !unpacking.current) {
+  if (previewUri && !unpackedFiles && !unpacking) {
     unpackZipFiles()
   }
 
   useEffect(() => {
-    const handler = async (event) => {
+    const handler = async (event: MessageEvent) => {
       if (event.data !== uid) {
         return
       }
-
-      iframeRef.current.contentWindow.postMessage(
-        {
-          target: 'hicetnunc-html-preview',
-          data: unpackedFiles.current,
-        },
-        '*'
-      )
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          {
+            target: 'hicetnunc-html-preview',
+            data: unpackedFiles,
+          },
+          '*'
+        )
+      }
     }
 
     window.addEventListener('message', handler)
 
     return () => window.removeEventListener('message', handler)
-  }, [previewUri])
+  }, [previewUri, unpackedFiles])
 
   const classes = classnames({
     [styles.container]: true,

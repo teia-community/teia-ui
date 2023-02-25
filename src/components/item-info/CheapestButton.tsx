@@ -2,8 +2,9 @@ import { Button } from '@atoms/button'
 import MarketplaceLabel from '@atoms/marketplace-labels'
 import styles from '@style'
 import { useUserStore } from '@context/userStore'
+import type { Listings } from 'gql'
 
-const CheapestButton = ({ listing }) => {
+const CheapestButton = ({ listing }: { listing?: Listings }) => {
   const [address, sync, collect] = useUserStore((st) => [
     st.address,
     st.sync,

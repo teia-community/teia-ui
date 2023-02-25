@@ -23,7 +23,7 @@ import {
 import type { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
-import { SelectField } from '@atoms/select/types'
+import type { SelectField } from '@atoms/select/types'
 
 interface MintState {
   title?: string
@@ -42,6 +42,7 @@ interface MintState {
   isValid: boolean
 
   reset: () => void
+  mint: (ignoreUriMap: Map<string, number>) => void
 }
 
 const defaultValuesStored = {
@@ -61,7 +62,7 @@ const defaultValues = {
   artifact: undefined,
   cover: undefined,
   thumbnail: undefined,
-  getValuesStored: () => {},
+  // getValuesStored: () => ({}),
 }
 
 export const useMintStore = create<MintState>()(
@@ -83,7 +84,7 @@ export const useMintStore = create<MintState>()(
           )
         },
 
-        mint: async (ignoreUriMap: Map<string, number>) => {
+        mint: async (ignoreUriMap) => {
           const { proxyAddress, address, sync, mint } = useUserStore.getState()
           const {
             language,
@@ -164,8 +165,8 @@ export const useMintStore = create<MintState>()(
 
           const generated = await generateCoverAndThumbnail(cover || artifact)
 
-          let used_cover = cover || generated.cover
-          let used_thumb = generated.thumbnail
+          const used_cover = cover || generated.cover
+          const used_thumb = generated.thumbnail
 
           if (artifact.mimeType.indexOf('image') === 0) {
             const format: Format = {

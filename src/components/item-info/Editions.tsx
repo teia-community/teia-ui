@@ -1,4 +1,5 @@
 import useSettings from '@hooks/use-settings'
+import type { Tokens } from 'gql'
 import { sum } from 'lodash'
 import { memo, useMemo } from 'react'
 
@@ -6,11 +7,19 @@ import { memo, useMemo } from 'react'
  * @param {Object} editionOptions
  * @param {import("@types").NFT} editionOptions.nft
  **/
-const Editions = ({ prefix, nft, className }) => {
+const Editions = ({
+  prefix,
+  nft,
+  className,
+}: {
+  prefix?: string
+  nft: Tokens
+  className?: string
+}) => {
   const { walletBlockMap, isLoading } = useSettings()
 
   const editionsForSale = useMemo(() => {
-    if (isLoading) return
+    if (isLoading || !walletBlockMap) return
     return sum(
       nft.listings
         ?.filter((listing) => walletBlockMap.get(listing.seller_address) !== 1)

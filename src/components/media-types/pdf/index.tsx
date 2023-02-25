@@ -6,7 +6,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
-import { MediaTypeProps } from '@types'
+import type { MediaTypeProps } from '@types'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
 const options = {

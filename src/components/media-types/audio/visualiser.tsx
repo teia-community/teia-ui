@@ -1,16 +1,16 @@
 import { createRef, useEffect, useState } from 'react'
 
-export const Visualiser = ({ src }) => {
-  const ref = createRef()
-  const [ctx, setCtx] = useState()
+export const Visualiser = ({ src }: { src: string }) => {
+  const ref = createRef<HTMLCanvasElement>()
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [ratio, setRatio] = useState(1)
-  const [audio, setAudio] = useState()
-  const [raf, setRaf] = useState()
-  const [data, setData] = useState()
-  const [analyser, setAnalyser] = useState()
+  const [audio, setAudio] = useState<HTMLAudioElement>()
+  const [raf, setRaf] = useState<number>(0)
+  const [data, setData] = useState<Float32Array>()
+  const [analyser, setAnalyser] = useState<AnalyserNode>()
 
   useEffect(() => {
-    setCtx(ref.current.getContext('2d'))
+    setCtx(ref.current?.getContext('2d') || null)
     setRatio(Math.max(1, Math.min(global.devicePixelRatio, 2)))
 
     return () => {
@@ -23,7 +23,7 @@ export const Visualiser = ({ src }) => {
   })
 
   useEffect(() => {
-    let _audio = new Audio()
+    const _audio = new Audio()
     _audio.src = src
     _audio.controls = false
     _audio.loop = true
@@ -32,32 +32,34 @@ export const Visualiser = ({ src }) => {
 
     setAudio(_audio)
 
-    let audioCtx = new AudioContext()
+    const audioCtx = new AudioContext()
 
     setAnalyser(audioCtx.createAnalyser())
     // analyser.fftSize = 2048
 
-    let source = audioCtx.createMediaElementSource(audio)
-    source.connect(analyser)
-    source.connect(audioCtx.destination)
+    if (audio && analyser) {
+      const source = audioCtx.createMediaElementSource(audio)
+      source.connect(analyser)
+      source.connect(audioCtx.destination)
+      const _data = new Float32Array(analyser.frequencyBinCount)
+      setData(_data)
 
-    setData(new Float32Array(analyser.frequencyBinCount))
-    analyser.getFloatTimeDomainData(data)
-
+      analyser.getFloatTimeDomainData(_data)
+    }
     //style = getComputedStyle(document.body)
   }, [analyser, audio, src, data])
 
   const play = () => {
-    audio.play()
+    audio?.play()
     setRaf(requestAnimationFrame(update))
   }
 
-  const pause = (reset) => {
-    audio.pause()
+  const pause = (reset?: boolean) => {
+    audio?.pause()
 
     cancelAnimationFrame(raf)
 
-    if (reset) {
+    if (reset && audio) {
       audio.currentTime = 0
     }
   }
@@ -65,13 +67,16 @@ export const Visualiser = ({ src }) => {
   const resize = () => {
     const width = 320
     const height = 320
-    ctx.canvas.width = width * ratio
-    ctx.canvas.height = height * ratio
-    ctx.canvas.style.width = `${width}px`
-    ctx.canvas.style.height = `${height}px`
+    if (ctx) {
+      ctx.canvas.width = width * ratio
+      ctx.canvas.height = height * ratio
+      ctx.canvas.style.width = `${width}px`
+      ctx.canvas.style.height = `${height}px`
+    }
   }
 
   const update = () => {
+    if (!analyser || !ctx || !data) return
     // analyser.getByteFrequencyData(data)
     analyser.getFloatTimeDomainData(data)
 
@@ -112,7 +117,7 @@ export const Visualiser = ({ src }) => {
   return (
     <canvas
       onClick={() => {
-        if (audio.paused) {
+        if (audio?.paused) {
           play()
         } else {
           pause()

@@ -1,4 +1,8 @@
-import { CSSObjectWithLabel, StylesConfig, ThemeConfig } from 'react-select'
+import type {
+  CSSObjectWithLabel,
+  StylesConfig,
+  ThemeConfig,
+} from 'react-select'
 
 export const theme: ThemeConfig = (theme) => ({
   ...theme,

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react'
-import { SWRHook } from 'swr'
-import { Middleware, PublicConfiguration } from 'swr/dist/types'
+import type { SWRHook } from 'swr'
+import type { Middleware, PublicConfiguration } from 'swr/dist/types'
 
 // taken from https://swr.vercel.app/docs/middleware#keep-previous-result
 

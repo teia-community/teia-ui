@@ -13,9 +13,10 @@ import { ItemInfo } from '@components/item-info'
 import styles from '@style'
 import './style.css'
 import useSettings from '@hooks/use-settings'
-import { TabOptions, Tabs } from '@atoms/tab/Tabs'
+import type { TabOptions } from '@atoms/tab/Tabs'
+import { Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
-import { NFT } from '@types'
+import type { NFT } from '@types'
 import laggy from '@utils/swr-laggy-middleware'
 import { useMemo } from 'react'
 
@@ -81,7 +82,7 @@ export const ObjktDisplay = () => {
     if (data) {
       const objkt = data.tokens_by_pk as NFT
       if (!objkt && id) {
-        let isNum = /^\d+$/.test(id)
+        const isNum = /^\d+$/.test(id)
         if (isNum) {
           throw new Error(`Cannot find an OBJKT with id: ${id}`, {
             cause: 'Unknown OBJKT',
@@ -196,7 +197,7 @@ export const ObjktDisplay = () => {
             }
 
             if (nft?.holdings && tab.private) {
-              let holders_arr = nft.holdings.map((e) => e.holder_address)
+              const holders_arr = nft.holdings.map((e) => e.holder_address)
 
               if (
                 holders_arr.includes(address || 'UNSYNCED') === false &&

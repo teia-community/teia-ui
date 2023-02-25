@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import styles from '@style'
-import React from 'react'
+import type React from 'react'
 
 interface LineProps {
   vertical?: boolean

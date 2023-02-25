@@ -4,22 +4,38 @@
 import styles from '@style'
 import { ImageComponent } from '../image'
 import '@google/model-viewer'
-/**
- * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
- */
+import type { MediaTypeProps } from '@types'
+import type { ModelViewerElement } from '@google/model-viewer'
+
+/** The types coming from model viewer are camel cased, this does not work */
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': ModelViewerElement
+    }
+  }
+}
+
 export const GLBComponent = ({
   artifactUri,
   displayUri,
   previewUri,
   displayView,
   nft,
-}) => {
+}: MediaTypeProps) => {
   // const ref = useRef()
   // const [width, setWidth] = useState('100px')
   // const [height, setHeight] = useState('100px')
 
-  let props = {
-    src: previewUri ? previewUri : artifactUri,
+  let props: Partial<HTMLElementTagNameMap['model-viewer']> & {
+    'auto-rotate'?: boolean
+    'data-js-focus-visible'?: boolean
+    'interaction-prompt'?: string
+    'ar-modes'?: string
+    src: string | undefined
+  } = {
+    src: previewUri ? previewUri : artifactUri || undefined,
   }
 
   if (displayView) {
@@ -31,7 +47,8 @@ export const GLBComponent = ({
       'interaction-prompt': 'none',
       ar: true,
       'ar-modes': 'webxr scene-viewer quick-look',
-      'camera-controls': true,
+      cameraControls: true,
+      //  'camera-controls': true,
     }
   }
 
@@ -52,9 +69,14 @@ export const GLBComponent = ({
   //   }
   // }, [width, height])
   return displayView ? (
-    <model-viewer {...props} title={`GLB object ${nft.token_id}`}>
+    <model-viewer
+      {...props}
+      alt="3D Viewer"
+      poster={displayUri || null}
+      title={`GLB object ${nft.token_id}`}
+    >
       <button slot="ar-button" className={styles.arButton}>
-        AR
+        <div>{'AR'}</div>
       </button>
     </model-viewer>
   ) : (

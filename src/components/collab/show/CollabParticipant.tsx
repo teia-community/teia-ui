@@ -1,7 +1,7 @@
 import { PATH } from '@constants'
 import { Link } from 'react-router-dom'
 import styles from '../index.module.scss'
-import { Teia_Shareholders } from 'gql'
+import type { Teia_Shareholders } from 'gql'
 
 export const CollabParticipant = ({
   participant,

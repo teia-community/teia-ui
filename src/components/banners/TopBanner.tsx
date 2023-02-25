@@ -2,8 +2,12 @@ import { useWindowScroll } from 'react-use'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import styles from '@style'
+import type { WithChildren } from '@types'
 
-export const TopBanner = ({ children, color }) => {
+export const TopBanner = ({
+  children,
+  color,
+}: WithChildren<{ color?: string }>) => {
   const [visible, setVisible] = useState(true)
   const { y } = useWindowScroll()
 

@@ -4,7 +4,7 @@ import { ALLOWED_COVER_MIMETYPES } from '@constants'
 
 export async function unzipMedia(buffer: Buffer) {
   // unzip into blobs
-  let unzipped = fflate.unzipSync(buffer)
+  const unzipped = fflate.unzipSync(buffer)
   let entries = Object.entries(unzipped).map((entry) => {
     const fileName = getFileName(entry[0])
     return {
@@ -104,7 +104,7 @@ export function getVideoMetadata(blob: Blob) {
 
 async function blobToDataURL(blob: Blob) {
   return new Promise((resolve, reject) => {
-    let reader = new FileReader()
+    const reader = new FileReader()
     reader.onerror = reject
     reader.onload = (e) => resolve(reader.result)
     reader.readAsDataURL(blob)

@@ -2,22 +2,19 @@ import * as fflate from 'fflate'
 import mime from 'mime-types'
 
 import { MIMETYPE } from '@constants'
-
-interface FileBlobs {
-  [path: string]: Blob
-}
+import type { FileBlobs } from './types'
 
 export async function prepareFilesFromZIP(buffer: Uint8Array) {
   console.debug('Preparing files from ZIP')
   // unzip files
-  let files = await unzipBuffer(buffer)
+  const files = await unzipBuffer(buffer)
 
   // save raw index file
   const indexBlob = files['index.html']
   files['index_raw.html'] = new Blob([indexBlob], { type: indexBlob.type })
 
   // inject CSP meta tag in all html files
-  for (let k in files) {
+  for (const k in files) {
     if (k.endsWith('.html') || k.endsWith('.htm')) {
       const pageBuffer = await files[k].arrayBuffer()
       const safePageBuffer = injectCSPMetaTagIntoBuffer(pageBuffer)
@@ -44,8 +41,8 @@ export async function prepareFilesFromZIP(buffer: Uint8Array) {
 
 export async function unzipBuffer(buffer: Uint8Array) {
   console.debug('Unzipping buffer')
-  let unzipped = fflate.unzipSync(buffer)
-  let entries = Object.entries(unzipped).map((entry) => {
+  const unzipped = fflate.unzipSync(buffer)
+  const entries = Object.entries(unzipped).map((entry) => {
     console.debug('Entry: ', entry)
     return {
       path: entry[0],
@@ -275,7 +272,7 @@ export async function validateFiles(files: FileBlobs) {
   }
 
   const pageBlob = files['index.html']
-  let htmlString = await pageBlob.text()
+  const htmlString = await pageBlob.text()
   const parser = new DOMParser()
   const doc = parser.parseFromString(htmlString, 'text/html')
 

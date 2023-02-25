@@ -1,7 +1,13 @@
 import styles from '@style'
+import type { Listings } from 'gql'
 import { memo } from 'react'
 
-const ListingLabel = ({ children, className, label, alt, tooltip }) => {
+const ListingLabel = ({
+  className,
+  label,
+  alt,
+  tooltip,
+}: ListingLabelProps) => {
   return (
     <div
       className={`${styles.swapLabel} ${className ? className : ''}`}
@@ -44,10 +50,8 @@ export const VersumLabel = () => (
 
 /**
  * Dynamic label from listing type.
- * @param {{listing:import('@types').Listing}} options
- * @returns {JSX.Element | null}
  */
-const MarketplaceLabel = ({ listing }) => {
+const MarketplaceLabel = ({ listing }: { listing: Listings }) => {
   if (listing.type.startsWith('TEIA')) {
     return <TeiaLabel />
   }

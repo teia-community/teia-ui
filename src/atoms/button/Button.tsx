@@ -1,8 +1,9 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { NavLink, To } from 'react-router-dom'
+import type { To } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import React from 'react'
+import type React from 'react'
 
 interface ButtonProps {
   /**Used for accessibility (aria-label) */

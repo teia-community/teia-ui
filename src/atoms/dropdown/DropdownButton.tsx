@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
-import { WithCompChildren } from '@types'
+import type { WithCompChildren } from '@types'
 interface DropdownButtonProps {
   menuID: string
   direction: 'left' | 'right'

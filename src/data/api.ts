@@ -56,9 +56,10 @@ export async function getUser(addressOrSubjkt: string, type = 'user_address') {
 }
 
 export async function fetchCollabCreations(
-  addressOrSubjkt: string,
+  addressOrSubjkt?: string,
   type = 'address'
 ) {
+  if (!addressOrSubjkt) return
   // const { data } = await fetchGraphQL(
   //   type === 'address' ? collabCreationsFromAddress : collabCreationsFromName,
   //   'GetCollabCreations',

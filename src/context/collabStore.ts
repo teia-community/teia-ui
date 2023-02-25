@@ -19,8 +19,8 @@ interface CollabState {
   originatedContract?: string
   originationOpHash?: string
   originatedProxy?: string
-  findOriginatedContractFromOpHash: (hash: string) => void
-  sign: (objktID: string) => void
+  findOriginatedContractFromOpHash: (hash: string) => Promise<void>
+  sign: (objktID: string) => Promise<string | undefined>
 }
 
 export const useCollabStore = create<CollabState>()(

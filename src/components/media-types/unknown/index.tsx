@@ -1,6 +1,7 @@
 import styles from '@style'
+import type { NFT } from '@types'
 
-export const UnknownComponent = ({ mimeType }) => {
+export const UnknownComponent = ({ nft }: { nft: NFT }) => {
   /*   const [queue, updateQueue] = useState()
   updateQueue(await axios.post(import.meta.env.VITE_GRAPHQL_STATUS).then(res => res.data))
  */

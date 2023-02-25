@@ -1,13 +1,14 @@
 import get from 'lodash/get'
 import { walletPreview } from '@utils/string'
 import styles from '../index.module.scss'
-import { Shareholder, Signature } from '@types'
+import type { Signature } from '@types'
+import type { Teia_Shareholders } from 'gql'
 
 export const SigningSummary = ({
   coreParticipants,
   signatures,
 }: {
-  coreParticipants: Shareholder[]
+  coreParticipants?: Teia_Shareholders[] | null
   signatures: Signature[]
 }) => {
   return (
@@ -16,23 +17,24 @@ export const SigningSummary = ({
         <strong>Signing status</strong>
       </h2>
       <ul className={styles.list}>
-        {coreParticipants.map((participant) => {
-          const hasSigned = signatures.some(
-            ({ shareholder_address }) =>
-              participant.shareholder_address === shareholder_address
-          )
+        {coreParticipants &&
+          coreParticipants.map((participant) => {
+            const hasSigned = signatures.some(
+              ({ shareholder_address }) =>
+                participant.shareholder_address === shareholder_address
+            )
 
-          return (
-            <li key={participant.shareholder_address}>
-              <a href={`/tz/${participant.shareholder_address}`}>
-                {get(participant, 'shareholder_profile.name') ||
-                  walletPreview(participant.shareholder_address)}
-                :{' '}
-              </a>
-              {hasSigned ? '✓' : '❌'}
-            </li>
-          )
-        })}
+            return (
+              <li key={participant.shareholder_address}>
+                <a href={`/tz/${participant.shareholder_address}`}>
+                  {get(participant, 'shareholder_profile.name') ||
+                    walletPreview(participant.shareholder_address)}
+                  :{' '}
+                </a>
+                {hasSigned ? '✓' : '❌'}
+              </li>
+            )
+          })}
       </ul>
     </div>
   )

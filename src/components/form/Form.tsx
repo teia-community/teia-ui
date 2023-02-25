@@ -1,13 +1,9 @@
 import Button from '@atoms/button/Button'
-import getFields from '@pages/mint/fields'
+import type getFields from '@pages/mint/fields'
 import { get } from 'lodash'
 import { memo } from 'react'
-import {
-  FieldError,
-  FieldValues,
-  SubmitHandler,
-  useFormContext,
-} from 'react-hook-form'
+import type { FieldError, FieldValues, SubmitHandler } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { FormFields } from './FormFields'
 
 interface FormProps {

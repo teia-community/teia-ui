@@ -9,7 +9,7 @@ import { shallow } from 'zustand/shallow'
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { motion } from 'framer-motion'
-import { NFT } from '@types'
+import type { NFT } from '@types'
 /**
  * @param {Object} feedOptions - The options for the feed item
  * @param {import("@types").NFT} feedOptions.nft - The nft to render

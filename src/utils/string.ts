@@ -1,4 +1,5 @@
-export const walletPreview = (wallet: string) => {
+export const walletPreview = (wallet?: string | null) => {
+  if (!wallet) return ''
   try {
     return `${wallet.slice(0, 5)}...${wallet.slice(
       wallet.length - 5,

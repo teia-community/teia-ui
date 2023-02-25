@@ -7,7 +7,9 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
-function isHTML(mimeType) {
+import type { WithChildren } from '@types'
+
+function isHTML(mimeType: string) {
   return (
     mimeType === MIMETYPE.ZIP ||
     mimeType === MIMETYPE.ZIP1 ||
@@ -15,26 +17,22 @@ function isHTML(mimeType) {
   )
 }
 
-const Attribute = ({ title, children }) => {
-  return (
-    children && (
-      <div className={styles.attributes}>
-        <strong>{title}:</strong>
-        {children}
-      </div>
-    )
-  )
+const Attribute = ({ title, children }: WithChildren<{ title?: string }>) => {
+  return children ? (
+    <div className={styles.attributes}>
+      <strong>{title}:</strong>
+      {children}
+    </div>
+  ) : null
 }
 
-const Field = ({ title, value }) => {
-  return (
-    value && (
-      <div className={styles.field}>
-        <strong>{title}:</strong>
-        {value}
-      </div>
-    )
-  )
+const Field = ({ title, value }: { title: string; value?: string }) => {
+  return value ? (
+    <div className={styles.field}>
+      <strong>{title}:</strong>
+      {value}
+    </div>
+  ) : null
 }
 export const Preview = () => {
   // const { getValues } = useFormContext()

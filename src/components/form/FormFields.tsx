@@ -5,16 +5,16 @@ import styles from '@style'
 import { memo } from 'react'
 import { Upload } from '@components/upload/index'
 import { ALLOWED_FILETYPES_LABEL } from '@constants'
-import {
+import type {
   Control,
-  Controller,
   FieldError,
   FieldValues,
   UseFormRegister,
 } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
 import classNames from 'classnames'
-import getFields from '@pages/mint/fields'
-import { Unpacked } from '@types'
+import type getFields from '@pages/mint/fields'
+import type { Unpacked } from '@types'
 
 const FormFieldError = memo(
   ({ error, text }: { error?: string; text?: boolean }) => {

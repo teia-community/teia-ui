@@ -2,16 +2,14 @@ import classnames from 'classnames'
 import styles from '@style'
 import './index.css'
 import { useUserStore } from '@context/userStore'
+import type { MediaTypeProps } from '@types'
 
-/**
- * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
- */
 export const VectorComponent = ({
   artifactUri,
   previewUri,
   displayView,
   nft,
-}) => {
+}: MediaTypeProps) => {
   const address = useUserStore((st) => st.address)
   const classes = classnames({
     [styles.container]: true,
@@ -19,8 +17,8 @@ export const VectorComponent = ({
     [styles.display]: displayView,
   })
 
-  let _viewer_ = false
-  let _objkt_ = false
+  let _viewer_ = ''
+  let _objkt_ = ''
 
   if (address) {
     _viewer_ = address

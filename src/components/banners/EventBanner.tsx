@@ -5,9 +5,14 @@ import { useEffect, useState } from 'react'
 import JSON5 from 'json5'
 import { TopBanner } from './TopBanner'
 
+interface BannerConfig {
+  enable?: boolean | number
+  color?: string
+}
+
 export const EventBanner = () => {
-  const [content, setContent] = useState()
-  const [config, setConfig] = useState()
+  const [content, setContent] = useState('')
+  const [config, setConfig] = useState<BannerConfig>()
   useEffect(() => {
     async function getBanner() {
       const config_response = await fetch(`${BANNER_URL}/banner_config.json`)

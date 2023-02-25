@@ -3,6 +3,7 @@ import { iOS } from '@utils/os'
 import styles from '@style'
 import ImageComponent from '../image/index'
 import { VideoIcon } from '@icons/refs'
+import type { MediaTypeProps } from '@types'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -15,16 +16,18 @@ export const VideoComponent = ({
   displayView,
   nft,
   forceVideo: force,
-}) => {
-  const domElement = useRef()
+}: MediaTypeProps) => {
+  const domElement = useRef<HTMLVideoElement>()
 
   useEffect(() => {
     if (!displayView) {
       return
     }
-    const isVideoAvailable = (video) => iOS || video.readyState > 2
+    const isVideoAvailable = (video?: HTMLVideoElement) =>
+      video && (iOS || video.readyState > 2)
 
-    const isVideoPlaying = (video) =>
+    const isVideoPlaying = (video?: HTMLVideoElement) =>
+      video &&
       video.currentTime > 0 &&
       !video.paused &&
       !video.ended &&
@@ -34,7 +37,7 @@ export const VideoComponent = ({
       // play
       if (isVideoAvailable(domElement.current)) {
         try {
-          domElement.current.play()
+          if (domElement.current) domElement.current.play()
         } catch (err) {
           console.error(err)
         }
@@ -43,10 +46,10 @@ export const VideoComponent = ({
       // pause
       if (
         isVideoAvailable(domElement.current) &&
-        isVideoPlaying(domElement.current)
+        isVideoPlaying(domElement?.current)
       ) {
         try {
-          domElement.current.pause()
+          if (domElement.current) domElement.current.pause()
         } catch (err) {
           console.error(err)
         }

@@ -1,7 +1,7 @@
 export function toHHMMSS(sec: number) {
-  let _hours = Math.floor(sec / 3600)
-  let _minutes = Math.floor((sec - _hours * 3600) / 60)
-  let _seconds = sec - _hours * 3600 - _minutes * 60
+  const _hours = Math.floor(sec / 3600)
+  const _minutes = Math.floor((sec - _hours * 3600) / 60)
+  const _seconds = sec - _hours * 3600 - _minutes * 60
   let hours, minutes, seconds
   if (_hours < 10) {
     hours = `0${hours}`

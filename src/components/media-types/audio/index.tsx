@@ -1,32 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 // import { Visualiser } from './visualiser'
 import styles from '@style'
 import { PlayIcon, PauseIcon } from '@icons'
 import Button from '@atoms/button/Button'
 import { PATH } from '@constants'
-/**
- * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
- */
+import type { MediaTypeProps } from '@types'
+
 export const AudioComponent = ({
   artifactUri,
   displayUri,
   previewUri,
   displayView,
   nft,
-}) => {
+}: MediaTypeProps) => {
   // const visualiser = useRef()
   // const [userTouched, setUserTouched] = useState(false)
-  const audioElement = useRef()
+  const audioElement = useRef<HTMLAudioElement>(null)
   const [play, setPlay] = useState(false)
   const togglePlay = () => {
     setPlay(!play)
-  }
-
-  useEffect(() => {
     if (!audioElement.current) return
-    if (play) audioElement.current.play()
+    if (!play) audioElement.current.play()
     else audioElement.current.pause()
-  }, [play])
+  }
 
   // user interaction
   // useEffect(() => {

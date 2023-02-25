@@ -21,8 +21,8 @@ import { IconCache } from '@utils/with-icon'
 import { shallow } from 'zustand/shallow'
 
 import type { RequestDocument } from 'graphql-request'
-import { NFT } from '@types'
-import { getSdkWithHooks } from 'gql'
+import type { NFT } from '@types'
+import type { getSdkWithHooks } from 'gql'
 
 /** Single view, vertical feed */
 function SingleView({ tokens }: { tokens: NFT[] }) {

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, useFormState } from 'react-hook-form'
 import { Outlet } from 'react-router'
 
-let TABS: TabOptions[] = [
+const TABS: TabOptions[] = [
   { title: 'Edit', to: '' },
   { title: 'Preview', to: 'preview', disabled: true },
   { title: 'Mint', disabled: true },

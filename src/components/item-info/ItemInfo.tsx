@@ -16,20 +16,21 @@ import SigningSummary from '@components/collab/show/SigningSummary'
 import CheapestButton from './CheapestButton'
 import CollabIssuerInfo from '@components/collab/show/CollabIssuerInfo'
 import Editions from './Editions'
+import type { Listings, Tokens } from 'gql'
 /**
  * @param {Object} itemInfoOptions
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
-const ItemInfo = ({ nft }) => {
+const ItemInfo = ({ nft }: { nft: Tokens }) => {
   const address = useUserStore((st) => st.address)
 
   const { walletBlockMap } = useSettings()
   const [showSignStatus, setShowSignStatus] = useState(false)
 
-  const restricted = walletBlockMap.get(nft.artist_address) === 1
+  const restricted = walletBlockMap?.get(nft.artist_address) === 1
 
   const cheapestListing = nft.listings.find(
-    (listing) => walletBlockMap.get(listing.seller_address) !== 1
+    (listing: Listings) => walletBlockMap?.get(listing.seller_address) !== 1
   )
 
   // Check collab status
@@ -115,7 +116,8 @@ const ItemInfo = ({ nft }) => {
                         signatures={nft.signatures}
                       />
                       <Button onClick={() => setShowSignStatus(false)}>
-                        <Secondary>close</Secondary>
+                        {/* <Secondary>close</Secondary> */}
+                        close
                       </Button>
                     </div>
                   </div>

@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import styles from '@style'
 import Button from '@atoms/button/Button'
-import React from 'react'
+import type React from 'react'
 
 interface IconToggleProps {
   // label:string

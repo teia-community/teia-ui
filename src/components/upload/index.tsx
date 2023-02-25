@@ -1,8 +1,9 @@
-import React, { ChangeEvent, memo, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import React, { memo, useState } from 'react'
 import useLanguage from '@hooks/use-language'
 import styles from '@style'
 import { getMimeType } from '@utils/sanitise'
-import { FileForm, WithChildren } from '@types'
+import type { FileForm, WithChildren } from '@types'
 // import { Buffer } from 'buffer'
 
 interface UploadProps {

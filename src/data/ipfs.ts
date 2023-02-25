@@ -6,7 +6,7 @@ import { Buffer } from 'buffer'
 import { api } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import { FileForm, FileMint, MintFormat } from '@types'
+import type { FileForm, FileMint, MintFormat } from '@types'
 import { pickBy } from 'lodash'
 
 /**

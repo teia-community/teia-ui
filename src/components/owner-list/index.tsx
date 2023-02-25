@@ -3,8 +3,9 @@ import { Button } from '@atoms/button'
 import { BURN_ADDRESS, MARKETPLACE_CONTRACTS_TO_NAME } from '@constants'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
+import type { Holdings } from 'gql'
 
-export const OwnerList = ({ owners }) => {
+export const OwnerList = ({ owners }: { owners: Holdings[] }) => {
   const ownersWithoutBurn = owners.filter(
     (e) => e.holder_address !== BURN_ADDRESS
   )

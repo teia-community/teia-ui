@@ -1,10 +1,10 @@
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
-import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import styles from '@style'
 
 import axios from 'axios'
+import type { MediaTypeProps } from '@types'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -14,9 +14,8 @@ export const MD = ({
   displayUri,
   artifactUri,
   previewUri,
-  preview,
-  objktID,
-}) => {
+  nft,
+}: MediaTypeProps) => {
   const [content, setContent] = React.useState('')
 
   React.useEffect(() => {
@@ -30,7 +29,7 @@ export const MD = ({
         })
     }
 
-    if (preview && previewUri) {
+    if (previewUri) {
       if (previewUri.startsWith('data:text/markdown;base64,')) {
         const base64_md = previewUri.replace('data:text/markdown;base64,', '')
         setContent(atob(base64_md))
@@ -38,12 +37,15 @@ export const MD = ({
         console.error('previewUri is not a base64 encoded markdown', previewUri)
       }
     }
-  }, [artifactUri, previewUri, displayView, displayUri, preview])
+  }, [artifactUri, previewUri, displayView, displayUri])
 
   return displayView ? (
     <div className={styles.container}>
       <div className={styles.preview}>
-        <img src={displayUri} alt={`cover for markdown object ${objktID}`} />
+        <img
+          src={displayUri}
+          alt={`cover for markdown object ${nft.token_id}`}
+        />
         <div className={styles.button}>
           <Button alt="View Markdown Token" />
         </div>
@@ -51,9 +53,7 @@ export const MD = ({
     </div>
   ) : (
     <div>
-      <Container>
-        <Markdown>{content}</Markdown>
-      </Container>
+      <Markdown>{content}</Markdown>
     </div>
   )
 }
