@@ -87,7 +87,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   )
 
   // TODO: finish the filtering logic
-  const filters = true
+  const filters = false
   return (
     <motion.div className={styles.toolbar}>
       {feeds_menu && (
@@ -144,7 +144,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
           icon={<MasonryIcon />}
         />
       </div>
-      {true && (
+      {filters && (
         <DropdownButton
           direction="left"
           menuID="sort"
