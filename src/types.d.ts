@@ -6,10 +6,10 @@ import type React from 'react'
 export type Unpacked<T> = T extends (infer U)[] ? U : T
 
 /** Wrapper type for React components with childrens */
-export type WithChildren<T = {}> = T & { children?: React.ReactNode }
+export type WithChildren<T = object> = T & { children?: React.ReactNode }
 
 /** Wrapper type for React components with childrens (only React components aka clonable) */
-export type WithCompChildren<T = {}> = T & {
+export type WithCompChildren<T = object> = T & {
   children?: React.ReactElement<any, string | React.JSXElementConstructor<any>>
 }
 
@@ -120,8 +120,6 @@ export type Signature = {
   token_id?: string
   shareholder_address?: string
 }
-
-export type ListingStatus = {}
 
 export interface Holding {
   holder_address: string

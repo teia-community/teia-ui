@@ -157,7 +157,7 @@ export const fields = [
   },
 ]
 
-const getFields = <T extends {}>(deps: T) => {
+const getFields = <T extends object>(deps: T) => {
   // return () => {
   const keys = Object.keys(deps)
   return fields
