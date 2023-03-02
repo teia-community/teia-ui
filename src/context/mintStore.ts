@@ -306,7 +306,7 @@ export const useMintStore = create<MintState>()(
           // optional
           return (state, error) => {
             if (error) {
-              console.log('an error happened during hydration', error)
+              console.error('an error happened during hydration', error)
             }
           }
         },

@@ -7,18 +7,20 @@ import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 
 import { useOutletContext } from 'react-router'
-import { orderBy } from 'lodash'
+import { flatMap, orderBy } from 'lodash'
+import { useUserStore } from '@context/userStore'
 
 const FILTER_ALL = 'ALL'
 const FILTER_PRIMARY = 'PRIMARY'
 const FILTER_SECONDARY = 'SECONDARY'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
+const FILTER_OWNED = 'OWNED'
 
 export default function Creations() {
-  const { showFilters, showRestricted, overrideProtections, address } =
+  const { showFilters, showRestricted, overrideProtections, user_address } =
     useOutletContext()
+  const address = useUserStore((st) => st.address)
   const [filter, setFilter] = useState(FILTER_ALL)
-
   return (
     <>
       {showFilters && (
@@ -30,6 +32,7 @@ export default function Creations() {
             { type: FILTER_PRIMARY, label: 'Primary' },
             { type: FILTER_SECONDARY, label: 'Secondary' },
             { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
+            { type: FILTER_OWNED, label: 'Owned' },
           ]}
         />
       )}
@@ -39,11 +42,11 @@ export default function Creations() {
         overrideProtections={overrideProtections}
         label="Artist's Creations"
         namespace="creations"
-        swrParams={[address]}
-        variables={{ address }}
+        swrParams={[user_address]}
+        variables={{ address: user_address }}
         emptyMessage="no creations"
         maxItems={null}
-        extractTokensFromResponse={(data) => {
+        extractTokensFromResponse={(data, { postProcessTokens }) => {
           const tokens = data.artist_tokens
           const collab_tokens = data.artist_single_collabs
             .map((collab) => {
@@ -56,33 +59,43 @@ export default function Creations() {
             })
             .flat()
 
-          return orderBy([...tokens, ...collab_tokens], ['minted_at'])
-            .reverse()
-            .map((token) => ({ ...token, key: token.token_id }))
+          return postProcessTokens(
+            orderBy([...tokens, ...collab_tokens], ['minted_at'])
+              .reverse()
+              .map((token) => ({ ...token, key: token.token_id }))
+          )
         }}
         postProcessTokens={(tokens) => {
-          if (filter === FILTER_PRIMARY) {
-            return tokens.filter(
-              (token) =>
-                get(token, 'lowest_price_listing.seller_address') === address
-            )
-          }
+          switch (filter) {
+            case FILTER_PRIMARY:
+              return tokens.filter(
+                (token) =>
+                  get(token, 'lowest_price_listing.seller_address') ===
+                  user_address
+              )
+            case FILTER_SECONDARY:
+              return tokens.filter(
+                (token) =>
+                  get(token, 'lowest_price_listing.seller_address') !==
+                  user_address
+              )
+            case FILTER_NOT_FOR_SALE:
+              return tokens.filter(
+                (token) => get(token, 'lowest_price_listing') === null
+              )
 
-          if (filter === FILTER_SECONDARY) {
-            return tokens.filter(
-              (token) =>
-                get(token, 'lowest_price_listing.seller_address') !== address
-            )
+            case FILTER_OWNED:
+              return tokens.filter((t) => {
+                const holders = flatMap(t.holdings, 'holder_address')
+                if (holders.includes(address)) {
+                  return true
+                }
+                return false
+              })
+            default:
+              // all tokens
+              return tokens
           }
-
-          if (filter === FILTER_NOT_FOR_SALE) {
-            return tokens.filter(
-              (token) => get(token, 'lowest_price_listing') === null
-            )
-          }
-
-          // all tokens
-          return tokens
         }}
         query={gql`
             ${BaseTokenFieldsFragment}
@@ -98,6 +111,9 @@ export default function Creations() {
               ) {
                 ...baseTokenFields
                 lowest_price_listing
+                holdings(where: {amount: {_gt: 0}}) {
+                   holder_address
+                }
               }
               artist_single_collabs: teia_shareholders(
                 where: { 

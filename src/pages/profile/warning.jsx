@@ -16,7 +16,7 @@ export const Warning = ({ onInteract }) => {
 
   const onEnable = () => {
     if (remember) {
-      console.log('disabling protections for good')
+      console.debug('disabling protections for good')
       setNsfwFriendly(true)
       setPhotosensitiveFriendly(true)
     }

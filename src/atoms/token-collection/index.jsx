@@ -68,7 +68,7 @@ function MasonryView({ tokens }) {
  * @param {number} tkProps.itemsPerLoad - Batch size
  * @param {number} tkProps.maxItems - Max items to fetch from the indexer
  * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} tkProps.extractTokensFromResponse - Function to filter the response
- * @param {([NFT]) => [NFT]} tkProps.postProcessTokens - Final filter pass over tokens?
+ * @param {(tokens:NFT[]) => NFT[]} tkProps.postProcessTokens - Final filter pass over tokens?
  * @returns {React.ReactElement} The feed
  */
 function TokenCollection({
