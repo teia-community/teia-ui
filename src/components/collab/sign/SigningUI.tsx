@@ -12,7 +12,7 @@ export const SigningUI = ({
   const sign = useCollabStore((st) => st.sign)
 
   const do_sign = () => {
-    sign(id).then(() => console.log('Signed'))
+    sign(id).then((r) => console.debug('Signed', r))
   }
 
   return hasSigned ? (

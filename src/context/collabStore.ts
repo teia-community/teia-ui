@@ -40,10 +40,10 @@ export const useCollabStore = create<CollabState>()(
             .then((response) => {
               const { data } = response
 
-              console.log('response from originations call', data[0])
+              console.debug('response from originations call', data[0])
 
               if (data[0]) {
-                console.log('There is correct data', data[0])
+                console.debug('There is correct data', data[0])
 
                 // Send the originated contract to the UI via context
                 const { originatedContract } = data[0]
@@ -53,7 +53,7 @@ export const useCollabStore = create<CollabState>()(
                   originationOpHash: undefined,
                 }) // save hash
 
-                console.log(
+                console.debug(
                   'Saved state originatedContract',
                   originatedContract
                 )
@@ -68,7 +68,7 @@ export const useCollabStore = create<CollabState>()(
                   closeModal()
                 }, 2500)
               } else {
-                console.log('missing data')
+                console.error('missing data')
 
                 // We have got our contract address
                 showModal(
@@ -101,7 +101,7 @@ export const useCollabStore = create<CollabState>()(
           const step = useModalStore.getState().step
           const handleOp = useUserStore.getState().handleOp
 
-          console.log('originateProxy', participantData)
+          console.debug('originateProxy', participantData)
 
           // Clear any existing calls
           set({

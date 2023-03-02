@@ -192,18 +192,15 @@ export const useUserStore = create<UserState>()(
           const current = await wallet.getPKH()
           if (current) {
             const info = await getUser(current)
-            console.log('getting user info', info)
             set({
               address: current,
-              userInfo: await getUser(current),
+              userInfo: info,
             })
           }
 
-          // console.log(this.state)
           return current
         },
         unsync: async () => {
-          // console.log('disconnect wallet')
           // This will clear the active account and the next "syncTaquito" will trigger a new sync
           await wallet.client.clearActiveAccount()
           set({

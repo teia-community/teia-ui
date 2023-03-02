@@ -87,7 +87,7 @@ export default function Display() {
   }, [])
 
   // TODO (mel): properly remove all this once migrated to the filter panel.
-  const [showFilters /*setShowFilters*/] = useState(false)
+  const [showFilters /*setShowFilters*/] = useState(true)
   const { data: user, error } = useSWR(
     ['/user', address || subjkt],
     (_, addressOrSubject) =>
@@ -197,7 +197,7 @@ export default function Display() {
               showRestricted,
               overrideProtections,
               showFilters,
-              address: user.address,
+              user_address: user.address,
             }}
           />
         </>
