@@ -4,8 +4,8 @@ import { useMount, useUpdateEffect } from 'react-use'
 
 export const useKeyboard = (
   combination: string,
-  keydown: () => void,
-  keyup: () => void
+  keydown?: () => void,
+  keyup?: () => void
 ) => {
   const [state, set] = useState<[boolean, keyboardjs.KeyEvent | undefined]>([
     false,

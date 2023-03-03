@@ -53,7 +53,7 @@ export default function MintForm() {
     >
       <CollabSwitch address={address} name={minterName} />
 
-      {balance > 0 && balance / 1e6 < 0.7 && (
+      {balance && balance > 0 && balance / 1e6 < 0.7 && (
         <div className={styles.fundsWarning}>
           <p>
             {`⚠️ You seem to be low on funds (${

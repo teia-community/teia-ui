@@ -34,7 +34,7 @@ type InputType =
  * onChange when not using ref will return the parsed value
  * number for "number" inputs, string for the rest)
  */
-interface InputProps<T> {
+interface InputProps<T extends number | string> {
   type?: InputType
   placeholder: string
   name?: string
@@ -42,7 +42,7 @@ interface InputProps<T> {
   max?: number
   maxlength?: number
   label?: string
-  onChange?: (value: T) => void
+  onChange?: <X>(value: X) => void
   onBlur?: FocusEventHandler<HTMLInputElement>
   // onWheel?: () => void
   disabled?: boolean
@@ -54,7 +54,7 @@ interface InputProps<T> {
   className?: string
 }
 
-function Input<T>(
+function Input<T extends number | string>(
   {
     type = 'text',
     placeholder = 'placeholder',
@@ -76,12 +76,12 @@ function Input<T>(
   }: WithChildren<InputProps<T>>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) {
-  const [value, setValue] = useControlled(valueProp, defaultValue)
+  const [value, setValue] = useControlled<T>(valueProp, defaultValue)
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
       if (ref) {
-        onChange(e as T)
+        onChange(e)
         return
       }
       const target = e.target as HTMLInputElement
@@ -93,7 +93,7 @@ function Input<T>(
               : target.value
             : target.value
 
-        setValue(v)
+        setValue(v as T)
         onChange(v as T)
       }
     },

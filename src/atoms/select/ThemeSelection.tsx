@@ -1,8 +1,10 @@
 import { THEMES, THEME_OPTIONS } from '@constants'
-import { useLocalSettings } from '@context/localSettingsStore'
-import Select from './Base'
+import { type Theme, useLocalSettings } from '@context/localSettingsStore'
+import Select, { type SelectProps } from './Base'
 
-export const ThemeSelection = (props) => {
+export const ThemeSelection = (
+  props: Partial<SelectProps> & { apply: boolean }
+) => {
   const theme = useLocalSettings((st) => st.theme)
   const setTheme = useLocalSettings((st) => st.setTheme)
 
@@ -10,7 +12,7 @@ export const ThemeSelection = (props) => {
     <Select
       alt="theme selection"
       value={{ label: THEMES[theme], value: theme }}
-      onChange={(e) => setTheme(e.value, props.apply)}
+      onChange={(e) => setTheme(e.value as Theme, props.apply)}
       options={THEME_OPTIONS}
       {...props}
     />

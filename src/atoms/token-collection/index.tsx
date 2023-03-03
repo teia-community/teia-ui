@@ -3,7 +3,6 @@ import get from 'lodash/get'
 import { request } from 'graphql-request'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
 import { FeedItem } from '@components/feed-item'
-import { Container } from '@atoms/layout'
 import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import useSettings from '@hooks/use-settings'
@@ -21,11 +20,11 @@ import { IconCache } from '@utils/with-icon'
 import { shallow } from 'zustand/shallow'
 
 import type { RequestDocument } from 'graphql-request'
-import type { NFT } from '@types'
+import type { ExtTokens, NFT } from '@types'
 import type { getSdkWithHooks } from 'gql'
 
 /** Single view, vertical feed */
-function SingleView({ tokens }: { tokens: NFT[] }) {
+function SingleView({ tokens }: { tokens: Partial<ExtTokens>[] }) {
   return (
     <div className={styles.single_view}>
       {tokens.map((token) => (
@@ -36,7 +35,7 @@ function SingleView({ tokens }: { tokens: NFT[] }) {
 }
 
 /*** Masonry view feed*/
-function MasonryView({ tokens }: { tokens: NFT[] }) {
+function MasonryView({ tokens }: { tokens: Partial<ExtTokens>[] }) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
@@ -124,7 +123,7 @@ function TokenCollection({
   //   : viewMode
 
   const limit = searchParams.get(namespace)
-    ? parseInt(searchParams.get(namespace), 10)
+    ? parseInt(searchParams.get(namespace) || itemsPerLoad, 10)
     : itemsPerLoad
 
   const { data, error } = useSWR(
@@ -145,11 +144,7 @@ function TokenCollection({
   )
 
   if (error) {
-    return (
-      <Container>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      </Container>
-    )
+    return <pre>{JSON.stringify(error, null, 2)}</pre>
   }
 
   if (!data) {
@@ -178,19 +173,19 @@ function TokenCollection({
       showRestricted
         ? true
         : walletBlockMap.get(token.artist_address) !== 1 &&
-          objktBlockMap.get(token.id) !== 1
+          objktBlockMap?.get(token.id) !== 1
     )
     .map((token) => {
       return {
         ...token,
         isNSFW:
           !overrideProtections &&
-          (nsfwMap.get(token.token_id) === 1 ||
+          (nsfwMap?.get(token.token_id) === 1 ||
             token.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE),
 
         isPhotosensitive:
           !overrideProtections &&
-          (photosensitiveMap.get(token.token_id) === 1 ||
+          (photosensitiveMap?.get(token.token_id) === 1 ||
             token.teia_meta?.accessibility?.hazards.includes(
               METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
             )),

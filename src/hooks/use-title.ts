@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export function useTitle(title: string) {
+export function useTitle(title?: string) {
   useEffect(() => {
     // const prevTitle = document.title
     document.title = title ? `${title} - teia` : 'teia'

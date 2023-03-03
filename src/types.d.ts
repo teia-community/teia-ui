@@ -1,5 +1,6 @@
 // UTILITIES
 
+import type { Tokens } from 'gql'
 import type React from 'react'
 
 /** Utility type to extract a single type from an Array type */
@@ -327,4 +328,11 @@ export type MediaTypeProps = SharedMediaProps & {
 
   /** Older video tokens did not require a cover image, load the video in these cases. */
   forceVideo?: boolean
+}
+
+// Tokens with extra artifacts not coming from the API
+export interface ExtTokens extends Tokens {
+  isPhotosensitive?: boolean
+  isNSFW?: boolean
+  key?: string
 }

@@ -7,9 +7,7 @@ import { useEffect } from 'react'
  * @param {boolean} ignore_parent If true, clicking on the direct parent won't trigger the callback.
  */
 export const useClickOutside = <T extends HTMLElement>(
-  ref: {
-    current?: T
-  },
+  ref: React.RefObject<T>,
   callback: () => void,
   ignore_parent = false
 ) => {

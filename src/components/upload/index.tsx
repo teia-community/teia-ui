@@ -10,7 +10,7 @@ interface UploadProps {
   /**The displayed label */
   label: string
   /**A  list of accepted types */
-  allowedTypes: string[]
+  allowedTypes?: string[]
   /**A comma separated list of label of accepted types*/
   allowedTypesLabel: string
 

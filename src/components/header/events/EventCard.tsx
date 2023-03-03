@@ -1,14 +1,10 @@
 import Button from '@atoms/button/Button'
 import { Markdown } from '@components/markdown'
 import styles from '@style'
+import type { FeedEvent } from '@types'
 import { motion } from 'framer-motion'
 
-/**
- * @param {Object} eventOptions - The options for the feed item
- * @param {import("@types").FeedEvent } eventOptions.event - The event object
- * @returns {React.ReactElement} The card
- */
-export const EventCard = ({ event }) => {
+export const EventCard = ({ event }: { event: FeedEvent }) => {
   const itemVariants = {
     hidden: {
       opacity: 0,

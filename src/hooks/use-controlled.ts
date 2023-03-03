@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 
-export const useControlled = <T>(controlled?: T, initial?: T) => {
+export const useControlled = <T>(
+  controlled?: T,
+  initial?: T
+): [val: T | undefined, setVal: (arg: T) => void, controlled: boolean] => {
   const controlledRef = useRef(false)
   controlledRef.current = controlled !== undefined
 

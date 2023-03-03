@@ -9,10 +9,10 @@ interface DropdownButtonProps {
   menuID: string
   direction: 'left' | 'right'
   label: string
-  alt: string
+  alt?: string
   icon?: React.ReactNode
   toggled: boolean
-  onClick: () => void
+  onClick?: () => void
   className?: string
 }
 

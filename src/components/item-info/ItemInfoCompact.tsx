@@ -7,7 +7,7 @@ import { TezosIcon } from '@icons'
 import { PATH } from '@constants'
 import { useParams } from 'react-router'
 import { useLocalSettings } from '@context/localSettingsStore'
-import type { Tokens } from 'gql'
+import type { ExtTokens } from '@types'
 
 const Price = ({ price }: { price?: string | null }) => (
   <div className={styles.price_box}>
@@ -19,7 +19,7 @@ const Price = ({ price }: { price?: string | null }) => (
  * @param {Object} itemInfoCompactOptions
  * @param {import("@types").NFT} itemInfoCompactOptions.nft
  **/
-const ItemInfoCompact = ({ nft }: { nft: Tokens }) => {
+const ItemInfoCompact = ({ nft }: { nft: Partial<ExtTokens> }) => {
   const [zen, viewMode] = useLocalSettings((st) => [st.zen, st.viewMode])
 
   const param = useParams()

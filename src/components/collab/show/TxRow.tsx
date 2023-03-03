@@ -52,7 +52,7 @@ export const TxRow = ({ tx, index, onAdd, onRemove }: TxRowProps) => {
           onChange={(v) => {
             // if (typeof v === 'number') setAmount(v.toString())
             // else setAmount(v)
-            setAmount(v)
+            setAmount(v as string)
           }}
         />
       </td>

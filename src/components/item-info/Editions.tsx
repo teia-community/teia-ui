@@ -1,5 +1,5 @@
 import useSettings from '@hooks/use-settings'
-import type { Tokens } from 'gql'
+import type { ExtTokens } from '@types'
 import { sum } from 'lodash'
 import { memo, useMemo } from 'react'
 
@@ -13,7 +13,7 @@ const Editions = ({
   className,
 }: {
   prefix?: string
-  nft: Tokens
+  nft: Partial<ExtTokens>
   className?: string
 }) => {
   const { walletBlockMap, isLoading } = useSettings()
