@@ -57,7 +57,11 @@ function _M.injectOpenGraphTags(body, info)
         '<meta name="twitter:image" content="' .. info['image'] .. '" />'
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', 'https://cache.teia.rocks/ipfs/')
-    return ngx.re.gsub(body, '<head>', '<head>' .. openGraphTags)
+    local ok, content = pcall(ngx.re.gsub, body, '<head>', '<head>' .. openGraphTags)
+    if ok and content then
+        return content
+    end
+    return body
 end
 
 return _M
