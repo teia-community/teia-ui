@@ -15,7 +15,7 @@ const users = [
 ]
 const user = users[0]
 
-const themes = ['light', 'dark', 'kawai', 'midnight', 'aqua', 'coffee']
+const themes = ['light', 'dark', 'kawaii', 'midnight', 'aqua', 'coffee']
 const pages = ['', user, 'settings']
 const theme_duration = 1500
 

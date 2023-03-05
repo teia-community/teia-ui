@@ -162,7 +162,7 @@ export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => ({
 export const THEMES: { [key: string]: string } = {
   dark: 'Dark',
   light: 'Light',
-  kawai: 'Kawai',
+  kawaii: 'Kawaii',
   aqua: 'Aqua',
   coffee: 'Coffee',
   midnight: 'Midnight',
