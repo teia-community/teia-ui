@@ -24,7 +24,7 @@ end
 function _M.findTokenDetails(search)
     local res = ngx.location.capture('/teztok/v1/graphql', {
         method = ngx.HTTP_POST,
-        body = '{"query":"query findTokenDetails {  token: tokens_by_pk(token_id: \\"'.. search .. '\\", fa2_address: \\"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton\\") { token_id name description display_uri artifact_uri}}"}',
+        body = '{"query":"query findTokenDetails {  token: tokens_by_pk(token_id: \\"'.. search .. '\\", fa2_address: \\"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton\\") {token_id name description artifact_uri teia_meta {preview_uri}}}"}',
     })
     -- ngx.log(ngx.ERR, "findTokenDetails: ", res.body)
     data = cjson.decode(res.body)['data']['token']
@@ -32,13 +32,15 @@ function _M.findTokenDetails(search)
     token['id'] = _M.clean(data['token_id'])
     token['name'] = _M.clean(data['name'])
     token['description'] = _M.clean(data['description'])
-    token['image'] = (data['display_uri'] ~= ngx.null and _M.clean(data['display_uri']) or _M.clean(data['artifact_uri']))
+    token['image'] = (
+        data['teia_meta']['preview_uri'] ~= ngx.null
+            and 'https://imgproxy.teia.rocks' .. _M.clean(data['teia_meta']['preview_uri'])
+            or _M.clean(data['artifact_uri'])
+        )
     return token
 end
 
 function _M.injectOpenGraphTags(body, info)
-    local newBody = body;
-
     -- cleanup old meta tags
     body = ngx.re.gsub(body, '<meta.*?property="og.*?/>', '', 'm')
     body = ngx.re.gsub(body, '<meta.*?name="twitter.*?/>', '', 'm')
