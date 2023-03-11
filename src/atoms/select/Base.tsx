@@ -6,25 +6,6 @@ import { useControlled } from '@hooks/use-controlled'
 import { style as select_style, theme } from './styles'
 import type { WithChildren } from '@types'
 
-interface SelectOption {
-  label: string
-  value: string
-}
-
-export interface SelectProps {
-  label?: string
-  alt?: string
-  onChange?: (val: SelectOption) => void
-  style?: React.CSSProperties
-  value: SelectOption
-  search?: boolean
-  defaultValue?: SelectOption
-  options: SelectOption[]
-  disabled?: boolean
-  placeholder?: string
-  className?: string
-}
-
 const Select = (
   {
     label,

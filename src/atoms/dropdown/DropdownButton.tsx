@@ -5,20 +5,6 @@ import classnames from 'classnames'
 import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
 import type { WithCompChildren } from '@types'
-interface DropdownButtonProps {
-  menuID: string
-  direction: 'left' | 'right'
-  label: string
-  alt?: string
-  icon?: React.ReactNode
-  toggled: boolean
-  onClick?: () => void
-  className?: string
-}
-
-interface ChildProps {
-  left?: boolean
-}
 
 function DropdownButton({
   menuID,
@@ -60,7 +46,9 @@ function DropdownButton({
         data-toggle={menuID}
         onClick={() => {
           toggle()
-          if (onClick) onClick()
+          if (onClick) {
+            onClick()
+          }
         }}
       >
         <>

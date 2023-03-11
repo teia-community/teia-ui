@@ -1,58 +1,8 @@
 import styles from '@style'
-import type { FocusEventHandler } from 'react'
 import { memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
-import type { KeyboardEvent } from 'react'
 import React from 'react'
 import type { WithChildren } from '@types'
-type InputType =
-  | 'button'
-  | 'checkbox'
-  | 'color'
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'file'
-  | 'hidden'
-  | 'image'
-  | 'month'
-  | 'number'
-  | 'password'
-  | 'radio'
-  | 'range'
-  | 'reset'
-  | 'search'
-  | 'submit'
-  | 'tel'
-  | 'text'
-  | 'time'
-  | 'url'
-  | 'week'
-
-/** We assume input always return strings
- * (which is the good thing to do apparently)
- * onChange when not using ref will return the parsed value
- * number for "number" inputs, string for the rest)
- */
-interface InputProps<T extends number | string> {
-  type?: InputType
-  placeholder: string
-  name?: string
-  min?: number
-  max?: number
-  maxlength?: number
-  label?: string
-  onChange?: <X>(value: X) => void
-  onBlur?: FocusEventHandler<HTMLInputElement>
-  // onWheel?: () => void
-  disabled?: boolean
-  value?: T
-  // children?: JSX.Element | JSX.Element[]
-  defaultValue?: T
-  pattern?: string
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
-  className?: string
-}
 
 function Input<T extends number | string>(
   {
@@ -63,7 +13,7 @@ function Input<T extends number | string>(
     max,
     maxlength = 500,
     label,
-    onChange = (value) => null,
+    onChange,
     onBlur,
     // onWheel = () => null,
     disabled,
@@ -72,7 +22,7 @@ function Input<T extends number | string>(
     defaultValue,
     pattern,
     onKeyDown,
-    className,
+    className = '',
   }: WithChildren<InputProps<T>>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) {
@@ -81,7 +31,7 @@ function Input<T extends number | string>(
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
       if (ref) {
-        onChange(e)
+        onChange?.(e)
         return
       }
       const target = e.target as HTMLInputElement
@@ -94,7 +44,7 @@ function Input<T extends number | string>(
             : target.value
 
         setValue(v as T)
-        onChange(v as T)
+        onChange?.(v as T)
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +52,7 @@ function Input<T extends number | string>(
   )
 
   return (
-    <div className={`${styles.container} ${className || ''}`}>
+    <div className={`${styles.container} ${className}`}>
       <label htmlFor={name}>
         <p>{label || name}</p>
         <input

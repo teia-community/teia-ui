@@ -1,6 +1,55 @@
-import type { ChangeEventHandler } from 'react'
+// import type { ChangeEventHandler } from "react";
 
-export interface CheckboxProps {
+/** We assume input always return strings
+ * (which is the good thing to do apparently)
+ * onChange when not using ref will return the parsed value
+ * number for "number" inputs, string for the rest)
+ */
+interface InputProps<T extends number | string> {
+  type?: InputType
+  placeholder: string
+  name?: string
+  min?: number
+  max?: number
+  maxlength?: number
+  label?: string
+  onChange?: <X>(value: X) => void
+  onBlur?: FocusEventHandler<HTMLInputElement>
+  // onWheel?: () => void
+  disabled?: boolean
+  value?: T
+  // children?: JSX.Element | JSX.Element[]
+  defaultValue?: T
+  pattern?: string
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+  className?: string
+}
+
+type InputType =
+  | 'button'
+  | 'checkbox'
+  | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'email'
+  | 'file'
+  | 'hidden'
+  | 'image'
+  | 'month'
+  | 'number'
+  | 'password'
+  | 'radio'
+  | 'range'
+  | 'reset'
+  | 'search'
+  | 'submit'
+  | 'tel'
+  | 'text'
+  | 'time'
+  | 'url'
+  | 'week'
+
+interface CheckboxProps {
   name: string
   label: string
   alt: string
@@ -16,7 +65,7 @@ export interface CheckboxProps {
   small?: boolean
 }
 
-export interface TextAreaProps {
+interface TextAreaProps {
   placeholder?: string
   name: string
   maxlength?: number

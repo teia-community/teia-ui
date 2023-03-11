@@ -1,10 +1,14 @@
-import type { SelectField } from '@atoms/select/types'
-import type { FileForm } from '@types'
+import '@atoms/select/types'
+import '@types'
 
-export interface MintOutletContext {
+interface MintOutletContext {
   balance?: number
   minterName?: string
   address: string
   artifact?: FileForm
   license?: SelectField
+}
+interface ImageDimensions {
+  imageWidth: number
+  imageHeight: number
 }

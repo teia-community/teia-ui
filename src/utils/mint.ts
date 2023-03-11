@@ -27,11 +27,6 @@ export const removeExtension = (name: string) => {
   return name.split('.').slice(0, -1).join('.')
 }
 
-interface ImageDimensions {
-  imageWidth: number
-  imageHeight: number
-}
-
 export const getImageDimensions = async (
   file: FileForm
 ): Promise<ImageDimensions> => {

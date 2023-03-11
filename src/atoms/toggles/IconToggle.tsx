@@ -3,17 +3,6 @@ import styles from '@style'
 import Button from '@atoms/button/Button'
 import type React from 'react'
 
-interface IconToggleProps {
-  // label:string
-  icon: React.ReactNode
-  // initial: boolean
-  toggled: boolean
-  alt: string
-  // className?: string
-  // style?: React.CSSProperties
-  onClick: () => void
-}
-
 export const IconToggle = ({
   //   label,
   icon,

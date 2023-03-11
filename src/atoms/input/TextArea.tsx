@@ -1,7 +1,6 @@
 import styles from '@style'
 import type { WithChildren } from '@types'
 import React from 'react'
-import type { TextAreaProps } from './types'
 
 const Textarea = (
   {
