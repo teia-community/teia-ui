@@ -20,10 +20,10 @@ import {
   getImageDimensions,
   removeExtension,
 } from '@utils/mint'
-import type { FileForm, Format } from '@types'
+import type { FileForm } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
-import type { SelectField } from '@atoms/select/types'
+import '@atoms/select/types'
 
 interface MintState {
   title?: string
@@ -254,7 +254,7 @@ export const useMintStore = create<MintState>()(
               rightUri: custom_license_uri,
               language: language?.value,
               accessibility,
-              contentRating,
+              contentRating: contentRating || undefined,
               formats,
             })
           } else {
@@ -272,7 +272,7 @@ export const useMintStore = create<MintState>()(
               rightUri: custom_license_uri,
               language: language?.value,
               accessibility,
-              contentRating,
+              contentRating: contentRating || undefined,
               formats,
             })
           }

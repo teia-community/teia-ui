@@ -8,13 +8,14 @@ import styles from '@style'
 import classNames from 'classnames'
 import { Button, Secondary } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
+import type { Teia_Shareholders } from 'gql'
 
 export const CreateCollaboration = () => {
   const address = useUserStore((st) => st.address)
 
   // Core collaborators and beneficiaries
   const [editCollaborators, setEditCollaborators] = useState(true)
-  const [collaborators, setCollaborators] = useState([])
+  const [collaborators, setCollaborators] = useState<Teia_Shareholders[]>([])
   const [beneficiaries, setBeneficiaries] = useState([])
 
   // For adding people not directly involved with the creation

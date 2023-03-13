@@ -49,7 +49,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   // }, [originationOpHash, timerEndDate, checkInterval])
 
   const { error, data } = apiSWR.useGetCollabsForAddress('/collabs-manage', {
-    address,
+    address: address || '',
   })
   const collabs = useMemo(() => {
     if (!address) {

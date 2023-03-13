@@ -21,19 +21,35 @@ interface TzktData {
 
 // IPFS
 interface PrepareProps {
-  name: string
-  description: string
-  tags: string
+  name?: string
+  description?: string
+  tags?: string
   address: string
   file: FileForm
   cover: FileForm
   thumbnail: FileForm
-  rights: string
+  rights?: string
   rightUri?: string
   language?: string
-  accessibility: string
-  contentRating: string
-  formats: any
+  accessibility?: AccessibilityOpts | null
+  contentRating?: string
+  formats: FormatOpts[]
+}
+
+interface AccessibilityOpts {
+  hazards: string[]
+}
+
+interface Format {
+  mimeType: string
+  fileSize: number
+  fileName: string
+  dimensions?: {
+    value: string
+    unit: 'px' | 'in' | 'cm' | 'mm' | 'pt' | 'pc'
+  }
+  /* An ipfs uri to the file */
+  uri?: string
 }
 
 interface PrepareDirectoryOptions {
@@ -45,11 +61,11 @@ interface PrepareDirectoryOptions {
   cover: FileForm
   thumbnail: FileForm
   formats: MintFormat[]
-  generateDisplayUri: string
+  generateDisplayUri: boolean
   rights?: string
   rightUri?: string
   language?: string
-  accessibility?: string
+  accessibility?: AccessibilityOpts | null
   contentRating?: string
 }
 interface BuildMetadataOptions {
@@ -64,12 +80,12 @@ interface BuildMetadataOptions {
   rights?: string
   rightUri?: string
   language?: string
-  accessibility?: string
+  accessibility?: AccessibilityOpts | null
   contentRating?: string
 }
 interface TeiaMetadata {
-  name: string
-  description: string
+  name?: string
+  description?: string
   tags: string[]
   symbol: string
   artifactUri: string
@@ -80,11 +96,11 @@ interface TeiaMetadata {
   decimals: number
   isBooleanAmount: boolean
   shouldPreferSymbol: boolean
-  rights: string
+  rights?: string
   date: string
   mintingTool: string
   //optional
-  accessibility?: string
+  accessibility?: AccessibilityOpts
   contentRating?: string
   rightUri?: string
   language?: string

@@ -14,16 +14,16 @@ export type WithCompChildren<T = object> = T & {
   children?: React.ReactElement<any, string | React.JSXElementConstructor<any>>
 }
 
-// Global to tidy
-export interface Format {
-  mimeType: string
-  fileSize: number
-  fileName: string
-  dimensions?: {
-    value: string
-    unit: string
-  }
-}
+// // Global to tidy
+// export interface Format {
+//   mimeType: string
+//   fileSize: number
+//   fileName: string
+//   dimensions?: {
+//     value: string
+//     unit: string
+//   }
+// }
 
 export type MintFormat = {
   mimeType: string

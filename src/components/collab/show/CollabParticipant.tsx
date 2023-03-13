@@ -12,14 +12,14 @@ export const CollabParticipant = ({
     ? participant.shareholder_profile.name
     : participant.shareholder_address
 
+  if (!displayName) return null
+
   return (
-    displayName && (
-      <Link
-        className={styles.link}
-        to={`${PATH.ISSUER}/${participant.shareholder_address}`}
-      >
-        {displayName}
-      </Link>
-    )
+    <Link
+      className={styles.link}
+      to={`${PATH.ISSUER}/${participant.shareholder_address}`}
+    >
+      {displayName}
+    </Link>
   )
 }

@@ -6,7 +6,7 @@ import { Buffer } from 'buffer'
 import { api } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import type { FileForm, FileMint, MintFormat } from '@types'
+import type { FileMint } from '@types'
 import { pickBy } from 'lodash'
 
 /**
@@ -407,7 +407,7 @@ async function buildMetadataFile({
     decimals: 0,
     isBooleanAmount: false,
     shouldPreferSymbol: false,
-    rights,
+    rights: rights || 'none',
     date: new Date().toISOString(),
     mintingTool: 'https://teia.art/mint',
   }

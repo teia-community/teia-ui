@@ -23,7 +23,7 @@ function DropDown({
   useClickOutside(
     dropdownRef,
     () => {
-      setOpen(false)
+      setOpen?.(false)
     },
     true
   )

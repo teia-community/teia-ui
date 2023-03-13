@@ -7,8 +7,15 @@ import { CollaboratorType, PATH } from '@constants'
 import ParticipantList from './ParticipantList'
 import { Link } from 'react-router-dom'
 import { useUserStore } from '@context/userStore'
+import type { Teia_Split_Contracts } from 'gql'
 
-export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
+export const CollabParticipantInfo = ({
+  collabData,
+  expanded = false,
+}: {
+  collabData: Teia_Split_Contracts
+  expanded: boolean
+}) => {
   const [proxyAddress, address] = useUserStore((st) => [
     st.proxyAddress,
     st.address,
@@ -30,7 +37,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
 
   // beneficiaries
   const beneficiaries = shareholders.filter(
-    ({ holder_type }) => holder_type === CollaboratorType.BENEFACTOR
+    ({ holder_type }) => holder_type === CollaboratorType.BENEFICIARY
   )
 
   // Combine various styles
@@ -74,7 +81,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
               onClick={() =>
                 useUserStore.setState({
                   proxyAddress: contract_address,
-                  proxyName: name,
+                  proxyName: name || undefined,
                 })
               }
             >

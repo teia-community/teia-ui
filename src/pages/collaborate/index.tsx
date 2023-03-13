@@ -21,7 +21,7 @@ const Collaborate = () => {
 
   // If an address is created, update the tab
   useEffect(() => {
-    const clb = (originationOpHash) => {
+    const clb = (originationOpHash?: string) => {
       console.debug({ originationOpHash })
       if (originationOpHash) {
         navigate('/')

@@ -1,6 +1,6 @@
 import { THEMES, THEME_OPTIONS } from '@constants'
 import { type Theme, useLocalSettings } from '@context/localSettingsStore'
-import Select, { type SelectProps } from './Base'
+import Select from './Base'
 
 export const ThemeSelection = (
   props: Partial<SelectProps> & { apply: boolean }

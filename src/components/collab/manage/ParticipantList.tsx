@@ -1,8 +1,15 @@
 import { CollabParticipant } from '../show/CollabParticipant'
 import styles from '../index.module.scss'
 import { memo } from 'react'
+import type { Teia_Shareholders } from 'gql'
 
-const ParticipantList = ({ title, participants }) => {
+const ParticipantList = ({
+  title,
+  participants,
+}: {
+  title?: string
+  participants: Teia_Shareholders[]
+}) => {
   return (
     <div>
       <div className={styles.flex}>

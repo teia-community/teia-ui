@@ -3,8 +3,15 @@ import { Button } from '@atoms/button'
 import { CollabParticipantInfo } from './CollabParticipantInfo'
 import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
+import type { Teia_Split_Contracts } from 'gql'
 
-export const CollabList = ({ description, collabs }) => {
+export const CollabList = ({
+  description,
+  collabs,
+}: {
+  description: string
+  collabs: Teia_Split_Contracts[]
+}) => {
   const [showDetail, setShowDetail] = useState(false)
 
   const headerStyle = classNames(styles.flex, styles.flexBetween)

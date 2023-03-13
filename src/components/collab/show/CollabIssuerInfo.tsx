@@ -37,7 +37,7 @@ export const CollabIssuerInfo = ({
 
       {showCollabSummary && (
         <div className={styles.collabInfo}>
-          <ParticipantList title={false} participants={coreParticipants} />
+          <ParticipantList participants={coreParticipants} />
         </div>
       )}
     </div>
