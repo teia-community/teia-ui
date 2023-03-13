@@ -1,5 +1,6 @@
 local _M = {}
 local cjson = require "cjson"
+local ustring = require "ustring"
 
 function _M.clean(input)
     return ngx.re.gsub(input, '"', '')
@@ -57,7 +58,7 @@ function _M.injectOpenGraphTags(body, info)
         '<meta name="twitter:image" content="' .. info['image'] .. '" />'
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', 'https://cache.teia.rocks/ipfs/')
-    local ok, content = pcall(ngx.re.gsub, body, '<head>', '<head>' .. openGraphTags)
+    local ok, content = pcall(ustring.gsub, body, '<head>', '<head>' .. openGraphTags)
     if ok and content then
         return content
     end
