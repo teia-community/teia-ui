@@ -23,7 +23,7 @@ import {
 import type { FileForm } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
-import '@atoms/select/types'
+import '@atoms/select/types.d.ts'
 
 interface MintState {
   title?: string

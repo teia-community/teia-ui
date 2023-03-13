@@ -1,8 +1,10 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
-import { BaseTokenFieldsFragment } from '@data/api'
+
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
+import { BaseTokenFieldsFragment } from '@data/queries'
+import type { Token_Metadata } from 'gql'
 
 export function OneOnOneFeed() {
   return (
@@ -11,7 +13,9 @@ export function OneOnOneFeed() {
       label="1/1 OBJKTs"
       namespace="one-on-one-feed"
       maxItems={600}
-      postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
+      postProcessTokens={(tokens: Token_Metadata[]) =>
+        uniqBy(tokens, 'artist_address')
+      }
       query={gql`
         ${BaseTokenFieldsFragment}
         query getUnoUno($limit: Int!) {

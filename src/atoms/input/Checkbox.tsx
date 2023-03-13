@@ -3,7 +3,7 @@ import styles from '@style'
 import classNames from 'classnames'
 import React, { useCallback } from 'react'
 
-import './types'
+import './types.d.ts'
 
 const Checkbox = (
   {

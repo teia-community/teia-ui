@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy'
 import { BaseTokenFieldsFragment } from '@data/queries'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
+import type { Token_Metadata } from 'gql'
 
 export function NewObjktsFeed() {
   return (
@@ -11,7 +12,9 @@ export function NewObjktsFeed() {
       label="New OBJKTs"
       namespace="new-objkts-feed"
       maxItems={600}
-      postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
+      postProcessTokens={(tokens: Token_Metadata[]) =>
+        uniqBy(tokens, 'artist_address')
+      }
       query={gql`
         ${BaseTokenFieldsFragment}
         query getNewObjkt($limit: Int!) {

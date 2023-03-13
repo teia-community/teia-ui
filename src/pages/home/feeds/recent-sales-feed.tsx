@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy'
 import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/queries'
 import { HEN_CONTRACT_FA2 } from '@constants'
+import type { Token_Metadata } from 'gql'
 
 export function RecentSalesFeed() {
   return (
@@ -14,7 +15,7 @@ export function RecentSalesFeed() {
       tokenPath="token"
       keyPath="token.token_id"
       maxItems={600}
-      postProcessTokens={(tokens) =>
+      postProcessTokens={(tokens: Token_Metadata[]) =>
         uniqBy(uniqBy(tokens, 'token_id'), 'artist_address')
       }
       query={gql`

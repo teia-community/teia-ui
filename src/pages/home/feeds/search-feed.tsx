@@ -7,8 +7,8 @@ export function SearchFeed() {
 
   return (
     <TagFeed
-      feeds_menu={false}
       label="Search"
+      feeds_menu={false}
       namespace="search-feed"
       tag={searchTerm}
     />

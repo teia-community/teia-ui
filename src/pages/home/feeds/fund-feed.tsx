@@ -13,7 +13,15 @@ function FundFeed({
   contractAddress,
   cause,
   namepsace,
-  tags = null,
+  tags,
+}: {
+  minShares?: number
+  introText: string
+  infoUrl: string
+  contractAddress: string
+  cause: string
+  namepsace: string
+  tags?: string[]
 }) {
   return (
     <>

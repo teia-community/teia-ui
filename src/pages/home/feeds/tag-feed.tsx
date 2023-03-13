@@ -3,7 +3,16 @@ import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/queries'
 import { HEN_CONTRACT_FA2 } from '@constants'
 
-export function TagFeed({ tag, ...otherProps }) {
+export function TagFeed({
+  tag,
+  ...otherProps
+}: {
+  tag: string
+  label?: string
+  feeds_menu?: boolean
+  namespace?: string
+  [key: string]: unknown
+}) {
   return (
     <TokenCollection
       feeds_menu

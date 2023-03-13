@@ -3,20 +3,31 @@ import uniqBy from 'lodash/uniqBy'
 import { BaseTokenFieldsFragment } from '@data/queries'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
+import type { Token_Metadata } from 'gql'
 
-function MimeTypeFeed({ label, namespace, mimeTypes }) {
+function MimeTypeFeed({
+  label,
+  namespace,
+  mimeTypes,
+}: {
+  label: string
+  namespace: string
+  mimeTypes: string[]
+}) {
   return (
     <TokenCollection
       feeds_menu
       label={label}
       namespace={namespace}
       maxItems={600}
-      postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
+      postProcessTokens={(tokens: Token_Metadata[]) =>
+        uniqBy(tokens, 'artist_address')
+      }
       query={gql`
         ${BaseTokenFieldsFragment}
         query getTokensByMimeTypes($limit: Int!) {
           tokens(where: { mime_type: {_in : [${mimeTypes
-            .map((mimeType) => `"${mimeType}"`)
+            .map((mimeType: string) => `"${mimeType}"`)
             .join(
               ', '
             )}] }, editions : { _neq : 0 }, metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}}, order_by: { minted_at: desc }, limit: $limit) {
