@@ -151,7 +151,7 @@ export const useUserStore = create<UserState>()(
           try {
             step(
               title,
-              `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})
+              `Awaiting confirmation of the [operation](https://tzkt.io/${op.opHash})
               *closing this dialog has no effect on the transaction*`
             )
             // skippable

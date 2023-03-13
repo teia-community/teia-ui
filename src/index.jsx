@@ -16,19 +16,20 @@ import {
   IranFeed,
   PakistanFeed,
   UkraineFeed,
+  QuakeFeed,
   AudioFeed,
   GifFeed,
   GlbFeed,
   HtmlSvgFeed,
   ImageFeed,
   VideoFeed,
+  OneOnOneFeed,
   NewObjktsFeed,
   RandomFeed,
   RecentSalesFeed,
   TagFeed,
   PdfFeed,
   MarkdownFeed,
-  QuakeFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -78,7 +79,7 @@ const router = createBrowserRouter(
       <Route path="feed/*" element={<Home />}>
         <Route index element={<RecentSalesFeed />} />
         <Route path="lists" element={<ListsFeed />} />
-
+        <Route path="1-1" element={<OneOnOneFeed />} />
         <Route
           path="tezospride"
           element={<TagFeed tag="tezospride" namespace="tezospride" />}

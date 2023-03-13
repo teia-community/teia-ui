@@ -26,6 +26,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { shallow } from 'zustand/shallow'
+import { ArtistProfile } from '@types'
 
 export const Header = () => {
   const [
@@ -101,7 +102,7 @@ export const Header = () => {
       string | undefined,
       string | undefined,
       string | undefined,
-      Teia_Users
+      ArtistProfile
     ]) => {
       setSyncLabel(address ? 'Unsync' : 'Sync')
       if (address) {
@@ -128,7 +129,7 @@ export const Header = () => {
           string | undefined,
           string | undefined,
           string | undefined,
-          Teia_Users
+          ArtistProfile
         ],
       updateTitle
     )

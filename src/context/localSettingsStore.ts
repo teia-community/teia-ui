@@ -8,7 +8,7 @@ import { useModalStore } from './modalStore'
 
 type ViewMode = 'single' | 'masonry'
 
-export type Theme = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
+export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
   'https://mainnet.api.tez.ie',

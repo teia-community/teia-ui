@@ -35,7 +35,7 @@ export const parameters = {
   //     { name: 'light', value: '#ffffff' },
   //     { name: 'dark', value: '#111' },
   //     { name: 'aqua', value: '#6aadff' },
-  //     { name: 'kawai', value: '#ffbde6' },
+  //     { name: 'kawaii', value: '#ffbde6' },
   //     { name: 'midnight', value: '#002633' },
   //     { name: 'coffee', value: '#170a06' },
   //   ],
