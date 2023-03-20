@@ -144,9 +144,14 @@ export const History = () => {
             )
           }
           if (
-            ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2', 'VERSUM_SWAP'].includes(
-              e.type
-            )
+            [
+              'OBJKT_ASK',
+              'OBJKT_ASK_V2',
+              'TEIA_SWAP',
+              'HEN_SWAP',
+              'HEN_SWAP_V2',
+              'VERSUM_SWAP',
+            ].includes(e.type)
           ) {
             return (
               <HistoryRow
@@ -177,6 +182,8 @@ export const History = () => {
               (ev) =>
                 (ev.implements === 'SALE' ||
                   [
+                    'OBJKT_ASK',
+                    'OBJKT_ASK_V2',
                     'TEIA_SWAP',
                     'HEN_SWAP',
                     'HEN_SWAP_V2',
