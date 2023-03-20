@@ -145,6 +145,7 @@ export const History = () => {
           }
           if (
             [
+              'OBJKT_ASK',
               'OBJKT_ASK_V2',
               'TEIA_SWAP',
               'HEN_SWAP',
@@ -181,6 +182,8 @@ export const History = () => {
               (ev) =>
                 (ev.implements === 'SALE' ||
                   [
+                    'OBJKT_ASK',
+                    'OBJKT_ASK_V2',
                     'TEIA_SWAP',
                     'HEN_SWAP',
                     'HEN_SWAP_V2',
