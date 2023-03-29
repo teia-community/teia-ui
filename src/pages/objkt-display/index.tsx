@@ -106,10 +106,6 @@ export const ObjktDisplay = () => {
 
         objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
         objkt.underReview = underReviewMap.get(objkt.artist_address) === 1
-        objkt.listings = objkt.listings.filter(
-          ({ seller_address }: { seller_address: string }) =>
-            walletBlockMap.get(seller_address) !== 1
-        )
 
         return objkt
       }
