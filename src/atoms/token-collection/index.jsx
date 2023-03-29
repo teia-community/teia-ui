@@ -205,7 +205,7 @@ function TokenCollection({
   const limitedTokens = tokens.slice(0, limit)
 
   return (
-    <div className={styles.feed_container}>
+    <div className={`${styles.feed_container} no-fool`}>
       <FeedToolbar feeds_menu={feeds_menu} />
       <IconCache.Provider value={{}}>
         <InfiniteScroll
