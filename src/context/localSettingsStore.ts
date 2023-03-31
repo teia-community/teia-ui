@@ -24,6 +24,8 @@ export const rpc_nodes = [
 export type RPC_NODES = typeof rpc_nodes[number]
 
 interface LocalSettingsState {
+  foolAround: boolean
+  setFoolAround: (foolAround: boolean) => void
   viewMode: ViewMode
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
@@ -53,6 +55,7 @@ const defaultValues = {
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
   rpcNode: rpc_nodes[0],
+  foolAround: true,
 }
 
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -60,6 +63,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
     persist(
       (set, get) => ({
         ...defaultValues,
+        setFoolAround: (foolAround) => set({ foolAround }),
         toggleViewMode: () =>
           set((state) => ({
             viewMode: state.viewMode === 'single' ? 'masonry' : 'single',
