@@ -14,6 +14,8 @@ export const Settings = () => {
     setPhotosensitiveFriendly,
     rpcNode,
     setRpcNode,
+    foolAround,
+    setFoolAround,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -21,6 +23,8 @@ export const Settings = () => {
     st.setPhotosensitiveFriendly,
     st.rpcNode,
     st.setRpcNode,
+    st.foolAround,
+    st.setFoolAround,
   ])
 
   return (
@@ -54,6 +58,7 @@ export const Settings = () => {
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
           />
+
           <Line />
           <ThemeSelection label={'Theme'} />
           <Line />
@@ -65,6 +70,14 @@ export const Settings = () => {
             onChange={(e) => {
               setRpcNode(e.value)
             }}
+          />
+          <Line />
+          <Checkbox
+            alt={`click to disable the april fool mode`}
+            checked={!foolAround}
+            onCheck={(c) => setFoolAround(!c)}
+            className="no-fool"
+            label={'I am done with the april fool mode'}
           />
         </div>
       </div>
