@@ -28,7 +28,7 @@ import { shallow } from 'zustand/shallow'
  */
 function SingleView({ tokens }) {
   return (
-    <div className={styles.single_view}>
+    <div className={`${styles.single_view} no-fool`}>
       {tokens.map((token) => (
         <FeedItem key={token.token_id} nft={token} />
       ))}
@@ -209,7 +209,7 @@ function TokenCollection({
       <FeedToolbar feeds_menu={feeds_menu} />
       <IconCache.Provider value={{}}>
         <InfiniteScroll
-          className={`${styles.infinite_scroll}`}
+          className={`${styles.infinite_scroll} no-fool`}
           loadMore={() => {
             setSearchParams(
               {
