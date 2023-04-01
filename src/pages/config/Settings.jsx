@@ -77,7 +77,7 @@ export const Settings = () => {
             checked={!foolAround}
             onCheck={(c) => setFoolAround(!c)}
             className="no-fool"
-            label={'I am done with the april fool mode (reload the page)'}
+            label={'I am done with the april fool mode'}
           />
         </div>
       </div>

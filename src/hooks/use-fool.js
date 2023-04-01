@@ -6,7 +6,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
  *
  */
 
-export default function useFool() {
+export default function useFool(minRotation = -2, maxRotation = 2) {
   const [foolAround] = useLocalSettings((t) => [t.foolAround])
   useEffect(() => {
     let styleEl = document.getElementById('page-styles')
@@ -18,14 +18,13 @@ export default function useFool() {
 
     let stylesheet = ''
     if (foolAround) {
-      const maxRotation = 2
-      const minRotation = -2
-      const value =
-        Math.floor(Math.random() * (maxRotation - minRotation + 1)) +
-        minRotation
+      let value = 0
+      while (Math.abs(value) < 0.3) {
+        value = Math.random() * (maxRotation - minRotation) + minRotation
+      }
       stylesheet = `*:not(.no-fool):not([id^="beacon-alert-wrapper-"]):not(main):not(body):not(html):not(#root) { transition: transform 500ms; rotate:${value}deg; }`
     }
 
     styleEl.innerHTML = stylesheet
-  }, [foolAround])
+  }, [foolAround, minRotation, maxRotation])
 }
