@@ -14,8 +14,8 @@ export const Settings = () => {
     setPhotosensitiveFriendly,
     rpcNode,
     setRpcNode,
-    foolAround,
-    setFoolAround,
+    // foolAround,
+    // setFoolAround,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -23,8 +23,8 @@ export const Settings = () => {
     st.setPhotosensitiveFriendly,
     st.rpcNode,
     st.setRpcNode,
-    st.foolAround,
-    st.setFoolAround,
+    // st.foolAround,
+    // st.setFoolAround,
   ])
 
   return (
@@ -72,13 +72,13 @@ export const Settings = () => {
             }}
           />
           <Line />
-          <Checkbox
+          {/* <Checkbox
             alt={`click to disable the april fool mode`}
             checked={!foolAround}
             onCheck={(c) => setFoolAround(!c)}
             className="no-fool"
             label={'I am done with the april fool mode'}
-          />
+          /> */}
         </div>
       </div>
     </Page>
