@@ -13,7 +13,6 @@
   flex-direction: column;
 
   container: main_menu / inline-size;
-  height: 100%;
   width: 100%;
   top: 0;
   left: 0;
@@ -22,7 +21,7 @@
   transition: var(--body-transition);
 
   z-index: 400;
-  height: 100%;
+  height: 100vh;
 
   .content {
     line-height: 3em;
