@@ -4,11 +4,10 @@ import { Loading as Preloading } from '@atoms/loading'
 import { AnimatePresence } from 'framer-motion'
 import { Debug } from '@atoms/debug'
 import { Header } from '@components/header'
-import useFool from '@hooks/use-fool'
 
 const App = () => {
   const { isLoading } = useSettings()
-  useFool()
+
   if (isLoading) {
     return <Preloading />
   }

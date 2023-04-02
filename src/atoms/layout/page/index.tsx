@@ -44,7 +44,7 @@ export const Page = ({
         variants={containerVariants}
         className={`${classes} ${className ? className : ''}`}
       >
-        <motion.div className={`${styles.content} no-fool`}>
+        <motion.div className={styles.content}>
           <>{children}</>
         </motion.div>
       </motion.main>

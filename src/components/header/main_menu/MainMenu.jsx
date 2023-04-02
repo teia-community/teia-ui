@@ -28,8 +28,8 @@ export const MainMenu = () => {
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
   return (
-    <motion.div className={`${styles.menu}`} {...fadeIn()}>
-      <nav className={`${styles.content}`}>
+    <motion.div className={styles.menu} {...fadeIn()}>
+      <nav className={styles.content}>
         <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />

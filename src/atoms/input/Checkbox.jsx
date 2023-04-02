@@ -51,7 +51,7 @@ const Checkbox = forwardRef(
     })
 
     return (
-      <label className={`${classes} ${className ? className : ''}`}>
+      <label className={`${classes} ${className || ''}`}>
         {label}
         <input
           ref={ref}
