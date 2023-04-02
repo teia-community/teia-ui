@@ -8,7 +8,7 @@ import { Header } from '@components/header'
 
 const App = () => {
   const { isLoading } = useSettings()
-  useFool()
+  //useFool()
   if (isLoading) {
     return <Preloading />
   }
