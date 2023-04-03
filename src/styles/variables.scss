@@ -66,6 +66,31 @@ $letter-spacing: 0.015em;
 
   --text-color: #dedede;
 }
+
+:root[data-theme='grass'] {
+  --gray-0: #000000;
+  --gray-5: #023108;
+  --gray-10: #1a1a1a;
+  --gray-15: #262626;
+  --gray-20: #075000;
+  --gray-30: #494949;
+  --gray-40: #666666;
+  --gray-50: #028802;
+  --gray-60: #00970d;
+  --gray-70: #28c202;
+  --gray-80: #05d810;
+  --gray-90: #e6e6e6;
+  --gray-100: #ffffff;
+
+  --background-color: #111;
+  --background-color-rgb: 0, 0, 0;
+  --border-color: rgba(255, 255, 255, 0.3);
+  --shadow-color: rgba(255, 255, 255, 0.3);
+  --secondary-color: rgba(255, 255, 255, 0.5);
+
+  --text-color: #00ff00;
+}
+
 :root[data-theme='noui'] {
   --gray-0: #111;
   --gray-5: ##111;
@@ -172,6 +197,7 @@ $letter-spacing: 0.015em;
 
   --text-color: var(--gray-90);
 }
+
 :root[data-theme='coffee'] {
   --gray-0: #170a06;
   --gray-5: #2f211d;

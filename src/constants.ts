@@ -166,6 +166,7 @@ export const THEMES: { [key: string]: string } = {
   aqua: 'Aqua',
   coffee: 'Coffee',
   midnight: 'Midnight',
+  grass: 'Grass',
   // noui: 'No UI (Expert Mode)',
 }
 
