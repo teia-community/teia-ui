@@ -55,7 +55,7 @@ const defaultValues = {
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
   rpcNode: rpc_nodes[0],
-  foolAround: true,
+  foolAround: false,
 }
 
 export const useLocalSettings = create<LocalSettingsState>()(
