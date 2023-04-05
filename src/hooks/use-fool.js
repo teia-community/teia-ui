@@ -7,7 +7,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
  */
 
 export default function useFool(minRotation = -2, maxRotation = 2) {
-  const [foolAround] = useLocalSettings((t) => [t.foolAround])
+  const [foolAround] = useLocalSettings((t) => [t.tilted])
   useEffect(() => {
     let styleEl = document.getElementById('page-styles')
     if (!styleEl) {
