@@ -178,7 +178,8 @@ export const History = () => {
           if (
             e.type === 'FA2_TRANSFER' &&
             e.to_address !== BURN_ADDRESS &&
-            !e.from_address.startsWith('KT1')
+            !e.from_address.startsWith('KT1') &&
+            !e.to_address.startsWith('KT1')
           ) {
             return (
               <HistoryRow
