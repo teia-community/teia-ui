@@ -144,9 +144,14 @@ export const History = () => {
             )
           }
           if (
-            ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2', 'VERSUM_SWAP'].includes(
-              e.type
-            )
+            [
+              'OBJKT_ASK',
+              'OBJKT_ASK_V2',
+              'TEIA_SWAP',
+              'HEN_SWAP',
+              'HEN_SWAP_V2',
+              'VERSUM_SWAP',
+            ].includes(e.type)
           ) {
             return (
               <HistoryRow
@@ -173,17 +178,8 @@ export const History = () => {
           if (
             e.type === 'FA2_TRANSFER' &&
             e.to_address !== BURN_ADDRESS &&
-            !nft.events.some(
-              (ev) =>
-                (ev.implements === 'SALE' ||
-                  [
-                    'TEIA_SWAP',
-                    'HEN_SWAP',
-                    'HEN_SWAP_V2',
-                    'VERSUM_SWAP',
-                  ].includes(ev.type)) &&
-                e.ophash === ev.ophash
-            )
+            !e.from_address.startsWith('KT1') &&
+            !e.to_address.startsWith('KT1')
           ) {
             return (
               <HistoryRow

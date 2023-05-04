@@ -15,14 +15,9 @@ import type { Listings, Tokens } from 'gql'
 function ListingRow({
   nft,
   listing,
-  // restricted,
-  // proxyAddress,
   onCollectClick,
   reswapPrices,
   setReswapPrices,
-  // reswap,
-  // cancel,
-  // address,
   proxyAdminAddress,
   rowId,
 }: {
@@ -42,7 +37,6 @@ function ListingRow({
   rowId: string
 }) {
   const { walletBlockMap } = useSettings()
-  // const [show, closeModal] = useModalStore((st) => [st.show, st.close])
   const [address, proxyAddress] = useUserStore((st) => [
     st.address,
     st.proxyAddress,
@@ -56,8 +50,8 @@ function ListingRow({
 
   console.debug('isOwnSwap', isOwnSwap)
   const restricted = useMemo(() => {
-    return nft.restricted
-  }, [nft.restricted])
+    return nft.restricted || walletBlockMap.get(listing.seller_address) === 1
+  }, [nft.restricted, walletBlockMap, listing.seller_address])
 
   if (!walletBlockMap) return null
 
@@ -72,9 +66,7 @@ function ListingRow({
       </div>
 
       <div className={styles.buttons}>
-        {(restricted || walletBlockMap.get(listing.seller_address) === 1) && (
-          <RestrictedLabel />
-        )}
+        {restricted && <RestrictedLabel />}
         <MarketplaceLabel listing={listing} />
         {!restricted &&
           walletBlockMap.get(listing.seller_address) !== 1 &&
@@ -89,6 +81,7 @@ function ListingRow({
           )}
 
         {isOwnSwap &&
+          !restricted &&
           (listing.type.startsWith('TEIA') ||
             listing.type.startsWith('HEN')) && (
             <>
@@ -128,19 +121,18 @@ function ListingRow({
               >
                 reswap
               </Button>
-
-              <Button
-                alt={'Click to cancel swap'}
-                shadow_box
-                onClick={() =>
-                  cancel(listing.contract_address, listing.swap_id)
-                }
-                className={styles.smol}
-              >
-                cancel
-              </Button>
             </>
           )}
+        {isOwnSwap && (
+          <Button
+            alt={'Click to cancel swap'}
+            shadow_box
+            onClick={() => cancel(listing.contract_address, listing.swap_id)}
+            className={styles.smol}
+          >
+            cancel
+          </Button>
+        )}
       </div>
     </div>
   )

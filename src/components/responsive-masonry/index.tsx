@@ -32,7 +32,7 @@ export const ResponsiveMasonry = ({ children }) => {
     <Masonry
       // cellSpacing={150}
       breakpointCols={colums}
-      className={styles.grid}
+      className={`${styles.grid} no-fool`}
       columnClassName={styles.column}
     >
       {children}

@@ -24,6 +24,8 @@ export const rpc_nodes = [
 export type RPC_NODES = typeof rpc_nodes[number]
 
 interface LocalSettingsState {
+  tilted: boolean
+  setTilted: (tilted: boolean) => void
   viewMode: ViewMode
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
@@ -53,6 +55,7 @@ const defaultValues = {
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
   rpcNode: rpc_nodes[0],
+  tilted: false,
 }
 
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -60,6 +63,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
     persist(
       (set, get) => ({
         ...defaultValues,
+        setTilted: (tilted) => set({ tilted }),
         toggleViewMode: () =>
           set((state) => ({
             viewMode: state.viewMode === 'single' ? 'masonry' : 'single',

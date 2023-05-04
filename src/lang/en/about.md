@@ -48,7 +48,7 @@ The Teia Marketplace Interface and marketplace contract are [code forks](https:/
 
 **Marketplace Contract Admin:** [KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P](https://tzkt.io/KT1PKBTVmdxfgkFvSeNUQacYiEFsPBw16B4P/operations/) - [multisig contract](https://multisign.onrender.com/) developed and owned by the Teia Community
 
-The [marketplace fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees) are temporarily set to 0%.
+The [marketplace fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees) are set to 2.5%.
 
 ---
 

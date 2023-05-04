@@ -134,7 +134,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
         <p>
           {loadingCollabs
             ? 'Looking for collabs...'
-            : 'You aren’t part of any collaborations at the moment'}
+            : 'You are not a manager of any collaborations at the moment'}
         </p>
       )} */}
     </Container>
