@@ -51,9 +51,7 @@ const CIDToURL = (
 
   switch (type) {
     case 'CDN':
-      return `https://cache.teia.rocks/media/${
-        options.size || 'raw'
-      }/ipfs/${cid}`
+      return `https://cache.teia.rocks/ipfs/${cid}`
     case 'CLOUDFLARE':
       return `https://cloudflare-ipfs.com/ipfs/${cid}`
     case 'PINATA':
