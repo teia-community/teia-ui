@@ -16,7 +16,7 @@ export function NewObjktsFeed() {
         ${BaseTokenFieldsFragment}
         query getNewObjkt($limit: Int!) {
           tokens(
-            where: { metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"} }
+            where: { editions: { _gt: "0" }, metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"} }
             order_by: { minted_at: desc }
             limit: $limit
 
