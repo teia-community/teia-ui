@@ -1,4 +1,5 @@
-<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" shape-rendering="crispEdges"
-	viewBox="0 0 1133.9 1133.9">
-	<path d="M566.9 178.2 0 1085.3h1133.9l-567-907.1zM210.6 971.9 567 405l356.4 566.9H210.6zM0 48.6h1133.9V162H0z" />
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill="currentColor" shape-rendering="crispEdges"
+    viewBox="0 0 512 128">
+    <path stroke="null"
+        d="M255.994 18.436 189.55 124.754h132.9L255.994 18.436zm-41.76 93.027 41.772-66.445 41.772 66.445h-83.544zM189.55 3.246h132.9v13.291h-132.9V3.247z" />
 </svg>
