@@ -19,9 +19,9 @@
 
 .banner {
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 3rem;
   /*position: fixed;*/
-  z-index: 400;
+  z-index: 1400;
   top: 0;
   color: #fff;
 
@@ -29,13 +29,19 @@
     padding: 0 1rem;
   }
 }
-
+.close {
+  position: absolute;
+  color: white;
+  top: 16px;
+  right: 15px;
+}
 .content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
   width: 100%;
+  max-width: var(--max-width-internal);
 
   @include respond-to('desktop') {
     /*width: 50%;*/

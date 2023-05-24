@@ -4,10 +4,18 @@ import styles from '@style'
 import { useEffect, useState } from 'react'
 import JSON5 from 'json5'
 import { TopBanner } from './TopBanner'
+import { Button } from '@atoms/button'
+import { CloseIcon } from '@icons'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 export const EventBanner = () => {
   const [content, setContent] = useState()
   const [config, setConfig] = useState()
+  const [has_seen_banner, setHasSeenBanner] = useLocalSettings((state) => [
+    state.has_seen_banner,
+    state.setHasSeenBanner,
+  ])
+
   useEffect(() => {
     async function getBanner() {
       const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
@@ -17,11 +25,17 @@ export const EventBanner = () => {
       // config_parsed.enable = true
       setConfig(config_parsed)
 
-      if (config_parsed.enable <= 0) {
-        return
-      }
-      const md_response = await fetch(`${BANNER_URL}/banner.md`)
-      const md_text = await md_response.text()
+      //TODO: TEMPORARY FOR STAGE
+      // if (config_parsed.enable <= 0) {
+      //   return
+      // }
+
+      //const md_response = await fetch(`${BANNER_URL}/banner.md`)
+      // const md_text = await md_response.text()
+
+      const md_text = `**[vote here](https://vote.teia.art/)**
+## Take part in the community vote on Teia's DAO Token distribution!
+[More info](https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran)`
       setContent(md_text)
     }
     try {
@@ -32,9 +46,17 @@ export const EventBanner = () => {
   }, [])
   return (
     <>
-      {content && (
+      {content && !has_seen_banner && (
         <TopBanner color={config?.color}>
           <Markdown className={styles.content}>{content}</Markdown>
+          <Button
+            onClick={() => {
+              setHasSeenBanner(true)
+            }}
+            className={styles.close}
+          >
+            <CloseIcon fill="white" width="16" />
+          </Button>
         </TopBanner>
       )}
     </>
