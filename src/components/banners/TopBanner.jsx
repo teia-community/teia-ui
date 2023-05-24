@@ -17,7 +17,7 @@ export const TopBanner = ({ children, color }) => {
       {visible && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: '50px', y: 0 }}
+          animate={{ opacity: 1, height: '40px', y: 0 }}
           exit={{ opacity: 0, y: -100 }}
           className={styles.banner}
         >

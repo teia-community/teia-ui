@@ -20,20 +20,19 @@
 .banner {
   width: 100%;
   background-color: var(--text-color);
-  padding: 0 3rem;
-  /*position: fixed;*/
   z-index: 1400;
   top: 0;
-  color: #fff;
-
-  @include respond-to('tablet') {
-    padding: 0 1rem;
+  color: var(--background-color);
+  a {
+    font-size: $font-small;
+  }
+  h2 {
+    font-size: $font-large;
   }
 }
 .close {
   position: absolute;
-  color: white;
-  top: 16px;
+  top: 13px;
   right: 15px;
 }
 .content {
@@ -50,8 +49,9 @@
   }
 
   a {
-    color: #fff;
+    color: var(--background-color);
     text-decoration: underline;
+    text-underline-offset: 0.3em;
     @media (min-width: 769px) {
       display: inline-block;
     }

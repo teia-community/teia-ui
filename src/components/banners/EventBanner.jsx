@@ -52,7 +52,7 @@ export const EventBanner = () => {
             }}
             className={styles.close}
           >
-            <CloseIcon fill="white" width="16" />
+            <CloseIcon fill="var(--background-color)" width="16" />
           </Button>
         </TopBanner>
       )}
