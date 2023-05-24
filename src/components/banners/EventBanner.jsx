@@ -25,10 +25,9 @@ export const EventBanner = () => {
       // config_parsed.enable = true
       setConfig(config_parsed)
 
-      //TODO: TEMPORARY FOR STAGE
-      // if (config_parsed.enable <= 0) {
-      //   return
-      // }
+      if (config_parsed.enable <= 0) {
+        return
+      }
 
       const md_response = await fetch(`${BANNER_URL}/banner.md`)
       const md_text = await md_response.text()
