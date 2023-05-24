@@ -19,23 +19,29 @@
 
 .banner {
   width: 100%;
-  padding: 0 2rem;
-  /*position: fixed;*/
-  z-index: 400;
+  background-color: var(--text-color);
+  z-index: 1400;
   top: 0;
-  color: #fff;
-
-  @include respond-to('tablet') {
-    padding: 0 1rem;
+  color: var(--background-color);
+  a {
+    font-size: $font-small;
+  }
+  h2 {
+    font-size: $font-large;
   }
 }
-
+.close {
+  position: absolute;
+  top: 13px;
+  right: 15px;
+}
 .content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
   width: 100%;
+  max-width: var(--max-width-internal);
 
   @include respond-to('desktop') {
     /*width: 50%;*/
@@ -43,8 +49,9 @@
   }
 
   a {
-    color: #fff;
+    color: var(--background-color);
     text-decoration: underline;
+    text-underline-offset: 0.3em;
     @media (min-width: 769px) {
       display: inline-block;
     }

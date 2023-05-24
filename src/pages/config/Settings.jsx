@@ -16,6 +16,8 @@ export const Settings = () => {
     setRpcNode,
     tilted,
     setTilted,
+    has_seen_banner,
+    setHasSeenBanner,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -25,6 +27,8 @@ export const Settings = () => {
     st.setRpcNode,
     st.tilted,
     st.setTilted,
+    st.has_seen_banner,
+    st.setHasSeenBanner,
   ])
 
   return (
@@ -75,9 +79,15 @@ export const Settings = () => {
           <Checkbox
             alt={`click to enable fool around (a throwback of the 2023 april fool)`}
             checked={tilted}
-            onCheck={(c) => setTilted(c)}
+            onCheck={setTilted}
             className="no-fool"
             label={'Fool Around'}
+          />
+          <Checkbox
+            alt={`click to enable fool around (a throwback of the 2023 april fool)`}
+            checked={has_seen_banner}
+            onCheck={setHasSeenBanner}
+            label={'Hide banner for last announcement'}
           />
         </div>
       </div>
