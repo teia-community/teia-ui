@@ -30,12 +30,9 @@ export const EventBanner = () => {
       //   return
       // }
 
-      //const md_response = await fetch(`${BANNER_URL}/banner.md`)
-      // const md_text = await md_response.text()
+      const md_response = await fetch(`${BANNER_URL}/banner.md`)
+      const md_text = await md_response.text()
 
-      const md_text = `**[vote here](https://vote.teia.art/)**
-## Take part in the community vote on Teia's DAO Token distribution!
-[More info](https://github.com/teia-community/teia-docs/wiki/Tezos-for-Iran)`
       setContent(md_text)
     }
     try {
