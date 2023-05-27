@@ -1,22 +1,46 @@
 // SVGs Rotating logos
 
-// import { ReactComponent as Julioglatt_01 } from './svgs/rotating_logos/julioglatt_01.svg'
-// import { ReactComponent as Julioglatt_02 } from './svgs/rotating_logos/julioglatt_02.svg'
-// import { ReactComponent as Julioglatt_03 } from './svgs/rotating_logos/julioglatt_03.svg'
-// import { ReactComponent as Julioglatt_04 } from './svgs/rotating_logos/julioglatt_04.svg'
-// import { ReactComponent as Julioglatt_05 } from './svgs/rotating_logos/julioglatt_05.svg'
-// import { ReactComponent as Julioglatt_06 } from './svgs/rotating_logos/julioglatt_06.svg'
-// import { ReactComponent as Merchantcoppola_01 } from './svgs/rotating_logos/merchantcoppola_01.svg'
-// import { ReactComponent as Serg_alec_horomox_01 } from './svgs/rotating_logos/serg_alec_horomox_01.svg'
-// import { ReactComponent as Slinkous_01 } from './svgs/rotating_logos/slinkous_01.svg'
-// import { ReactComponent as Somfay_01 } from './svgs/rotating_logos/somfay_01.svg'
-// import { ReactComponent as Somfay_02 } from './svgs/rotating_logos/somfay_02.svg'
-
-//-- SVG Convertsion issues
-// import { ReactComponent as Norulesjustfeels_05 } from './svgs/rotating_logos/norulesjustfeels_05.svg'
-// import { ReactComponent as Varda_03 } from './svgs/rotating_logos/varda_03.svg'
-
 // TODO: replace all that from a build script if we ever have to make it grow more easily...
+
+import { ReactComponent as Acidmanhattan_01 } from './svgs/rotating_logos/acidmanhattan_01.svg'
+import { ReactComponent as Acidmanhattan_02 } from './svgs/rotating_logos/acidmanhattan_02.svg'
+import { ReactComponent as AfrizalRizki_01 } from './svgs/rotating_logos/afrizalRizki_01.svg'
+import { ReactComponent as Alterebro_01 } from './svgs/rotating_logos/alterebro_01.svg'
+import { ReactComponent as Alterebro_02 } from './svgs/rotating_logos/alterebro_02.svg'
+import { ReactComponent as Alterebro_03 } from './svgs/rotating_logos/alterebro_03.svg'
+import { ReactComponent as Annekatrinenderlein_01 } from './svgs/rotating_logos/annekatrinenderlein_01.svg'
+import { ReactComponent as Burkabayram_01 } from './svgs/rotating_logos/burkabayram_01.svg'
+import { ReactComponent as Carolyn_01 } from './svgs/rotating_logos/carolyn_01.svg'
+import { ReactComponent as CRYPTEMES_01 } from './svgs/rotating_logos/CRYPTEMES_01.svg'
+import { ReactComponent as Djkero_01 } from './svgs/rotating_logos/djkero_01.svg'
+import { ReactComponent as Imnot_01 } from './svgs/rotating_logos/imnot_01.svg'
+import { ReactComponent as Itzcoatl_01 } from './svgs/rotating_logos/santiago-itzcoatl_01.svg'
+import { ReactComponent as Itzcoatl_02 } from './svgs/rotating_logos/santiago-itzcoatl_02.svg'
+import { ReactComponent as Joerres_01 } from './svgs/rotating_logos/klaus-joerres_01.svg'
+import { ReactComponent as Linkous_03 } from './svgs/rotating_logos/spencer-linkous_03.svg'
+import { ReactComponent as Maes_02 } from './svgs/rotating_logos/maes_02.svg'
+import { ReactComponent as Mumuthestan_02 } from './svgs/rotating_logos/mumuthestan_02.svg'
+import { ReactComponent as Mumuthestan_03 } from './svgs/rotating_logos/mumuthestan_03.svg'
+import { ReactComponent as Mumuthestan_04 } from './svgs/rotating_logos/mumuthestan_04.svg'
+import { ReactComponent as Natived_01 } from './svgs/rotating_logos/natived_01.svg'
+import { ReactComponent as Norulesjustfeels_07 } from './svgs/rotating_logos/norulesjustfeels_07.svg'
+import { ReactComponent as OneLab_01 } from './svgs/rotating_logos/111v1ab_01.svg'
+import { ReactComponent as OneLab_02 } from './svgs/rotating_logos/111v1ab_02.svg'
+import { ReactComponent as Oviy_01 } from './svgs/rotating_logos/oviy_01.svg'
+import { ReactComponent as Oviy_02 } from './svgs/rotating_logos/oviy_02.svg'
+import { ReactComponent as Pilhei_01 } from './svgs/rotating_logos/pilhei_01.svg'
+import { ReactComponent as Pretorius_01 } from './svgs/rotating_logos/herman-pretorius_01.svg'
+import { ReactComponent as Qizzio_02 } from './svgs/rotating_logos/qizzio_02.svg'
+import { ReactComponent as Rodicqart_01 } from './svgs/rotating_logos/rodicqart_01.svg'
+import { ReactComponent as Safa_01 } from './svgs/rotating_logos/kerim-safa_01.svg'
+import { ReactComponent as Three_01 } from './svgs/rotating_logos/333_01.svg'
+import { ReactComponent as Varda_01 } from './svgs/rotating_logos/varda_01.svg'
+import { ReactComponent as Varda_02 } from './svgs/rotating_logos/varda_02.svg'
+import { ReactComponent as Virgini_01 } from './svgs/rotating_logos/simone-virgini_01.svg'
+import { ReactComponent as Waadt_02 } from './svgs/rotating_logos/christian-waadt_02.svg'
+import { ReactComponent as Waadt_03 } from './svgs/rotating_logos/christian-waadt_03.svg'
+import { ReactComponent as Wans_01 } from './svgs/rotating_logos/wans_01.svg'
+import { ReactComponent as Yazid_01 } from './svgs/rotating_logos/yazid_01.svg'
 
 import { ReactComponent as activeprinciple_01 } from './svgs/rotating_logos/activeprinciple_01.svg'
 import { ReactComponent as activeprinciple_02 } from './svgs/rotating_logos/activeprinciple_02.svg'
@@ -68,56 +92,7 @@ import { ReactComponent as viscous_01 } from './svgs/rotating_logos/viscous_01.s
 import { ReactComponent as wans_02 } from './svgs/rotating_logos/wans_02.svg'
 import { ReactComponent as zootghost_01 } from './svgs/rotating_logos/zootghost_01.svg'
 
-// - Working fine
-import { ReactComponent as Acidmanhattan_01 } from './svgs/rotating_logos/acidmanhattan_01.svg'
-import { ReactComponent as Acidmanhattan_02 } from './svgs/rotating_logos/acidmanhattan_02.svg'
-import { ReactComponent as AfrizalRizki_01 } from './svgs/rotating_logos/afrizalRizki_01.svg'
-import { ReactComponent as Alterebro_01 } from './svgs/rotating_logos/alterebro_01.svg'
-import { ReactComponent as Alterebro_02 } from './svgs/rotating_logos/alterebro_02.svg'
-import { ReactComponent as Alterebro_03 } from './svgs/rotating_logos/alterebro_03.svg'
-import { ReactComponent as Annekatrinenderlein_01 } from './svgs/rotating_logos/annekatrinenderlein_01.svg'
-import { ReactComponent as Burkabayram_01 } from './svgs/rotating_logos/burkabayram_01.svg'
-import { ReactComponent as Carolyn_01 } from './svgs/rotating_logos/carolyn_01.svg'
-import { ReactComponent as CRYPTEMES_01 } from './svgs/rotating_logos/CRYPTEMES_01.svg'
-import { ReactComponent as Djkero_01 } from './svgs/rotating_logos/djkero_01.svg'
-import { ReactComponent as Imnot_01 } from './svgs/rotating_logos/imnot_01.svg'
-import { ReactComponent as Itzcoatl_01 } from './svgs/rotating_logos/santiago-itzcoatl_01.svg'
-import { ReactComponent as Itzcoatl_02 } from './svgs/rotating_logos/santiago-itzcoatl_02.svg'
-import { ReactComponent as Joerres_01 } from './svgs/rotating_logos/klaus-joerres_01.svg'
-import { ReactComponent as Linkous_03 } from './svgs/rotating_logos/spencer-linkous_03.svg'
-import { ReactComponent as Maes_02 } from './svgs/rotating_logos/maes_02.svg'
-import { ReactComponent as Mumuthestan_02 } from './svgs/rotating_logos/mumuthestan_02.svg'
-import { ReactComponent as Mumuthestan_03 } from './svgs/rotating_logos/mumuthestan_03.svg'
-import { ReactComponent as Mumuthestan_04 } from './svgs/rotating_logos/mumuthestan_04.svg'
-import { ReactComponent as Natived_01 } from './svgs/rotating_logos/natived_01.svg'
-import { ReactComponent as Norulesjustfeels_07 } from './svgs/rotating_logos/norulesjustfeels_07.svg'
-import { ReactComponent as OneLab_01 } from './svgs/rotating_logos/111v1ab_01.svg'
-import { ReactComponent as OneLab_02 } from './svgs/rotating_logos/111v1ab_02.svg'
-import { ReactComponent as Oviy_01 } from './svgs/rotating_logos/oviy_01.svg'
-import { ReactComponent as Oviy_02 } from './svgs/rotating_logos/oviy_02.svg'
-import { ReactComponent as Pilhei_01 } from './svgs/rotating_logos/pilhei_01.svg'
-import { ReactComponent as Pretorius_01 } from './svgs/rotating_logos/herman-pretorius_01.svg'
-import { ReactComponent as Qizzio_02 } from './svgs/rotating_logos/qizzio_02.svg'
-import { ReactComponent as Rodicqart_01 } from './svgs/rotating_logos/rodicqart_01.svg'
-import { ReactComponent as Safa_01 } from './svgs/rotating_logos/kerim-safa_01.svg'
-import { ReactComponent as Three_01 } from './svgs/rotating_logos/333_01.svg'
-import { ReactComponent as Varda_01 } from './svgs/rotating_logos/varda_01.svg'
-import { ReactComponent as Varda_02 } from './svgs/rotating_logos/varda_02.svg'
-import { ReactComponent as Virgini_01 } from './svgs/rotating_logos/simone-virgini_01.svg'
-import { ReactComponent as Waadt_02 } from './svgs/rotating_logos/christian-waadt_02.svg'
-import { ReactComponent as Waadt_03 } from './svgs/rotating_logos/christian-waadt_03.svg'
-import { ReactComponent as Wans_01 } from './svgs/rotating_logos/wans_01.svg'
-import { ReactComponent as Yazid_01 } from './svgs/rotating_logos/yazid_01.svg'
-
 export const RotatingLogoSVG = [
-  //-- SVG Convertsion issues
-  // Norulesjustfeels_05,
-  // Varda_03,
-  // Merchantcoppola_01,
-  // Serg_alec_horomox_01,
-  // Slinkous_01,
-  // Somfay_01,
-  // Somfay_02,
   // - Working fine
   Acidmanhattan_01,
   Acidmanhattan_02,
