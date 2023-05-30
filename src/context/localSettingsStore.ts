@@ -108,7 +108,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
       {
         name: 'settings',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
-        version: 1,
+        version: 2,
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>
@@ -123,6 +123,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
           }
         },
         migrate: (persistedState: any, version: number) => {
+          console.debug('migrating settings from version', version)
           // here we can check against the version of the storage and makes updates accordingly.
           // useful to rename keys or restore value, we will first use it for the banner updates.
           persistedState.has_seen_banner = false
