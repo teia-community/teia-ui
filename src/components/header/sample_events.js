@@ -1,11 +1,20 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'Tezos Pride',
+    icon: '🏳️‍🌈',
+    feed: 'tezospride',
+    link: 'https://github.com/teia-community/teia-docs/wiki/Tezospride',
+    subtitle: 'throughout June and beyond every year',
+    content:
+      'TezosPride is a continuous event to celebrate and support the 2SLGBTQ+ community in the Tezos ecosystem. The main event spans Pride Month (June) annually.',
+  },
+  {
     title: 'TezQuakeAid - Earthquake Relief',
     icon: '',
     feed: 'quake-aid',
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
-    subtitle: '8st February 2023 - tbd',
+    subtitle: '8st February 2023 - March 2023',
     content:
       'The earthquakes in Turkey and Syria in February 2023 have caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
   },
