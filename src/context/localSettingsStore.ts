@@ -4,7 +4,7 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { useModalStore } from './modalStore'
+// import { useModalStore } from './modalStore'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -28,6 +28,8 @@ interface LocalSettingsState {
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
   rpcNode: RPC_NODES
+  getRpcNode: () => RPC_NODES | string
+  customRpcNode: string
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
@@ -56,6 +58,7 @@ const defaultValues = {
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
   rpcNode: rpc_nodes[0],
+  customRpcNode: '',
   tilted: false,
   has_seen_banner: false,
 }
@@ -91,13 +94,21 @@ export const useLocalSettings = create<LocalSettingsState>()(
           const root = document.documentElement
           root.setAttribute('data-theme', theme)
         },
+        getRpcNode: () => {
+          const rpcNode = get().rpcNode
+          if (rpcNode === 'custom') {
+            const custom = get().customRpcNode
+            return custom || rpcNode
+          }
+          return rpcNode
+        },
         setRpcNode: async (rpcNode) => {
-          const show = useModalStore.getState().show
+          // const show = useModalStore.getState().show
           set({ rpcNode })
-          show(
-            'RPC Node Changed',
-            'Please reload the page for it to take effect.'
-          )
+          // show(
+          //   'RPC Node Changed',
+          //   'Please reload the page for it to take effect.'
+          // )
           // await useUserStore.getState().sync({ rpcNode })
         },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),

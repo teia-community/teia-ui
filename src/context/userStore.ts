@@ -116,7 +116,7 @@ interface UserState {
   ) => OperationReturn
 }
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
-export const Tezos = new TezosToolkit(useLocalSettings.getState().rpcNode)
+export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
 
 const Packer = new MichelCodecPacker()
 
@@ -176,7 +176,7 @@ export const useUserStore = create<UserState>()(
         sync: async (opts) => {
           const network = {
             type: NetworkType.MAINNET,
-            rpcUrl: opts?.rpcNode || useLocalSettings.getState().rpcNode,
+            rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
           }
 
           // Set the client theme
