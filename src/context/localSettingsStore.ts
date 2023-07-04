@@ -14,11 +14,9 @@ export const rpc_nodes = [
   'https://mainnet.api.tez.ie',
   'https://mainnet.smartpy.io',
   'https://rpc.tzbeta.net',
-  'https://mainnet-tezos.giganode.io',
   'https://mainnet.tezos.marigold.dev',
-  'https://eu01-node.teztools.net',
   'https://rpc.tzkt.io/mainnet',
-  'custom',
+  'https://mainnet.teia.rocks',
 ] as const
 
 export type RPC_NODES = typeof rpc_nodes[number]
