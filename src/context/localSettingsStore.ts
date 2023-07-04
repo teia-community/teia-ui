@@ -17,6 +17,7 @@ export const rpc_nodes = [
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
   'https://mainnet.teia.rocks',
+  'custom',
 ] as const
 
 export type RPC_NODES = typeof rpc_nodes[number]
