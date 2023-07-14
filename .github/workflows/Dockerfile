@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 RUN : \
-    && npm config set registry http://registry.npmjs.org \
+    && npm config set registry https://registry.npmjs.org \
     && npm install; npm run build \
     && echo "add_header x-teia-commit-hash $(git rev-parse HEAD);" > /header.conf
 
