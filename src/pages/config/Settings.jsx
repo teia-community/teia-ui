@@ -27,8 +27,8 @@ export const Settings = () => {
     st.setPhotosensitiveFriendly,
     st.rpcNode,
     st.setRpcNode,
-    st.customRCPNode,
-    st.setCustomRCPNode,
+    st.customRpcNode,
+    st.setCustomRpcNode,
     st.tilted,
     st.setTilted,
     st.has_seen_banner,
@@ -86,7 +86,7 @@ export const Settings = () => {
               onChange={setCustomRpcNode}
               placeholder="url to a RPC node"
               label="Custom RPC node"
-              pattern="/^(?:https?|http):\/\/[^\s/$.?#].[^\s]*$"
+              // pattern={'^(?:https?|http):\\/\\/[^\\s\\/$.?#].[^\\s]*$'}
             />
           )}
           <Line />

@@ -28,8 +28,10 @@ interface LocalSettingsState {
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
   rpcNode: RPC_NODES
+  /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
   customRpcNode: string
+  setCustomRpcNode: (v: string) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
@@ -101,6 +103,15 @@ export const useLocalSettings = create<LocalSettingsState>()(
             return custom || rpcNode
           }
           return rpcNode
+        },
+        setCustomRpcNode: (customRpcNode: string) => {
+          if (!customRpcNode) {
+            return
+          }
+          if (!customRpcNode.startsWith('http')) {
+            customRpcNode = `https://${customRpcNode}`
+          }
+          set({ customRpcNode })
         },
         setRpcNode: async (rpcNode) => {
           // const show = useModalStore.getState().show
