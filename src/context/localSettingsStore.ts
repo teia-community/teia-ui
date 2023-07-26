@@ -4,7 +4,7 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { useModalStore } from './modalStore'
+// import { useModalStore } from './modalStore'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -17,6 +17,7 @@ export const rpc_nodes = [
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
   'https://mainnet.teia.rocks',
+  'custom',
 ] as const
 
 export type RPC_NODES = typeof rpc_nodes[number]
@@ -27,6 +28,10 @@ interface LocalSettingsState {
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
   rpcNode: RPC_NODES
+  /** Use this to query the current rpc url since it will also resolve the custom one.*/
+  getRpcNode: () => RPC_NODES | string
+  customRpcNode: string
+  setCustomRpcNode: (v: string) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
@@ -55,6 +60,7 @@ const defaultValues = {
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
   rpcNode: rpc_nodes[0],
+  customRpcNode: '',
   tilted: false,
   has_seen_banner: false,
 }
@@ -90,13 +96,30 @@ export const useLocalSettings = create<LocalSettingsState>()(
           const root = document.documentElement
           root.setAttribute('data-theme', theme)
         },
+        getRpcNode: () => {
+          const rpcNode = get().rpcNode
+          if (rpcNode === 'custom') {
+            const custom = get().customRpcNode
+            return custom || rpcNode
+          }
+          return rpcNode
+        },
+        setCustomRpcNode: (customRpcNode: string) => {
+          if (!customRpcNode) {
+            return
+          }
+          if (!customRpcNode.startsWith('http')) {
+            customRpcNode = `https://${customRpcNode}`
+          }
+          set({ customRpcNode })
+        },
         setRpcNode: async (rpcNode) => {
-          const show = useModalStore.getState().show
+          // const show = useModalStore.getState().show
           set({ rpcNode })
-          show(
-            'RPC Node Changed',
-            'Please reload the page for it to take effect.'
-          )
+          // show(
+          //   'RPC Node Changed',
+          //   'Please reload the page for it to take effect.'
+          // )
           // await useUserStore.getState().sync({ rpcNode })
         },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
