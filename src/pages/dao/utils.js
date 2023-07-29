@@ -16,7 +16,10 @@ export const MERKLE_DATA_IPFS_PATHS = {
     8: "QmRhr7m6zBtU1YFNcLMo34jQVUFdamG3BCGCFjA9AwBEnK"
 };
 
+export async function claimTokens() {
+}
 
+/*
 // Returns the contract reference
 export async function getContract(tezos, contractAddress) {
     return await tezos.wallet.at(contractAddress)
@@ -25,10 +28,6 @@ export async function getContract(tezos, contractAddress) {
 
 // Returns the DAO token drop contract reference
 export async function getDropContract() {
-
-}
-
-/*
     if (this.state.dropContract) {
         return this.state.dropContract;
     }
@@ -92,4 +91,5 @@ export async function downloadFileFromIpfs(ipfsPath) {
 
     return await response.json();
 }
+
 */
