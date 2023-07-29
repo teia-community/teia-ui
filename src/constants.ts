@@ -8,6 +8,7 @@ export const PATH = {
   COLLAB: '/kt',
   ABOUT: '/about',
   FAQ: '/faq',
+  DAO: '/dao',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
@@ -111,6 +112,20 @@ export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
 export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
 export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
+
+export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NhaMvktjR89DcdNw6gYbtW9nXnivn65uq'
+export const DISTRIBUTION_MAPPING_IPFS_PATH = "QmXDnvkw5ZxNQKKtNaYyve5JuCeM8PfxRM9iAZCi84JKpN"
+export const MERKLE_DATA_IPFS_PATHS = {
+    0: "QmR3tiFDi8vgTdvR98jS8jLn2No8EheMG6WTnpbzbupvZm",
+    1: "QmWG2jqiHXFk6Ub7xY7TtjYomxern3SNXuCDVxVeFc88iA",
+    2: "QmZ6P44rhTMxKHqADcW27quQPgvs6h1YTQaz1hS8J3FggF",
+    3: "Qmbm99hPZBQKg5wUhzYTuQUrit5eDgvytqU8J17kpcC71T",
+    4: "QmVBQjr7m25MgF2S7BkmNMtzVNfSuWCaxsYJMXkA7PNhKu",
+    5: "QmTi6E5HJJGZrwKkvBRYMHx2DaVD9mij9rm5cSyDVWv64f",
+    6: "QmbZsvCDiGv4xWeLtMf1wPxjogpvLjaKLwdZe5xQezUWUS",
+    7: "QmbCvvyP2s6nqq1cCW9H617jRGEYoZkV3SoJHCS9sJmsNU",
+    8: "QmRhr7m6zBtU1YFNcLMo34jQVUFdamG3BCGCFjA9AwBEnK"
+}
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,

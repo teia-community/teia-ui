@@ -26,6 +26,9 @@ import {
   MARKETPLACE_CONTRACT_TEIA,
   MARKETPLACE_CONTRACT_V1,
   SUBJKT_CONTRACT,
+  DAO_TOKEN_CLAIM_CONTRACT,
+  DISTRIBUTION_MAPPING_IPFS_PATH,
+  MERKLE_DATA_IPFS_PATHS,
   teiaCancelSwapSchema,
 } from '@constants'
 import {
@@ -35,6 +38,7 @@ import {
   createSwapCalls,
   packData,
 } from '@utils/swap'
+import { downloadFileFromIpfs } from '@utils/ipfs'
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
@@ -105,6 +109,8 @@ interface UserState {
   resetProxy: () => void
   /**Transfer tokens */
   transfer: (txs: Tx[]) => OperationReturn
+  /** Claim DAO tokens */
+  claimTokens: () => OperationReturn
   /** Get the balance for the given address (or current user if not provided) */
   getBalance: (address?: string) => Promise<number>
   /** Mint the token */
@@ -401,6 +407,30 @@ export const useUserStore = create<UserState>()(
             return await handleOp(batch, 'Transfer')
           } catch (e) {
             showError('Transfer', e)
+          }
+        },
+        claimTokens: async () => {
+          const user_address = get().address
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Claiming Teia DAO tokens', 'Claiming Teia DAO tokens', true)
+
+          // Download the distribution file mapping file
+          const mapping = await downloadFileFromIpfs(DISTRIBUTION_MAPPING_IPFS_PATH)
+
+          // Download the Merkle data
+          const merkleDataPath = MERKLE_DATA_IPFS_PATHS[mapping[user_address]]
+          const merkleData = await downloadFileFromIpfs(merkleDataPath)
+          console.log(merkleData)
+          try {
+            const dropContract = await Tezos.wallet.at(DAO_TOKEN_CLAIM_CONTRACT)
+            const batch = dropContract.methods.claim(merkleData.proof, merkleData.leafDataPacked)
+
+            return await handleOp(batch, 'Claim')
+          } catch (e) {
+            showError('Claim', e)
           }
         },
         collect: async (listing) => {
