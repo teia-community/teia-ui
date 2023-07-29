@@ -1,0 +1,17 @@
+@import '@styles/mixins.scss';
+
+.dao__title {
+  font-size: 1.8em;
+  font-weight: bold;
+
+  margin-bottom: 0.2em;
+}
+
+.dao__outer__container {
+  padding-top: 80px;
+  width: 100%;
+
+  @include respond-to('desktop') {
+    margin: 0;
+  }
+}

@@ -63,6 +63,13 @@ export const MainMenu = () => {
             route="subjkt"
             need_sync
           />
+
+          <MenuItem
+            className={styles.menu_label}
+            label="Claim DAO tokens"
+            route="dao"
+            need_sync={!currentName || !currentAddress}
+          />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
