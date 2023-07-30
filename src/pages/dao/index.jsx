@@ -26,7 +26,7 @@ export const DAO = () => {
         <Line />
       </div>
 
-       <div className={styles.dao__outer__container}>
+      <div className={styles.dao__outer__container}>
         <h2 className={styles.dao__title}>How to Claim</h2>
         <ol>
         <li><b>Sync Your Wallet</b><span style="font-weight: 400;"> in the top right corner of this page</li>
@@ -39,6 +39,7 @@ export const DAO = () => {
       <div className={styles.dao__outer__container}>        
         <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
         <p><span style="font-weight: 400;">By clicking this button, you confiorm that you have read and agree with the legal disclaimer below</span></p>
+      </div>
      
       </div>
         <div className={styles.dao__outer__container}>
