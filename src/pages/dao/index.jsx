@@ -24,7 +24,7 @@ export const DAO = () => {
             If your Tezos wallet satisfies the conditions laid out in the token
             distribution fact sheet you are eligible to claim your Teia tokens.
             You can find a table with all eligible Tezos
-            addresses <a href="#">here</a>.
+            addresses <a href="https://docs.google.com/spreadsheets/d/1p301FDxAyi2EI-RjSyH5Fv34OGJ4j7vdvc5EQJ3lf54/edit?usp=sharing">here</a>.
           </p>
 
           <p>
@@ -140,7 +140,7 @@ export const DAO = () => {
               you become a member of the Teia DAO LLC. Teia does not require
               you to provide any personal information, as long as you hold less
               than 10% of tokens in circulation. Every address is limited to
-              XXXXX TEIA tokens.
+              400k TEIA tokens.
             </li>
 
             <li>
