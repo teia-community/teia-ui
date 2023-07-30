@@ -1,46 +1,47 @@
 @import '@styles/mixins.scss';
 
-.dao__container li::before {
-  content: '-';
-  position: absolute;
-  margin-left: -1em;
-}
-
 .dao__container {
-  margin: 0 20px;
-  list-style-type: none;
-
-  li {
-    margin-top: 0.8em;
-  }
-
-  margin-bottom: 20px;
-
-  @include respond-to('desktop') {
-    margin-bottom: 30px;
-  }
-}
-
-.dao__container:last-of-type {
-  margin-top: 20px;
-
-  @include respond-to('desktop') {
-    margin-top: 30px;
-  }
-}
-
-.dao__title {
-  font-size: 1.8em;
-  font-weight: bold;
-
-  margin-bottom: 0.2em;
-}
-
-.dao__outer__container {
-  padding-top: 80px;
+  padding-top: 60px;
   width: 100%;
 
   @include respond-to('desktop') {
     margin: 0;
+  }
+}
+
+.dao__section__title {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+.dao__section {
+  margin: 1em 0;
+
+  b {
+    font-weight: bold;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  p {
+    margin: 1em 0;
+  }
+
+  li {
+    margin-left: 1em;
+    margin-top: 0.8em;
+
+    ::before {
+      content: '-';
+      position: absolute;
+      margin-left: -1em;
+    }
+  }
+
+  @include respond-to('desktop') {
+    margin-bottom: 30px;
   }
 }

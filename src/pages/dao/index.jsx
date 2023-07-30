@@ -10,26 +10,26 @@ export const DAO = () => {
 
   return (
     <Page title="Claim DAO tokens" large>
-      <div className={styles.dao__outer__container}>
-        <div className={styles.dao__container}>
-          <h1 className={styles.dao__title}>
+      <div className={styles.dao__container}>
+        <section className={styles.dao__section}>
+          <h1 className={styles.dao__section__title}>
             Welcome to the TEIA token claim page!
           </h1>
 
           <p>
-            Here, you can claim your TEIA DAO tokens.
+            Here you can claim your TEIA DAO tokens.
           </p>
 
           <p>
             If your Tezos wallet satisfies the conditions laid out in the token
             distribution fact sheet you are eligible to claim your Teia tokens.
-            You can find a table with all eligible Tezos addresses
-            <a href="#">here</a>.
+            You can find a table with all eligible Tezos
+            addresses <a href="#">here</a>.
           </p>
 
           <p>
             TEIA DAO tokens, or TEIA tokens, are specifically designed for
-            governance purposes within the Teia DAO ecosystem: by owning TEIA
+            governance purposes within the Teia DAO ecosystem. By owning TEIA
             tokens, you are part of the Teia DAO LLC and eligible to put
             forward and vote on DAO proposals for Teia.
           </p>
@@ -47,31 +47,31 @@ export const DAO = () => {
             It is your responsibility to ensure compliance with applicable laws
             before participating in the token claim process.
           </p>
-        </div>
+        </section>
 
         <Line />
 
-        <div className={styles.dao__container}>
-          <h2 className={styles.dao__title}>
+        <section className={styles.dao__section}>
+          <h1 className={styles.dao__section__title}>
             How to Claim your Tokens
-          </h2>
+          </h1>
 
           <ol>
             <li>
-              <b>Sync your wallet</b>in the top right corner of this page.
+              <b>Sync your wallet</b> in the top right corner of this page.
             </li>
 
             <li>
-              <b>Confirm you have read the legal disclaimer.</b>
-              Before proceeding with the token claim process, please make sure
+              <b>Confirm you have read the legal disclaimer.</b> Before
+              proceeding with the token claim process, please make sure
               you have read and understood the legal disclaimer provided on
               this page. It outlines important information regarding the nature
               of TEIA tokens and your responsibilities as a token holder.
             </li>
 
             <li>
-              <b>Claim tokens.</b>
-              Once you have synced your wallet and acknowledged the legal
+              <b>Claim tokens.</b> Once you have synced your wallet and
+              acknowledged the legal
               disclaimer below, click on the "Claim DAO tokens" button below to
               initiate the token claim process.
             </li>
@@ -79,25 +79,24 @@ export const DAO = () => {
 
           <p>
             For any questions or assistance regarding the token claim process,
-            please contact us via discord or mail at info@teia.art
+            please contact us via discord or mail
+            at <a href="mailto:info@teia.art">info@teia.art</a>
           </p>
-        </div>
-
-        <div className={styles.dao__container}>        
-          <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
 
           <p>
-            By clicking this button, you confiorm that you have read and agree
+            By clicking this button, you confirm that you have read and agree
             with the legal disclaimer below.
           </p>
-        </div>
+
+          <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
+        </section>
 
         <Line />
 
-        <div className={styles.dao__container}>
-          <h2 className={styles.dao__title}>
+        <section className={styles.dao__section}>
+          <h1 className={styles.dao__section__title}>
             Legal Disclaimer
-          </h2>
+          </h1>
 
           <p>
             Please read the following disclaimer carefully before participating
@@ -189,7 +188,7 @@ export const DAO = () => {
               the revised disclaimer.
             </li>
           </ol>
-        </div>
+        </section>
       </div>
     </Page>
   )
