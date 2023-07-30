@@ -412,25 +412,69 @@ export const useUserStore = create<UserState>()(
         claimTokens: async () => {
           const user_address = get().address
           const handleOp = get().handleOp
+          const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
 
-          step('Claiming Teia DAO tokens', 'Claiming Teia DAO tokens', true)
+          step('Claim DAO tokens', 'Claiming Teia DAO tokens', true)
 
-          // Download the distribution file mapping file
-          const mapping = await downloadFileFromIpfs(DISTRIBUTION_MAPPING_IPFS_PATH)
+          if (!user_address) {
+            show("Claim DAO tokens", "You need to sync your wallet first")
+            return
+          }
 
-          // Download the Merkle data
-          const merkleDataPath = MERKLE_DATA_IPFS_PATHS[mapping[user_address]]
-          const merkleData = await downloadFileFromIpfs(merkleDataPath)
-          console.log(merkleData)
+          // Download the distribution mapping file from IPFS
+          const distributionMapping = await downloadFileFromIpfs(
+            DISTRIBUTION_MAPPING_IPFS_PATH
+          )
+
+          if (!distributionMapping) {
+            show(
+              "Claim DAO tokens",
+              "Could not download the distribution map from IPFS"
+            )
+            return
+          } else if (!(user_address in distributionMapping)) {
+            show(
+              "Claim DAO tokens",
+              "Your wallet is not in the distribution list.\n" + 
+              "Sorry, you don't qualify to claim any tokens."
+            )
+            return
+          }
+
+          // Download the file with the user Merkle proofs
+          const fileIndex = distributionMapping[user_address]
+          const merkleData = await downloadFileFromIpfs(
+            MERKLE_DATA_IPFS_PATHS[fileIndex]
+          )
+
+          if (!merkleData) {
+            show(
+              "Claim DAO tokens",
+              "Could not download the user Merkle proofs from IPFS"
+            )
+            return
+          }
+
+          const userMerkleData = merkleData[user_address]
+          const userDaoTokens = parseInt(userMerkleData.tokens) / 1e6
+          step(
+            'Claim DAO tokens',
+            'You are allowed to claim ' + userDaoTokens + ' DAO tokens'
+          )
+
+          // Send the claim operation
           try {
             const dropContract = await Tezos.wallet.at(DAO_TOKEN_CLAIM_CONTRACT)
-            const batch = dropContract.methods.claim(merkleData.proof, merkleData.leafDataPacked)
+            const batch = dropContract.methods.claim(
+              userMerkleData.proof,
+              userMerkleData.leafDataPacked
+            )
 
-            return await handleOp(batch, 'Claim')
+            return await handleOp(batch, 'Claim DAO tokens')
           } catch (e) {
-            showError('Claim', e)
+            showError('Claim DAO tokens', e)
           }
         },
         collect: async (listing) => {
