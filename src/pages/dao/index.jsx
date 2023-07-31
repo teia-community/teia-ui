@@ -19,40 +19,28 @@ export const DAO = () => {
           <p>
             Here you can claim your TEIA DAO tokens.
           </p>
+          
+          <p>
+            TEIA DAO tokens, or TEIA tokens, are specifically designed and intended for
+            governance purposes within the Teia DAO ecosystem. By owning TEIA
+            tokens, you are part of the Teia DAO LLC and eligible to put
+            forward and vote on DAO proposals for Teia.
+          </p> 
 
           <p>
             If your Tezos wallet satisfies the conditions laid out in the 
             <a href="https://blog.teia.art/blog/fact-sheet-token-drop"  target="_blank">token
             distribution fact sheet</a> you are eligible to claim your Teia tokens 
             during the claiming period (August 15th, 2023 to November 15th, 2023)
-            You can find a table with all eligible Tezos addresses 
-            <a href="https://docs.google.com/spreadsheets/d/1p301FDxAyi2EI-RjSyH5Fv34OGJ4j7vdvc5EQJ3lf54/edit?usp=sharing"  target="_blank">in this spreadsheet (click here)</a>.
-          </p>
-
-          <p>
-            TEIA DAO tokens, or TEIA tokens, are specifically designed and intended for
-            governance purposes within the Teia DAO ecosystem. By owning TEIA
-            tokens, you are part of the Teia DAO LLC and eligible to put
-            forward and vote on DAO proposals for Teia.
-          </p>          
-
-          <p>
-            TEIA tokens are not intended to be securities or investment
-            instruments and Teia as a non-profit organisation is not allowed
-            and does not intend to generate and distribute profits based on
-            token ownership.
-          </p> 
-
-          <p> 
-            Please note that the claiming and use of TEIA tokens may be
-            subject to various laws and regulations in different jurisdictions.
-            It is your responsibility to ensure compliance with applicable laws
-            before participating in the token claim process and DAO.
-          </p>
+            You can find a table with all eligible Tezos addresses and the amount of tokens
+            <a href="https://docs.google.com/spreadsheets/d/11jFANEUsvNSc9vQGD7sc46n_BOp8v0tGOLY1LG0KENk/edit?usp=sharing"  target="_blank">on this spreadsheet (click here)</a>.
+          </p>         
           
-          <p>            
-            For any questions or assistance regarding the token claim process,
-            please contact us via discord or mail at 
+          <p>
+            Find more detailed info about the TEIA token distribution on this 
+            <a href="https://blog.teia.art/blog/fact-sheet-token-drop"  target="_blank">fact sheet (click here)</a>.
+            For any questions or assistance regarding the token claim process
+            get in touch with the team via discord or mail at 
             <a href="mailto:info@teia.art">info@teia.art</a>
           </p>
 
@@ -72,7 +60,7 @@ export const DAO = () => {
 
             <li>
               <b>2) Legal acknowledgement:</b> please make sure you have read 
-              and understood the legal disclaimer provided below. It outlines 
+              and understood the legal disclaimer below. It outlines 
               important information regarding the nature of TEIA tokens and your 
               responsibilities as a token holder.
             </li>
@@ -86,20 +74,18 @@ export const DAO = () => {
           </ol>
 
           <p> 
-            If you have multible elligible wallets, unsync your wallet and
-            repeat the process with 1) for each of your wallets.
+            If you own multible elligible wallets, unsync your wallet and
+            repeat these steps for each of your wallets.
           </p>
 
-
-
           <p>
+            <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
             <i>By clicking this button, you confirm you have read and agree
             with the legal disclaimer below.</i>
           </p>
 
-          <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
+          
         </section>
-
         <Line />
 
         <section className={styles.dao__section}>
