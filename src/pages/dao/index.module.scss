@@ -22,6 +22,10 @@
     font-weight: bold;
   }
 
+  i {
+    font-style: italic;
+  }
+
   a {
     text-decoration: underline;
   }
@@ -31,14 +35,18 @@
   }
 
   li {
-    margin-left: 1em;
-    margin-top: 0.8em;
+      margin-left: 1.5em;
+      margin-top: 0.8em;
+  }
 
-    ::before {
-      content: '-';
-      position: absolute;
-      margin-left: -1em;
-    }
+  li:before {
+    content: attr(counter) ".";
+    position: absolute;
+    margin-left: -1.5em;
+  }
+
+  button {
+      margin-bottom: 1em;
   }
 
   @include respond-to('desktop') {
