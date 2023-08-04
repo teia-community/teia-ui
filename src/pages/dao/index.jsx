@@ -132,7 +132,7 @@ export const DAO = () => {
             <li counter="2">
               <b>No investment advice:</b> The information provided on the
               claim page, including but not limited to any articles, blog posts
-              on blog.teai.art, or other related materials, is for
+              on blog.teia.art, or other related materials, is for
               informational purposes only. It does not constitute investment
               advice or any form of recommendation. The Teia DAO team does not
               endorse or recommend the purchase or sale of TEIA tokens as
