@@ -112,7 +112,7 @@ export const DAO = () => {
             By claiming your TEIA DAO tokens, you agree to be bound by the 
             terms and conditions set forth in this disclaimer. 
             If you do not agree with any part of this disclaimer,
-            you should refrain from using this claim page.
+            don't participate in the token claim process!
           </p>
 
           <ol>
@@ -185,10 +185,10 @@ export const DAO = () => {
               <b>Updates and amendments:</b> The Teia DAO team reserves the
               right to modify, update, or amend this disclaimer at any time
               without prior notice. If you want to stop being a Teia DAO member, 
-              you can send all your TEIA tokens to
+              you can send all your TEIA tokens to the
               {' '}
               <a href="https://tzkt.io/KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb/operations/" target="_blank" rel="noreferrer">
-                Teias Treasury address
+                Teia Treasury address
               </a>.
             </li>
           </ol>
