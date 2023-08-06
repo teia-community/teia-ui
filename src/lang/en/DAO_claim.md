@@ -1,4 +1,4 @@
-## Welcome to the TEIA token claim page!
+## Welcome to the TEIA tokens claim page!
 
 Here you can claim your TEIA DAO tokens.
 
@@ -6,19 +6,17 @@ TEIA DAO tokens, or TEIA tokens, are specifically designed and intended for gove
 
 If your Tezos wallet satisfies the conditions laid out in the [token distribution fact sheet](https://blog.teia.art/blog/fact-sheet-token-drop) you are eligible to claim your TEIA tokens during the claiming period (August 15th, 2023 to November 15th, 2023) You can find a table with all eligible Tezos addresses and the amount of tokens on this [spreadsheet](https://docs.google.com/spreadsheets/d/11jFANEUsvNSc9vQGD7sc46n_BOp8v0tGOLY1LG0KENk/edit?usp=sharing).
 
-Find more detailed info about the TEIA token distribution on this [fact sheet](https://blog.teia.art/blog/fact-sheet-token-drop). For any questions or assistance regarding the token claim process get in touch with the team via discord or mail at [info@teia.art](mailto:info@teia.art)
+Find more detailed info about the TEIA tokens distribution on this [fact sheet](https://blog.teia.art/blog/fact-sheet-token-drop). For any questions or assistance regarding the token claim process get in touch with the team via discord or mail at [info@teia.art](mailto:info@teia.art)
 
 ---
 
 ## How to Claim your Tokens
 
 1.  **Sync your wallet** in the top right corner of this page.
-2.  **Legal acknowledgement:** please make sure you have read and understood the legal disclaimer below. It outlines important information regarding the nature of TEIA tokens and your responsibilities as a token holder.
-3.  **Claim tokens:** Click on the "Claim DAO tokens" button below to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
+2.  **Read the legal disclaimer below** and confirm you understood it. It outlines important information regarding the nature of TEIA tokens and your responsibilities as a token holder.
+3.  **Click on the "laim TEIA DAO tokens" button** at the bottom of the of this page to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
 
 If you own multible elligible wallets, unsync your wallet and repeat these steps for each of your wallets.
-
-_By clicking this button, you confirm you have read and agree with the legal disclaimer below._
 
 ---
 
