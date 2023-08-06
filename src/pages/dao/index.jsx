@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { Page } from '@atoms/layout'
 import { useUserStore } from '@context/userStore'
 import { Button } from '@atoms/button'
+import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
 import styles from '@style'
 
 export const DAO = () => {
 
   const claimTokens = useUserStore((st) => st.claimTokens)
+  const [acceptLegalDisclaimer, setAcceptLegalDisclaimer] = useState(false);
 
   return (
     <Page title="Claim DAO tokens" large>
@@ -57,8 +60,8 @@ export const DAO = () => {
               info@teia.art
             </a>
           </p>
-
         </section>
+
         <Line />
 
         <section className={styles.dao__section}>
@@ -88,9 +91,9 @@ export const DAO = () => {
             If you own multible elligible wallets, unsync your wallet and
             repeat these steps for each of your wallets.
           </p>
-
-        <Line />  
         </section>
+
+        <Line />
 
         <section className={styles.dao__section}>
           <h1 className={styles.dao__section__title}>
@@ -181,25 +184,37 @@ export const DAO = () => {
               </a>.
             </li>
           </ol>
-        </section>
-        
-        <Line />            
-        </div>
-        
-        <section>
-          <h1 className={styles.dao__section__title}>
-            Claim your TEIA tokens!
-          </h1>
 
-          <p>
-            <Button shadow_box onClick={claimTokens}>Claim TEIA DAO tokens</Button>
-            <i>
-              By clicking this button, you confirm you have read and agree
-              with the legal disclaimer above.
-            </i>
-          </p>
+          <br/>
+          <Checkbox
+            alt={`click to ${
+              acceptLegalDisclaimer ? 'decline' : 'accept'
+            } the legal disclaimer`}
+            checked={acceptLegalDisclaimer}
+            onCheck={setAcceptLegalDisclaimer}
+            label={'Tick here to accept the legal disclaimer'}
+          />
         </section>
-        
+
+        {acceptLegalDisclaimer &&
+          <>
+            <Line />
+            <section className={styles.dao__section}>
+              <h1 className={styles.dao__section__title}>
+                Claim your TEIA tokens!
+              </h1>
+
+              <p>
+                <Button shadow_box onClick={claimTokens}>Claim TEIA DAO tokens</Button>
+                <i>
+                  By clicking this button, you confirm you have read and agree
+                  with the legal disclaimer above.
+                </i>
+              </p>
+            </section>
+          </>
+        }
+      </div>        
     </Page>
   )
 }
