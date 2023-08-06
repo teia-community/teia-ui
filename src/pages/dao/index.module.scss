@@ -1,12 +1,16 @@
 @import '@styles/mixins.scss';
 
 .dao__container {
-  padding-top: 60px;
   width: 100%;
-
   @include respond-to('desktop') {
-    margin: 0;
+    padding-top: 60px;
   }
+}
+
+.buttons_row {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
 }
 
 .dao__section__title {
@@ -15,9 +19,10 @@
   margin-bottom: 1em;
 }
 
-.dao__section {
-  margin: 1em 0;
-
+.dao__container {
+  h1 {
+    text-align: center;
+  }
   b {
     font-weight: bold;
   }
@@ -35,21 +40,17 @@
   }
 
   li {
-      margin-left: 1.5em;
-      margin-top: 0.8em;
+    margin-left: 1.5em;
+    margin-top: 0.8em;
   }
 
   li:before {
-    content: attr(counter) ".";
+    content: attr(counter) '.';
     position: absolute;
     margin-left: -1.5em;
   }
 
   button {
-      margin-bottom: 1em;
-  }
-
-  @include respond-to('desktop') {
-    margin-bottom: 30px;
+    margin-bottom: 1em;
   }
 }
