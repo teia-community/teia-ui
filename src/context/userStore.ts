@@ -419,7 +419,7 @@ export const useUserStore = create<UserState>()(
           step('Claim DAO tokens', 'Claiming Teia DAO tokens', true)
 
           if (!user_address) {
-            show("Claim DAO tokens", "You need to sync your wallet first")
+            show('Claim DAO tokens', 'You need to sync your wallet first')
             return
           }
 
@@ -430,15 +430,15 @@ export const useUserStore = create<UserState>()(
 
           if (!distributionMapping) {
             show(
-              "Claim DAO tokens",
-              "Could not download the distribution map from IPFS"
+              'Claim DAO tokens',
+              'Could not download the distribution map from IPFS'
             )
             return
           } else if (!(user_address in distributionMapping)) {
             show(
-              "Claim DAO tokens",
-              "Your wallet is not in the distribution list.\n" + 
-              "Sorry, you don't qualify to claim any tokens."
+              'Claim DAO tokens',
+              'Your wallet is not in the distribution list.\n' +
+                "Sorry, you don't qualify to claim any tokens."
             )
             return
           }
@@ -451,8 +451,8 @@ export const useUserStore = create<UserState>()(
 
           if (!merkleData) {
             show(
-              "Claim DAO tokens",
-              "Could not download the user Merkle proofs from IPFS"
+              'Claim DAO tokens',
+              'Could not download the user Merkle proofs from IPFS'
             )
             return
           }
