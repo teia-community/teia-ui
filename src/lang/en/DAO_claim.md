@@ -1,4 +1,4 @@
-## Welcome to the TEIA tokens claim page!
+# Welcome to the TEIA tokens claim page!
 
 Here you can claim your TEIA DAO tokens.
 
