@@ -38,7 +38,7 @@ import {
   createSwapCalls,
   packData,
 } from '@utils/swap'
-import { downloadFileFromIpfs } from '@utils/ipfs'
+import { downloadJsonFileFromIpfs } from '@utils/ipfs'
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
@@ -424,7 +424,7 @@ export const useUserStore = create<UserState>()(
           }
 
           // Download the distribution mapping file from IPFS
-          const distributionMapping = await downloadFileFromIpfs(
+          const distributionMapping = await downloadJsonFileFromIpfs(
             DISTRIBUTION_MAPPING_IPFS_PATH
           )
 
@@ -445,7 +445,7 @@ export const useUserStore = create<UserState>()(
 
           // Download the file with the user Merkle proofs
           const fileIndex = distributionMapping[user_address]
-          const merkleData = await downloadFileFromIpfs(
+          const merkleData = await downloadJsonFileFromIpfs(
             MERKLE_DATA_IPFS_PATHS[fileIndex]
           )
 
