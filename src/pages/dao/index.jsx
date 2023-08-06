@@ -13,7 +13,7 @@ export const DAO = () => {
       <div className={styles.dao__container}>
         <section className={styles.dao__section}>
           <h1 className={styles.dao__section__title}>
-            Welcome to the TEIA token claim page!
+            Welcome to the TEIA tokens claim page!
           </h1>
 
           <p>
@@ -45,7 +45,7 @@ export const DAO = () => {
           </p>         
           
           <p>
-            Find more detailed info about the TEIA token distribution on this 
+            Find more detailed info about the TEIA tokens distribution on this 
             {' '}
             <a href="https://blog.teia.art/blog/fact-sheet-token-drop" target="_blank" rel="noreferrer">
               fact sheet
@@ -59,7 +59,6 @@ export const DAO = () => {
           </p>
 
         </section>
-
         <Line />
 
         <section className={styles.dao__section}>
@@ -73,14 +72,13 @@ export const DAO = () => {
             </li>
 
             <li counter="2">
-              <b>Legal acknowledgement:</b> please make sure you have read 
-              and understood the legal disclaimer below. It outlines 
+              <b>Read the legal disclaimer below</b>  and confirm you understood it. It outlines 
               important information regarding the nature of TEIA tokens and your 
               responsibilities as a token holder.
             </li>
 
             <li counter="3">
-              <b>Claim tokens:</b> Click on the "Claim DAO tokens" button below to
+              <b>Click on the "laim TEIA DAO tokens" button </b> at the bottom of the of this page to
               initiate the token claim process and confirm the operation with
               your wallet. Your tokens should arrive in your wallet after a few minutes.
             </li>
@@ -91,17 +89,8 @@ export const DAO = () => {
             repeat these steps for each of your wallets.
           </p>
 
-          <p>
-            <Button shadow_box onClick={claimTokens}>Claim DAO tokens</Button>
-            <i>
-              By clicking this button, you confirm you have read and agree
-              with the legal disclaimer below.
-            </i>
-          </p>
-
-          
+        <Line />  
         </section>
-        <Line />
 
         <section className={styles.dao__section}>
           <h1 className={styles.dao__section__title}>
@@ -193,7 +182,24 @@ export const DAO = () => {
             </li>
           </ol>
         </section>
-      </div>
+        
+        <Line />            
+        </div>
+        
+        <section>
+          <h1 className={styles.dao__section__title}>
+            Claim your TEIA tokens!
+          </h1>
+
+          <p>
+            <Button shadow_box onClick={claimTokens}>Claim TEIA DAO tokens</Button>
+            <i>
+              By clicking this button, you confirm you have read and agree
+              with the legal disclaimer above.
+            </i>
+          </p>
+        </section>
+        
     </Page>
   )
 }
