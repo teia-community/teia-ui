@@ -81,7 +81,7 @@ export const DAO = () => {
             </li>
 
             <li counter="3">
-              <b>Click on the "laim TEIA DAO tokens" button </b> at the bottom of the of this page to
+              <b>Click on the "Claim TEIA DAO tokens" button </b> at the bottom of the of this page to
               initiate the token claim process and confirm the operation with
               your wallet. Your tokens should arrive in your wallet after a few minutes.
             </li>

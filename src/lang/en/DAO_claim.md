@@ -14,7 +14,7 @@ Find more detailed info about the TEIA tokens distribution on this [fact sheet](
 
 1.  **Sync your wallet** in the top right corner of this page.
 2.  **Read the legal disclaimer below** and confirm you understood it. It outlines important information regarding the nature of TEIA tokens and your responsibilities as a token holder.
-3.  **Click on the "laim TEIA DAO tokens" button** at the bottom of the of this page to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
+3.  **Click on the "Claim TEIA DAO tokens" button** at the bottom of the of this page to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
 
 If you own multible elligible wallets, unsync your wallet and repeat these steps for each of your wallets.
 
