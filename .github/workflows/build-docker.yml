@@ -1,6 +1,7 @@
 name: 🐳 Docker build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
