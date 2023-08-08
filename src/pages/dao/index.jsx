@@ -88,7 +88,7 @@ export const DAO = () => {
           </ol>
 
           <p> 
-            If you own multible elligible wallets, unsync your wallet and
+            If you own multiple eligible wallets, unsync your wallet and
             repeat these steps for each of your wallets.
           </p>
         </section>
