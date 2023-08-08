@@ -1,10 +1,10 @@
-name: build-docker
+name: 🐳 Docker build
 
 on:
   push:
     branches:
-      - "main"
-      - "develop"
+      - 'main'
+      - 'develop'
 
 jobs:
   build:
