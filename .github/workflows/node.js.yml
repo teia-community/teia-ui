@@ -8,6 +8,9 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    paths-ignore:
+      - '.github/*'
+      - '.storybook/*'
 
 jobs:
   build:
