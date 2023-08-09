@@ -23,13 +23,18 @@ jobs:
     outputs:
       level: ${{ steps.access_check.outputs.has-write }}
     steps:
-      - name: 🗝️ Check if author has write access
+      - name: 🗝️ Check PR origin & author write access
         id: access_check
         run: |
-          PERMISSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.pull_request.user.login }}/permission" | jq -r .permission)
-          echo "Workflow ran by ${{ github.actor }}"
-          echo "Permissions of ${{ github.event.pull_request.user.login }}: ${PERMISSION}"
-          echo "has-write=${PERMISSION}" >> $GITHUB_OUTPUT
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" != "teia-community/teia-ui" ]; then
+            echo "has-write=none" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            PERMISSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.pull_request.user.login }}/permission" | jq -r .permission)
+            echo "Workflow ran by ${{ github.actor }}"
+            echo "Permissions of ${{ github.event.pull_request.user.login }} (PR author): ${PERMISSION}"
+            echo "has-write=${PERMISSION}" >> $GITHUB_OUTPUT
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
