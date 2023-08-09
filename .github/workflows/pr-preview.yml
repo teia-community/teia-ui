@@ -20,7 +20,8 @@ concurrency: preview-${{ github.ref }}
 jobs:
   check_access:
     runs-on: ubuntu-latest
-    
+    outputs:
+      level: ${{ steps.access_check.outputs.has-write }}
     steps:
       - name: 🗝️ Check if initiator has write access
         id: access_check
@@ -34,7 +35,7 @@ jobs:
   deploy-preview:
     runs-on: ubuntu-latest
     needs: check_access
-    if: needs.check_access.outputs.has-write == 'write' || needs.check_access.outputs.has-write == 'admin'
+    if: needs.check_access.outputs.level == 'write' || needs.check_access.outputs.level == 'admin'
     
     strategy:
       matrix:
