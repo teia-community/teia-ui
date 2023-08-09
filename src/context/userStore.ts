@@ -1,13 +1,11 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
-import {
-  OpKind,
-  MichelCodecPacker,
-  TezosToolkit,
+import type {
   WalletOperationBatch,
   ContractMethod,
   Wallet,
   WalletParamsWithKind,
 } from '@taquito/taquito'
+import { OpKind, MichelCodecPacker, TezosToolkit } from '@taquito/taquito'
 import { create } from 'zustand'
 import {
   persist,
@@ -39,6 +37,7 @@ import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import type { Listing, NFT, SubjktInfo, Tx } from '@types'
+import type { Listings, Tokens } from 'gql'
 
 // type OperationReturn = Promise<string | TransactionWalletOperation | undefined>
 type OperationReturn = Promise<string | undefined>
@@ -86,15 +85,9 @@ interface UserState {
   /** Burn Token */
   burn: (objkt_id: string, amount: number) => OperationReturn
   /** Reswap Token */
-  reswap: (nft: NFT, price: number, swap: Listing) => OperationReturn
+  reswap: (nft: Tokens, price: number, swap: Listings) => OperationReturn
   /** Collect token */
-  collect: (listing: {
-    type: string
-    contract_address: string
-    swap_id: string
-    price: string
-    ask_id: any
-  }) => OperationReturn
+  collect: (listing: Listings) => OperationReturn
   /** Cancel Swap */
   cancel: (contract: string, swap_id: number) => OperationReturn
   /** Cancel Swap from V1 */
@@ -495,7 +488,7 @@ export const useUserStore = create<UserState>()(
           const creator = nft.artist_address
           const from = swap.seller_address
 
-          let proxyContract = undefined
+          const proxyContract = undefined
           if (proxyAddress) {
             show('Reswap', 'reswapping is not yet supported in collab mode')
             return
@@ -534,7 +527,7 @@ export const useUserStore = create<UserState>()(
               swap.amount_left,
               price,
               nft.royalties_total / 1e3,
-              creator,
+              creator as string,
               MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
             ),
           ]

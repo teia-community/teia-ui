@@ -4,21 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import classnames from 'classnames'
 import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
-interface DropdownButtonProps {
-  menuID: string
-  direction: 'left' | 'right'
-  label: string
-  alt: string
-  icon?: React.ReactNode
-  toggled: boolean
-  children: React.ReactNode
-  onClick: () => void
-  className?: string
-}
-
-interface ChildProps {
-  left?: boolean
-}
+import type { WithCompChildren } from '@types'
 
 function DropdownButton({
   menuID,
@@ -30,7 +16,7 @@ function DropdownButton({
   children,
   onClick,
   className,
-}: DropdownButtonProps) {
+}: WithCompChildren<DropdownButtonProps>) {
   const [open, setOpen] = useState(false)
 
   useTwemoji()
@@ -60,7 +46,9 @@ function DropdownButton({
         data-toggle={menuID}
         onClick={() => {
           toggle()
-          if (onClick) onClick()
+          if (onClick) {
+            onClick()
+          }
         }}
       >
         <>

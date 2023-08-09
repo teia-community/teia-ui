@@ -2,7 +2,8 @@ import { Input } from '@atoms/input'
 import styles from '../../collab/index.module.scss'
 import { Button } from '@atoms/button'
 import { CloseIcon } from '@icons'
-import { KeyboardEvent, useState } from 'react'
+import type { KeyboardEvent } from 'react'
+import { useState } from 'react'
 import { validateAddress } from '@taquito/utils'
 import { useModalStore } from '@context/modalStore'
 import type { TxWithIndex } from '@types'
@@ -49,7 +50,9 @@ export const TxRow = ({ tx, index, onAdd, onRemove }: TxRowProps) => {
           min={1}
           value={amount}
           onChange={(v) => {
-            if (typeof v === 'number') setAmount(v.toString())
+            // if (typeof v === 'number') setAmount(v.toString())
+            // else setAmount(v)
+            setAmount(v as string)
           }}
         />
       </td>

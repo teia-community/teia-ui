@@ -1,4 +1,4 @@
-import { NFT } from '@types'
+import type { NFT } from '@types'
 import * as _ from 'lodash'
 
 /** Flip key value to value key */

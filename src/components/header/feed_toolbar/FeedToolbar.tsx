@@ -1,0 +1,277 @@
+// ! NOTE - Keep the comments.
+import { motion } from 'framer-motion'
+import styles from '@style'
+import { DropDown, DropdownButton } from '@atoms/dropdown'
+import { IconToggle, Toggle } from '@atoms/toggles'
+import { SingleViewIcon, MasonryIcon, ChevronIcon, FiltersIcon } from '@icons'
+
+import { useCallback, useState } from 'react'
+import { Button } from '@atoms/button'
+
+import { useLocalSettings } from '@context/localSettingsStore'
+import { useLocation, useNavigate } from 'react-router'
+import { useEffect } from 'react'
+import { Line } from '@atoms/line'
+import { shallow } from 'zustand/shallow'
+import { Input } from '@atoms/input'
+import { useSearchParams } from 'react-router-dom'
+
+const MediaFilter = ({ label, tagline }) => {
+  return (
+    <div className={styles.media_type}>
+      <Toggle box label={label} />
+      <p className={styles.tagline}>{tagline}</p>
+    </div>
+  )
+}
+
+const locationMap = new Map([
+  ['/', 'Recent Sales'],
+  ['/feed/random', 'Random'],
+  ['/feed/newobjkts', 'New OBJKTs'],
+  ['/feed/1-1', '1 / 1'],
+  ['/feed/friends', 'Friends'],
+  // separator
+  ['---fund_feeds', 'fund_feeds'],
+  ['/feed/quake-aid', 'Quake Aid'],
+  ['/feed/ukraine', '🇺🇦 Ukraine'],
+  ['/feed/pakistan', '🇵🇰 Pakistan'],
+  ['/feed/iran', '🇮🇷 Iran'],
+  ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
+  // separator
+  ['---mime_feeds', 'mime_feeds'],
+  ['/feed/image', 'Image'],
+  ['/feed/video', 'Video'],
+  ['/feed/audio', 'Audio'],
+  ['/feed/glb', '3D'],
+  ['/feed/html-svg', 'HTML & SVG'],
+  ['/feed/gif', 'GIF'],
+  ['/feed/pdf', 'PDF'],
+  ['/feed/md', 'Markdown'],
+])
+
+const locationNeedSync = ['/feed/friends']
+const locationPaths = [...locationMap.keys()]
+
+export const FeedToolbar = ({ feeds_menu = false }) => {
+  const [price, setPrice] = useState({ from: 0, to: 0 })
+
+  const [viewMode, setViewMode] = useLocalSettings(
+    (st) => [st.viewMode, st.setViewMode],
+    shallow
+  )
+  const location = useLocation()
+  const [feedLabel, setFeedLabel] = useState('Recent Sales')
+
+  const navigate = useNavigate()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  useEffect(() => {
+    for (const pth of locationPaths.slice(1)) {
+      if (location.pathname.includes(pth)) {
+        setFeedLabel(locationMap.get(pth))
+      }
+    }
+
+    // return locationMap[location]
+  }, [location])
+
+  const updateParams = useCallback(
+    (key, value) => {
+      setSearchParams({
+        ...Object.fromEntries(searchParams),
+        [key]: value,
+      })
+    },
+    [searchParams, setSearchParams]
+  )
+
+  // TODO: finish the filtering logic
+  const filters = false
+  return (
+    <motion.div className={styles.toolbar}>
+      {feeds_menu && (
+        <div className={styles.feeds_area}>
+          <DropdownButton
+            alt="feeds selection dropdown"
+            menuID="feeds"
+            icon={<ChevronIcon />}
+            label={feedLabel}
+            className={styles.feeds_dropdown}
+          >
+            <DropDown menuID="feeds">
+              <div className={styles.feeds_button}>
+                {[...locationMap.keys()].map((k) => {
+                  if (k.startsWith('-')) {
+                    return <Line className={styles.separator} key={k} />
+                  }
+                  if (locationNeedSync.includes(k)) {
+                    return (
+                      <Button
+                        key={k}
+                        onClick={() => {
+                          navigate('/sync', { state: `${k}` })
+                        }}
+                      >
+                        {locationMap.get(k)}
+                      </Button>
+                    )
+                  }
+                  return (
+                    <Button key={k} to={k}>
+                      {locationMap.get(k)}
+                    </Button>
+                  )
+                })}
+              </div>
+            </DropDown>
+          </DropdownButton>
+        </div>
+      )}
+      <div className={styles.view_mode_area}>
+        <IconToggle
+          alt={'single view mode'}
+          toggled={viewMode === 'single'}
+          onClick={() => {
+            setViewMode('single')
+          }}
+          icon={<SingleViewIcon />}
+        />
+        <IconToggle
+          alt={'masonry view mode'}
+          toggled={viewMode === 'masonry'}
+          onClick={() => setViewMode('masonry')}
+          icon={<MasonryIcon />}
+        />
+      </div>
+      {filters && (
+        <DropdownButton
+          direction="left"
+          menuID="sort"
+          icon={<FiltersIcon />}
+          label="Sort"
+          className={styles.sort_area}
+        >
+          <DropDown left menuID="sort">
+            <motion.div key="filters" className={styles.filters_container}>
+              <motion.div key="media" className={styles.filter_box}>
+                <Button onClick={() => updateParams('sort', 'price')} box fit>
+                  By Price
+                </Button>
+                <Button
+                  onClick={() => updateParams('sort', 'buy_date')}
+                  box
+                  fit
+                >
+                  By Last Purchase Date
+                </Button>
+                <Button onClick={() => updateParams('sort', 'id')} box fit>
+                  By ID Number
+                </Button>
+              </motion.div>
+            </motion.div>
+          </DropDown>
+        </DropdownButton>
+      )}
+      {/* KEEP */}
+      {filters && (
+        <DropdownButton
+          direction="left"
+          menuID="filters"
+          icon={<FiltersIcon />}
+          label="Filters"
+          className={styles.filter_area}
+        >
+          <DropDown left menuID="filters">
+            <motion.div key="filters" className={styles.filters_container}>
+              <motion.div key="media" className={styles.filter_box}>
+                <h1>Media Types</h1>
+                <MediaFilter
+                  key="video"
+                  label="Video"
+                  tagline="mp4, webm, gif"
+                />{' '}
+                <MediaFilter key="image" label="Image" tagline="jpeg, png" />
+                <MediaFilter
+                  key="audio"
+                  label="Audio"
+                  tagline="mp3, wav, flac"
+                />
+                <MediaFilter key="3d" label="3D" tagline="glb" />
+                <MediaFilter
+                  key="interactive"
+                  label="HTML&SVG"
+                  tagline="Interactive"
+                />
+                <MediaFilter key="text" label="Document" tagline="pdf, md" />
+              </motion.div>
+              <motion.div key="prices" className={styles.filter_box}>
+                <h1>Price</h1>
+                <div>
+                  <div style={{ display: 'flex' }}>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={1e6}
+                      onChange={(e) => {
+                        console.log(e.target.value)
+                        setPrice({ ...price, from: e.target.value })
+                        console.log(price)
+                      }}
+                      placeholder={`0`}
+                      label="From"
+                      value={price.from}
+                    >
+                      <Line />
+                    </Input>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={1e6}
+                      onChange={(e) => {
+                        console.log(e.target.value)
+                        setPrice({ ...price, to: e.target.value })
+                        console.log(price)
+                      }}
+                      placeholder={`0`}
+                      label="To"
+                      value={price.to}
+                    >
+                      <Line />
+                    </Input>
+                  </div>
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <Toggle box label="Primary" />
+                    <Toggle box label="Secondary" />
+                  </div>
+                </div>
+              </motion.div>
+              <motion.div key="tags" className={styles.filter_box}>
+                <h1>Featured tags</h1>
+                <p className={styles.tagline}>Events</p>
+                <div className={styles.tags}>
+                  <Toggle box key="pakistan" label="Pakistan" />
+                  <Toggle box key="ukraine" label="Ukraine" />
+                  <Toggle box key="iran" label="Iran" />
+                </div>
+                <p className={styles.tagline}>Popular</p>
+                <div className={styles.tags}>
+                  <Toggle box key="pixelart" label="pixelart" />
+                  <Toggle box key="generativeart" label="generativeart" />
+                  <Toggle box key="gan" label="gan" />
+                </div>
+              </motion.div>
+            </motion.div>
+            <div key="confirm_box" className={styles.confirm_box}>
+              <Button>Clear</Button>
+              {/* <Button onClick={() => context.closeDropdowns()}>Ok</Button> */}
+            </div>
+          </DropDown>
+        </DropdownButton>
+      )}
+    </motion.div>
+  )
+}
+
+export default FeedToolbar

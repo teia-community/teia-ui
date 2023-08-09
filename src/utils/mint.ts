@@ -27,11 +27,6 @@ export const removeExtension = (name: string) => {
   return name.split('.').slice(0, -1).join('.')
 }
 
-interface ImageDimensions {
-  imageWidth: number
-  imageHeight: number
-}
-
 export const getImageDimensions = async (
   file: FileForm
 ): Promise<ImageDimensions> => {
@@ -60,7 +55,7 @@ export const generateCompressedImage = async (
   const mimeType = blob.type
   const buffer = await blob.arrayBuffer()
   const reader = await blobToDataURL(blob)
-  return { mimeType, buffer, reader }
+  return { mimeType, buffer: new Uint8Array(buffer), reader }
 }
 
 const blobToDataURL = async (

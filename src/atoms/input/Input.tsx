@@ -1,7 +1,9 @@
 import styles from '@style'
 import { memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
-import React, { KeyboardEvent } from 'react'
+import type { WithChildren } from '@types'
+import type { KeyboardEvent } from 'react'
+import React from 'react'
 
 // TODO: properly handle validation. Either on pattern (regex) or a prop onValidate
 
@@ -56,7 +58,7 @@ interface InputProps {
   className?: string
 }
 
-function Input(
+function Input<T extends number | string>(
   {
     type = 'text',
     placeholder = 'placeholder',
@@ -65,8 +67,8 @@ function Input(
     max,
     maxlength = 500,
     label,
-    onChange = (value) => null,
-    onBlur = () => null,
+    onChange,
+    onBlur,
     // onWheel = () => null,
     disabled,
     value: valueProp,
@@ -74,16 +76,16 @@ function Input(
     defaultValue,
     pattern,
     onKeyDown,
-    className,
-  }: InputProps,
+    className = '',
+  }: WithChildren<InputProps<T>>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) {
-  const [value, setValue] = useControlled(valueProp, defaultValue)
+  const [value, setValue] = useControlled<T>(valueProp, defaultValue)
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
       if (ref) {
-        onChange(e)
+        onChange?.(e)
         return
       }
       const target = e.target as HTMLInputElement
@@ -95,8 +97,8 @@ function Input(
               : target.value
             : target.value
 
-        setValue(v)
-        onChange(v)
+        setValue(v as T)
+        onChange?.(v as T)
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +106,7 @@ function Input(
   )
 
   return (
-    <div className={`${styles.container} ${className || ''}`}>
+    <div className={`${styles.container} ${className}`}>
       <label htmlFor={name}>
         <p>{label || name}</p>
         <input
@@ -115,7 +117,7 @@ function Input(
           min={min}
           max={max}
           maxLength={maxlength}
-          defaultValue={defaultValue}
+          defaultValue={defaultValue as string}
           value={value}
           onChange={handleInput}
           onBlur={onBlur}
@@ -130,4 +132,4 @@ function Input(
   )
 }
 
-export default memo(React.forwardRef(Input))
+export default memo(React.forwardRef(Input)) as typeof Input

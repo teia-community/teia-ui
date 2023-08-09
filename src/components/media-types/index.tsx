@@ -12,15 +12,15 @@ import { PdfComponent } from './pdf'
 import { Container } from './container'
 import { MD } from './md'
 import { useMemo } from 'react'
-import { NFT } from '@types'
+import type { Tokens } from 'gql'
 
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
-  nft: NFT
+  nft: Partial<Tokens>
   /**When minting this is a base64 (or ObjectURL) representation of the image/video */
-  previewUri?: string
+  previewUri?: string | ArrayBuffer | null
   /**When minting this is a base64 (or ObjectURL) representation of the cover image/video */
-  previewDisplayUri?: string
+  previewDisplayUri?: string | ArrayBuffer | null
   /**false on feeds, true on objkt detail view. */
   displayView?: boolean
   /**hacky way to pass the details hover for now... */
@@ -186,7 +186,7 @@ export const RenderMediaType = ({
         )
 
       default:
-        return <UnknownComponent mimeType={nft.mime_type} />
+        return <UnknownComponent nft={nft} />
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nft.mime_type])

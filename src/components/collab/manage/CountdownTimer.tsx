@@ -1,0 +1,35 @@
+import { useState, useEffect } from 'react'
+
+export const CountdownTimer = ({
+  endDate,
+  onComplete,
+}: {
+  endDate: Date
+  onComplete: () => void
+}) => {
+  const calculateTimeRemaining = () => {
+    const now = new Date()
+    const difference = Math.abs(endDate.getTime() - now.getTime())
+
+    return Math.floor((difference / 1000) % 60)
+  }
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeRemaining())
+
+  useEffect(() => {
+    const timerFunc = setTimeout(() => {
+      const remaining = calculateTimeRemaining()
+      setTimeLeft(remaining)
+    }, 1000)
+
+    return () => clearTimeout(timerFunc)
+  })
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      onComplete()
+    }
+  }, [timeLeft]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return timeLeft > 0 ? `${timeLeft}s` : 'checking...'
+}

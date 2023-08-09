@@ -3,15 +3,26 @@
     "react-app",
     "plugin:jsx-a11y/recommended",
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:react/jsx-runtime"
   ],
+  "parser": "@typescript-eslint/parser",
   "globals": {
     "JSX": "readonly"
   },
   "root": true,
-  "plugins": ["jsx-a11y"],
+  "plugins": ["jsx-a11y", "@typescript-eslint", "react"],
   "rules": {
-    "jsx-a11y/media-has-caption": "off"
+    "jsx-a11y/media-has-caption": "off",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/no-namespace": "off"
   },
-  "ignorePatterns": ["**/*.html", "node_polyfill.js"]
+
+  "ignorePatterns": [
+    "**/*.html",
+    "node_polyfill.js",
+    "src/stories/*",
+    ".storybook/*",
+    "src/gql/index.ts"
+  ]
 }

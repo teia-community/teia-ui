@@ -4,20 +4,16 @@ import {
   SWAP_TYPE_TEIA,
   teiaSwapSchema,
 } from '@constants'
-import {
+import type {
   ContractAbstraction,
-  MichelCodecPacker,
-  OpKind,
   Wallet,
   WalletParamsWithKind,
 } from '@taquito/taquito'
+import { MichelCodecPacker, OpKind } from '@taquito/taquito'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import { Parser } from '@taquito/michel-codec'
-import {
-  MichelsonMap,
-  MichelsonMapKey,
-  Schema,
-} from '@taquito/michelson-encoder'
+import type { MichelsonMap, MichelsonMapKey } from '@taquito/michelson-encoder'
+import { Schema } from '@taquito/michelson-encoder'
 
 export const Packer = new MichelCodecPacker()
 

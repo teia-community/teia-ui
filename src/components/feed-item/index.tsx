@@ -9,7 +9,7 @@ import { shallow } from 'zustand/shallow'
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { motion } from 'framer-motion'
-import { NFT } from '@types'
+import type { ExtTokens } from '@types'
 /**
  * @param {Object} feedOptions - The options for the feed item
  * @param {import("@types").NFT} feedOptions.nft - The nft to render
@@ -28,7 +28,13 @@ const info_variants = {
   },
 }
 
-const TokenHover = ({ nft, visible }: { nft: NFT; visible: boolean }) => {
+const TokenHover = ({
+  nft,
+  visible,
+}: {
+  nft: Partial<ExtTokens>
+  visible: boolean
+}) => {
   return (
     <AnimatePresence>
       {visible && (
@@ -42,7 +48,7 @@ const TokenHover = ({ nft, visible }: { nft: NFT; visible: boolean }) => {
   )
 }
 
-export const FeedItem = ({ nft }: { nft: NFT }) => {
+export const FeedItem = ({ nft }: { nft: Partial<ExtTokens> }) => {
   const [nsfwFriendly, photosensitiveFriendly] = useLocalSettings(
     (state) => [state.nsfwFriendly, state.photosensitiveFriendly],
     shallow

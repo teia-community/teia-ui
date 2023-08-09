@@ -26,7 +26,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { shallow } from 'zustand/shallow'
-import { ArtistProfile } from '@types'
+import type { ArtistProfile } from '@types'
 
 export const Header = () => {
   const [

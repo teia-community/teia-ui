@@ -9,15 +9,6 @@ import { useClickOutside } from '@hooks/use-click-outside'
 import classnames from 'classnames'
 import { useTwemoji } from '@hooks/use-twemoji'
 
-interface DropdownProps {
-  menuID: string
-  /** Callback when dropdown closed/clicked outside */
-  setOpen: (isOpen: boolean) => void
-  children: JSX.Element | JSX.Element[]
-  vertical?: boolean
-  left?: boolean
-}
-
 function DropDown({
   children,
   setOpen,
@@ -32,7 +23,7 @@ function DropDown({
   useClickOutside(
     dropdownRef,
     () => {
-      setOpen(false)
+      setOpen?.(false)
     },
     true
   )

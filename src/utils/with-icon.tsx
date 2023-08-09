@@ -7,11 +7,19 @@ export const IconCache = React.createContext<{ [key: string]: string }>({})
 export const useIconCache = () => React.useContext(IconCache)
 
 interface WithIconProps {
-  size: number
-  viewBox: number
+  size?: number
+  viewBox?: number
 }
 
-// SVG Icon Cache system using refs
+/** SVG Icon Cache system using refs
+ * Resolves the first call to the actuall SVG and store it in a
+ * context cache. We then `useref` that svg on subsequent calls.
+ *
+ * Less optimal to use than importing SVG using the bundler (as a react component)
+ * for single use cases.
+ *
+ * Heavily based on https://paco.me/writing/svg-caching-with-use
+ */
 const withIcon = (icon: string, defaultViewBox?: number) => {
   const Icon = (props: WithIconProps) => {
     const { size = 30, viewBox = defaultViewBox } = props

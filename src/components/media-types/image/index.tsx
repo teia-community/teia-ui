@@ -1,7 +1,8 @@
+import type { ReactEventHandler } from 'react'
 import { useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from '@style'
-import { MediaTypeProps } from '@types'
+import type { MediaTypeProps } from '@types'
 
 export const ImageComponent = ({
   artifactUri,
@@ -28,12 +29,15 @@ export const ImageComponent = ({
     console.error(error)
   }
 
-  const onLoad = ({ target: img }: { target: HTMLImageElement }) => {
+  const onLoad: ReactEventHandler<HTMLImageElement> = (e) => {
     // Do whatever you want here
-    const w = img.naturalWidth
-    const h = img.naturalHeight
-    if (w + h < 256) {
-      setSmol(true)
+    if (e?.target) {
+      const img = e.target as HTMLImageElement
+      const w = img.naturalWidth
+      const h = img.naturalHeight
+      if (w + h < 256) {
+        setSmol(true)
+      }
     }
   }
   // useEffect(() => {

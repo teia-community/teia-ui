@@ -1,12 +1,29 @@
-export interface Format {
-  mimeType: string
-  fileSize: number
-  fileName: string
-  dimensions?: {
-    value: string
-    unit: string
-  }
+// UTILITIES
+
+import type { Tokens } from 'gql'
+import type React from 'react'
+
+/** Utility type to extract a single type from an Array type */
+export type Unpacked<T> = T extends (infer U)[] ? U : T
+
+/** Wrapper type for React components with childrens */
+export type WithChildren<T = object> = T & { children?: React.ReactNode }
+
+/** Wrapper type for React components with childrens (only React components aka clonable) */
+export type WithCompChildren<T = object> = T & {
+  children?: React.ReactElement<any, string | React.JSXElementConstructor<any>>
 }
+
+// // Global to tidy
+// export interface Format {
+//   mimeType: string
+//   fileSize: number
+//   fileName: string
+//   dimensions?: {
+//     value: string
+//     unit: string
+//   }
+// }
 
 export type MintFormat = {
   mimeType: string
@@ -33,7 +50,7 @@ export type FileForm = {
   /** The file object */
   file?: File
   /** The buffer extracted from the file. */
-  buffer: ArrayBuffer
+  buffer: Uint8Array
   /** The file reader*/
   reader: string | ArrayBuffer | null
   format?: Format
@@ -104,8 +121,6 @@ export type Signature = {
   token_id?: string
   shareholder_address?: string
 }
-
-export type ListingStatus = {}
 
 export interface Holding {
   holder_address: string
@@ -313,4 +328,11 @@ export type MediaTypeProps = SharedMediaProps & {
 
   /** Older video tokens did not require a cover image, load the video in these cases. */
   forceVideo?: boolean
+}
+
+// Tokens with extra artifacts not coming from the API
+export interface ExtTokens extends Tokens {
+  isPhotosensitive?: boolean
+  isNSFW?: boolean
+  key?: string
 }

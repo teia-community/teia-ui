@@ -1,17 +1,13 @@
-import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
+import { IPFS_DEFAULT_THUMBNAIL_URI, MIMETYPE } from '@constants'
 
 import mime from 'mime-types'
 import axios from 'axios'
 import { Buffer } from 'buffer'
-import { fetchGraphQL } from './api'
+import { api } from './api'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import { FileForm, FileMint, MintFormat } from '@types'
-import { gql } from 'graphql-request'
-
-/**
- * @typedef { {path: string?, blob: Blob} } FileHolder
- */
+import type { FileMint } from '@types'
+import { pickBy } from 'lodash'
 
 /**
  * Upload a single file through the IPFS proxy.
@@ -96,67 +92,31 @@ export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
 }
 
 const isDoubleMint = async (uri: string) => {
-  const uriQuery = gql`
-    query uriQuery($address: String!, $ids: [String!] = "") {
-      tokens(
-        order_by: { minted_at: desc }
-        where: {
-          editions: { _gt: "0" }
-          metadata_status: { _eq: "processed" }
-          artifact_uri: { _in: $ids }
-          artist_address: { _eq: $address }
-        }
-      ) {
-        token_id
-      }
-    }
-  `
   const { proxyAddress, address } = useUserStore.getState()
   const { show } = useModalStore.getState()
-  const { errors, data } = await fetchGraphQL(uriQuery, 'uriQuery', {
-    address: proxyAddress || address,
-    ids: [uri],
+
+  const res = await api.uriMintedByAddress({
+    address: proxyAddress || address || '',
+    uris: [uri],
   })
+  console.debug(res)
 
-  console.debug(data)
+  if (!res.tokens) return false
+  const areAllTokensBurned = res.tokens.every((token) => token.editions === 0)
 
-  if (errors) {
-    show(`GraphQL Error: ${JSON.stringify(errors)}`)
-    return true
-  } else if (data) {
-    if (!data.tokens) return false
-    const areAllTokensBurned = data.tokens.every(
-      ({ editions }: { editions: number }) => editions === 0
-    )
-
-    if (areAllTokensBurned) {
-      return false
-    }
-
-    show(
-      `Duplicate mint detected: [#${data.tokens[0].token_id}](/objkt/${data.tokens[0].token_id}) is already minted`
-    )
-
-    return true
+  if (areAllTokensBurned) {
+    return false
   }
-  return false
+
+  show(
+    `Duplicate mint detected: [#${res.tokens[0].token_id}](/objkt/${res.tokens[0].token_id}) is already minted`
+  )
+
+  return true
+  // }
+  // return false
 }
 
-interface PrepareProps {
-  name: string
-  description: string
-  tags: string
-  address: string
-  file: FileForm
-  cover: FileForm
-  thumbnail: FileForm
-  rights: string
-  rightUri?: string
-  language?: string
-  accessibility: string
-  contentRating: string
-  formats: any
-}
 export const prepareFile = async ({
   name,
   description,
@@ -283,22 +243,7 @@ export const prepareDirectory = async ({
   accessibility,
   contentRating,
   formats,
-}: {
-  name?: string
-  description?: string
-  tags?: string
-  address: string
-  files: FileForm[]
-  cover: FileForm
-  thumbnail: FileForm
-  generateDisplayUri: string
-  rights: string
-  rightUri: string
-  language: string
-  accessibility: string
-  contentRating: string
-  formats: MintFormat[]
-}) => {
+}: PrepareDirectoryOptions) => {
   const step = useModalStore.getState().step
 
   const hashes = await uploadFilesToDirectory(files)
@@ -448,21 +393,7 @@ async function buildMetadataFile({
   accessibility,
   contentRating,
   formats,
-}: {
-  name: string
-  description: string
-  tags: string
-  uri: string
-  address: string
-  displayUri: string
-  thumbnailUri: string
-  rights: string
-  rightUri?: string
-  language: string
-  accessibility: string
-  contentRating: string
-  formats: MintFormat[]
-}) {
+}: BuildMetadataOptions) {
   const metadata: TeiaMetadata = {
     name,
     description,
@@ -476,7 +407,7 @@ async function buildMetadataFile({
     decimals: 0,
     isBooleanAmount: false,
     shouldPreferSymbol: false,
-    rights,
+    rights: rights || 'none',
     date: new Date().toISOString(),
     mintingTool: 'https://teia.art/mint',
   }
@@ -485,28 +416,11 @@ async function buildMetadataFile({
   if (rights === 'custom') metadata.rightUri = rightUri
   if (language != null) metadata.language = language
 
-  return JSON.stringify(metadata)
-}
+  // const cleaned = Object.keys(metadata).forEach(
+  //   (key) => get(metadata,key) === undefined && delete metadata[key]
+  // )
 
-interface TeiaMetadata {
-  name: string
-  description: string
-  tags: string[]
-  symbol: string
-  artifactUri: string
-  displayUri: string
-  thumbnailUri: string
-  creators: string[]
-  formats: MintFormat[]
-  decimals: number
-  isBooleanAmount: boolean
-  shouldPreferSymbol: boolean
-  rights: string
-  date: string
-  mintingTool: string
-  //optional
-  accessibility?: string
-  contentRating?: string
-  rightUri?: string
-  language?: string
+  const cleaned_metas = pickBy(metadata, (v) => v !== undefined)
+
+  return JSON.stringify(cleaned_metas)
 }

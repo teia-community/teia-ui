@@ -17,11 +17,11 @@ export const CollabDisplay = () => {
     !id || !name ? ['/contract', id, name] : null,
     async () => {
       const result = await fetchCollabCreations(
-        name || id!,
+        name || id,
         name ? 'subjkt' : 'address'
       )
 
-      if (!result.split_contracts.length) {
+      if (!result?.split_contracts.length) {
         throw new Error('unknown split contract')
       }
 

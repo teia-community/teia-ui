@@ -435,7 +435,7 @@ export const Identicon = ({
         src={resolvedLogo}
         alt="identicon"
         onLoad={onLoad}
-        onError={(e: ErrorEvent) => {
+        onError={(e) => {
           console.error(e)
           setIsVideo(true)
         }}

@@ -11,6 +11,7 @@ import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import filterReplace from 'vite-plugin-filter-replace'
+import codegen from 'vite-plugin-graphql-codegen'
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
@@ -89,6 +90,7 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
+      codegen(),
       filterReplace(
         [
           {

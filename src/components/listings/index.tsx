@@ -1,5 +1,6 @@
 import get from 'lodash/get'
-import React, { useMemo, useState } from 'react'
+import type React from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { walletPreview } from '@utils/string'
@@ -7,8 +8,8 @@ import styles from '@style'
 import MarketplaceLabel, { RestrictedLabel } from '@atoms/marketplace-labels'
 import useSettings from '@hooks/use-settings'
 import { Line } from '@atoms/line'
-import { Listing, NFT } from '@types'
 import { useUserStore } from '@context/userStore'
+import type { Listings, Tokens } from 'gql'
 
 // TODO: add support for all kind of listings
 function ListingRow({
@@ -20,17 +21,18 @@ function ListingRow({
   proxyAdminAddress,
   rowId,
 }: {
-  nft: NFT
-  listing: Listing
-  proxyAddress: string
-  onCollectClick: (listing: Listing) => void
+  nft: Tokens & { restricted: boolean }
+  listing: Listings
+  // restricted: boolean
+  // proxyAddress: string
+  onCollectClick: (listing: Listings) => void
   reswapPrices: { [key: string]: number }
   setReswapPrices: React.Dispatch<
     React.SetStateAction<{ [key: string]: string }>
   >
-  reswap: (nft: NFT, price: number, listing: Listing) => void
-  cancel: (contract: string, swap_id: string) => void
-  address: string
+  // reswap: (nft: Tokens, price: number, listing: Listing) => void
+  // cancel: (contract: string, swap_id: string) => void
+  // address: string
   proxyAdminAddress: string
   rowId: string
 }) {
@@ -50,6 +52,8 @@ function ListingRow({
   const restricted = useMemo(() => {
     return nft.restricted || walletBlockMap.get(listing.seller_address) === 1
   }, [nft.restricted, walletBlockMap, listing.seller_address])
+
+  if (!walletBlockMap) return null
 
   return (
     <div className={styles.swap}>
@@ -134,7 +138,7 @@ function ListingRow({
   )
 }
 
-export const Listings = ({
+const ListingsComponent = ({
   // id,
   // listings,
   proxyAdminAddress,
@@ -148,8 +152,8 @@ export const Listings = ({
 // reswap,
 {
   proxyAdminAddress: string
-  nft: NFT
-  handleCollect: (listing: Listing) => void
+  nft: Tokens & { restricted: boolean }
+  handleCollect: (listing: Listings) => void
 }) => {
   const [reswapPrices, setReswapPrices] = useState({})
   const listingsWithKeys = nft.listings?.map((listing) => ({
@@ -164,7 +168,7 @@ export const Listings = ({
           <ListingRow
             nft={nft}
             key={listing.key}
-            rowId={listing.key!}
+            rowId={listing.key as string}
             listing={listing}
             // restricted={nft.restricted}
             // address={address}
@@ -185,3 +189,5 @@ export const Listings = ({
     </div>
   )
 }
+
+export { ListingsComponent as Listings }
