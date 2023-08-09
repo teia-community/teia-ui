@@ -27,7 +27,7 @@ jobs:
         id: access_check
         run: |
           if [ "${{ github.event.pull_request.head.repo.full_name }}" != "teia-community/teia-ui" ]; then
-            echo "Aborting since we the head is "${{ github.event.pull_request.head.repo.full_name }}!"
+            echo "Aborting since we the head is ${{ github.event.pull_request.head.repo.full_name }}!"
             echo "has-write=none" >> $GITHUB_OUTPUT
             exit 0
           else
