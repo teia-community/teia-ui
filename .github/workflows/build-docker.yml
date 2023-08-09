@@ -6,6 +6,10 @@ on:
     branches:
       - 'main'
       - 'develop'
+    paths:
+      - 'src/**'
+      - '.env'
+      - 'index.html'
 
 jobs:
   build:

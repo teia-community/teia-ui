@@ -23,8 +23,16 @@ jobs:
         node-version: [18]
 
     steps:
+      - name: 🗝️ Check if initiator has write access
+        id: access_check
+        run: |
+          PERMISSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" | jq -r .permission)
+          echo "::set-output name=has-write::${PERMISSION}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⏬ Checkout
         uses: actions/checkout@v3
+        if: steps.access_check.outputs.has-write == 'write'
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -32,11 +40,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
+        if: steps.access_check.outputs.has-write == 'write'
 
       - name: ⚙️ Install and Build
         run: |
           npm ci
           npm run build
+        if: steps.access_check.outputs.has-write == 'write'
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
@@ -44,3 +54,4 @@ jobs:
           source-dir: ./build/
           preview-branch: gh-pages
           umbrella-dir: previews
+        if: steps.access_check.outputs.has-write == 'write'

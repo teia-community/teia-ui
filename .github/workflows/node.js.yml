@@ -8,11 +8,14 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    paths-ignore:
+      - '.github/**'
+      - '.storybook/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         node-version: [18]
