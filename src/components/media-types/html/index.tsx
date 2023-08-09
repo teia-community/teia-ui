@@ -127,7 +127,7 @@ export const HTMLComponent = (props: MediaTypeProps) => {
           <iframe
             ref={iframeRef}
             title={`interactive object ${nft.token_id}`}
-            src={`https://teia-community.github.io/teia-ui/gh-pages/html-preview/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
+            src={`https://iframe.teia.art/html?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
             sandbox={sandbox_features}
             allow={allowed_features}
           />

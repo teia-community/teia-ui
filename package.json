@@ -54,6 +54,9 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "lint-staged": {
+    "./src/**/*.{js,jsx,scss}": "prettier --write"
+  },
   "browserslist": {
     "production": [
       ">0.2%",

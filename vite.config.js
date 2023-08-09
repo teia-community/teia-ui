@@ -85,6 +85,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    base: process.env.GH_BASE_URL || '/',
     clearScreen: prod,
     appType: 'mpa',
     plugins: [

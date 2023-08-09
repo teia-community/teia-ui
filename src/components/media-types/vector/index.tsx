@@ -61,6 +61,6 @@ export const VectorComponent = ({
   )
 }
 // svg version:     src={`${src}?author=${_creator_}&viewer=${_viewer_}`}
-// iframe version:  src={`https://teia-community.github.io/teia-ui/gh-pages/sandbox-svg.html?src=${src}&creator=${_creator_}&viewer=${_viewer_}`}
+// iframe version:  src={`https://iframe.teia.art/svg?src=${src}&creator=${_creator_}&viewer=${_viewer_}`}
 
 export default VectorComponent

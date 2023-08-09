@@ -1,7 +1,6 @@
 import { flipObject } from './utils'
 
-export const BANNER_URL =
-  'https://raw.githubusercontent.com/teia-community/teia-status/main'
+export const BANNER_URL = 'https://lists.teia.art/teia-status'
 
 export const PATH = {
   FEED: '/',
