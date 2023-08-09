@@ -8,36 +8,56 @@ on:
       - synchronize
       - closed
     paths:
+      - '.github/**'
       - 'src/**'
       - '.env'
       - 'index.html'
+      - 'vite.config.js'
+
 
 concurrency: preview-${{ github.ref }}
 
 jobs:
+  check_access:
+    runs-on: ubuntu-latest
+    outputs:
+      level: ${{ steps.access_check.outputs.has-write }}
+    steps:
+      - name: 🗝️ Check if initiator has write access
+        id: access_check
+        run: |
+          PERMISSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" | jq -r .permission)
+          echo "Permissions of ${{ github.actor }}: ${PERMISSION}"
+          echo "has-write=${PERMISSION}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
   deploy-preview:
     runs-on: ubuntu-latest
-
+    needs: check_access
+    if: needs.check_access.outputs.level == 'write' || needs.check_access.outputs.level == 'admin'
+    
     strategy:
       matrix:
         node-version: [18]
-
+        
     steps:
       - name: ⏬ Checkout
         uses: actions/checkout@v3
-
+        
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
-
+          
       - name: ⚙️ Install and Build
         run: |
+          export GH_BASE_URL="/teia-ui/previews/pr-${{ github.event.pull_request.number }}/"
           npm ci
           npm run build
-
+          
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:
