@@ -2,6 +2,9 @@ import styles from '@style'
 import { memo, useCallback } from 'react'
 import { useControlled } from '@hooks/use-controlled'
 import React, { KeyboardEvent } from 'react'
+
+// TODO: properly handle validation. Either on pattern (regex) or a prop onValidate
+
 type InputType =
   | 'button'
   | 'checkbox'
