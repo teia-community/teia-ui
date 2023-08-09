@@ -11,6 +11,8 @@ on:
       - 'src/**'
       - '.env'
       - 'index.html'
+      - 'vite.config.js'
+
 
 concurrency: preview-${{ github.ref }}
 
