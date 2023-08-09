@@ -30,7 +30,8 @@ jobs:
         id: access_check
         run: |
           PERMISSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" | jq -r .permission)
-          echo "::set-output name=has-write::${PERMISSION}"
+          echo "Permissions of ${{ github.actor }}: ${PERMISSION}"
+          echo "has-write=${PERMISSION}" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⏬ Checkout
