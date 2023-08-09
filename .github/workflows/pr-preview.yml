@@ -44,6 +44,7 @@ jobs:
 
       - name: ⚙️ Install and Build
         run: |
+          export GH_BASE_URL="/teia-ui/previews/pr-${{ github.event.pull_request.number }}/"
           npm ci
           npm run build
         if: steps.access_check.outputs.has-write == 'write'
