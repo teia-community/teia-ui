@@ -32,12 +32,8 @@ export const DAO = () => {
                 } the legal disclaimer`}
                 checked={acceptLegalDisclaimer}
                 onCheck={setAcceptLegalDisclaimer}
-                label={'Tick here to accept the legal disclaimer'}
+                label={'I have read and understood the legal disclaimer and agree to it'}
               />
-              <i>
-                By clicking this button, you confirm you have read and agree
-                with the legal disclaimer above.
-              </i>
             </div>
 
             <Button
@@ -49,7 +45,7 @@ export const DAO = () => {
             </Button>
             {!acceptLegalDisclaimer && (
               <span style={{ color: 'red' }}>
-                <p>You must accept the terms first</p>
+                <p> You need to agree to the legal disclaimer with the checkbox above in order to access the token claim button.</p>
               </span>
             )}
             {acceptLegalDisclaimer}
