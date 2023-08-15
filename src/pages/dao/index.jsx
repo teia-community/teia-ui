@@ -196,7 +196,7 @@ export const DAO = () => {
             checked={acceptLegalDisclaimer}
             onCheck={setAcceptLegalDisclaimer}
             label={
-              'I have read and understood the legal disclaimer and agree to itI have read and understood the legal disclaimer and agree to it'
+              'I have read and understood the legal disclaimer and agree to it'
             }
           />
         </section>
