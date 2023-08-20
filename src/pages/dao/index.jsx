@@ -12,9 +12,9 @@ export const DAO = () => {
 
   return (
     <Page title="Claim DAO tokens" large>
-      <div className={styles.dao__container}>
-        <section className={styles.dao__section}>
-          <h1 className={styles.dao__section__title}>
+      <div className={styles.container}>
+        <section className={styles.section}>
+          <h1 className={styles.section_title}>
             Welcome to the TEIA tokens claim page!
           </h1>
 
@@ -59,10 +59,8 @@ export const DAO = () => {
 
         <Line />
 
-        <section className={styles.dao__section}>
-          <h1 className={styles.dao__section__title}>
-            How to Claim your Tokens
-          </h1>
+        <section className={styles.section}>
+          <h1 className={styles.section_title}>How to Claim your Tokens</h1>
 
           <ol>
             <li counter="1">
@@ -98,8 +96,8 @@ export const DAO = () => {
 
         <Line />
 
-        <section className={styles.dao__section}>
-          <h1 className={styles.dao__section__title}>Legal Disclaimer</h1>
+        <section className={styles.section}>
+          <h1 className={styles.section_title}>Legal Disclaimer</h1>
 
           <p>
             By claiming your TEIA DAO tokens, you agree to be bound by the terms
@@ -208,10 +206,8 @@ export const DAO = () => {
         {acceptLegalDisclaimer && (
           <>
             <Line />
-            <section className={styles.dao__section}>
-              <h1 className={styles.dao__section__title}>
-                Claim your TEIA tokens!
-              </h1>
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Claim your TEIA tokens!</h1>
 
               <p>
                 <Button shadow_box onClick={claimTokens}>
