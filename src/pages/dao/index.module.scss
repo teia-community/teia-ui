@@ -1,7 +1,8 @@
 @import '@styles/mixins.scss';
 
 .container {
-  padding-top: 60px;
+  padding-top: 12px;
+  padding-bottom: 60px;
   width: 100%;
 
   @include respond-to('desktop') {
