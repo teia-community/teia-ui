@@ -6,6 +6,7 @@ import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
 import styles from '@style'
 import { ReactComponent as DaoMD } from '../../lang/en/DAO_claim.md'
+import { DAOIcon } from '@icons'
 
 export const DAO = () => {
   const claimTokens = useUserStore((st) => st.claimTokens)

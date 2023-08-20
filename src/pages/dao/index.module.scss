@@ -1,6 +1,7 @@
 @import '@styles/mixins.scss';
 
-.dao__container {
+.container {
+  padding-top: 60px;
   width: 100%;
   @include respond-to('desktop') {
     padding-top: 60px;
@@ -13,16 +14,23 @@
   flex-direction: column;
 }
 
-.dao__section__title {
-  font-size: 1.8em;
-  font-weight: bold;
+.buttons_row {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.headline {
+  text-align: center;
+}
+
+.section_title {
   margin-bottom: 1em;
 }
 
-.dao__container {
-  h1 {
-    text-align: center;
-  }
+.section {
+  margin: 1em 0;
+
   b {
     font-weight: bold;
   }
