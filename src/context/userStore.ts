@@ -16,10 +16,7 @@ import {
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
-import { 
-  getUser,
-  getClaimedDaoTokens
-} from '@data/api'
+import { getUser, getClaimedDaoTokens } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
   BURN_ADDRESS,
@@ -464,8 +461,11 @@ export const useUserStore = create<UserState>()(
 
           // Calculate the tokens that the user still can claim
           const totalTokensToClaim = parseInt(userMerkleData.tokens) / 1e6
-          const alreadyClaimedTokens = (await getClaimedDaoTokens(user_address)) / 1e6
-          const unclaimedTokens = totalTokensToClaim - alreadyClaimedTokens
+          const alreadyClaimedTokens =
+            (await getClaimedDaoTokens(user_address)) / 1e6
+          const unclaimedTokens =
+            totalTokensToClaim -
+            (alreadyClaimedTokens ? alreadyClaimedTokens : 0)
 
           if (unclaimedTokens === 0) {
             show(

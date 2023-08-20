@@ -8,7 +8,7 @@ export const PATH = {
   COLLAB: '/kt',
   ABOUT: '/about',
   FAQ: '/faq',
-  DAO: '/dao',
+  CLAIM: '/claim',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
@@ -113,7 +113,7 @@ export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
 export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
 export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
 
-export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1StiWr1bqAfu7y1pLUkUC8zhwLmHpvJuJ7'
+export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
   'QmbRmck8A5sBYQC7WEuK8dApnGQGXBhyPEgQpLm8ftfAtL'
 export const MERKLE_DATA_IPFS_PATHS = {
@@ -127,7 +127,7 @@ export const MERKLE_DATA_IPFS_PATHS = {
   7: 'QmXiD3T5erwNAZ5yFYpz3AA2h6FXfPMt7XzKCDrKwJSMDX',
   8: 'QmW4jpn5EnjQx6aCbSAodEhh6BW2UqvZSGvubu2tv4UWCn',
 }
-export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '511337';
+export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '518731'
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,
