@@ -71,7 +71,7 @@ export const Claim = () => {
             </li>
 
             <li counter="2">
-              <b>Read the legal disclaimer below</b> It outlines important
+              <b>Read the legal disclaimer below.</b> It outlines important
               information regarding the nature of TEIA tokens and your
               responsibilities as a token holder.
             </li>
@@ -81,8 +81,8 @@ export const Claim = () => {
               the bottom of this page to get access to the claim button.
             </li>
             <li counter="4">
-              <b>Click on the "Claim TEIA DAO tokens" button</b> at the bottom
-              of the of this page to initiate the token claim process and
+              <b>Click on the "Claim TEIA tokens" button</b> at the bottom
+              of this page to initiate the token claim process and
               confirm the operation with your wallet. Your tokens should arrive
               in your wallet after a few minutes.
             </li>
