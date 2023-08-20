@@ -1,4 +1,4 @@
-import { HEN_CONTRACT_FA2 } from '@constants'
+import { HEN_CONTRACT_FA2, CLAIMED_DAO_TOKENS_BIGMAP_ID } from '@constants'
 import axios from 'axios'
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
@@ -320,4 +320,15 @@ export const GetUserMetadata = async (walletAddr: string) => {
     tzktData.data = tzpData
   }
   return tzktData
+}
+
+
+/**
+ * Get User claimed tokens
+ */
+export async function getClaimedDaoTokens(walletAddr: string) {
+  const response = await axios.get(
+    `https://api.tzkt.io/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`)
+
+  return response? parseInt(response.data.value) : 0
 }
