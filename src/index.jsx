@@ -9,7 +9,7 @@ import {
 } from '@pages/collaborate'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
-import { DAO } from '@pages/dao'
+import { Claim } from '@pages/dao'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -134,7 +134,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
-      <Route path="dao/*" element={<DAO />} />
+      <Route path="claim/*" element={<Claim />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

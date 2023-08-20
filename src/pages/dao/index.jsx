@@ -7,7 +7,7 @@ import { Line } from '@atoms/line'
 import styles from '@style'
 import { DAOIcon } from '@icons'
 
-export const DAO = () => {
+export const Claim = () => {
   const claimTokens = useUserStore((st) => st.claimTokens)
   const [acceptLegalDisclaimer, setAcceptLegalDisclaimer] = useState(false)
 

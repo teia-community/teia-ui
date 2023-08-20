@@ -8,7 +8,7 @@ export const PATH = {
   COLLAB: '/kt',
   ABOUT: '/about',
   FAQ: '/faq',
-  DAO: '/dao',
+  CLAIM: '/claim',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
