@@ -16,7 +16,10 @@ import {
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
-import { getUser } from '@data/api'
+import { 
+  getUser,
+  getClaimedDaoTokens
+} from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
   BURN_ADDRESS,
@@ -458,10 +461,23 @@ export const useUserStore = create<UserState>()(
           }
 
           const userMerkleData = merkleData[user_address]
-          const userDaoTokens = parseInt(userMerkleData.tokens) / 1e6
+
+          // Calculate the tokens that the user still can claim
+          const totalTokensToClaim = parseInt(userMerkleData.tokens) / 1e6
+          const alreadyClaimedTokens = (await getClaimedDaoTokens(user_address)) / 1e6
+          const unclaimedTokens = totalTokensToClaim - alreadyClaimedTokens
+
+          if (unclaimedTokens === 0) {
+            show(
+              'Claim DAO tokens',
+              'Sorry, but you already claimed all your tokens'
+            )
+            return
+          }
+
           step(
             'Claim DAO tokens',
-            'You are allowed to claim ' + userDaoTokens + ' DAO tokens'
+            'You are allowed to claim ' + unclaimedTokens + ' DAO tokens'
           )
 
           // Send the claim operation
