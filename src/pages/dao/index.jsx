@@ -21,10 +21,10 @@ export const DAO = () => {
           <p>Here you can claim your TEIA DAO tokens.</p>
 
           <p>
-            TEIA DAO tokens, or TEIA tokens, are specifically designed and
-            intended for governance purposes within the Teia DAO ecosystem. By
-            owning TEIA tokens, you are part of the Teia DAO LLC and eligible to
-            put forward and vote on DAO proposals for Teia.
+            By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
+            to put forward and vote on DAO proposals for Teia. TEIA DAO tokens,
+            or TEIA tokens, are specifically designed and intended for
+            governance purposes within the Teia DAO ecosystem.
           </p>
 
           <p>
@@ -38,28 +38,20 @@ export const DAO = () => {
             </a>{' '}
             you are eligible to claim your TEIA tokens during the claiming
             period (August 15th, 2023 to November 15th, 2023) You can find a
-            table with all eligible Tezos addresses and the amount of tokens on
+            table with all eligible Tezos addresses and the amount of tokens in
             this{' '}
             <a
               href="https://docs.google.com/spreadsheets/d/11jFANEUsvNSc9vQGD7sc46n_BOp8v0tGOLY1LG0KENk/edit?usp=sharing"
               target="_blank"
               rel="noreferrer"
             >
-              spreadsheet
+              token distribution spreadsheet
             </a>
             .
           </p>
 
           <p>
-            Find more detailed info about the TEIA tokens distribution on this{' '}
-            <a
-              href="https://blog.teia.art/blog/fact-sheet-token-drop"
-              target="_blank"
-              rel="noreferrer"
-            >
-              fact sheet
-            </a>
-            . For any questions or assistance regarding the token claim process
+            For any questions or assistance regarding the token claim process
             get in touch with the team via discord or mail at{' '}
             <a href="mailto:info@teia.art">info@teia.art</a>
           </p>
@@ -74,17 +66,24 @@ export const DAO = () => {
 
           <ol>
             <li counter="1">
-              <b>Sync your wallet</b> in the top right corner of this page.
+              <b>Sync your wallet</b> with teia.art (top right corner). Please
+              check the URL before syncing your wallet: The only official Teia
+              token claim page is at{' '}
+              <a href="www.teia.art/dao">www.teia.art/dao</a>
             </li>
 
             <li counter="2">
-              <b>Read the legal disclaimer below</b> and confirm you understood
-              it. It outlines important information regarding the nature of TEIA
-              tokens and your responsibilities as a token holder.
+              <b>Read the legal disclaimer below</b> It outlines important
+              information regarding the nature of TEIA tokens and your
+              responsibilities as a token holder.
             </li>
 
             <li counter="3">
-              <b>Click on the "Claim TEIA DAO tokens" button </b> at the bottom
+              <b>Confirm you have read the disclaimer</b> by checking the box at
+              the bottom of this page to get access to the claim button.
+            </li>
+            <li counter="4">
+              <b>Click on the "Claim TEIA DAO tokens" button</b> at the bottom
               of the of this page to initiate the token claim process and
               confirm the operation with your wallet. Your tokens should arrive
               in your wallet after a few minutes.
@@ -111,15 +110,15 @@ export const DAO = () => {
 
           <ol>
             <li counter="1">
-              <b>Governance only:</b> The TEIA DAO tokens ("TEIA tokens")
+              <b>Governance only:</b> The Teia DAO tokens ("TEIA tokens")
               distributed through the claim page are intended solely for
               governance purposes within the Teia DAO ecosystem. TEIA tokens do
-              not represent or confer any equity interests or any form of
-              investment in the Teia DAO or any associated entity. TEIA tokens
-              are not intended to be securities or investment assets. Teia does
-              not intend to generate and distribute profits among its members.
-              Teia does not sell TEIA tokens, nor to generate profit with the
-              tokens. Claiming TEIA tokens via this official claim page is free.
+              not represent any form of investment in the Teia DAO or any
+              associated entity. TEIA tokens are not intended to be securities
+              or investment assets. Teia does not intend to generate and
+              distribute profits among its members. Teia does not sell TEIA
+              tokens, nor to generate profit with the tokens. Claiming TEIA
+              tokens via this claim page is free.
             </li>
 
             <li counter="2">
@@ -141,7 +140,12 @@ export const DAO = () => {
               become a member of the Teia DAO LLC. Teia does not require you to
               provide any personal information, as long as you hold less than
               10% of tokens in circulation. Every address is limited to 400k
-              TEIA tokens.
+              TEIA tokens (5% of total supply) initially. If you want to stop
+              being a Teia DAO member, you can send all your TEIA tokens to the{' '}
+              <a href="https://tzkt.io/KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb/operations/">
+                Teia Treasury Address
+              </a>
+              .
             </li>
 
             <li counter="4">
@@ -159,8 +163,8 @@ export const DAO = () => {
               law, the Teia DAO team, its contributors, affiliates, partners,
               and any other associated entities shall not be liable for any
               direct, indirect, incidental, consequential, or punitive damages
-              arising out of or in connection with the TEIA tokens, the claim
-              page, or your participation in the TEIA token claim process.
+              arising out of or in connection with the TEIA tokens or your
+              participation in the TEIA token claim process.
             </li>
 
             <li counter="6">
