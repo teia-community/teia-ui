@@ -22,8 +22,8 @@ export const DAO = () => {
           </div>
           <p>
             By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
-            to put forward and vote on DAO proposals for Teia. Teia DAO tokens,
-            (or TEIA tokens) are specifically designed and intended for
+            to put forward and vote on DAO proposals for Teia. 
+            Teia DAO tokens, (or "TEIA tokens") are specifically designed and intended for
             governance purposes within the Teia DAO ecosystem.
           </p>
 
@@ -65,7 +65,7 @@ export const DAO = () => {
           <ol>
             <li counter="1">
               <b>Sync your wallet</b> with teia.art (top right corner). Please
-              check the URL before syncing your wallet: The only official Teia
+              check the URL before syncing your wallet: The only official TEIA
               token claim page is at{' '}
               <a href="www.teia.art/dao">www.teia.art/dao</a>
             </li>
@@ -100,7 +100,7 @@ export const DAO = () => {
           <h1 className={styles.section_title}>Legal Disclaimer</h1>
 
           <p>
-            By claiming your TEIA DAO tokens, you agree to be bound by the terms
+            By claiming your Teia DAO tokens ("TEIA tokens"), you agree to be bound by the terms
             and conditions set forth in this disclaimer. If you do not agree
             with any part of this disclaimer, don't participate in the token
             claim process!
@@ -108,8 +108,7 @@ export const DAO = () => {
 
           <ol>
             <li counter="1">
-              <b>Governance only:</b> The Teia DAO tokens ("TEIA tokens")
-              distributed through the claim page are intended solely for
+              <b>Governance only:</b> The TEIA tokens are intended solely for
               governance purposes within the Teia DAO ecosystem. TEIA tokens do
               not represent any form of investment in the Teia DAO or any
               associated entity. TEIA tokens are not intended to be securities
@@ -207,7 +206,7 @@ export const DAO = () => {
 
               <p>
                 <Button shadow_box onClick={claimTokens}>
-                  Claim TEIA DAO tokens
+                  Claim TEIA tokens
                 </Button>
 
               </p>
