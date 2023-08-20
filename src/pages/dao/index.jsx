@@ -16,11 +16,9 @@ export const DAO = () => {
       <div className={styles.container}>
         <section className={styles.section}>
           <div className={styles.headline}>
-            <h1 className={styles.section_title}>
-              Welcome to the TEIA tokens claim page!
-            </h1>
-            <DAOIcon />
+            <h1>Welcome to the TEIA tokens claim page!</h1>
             <p>Here you can claim your TEIA DAO tokens.</p>
+            <DAOIcon />
           </div>
           <p>
             By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
