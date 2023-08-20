@@ -37,7 +37,7 @@ export const Claim = () => {
               token distribution fact sheet
             </a>{' '}
             you are eligible to claim your TEIA tokens during the claiming
-            period (August 20th, 2023 to November 20th, 2023) You can find a
+            period (August 20th, 2023 to November 20th, 2023). You can find a
             table with all eligible Tezos addresses and the amount of tokens in
             this{' '}
             <a
@@ -67,7 +67,7 @@ export const Claim = () => {
               <b>Sync your wallet</b> with teia.art (top right corner). Please
               check the URL before syncing your wallet: The only official TEIA
               token claim page is at{' '}
-              <a href="www.teia.art/dao">www.teia.art/dao</a>
+              <a href="www.teia.art/dao">www.teia.art/claim</a>
             </li>
 
             <li counter="2">
