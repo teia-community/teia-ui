@@ -28,8 +28,23 @@
   margin-bottom: 1em;
 }
 
-.section {
-  margin: 1em 0;
+.container {
+  ol {
+    list-style: none;
+    counter-reset: my-awesome-counter;
+  }
+  ol li {
+    counter-increment: my-awesome-counter;
+  }
+  ol li::before {
+    content: counter(my-awesome-counter) '. ';
+    color: var(--gray-60);
+    font-weight: bold;
+  }
+  h1,
+  h2 {
+    margin-bottom: 1em;
+  }
 
   b {
     font-weight: bold;

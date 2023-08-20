@@ -5,8 +5,8 @@ import { Button } from '@atoms/button'
 import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
 import styles from '@style'
+//TODO: Add a default md style to extend upon, and probably use remarkGfm plugin
 import { ReactComponent as DaoMD } from '../../lang/en/DAO_claim.md'
-import { DAOIcon } from '@icons'
 
 export const DAO = () => {
   const claimTokens = useUserStore((st) => st.claimTokens)
@@ -14,7 +14,7 @@ export const DAO = () => {
 
   return (
     <Page title="Claim DAO tokens" large>
-      <div className={styles.dao__container}>
+      <div className={styles.container}>
         <DaoMD />
 
         <>
