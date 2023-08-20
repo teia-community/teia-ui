@@ -5,6 +5,7 @@ import { Button } from '@atoms/button'
 import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
 import styles from '@style'
+import { DAOIcon } from '@icons'
 
 export const DAO = () => {
   const claimTokens = useUserStore((st) => st.claimTokens)
@@ -14,12 +15,13 @@ export const DAO = () => {
     <Page title="Claim DAO tokens" large>
       <div className={styles.container}>
         <section className={styles.section}>
-          <h1 className={styles.section_title}>
-            Welcome to the TEIA tokens claim page!
-          </h1>
-
-          <p>Here you can claim your TEIA DAO tokens.</p>
-
+          <div className={styles.headline}>
+            <h1 className={styles.section_title}>
+              Welcome to the TEIA tokens claim page!
+            </h1>
+            <DAOIcon />
+            <p>Here you can claim your TEIA DAO tokens.</p>
+          </div>
           <p>
             By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
             to put forward and vote on DAO proposals for Teia. TEIA DAO tokens,
