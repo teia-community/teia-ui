@@ -67,7 +67,7 @@ export const Claim = () => {
               <b>Sync your wallet</b> with teia.art (top right corner). Please
               check the URL before syncing your wallet: The only official TEIA
               token claim page is at{' '}
-              <a href="www.teia.art/dao">www.teia.art/claim</a>
+              <a href="https://www.teia.art/claim">www.teia.art/claim</a>
             </li>
 
             <li counter="2">
