@@ -114,7 +114,7 @@ export const Claim = () => {
               associated entity. TEIA tokens are not intended to be securities
               or investment assets. The Teia DAO LLC does not intend to generate and
               distribute profits among its members. Teia does not sell TEIA
-              tokens, nor to generate profit with the tokens. Claiming TEIA
+              tokens and does not intend to generate profit with the tokens. Claiming TEIA
               tokens via this claim page is free.
             </li>
 
