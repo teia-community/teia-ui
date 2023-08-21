@@ -488,7 +488,10 @@ export const useUserStore = create<UserState>()(
               userMerkleData.leafDataPacked
             )
 
-            return await handleOp(batch, 'Claim DAO tokens')
+            return await handleOp(batch, 'Claim DAO tokens', {
+              amount: 0,
+              storageLimit: 400,
+            })
           } catch (e) {
             showError('Claim DAO tokens', e)
           }
