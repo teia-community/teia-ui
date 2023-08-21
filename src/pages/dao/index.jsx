@@ -22,8 +22,8 @@ export const Claim = () => {
           </div>
           <p>
             By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
-            to put forward and vote on DAO proposals for Teia. 
-            Teia DAO tokens, (or "TEIA tokens") are specifically designed and intended for
+            to put forward and vote on DAO proposals for Teia. Teia DAO tokens,
+            (or "TEIA tokens") are specifically designed and intended for
             governance purposes within the Teia DAO ecosystem.
           </p>
 
@@ -80,10 +80,10 @@ export const Claim = () => {
               the bottom of this page to get access to the claim button.
             </li>
             <li counter="4">
-              <b>Click on the "Claim TEIA tokens" button</b> at the bottom
-              of this page to initiate the token claim process and
-              confirm the operation with your wallet. Your tokens should arrive
-              in your wallet after a few minutes.
+              <b>Click on the "Claim TEIA tokens" button</b> at the bottom of
+              this page to initiate the token claim process and confirm the
+              operation with your wallet. Your tokens should arrive in your
+              wallet after a few minutes.
             </li>
           </ol>
 
@@ -99,10 +99,10 @@ export const Claim = () => {
           <h1 className={styles.section_title}>Legal Disclaimer</h1>
 
           <p>
-            By claiming your Teia DAO tokens ("TEIA tokens"), you agree to be bound by the terms
-            and conditions set forth in this disclaimer. If you do not agree
-            with any part of this disclaimer, don't participate in the token
-            claim process!
+            By claiming your Teia DAO tokens ("TEIA tokens"), you agree to be
+            bound by the terms and conditions set forth in this disclaimer. If
+            you do not agree with any part of this disclaimer, don't participate
+            in the token claim process!
           </p>
 
           <ol>
@@ -111,24 +111,25 @@ export const Claim = () => {
               governance purposes within the Teia DAO ecosystem. TEIA tokens do
               not represent any form of investment in the Teia DAO or any
               associated entity. TEIA tokens are not intended to be securities
-              or investment assets. The Teia DAO LLC does not intend to generate and
-              distribute profits among its members. Teia does not sell TEIA
-              tokens and does not intend to generate profit with the tokens. Claiming TEIA
-              tokens via this claim page is free.
+              or investment assets. The Teia DAO LLC does not intend to generate
+              and distribute profits among its members. Teia does not sell TEIA
+              tokens and does not intend to generate profit with the tokens.
+              Claiming TEIA tokens via this claim page is free.
             </li>
 
             <li counter="2">
-              <b>No investment advice:</b> The information provided on this claim page, 
-              as well as any other informational materials, blog articles, or 
-              announcements published by Teia DAO LLC, are strictly for informational purposes.  
-              It does not constitute investment advice or any
-              form of recommendation. The Teia DAO team does not endorse or
-              recommend the purchase or sale of TEIA tokens as investment
-              assets. The Teia DAO team makes no guarantees or representations
-              regarding the future value, utility, or performance of TEIA
-              tokens. The value of TEIA tokens may fluctuate, and you may
-              experience losses if you choose to acquire or trade them. The Teia
-              DAO team disclaims any responsibility for such losses.
+              <b>No investment advice:</b> The information provided on this
+              claim page, as well as any other informational materials, blog
+              articles, or announcements published by Teia DAO LLC, are strictly
+              for informational purposes. It does not constitute investment
+              advice or any form of recommendation. The Teia DAO team does not
+              endorse or recommend the purchase or sale of TEIA tokens as
+              investment assets. The Teia DAO team makes no guarantees or
+              representations regarding the future value, utility, or
+              performance of TEIA tokens. The value of TEIA tokens may
+              fluctuate, and you may experience losses if you choose to acquire
+              or trade them. The Teia DAO team disclaims any responsibility for
+              such losses.
             </li>
 
             <li counter="3">
@@ -136,9 +137,10 @@ export const Claim = () => {
               become a member of the Teia DAO LLC. Teia does not require you to
               provide any personal information, as long as you hold less than
               10% of tokens in circulation. Every address is limited to 400k
-              TEIA tokens (5% of total supply) initially. This limit can be adjusted between 
-              1% and 10% of total supply via DAO vote. If you want to stop
-              being a Teia DAO member, you can send all your TEIA tokens to the{' '}
+              TEIA tokens (5% of total supply) initially. This limit can be
+              adjusted between 1% and 10% of total supply via DAO vote. If you
+              want to stop being a Teia DAO member, you can send all your TEIA
+              tokens to the{' '}
               <a href="https://tzkt.io/KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb/operations/">
                 Teia Treasury Address
               </a>
@@ -173,12 +175,11 @@ export const Claim = () => {
               arising from your participation.
             </li>
 
-           <li counter="7">
-             <b>Updates and amendments:</b> The Teia DAO team reserves the
-             right to modify, update, or amend this disclaimer at any time
-             without prior notice.
-           </li>
-            
+            <li counter="7">
+              <b>Updates and amendments:</b> The Teia DAO team reserves the
+              right to modify, update, or amend this disclaimer at any time
+              without prior notice.
+            </li>
           </ol>
 
           <br />
@@ -193,7 +194,8 @@ export const Claim = () => {
             }
           />
           <i>
-             You need to accept the disclaimer in order to access the token claim button.
+            You need to accept the disclaimer in order to access the token claim
+            button.
           </i>
         </section>
 
@@ -207,8 +209,33 @@ export const Claim = () => {
                 <Button shadow_box onClick={claimTokens}>
                   Claim TEIA tokens
                 </Button>
-
               </p>
+            </section>
+            <Line />
+
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Troubleshooting</h1>
+              <p>
+                Here are some of the most common solutions if the token claim
+                process fails
+              </p>
+
+              <ol>
+                <li>Unsync and resync your wallet from teia.art</li>
+                <li>
+                  Check if you have enough funds for the transaction in your
+                  wallet. The transaction cost for the claim process is about
+                  0.1-0.2 tez.
+                </li>
+                <li>Clear your browser cache</li>
+                <li>
+                  Switch the rpc node in the{' '}
+                  <a href="/settings" target="_blank" rel="noreferrer">
+                    config menu
+                  </a>{' '}
+                  , reload the page and try again.
+                </li>
+              </ol>
             </section>
           </>
         )}
