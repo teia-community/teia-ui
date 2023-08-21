@@ -472,7 +472,7 @@ export const useUserStore = create<UserState>()(
               'Claim DAO tokens',
               'Sorry, but you already claimed all your tokens'
             )
-            //return
+            return
           }
 
           step(
