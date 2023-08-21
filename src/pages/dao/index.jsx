@@ -221,20 +221,16 @@ export const Claim = () => {
               </p>
 
               <ol>
-                <li>Unsyc and resync your wallet from Teia.art</li>
+                <li>Unsync and resync your wallet from teia.art</li>
                 <li>
                   Check if you have enough funds for the transaction in your
-                  wallet. The transaction costs for the claim process are about
+                  wallet. The transaction cost for the claim process is about
                   0.1-0.2 tez.
                 </li>
                 <li>Clear your browser cache</li>
                 <li>
                   Switch the rpc node in the{' '}
-                  <a
-                    href="https://teia.art/settings"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href="/settings" target="_blank" rel="noreferrer">
                     config menu
                   </a>{' '}
                   , reload the page and try again.
