@@ -207,9 +207,40 @@ export const Claim = () => {
                 <Button shadow_box onClick={claimTokens}>
                   Claim TEIA tokens
                 </Button>
-
               </p>
             </section>
+       <Line />
+            
+        <section className={styles.section}>
+         <h1 className={styles.section_title}>Troubleshooting</h1>
+         <p>Here are some of the most common solutions if the token claim process fails</p>
+          
+          <ol>            
+            <li>
+              Unsyc and resync your wallet from Teia.art
+            </li>            
+            <li>
+              Check if you have enough funds for the transaction in your wallet. The transaction costs for the claim process are about 0.1-0.2 tez. 
+            </li>            
+            <li>
+              Clear your browser cache
+            </li>            
+            <li>
+              Switch the rpc node in the  {' '}
+               <a
+                href="https://teia.art/settings"
+                target="_blank"
+                rel="noreferrer"
+               >
+               config menu
+               </a>{' '}                                           
+              , reload the page and try again.
+            </li>
+          
+          </ol>          
+        </section>
+
+            
           </>
         )}
       </div>
