@@ -5,6 +5,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 // import { useModalStore } from './modalStore'
+import { FEED_MAP, DEFAULT_START_FEED } from '@constants'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -20,6 +21,8 @@ export const rpc_nodes = [
   'custom',
 ] as const
 
+type StartFeed = keyof typeof FEED_MAP
+
 export type RPC_NODES = typeof rpc_nodes[number]
 
 interface LocalSettingsState {
@@ -27,6 +30,7 @@ interface LocalSettingsState {
   has_seen_banner: boolean
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
+  startFeed: StartFeed
   rpcNode: RPC_NODES
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
@@ -34,6 +38,7 @@ interface LocalSettingsState {
   setCustomRpcNode: (v: string) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
+  setStartFeed: (v: StartFeed | undefined) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
   setTilted: (tilted: boolean) => void
@@ -55,6 +60,7 @@ const defaultValues = {
   viewMode: 'single' as ViewMode,
   nsfwFriendly: false,
   photosensitiveFriendly: false,
+  startFeed: DEFAULT_START_FEED,
   zen: false,
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
@@ -125,6 +131,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),
+        setStartFeed: (startFeed) => set({ startFeed }),
       }),
       {
         name: 'settings',

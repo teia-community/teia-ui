@@ -5,14 +5,13 @@ import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { IconToggle } from '@atoms/toggles'
 import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 
-import { useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { useLocalSettings } from '@context/localSettingsStore'
 import { useLocation, useNavigate } from 'react-router'
-import { useEffect } from 'react'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
+import { FEED_MAP, DEFAULT_START_FEED } from '@constants'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -24,53 +23,45 @@ import { shallow } from 'zustand/shallow'
 // }
 
 const locationMap = new Map([
-  ['/', 'Recent Sales'],
-  ['/feed/random', 'Random'],
-  ['/feed/newobjkts', 'New OBJKTs'],
-  ['/feed/friends', 'Friends'],
+  ['/feed/sales', FEED_MAP['Recent Sales']],
+  ['/feed/random', FEED_MAP['Random']],
+  ['/feed/newobjkts', FEED_MAP['New OBJKTs']],
+  ['/feed/friends', FEED_MAP['Friends']],
   // separator
   ['---fund_feeds', 'fund_feeds'],
-  ['/feed/quake-aid', 'Quake Aid'],
-  ['/feed/ukraine', '🇺🇦 Ukraine'],
-  ['/feed/pakistan', '🇵🇰 Pakistan'],
-  ['/feed/iran', '🇮🇷 Iran'],
-  ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
+  ['/feed/quake-aid', FEED_MAP['Quake Aid']],
+  ['/feed/ukraine', FEED_MAP['🇺🇦 Ukraine']],
+  ['/feed/pakistan', FEED_MAP['🇵🇰 Pakistan']],
+  ['/feed/iran', FEED_MAP['🇮🇷 Iran']],
+  ['/feed/tezospride', FEED_MAP['🏳️‍🌈 Tezospride']],
   // separator
   ['---mime_feeds', 'mime_feeds'],
-  ['/feed/image', 'Image'],
-  ['/feed/video', 'Video'],
-  ['/feed/audio', 'Audio'],
-  ['/feed/glb', '3D'],
-  ['/feed/html-svg', 'HTML & SVG'],
-  ['/feed/gif', 'GIF'],
-  ['/feed/pdf', 'PDF'],
-  ['/feed/md', 'Markdown'],
+  ['/feed/image', FEED_MAP['Image']],
+  ['/feed/video', FEED_MAP['Video']],
+  ['/feed/audio', FEED_MAP['Audio']],
+  ['/feed/glb', FEED_MAP['3D']],
+  ['/feed/html-svg', FEED_MAP['HTML & SVG']],
+  ['/feed/gif', FEED_MAP['GIF']],
+  ['/feed/pdf', FEED_MAP['PDF']],
+  ['/feed/md', FEED_MAP['Markdown']],
 ])
 
 const locationNeedSync = ['/feed/friends']
-const locationPaths = [...locationMap.keys()]
 
 export const FeedToolbar = ({ feeds_menu = false }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
 
-  const [viewMode, setViewMode] = useLocalSettings(
-    (st) => [st.viewMode, st.setViewMode],
+  const [viewMode, setViewMode, startFeed] = useLocalSettings(
+    (st) => [st.viewMode, st.setViewMode, st.startFeed],
     shallow
   )
   const location = useLocation()
-  const [feedLabel, setFeedLabel] = useState('Recent Sales')
+  const feedLabel =
+    locationMap.get(location.pathname) ||
+    startFeed ||
+    FEED_MAP[DEFAULT_START_FEED]
 
   const navigate = useNavigate()
-
-  useEffect(() => {
-    for (const pth of locationPaths.slice(1)) {
-      if (location.pathname.includes(pth)) {
-        setFeedLabel(locationMap.get(pth))
-      }
-    }
-
-    // return locationMap[location]
-  }, [location])
 
   // TODO: finish the filtering logic
   // const filters = false

@@ -68,6 +68,27 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
   .join(', ')
 
+export const FEED_MAP = {
+  'Recent Sales': 'Recent Sales',
+  'Random': 'Random',
+  'New OBJKTs': 'New OBJKTs',
+  'Friends': 'Friends',
+  'Quake Aid': 'Quake Aid',
+  '🇺🇦 Ukraine': '🇺🇦 Ukraine',
+  '🇵🇰 Pakistan': '🇵🇰 Pakistan',
+  '🇮🇷 Iran': '🇮🇷 Iran',
+  '🏳️‍🌈 Tezospride': '🏳️‍🌈 Tezospride',
+  'Image': 'Image',
+  'Video': 'Video',
+  'Audio': 'Audio',
+  '3D': '3D',
+  'HTML & SVG': 'HTML & SVG',
+  'GIF': 'GIF',
+  'PDF': 'PDF',
+  'Markdown': 'Markdown',
+} as const
+export const DEFAULT_START_FEED: keyof typeof FEED_MAP = 'Recent Sales'
+
 //- Mint stuff
 
 export const ALLOWED_COVER_MIMETYPES = [

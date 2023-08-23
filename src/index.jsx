@@ -77,7 +77,7 @@ const router = createBrowserRouter(
     <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
       <Route path="feed/*" element={<Home />}>
-        <Route index element={<RecentSalesFeed />} />
+        <Route path="sales" element={<RecentSalesFeed />} />
         <Route path="lists" element={<ListsFeed />} />
 
         <Route
