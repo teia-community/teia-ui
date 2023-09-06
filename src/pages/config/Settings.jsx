@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Page } from '@atoms/layout'
 import { Checkbox, Input } from '@atoms/input'
@@ -17,7 +18,6 @@ export const Settings = () => {
       const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
       const config_text = await config_response.text()
       const config_parsed = JSON5.parse(config_text)
-      console.log(config_parsed)
       setBannerEnabled(config_parsed.enable === 1)
     }
     try {
@@ -92,9 +92,12 @@ export const Settings = () => {
           />
           <Select
             label={'Start Feed'}
-            value={{ value: startFeed, label: startFeed }}
+            value={{
+              label: startFeed.replace(/[^\x00-\xFF]/g, ''),
+              value: startFeed,
+            }}
             options={FEED_LIST.map((f) => ({
-              label: f,
+              label: f.replace(/[^\x00-\xFF]/g, ''),
               value: f,
             }))}
             onChange={(e) => {
