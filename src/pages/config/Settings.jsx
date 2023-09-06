@@ -3,7 +3,7 @@ import { Page } from '@atoms/layout'
 import { Checkbox, Input } from '@atoms/input'
 import styles from '@style'
 import { rpc_nodes, useLocalSettings } from '@context/localSettingsStore'
-import { FEED_MAP } from '@constants'
+import { FEED_LIST } from '@constants'
 import { Select, ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 import { useEffect, useState } from 'react'
@@ -92,10 +92,10 @@ export const Settings = () => {
           />
           <Select
             label={'Start Feed'}
-            value={{ value: startFeed, label: FEED_MAP[startFeed] }}
-            options={Object.entries(FEED_MAP).map(([key, value]) => ({
-              label: value,
-              value: key,
+            value={{ value: startFeed, label: startFeed }}
+            options={FEED_LIST.map((f) => ({
+              label: f,
+              value: f,
             }))}
             onChange={(e) => {
               setStartFeed(e.value)

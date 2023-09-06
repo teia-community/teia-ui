@@ -11,7 +11,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
 import { useLocation, useNavigate } from 'react-router'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
-import { FEED_MAP, DEFAULT_START_FEED } from '@constants'
+import { DEFAULT_START_FEED } from '@constants'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -23,27 +23,27 @@ import { FEED_MAP, DEFAULT_START_FEED } from '@constants'
 // }
 
 const locationMap = new Map([
-  ['/feed/sales', FEED_MAP['Recent Sales']],
-  ['/feed/random', FEED_MAP['Random']],
-  ['/feed/newobjkts', FEED_MAP['New OBJKTs']],
-  ['/feed/friends', FEED_MAP['Friends']],
+  ['/feed/sales', 'Recent Sales'],
+  ['/feed/random', 'Random'],
+  ['/feed/newobjkts', 'New OBJKTs'],
+  ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
-  ['/feed/quake-aid', FEED_MAP['Quake Aid']],
-  ['/feed/ukraine', FEED_MAP['🇺🇦 Ukraine']],
-  ['/feed/pakistan', FEED_MAP['🇵🇰 Pakistan']],
-  ['/feed/iran', FEED_MAP['🇮🇷 Iran']],
-  ['/feed/tezospride', FEED_MAP['🏳️‍🌈 Tezospride']],
+  ['/feed/quake-aid', 'Quake Aid'],
+  ['/feed/ukraine', '🇺🇦 Ukraine'],
+  ['/feed/pakistan', '🇵🇰 Pakistan'],
+  ['/feed/iran', '🇮🇷 Iran'],
+  ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
   // separator
   ['---mime_feeds', 'mime_feeds'],
-  ['/feed/image', FEED_MAP['Image']],
-  ['/feed/video', FEED_MAP['Video']],
-  ['/feed/audio', FEED_MAP['Audio']],
-  ['/feed/glb', FEED_MAP['3D']],
-  ['/feed/html-svg', FEED_MAP['HTML & SVG']],
-  ['/feed/gif', FEED_MAP['GIF']],
-  ['/feed/pdf', FEED_MAP['PDF']],
-  ['/feed/md', FEED_MAP['Markdown']],
+  ['/feed/image', 'Image'],
+  ['/feed/video', 'Video'],
+  ['/feed/audio', 'Audio'],
+  ['/feed/glb', '3D'],
+  ['/feed/html-svg', 'HTML & SVG'],
+  ['/feed/gif', 'GIF'],
+  ['/feed/pdf', 'PDF'],
+  ['/feed/md', 'Markdown'],
 ])
 
 const locationNeedSync = ['/feed/friends']
@@ -57,9 +57,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   )
   const location = useLocation()
   const feedLabel =
-    locationMap.get(location.pathname) ||
-    startFeed ||
-    FEED_MAP[DEFAULT_START_FEED]
+    locationMap.get(location.pathname) || startFeed || DEFAULT_START_FEED
 
   const navigate = useNavigate()
 

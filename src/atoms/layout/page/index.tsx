@@ -45,7 +45,7 @@ export const Page = ({
         className={`${classes} ${className ? className : ''}`}
       >
         <motion.div className={`${styles.content} no-fool`}>
-          <>{children}</>
+          {children}
         </motion.div>
       </motion.main>
       <AnimatePresence>{/*footerVisible &&*/ <Footer menu />}</AnimatePresence>

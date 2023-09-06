@@ -591,7 +591,7 @@ export const useUserStore = create<UserState>()(
           const creator = nft.artist_address
           const from = swap.seller_address
 
-          let proxyContract = undefined
+          const proxyContract = undefined
           if (proxyAddress) {
             show('Reswap', 'reswapping is not yet supported in collab mode')
             return

@@ -5,7 +5,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 // import { useModalStore } from './modalStore'
-import { FEED_MAP, DEFAULT_START_FEED } from '@constants'
+import { FEED_LIST, DEFAULT_START_FEED } from '@constants'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -21,16 +21,16 @@ export const rpc_nodes = [
   'custom',
 ] as const
 
-type StartFeed = keyof typeof FEED_MAP
+type FeedType = (typeof FEED_LIST)[number]
 
-export type RPC_NODES = typeof rpc_nodes[number]
+export type RPC_NODES = (typeof rpc_nodes)[number]
 
 interface LocalSettingsState {
   applyTheme: (theme: Theme) => void
   has_seen_banner: boolean
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
-  startFeed: StartFeed
+  startFeed: FeedType
   rpcNode: RPC_NODES
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
@@ -38,7 +38,7 @@ interface LocalSettingsState {
   setCustomRpcNode: (v: string) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
-  setStartFeed: (v: StartFeed | undefined) => void
+  setStartFeed: (v: FeedType | undefined) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
   setTilted: (tilted: boolean) => void
