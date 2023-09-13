@@ -64,11 +64,12 @@ export function QuakeFeed() {
       introText={
         <>
           Tezos community initiative to support those affected by the recent
-          earthquake in Turkey and Syria.
+          earthquake in Turkey and Syria. Given the events in Morocco, we are 
+          channeling our current support toward emergency relief there.
         </>
       }
       contractAddress={QUAKE_FUNDING_CONTRACT}
-      cause="Turkey and Syria Earthquakes"
+      cause="Morocco, Turkey and Syria Earthquakes"
       namepsace="quake-feed"
       tags={['TezQuakeAid', '#TezQuakeAid']}
       infoUrl="https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671"

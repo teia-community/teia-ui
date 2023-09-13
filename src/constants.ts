@@ -348,6 +348,10 @@ export const TabIndex = {
 // TODO - get this manageable on-chain
 export const ossProjects = [
   {
+    name: 'TezQuakeAid Morocco Fundraiser',
+    address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
+  },
+  {
     name: 'TezQuakeAid Turkey/Syria Fundraiser',
     address: 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g',
   },
