@@ -1,5 +1,14 @@
 // DEV SAMPLES
 export const sample_events = [
+    {
+    title: 'TezQuakeAid - Morocco',
+    icon: '🇲🇦 ',
+    feed: 'morocco-quake-aid',
+    link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
+    subtitle: '9th September 2023 - ',
+    content:
+      'In September 2023, Morocco has bene hit by a devastating earthquake. TezQuateAid launched a fundraising campaign dedicated to assisting those who have been impacted by this tragic catastrophe.',
+  },
   {
     title: 'Tezos Pride',
     icon: '🏳️‍🌈',
@@ -9,23 +18,15 @@ export const sample_events = [
     content:
       'TezosPride is a continuous event to celebrate and support the 2SLGBTQ+ community in the Tezos ecosystem. The main event spans Pride Month (June) annually.',
   },
+
   {
-    title: 'TezQuakeAid - Earthquake Relief',
+    title: 'TezQuakeAid - Turkey/Syria',
     icon: '🇹🇷🇸🇾 ',
     feed: 'quake-aid',
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
     subtitle: '8st February 2023 - March 2023',
     content:
-      'The earthquakes in Turkey and Syria in February 2023 have caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
-  },
-  {
-    title: 'Morocco TezQuakeAid - Earthquake Relief',
-    icon: '🇲🇦 ',
-    feed: 'morocco-quake-aid',
-    link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
-    subtitle: '9th September 2023 - ',
-    content:
-      'The earthquake in Morocco in September 2023 has caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
+      'The earthquakes in Turkey and Syria in February 2023 have caused immense devastation. The Tezos community has set up donation opportunities to recognised, independent relief organisations. Donations after April 2023 will be directed towards the current flood relief event for Morocco',
   },
   {
     title: 'Tezos for Iran',
