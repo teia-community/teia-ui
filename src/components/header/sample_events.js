@@ -7,7 +7,7 @@ export const sample_events = [
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
     subtitle: '9th September 2023 - ',
     content:
-      'In September 2023, Morocco has bene hit by a devastating earthquake. TezQuateAid launched a fundraising campaign dedicated to assisting those who have been impacted by this tragic catastrophe.',
+      'In September 2023, Morocco has been hit by a devastating earthquake. The TezQuateAid team launched a fundraising campaign dedicated to assisting those who have been impacted by this tragic catastrophe.',
   },
   {
     title: 'Tezos Pride',
