@@ -11,12 +11,21 @@ export const sample_events = [
   },
   {
     title: 'TezQuakeAid - Earthquake Relief',
-    icon: '',
+    icon: '🇹🇷🇸🇾 ',
     feed: 'quake-aid',
     link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
     subtitle: '8st February 2023 - March 2023',
     content:
       'The earthquakes in Turkey and Syria in February 2023 have caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
+  },
+  {
+    title: 'Morocco TezQuakeAid - Earthquake Relief',
+    icon: '🇲🇦 ',
+    feed: 'morocco-quake-aid',
+    link: 'https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671',
+    subtitle: '9th September 2023 - ',
+    content:
+      'The earthquake in Morocco in September 2023 has caused immense devastation. In an attempt to support relief efforts, the Tezos community has set up donation opportunities to recognised, independent relief organisations. Artists and collectors can contribute through art sales and promotion of this fundraiser. Direct donations of XTZ are also possible.',
   },
   {
     title: 'Tezos for Iran',
