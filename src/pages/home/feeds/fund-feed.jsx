@@ -12,7 +12,7 @@ function FundFeed({
   infoUrl,
   contractAddress,
   cause,
-  namepsace,
+  namespace,
   tags = null,
 }) {
   return (
@@ -27,7 +27,7 @@ function FundFeed({
       <TokenCollection
         feeds_menu
         label={`Fundraise for ${cause}`}
-        namespace={namepsace}
+        namespace={namespace}
         maxItems={600}
         extractTokensFromResponse={({ tokens_by_share, tokens_by_tag }) => {
           // tokensFromSplitContract

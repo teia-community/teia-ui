@@ -30,6 +30,7 @@ import {
   PdfFeed,
   MarkdownFeed,
   QuakeFeed,
+  MoroccoQuakeFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -86,6 +87,7 @@ const router = createBrowserRouter(
         />
 
         <Route path="iran" element={<IranFeed />} />
+        <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
         <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />
         <Route path="pakistan" element={<PakistanFeed />} />
