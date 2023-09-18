@@ -3,7 +3,9 @@
     "react-app",
     "plugin:jsx-a11y/recommended",
     "eslint:recommended",
-    "plugin:react/jsx-runtime"
+    "plugin:react/jsx-runtime",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "globals": {
     "JSX": "readonly"
@@ -11,7 +13,11 @@
   "root": true,
   "plugins": ["jsx-a11y"],
   "rules": {
-    "jsx-a11y/media-has-caption": "off"
+    "jsx-a11y/media-has-caption": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off"
   },
   "ignorePatterns": ["**/*.html", "node_polyfill.js"]
 }

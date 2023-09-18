@@ -68,6 +68,30 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
   .join(', ')
 
+export const FEED_LIST = [
+  'Recent Sales',
+  'Random',
+  'New OBJKTs',
+  'Friends',
+  'Quake Aid',
+  '🇺🇦 Ukraine',
+  '🇵🇰 Pakistan',
+  '🇮🇷 Iran',
+  '🏳️‍🌈 Tezospride',
+  'Image',
+  'Video',
+  'Audio',
+  '3D',
+  'HTML & SVG',
+  'GIF',
+  'PDF',
+  'Markdown',
+] as const
+
+export type FeedType = (typeof FEED_LIST)[number]
+
+export const DEFAULT_START_FEED: FeedType = 'Recent Sales'
+
 //- Mint stuff
 
 export const ALLOWED_COVER_MIMETYPES = [
@@ -128,7 +152,7 @@ export const MERKLE_DATA_IPFS_PATHS = {
   7: 'QmXiD3T5erwNAZ5yFYpz3AA2h6FXfPMt7XzKCDrKwJSMDX',
   8: 'QmW4jpn5EnjQx6aCbSAodEhh6BW2UqvZSGvubu2tv4UWCn',
 }
-export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '518731';
+export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '518731'
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,
