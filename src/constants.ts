@@ -136,6 +136,7 @@ export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
 export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
 export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
+export const MOROCCO_QUAKE_FUNDING_CONTRACT = 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA'
 
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
@@ -371,6 +372,10 @@ export const TabIndex = {
 
 // TODO - get this manageable on-chain
 export const ossProjects = [
+  {
+    name: 'TezQuakeAid Morocco Fundraiser',
+    address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
+  },
   {
     name: 'TezQuakeAid Turkey/Syria Fundraiser',
     address: 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g',
