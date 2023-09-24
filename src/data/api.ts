@@ -343,7 +343,7 @@ export async function getDaoTokenBalance(walletAddr: string) {
  */
 export async function getClaimedDaoTokens(walletAddr: string) {
   const response = await axios.get(
-    `https://api.tzkt.io/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`)
+    import.meta.env.VITE_TZKT_API + `/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`)
 
   return response? parseInt(response.data.value) : 0
 }
