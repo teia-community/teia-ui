@@ -40,6 +40,8 @@ export default function Profile({ user }) {
             {isAddressCopied && 'Copied!'}
           </div>
 
+          {user.daoTokenBalance && <p>{`${Math.round(user.daoTokenBalance * 10) / 10} TEIA`}</p>}
+
           <div className={styles.socials}>
             {user.twitter && (
               <Button

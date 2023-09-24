@@ -1,4 +1,4 @@
-import { HEN_CONTRACT_FA2, CLAIMED_DAO_TOKENS_BIGMAP_ID } from '@constants'
+import { HEN_CONTRACT_FA2, DAO_TOKEN_CONTRACT, CLAIMED_DAO_TOKENS_BIGMAP_ID } from '@constants'
 import axios from 'axios'
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
@@ -320,6 +320,21 @@ export const GetUserMetadata = async (walletAddr: string) => {
     tzktData.data = tzpData
   }
   return tzktData
+}
+
+/**
+ * Get User DAO token balance
+ */
+export async function getDaoTokenBalance(walletAddr: string) {
+  const parameters = {
+    'token.contract': DAO_TOKEN_CONTRACT,
+    'token.tokenId': '0',
+    'account': walletAddr,
+    "select": 'balance'}
+  const response = await axios.get(`https://api.tzkt.io/v1/tokens/balances`, { params: parameters })
+    .catch(error => console.log('Error while querying the account token balance:', error))
+
+  return response? parseInt(response.data[0]) / 1e6 : 0
 }
 
 
