@@ -334,9 +334,8 @@ export async function getDaoTokenBalance(walletAddr: string) {
   const response = await axios.get(`https://api.tzkt.io/v1/tokens/balances`, { params: parameters })
     .catch(error => console.log('Error while querying the account token balance:', error))
 
-  return response? parseInt(response.data[0]) / 1e6 : 0
+  return response?.data[0]? parseInt(response.data[0]) / 1e6 : 0
 }
-
 
 /**
  * Get User claimed tokens
