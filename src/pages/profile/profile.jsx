@@ -41,7 +41,10 @@ export default function Profile({ user }) {
           </div>
 
           {user.daoTokenBalance >= 0 && (
-            <p>{Math.round(user.daoTokenBalance * 10) / 10} <a href="claim">TEIA</a></p>
+            <p>
+              {Math.round(user.daoTokenBalance * 10) / 10}{' '}
+              <a href="claim">TEIA</a>
+            </p>
           )}
 
           <div className={styles.socials}>

@@ -1,4 +1,8 @@
-import { HEN_CONTRACT_FA2, DAO_TOKEN_CONTRACT, CLAIMED_DAO_TOKENS_BIGMAP_ID } from '@constants'
+import {
+  HEN_CONTRACT_FA2,
+  DAO_TOKEN_CONTRACT,
+  CLAIMED_DAO_TOKENS_BIGMAP_ID,
+} from '@constants'
 import axios from 'axios'
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
@@ -329,13 +333,18 @@ export async function getDaoTokenBalance(walletAddr: string) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
     'token.tokenId': '0',
-    'account': walletAddr,
-    "select": 'balance'}
-  const response = await axios.get(import.meta.env.VITE_TZKT_API + '/v1/tokens/balances', {
-      params: parameters
-    }).catch(error => console.log('Error while querying the account token balance:', error))
+    account: walletAddr,
+    select: 'balance',
+  }
+  const response = await axios
+    .get(import.meta.env.VITE_TZKT_API + '/v1/tokens/balances', {
+      params: parameters,
+    })
+    .catch((error) =>
+      console.log('Error while querying the account token balance:', error)
+    )
 
-  return response?.data[0]? parseInt(response.data[0]) / 1e6 : 0
+  return response?.data[0] ? parseInt(response.data[0]) / 1e6 : 0
 }
 
 /**
@@ -343,7 +352,9 @@ export async function getDaoTokenBalance(walletAddr: string) {
  */
 export async function getClaimedDaoTokens(walletAddr: string) {
   const response = await axios.get(
-    import.meta.env.VITE_TZKT_API + `/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`)
+    import.meta.env.VITE_TZKT_API +
+      `/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`
+  )
 
-  return response? parseInt(response.data.value) : 0
+  return response ? parseInt(response.data.value) : 0
 }
