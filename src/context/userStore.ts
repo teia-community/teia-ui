@@ -5,9 +5,12 @@ import {
   TezosToolkit,
   WalletOperationBatch,
   ContractMethod,
+  ContractMethodObject,
   Wallet,
   WalletParamsWithKind,
 } from '@taquito/taquito'
+import { validateAddress } from '@taquito/utils';
+import { Parser } from '@taquito/michel-codec';
 import { create } from 'zustand'
 import {
   persist,
@@ -29,8 +32,11 @@ import {
   MARKETPLACE_CONTRACT_TEIA,
   MARKETPLACE_CONTRACT_V1,
   SUBJKT_CONTRACT,
+  DAO_TOKEN_CONTRACT,
+  DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CLAIM_CONTRACT,
   DISTRIBUTION_MAPPING_IPFS_PATH,
+  DAO_TOKEN_DECIMALS,
   MERKLE_DATA_IPFS_PATHS,
   teiaCancelSwapSchema,
 } from '@constants'
@@ -42,6 +48,7 @@ import {
   packData,
 } from '@utils/swap'
 import { downloadJsonFileFromIpfs } from '@utils/ipfs'
+import { stringToHex } from '@utils/string'
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
@@ -67,7 +74,7 @@ interface UserState {
   /** Handle the operation confirmation and error and return the ophash */
   handleOp: (
     // op: TransactionWalletOperation | BatchWalletOperation,
-    op_to_send: WalletOperationBatch | ContractMethod<Wallet>,
+    op_to_send: WalletOperationBatch | ContractMethod<Wallet> | ContractMethodObject<Wallet>,
     title: string,
     send_options?: {
       amount: number
@@ -112,6 +119,26 @@ interface UserState {
   resetProxy: () => void
   /**Transfer tokens */
   transfer: (txs: Tx[]) => OperationReturn
+  /** Votes a DAO proposal */
+  voteProposal: (proposalId: string, vote: string, maxCheckpoints: any) => OperationReturn
+  /** Votes a DAO proposal as representaive */
+  voteProposalAsRepresentative: (proposalId: string, vote: string) => OperationReturn
+  /** Cancels a DAO proposal */
+  cancelProposal: (proposalId: string, returnEscrow: boolean) => OperationReturn
+  /** Evaluates a DAO proposal voting result */
+  evaluateVotingResult: (proposalId: string) => OperationReturn
+  /** Executes a DAO proposal */
+  executeProposal: (proposalId: string) => OperationReturn
+  /** Creates a DAO proposal */
+  createProposal: (title: string, descriptionIpfsPath:string, kind:any) => OperationReturn
+  /** Creates a DAO text proposal */
+  createTextProposal: (title: string, descriptionIpfsPath:string) => OperationReturn
+  /** Creates a DAO transfer mutez proposal */
+  createTransferMutezProposal: (title: string, descriptionIpfsPath:string, transfers: any) => OperationReturn
+  /** Creates a DAO transfer token proposal */
+  createTransferTokenProposal: (title: string, descriptionIpfsPath: string, tokenAddress: string, tokenId: string, transfers: any) => OperationReturn
+  /** Creates a DAO lambda function proposal */
+  createLambdaFunctionProposal: (title: string, descriptionIpfsPath: string, michelineCode: string) => OperationReturn
   /** Claim DAO tokens */
   claimTokens: () => OperationReturn
   /** Get the balance for the given address (or current user if not provided) */
@@ -412,6 +439,214 @@ export const useUserStore = create<UserState>()(
             showError('Transfer', e)
           }
         },
+        voteProposal: async (proposalId, vote, maxCheckpoints = null) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Vote DAO proposal', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
+
+            const parameters = {
+              proposal_id: proposalId,
+              vote: { [vote]: [['unit']] },
+              max_checkpoints: maxCheckpoints
+            }
+            const batch = contract.methodsObject.token_vote(parameters)
+
+            return await handleOp(batch, 'Vote DAO proposal')
+          } catch (e) {
+            showError('Vote DAO proposal', e)
+          }
+        },
+        voteProposalAsRepresentative: async (proposalId, vote) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Vote DAO proposal as representative', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT);
+
+            const parameters = {
+              proposal_id: proposalId,
+              vote: { [vote]: [['unit']] }
+            }
+            const batch = contract.methodsObject.representatives_vote(parameters)
+
+            return await handleOp(batch, 'Vote DAO proposal as representative')
+          } catch (e) {
+            showError('Vote DAO proposal as representative', e)
+          }
+        },
+        cancelProposal: async (proposalId, returnEscrow = true) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Cancel DAO proposal', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
+
+            const batch = contract.methods.cancel_proposal(proposalId, returnEscrow)
+
+            return await handleOp(batch, 'Cancel DAO proposal')
+          } catch (e) {
+            showError('Cancel DAO proposal', e)
+          }
+        },
+        evaluateVotingResult: async (proposalId) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Evaluate voting result', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
+
+            const batch = contract.methods.evaluate_voting_result(proposalId)
+
+            return await handleOp(batch, 'Evaluate voting result')
+          } catch (e) {
+            showError('Evaluate voting result', e)
+          }
+        },
+        executeProposal: async (proposalId) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          step('Execute DAO proposal', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
+
+            const batch = contract.methods.execute_proposal(proposalId)
+
+            return await handleOp(batch, 'Execute DAO proposal')
+          } catch (e) {
+            showError('Execute DAO proposal', e)
+          }
+        },
+        createProposal: async (title, descriptionIpfsPath, kind) => {
+          const userAddress = get().address
+          const handleOp = get().handleOp
+          const show = useModalStore.getState().show
+          const showError = useModalStore.getState().showError
+          const step = useModalStore.getState().step
+
+          if (!descriptionIpfsPath) {
+            show(
+              'Create DAO proposal',
+              'The proposal description needs to be uploaded first to IPFS'
+            )
+            return
+          }
+
+          step('Create DAO proposal', 'Waiting for confirmation', true)
+
+          try {
+            const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
+            const tokenContract = await Tezos.wallet.at(DAO_TOKEN_CONTRACT)
+
+            // Initialize the batch operation
+            let batch = Tezos.wallet.batch()
+
+            // Add the token operator
+            const operator = {
+              owner: userAddress,
+              operator: DAO_GOVERNANCE_CONTRACT,
+              token_id: 0
+            }
+            batch = batch.withContractCall(
+              tokenContract.methods.update_operators([{ add_operator: operator }])
+            )
+
+            // Add the create proposal operation
+            const parameters = {
+              title: stringToHex(title),
+              description: stringToHex('ipfs://' + descriptionIpfsPath),
+              kind: kind
+            }
+            batch = batch.withContractCall(
+              contract.methodsObject.create_proposal(parameters)
+            )
+
+            // Remove the token operator
+            batch = batch.withContractCall(
+              tokenContract.methods.update_operators([{ remove_operator: operator }])
+            )
+
+            return await handleOp(batch, 'Create DAO proposal')
+          } catch (e) {
+            showError('Create DAO proposal', e)
+          }
+        },
+        createTextProposal: async (title, descriptionIpfsPath) => {
+          const kind = { text: [['unit']] };
+          return get().createProposal(title, descriptionIpfsPath, kind)
+        },
+        createTransferMutezProposal: async (title, descriptionIpfsPath, transfers) => {
+          const show = useModalStore.getState().show
+
+          for (const transfer of transfers) {
+            const destination = transfer.destination;
+
+            if (!(destination && validateAddress(destination) === 3)) {
+              show(`The provided address is not a valid tezos address: ${destination}`)
+              return
+            }
+
+            const kind = { transfer_mutez: transfers }
+            return get().createProposal(title, descriptionIpfsPath, kind)
+          }
+        },
+        createTransferTokenProposal: async (title, descriptionIpfsPath, tokenAddress, tokenId, transfers) => {
+          const show = useModalStore.getState().show
+
+          if (!(tokenAddress && validateAddress(tokenAddress) === 3)) {
+            show(`The provided token contract address is not a valid tezos address: ${tokenAddress}`)
+            return
+          }
+
+          for (const transfer of transfers) {
+            const destination = transfer.destination
+
+            if (!(destination && validateAddress(destination) === 3)) {
+              show(`The provided address is not a valid tezos address: ${destination}`)
+              return
+            }
+          }
+
+          const kind = {
+            transfer_token: {
+              fa2: tokenAddress,
+              token_id: tokenId,
+              distribution: transfers
+            }
+          }
+          return get().createProposal(title, descriptionIpfsPath, kind)
+        },
+        createLambdaFunctionProposal: async (title, descriptionIpfsPath, michelineCode) => {
+          const show = useModalStore.getState().show
+          let lambdaFunction
+
+          try {
+            const parser = new Parser()
+            lambdaFunction = parser.parseMichelineExpression(michelineCode)
+          } catch (error) {
+            show('The provided lambda function Michelson code is not correct')
+            return
+          }
+
+          const kind = { lambda_function: lambdaFunction }
+          return get().createProposal(title, descriptionIpfsPath, kind)
+        },
         claimTokens: async () => {
           const user_address = get().address
           const handleOp = get().handleOp
@@ -463,8 +698,8 @@ export const useUserStore = create<UserState>()(
           const userMerkleData = merkleData[user_address]
 
           // Calculate the tokens that the user still can claim
-          const totalTokensToClaim = parseInt(userMerkleData.tokens) / 1e6
-          const alreadyClaimedTokens = (await getClaimedDaoTokens(user_address)) / 1e6
+          const totalTokensToClaim = parseInt(userMerkleData.tokens) / DAO_TOKEN_DECIMALS
+          const alreadyClaimedTokens = (await getClaimedDaoTokens(user_address)) / DAO_TOKEN_DECIMALS
           const unclaimedTokens = totalTokensToClaim - (alreadyClaimedTokens? alreadyClaimedTokens : 0)
 
           if (unclaimedTokens === 0) {
