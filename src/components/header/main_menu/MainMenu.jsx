@@ -69,6 +69,12 @@ export const MainMenu = () => {
             label="Claim DAO tokens"
             route="claim"
           />
+
+          <MenuItem
+            className={styles.menu_label}
+            label="DAO parameters"
+            route="dao"
+          />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
