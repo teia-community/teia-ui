@@ -327,7 +327,7 @@ export const GetUserMetadata = async (walletAddr: string) => {
 }
 
 /**
- * Get User DAO token balance
+ * Get user DAO token balance
  */
 export async function getDaoTokenBalance(walletAddr: string) {
   const parameters = {
@@ -348,7 +348,7 @@ export async function getDaoTokenBalance(walletAddr: string) {
 }
 
 /**
- * Get User claimed tokens
+ * Get user claimed tokens
  */
 export async function getClaimedDaoTokens(walletAddr: string) {
   const response = await axios.get(
