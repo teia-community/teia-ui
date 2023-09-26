@@ -74,7 +74,7 @@ export const DaoParameters = () => {
                 </li>
                 <li>
                   Voted in {numberOfTimesVoted} proposal
-                  {numberOfTimesVoted == 1 ? '' : 's'}
+                  {numberOfTimesVoted === 1 ? '' : 's'}
                 </li>
               </ul>
             </section>
