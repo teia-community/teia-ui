@@ -1,3 +1,4 @@
+import { encodePubKey } from '@taquito/utils'
 import { Parser, emitMicheline } from '@taquito/michel-codec'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { Page } from '@atoms/layout'
@@ -471,7 +472,7 @@ function ProposalDescriptionContent(props) {
         <p>Effect: Executes a lambda function.</p>
         <details>
           <summary>See Micheline code</summary>
-          <pre className={sytles.micheline_code}>{encodedMichelineCode}</pre>
+          <pre className={styles.micheline_code}>{encodedMichelineCode}</pre>
         </details>
       </>
     )
