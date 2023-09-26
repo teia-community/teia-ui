@@ -56,7 +56,7 @@ async function getTzktData(query, parameters) {
   return response.data
 }
 
-function getStorage(address) {
+function useStorage(address) {
   const { data } = useSWR(
     address ? [`/v1/contracts/${address}/storage`, {}] : null,
     getTzktData
@@ -65,7 +65,7 @@ function getStorage(address) {
   return data
 }
 
-function getGovernanceParameters(daoStorage) {
+function useGovernanceParameters(daoStorage) {
   const { data } = useSWR(
     daoStorage
       ? [`/v1/bigmaps/${daoStorage.governance_parameters}/keys`, {}]
@@ -79,7 +79,7 @@ function getGovernanceParameters(daoStorage) {
   return governanceParameters
 }
 
-function getRepresentatives(daoStorage) {
+function useRepresentatives(daoStorage) {
   const { data } = useSWR(
     daoStorage
       ? [`/v1/contracts/${daoStorage.representatives}/storage`, {}]
@@ -90,7 +90,7 @@ function getRepresentatives(daoStorage) {
   return data?.representatives
 }
 
-function getUserVotes(address, daoStorage) {
+function useUserVotes(address, daoStorage) {
   const parameters = { 'key.address': address }
   const { data } = useSWR(
     address && daoStorage
@@ -105,7 +105,7 @@ function getUserVotes(address, daoStorage) {
   return userVotes
 }
 
-function getBalance(address) {
+function useBalance(address) {
   const { data } = useSWR(
     address ? [`/v1/accounts/${address}/balance`, {}] : null,
     getTzktData
@@ -114,7 +114,7 @@ function getBalance(address) {
   return data ? data / 1000000 : 0
 }
 
-function getTokenBalance(address) {
+function useTokenBalance(address) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
     'token.tokenId': '0',
@@ -131,13 +131,13 @@ function getTokenBalance(address) {
 
 export const DaoParameters = () => {
   const userAddress = useUserStore((st) => st.address)
-  const userTokenBalance = getTokenBalance(userAddress)
-  const daoTokenBalance = getTokenBalance(DAO_GOVERNANCE_CONTRACT)
-  const daoBalance = getBalance(DAO_GOVERNANCE_CONTRACT)
-  const daoStorage = getStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = getGovernanceParameters(daoStorage)
-  const representatives = getRepresentatives(daoStorage)
-  const userVotes = getUserVotes(userAddress, daoStorage)
+  const userTokenBalance = useTokenBalance(userAddress)
+  const daoTokenBalance = useTokenBalance(DAO_GOVERNANCE_CONTRACT)
+  const daoBalance = useBalance(DAO_GOVERNANCE_CONTRACT)
+  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const governanceParameters = useGovernanceParameters(daoStorage)
+  const representatives = useRepresentatives(daoStorage)
+  const userVotes = useUserVotes(userAddress, daoStorage)
 
   if (!daoStorage || !governanceParameters || !representatives)
     return (
