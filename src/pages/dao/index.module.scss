@@ -56,3 +56,208 @@
     margin-bottom: 30px;
   }
 }
+
+.parameters_list {
+  li:before {
+    content: '';
+  }
+}
+
+.tezos_address,
+.token_link,
+.ipfs_link {
+  font-family: monospace;
+}
+
+.ipfs_link {
+  word-break: break-word;
+}
+
+.proposal_list {
+  max-height: 50em;
+  overflow: auto;
+
+  & > li {
+    padding: 0.2em 0;
+
+    &:before {
+      content: '';
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid darken(white, 30%);
+    }
+  }
+}
+
+.proposal_timestamp {
+  font-family: monospace;
+  margin: 0.5em 0;
+
+  @media (min-width: 480px) {
+    padding-right: 1em;
+  }
+}
+
+button,
+input,
+.user_votes {
+  display: inline-block;
+  font-family: monospace;
+  min-width: 3em;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+
+.user_votes {
+  background-color: white;
+  margin: 0 0.5em 0.5em 0;
+
+  &:empty:before {
+    content: '\200b';
+  }
+}
+
+.yes_vote {
+  background-color: lighten(green, 55%);
+}
+
+.no_vote {
+  background-color: lighten(red, 25%);
+}
+
+.abstain_vote {
+  background-color: lighten(yellow, 25%);
+}
+
+.proposal_description {
+  min-width: 20em;
+  margin: 0;
+
+  & p {
+    margin: 0.5em 0;
+  }
+
+  @media (min-width: 480px) {
+    padding: 0 1em;
+  }
+}
+
+.proposal_id {
+  display: inline-block;
+  font-family: monospace;
+  background-color: white;
+  color: lighten(black, 20%);
+  min-width: 4em;
+  padding: 0 0.5em;
+  margin-right: 0.5em;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.proposal_title {
+  font-weight: bold;
+}
+
+details {
+  summary {
+    cursor: pointer;
+  }
+
+  table {
+    display: inline-block;
+    background-color: white;
+    margin: 0.5em 0 0 0;
+    padding: 1em;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  td:first-child {
+    text-align: right;
+  }
+}
+
+.proposal_votes_summary {
+  margin: 1em 0 0.5em 0;
+  padding: 0 0.5em;
+  border-radius: 4px;
+}
+
+.votes_display_result {
+  font-size: 0.9em;
+  text-align: center;
+  color: black;
+  margin: 0 1em;
+  display: flex;
+  flex-direction: row;
+}
+
+.vote_display_nothing {
+  background-color: white;
+}
+
+.vote_display_yes {
+  background-color: lighten(green, 55%);
+}
+
+.vote_display_no {
+  background-color: lighten(red, 25%);
+}
+
+.vote_display_abstain {
+  background-color: lighten(yellow, 25%);
+}
+
+.proposal_actions {
+  margin-right: 0.5em;
+
+  > :not(:first-child) {
+    margin-top: 1em;
+  }
+
+  p {
+    margin: 0.5em 0;
+  }
+}
+
+.micheline_code {
+  font-family: monospace;
+  line-height: 1.4;
+  color: black;
+  background-color: white;
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.proposal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.proposal_description {
+  flex: 1 1 0;
+}
+
+.proposal_extra_information {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.proposal_actions_buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 0.5em;
+  align-items: baseline;
+
+  @media (min-width: 816px) {
+    justify-content: flex-end;
+  }
+}

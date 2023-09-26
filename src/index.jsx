@@ -11,6 +11,8 @@ import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
 import { Claim } from '@pages/dao'
 import { DaoParameters } from '@pages/dao/parameters'
+import { DaoProposals } from '@pages/dao/proposals'
+import { CreateDaoProposals } from '@pages/dao/create'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -139,6 +141,8 @@ const router = createBrowserRouter(
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />
       <Route path="dao/*" element={<DaoParameters />} />
+      <Route path="proposals/*" element={<DaoProposals />} />
+      <Route path="create/*" element={<CreateDaoProposals />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
