@@ -4,6 +4,7 @@ import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { Page } from '@atoms/layout'
 import { useUserStore } from '@context/userStore'
 import { hexToString } from '@utils/string'
+import { Line } from '@atoms/line'
 import { Button } from '@atoms/button'
 import { TezosAddressLink, TokenLink, IpfsLink } from './links'
 import styles from '@style'
@@ -111,80 +112,107 @@ export function DaoProposals() {
         </section>
 
         {votedProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Already voted proposals</h1>
-            <p>
-              These proposals are still in the voting phase, but you already
-              voted them.
-            </p>
-            <ProposalList proposals={votedProposals} canCancel />
-          </section>
+          <>
+            <Line />
+
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Already voted proposals</h1>
+              <p>
+                These proposals are still in the voting phase, but you already
+                voted them.
+              </p>
+              <ProposalList proposals={votedProposals} canCancel />
+            </section>
+          </>
         )}
 
         {pendingEvaluationProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>
-              Proposals pending votes results evaluation
-            </h1>
-            <p>
-              The voting period for these proposals has finished. You can
-              evaluate their result to see if they are approved or rejected.
-            </p>
-            <ProposalList
-              proposals={pendingEvaluationProposals}
-              canEvaluate
-              canCancel
-            />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>
+                Proposals pending votes results evaluation
+              </h1>
+              <p>
+                The voting period for these proposals has finished. You can
+                evaluate their result to see if they are approved or rejected.
+              </p>
+              <ProposalList
+                proposals={pendingEvaluationProposals}
+                canEvaluate
+                canCancel
+              />
+            </section>
+          </>
         )}
 
         {waitingProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Approved proposals</h1>
-            <p>
-              These are approved proposals that are still in the waiting phase.
-              Once the waiting phase finishes, you will be able to execute them.
-            </p>
-            <ProposalList proposals={waitingProposals} canCancel />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Approved proposals</h1>
+              <p>
+                These are approved proposals that are still in the waiting
+                phase. Once the waiting phase finishes, you will be able to
+                execute them.
+              </p>
+              <ProposalList proposals={waitingProposals} canCancel />
+            </section>
+          </>
         )}
 
         {toExecuteProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Proposals to execute</h1>
-            <p>These are approved proposals that can be exectuded.</p>
-            <ProposalList proposals={toExecuteProposals} canExecute canCancel />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Proposals to execute</h1>
+              <p>These are approved proposals that can be exectuded.</p>
+              <ProposalList
+                proposals={toExecuteProposals}
+                canExecute
+                canCancel
+              />
+            </section>
+          </>
         )}
 
         {executedProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Executed proposals</h1>
-            <p>These proposals have been executed already.</p>
-            <ProposalList proposals={executedProposals} />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Executed proposals</h1>
+              <p>These proposals have been executed already.</p>
+              <ProposalList proposals={executedProposals} />
+            </section>
+          </>
         )}
 
         {rejectedProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Rejected proposals</h1>
-            <p>
-              These proposals didn't reach the required quorum and/or
-              supermajority. As a result, they were rejected by the DAO.
-            </p>
-            <ProposalList proposals={rejectedProposals} />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Rejected proposals</h1>
+              <p>
+                These proposals didn't reach the required quorum and/or
+                supermajority. As a result, they were rejected by the DAO.
+              </p>
+              <ProposalList proposals={rejectedProposals} />
+            </section>
+          </>
         )}
 
         {cancelledProposals.length > 0 && (
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Cancelled proposals</h1>
-            <p>
-              These proposals were cancelled by the proposal issuer or the DAO
-              guardians.
-            </p>
-            <ProposalList proposals={cancelledProposals} />
-          </section>
+          <>
+            <Line />
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Cancelled proposals</h1>
+              <p>
+                These proposals were cancelled by the proposal issuer or the DAO
+                guardians.
+              </p>
+              <ProposalList proposals={cancelledProposals} />
+            </section>
+          </>
         )}
       </div>
     </Page>
