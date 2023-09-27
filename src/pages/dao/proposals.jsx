@@ -1,13 +1,14 @@
 import { encodePubKey } from '@taquito/utils'
 import { Parser, emitMicheline } from '@taquito/michel-codec'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
-import { Page } from '@atoms/layout'
 import { useUserStore } from '@context/userStore'
-import { hexToString } from '@utils/string'
-import { Line } from '@atoms/line'
+import { useDaoStore } from '@context/daoStore'
+import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
-import { TezosAddressLink, TokenLink, IpfsLink } from './links'
+import { Line } from '@atoms/line'
+import { hexToString } from '@utils/string'
 import styles from '@style'
+import { TezosAddressLink, TokenLink, IpfsLink } from './links'
 import {
   useTokenBalance,
   useStorage,
@@ -674,13 +675,13 @@ function ProposalActions(props) {
   const communityVotes = useCommunityVotes(userCommunity, daoStorage)
 
   // Get the contract call methods from the user store
-  const voteProposal = useUserStore((st) => st.voteProposal)
-  const voteProposalAsRepresentative = useUserStore(
+  const voteProposal = useDaoStore((st) => st.voteProposal)
+  const voteProposalAsRepresentative = useDaoStore(
     (st) => st.voteProposalAsRepresentative
   )
-  const cancelProposal = useUserStore((st) => st.cancelProposal)
-  const evaluateVotingResult = useUserStore((st) => st.evaluateVotingResult)
-  const executeProposal = useUserStore((st) => st.executeProposal)
+  const cancelProposal = useDaoStore((st) => st.cancelProposal)
+  const evaluateVotingResult = useDaoStore((st) => st.evaluateVotingResult)
+  const executeProposal = useDaoStore((st) => st.executeProposal)
 
   // Check if the user is a DAO member
   const isMember = userTokenBalance > 0
@@ -699,7 +700,7 @@ function ProposalActions(props) {
 
   return (
     <div className={styles.proposal_actions}>
-      {props.canVote && userCanVote && !userVotes[props.id] && (
+      {props.canVote && userCanVote && userVotes && !userVotes[props.id] && (
         <div>
           <p>Vote with your tokens:</p>
           <div className={styles.proposal_actions_buttons}>

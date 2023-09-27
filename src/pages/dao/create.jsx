@@ -1,14 +1,13 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
+import { useUserStore } from '@context/userStore'
+import { useDaoStore } from '@context/daoStore'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { useUserStore } from '@context/userStore'
-import { useModalStore } from '@context/modalStore'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
-import { IpfsLink } from './links'
 import styles from '@style'
+import { IpfsLink } from './links'
 import { useTokenBalance, useStorage, useGovernanceParameters } from './hooks'
 
 export function CreateDaoProposals() {
@@ -20,15 +19,15 @@ export function CreateDaoProposals() {
   const userAddress = useUserStore((st) => st.address)
   const userTokenBalance = useTokenBalance(userAddress)
 
-  // Get the contract call methods from the user store
-  const createTextProposal = useUserStore((st) => st.createTextProposal)
-  const createTransferMutezProposal = useUserStore(
+  // Get the contract call methods from the DAO store
+  const createTextProposal = useDaoStore((st) => st.createTextProposal)
+  const createTransferMutezProposal = useDaoStore(
     (st) => st.createTransferMutezProposal
   )
-  const createTransferTokenProposal = useUserStore(
+  const createTransferTokenProposal = useDaoStore(
     (st) => st.createTransferTokenProposal
   )
-  const createLambdaFunctionProposal = useUserStore(
+  const createLambdaFunctionProposal = useDaoStore(
     (st) => st.createLambdaFunctionProposal
   )
 
@@ -147,43 +146,12 @@ export function CreateDaoProposals() {
   )
 }
 
-async function uploadFileToIpfs(file, displayUploadInformation) {
-  const show = useModalStore.getState().show
-  const step = useModalStore.getState().step
-  const close = useModalStore.getState().close
-
-  // Check that the file is not undefined
-  if (!file) {
-    show('A file needs to be loaded before uploading to IPFS')
-    return
-  }
-
-  // Display the information message
-  if (displayUploadInformation) {
-    step('IPFS upload', `Uploading ${file.name} to ipfs...`)
-  }
-
-  // Upload the file to IPFS
-  const formData = new FormData()
-  formData.append('asset', file)
-  const added = await axios.post(
-    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
-  )
-
-  // Close the modal when the file is uploaded
-  if (displayUploadInformation) {
-    close()
-  }
-
-  // Return the IPFS cid
-  return added?.data.cid
-}
-
 function GeneralProposalInputs(props) {
   // Set the component state
   const [descriptionFile, setDescriptionFile] = useState(undefined)
+
+  // Get the upload file method from the DAO store
+  const uploadFileToIpfs = useDaoStore((st) => st.uploadFileToIpfs)
 
   // Define the on change handler
   const handleChange = (e) => {

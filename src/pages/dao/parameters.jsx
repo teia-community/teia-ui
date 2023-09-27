@@ -1,10 +1,10 @@
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { useUserStore } from '@context/userStore'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
-import { TezosAddressLink } from './links'
 import styles from '@style'
+import { TezosAddressLink } from './links'
 import {
   useBalance,
   useTokenBalance,
