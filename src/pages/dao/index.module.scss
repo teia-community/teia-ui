@@ -261,3 +261,82 @@ details {
     justify-content: flex-end;
   }
 }
+
+.form_input {
+  max-width: 1000px;
+
+  input {
+    margin: 0.5em 0;
+  }
+
+  textarea {
+    margin-top: 0.5em;
+  }
+}
+
+input[type='file'] {
+  background-color: white;
+}
+
+input[type='number'] {
+  width: 13ch;
+  text-align: right;
+}
+
+textarea {
+  width: 100%;
+  min-height: 10em;
+  resize: none;
+}
+
+@media (min-width: 480px) {
+  .tezos_wallet_input {
+    width: 38ch;
+  }
+
+  .contract_address_input {
+    width: 41ch;
+  }
+}
+
+.transfers_input {
+  display: block;
+  margin: 1em 0;
+
+  &:first-child {
+    margin-top: 1em;
+  }
+}
+
+.transfer_input {
+  display: block;
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 4px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1em;
+
+  @media (min-width: 816px) {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.form-input {
+  flex: 1 1 auto;
+}
