@@ -1,14 +1,14 @@
 import { useState } from 'react'
+import { useDaoStore } from '@context/daoStore'
 import { Page } from '@atoms/layout'
-import { useUserStore } from '@context/userStore'
 import { Button } from '@atoms/button'
 import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
-import styles from '@style'
 import { DAOIcon } from '@icons'
+import styles from '@style'
 
 export const Claim = () => {
-  const claimTokens = useUserStore((st) => st.claimTokens)
+  const claimTokens = useDaoStore((st) => st.claimTokens)
   const [acceptLegalDisclaimer, setAcceptLegalDisclaimer] = useState(false)
 
   return (
