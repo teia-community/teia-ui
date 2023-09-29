@@ -8,7 +8,7 @@ import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { hexToString } from '@utils/string'
 import styles from '@style'
-import { TezosAddressLink, TokenLink, IpfsLink } from './links'
+import { TeiaUserLink, TezosAddressLink, TokenLink, IpfsLink } from './links'
 import {
   useTokenBalance,
   useStorage,
@@ -17,6 +17,7 @@ import {
   useRepresentatives,
   useUserVotes,
   useCommunityVotes,
+  useUsersAliases,
 } from './hooks'
 
 export function DaoProposals() {
@@ -28,10 +29,12 @@ export function DaoProposals() {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity =
-    userAddress && representatives ? representatives[userAddress] : undefined
+  const userCommunity = representatives?.[userAddress]
   const userVotes = useUserVotes(userAddress, daoStorage)
-  const communityVotes = useCommunityVotes(userCommunity, daoStorage)
+  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
+
+  // Get all the relevant users aliases
+  const usersAliases = useUsersAliases(userAddress, representatives, proposals)
 
   // Separate the proposals depending of their current status
   const toVoteProposals = []
@@ -43,26 +46,31 @@ export function DaoProposals() {
   const rejectedProposals = []
   const cancelledProposals = []
 
-  if (governanceParameters && proposals) {
+  if (governanceParameters && proposals && usersAliases) {
     // Loop over the complete list of proposals
     const now = new Date()
 
-    for (const proposal of proposals) {
+    for (const proposalId in proposals) {
+      // Store the proposal id and the issuer alias inside the proposal details
+      const proposal = proposals[proposalId]
+      proposal['id'] = proposalId
+      proposal['issuerAlias'] = usersAliases[proposal.issuer]
+
       // Get the vote and wait period from the proposal governance parameters
       const proposalGovernanceParameters =
-        governanceParameters[proposal.value.gp_index]
+        governanceParameters[proposal.gp_index]
       const votePeriod = parseInt(proposalGovernanceParameters.vote_period)
       const waitPeriod = parseInt(proposalGovernanceParameters.wait_period)
 
-      if (proposal.value.status.open) {
+      if (proposal.status.open) {
         // Check if the proposal voting period has expired
-        const voteExpirationTime = new Date(proposal.value.timestamp)
+        const voteExpirationTime = new Date(proposal.timestamp)
         voteExpirationTime.setDate(voteExpirationTime.getDate() + votePeriod)
 
         if (now > voteExpirationTime) {
           pendingEvaluationProposals.push(proposal)
-        } else if (userVotes && userVotes[proposal.key]) {
-          if (communityVotes && !communityVotes[proposal.key]) {
+        } else if (userVotes?.[proposalId]) {
+          if (userCommunity && !userCommunityVotes?.[proposalId]) {
             toVoteProposals.push(proposal)
           } else {
             votedProposals.push(proposal)
@@ -70,9 +78,9 @@ export function DaoProposals() {
         } else {
           toVoteProposals.push(proposal)
         }
-      } else if (proposal.value.status.approved) {
+      } else if (proposal.status.approved) {
         // Check if the proposal waiting period has passed or not
-        const waitExpirationTime = new Date(proposal.value.timestamp)
+        const waitExpirationTime = new Date(proposal.timestamp)
         waitExpirationTime.setDate(
           waitExpirationTime.getDate() + votePeriod + waitPeriod
         )
@@ -82,11 +90,11 @@ export function DaoProposals() {
         } else {
           waitingProposals.push(proposal)
         }
-      } else if (proposal.value.status.executed) {
+      } else if (proposal.status.executed) {
         executedProposals.push(proposal)
-      } else if (proposal.value.status.rejected) {
+      } else if (proposal.status.rejected) {
         rejectedProposals.push(proposal)
-      } else if (proposal.value.status.cancelled) {
+      } else if (proposal.status.cancelled) {
         cancelledProposals.push(proposal)
       }
     }
@@ -130,6 +138,7 @@ export function DaoProposals() {
         {pendingEvaluationProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>
                 Proposals pending votes results evaluation
@@ -150,6 +159,7 @@ export function DaoProposals() {
         {waitingProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Approved proposals</h1>
               <p>
@@ -165,6 +175,7 @@ export function DaoProposals() {
         {toExecuteProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Proposals to execute</h1>
               <p>These are approved proposals that can be exectuded.</p>
@@ -180,6 +191,7 @@ export function DaoProposals() {
         {executedProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Executed proposals</h1>
               <p>These proposals have been executed already.</p>
@@ -191,6 +203,7 @@ export function DaoProposals() {
         {rejectedProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Rejected proposals</h1>
               <p>
@@ -205,6 +218,7 @@ export function DaoProposals() {
         {cancelledProposals.length > 0 && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Cancelled proposals</h1>
               <p>
@@ -224,10 +238,9 @@ function ProposalList(props) {
   return (
     <ul className={styles.proposal_list}>
       {props.proposals.map((proposal) => (
-        <li key={proposal.key}>
+        <li key={proposal.id}>
           <Proposal
-            proposalId={proposal.key}
-            proposal={proposal.value}
+            proposal={proposal}
             canVote={props.canVote}
             canCancel={props.canCancel}
             canEvaluate={props.canEvaluate}
@@ -242,13 +255,9 @@ function ProposalList(props) {
 function Proposal(props) {
   return (
     <div className={styles.proposal}>
-      <ProposalInitialBlock
-        id={props.proposalId}
-        timestamp={props.proposal.timestamp}
-      />
-      <ProposalDescription id={props.proposalId} proposal={props.proposal} />
+      <ProposalInitialBlock proposal={props.proposal} />
+      <ProposalDescription proposal={props.proposal} />
       <ProposalActions
-        id={props.proposalId}
         proposal={props.proposal}
         canVote={props.canVote}
         canCancel={props.canCancel}
@@ -266,49 +275,41 @@ function ProposalInitialBlock(props) {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity =
-    userAddress && representatives ? representatives[userAddress] : undefined
+  const userCommunity = representatives?.[userAddress]
   const userTokenBalance = useTokenBalance(userAddress)
   const userVotes = useUserVotes(userAddress, daoStorage)
-  const communityVotes = useCommunityVotes(userCommunity, daoStorage)
-
-  // Check if the user is a DAO member
-  const isMember = userTokenBalance > 0
-
-  // Check if the user is a community representative
-  const isRepresentative = communityVotes !== undefined
+  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
 
   // Get the user vote and the vote class name
-  const userVote = userVotes && userVotes[props.id]?.vote
-  let voteClassName = ''
-
-  if (userVote) {
-    voteClassName = userVote.yes
-      ? styles.yes_vote
-      : userVote.no
-      ? styles.no_vote
-      : styles.abstain_vote
-  }
+  const proposalId = props.proposal.id
+  const userVote = userVotes?.[proposalId]?.vote
+  const voteClassName = !userVote
+    ? ''
+    : userVote.yes
+    ? styles.yes_vote
+    : userVote.no
+    ? styles.no_vote
+    : styles.abstain_vote
 
   // Get the community vote and the community vote class name
-  const communityVote = communityVotes && communityVotes[props.id]
-  let communityVoteClassName = ''
-
-  if (communityVote) {
-    communityVoteClassName = communityVote.yes
-      ? styles.yes_vote
-      : communityVote.no
-      ? styles.no_vote
-      : styles.abstain_vote
-  }
+  const userCommunityVote = userCommunityVotes?.[proposalId]
+  const communityVoteClassName = !userCommunityVote
+    ? ''
+    : userCommunityVote.yes
+    ? styles.yes_vote
+    : userCommunityVote.no
+    ? styles.no_vote
+    : styles.abstain_vote
 
   return (
     <div>
-      <p className={styles.proposal_timestamp}>{props.timestamp}</p>
+      <p className={styles.proposal_timestamp}>{props.proposal.timestamp}</p>
 
-      {isMember && <span className={styles.user_votes + ' ' + voteClassName} />}
+      {(userTokenBalance > 0 || userVotes) && (
+        <span className={styles.user_votes + ' ' + voteClassName} />
+      )}
 
-      {isRepresentative && (
+      {userCommunity && (
         <span className={styles.user_votes + ' ' + communityVoteClassName} />
       )}
     </div>
@@ -318,8 +319,8 @@ function ProposalInitialBlock(props) {
 function ProposalDescription(props) {
   return (
     <div className={styles.proposal_description}>
-      <ProposalDescriptionIntro id={props.id} proposal={props.proposal} />{' '}
-      <ProposalDescriptionContent proposal={props.proposal} />{' '}
+      <ProposalDescriptionIntro proposal={props.proposal} />
+      <ProposalDescriptionContent proposal={props.proposal} />
       <ProposalVotesSummary proposal={props.proposal} />
     </div>
   )
@@ -330,22 +331,25 @@ function ProposalDescriptionIntro(props) {
   const title = hexToString(props.proposal.title)
   const description = hexToString(props.proposal.description)
 
-  // Try to extract an ipfs path from the proposal description
-  const ipfsPath = description.split('/')[2]
+  // Try to extract an ipfs cid from the proposal description
+  const cid = description.split('/')[2]
 
   return (
     <>
       <p>
-        <span className={styles.proposal_id}>#{props.id}</span>
-        <span className={styles.proposal_title}>{title}</span>
+        <span className={styles.proposal_id}>#{props.proposal.id}</span>
+        <b>{title}</b>
       </p>
       <p>
         Issuer:{' '}
-        <TezosAddressLink address={props.proposal.issuer} useAlias shorten />
+        <TeiaUserLink
+          address={props.proposal.issuer}
+          alias={props.proposal.issuerAlias}
+          shorten
+        />
       </p>
       <p>
-        Description:{' '}
-        {ipfsPath ? <IpfsLink path={ipfsPath}>ipfs</IpfsLink> : description}
+        Description: {cid ? <IpfsLink cid={cid}>ipfs</IpfsLink> : description}
       </p>
     </>
   )
@@ -368,30 +372,24 @@ function ProposalDescriptionContent(props) {
     if (transfers.length === 1) {
       return (
         <p>
-          Effect: Transfers {transfers[0].amount / 1000000} ꜩ to{' '}
-          <TezosAddressLink
-            address={transfers[0].destination}
-            useAlias
-            shorten
-          />
-          .
+          Effect: Transfers {totalAmount / 1000000} tez to{' '}
+          <TezosAddressLink address={transfers[0].destination} shorten />.
         </p>
       )
     } else {
       return (
         <>
-          <p>Effect: Transfers {totalAmount / 1000000} ꜩ.</p>
+          <p>Effect: Transfers {totalAmount / 1000000} tez.</p>
           <details>
             <summary>See transfer details</summary>
             <table>
               <tbody>
                 {transfers.map((transfer, index) => (
                   <tr key={index}>
-                    <td>{transfer.amount / 1000000} ꜩ to</td>
+                    <td>{transfer.amount / 1000000} tez to</td>
                     <td>
                       <TezosAddressLink
                         address={transfer.destination}
-                        useAlias
                         shorten
                       />
                     </td>
@@ -417,21 +415,14 @@ function ProposalDescriptionContent(props) {
     if (transfers.length === 1) {
       return (
         <p>
-          Effect: Transfers{' '}
-          {token ? transfers[0].amount / token.decimals : transfers[0].amount}{' '}
+          Effect: Transfers {token ? nEditions / token.decimals : nEditions}{' '}
           {token?.multiasset
-            ? `edition${transfers[0].amount > 1 ? 's' : ''} of token`
+            ? `edition${nEditions > 1 ? 's' : ''} of token`
             : ''}{' '}
           <TokenLink fa2={fa2} id={tokenId}>
             {token ? (token.multiasset ? '#' + tokenId : token.name) : 'tokens'}
           </TokenLink>{' '}
-          to{' '}
-          <TezosAddressLink
-            address={transfers[0].destination}
-            useAlias
-            shorten
-          />
-          .
+          to <TezosAddressLink address={transfers[0].destination} shorten />.
         </p>
       )
     } else {
@@ -467,7 +458,6 @@ function ProposalDescriptionContent(props) {
                     <td>
                       <TezosAddressLink
                         address={transfer.destination}
-                        useAlias
                         shorten
                       />
                     </td>
@@ -568,7 +558,7 @@ function ProposalVotesSummary(props) {
   // Calculate the number of yes votes needed to reach supermajority
   const requiredYesVotesForSupermajority = passesSupermajority
     ? 0
-    : negativeVotes === 0
+    : positiveVotes === 0
     ? voteScaling
     : (negativeVotes * supermajority) / (1 - supermajority) - positiveVotes
 
@@ -669,12 +659,11 @@ function ProposalActions(props) {
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userTokenBalance = useTokenBalance(userAddress)
-  const userCommunity =
-    userAddress && representatives ? representatives[userAddress] : undefined
+  const userCommunity = representatives?.[userAddress]
   const userVotes = useUserVotes(userAddress, daoStorage)
   const communityVotes = useCommunityVotes(userCommunity, daoStorage)
 
-  // Get the contract call methods from the user store
+  // Get the contract call methods from the DAO store
   const voteProposal = useDaoStore((st) => st.voteProposal)
   const voteProposalAsRepresentative = useDaoStore(
     (st) => st.voteProposalAsRepresentative
@@ -683,36 +672,33 @@ function ProposalActions(props) {
   const evaluateVotingResult = useDaoStore((st) => st.evaluateVotingResult)
   const executeProposal = useDaoStore((st) => st.executeProposal)
 
-  // Check if the user is a DAO member
+  // Check if the user is currently a DAO member
   const isMember = userTokenBalance > 0
 
-  // Check if the user is a community representative
-  const isRepresentative = userCommunity !== undefined
-
   // Check if the user is the proposal issuer
-  const isProposalIssuer = props.proposal.issuer === userAddress
+  const proposal = props.proposal
+  const isProposalIssuer = proposal.issuer === userAddress
 
   // Check if the user can vote proposals
   const userCanVote =
     userTokenBalance >=
-    governanceParameters[props.proposal.gp_index].min_amount /
-      DAO_TOKEN_DECIMALS
+    governanceParameters[proposal.gp_index].min_amount / DAO_TOKEN_DECIMALS
 
   return (
     <div className={styles.proposal_actions}>
-      {props.canVote && userCanVote && userVotes && !userVotes[props.id] && (
+      {props.canVote && userCanVote && !userVotes?.[proposal.id] && (
         <div>
           <p>Vote with your tokens:</p>
           <div className={styles.proposal_actions_buttons}>
-            <Button shadow_box onClick={() => voteProposal(props.id, 'yes')}>
+            <Button shadow_box onClick={() => voteProposal(proposal.id, 'yes')}>
               yes
             </Button>
-            <Button shadow_box onClick={() => voteProposal(props.id, 'no')}>
+            <Button shadow_box onClick={() => voteProposal(proposal.id, 'no')}>
               no
             </Button>
             <Button
               shadow_box
-              onClick={() => voteProposal(props.id, 'abstain')}
+              onClick={() => voteProposal(proposal.id, 'abstain')}
             >
               abstain
             </Button>
@@ -720,43 +706,43 @@ function ProposalActions(props) {
         </div>
       )}
 
-      {props.canVote &&
-        isRepresentative &&
-        communityVotes &&
-        !communityVotes[props.id] && (
-          <div>
-            <p>Vote as representative:</p>
-            <div className={styles.proposal_actions_buttons}>
-              <Button
-                shadow_box
-                onClick={() => voteProposalAsRepresentative(props.id, 'yes')}
-              >
-                yes
-              </Button>
-              <Button
-                shadow_box
-                onClick={() => voteProposalAsRepresentative(props.id, 'no')}
-              >
-                no
-              </Button>
-              <Button
-                shadow_box
-                onClick={() =>
-                  voteProposalAsRepresentative(props.id, 'abstain')
-                }
-              >
-                abstain
-              </Button>
-            </div>
+      {props.canVote && userCommunity && !communityVotes?.[proposal.id] && (
+        <div>
+          <p>Vote as representative:</p>
+          <div className={styles.proposal_actions_buttons}>
+            <Button
+              shadow_box
+              onClick={() => voteProposalAsRepresentative(proposal.id, 'yes')}
+            >
+              yes
+            </Button>
+            <Button
+              shadow_box
+              onClick={() => voteProposalAsRepresentative(proposal.id, 'no')}
+            >
+              no
+            </Button>
+            <Button
+              shadow_box
+              onClick={() =>
+                voteProposalAsRepresentative(proposal.id, 'abstain')
+              }
+            >
+              abstain
+            </Button>
           </div>
-        )}
+        </div>
+      )}
 
       {props.canCancel &&
         isProposalIssuer &&
         !props.canEvaluate &&
         !props.canExecute && (
           <div className={styles.proposal_actions_buttons}>
-            <Button shadow_box onClick={() => cancelProposal(props.id, true)}>
+            <Button
+              shadow_box
+              onClick={() => cancelProposal(proposal.id, true)}
+            >
               cancel
             </Button>
           </div>
@@ -765,11 +751,14 @@ function ProposalActions(props) {
       {props.canEvaluate && isMember && (
         <div className={styles.proposal_actions_buttons}>
           {props.canCancel && isProposalIssuer && (
-            <Button shadow_box onClick={() => cancelProposal(props.id, true)}>
+            <Button
+              shadow_box
+              onClick={() => cancelProposal(proposal.id, true)}
+            >
               cancel
             </Button>
           )}
-          <Button shadow_box onClick={() => evaluateVotingResult(props.id)}>
+          <Button shadow_box onClick={() => evaluateVotingResult(proposal.id)}>
             evaluate
           </Button>
         </div>
@@ -778,11 +767,14 @@ function ProposalActions(props) {
       {props.canExecute && isMember && (
         <div className={styles.proposal_actions_buttons}>
           {props.canCancel && isProposalIssuer && (
-            <Button shadow_box onClick={() => cancelProposal(props.id, true)}>
+            <Button
+              shadow_box
+              onClick={() => cancelProposal(proposal.id, true)}
+            >
               cancel
             </Button>
           )}
-          <Button shadow_box onClick={() => executeProposal(props.id)}>
+          <Button shadow_box onClick={() => executeProposal(proposal.id)}>
             execute
           </Button>
         </div>

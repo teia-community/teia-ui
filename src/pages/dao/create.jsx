@@ -190,7 +190,7 @@ function GeneralProposalInputs(props) {
             {props.descriptionIpfsPath ? 'uploaded' : 'upload to IPFS'}
           </Button>{' '}
           {props.descriptionIpfsPath && (
-            <IpfsLink path={props.descriptionIpfsPath} />
+            <IpfsLink cid={props.descriptionIpfsPath} />
           )}
         </div>
       )}

@@ -1,18 +1,36 @@
 import useSWR from 'swr'
 import axios from 'axios'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { hexToString } from '@utils/string'
 
-export async function getTzktData(query, parameters) {
-  const response = await axios.get(import.meta.env.VITE_TZKT_API + query, {
-    params: parameters,
-  })
+async function getTzktData(query, parameters = {}, debug = false) {
+  const url = import.meta.env.VITE_TZKT_API + query
+  const response = await axios
+    .get(url, { params: parameters })
+    .catch((error) =>
+      console.log(`The following TzKT query returned an error: ${url}`, error)
+    )
 
-  return response.data
+  if (debug) console.log(`Executed TzKT query: ${url}`, parameters)
+
+  return response?.data
+}
+
+function reorderBigmapData(data, subKey = undefined, decode = false) {
+  const bigmapData = data?.length > 0 ? {} : undefined
+  data?.forEach(
+    (item) =>
+      (bigmapData[subKey ? item.key[subKey] : item.key] = decode
+        ? hexToString(item.value)
+        : item.value)
+  )
+
+  return bigmapData
 }
 
 export function useBalance(address) {
   const { data } = useSWR(
-    address ? [`/v1/accounts/${address}/balance`, {}] : null,
+    address ? `/v1/accounts/${address}/balance` : null,
     getTzktData
   )
 
@@ -31,12 +49,12 @@ export function useTokenBalance(address) {
     getTzktData
   )
 
-  return data ? (data[0] ? parseInt(data[0]) / DAO_TOKEN_DECIMALS : 0) : 0
+  return data?.[0] ? parseInt(data[0]) / DAO_TOKEN_DECIMALS : 0
 }
 
-export function useStorage(address) {
+export function useStorage(contractAddress) {
   const { data } = useSWR(
-    address ? [`/v1/contracts/${address}/storage`, {}] : null,
+    contractAddress ? `/v1/contracts/${contractAddress}/storage` : null,
     getTzktData
   )
 
@@ -44,33 +62,40 @@ export function useStorage(address) {
 }
 
 export function useGovernanceParameters(daoStorage) {
+  const parameters = {
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
   const { data } = useSWR(
     daoStorage
-      ? [`/v1/bigmaps/${daoStorage.governance_parameters}/keys`, {}]
+      ? [`/v1/bigmaps/${daoStorage.governance_parameters}/keys`, parameters]
       : null,
     getTzktData
   )
 
-  const governanceParameters = data ? {} : undefined
-  data?.forEach((gp) => (governanceParameters[gp.key] = gp.value))
-
-  return governanceParameters
+  return reorderBigmapData(data)
 }
 
 export function useProposals(daoStorage) {
+  const parameters = {
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
   const { data } = useSWR(
-    daoStorage ? [`/v1/bigmaps/${daoStorage.proposals}/keys`, {}] : null,
+    daoStorage
+      ? [`/v1/bigmaps/${daoStorage.proposals}/keys`, parameters]
+      : null,
     getTzktData
   )
 
-  return data
+  return reorderBigmapData(data)
 }
 
 export function useRepresentatives(daoStorage) {
   const { data } = useSWR(
-    daoStorage
-      ? [`/v1/contracts/${daoStorage.representatives}/storage`, {}]
-      : null,
+    daoStorage ? `/v1/contracts/${daoStorage.representatives}/storage` : null,
     getTzktData
   )
 
@@ -78,7 +103,12 @@ export function useRepresentatives(daoStorage) {
 }
 
 export function useUserVotes(address, daoStorage) {
-  const parameters = { 'key.address': address }
+  const parameters = {
+    'key.address': address,
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
   const { data } = useSWR(
     address && daoStorage
       ? [`/v1/bigmaps/${daoStorage.token_votes}/keys`, parameters]
@@ -86,14 +116,16 @@ export function useUserVotes(address, daoStorage) {
     getTzktData
   )
 
-  const userVotes = data ? {} : undefined
-  data?.forEach((vote) => (userVotes[vote.key.nat] = vote.value))
-
-  return userVotes
+  return reorderBigmapData(data, 'nat')
 }
 
 export function useCommunityVotes(community, daoStorage) {
-  const parameters = { 'key.string': community }
+  const parameters = {
+    'key.string': community,
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
   const { data } = useSWR(
     community && daoStorage
       ? [`/v1/bigmaps/${daoStorage.representatives_votes}/keys`, parameters]
@@ -101,8 +133,43 @@ export function useCommunityVotes(community, daoStorage) {
     getTzktData
   )
 
-  const communityVotes = data ? {} : undefined
-  data?.forEach((vote) => (communityVotes[vote.key.nat] = vote.value))
+  return reorderBigmapData(data, 'nat')
+}
 
-  return communityVotes
+export function useUsersAliases(userAddress, representatives, proposals) {
+  const addresses = []
+  if (userAddress) addresses.push(userAddress)
+  if (representatives)
+    Object.keys(representatives).forEach((address) => addresses.push(address))
+  if (proposals)
+    Object.values(proposals).forEach((proposal) =>
+      addresses.push(proposal.issuer)
+    )
+
+  const parameters = {
+    'key.in': addresses.join(','),
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
+  const { data } = useSWR(
+    representatives && proposals ? [`/v1/bigmaps/3919/keys`, parameters] : null,
+    getTzktData
+  )
+
+  return reorderBigmapData(data, undefined, true)
+}
+
+export function useDaoMemberCount() {
+  const parameters = {
+    'token.contract': DAO_TOKEN_CONTRACT,
+    'token.tokenId': '0',
+    'balance.gt': 0 * DAO_TOKEN_DECIMALS,
+  }
+  const { data } = useSWR(
+    ['/v1/tokens/balances/count', parameters],
+    getTzktData
+  )
+
+  return data ? parseInt(data) : 0
 }
