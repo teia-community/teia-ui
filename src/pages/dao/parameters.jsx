@@ -4,38 +4,48 @@ import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Line } from '@atoms/line'
 import styles from '@style'
-import { TezosAddressLink } from './links'
+import { TeiaUserLink, TezosAddressLink } from './links'
 import {
   useBalance,
   useTokenBalance,
   useStorage,
   useGovernanceParameters,
+  useProposals,
   useRepresentatives,
   useUserVotes,
+  useCommunityVotes,
+  useUsersAliases,
+  useDaoMemberCount,
 } from './hooks'
 
 export const DaoParameters = () => {
   // Get all the required DAO information
   const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
   const governanceParameters = useGovernanceParameters(daoStorage)
+  const proposals = useProposals(daoStorage)
   const representatives = useRepresentatives(daoStorage)
+  const daoMemberCount = useDaoMemberCount()
   const daoBalance = useBalance(DAO_GOVERNANCE_CONTRACT)
   const daoTokenBalance = useTokenBalance(DAO_GOVERNANCE_CONTRACT)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity =
-    userAddress && representatives ? representatives[userAddress] : undefined
+  const userCommunity = representatives?.[userAddress]
   const userTokenBalance = useTokenBalance(userAddress)
   const userVotes = useUserVotes(userAddress, daoStorage)
+  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
+
+  // Get all the relevant users aliases
+  const usersAliases = useUsersAliases(userAddress, representatives, proposals)
 
   // Display the loading page information until all data is available
-  if (!daoStorage || !governanceParameters || !representatives)
+  if (!daoStorage || !governanceParameters || !representatives || !proposals) {
     return (
       <Page title="DAO main parameters" large>
         <Loading message="loading DAO information" />
       </Page>
     )
+  }
 
   // Get the current governance parameters
   const currentGovernanceParameters =
@@ -46,8 +56,19 @@ export const DaoParameters = () => {
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
+  // Invert the representatives map and sort the community keys
+  const communities = {}
+  const communitiesList = Object.values(representatives).sort()
+  communitiesList.forEach((key) => (communities[key] = ''))
+  Object.entries(representatives).forEach(
+    ([representative, community]) => (communities[community] = representative)
+  )
+
   // Calculate the number of times that the user has voted
   const numberOfTimesVoted = userVotes ? Object.keys(userVotes).length : 0
+  const numberOfTimesVotedAsRepresentative = userCommunityVotes
+    ? Object.keys(userCommunityVotes).length
+    : 0
 
   return (
     <Page title="DAO main parameters" large>
@@ -61,21 +82,23 @@ export const DaoParameters = () => {
             <section className={styles.section}>
               <h1 className={styles.section_title}>User information</h1>
               <ul className={styles.parameters_list}>
-                <li>Address: {<TezosAddressLink address={userAddress} />}</li>
-                <li>
-                  Teia Community:{' '}
-                  {userCommunity
-                    ? userCommunity
-                    : 'not a community representative'}
-                </li>
+                <li>Address: {<TeiaUserLink address={userAddress} />}</li>
+                {userCommunity && <li>Teia Community: {userCommunity}</li>}
                 <li>
                   DAO token balance: {Math.round(userTokenBalance * 10) / 10}{' '}
                   TEIA
                 </li>
                 <li>
                   Voted in {numberOfTimesVoted} proposal
-                  {numberOfTimesVoted === 1 ? '' : 's'}
+                  {numberOfTimesVoted === 1 ? '' : 's'}.
                 </li>
+                {userCommunity && (
+                  <li>
+                    Voted in {numberOfTimesVotedAsRepresentative} proposal
+                    {numberOfTimesVotedAsRepresentative === 1 ? '' : 's'} as
+                    community representative.
+                  </li>
+                )}
               </ul>
             </section>
 
@@ -84,32 +107,34 @@ export const DaoParameters = () => {
         )}
 
         <section className={styles.section}>
-          <h1 className={styles.section_title}>DAO smart contracts</h1>
+          <h1 className={styles.section_title}>General information</h1>
           <ul className={styles.parameters_list}>
+            <li>DAO members: {daoMemberCount}</li>
             <li>
-              DAO governance:{' '}
-              <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} />
+              DAO Treasury balance: {Math.round(daoBalance)} tez and{' '}
+              {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
+            </li>
+            <li>Submited proposals: {Object.keys(proposals).length}</li>
+            <li>
+              Executed proposals:{' '}
+              {Object.values(proposals).reduce(
+                (acc, proposal) => acc + (proposal.status.executed ? 1 : 0),
+                0
+              )}
             </li>
             <li>
-              DAO token: <TezosAddressLink address={daoStorage.token} />
+              Rejected proposals:{' '}
+              {Object.values(proposals).reduce(
+                (acc, proposal) => acc + (proposal.status.rejected ? 1 : 0),
+                0
+              )}
             </li>
             <li>
-              DAO treasury: <TezosAddressLink address={daoStorage.treasury} />
-            </li>
-            <li>
-              DAO guardians: <TezosAddressLink address={daoStorage.guardians} />
-            </li>
-            <li>
-              DAO administrator:{' '}
-              <TezosAddressLink address={daoStorage.administrator} />
-            </li>
-            <li>
-              Teia Community representatives:{' '}
-              <TezosAddressLink address={daoStorage.representatives} />
-            </li>
-            <li>
-              DAO treasury balance: {daoBalance} ꜩ and {daoTokenBalance} TEIA
-              tokens
+              Cancelled proposals:{' '}
+              {Object.values(proposals).reduce(
+                (acc, proposal) => acc + (proposal.status.cancelled ? 1 : 0),
+                0
+              )}
             </li>
           </ul>
         </section>
@@ -117,8 +142,25 @@ export const DaoParameters = () => {
         <Line />
 
         <section className={styles.section}>
+          <h1 className={styles.section_title}>Community representatives</h1>
+          <ul className={styles.parameters_list}>
+            {Object.entries(communities).map(([community, representative]) => (
+              <li key={community}>
+                {community}:{' '}
+                <TeiaUserLink
+                  address={representative}
+                  alias={usersAliases?.[representative]}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <Line />
+
+        <section className={styles.section}>
           <h1 className={styles.section_title}>
-            Current governance parameters
+            Current DAO governance parameters
           </h1>
           <ul className={styles.parameters_list}>
             <li>
@@ -160,6 +202,35 @@ export const DaoParameters = () => {
               Minimum number of tokens required to vote a proposal:{' '}
               {currentGovernanceParameters.min_amount / DAO_TOKEN_DECIMALS} TEIA
               tokens
+            </li>
+          </ul>
+        </section>
+
+        <Line />
+
+        <section className={styles.section}>
+          <h1 className={styles.section_title}>Smart contracts</h1>
+          <ul className={styles.parameters_list}>
+            <li>
+              DAO governance:{' '}
+              <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} />
+            </li>
+            <li>
+              DAO token: <TezosAddressLink address={daoStorage.token} />
+            </li>
+            <li>
+              DAO treasury: <TezosAddressLink address={daoStorage.treasury} />
+            </li>
+            <li>
+              DAO guardians: <TezosAddressLink address={daoStorage.guardians} />
+            </li>
+            <li>
+              DAO administrator:{' '}
+              <TezosAddressLink address={daoStorage.administrator} />
+            </li>
+            <li>
+              Community representatives:{' '}
+              <TezosAddressLink address={daoStorage.representatives} />
             </li>
           </ul>
         </section>

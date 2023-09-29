@@ -6,6 +6,7 @@ import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
 import { DAOIcon } from '@icons'
 import styles from '@style'
+import { DefaultLink } from './links'
 
 export const Claim = () => {
   const claimTokens = useDaoStore((st) => st.claimTokens)
@@ -29,24 +30,16 @@ export const Claim = () => {
 
           <p>
             If your Tezos wallet satisfies the conditions laid out in the{' '}
-            <a
-              href="https://blog.teia.art/blog/fact-sheet-token-drop"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <DefaultLink href="https://blog.teia.art/blog/fact-sheet-token-drop">
               token distribution fact sheet
-            </a>{' '}
+            </DefaultLink>{' '}
             you are eligible to claim your TEIA tokens during the claiming
             period (August 20th, 2023 to November 20th, 2023). You can find a
             table with all eligible Tezos addresses and the amount of tokens in
             this{' '}
-            <a
-              href="https://docs.google.com/spreadsheets/d/11jFANEUsvNSc9vQGD7sc46n_BOp8v0tGOLY1LG0KENk/edit?usp=sharing"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <DefaultLink href="https://docs.google.com/spreadsheets/d/11jFANEUsvNSc9vQGD7sc46n_BOp8v0tGOLY1LG0KENk/edit?usp=sharing">
               token distribution spreadsheet
-            </a>
+            </DefaultLink>
             .
           </p>
 
@@ -141,9 +134,9 @@ export const Claim = () => {
               adjusted between 1% and 10% of total supply via DAO vote. If you
               want to stop being a Teia DAO member, you can send all your TEIA
               tokens to the{' '}
-              <a href="https://tzkt.io/KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb/operations/">
+              <DefaultLink href="https://tzkt.io/KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb/operations/">
                 Teia Treasury Address
-              </a>
+              </DefaultLink>
               .
             </li>
 
@@ -230,10 +223,8 @@ export const Claim = () => {
                 <li>Clear your browser cache</li>
                 <li>
                   Switch the rpc node in the{' '}
-                  <a href="/settings" target="_blank" rel="noreferrer">
-                    config menu
-                  </a>{' '}
-                  , reload the page and try again.
+                  <DefaultLink href="/settings">config menu</DefaultLink>,
+                  reload the page and try again.
                 </li>
               </ol>
             </section>
