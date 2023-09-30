@@ -17,7 +17,7 @@ async function getTzktData(query, parameters = {}, debug = false) {
 }
 
 function reorderBigmapData(data, subKey = undefined, decode = false) {
-  const bigmapData = data?.length > 0 ? {} : undefined
+  const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
       (bigmapData[subKey ? item.key[subKey] : item.key] = decode

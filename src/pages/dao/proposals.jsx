@@ -5,7 +5,6 @@ import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
-import { Line } from '@atoms/line'
 import { hexToString } from '@utils/string'
 import styles from '@style'
 import { TeiaUserLink, TezosAddressLink, TokenLink, IpfsLink } from './links'
@@ -107,8 +106,13 @@ export function DaoProposals() {
           <h1>DAO proposals</h1>
         </div>
 
-        <section className={styles.section}>
-          <h1 className={styles.section_title}>Proposals to vote</h1>
+        <ProposalSection
+          header="Proposals to vote"
+          proposals={toVoteProposals}
+          canVote
+          canCancel
+          allwaysShow
+        >
           {toVoteProposals.length > 0 ? (
             <p>
               These proposals are still in the voting phase and you didn't vote
@@ -117,138 +121,107 @@ export function DaoProposals() {
           ) : (
             <p>There are no new proposals to vote at the moment.</p>
           )}
-          <ProposalList proposals={toVoteProposals} canVote canCancel />
-        </section>
+        </ProposalSection>
 
-        {votedProposals.length > 0 && (
-          <>
-            <Line />
+        <ProposalSection
+          header="Already voted proposals"
+          proposals={votedProposals}
+          canCancel
+        >
+          <p>
+            These proposals are still in the voting phase, but you already voted
+            them.
+          </p>
+        </ProposalSection>
 
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Already voted proposals</h1>
-              <p>
-                These proposals are still in the voting phase, but you already
-                voted them.
-              </p>
-              <ProposalList proposals={votedProposals} canCancel />
-            </section>
-          </>
-        )}
+        <ProposalSection
+          header="Proposals pending votes results evaluation"
+          proposals={pendingEvaluationProposals}
+          canEvaluate
+          canCancel
+        >
+          <p>
+            The voting period for these proposals has finished. You can evaluate
+            their result to see if they are approved or rejected.
+          </p>
+        </ProposalSection>
 
-        {pendingEvaluationProposals.length > 0 && (
-          <>
-            <Line />
+        <ProposalSection
+          header="Approved proposals"
+          proposals={waitingProposals}
+          canCancel
+        >
+          <p>
+            These are approved proposals that are still in the waiting phase.
+            Once the waiting phase finishes, you will be able to execute them.
+          </p>
+        </ProposalSection>
 
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>
-                Proposals pending votes results evaluation
-              </h1>
-              <p>
-                The voting period for these proposals has finished. You can
-                evaluate their result to see if they are approved or rejected.
-              </p>
-              <ProposalList
-                proposals={pendingEvaluationProposals}
-                canEvaluate
-                canCancel
-              />
-            </section>
-          </>
-        )}
+        <ProposalSection
+          header="Proposals to execute"
+          proposals={toExecuteProposals}
+          canExecute
+          canCancel
+        >
+          <p>These are approved proposals that can be exectuded.</p>
+        </ProposalSection>
 
-        {waitingProposals.length > 0 && (
-          <>
-            <Line />
+        <ProposalSection
+          header="Executed proposals"
+          proposals={executedProposals}
+        >
+          <p>These proposals have been executed already.</p>
+        </ProposalSection>
 
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Approved proposals</h1>
-              <p>
-                These are approved proposals that are still in the waiting
-                phase. Once the waiting phase finishes, you will be able to
-                execute them.
-              </p>
-              <ProposalList proposals={waitingProposals} canCancel />
-            </section>
-          </>
-        )}
+        <ProposalSection
+          header="Rejected proposals"
+          proposals={rejectedProposals}
+        >
+          <p>
+            These proposals didn't reach the required quorum and/or
+            supermajority. As a result, they were rejected by the DAO.
+          </p>
+        </ProposalSection>
 
-        {toExecuteProposals.length > 0 && (
-          <>
-            <Line />
-
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Proposals to execute</h1>
-              <p>These are approved proposals that can be exectuded.</p>
-              <ProposalList
-                proposals={toExecuteProposals}
-                canExecute
-                canCancel
-              />
-            </section>
-          </>
-        )}
-
-        {executedProposals.length > 0 && (
-          <>
-            <Line />
-
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Executed proposals</h1>
-              <p>These proposals have been executed already.</p>
-              <ProposalList proposals={executedProposals} />
-            </section>
-          </>
-        )}
-
-        {rejectedProposals.length > 0 && (
-          <>
-            <Line />
-
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Rejected proposals</h1>
-              <p>
-                These proposals didn't reach the required quorum and/or
-                supermajority. As a result, they were rejected by the DAO.
-              </p>
-              <ProposalList proposals={rejectedProposals} />
-            </section>
-          </>
-        )}
-
-        {cancelledProposals.length > 0 && (
-          <>
-            <Line />
-
-            <section className={styles.section}>
-              <h1 className={styles.section_title}>Cancelled proposals</h1>
-              <p>
-                These proposals were cancelled by the proposal issuer or the DAO
-                guardians.
-              </p>
-              <ProposalList proposals={cancelledProposals} />
-            </section>
-          </>
-        )}
+        <ProposalSection
+          header="Cancelled proposals"
+          proposals={cancelledProposals}
+        >
+          <p>
+            These proposals were cancelled by the proposal issuer or the DAO
+            guardians.
+          </p>
+        </ProposalSection>
       </div>
     </Page>
   )
 }
 
-function ProposalList(props) {
+function ProposalSection(props) {
+  if (props.proposals.length === 0 && !props.alwaysShow) {
+    return
+  }
+
   return (
-    <ul className={styles.proposal_list}>
-      {props.proposals.map((proposal) => (
-        <li key={proposal.id}>
-          <Proposal
-            proposal={proposal}
-            canVote={props.canVote}
-            canCancel={props.canCancel}
-            canEvaluate={props.canEvaluate}
-            canExecute={props.canExecute}
-          />
-        </li>
-      ))}
-    </ul>
+    <section className={styles.section}>
+      <h1 className={styles.section_title}>{props.header}</h1>
+
+      {props.children}
+
+      <ul className={styles.proposal_list}>
+        {props.proposals.map((proposal) => (
+          <li key={proposal.id}>
+            <Proposal
+              proposal={proposal}
+              canVote={props.canVote}
+              canCancel={props.canCancel}
+              canEvaluate={props.canEvaluate}
+              canExecute={props.canExecute}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -280,9 +253,11 @@ function ProposalInitialBlock(props) {
   const userVotes = useUserVotes(userAddress, daoStorage)
   const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
 
+  // Check if the user is a DAO member
+  const isDaoMember = userTokenBalance > 0
+
   // Get the user vote and the vote class name
-  const proposalId = props.proposal.id
-  const userVote = userVotes?.[proposalId]?.vote
+  const userVote = userVotes?.[props.proposal.id]?.vote
   const voteClassName = !userVote
     ? ''
     : userVote.yes
@@ -291,8 +266,8 @@ function ProposalInitialBlock(props) {
     ? styles.no_vote
     : styles.abstain_vote
 
-  // Get the community vote and the community vote class name
-  const userCommunityVote = userCommunityVotes?.[proposalId]
+  // Get the user community vote and the community vote class name
+  const userCommunityVote = userCommunityVotes?.[props.proposal.id]
   const communityVoteClassName = !userCommunityVote
     ? ''
     : userCommunityVote.yes
@@ -305,7 +280,7 @@ function ProposalInitialBlock(props) {
     <div>
       <p className={styles.proposal_timestamp}>{props.proposal.timestamp}</p>
 
-      {(userTokenBalance > 0 || userVotes) && (
+      {(isDaoMember || (userVotes && Object.keys(userVotes).length > 0)) && (
         <span className={styles.user_votes + ' ' + voteClassName} />
       )}
 
@@ -357,13 +332,13 @@ function ProposalDescriptionIntro(props) {
 
 function ProposalDescriptionContent(props) {
   // Write a different proposal description depending of the proposal kind
-  const proposal = props.proposal
+  const kind = props.proposal.kind
 
-  if (proposal.kind.text) {
+  if (kind.text) {
     return <p>Effect: Approves a text proposal.</p>
-  } else if (proposal.kind.transfer_mutez) {
+  } else if (kind.transfer_mutez) {
     // Extract the transfers information
-    const transfers = proposal.kind.transfer_mutez
+    const transfers = kind.transfer_mutez
     const totalAmount = transfers.reduce(
       (previous, current) => previous + parseInt(current.amount),
       0
@@ -401,11 +376,11 @@ function ProposalDescriptionContent(props) {
         </>
       )
     }
-  } else if (proposal.kind.transfer_token) {
+  } else if (kind.transfer_token) {
     // Extract the transfers information
-    const fa2 = proposal.kind.transfer_token.fa2
-    const tokenId = proposal.kind.transfer_token.token_id
-    const transfers = proposal.kind.transfer_token.distribution
+    const fa2 = kind.transfer_token.fa2
+    const tokenId = kind.transfer_token.token_id
+    const transfers = kind.transfer_token.distribution
     const nEditions = transfers.reduce(
       (previous, current) => previous + parseInt(current.amount),
       0
@@ -472,9 +447,7 @@ function ProposalDescriptionContent(props) {
   } else {
     // Transform the lambda function Michelson JSON code to Micheline code
     const parser = new Parser()
-    const michelsonCode = parser.parseJSON(
-      JSON.parse(proposal.kind.lambda_function)
-    )
+    const michelsonCode = parser.parseJSON(JSON.parse(kind.lambda_function))
     const michelineCode = emitMicheline(michelsonCode, {
       indent: '    ',
       newline: '\n',
@@ -672,14 +645,11 @@ function ProposalActions(props) {
   const evaluateVotingResult = useDaoStore((st) => st.evaluateVotingResult)
   const executeProposal = useDaoStore((st) => st.executeProposal)
 
-  // Check if the user is currently a DAO member
-  const isMember = userTokenBalance > 0
-
-  // Check if the user is the proposal issuer
-  const proposal = props.proposal
-  const isProposalIssuer = proposal.issuer === userAddress
+  // Check if the user is a DAO member
+  const isDaoMember = userTokenBalance > 0
 
   // Check if the user can vote proposals
+  const proposal = props.proposal
   const userCanVote =
     userTokenBalance >=
     governanceParameters[proposal.gp_index].min_amount / DAO_TOKEN_DECIMALS
@@ -734,51 +704,23 @@ function ProposalActions(props) {
         </div>
       )}
 
-      {props.canCancel &&
-        isProposalIssuer &&
-        !props.canEvaluate &&
-        !props.canExecute && (
-          <div className={styles.proposal_actions_buttons}>
-            <Button
-              shadow_box
-              onClick={() => cancelProposal(proposal.id, true)}
-            >
-              cancel
-            </Button>
-          </div>
+      <div className={styles.proposal_actions_buttons}>
+        {props.canCancel && proposal.issuer === userAddress && (
+          <Button shadow_box onClick={() => cancelProposal(proposal.id, true)}>
+            cancel
+          </Button>
         )}
-
-      {props.canEvaluate && isMember && (
-        <div className={styles.proposal_actions_buttons}>
-          {props.canCancel && isProposalIssuer && (
-            <Button
-              shadow_box
-              onClick={() => cancelProposal(proposal.id, true)}
-            >
-              cancel
-            </Button>
-          )}
+        {props.canEvaluate && isDaoMember && (
           <Button shadow_box onClick={() => evaluateVotingResult(proposal.id)}>
             evaluate
           </Button>
-        </div>
-      )}
-
-      {props.canExecute && isMember && (
-        <div className={styles.proposal_actions_buttons}>
-          {props.canCancel && isProposalIssuer && (
-            <Button
-              shadow_box
-              onClick={() => cancelProposal(proposal.id, true)}
-            >
-              cancel
-            </Button>
-          )}
+        )}
+        {props.canExecute && isDaoMember && (
           <Button shadow_box onClick={() => executeProposal(proposal.id)}>
             execute
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
