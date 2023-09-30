@@ -114,7 +114,7 @@ export const DaoParameters = () => {
               DAO Treasury balance: {Math.round(daoBalance)} tez and{' '}
               {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
             </li>
-            <li>Submited proposals: {Object.keys(proposals).length}</li>
+            <li>Total number of proposals: {Object.keys(proposals).length}</li>
             <li>
               Executed proposals:{' '}
               {Object.values(proposals).reduce(

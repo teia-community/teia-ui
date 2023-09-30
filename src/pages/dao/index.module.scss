@@ -242,7 +242,7 @@ details {
   gap: 0.5em;
   align-items: baseline;
 
-  @media (min-width: 816px) {
+  @include respond-to('desktop') {
     justify-content: flex-end;
   }
 }
