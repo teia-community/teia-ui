@@ -84,14 +84,6 @@
   }
 }
 
-.proposal_timestamp {
-  margin: 0.5em 0;
-
-  @media (min-width: 480px) {
-    padding-right: 1em;
-  }
-}
-
 input,
 .user_votes {
   display: inline-block;
@@ -121,16 +113,9 @@ input,
   background-color: lighten(yellow, 25%);
 }
 
-.proposal_description {
-  min-width: 20em;
-  margin: 0;
-
-  & p {
+.proposal_information {
+  p {
     margin: 0.5em 0;
-  }
-
-  @media (min-width: 480px) {
-    padding: 0 1em;
   }
 }
 
@@ -165,9 +150,7 @@ details {
 }
 
 .proposal_votes_summary {
-  margin: 1em 0 0.5em 0;
-  padding: 0 0.5em;
-  border-radius: 4px;
+  margin-top: 1em;
 }
 
 .votes_display_result {
@@ -220,19 +203,21 @@ details {
 
 .proposal {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: baseline;
+  gap: 0.5em;
+
+  @include respond-to('desktop') {
+    flex-direction: row;
+  }
 }
 
-.proposal_description {
-  flex: 1 1 0;
-}
-
-.proposal_extra_information {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
+.proposal_information {
+  width: 100%;
+  @include respond-to('desktop') {
+    flex: 1 1 0;
+  }
 }
 
 .proposal_actions_buttons {

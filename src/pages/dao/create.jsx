@@ -32,12 +32,13 @@ export function CreateDaoProposals() {
   )
 
   // Display the loading page information until all data is available
-  if (!daoStorage || !governanceParameters)
+  if (!daoStorage || !governanceParameters) {
     return (
       <Page title="Create DAO proposals" large>
         <Loading message="loading DAO information" />
       </Page>
     )
+  }
 
   // Get the current governance parameters
   const currentGovernanceParameters =
@@ -45,21 +46,27 @@ export function CreateDaoProposals() {
 
   // Return if the user doesn't have enough balance to create proposals
   if (
-    userTokenBalance == 0 ||
     currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS >
-      userTokenBalance
+    userTokenBalance
   ) {
     return (
       <Page title="Create DAO proposals" large>
         <div className={styles.container}>
           <div className={styles.headline}>
             <h1>Create DAO proposals</h1>
-            <p>
-              A minimum of{' '}
-              {currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS}{' '}
-              TEIA tokens are needed to create proposals.
-            </p>
           </div>
+
+          <section className={styles.section}>
+            {userTokenBalance == 0 ? (
+              <p>Only DAO members can create proposals.</p>
+            ) : (
+              <p>
+                A minimum of{' '}
+                {currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS}{' '}
+                TEIA tokens are needed to create proposals.
+              </p>
+            )}
+          </section>
         </div>
       </Page>
     )
