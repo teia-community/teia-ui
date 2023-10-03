@@ -1,4 +1,5 @@
 @import '@styles/mixins.scss';
+@import '@styles/variables.scss';
 
 .container {
   padding-top: 12px;
@@ -12,6 +13,10 @@
 
 .headline {
   text-align: center;
+
+  > p {
+    margin: 1em 0;
+  }
 }
 
 .section_title {
@@ -33,7 +38,7 @@
     text-decoration: underline;
   }
 
-  p {
+  > p {
     margin: 1em 0;
   }
 
@@ -46,10 +51,6 @@
     content: attr(counter) '.';
     position: absolute;
     margin-left: -1.5em;
-  }
-
-  button {
-    margin-bottom: 1em;
   }
 
   @include respond-to('desktop') {
@@ -84,15 +85,11 @@
   }
 }
 
-input,
 .user_votes {
   display: inline-block;
   min-width: 3em;
   padding: 0.5em;
   border-radius: 4px;
-}
-
-.user_votes {
   background-color: white;
   margin: 0 0.5em 0.5em 0;
 
@@ -137,7 +134,6 @@ details {
 
   table {
     display: inline-block;
-    background-color: white;
     margin: 0.5em 0 0 0;
     padding: 1em;
     border-radius: 4px;
@@ -192,8 +188,6 @@ details {
 
 .micheline_code {
   line-height: 1.4;
-  color: black;
-  background-color: white;
   margin: 1em 0;
   padding: 1em;
   border-radius: 4px;
@@ -232,81 +226,37 @@ details {
   }
 }
 
-.form_input {
-  max-width: 1000px;
+.proposal_form {
+  margin: 2em 0 3em 0;
 
-  input {
-    margin: 0.5em 0;
-  }
-
-  textarea {
-    margin-top: 0.5em;
+  input[type='file'] {
+    display: none;
   }
 }
 
-input[type='file'] {
-  background-color: white;
+.proposal_form_field {
+  margin: 1em 0;
 }
 
-input[type='number'] {
-  width: 13ch;
-  text-align: right;
+.proposal_description_label {
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: $letter-spacing;
+  color: inherit;
+  pointer-events: none;
+  border: 1px;
 }
 
-textarea {
+.upload_button {
+  display: block;
   width: 100%;
-  min-height: 10em;
-  resize: none;
+  margin-top: 1em;
+  padding: 6px;
+  border: 2px dashed var(--text-color);
+  text-align: center;
+  cursor: pointer;
 }
 
-@media (min-width: 480px) {
-  .tezos_wallet_input {
-    width: 38ch;
-  }
-
-  .contract_address_input {
-    width: 41ch;
-  }
-}
-
-.transfers_input {
-  display: block;
-  margin: 1em 0;
-
-  &:first-child {
-    margin-top: 1em;
-  }
-}
-
-.transfer_input {
-  display: block;
-  margin: 1em 0;
-  padding: 1em;
-  border-radius: 4px;
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 1em;
-
-  @media (min-width: 816px) {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-}
-
-.form-input {
-  flex: 1 1 auto;
+.transfers_fields {
+  margin-bottom: 1em;
 }

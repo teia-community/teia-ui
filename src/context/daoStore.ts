@@ -78,6 +78,8 @@ export const useDaoStore = create<DaoState>()(
             close()
           }
 
+          console.log(`File IPFS cid: ${added?.data.cid}`)
+
           return added?.data.cid
         },
         voteProposal: async (proposalId, vote, maxCheckpoints = null) => {
@@ -187,6 +189,14 @@ export const useDaoStore = create<DaoState>()(
           const step = useModalStore.getState().step
 
           const modalTitle = 'Create DAO proposal'
+
+          if (!title || title.length < 10) {
+            show(
+              modalTitle,
+              'The proposal title must be at least 10 charactes long'
+            )
+            return
+          }
 
           if (!descriptionIpfsPath) {
             show(

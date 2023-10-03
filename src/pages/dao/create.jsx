@@ -6,8 +6,8 @@ import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
+import { Input, Textarea } from '@atoms/input'
 import styles from '@style'
-import { IpfsLink } from './links'
 import { useTokenBalance, useStorage, useGovernanceParameters } from './hooks'
 
 export function CreateDaoProposals() {
@@ -19,241 +19,223 @@ export function CreateDaoProposals() {
   const userAddress = useUserStore((st) => st.address)
   const userTokenBalance = useTokenBalance(userAddress)
 
-  // Get the contract call methods from the DAO store
-  const createTextProposal = useDaoStore((st) => st.createTextProposal)
-  const createTransferMutezProposal = useDaoStore(
-    (st) => st.createTransferMutezProposal
-  )
-  const createTransferTokenProposal = useDaoStore(
-    (st) => st.createTransferTokenProposal
-  )
-  const createLambdaFunctionProposal = useDaoStore(
-    (st) => st.createLambdaFunctionProposal
-  )
-
   // Display the loading page information until all data is available
   if (!daoStorage || !governanceParameters) {
     return (
-      <Page title="Create DAO proposals" large>
-        <Loading message="loading DAO information" />
+      <Page title="Create new DAO proposals" large>
+        <Loading message="Loading DAO information" />
       </Page>
     )
   }
 
-  // Get the current governance parameters
+  // Get the minimum number of tokens needed to create proposals
   const currentGovernanceParameters =
     governanceParameters[daoStorage.gp_counter - 1]
+  const minimumTokensToCreateProposals =
+    currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS
 
-  // Return if the user doesn't have enough balance to create proposals
-  if (
-    currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS >
-    userTokenBalance
-  ) {
-    return (
-      <Page title="Create DAO proposals" large>
-        <div className={styles.container}>
-          <div className={styles.headline}>
-            <h1>Create DAO proposals</h1>
-          </div>
+  return (
+    <Page title="Create new DAO proposals" large>
+      <div className={styles.container}>
+        <div className={styles.headline}>
+          <h1>Create new DAO proposals</h1>
+        </div>
 
+        {userTokenBalance === 0 ||
+        userTokenBalance < minimumTokensToCreateProposals ? (
           <section className={styles.section}>
-            {userTokenBalance == 0 ? (
+            {userTokenBalance === 0 ? (
               <p>Only DAO members can create proposals.</p>
             ) : (
               <p>
-                A minimum of{' '}
-                {currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS}{' '}
-                TEIA tokens are needed to create proposals.
+                A minimum of {minimumTokensToCreateProposals} TEIA tokens are
+                needed to create proposals.
               </p>
             )}
           </section>
-        </div>
-      </Page>
-    )
-  }
+        ) : (
+          <>
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Text proposal</h1>
+              <p>
+                Use this form to create a proposal to approve a text or
+                decission.
+              </p>
+              <p>
+                This proposal has no direct consequences on the blockchain.
+                However, if accepted and executed, it should trigger some
+                off-chain actions by one of the Teia DAO members (e.g. change a
+                website UI, decide on a dog name, buy bread at the bakery). The
+                proposal description will be stored in IPFS for archival
+                purposes.
+              </p>
+              <TextProposalForm />
+            </section>
 
-  return (
-    <Page title="Create DAO proposals" large>
-      <div className={styles.container}>
-        <div className={styles.headline}>
-          <h1>Create DAO proposals</h1>
-        </div>
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Transfer tez proposal</h1>
+              <p>
+                Use this form to create a proposal that, if accepted, it will
+                transfer the specified amount of tez from the DAO treasury to a
+                list of tezos addresses. The proposal description will be stored
+                in IPFS for archival purposes.
+              </p>
+              <TransferTezProposalForm />
+            </section>
 
-        <section className={styles.section}>
-          <h1 className={styles.section_title}>Text proposal</h1>
-          <p>
-            Use this form to create a proposal to approve a text or decission.
-          </p>
-          <p>
-            This proposal has no direct consequences on the blockchain. However,
-            if accepted and executed, it should trigger some off-chain actions
-            by one of the Teia DAO members (e.g. change a website UI, decide on
-            a dog name, buy bread at the bakery). The proposal description will
-            be stored in IPFS for archival purposes.
-          </p>
-          <TextProposalForm handleSubmit={createTextProposal} />
-        </section>
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Transfer token proposal</h1>
+              <p>
+                Use this form to create a proposal that, if accepted, it will
+                transfer the specified amount of token editions from the DAO
+                treasury to a list of tezos addresses. The proposal description
+                will be stored in IPFS for archival purposes.
+              </p>
+              <TransferTokenProposalForm />
+            </section>
 
-        <Line />
-
-        <section className={styles.section}>
-          <h1 className={styles.section_title}>Transfer tez proposal</h1>
-          <p>
-            Use this form to create a proposal that, if accepted, it will
-            transfer the specified amount of tez from the DAO treasury to a list
-            of tezos addresses. The proposal description will be stored in IPFS
-            for archival purposes.
-          </p>
-          <TransferTezProposalForm handleSubmit={createTransferMutezProposal} />
-        </section>
-
-        <Line />
-
-        <section className={styles.section}>
-          <h1 className={styles.section_title}>Transfer token proposal</h1>
-          <p>
-            Use this form to create a proposal that, if accepted, it will
-            transfer the specified amount of token editions from the DAO
-            treasury to a list of tezos addresses. The proposal description will
-            be stored in IPFS for archival purposes.
-          </p>
-          <TransferTokenProposalForm
-            handleSubmit={createTransferTokenProposal}
-          />
-        </section>
-
-        <Line />
-
-        <section className={styles.section}>
-          <h1 className={styles.section_title}>Lambda function proposal</h1>
-          <p>
-            Use this form to create a proposal that, if accepted, it will
-            execute some smart contract code stored in a Michelson lambda
-            function. The proposal description will be stored in IPFS for
-            archival purposes.
-          </p>
-          <p>
-            This proposal could be used to administer other smart contracts of
-            which the DAO is the administrator (e.g. to update some smart
-            contract fees), or to execute entry points from other contracts
-            (e.g. swap or collect a token, vote in anoter DAO / multisig).
-          </p>
-          <p className={styles.create_proposal_warning}>
-            Warning: Executing arbitrary smart contract code could compromise
-            the DAO or have unexpected consequences. The lambda function code
-            should have been revised by some trusted smart contract expert
-            before the proposal is accepted and executed.
-          </p>
-          <LambdaFunctionProposalForm
-            handleSubmit={createLambdaFunctionProposal}
-          />
-        </section>
+            <section className={styles.section}>
+              <h1 className={styles.section_title}>Lambda function proposal</h1>
+              <p>
+                Use this form to create a proposal that, if accepted, it will
+                execute some smart contract code stored in a Michelson lambda
+                function. The proposal description will be stored in IPFS for
+                archival purposes.
+              </p>
+              <p>
+                This proposal could be used to administer other smart contracts
+                of which the DAO is the administrator (e.g. to update the Teia
+                marketplace fees), or to execute entry points from other
+                contracts (e.g. swap or collect a token, vote in anoter DAO /
+                multisig).
+              </p>
+              <p>
+                Warning: Executing arbitrary smart contract code could
+                compromise the DAO or have unexpected consequences. The lambda
+                function code should have been revised by some trusted smart
+                contract expert before the proposal is accepted and executed.
+              </p>
+              <LambdaFunctionProposalForm />
+            </section>
+          </>
+        )}
       </div>
     </Page>
   )
 }
 
-function GeneralProposalInputs(props) {
+function CommonProposalFields({
+  title,
+  setTitle,
+  descriptionIpfsCid,
+  setDescriptionIpfsCid,
+}) {
   // Set the component state
   const [descriptionFile, setDescriptionFile] = useState(undefined)
 
-  // Get the upload file method from the DAO store
+  // Get the upload method from the DAO store
   const uploadFileToIpfs = useDaoStore((st) => st.uploadFileToIpfs)
 
   // Define the on change handler
   const handleChange = (e) => {
     setDescriptionFile(e.target.files[0])
-    props.setDescriptionIpfsPath(undefined)
+    setDescriptionIpfsCid('')
   }
 
   // Define the on click handler
-  const handleClick = async (e) => {
-    e.preventDefault()
-
-    // Update the component state
-    props.setDescriptionIpfsPath(await uploadFileToIpfs(descriptionFile, true))
+  const handleClick = async () => {
+    if (descriptionIpfsCid !== '') return
+    setDescriptionIpfsCid(await uploadFileToIpfs(descriptionFile, true))
   }
 
   return (
     <>
-      <label>
-        Proposal title:{' '}
-        <input
-          type="text"
-          placeholder="write here"
-          spellCheck="false"
-          minLength="1"
-          value={props.title}
-          onChange={(e) => props.setTitle(e.target.value)}
-        />
-      </label>
-      <br />
-      <label>
-        Proposal description: <input type="file" onChange={handleChange} />
-      </label>
-      {descriptionFile && (
-        <div>
-          <Button shadow_box onClick={handleClick}>
-            {props.descriptionIpfsPath ? 'uploaded' : 'upload to IPFS'}
-          </Button>{' '}
-          {props.descriptionIpfsPath && (
-            <IpfsLink cid={props.descriptionIpfsPath} />
-          )}
-        </div>
-      )}
+      <Input
+        type="text"
+        name="proposalTitle"
+        label="Proposal title"
+        placeholder="Write here a meaningful title for your proposal"
+        maxlength="500"
+        value={title}
+        onChange={setTitle}
+        className={styles.proposal_form_field}
+      >
+        <Line />
+      </Input>
+
+      <div className={styles.proposal_form_field}>
+        <p className={styles.proposal_description_label}>
+          Proposal description
+        </p>
+        <label className={styles.upload_button}>
+          {descriptionFile
+            ? descriptionFile.name
+            : 'Select the file with the proposal description'}
+          <input type="file" onChange={handleChange} />
+        </label>
+        {descriptionFile && (
+          <div className={styles.upload_button} onClick={handleClick}>
+            {descriptionIpfsCid !== ''
+              ? `${descriptionFile.name} has been uploaded to IPFS`
+              : `Upload ${descriptionFile.name} to IPFS`}
+          </div>
+        )}
+      </div>
     </>
   )
 }
 
-function TextProposalForm(props) {
+function TextProposalForm() {
   // Set the component state
   const [title, setTitle] = useState('')
-  const [descriptionIpfsPath, setDescriptionIpfsPath] = useState(undefined)
+  const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
+
+  // Get the create proposal method from the DAO store
+  const createTextProposal = useDaoStore((st) => st.createTextProposal)
 
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.handleSubmit(title, descriptionIpfsPath)
+    createTextProposal(title, descriptionIpfsCid)
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.form_input}>
-        <GeneralProposalInputs
-          title={title}
-          setTitle={setTitle}
-          descriptionIpfsPath={descriptionIpfsPath}
-          setDescriptionIpfsPath={setDescriptionIpfsPath}
-        />
-      </div>
-      <Button shadow_box>send proposal</Button>
+    <form className={styles.proposal_form} onSubmit={handleSubmit}>
+      <CommonProposalFields
+        title={title}
+        setTitle={setTitle}
+        descriptionIpfsCid={descriptionIpfsCid}
+        setDescriptionIpfsCid={setDescriptionIpfsCid}
+      />
+
+      <Button shadow_box fit>
+        Submit proposal
+      </Button>
     </form>
   )
 }
 
-function TransferTezProposalForm(props) {
+function TransferTezProposalForm() {
   // Set the component state
   const [title, setTitle] = useState('')
-  const [descriptionIpfsPath, setDescriptionIpfsPath] = useState(undefined)
+  const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
   const [transfers, setTransfers] = useState([{ amount: 0, destination: '' }])
+
+  // Get the create proposal method from the DAO store
+  const createTransferMutezProposal = useDaoStore(
+    (st) => st.createTransferMutezProposal
+  )
 
   // Define the on change handler
   const handleChange = (index, parameter, value) => {
     // Create a new transfers array
-    const newTransfers = transfers.map((transfer, i) => {
-      // Create a new transfer
-      const newTransfer = {
-        amount: transfer.amount,
-        destination: transfer.destination,
-      }
+    const newTransfers = transfers.map((transfer) => ({
+      amount: transfer.amount,
+      destination: transfer.destination,
+    }))
 
-      // Update the value if we are at the correct index position
-      if (i === index) {
-        newTransfer[parameter] = value
-      }
-
-      return newTransfer
-    })
+    // Update the value
+    newTransfers[index][parameter] = value
 
     // Update the component state
     setTransfers(newTransfers)
@@ -283,9 +265,9 @@ function TransferTezProposalForm(props) {
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.handleSubmit(
+    createTransferMutezProposal(
       title,
-      descriptionIpfsPath,
+      descriptionIpfsCid,
       transfers.map((transfer) => ({
         amount: transfer.amount * 1000000,
         destination: transfer.destination,
@@ -294,49 +276,42 @@ function TransferTezProposalForm(props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.form_input}>
-        <GeneralProposalInputs
-          title={title}
-          setTitle={setTitle}
-          descriptionIpfsPath={descriptionIpfsPath}
-          setDescriptionIpfsPath={setDescriptionIpfsPath}
-        />
-        <br />
-        <div className={styles.transfers_input}>
-          {transfers.map((transfer, index) => (
-            <div key={index} className={styles.transfer_input}>
-              <label>
-                Amount to transfer (ꜩ):{' '}
-                <input
-                  type="number"
-                  min="0"
-                  step="0.000001"
-                  value={transfer.amount}
-                  onChange={(e) =>
-                    handleChange(index, 'amount', e.target.value)
-                  }
-                />
-              </label>
-              <br />
-              <label>
-                Destination address:{' '}
-                <input
-                  type="text"
-                  placeholder="tz1..."
-                  spellCheck="false"
-                  minLength="36"
-                  maxLength="36"
-                  className={styles.tezos_wallet_input}
-                  value={transfer.destination}
-                  onChange={(e) =>
-                    handleChange(index, 'destination', e.target.value)
-                  }
-                />
-              </label>
-            </div>
-          ))}
-        </div>
+    <form className={styles.proposal_form} onSubmit={handleSubmit}>
+      <CommonProposalFields
+        title={title}
+        setTitle={setTitle}
+        descriptionIpfsCid={descriptionIpfsCid}
+        setDescriptionIpfsCid={setDescriptionIpfsCid}
+      />
+
+      <div className={styles.transfers_fields}>
+        {transfers.map((transfer, index) => (
+          <div key={index}>
+            <Input
+              type="number"
+              name={`transferTezAmount${index}`}
+              label={`Amount to transfer in tez (${index + 1})`}
+              placeholder="0"
+              value={transfer.amount}
+              onChange={(value) => handleChange(index, 'amount', value)}
+              className={styles.proposal_form_field}
+            >
+              <Line />
+            </Input>
+
+            <Input
+              type="text"
+              name={`transferTezDestination${index}`}
+              label={`Destination address (${index + 1})`}
+              placeholder="tz1..."
+              value={transfer.destination}
+              onChange={(value) => handleChange(index, 'destination', value)}
+              className={styles.proposal_form_field}
+            >
+              <Line />
+            </Input>
+          </div>
+        ))}
         <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
           +
         </Button>
@@ -344,36 +319,37 @@ function TransferTezProposalForm(props) {
           -
         </Button>
       </div>
-      <Button shadow_box>send proposal</Button>
+
+      <Button shadow_box fit>
+        Submit proposal
+      </Button>
     </form>
   )
 }
 
-function TransferTokenProposalForm(props) {
+function TransferTokenProposalForm() {
   // Set the component state
   const [title, setTitle] = useState('')
-  const [descriptionIpfsPath, setDescriptionIpfsPath] = useState(undefined)
+  const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
   const [tokenContract, setTokenContract] = useState('')
-  const [tokenId, setTokenId] = useState('')
+  const [tokenId, setTokenId] = useState(0)
   const [transfers, setTransfers] = useState([{ amount: 0, destination: '' }])
+
+  // Get the create proposal method from the DAO store
+  const createTransferTokenProposal = useDaoStore(
+    (st) => st.createTransferTokenProposal
+  )
 
   // Define the on change handler
   const handleChange = (index, parameter, value) => {
     // Create a new transfers array
-    const newTransfers = transfers.map((transfer, i) => {
-      // Create a new transfer
-      const newTransfer = {
-        amount: transfer.amount,
-        destination: transfer.destination,
-      }
+    const newTransfers = transfers.map((transfer) => ({
+      amount: transfer.amount,
+      destination: transfer.destination,
+    }))
 
-      // Update the value if we are at the correct index position
-      if (i === index) {
-        newTransfer[parameter] = value
-      }
-
-      return newTransfer
-    })
+    // Update the value
+    newTransfers[index][parameter] = value
 
     // Update the component state
     setTransfers(newTransfers)
@@ -412,9 +388,9 @@ function TransferTokenProposalForm(props) {
     }))
 
     // Submit the proposal
-    props.handleSubmit(
+    createTransferTokenProposal(
       title,
-      descriptionIpfsPath,
+      descriptionIpfsCid,
       tokenContract,
       tokenId,
       newTransfers
@@ -422,85 +398,66 @@ function TransferTokenProposalForm(props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.form_input}>
-        <GeneralProposalInputs
-          title={title}
-          setTitle={setTitle}
-          descriptionIpfsPath={descriptionIpfsPath}
-          setDescriptionIpfsPath={setDescriptionIpfsPath}
-        />
-        <br />
-        <label>
-          Token contract address:{' '}
-          <input
-            type="text"
-            placeholder="KT..."
-            list="tokenContracts"
-            spellCheck="false"
-            minLength="36"
-            maxLength="36"
-            className={styles.contract_address_input}
-            value={tokenContract}
-            onMouseDown={() => setTokenContract('')}
-            onChange={(e) => setTokenContract(e.target.value)}
-          />
-          <datalist id="tokenContracts">
-            <option value=""></option>
-            {TOKENS.map((token) => (
-              <option key={token.fa2} value={token.fa2}>
-                {token.name}
-              </option>
-            ))}
-          </datalist>
-        </label>
-        <br />
-        <label>
-          Token Id:{' '}
-          <input
-            type="number"
-            placeholder="0"
-            min="0"
-            step="1"
-            value={tokenId}
-            onChange={(e) => setTokenId(e.target.value)}
-          />
-        </label>
-        <br />
-        <div className={styles.transfers_input}>
-          {transfers.map((transfer, index) => (
-            <div key={index} className={styles.transfer_input}>
-              <label>
-                Token editions:{' '}
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={transfer.amount}
-                  onChange={(e) =>
-                    handleChange(index, 'amount', e.target.value)
-                  }
-                />
-              </label>
-              <br />
-              <label>
-                Destination address:{' '}
-                <input
-                  type="text"
-                  placeholder="tz1..."
-                  spellCheck="false"
-                  minLength="36"
-                  maxLength="36"
-                  className={styles.tezos_wallet_input}
-                  value={transfer.destination}
-                  onChange={(e) =>
-                    handleChange(index, 'destination', e.target.value)
-                  }
-                />
-              </label>
-            </div>
-          ))}
-        </div>
+    <form className={styles.proposal_form} onSubmit={handleSubmit}>
+      <CommonProposalFields
+        title={title}
+        setTitle={setTitle}
+        descriptionIpfsCid={descriptionIpfsCid}
+        setDescriptionIpfsCid={setDescriptionIpfsCid}
+      />
+
+      <Input
+        type="text"
+        name="tokenContractAddress"
+        label="Token contract address"
+        placeholder="KT..."
+        value={tokenContract}
+        onChange={setTokenContract}
+        className={styles.proposal_form_field}
+      >
+        <Line />
+      </Input>
+
+      <Input
+        type="number"
+        name="tokenId"
+        label="Token id"
+        placeholder="0"
+        step="1"
+        value={tokenId}
+        onChange={setTokenId}
+        className={styles.proposal_form_field}
+      >
+        <Line />
+      </Input>
+
+      <div className={styles.transfers_fields}>
+        {transfers.map((transfer, index) => (
+          <div key={index}>
+            <Input
+              type="number"
+              name={`tokenEditions${index}`}
+              label={`Token editions (${index})`}
+              placeholder="0"
+              value={transfer.amount}
+              onChange={(value) => handleChange(index, 'amount', value)}
+              className={styles.proposal_form_field}
+            >
+              <Line />
+            </Input>
+            <Input
+              type="text"
+              name={`tokenDestination${index}`}
+              label={`Destination address (${index})`}
+              placeholder="tz1..."
+              value={transfer.destination}
+              onChange={(value) => handleChange(index, 'destination', value)}
+              className={styles.proposal_form_field}
+            >
+              <Line />
+            </Input>
+          </div>
+        ))}
         <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
           +
         </Button>
@@ -508,44 +465,54 @@ function TransferTokenProposalForm(props) {
           -
         </Button>
       </div>
-      <Button shadow_box>send proposal</Button>
+
+      <Button shadow_box fit>
+        Submit proposal
+      </Button>
     </form>
   )
 }
 
-function LambdaFunctionProposalForm(props) {
+function LambdaFunctionProposalForm() {
   // Set the component state
   const [title, setTitle] = useState('')
-  const [descriptionIpfsPath, setDescriptionIpfsPath] = useState(undefined)
+  const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
   const [michelineCode, setMichelineCode] = useState('')
+
+  // Get the create proposal method from the DAO store
+  const createLambdaFunctionProposal = useDaoStore(
+    (st) => st.createLambdaFunctionProposal
+  )
 
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.handleSubmit(title, descriptionIpfsPath, michelineCode)
+    createLambdaFunctionProposal(title, descriptionIpfsCid, michelineCode)
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.form_input}>
-        <GeneralProposalInputs
-          title={title}
-          setTitle={setTitle}
-          descriptionIpfsPath={descriptionIpfsPath}
-          setDescriptionIpfsPath={setDescriptionIpfsPath}
-        />
-        <br />
-        <label className={styles.form_input}>
-          Lambda function code in Micheline format:{' '}
-          <textarea
-            className={styles.micheline_code}
-            spellCheck="false"
-            value={michelineCode}
-            onChange={(e) => setMichelineCode(e.target.value)}
-          />
-        </label>
-      </div>
-      <Button shadow_box>send proposal</Button>
+    <form className={styles.proposal_form} onSubmit={handleSubmit}>
+      <CommonProposalFields
+        title={title}
+        setTitle={setTitle}
+        descriptionIpfsCid={descriptionIpfsCid}
+        setDescriptionIpfsCid={setDescriptionIpfsCid}
+      />
+
+      <Textarea
+        name="lambdaFunctionCode"
+        label="Lambda function code in Micheline format"
+        placeholder="Write here the lambda function code"
+        value={michelineCode}
+        onChange={(e) => setMichelineCode(e.value)}
+        className={styles.proposal_form_field}
+      >
+        <Line />
+      </Textarea>
+
+      <Button shadow_box fit>
+        Submit proposal
+      </Button>
     </form>
   )
 }
