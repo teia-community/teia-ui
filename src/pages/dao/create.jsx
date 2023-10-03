@@ -143,7 +143,8 @@ function CommonProposalFields({
   }
 
   // Define the on click handler
-  const handleClick = async () => {
+  const handleClick = async (e) => {
+    e.preventDefault()
     if (descriptionIpfsCid !== '') return
     setDescriptionIpfsCid(await uploadFileToIpfs(descriptionFile, true))
   }
@@ -174,11 +175,11 @@ function CommonProposalFields({
           <input type="file" onChange={handleChange} />
         </label>
         {descriptionFile && (
-          <div className={styles.upload_button} onClick={handleClick}>
+          <button className={styles.upload_button} onClick={handleClick}>
             {descriptionIpfsCid !== ''
               ? `${descriptionFile.name} has been uploaded to IPFS`
               : `Upload ${descriptionFile.name} to IPFS`}
-          </div>
+          </button>
         )}
       </div>
     </>
