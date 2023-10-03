@@ -42,7 +42,7 @@ export const DaoParameters = () => {
   if (!daoStorage || !governanceParameters || !representatives || !proposals) {
     return (
       <Page title="DAO main parameters" large>
-        <Loading message="loading DAO information" />
+        <Loading message="Loading DAO information" />
       </Page>
     )
   }

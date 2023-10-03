@@ -3,95 +3,85 @@ import { walletPreview } from '@utils/string'
 import { TOKENS } from '@constants'
 import styles from '@style'
 
-export function TeiaUserLink(props) {
+export function TeiaUserLink({ address, alias, shorten, className, children }) {
   return (
-    <a
-      href={`/tz/${props.address}`}
-      className={props.className ? props.className : ''}
-    >
-      {props.children}
-      {props.alias
-        ? props.alias
-        : props.shorten
-        ? walletPreview(props.address)
-        : props.address}
+    <a href={`/tz/${address}`} className={className ? className : ''}>
+      {children}
+      {alias ? alias : shorten ? walletPreview(address) : address}
     </a>
   )
 }
 
-export function DefaultLink(props) {
+export function DefaultLink({ href, className, children }) {
   return (
     <a
-      href={props.href}
+      href={href}
       target="_blank"
       rel="noreferrer"
-      className={props.className ? props.className : ''}
+      className={className ? className : ''}
     >
-      {props.children}
+      {children}
     </a>
   )
 }
 
-export function TzktLink(props) {
+export function TzktLink({ link, className, children }) {
   return (
     <DefaultLink
-      href={`https://tzkt.io/${props.link}`}
-      className={props.className ? props.className : ''}
+      href={`https://tzkt.io/${link}`}
+      className={className ? className : ''}
     >
-      {props.children}
+      {children}
     </DefaultLink>
   )
 }
 
-export function TezosAddressLink(props) {
+export function TezosAddressLink({
+  address,
+  alias,
+  shorten,
+  className,
+  children,
+}) {
   return (
-    <TzktLink
-      link={props.address}
-      className={props.className ? props.className : ''}
-    >
-      {props.children}
-      {props.alias
-        ? props.alias
-        : props.shorten
-        ? walletPreview(props.address)
-        : props.address}
+    <TzktLink link={address} className={className ? className : ''}>
+      {children}
+      {alias ? alias : shorten ? walletPreview(address) : address}
     </TzktLink>
   )
 }
 
-export function TokenLink(props) {
-  const token = TOKENS.find((token) => token.fa2 === props.fa2)
+export function TokenLink({ fa2, id, className, children }) {
+  const token = TOKENS.find((token) => token.fa2 === fa2)
 
   if (token?.website) {
     return (
       <DefaultLink
-        href={token.website + props.id}
-        className={props.className ? props.className : ''}
+        href={token.website + id}
+        className={className ? className : ''}
       >
-        {props.children}
+        {children}
       </DefaultLink>
     )
   } else {
     return (
       <TzktLink
-        link={`${props.fa2}/tokens/${props.id}`}
-        className={props.className ? props.className : ''}
+        link={`${fa2}/tokens/${id}`}
+        className={className ? className : ''}
       >
-        {props.children}
+        {children}
       </TzktLink>
     )
   }
 }
 
-export function IpfsLink(props) {
+export function IpfsLink({ cid, className, children }) {
   return (
     <DefaultLink
-      href={`https://ipfs.io/ipfs/${props.cid}`}
-      className={
-        styles.ipfs_link + ' ' + (props.className ? props.className : '')
-      }
+      href={`https://ipfs.io/ipfs/${cid}`}
+      className={styles.ipfs_link + ' ' + (className ? className : '')}
     >
-      {props.children ? props.children : props.cid}
+      {children ? children : cid}
     </DefaultLink>
   )
 }

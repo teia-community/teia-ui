@@ -50,7 +50,7 @@ export function DaoProposals() {
     // Loop over the complete list of proposals
     const now = new Date()
 
-    for (const proposalId in proposals) {
+    for (const proposalId of Object.keys(proposals).reverse()) {
       // Store the proposal id and the issuer alias inside the proposal details
       const proposal = proposals[proposalId]
       proposal.id = proposalId
@@ -113,7 +113,7 @@ export function DaoProposals() {
           proposals={toVoteProposals}
           canVote
           canCancel
-          allwaysShow
+          alwaysShow
         >
           {toVoteProposals.length > 0 ? (
             <p>
@@ -245,9 +245,8 @@ function Proposal(props) {
   )
 }
 
-function ProposalDescription(props) {
+function ProposalDescription({ proposal }) {
   // Get the proposal title and description
-  const proposal = props.proposal
   const title = hexToString(proposal.title)
   const description = hexToString(proposal.description)
 
@@ -271,15 +270,17 @@ function ProposalDescription(props) {
         on {getWordDate(proposal.timestamp)}.
       </p>
 
-      {!proposal.voteFinished && (
+      {proposal.status.open && !proposal.voteFinished && (
         <p>Voting period ends on {getWordDate(proposal.voteExpirationTime)}.</p>
       )}
 
-      {proposal.voteFinished && !proposal.waitFinished && (
-        <p>
-          Waiting period ends on {getWordDate(proposal.waitExpirationTime)}.
-        </p>
-      )}
+      {proposal.status.open &&
+        proposal.voteFinished &&
+        !proposal.waitFinished(
+          <p>
+            Waiting period ends on {getWordDate(proposal.waitExpirationTime)}.
+          </p>
+        )}
 
       <p>
         Description: {cid ? <IpfsLink cid={cid}>ipfs</IpfsLink> : description}
@@ -290,9 +291,7 @@ function ProposalDescription(props) {
   )
 }
 
-function ProposalContent(props) {
-  const content = props.content
-
+function ProposalContent({ content }) {
   if (content.text) {
     return <p>Effect: Approves a text proposal.</p>
   } else if (content.transfer_mutez) {
@@ -430,7 +429,7 @@ function ProposalContent(props) {
   }
 }
 
-function ProposalVotesSummary(props) {
+function ProposalVotesSummary({ proposal }) {
   // Get all the required DAO information
   const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
   const governanceParameters = useGovernanceParameters(daoStorage)
@@ -444,7 +443,6 @@ function ProposalVotesSummary(props) {
   const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
 
   // Get the proposal quorum and governance parameters
-  const proposal = props.proposal
   const quorum = proposal.quorum
   const proposalGovernanceParameters = governanceParameters[proposal.gp_index]
 
@@ -578,16 +576,15 @@ function ProposalVotesSummary(props) {
   )
 }
 
-function VotesDisplay(props) {
-  const totalVotes =
-    parseInt(props.yes) + parseInt(props.no) + parseInt(props.abstain)
-  const yesPercent = (100 * props.yes) / totalVotes
-  const noPercent = (100 * props.no) / totalVotes
-  const abstainPercent = (100 * props.abstain) / totalVotes
+function VotesDisplay({ title, yes, no, abstain }) {
+  const totalVotes = parseInt(yes) + parseInt(no) + parseInt(abstain)
+  const yesPercent = (100 * yes) / totalVotes
+  const noPercent = (100 * no) / totalVotes
+  const abstainPercent = (100 * abstain) / totalVotes
 
   return (
     <div className={styles.votes_display}>
-      <p className={styles.votes_display_title}>{props.title}</p>
+      <p className={styles.votes_display_title}>{title}</p>
       <div className={styles.votes_display_result}>
         {totalVotes === 0 && (
           <div
@@ -602,7 +599,7 @@ function VotesDisplay(props) {
             className={styles.vote_display_yes}
             style={{ width: yesPercent + '%' }}
           >
-            {Math.round(props.yes)}
+            {Math.round(yes)}
           </div>
         )}
         {noPercent > 0 && (
@@ -610,7 +607,7 @@ function VotesDisplay(props) {
             className={styles.vote_display_no}
             style={{ width: noPercent + '%' }}
           >
-            {Math.round(props.no)}
+            {Math.round(no)}
           </div>
         )}
         {abstainPercent > 0 && (
@@ -618,7 +615,7 @@ function VotesDisplay(props) {
             className={styles.vote_display_abstain}
             style={{ width: abstainPercent + '%' }}
           >
-            {Math.round(props.abstain)}
+            {Math.round(abstain)}
           </div>
         )}
       </div>
