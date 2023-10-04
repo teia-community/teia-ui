@@ -3,12 +3,11 @@ import { Parser, emitMicheline } from '@taquito/michel-codec'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
-import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
-import { TeiaUserLink, TezosAddressLink, TokenLink, IpfsLink } from './links'
+import { TeiaUserLink, TezosAddressLink, TokenLink, IpfsLink } from '../links'
 import {
   useTokenBalance,
   useStorage,
@@ -18,7 +17,7 @@ import {
   useUserVotes,
   useCommunityVotes,
   useUsersAliases,
-} from './hooks'
+} from '../hooks'
 
 export function DaoProposals() {
   // Get all the required DAO information
@@ -102,100 +101,88 @@ export function DaoProposals() {
   }
 
   return (
-    <Page title="DAO proposals" large>
-      <div className={styles.container}>
-        <div className={styles.headline}>
-          <h1>DAO proposals</h1>
-        </div>
-
-        <ProposalGroup
-          header="Proposals to vote"
-          proposals={toVoteProposals}
-          canVote
-          canCancel
-          alwaysShow
-        >
-          {toVoteProposals.length > 0 ? (
-            <p>
-              These proposals are still in the voting phase and you didn't vote
-              for them yet.
-            </p>
-          ) : (
-            <p>There are no new proposals to vote at the moment.</p>
-          )}
-        </ProposalGroup>
-
-        <ProposalGroup
-          header="Already voted proposals"
-          proposals={votedProposals}
-          canCancel
-        >
+    <div className={styles.container}>
+      <ProposalGroup
+        header="Proposals to vote"
+        proposals={toVoteProposals}
+        canVote
+        canCancel
+        alwaysShow
+      >
+        {toVoteProposals.length > 0 ? (
           <p>
-            These proposals are still in the voting phase, but you already voted
-            them.
+            These proposals are still in the voting phase and you didn't vote
+            for them yet.
           </p>
-        </ProposalGroup>
+        ) : (
+          <p>There are no new proposals to vote at the moment.</p>
+        )}
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Proposals pending votes results evaluation"
-          proposals={pendingEvaluationProposals}
-          canEvaluate
-          canCancel
-        >
-          <p>
-            The voting period for these proposals has finished. You can evaluate
-            their result to see if they are approved or rejected.
-          </p>
-        </ProposalGroup>
+      <ProposalGroup
+        header="Already voted proposals"
+        proposals={votedProposals}
+        canCancel
+      >
+        <p>
+          These proposals are still in the voting phase, but you already voted
+          them.
+        </p>
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Approved proposals"
-          proposals={waitingProposals}
-          canCancel
-        >
-          <p>
-            These are approved proposals that are still in the waiting phase.
-            Once the waiting phase finishes, you will be able to execute them.
-          </p>
-        </ProposalGroup>
+      <ProposalGroup
+        header="Proposals pending votes results evaluation"
+        proposals={pendingEvaluationProposals}
+        canEvaluate
+        canCancel
+      >
+        <p>
+          The voting period for these proposals has finished. You can evaluate
+          their result to see if they are approved or rejected.
+        </p>
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Proposals to execute"
-          proposals={toExecuteProposals}
-          canExecute
-          canCancel
-        >
-          <p>These are approved proposals that can be exectuded.</p>
-        </ProposalGroup>
+      <ProposalGroup
+        header="Approved proposals"
+        proposals={waitingProposals}
+        canCancel
+      >
+        <p>
+          These are approved proposals that are still in the waiting phase. Once
+          the waiting phase finishes, you will be able to execute them.
+        </p>
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Executed proposals"
-          proposals={executedProposals}
-        >
-          <p>These proposals have been executed already.</p>
-        </ProposalGroup>
+      <ProposalGroup
+        header="Proposals to execute"
+        proposals={toExecuteProposals}
+        canExecute
+        canCancel
+      >
+        <p>These are approved proposals that can be exectuded.</p>
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Rejected proposals"
-          proposals={rejectedProposals}
-        >
-          <p>
-            These proposals didn't reach the required quorum and/or
-            supermajority. As a result, they were rejected by the DAO.
-          </p>
-        </ProposalGroup>
+      <ProposalGroup header="Executed proposals" proposals={executedProposals}>
+        <p>These proposals have been executed already.</p>
+      </ProposalGroup>
 
-        <ProposalGroup
-          header="Cancelled proposals"
-          proposals={cancelledProposals}
-        >
-          <p>
-            These proposals were cancelled by the proposal issuer or the DAO
-            guardians.
-          </p>
-        </ProposalGroup>
-      </div>
-    </Page>
+      <ProposalGroup header="Rejected proposals" proposals={rejectedProposals}>
+        <p>
+          These proposals didn't reach the required quorum and/or supermajority.
+          As a result, they were rejected by the DAO.
+        </p>
+      </ProposalGroup>
+
+      <ProposalGroup
+        header="Cancelled proposals"
+        proposals={cancelledProposals}
+      >
+        <p>
+          These proposals were cancelled by the proposal issuer or the DAO
+          guardians.
+        </p>
+      </ProposalGroup>
+    </div>
   )
 }
 
@@ -276,7 +263,7 @@ function ProposalDescription({ proposal }) {
 
       {proposal.status.open &&
         proposal.voteFinished &&
-        !proposal.waitFinished(
+        !proposal.waitFinished && (
           <p>
             Waiting period ends on {getWordDate(proposal.waitExpirationTime)}.
           </p>
