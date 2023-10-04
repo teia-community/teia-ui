@@ -72,20 +72,8 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="DAO parameters"
+            label="DAO governance"
             route="dao"
-          />
-
-          <MenuItem
-            className={styles.menu_label}
-            label="DAO proposals"
-            route="proposals"
-          />
-
-          <MenuItem
-            className={styles.menu_label}
-            label="Create DAO proposals"
-            route="create"
           />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
