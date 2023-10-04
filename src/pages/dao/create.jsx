@@ -6,7 +6,7 @@ import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
-import { Input, Textarea } from '@atoms/input'
+import { DaoInput, Textarea } from '@atoms/input'
 import styles from '@style'
 import { useTokenBalance, useStorage, useGovernanceParameters } from './hooks'
 
@@ -151,18 +151,18 @@ function CommonProposalFields({
 
   return (
     <>
-      <Input
+      <DaoInput
         type="text"
-        name="proposalTitle"
         label="Proposal title"
         placeholder="Write here a meaningful title for your proposal"
+        minlength="10"
         maxlength="500"
         value={title}
         onChange={setTitle}
         className={styles.proposal_form_field}
       >
         <Line />
-      </Input>
+      </DaoInput>
 
       <div className={styles.proposal_form_field}>
         <p className={styles.proposal_description_label}>
@@ -220,7 +220,7 @@ function TransferTezProposalForm() {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
-  const [transfers, setTransfers] = useState([{ amount: 0, destination: '' }])
+  const [transfers, setTransfers] = useState([{ amount: '', destination: '' }])
 
   // Get the create proposal method from the DAO store
   const createTransferMutezProposal = useDaoStore(
@@ -229,13 +229,13 @@ function TransferTezProposalForm() {
 
   // Define the on change handler
   const handleChange = (index, parameter, value) => {
-    // Create a new transfers array
+    // Copy the transfers array
     const newTransfers = transfers.map((transfer) => ({
       amount: transfer.amount,
       destination: transfer.destination,
     }))
 
-    // Update the value
+    // Update the transfer parameter value
     newTransfers[index][parameter] = value
 
     // Update the component state
@@ -246,15 +246,15 @@ function TransferTezProposalForm() {
   const handleClick = (e, increase) => {
     e.preventDefault()
 
-    // Create a new transfers array
+    // Copy the transfers array
     const newTransfers = transfers.map((transfer) => ({
       amount: transfer.amount,
       destination: transfer.destination,
     }))
 
-    // Add or remove a transfer from the list
+    // Add or remove a transfer from the new array
     if (increase) {
-      newTransfers.push({ amount: 0, destination: '' })
+      newTransfers.push({ amount: '', destination: '' })
     } else if (newTransfers.length > 1) {
       newTransfers.pop()
     }
@@ -288,29 +288,30 @@ function TransferTezProposalForm() {
       <div className={styles.transfers_fields}>
         {transfers.map((transfer, index) => (
           <div key={index}>
-            <Input
+            <DaoInput
               type="number"
-              name={`transferTezAmount${index}`}
               label={`Amount to transfer in tez (${index + 1})`}
               placeholder="0"
+              min="0"
               value={transfer.amount}
               onChange={(value) => handleChange(index, 'amount', value)}
               className={styles.proposal_form_field}
             >
               <Line />
-            </Input>
+            </DaoInput>
 
-            <Input
+            <DaoInput
               type="text"
-              name={`transferTezDestination${index}`}
               label={`Destination address (${index + 1})`}
               placeholder="tz1..."
+              minlenght="36"
+              maxlength="36"
               value={transfer.destination}
               onChange={(value) => handleChange(index, 'destination', value)}
               className={styles.proposal_form_field}
             >
               <Line />
-            </Input>
+            </DaoInput>
           </div>
         ))}
         <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
@@ -333,23 +334,22 @@ function TransferTokenProposalForm() {
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
   const [tokenContract, setTokenContract] = useState('')
-  const [tokenId, setTokenId] = useState(0)
-  const [transfers, setTransfers] = useState([{ amount: 0, destination: '' }])
+  const [tokenId, setTokenId] = useState('')
+  const [transfers, setTransfers] = useState([{ amount: '', destination: '' }])
 
   // Get the create proposal method from the DAO store
   const createTransferTokenProposal = useDaoStore(
     (st) => st.createTransferTokenProposal
   )
-
   // Define the on change handler
   const handleChange = (index, parameter, value) => {
-    // Create a new transfers array
+    // Copy the transfers array
     const newTransfers = transfers.map((transfer) => ({
       amount: transfer.amount,
       destination: transfer.destination,
     }))
 
-    // Update the value
+    // Update the transfer parameter value
     newTransfers[index][parameter] = value
 
     // Update the component state
@@ -360,15 +360,15 @@ function TransferTokenProposalForm() {
   const handleClick = (e, increase) => {
     e.preventDefault()
 
-    // Create a new transfers array
+    // Copy the transfers array
     const newTransfers = transfers.map((transfer) => ({
       amount: transfer.amount,
       destination: transfer.destination,
     }))
 
-    // Add or remove a transfer from the list
+    // Add or remove a transfer from the new array
     if (increase) {
-      newTransfers.push({ amount: 0, destination: '' })
+      newTransfers.push({ amount: '', destination: '' })
     } else if (newTransfers.length > 1) {
       newTransfers.pop()
     }
@@ -407,56 +407,62 @@ function TransferTokenProposalForm() {
         setDescriptionIpfsCid={setDescriptionIpfsCid}
       />
 
-      <Input
+      <DaoInput
         type="text"
-        name="tokenContractAddress"
         label="Token contract address"
         placeholder="KT..."
+        minlenght="36"
+        maxlength="36"
         value={tokenContract}
         onChange={setTokenContract}
         className={styles.proposal_form_field}
       >
         <Line />
-      </Input>
+      </DaoInput>
 
-      <Input
+      <DaoInput
         type="number"
-        name="tokenId"
         label="Token id"
         placeholder="0"
+        min="0"
         step="1"
         value={tokenId}
         onChange={setTokenId}
         className={styles.proposal_form_field}
       >
         <Line />
-      </Input>
+      </DaoInput>
 
       <div className={styles.transfers_fields}>
         {transfers.map((transfer, index) => (
           <div key={index}>
-            <Input
+            <DaoInput
               type="number"
-              name={`tokenEditions${index}`}
-              label={`Token editions (${index})`}
+              label={`Token editions (${index + 1})`}
               placeholder="0"
+              min="0"
+              step="1"
               value={transfer.amount}
-              onChange={(value) => handleChange(index, 'amount', value)}
+              onChange={(value) =>
+                handleChange(index, 'amount', Math.round(value))
+              }
               className={styles.proposal_form_field}
             >
               <Line />
-            </Input>
-            <Input
+            </DaoInput>
+
+            <DaoInput
               type="text"
-              name={`tokenDestination${index}`}
-              label={`Destination address (${index})`}
+              label={`Destination address (${index + 1})`}
               placeholder="tz1..."
+              minlenght="36"
+              maxlength="36"
               value={transfer.destination}
               onChange={(value) => handleChange(index, 'destination', value)}
               className={styles.proposal_form_field}
             >
               <Line />
-            </Input>
+            </DaoInput>
           </div>
         ))}
         <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
@@ -504,6 +510,7 @@ function LambdaFunctionProposalForm() {
         name="lambdaFunctionCode"
         label="Lambda function code in Micheline format"
         placeholder="Write here the lambda function code"
+        maxLength="1000"
         value={michelineCode}
         onChange={(e) => setMichelineCode(e.value)}
         className={styles.proposal_form_field}
