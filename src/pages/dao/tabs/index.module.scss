@@ -50,6 +50,10 @@
   }
 }
 
+.selector {
+  margin-bottom: 1em;
+}
+
 .parameters_list {
   li:before {
     content: '';
@@ -61,8 +65,7 @@
 }
 
 .proposal_list {
-  max-height: 50em;
-  overflow: auto;
+  margin-top: 3em;
 
   & > li {
     padding: 0.2em 0;
@@ -219,7 +222,7 @@ details {
 }
 
 .proposal_form {
-  margin: 2em 0 3em 0;
+  margin: 3em 0 3em 0;
 
   input[type='file'] {
     display: none;

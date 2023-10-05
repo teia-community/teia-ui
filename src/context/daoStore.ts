@@ -188,7 +188,7 @@ export const useDaoStore = create<DaoState>()(
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
 
-          const modalTitle = 'Create DAO proposal'
+          const modalTitle = 'Submit DAO proposal'
 
           if (!title || title.length < 10) {
             show(
@@ -250,7 +250,7 @@ export const useDaoStore = create<DaoState>()(
 
             if (!(destination && validateAddress(destination) === 3)) {
               show(
-                'Create DAO proposal',
+                'Submit DAO proposal',
                 `The provided address is not a valid tezos address: ${destination}`
               )
               return
@@ -265,7 +265,7 @@ export const useDaoStore = create<DaoState>()(
 
           if (!(tokenAddress && validateAddress(tokenAddress) === 3)) {
             show(
-              'Create DAO proposal',
+              'Submit DAO proposal',
               `The provided token contract address is not a valid tezos address: ${tokenAddress}`
             )
             return
@@ -276,7 +276,7 @@ export const useDaoStore = create<DaoState>()(
 
             if (!(destination && validateAddress(destination) === 3)) {
                show(
-                'Create DAO proposal',
+                'Submit DAO proposal',
                 `The provided address is not a valid tezos address: ${destination}`
               )
               return
