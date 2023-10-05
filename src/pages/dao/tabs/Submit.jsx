@@ -537,7 +537,7 @@ function LambdaFunctionProposalForm() {
         placeholder="Write here the lambda function code"
         maxLength="1000"
         value={michelineCode}
-        onChange={(e) => setMichelineCode(e.value)}
+        onChange={(e) => setMichelineCode(e.target.value)}
         className={styles.proposal_form_field}
       >
         <Line />
