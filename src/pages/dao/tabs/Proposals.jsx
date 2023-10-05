@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { encodePubKey } from '@taquito/utils'
 import { Parser, emitMicheline } from '@taquito/michel-codec'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
 import { Button } from '@atoms/button'
+import { Line } from '@atoms/line'
+import { Select } from '@atoms/select'
 import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
@@ -19,7 +22,21 @@ import {
   useUsersAliases,
 } from '../hooks'
 
+const PROPOSAL_STATUS_OPTIONS = {
+  toVote: 'Proposals to vote',
+  voted: 'Already voted proposals',
+  toEvaluate: 'Proposals pending votes results evaluation',
+  approved: 'Approved proposals',
+  toExecute: 'Proposals to execute',
+  executed: 'Executed proposals',
+  rejected: 'Rejected proposals',
+  cancelled: 'Cancelled proposals',
+}
+
 export function DaoProposals() {
+  // Set the component state
+  const [selectedStatus, setSelectedStatus] = useState('toVote')
+
   // Get all the required DAO information
   const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
   const governanceParameters = useGovernanceParameters(daoStorage)
@@ -36,14 +53,10 @@ export function DaoProposals() {
   const usersAliases = useUsersAliases(userAddress, representatives, proposals)
 
   // Separate the proposals depending of their current status
-  const toVoteProposals = []
-  const votedProposals = []
-  const pendingEvaluationProposals = []
-  const waitingProposals = []
-  const toExecuteProposals = []
-  const executedProposals = []
-  const rejectedProposals = []
-  const cancelledProposals = []
+  const proposalsByStatus = {}
+  Object.keys(PROPOSAL_STATUS_OPTIONS).forEach(
+    (status) => (proposalsByStatus[status] = [])
+  )
 
   if (governanceParameters && proposals && usersAliases) {
     // Loop over the complete list of proposals
@@ -66,6 +79,8 @@ export function DaoProposals() {
       waitExpirationTime.setDate(
         waitExpirationTime.getDate() + votePeriod + waitPeriod
       )
+
+      // Save the information inside the proposal
       proposal.voteExpirationTime = voteExpirationTime
       proposal.waitExpirationTime = waitExpirationTime
       proposal.voteFinished = now > voteExpirationTime
@@ -74,143 +89,181 @@ export function DaoProposals() {
       // Classify the proposal according to their status
       if (proposal.status.open) {
         if (proposal.voteFinished) {
-          pendingEvaluationProposals.push(proposal)
+          proposalsByStatus.toEvaluate.push(proposal)
         } else if (userVotes?.[proposalId]) {
           if (userCommunity && !userCommunityVotes?.[proposalId]) {
-            toVoteProposals.push(proposal)
+            proposalsByStatus.toVote.push(proposal)
           } else {
-            votedProposals.push(proposal)
+            proposalsByStatus.voted.push(proposal)
           }
         } else {
-          toVoteProposals.push(proposal)
+          proposalsByStatus.toVote.push(proposal)
         }
       } else if (proposal.status.approved) {
         if (proposal.waitFinished) {
-          toExecuteProposals.push(proposal)
+          proposalsByStatus.toExecute.push(proposal)
         } else {
-          waitingProposals.push(proposal)
+          proposalsByStatus.approved.push(proposal)
         }
       } else if (proposal.status.executed) {
-        executedProposals.push(proposal)
+        proposalsByStatus.executed.push(proposal)
       } else if (proposal.status.rejected) {
-        rejectedProposals.push(proposal)
+        proposalsByStatus.rejected.push(proposal)
       } else if (proposal.status.cancelled) {
-        cancelledProposals.push(proposal)
+        proposalsByStatus.cancelled.push(proposal)
       }
     }
   }
 
+  // Decide which proposal groups can be selected
+  const statusToSelect = Object.keys(PROPOSAL_STATUS_OPTIONS).filter(
+    (status) => status === 'toVote' || proposalsByStatus[status].length > 0
+  )
+
   return (
     <div className={styles.container}>
-      <ProposalGroup
-        header="Proposals to vote"
-        proposals={toVoteProposals}
-        canVote
-        canCancel
-        alwaysShow
-      >
-        {toVoteProposals.length > 0 ? (
-          <p>
-            These proposals are still in the voting phase and you didn't vote
-            for them yet.
-          </p>
-        ) : (
-          <p>There are no new proposals to vote at the moment.</p>
-        )}
-      </ProposalGroup>
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>Teia DAO proposals</h1>
 
-      <ProposalGroup
-        header="Already voted proposals"
-        proposals={votedProposals}
-        canCancel
-      >
-        <p>
-          These proposals are still in the voting phase, but you already voted
-          them.
-        </p>
-      </ProposalGroup>
+        <Select
+          alt="proposal group selection"
+          value={{
+            value: selectedStatus,
+            label: `${PROPOSAL_STATUS_OPTIONS[selectedStatus]} (${proposalsByStatus[selectedStatus].length})`,
+          }}
+          onChange={(e) => setSelectedStatus(e.value)}
+          options={statusToSelect.map((status) => ({
+            value: status,
+            label: `${PROPOSAL_STATUS_OPTIONS[status]} (${proposalsByStatus[status].length})`,
+          }))}
+          className={styles.selector}
+        >
+          <Line />
+        </Select>
 
-      <ProposalGroup
-        header="Proposals pending votes results evaluation"
-        proposals={pendingEvaluationProposals}
-        canEvaluate
-        canCancel
-      >
-        <p>
-          The voting period for these proposals has finished. You can evaluate
-          their result to see if they are approved or rejected.
-        </p>
-      </ProposalGroup>
-
-      <ProposalGroup
-        header="Approved proposals"
-        proposals={waitingProposals}
-        canCancel
-      >
-        <p>
-          These are approved proposals that are still in the waiting phase. Once
-          the waiting phase finishes, you will be able to execute them.
-        </p>
-      </ProposalGroup>
-
-      <ProposalGroup
-        header="Proposals to execute"
-        proposals={toExecuteProposals}
-        canExecute
-        canCancel
-      >
-        <p>These are approved proposals that can be exectuded.</p>
-      </ProposalGroup>
-
-      <ProposalGroup header="Executed proposals" proposals={executedProposals}>
-        <p>These proposals have been executed already.</p>
-      </ProposalGroup>
-
-      <ProposalGroup header="Rejected proposals" proposals={rejectedProposals}>
-        <p>
-          These proposals didn't reach the required quorum and/or supermajority.
-          As a result, they were rejected by the DAO.
-        </p>
-      </ProposalGroup>
-
-      <ProposalGroup
-        header="Cancelled proposals"
-        proposals={cancelledProposals}
-      >
-        <p>
-          These proposals were cancelled by the proposal issuer or the DAO
-          guardians.
-        </p>
-      </ProposalGroup>
+        <ProposalGroup
+          status={selectedStatus}
+          proposals={proposalsByStatus[selectedStatus]}
+        />
+      </section>
     </div>
   )
 }
 
-function ProposalGroup(props) {
-  if (props.proposals.length === 0 && !props.alwaysShow) {
+function ProposalGroup({ status, proposals }) {
+  switch (status) {
+    case 'toVote':
+      return (
+        <>
+          {proposals.length > 0 ? (
+            <p>
+              These proposals are still in the voting phase and you didn't vote
+              for them yet.
+            </p>
+          ) : (
+            <p>There are no new proposals to vote at the moment.</p>
+          )}
+          <ProposalList proposals={proposals} canVote canCancel />
+        </>
+      )
+    case 'voted':
+      return (
+        <>
+          {proposals.length > 0 ? (
+            <p>
+              These proposals are still in the voting phase, but you already
+              voted them.
+            </p>
+          ) : (
+            <p>You didn't vote any proposal.</p>
+          )}
+          <ProposalList proposals={proposals} canCancel />
+        </>
+      )
+    case 'toEvaluate':
+      return (
+        <>
+          <p>
+            The voting period for these proposals has finished. You can evaluate
+            their result to see if they are approved or rejected.
+          </p>
+          <ProposalList proposals={proposals} canCancel canEvaluate />
+        </>
+      )
+    case 'approved':
+      return (
+        <>
+          <p>
+            These are approved proposals that are still in the waiting phase.
+            Once the waiting phase finishes, you will be able to execute them.
+          </p>
+          <ProposalList proposals={proposals} canCancel />
+        </>
+      )
+    case 'toExecute':
+      return (
+        <>
+          <p>
+            These proposals have been approved by the DAO and can be exectuded.
+          </p>
+          <ProposalList proposals={proposals} canCancel canExecute />
+        </>
+      )
+    case 'executed':
+      return (
+        <>
+          <p>These proposals have been executed already.</p>
+          <ProposalList proposals={proposals} />
+        </>
+      )
+    case 'rejected':
+      return (
+        <>
+          <p>
+            These proposals didn't reach the required quorum and/or
+            supermajority. As a result, they were rejected by the DAO.
+          </p>
+          <ProposalList proposals={proposals} />
+        </>
+      )
+    case 'cancelled':
+      return (
+        <>
+          <p>
+            These proposals were cancelled by the proposal issuer or the DAO
+            guardians.
+          </p>
+          <ProposalList proposals={proposals} />
+        </>
+      )
+  }
+}
+
+function ProposalList({
+  proposals,
+  canVote,
+  canCancel,
+  canEvaluate,
+  canExecute,
+}) {
+  if (proposals.length === 0) {
     return
   }
 
   return (
-    <section className={styles.section}>
-      <h1 className={styles.section_title}>{props.header}</h1>
-
-      {props.children}
-
-      <ul className={styles.proposal_list}>
-        {props.proposals.map((proposal) => (
-          <li key={proposal.id}>
-            <Proposal
-              proposal={proposal}
-              canVote={props.canVote}
-              canCancel={props.canCancel}
-              canEvaluate={props.canEvaluate}
-              canExecute={props.canExecute}
-            />
-          </li>
-        ))}
-      </ul>
-    </section>
+    <ul className={styles.proposal_list}>
+      {proposals.map((proposal) => (
+        <li key={proposal.id}>
+          <Proposal
+            proposal={proposal}
+            canVote={canVote}
+            canCancel={canCancel}
+            canEvaluate={canEvaluate}
+            canExecute={canExecute}
+          />
+        </li>
+      ))}
+    </ul>
   )
 }
 

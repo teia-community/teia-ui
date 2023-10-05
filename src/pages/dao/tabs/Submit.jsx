@@ -5,11 +5,22 @@ import { useDaoStore } from '@context/daoStore'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
+import { Select } from '@atoms/select'
 import { DaoInput, Textarea } from '@atoms/input'
 import styles from '@style'
 import { useTokenBalance, useStorage, useGovernanceParameters } from '../hooks'
 
+const PROPOSAL_KINDS = {
+  text: 'Text proposal',
+  transferTez: 'Transfer tez proposal',
+  transferToken: 'Transfer token proposal',
+  lambdaFunction: 'Lambda function proposal',
+}
+
 export function SubmitDaoProposals() {
+  // Set the component state
+  const [selectedKind, setSelectedKind] = useState('text')
+
   // Get all the required DAO information
   const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
   const governanceParameters = useGovernanceParameters(daoStorage)
@@ -23,7 +34,7 @@ export function SubmitDaoProposals() {
     return <Loading message="Loading DAO information" />
   }
 
-  // Get the minimum number of tokens needed to create proposals
+  // Calculate the minimum number of tokens needed to create proposals
   const currentGovernanceParameters =
     governanceParameters[daoStorage.gp_counter - 1]
   const minimumTokensToCreateProposals =
@@ -31,83 +42,112 @@ export function SubmitDaoProposals() {
 
   return (
     <div className={styles.container}>
-      {userTokenBalance === 0 ||
-      userTokenBalance < minimumTokensToCreateProposals ? (
-        <section className={styles.section}>
-          {userTokenBalance === 0 ? (
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>Submit a new DAO proposal</h1>
+
+        {userTokenBalance === 0 ||
+        userTokenBalance < minimumTokensToCreateProposals ? (
+          userTokenBalance === 0 ? (
             <p>Only DAO members can create proposals.</p>
           ) : (
             <p>
               A minimum of {minimumTokensToCreateProposals} TEIA tokens are
               needed to create proposals.
             </p>
-          )}
-        </section>
-      ) : (
-        <>
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Text proposal</h1>
-            <p>
-              Use this form to create a proposal to approve a text or decission.
-            </p>
-            <p>
-              This proposal has no direct consequences on the blockchain.
-              However, if accepted and executed, it should trigger some
-              off-chain actions by one of the Teia DAO members (e.g. change a
-              website UI, decide on a dog name, buy bread at the bakery). The
-              proposal description will be stored in IPFS for archival purposes.
-            </p>
-            <TextProposalForm />
-          </section>
+          )
+        ) : (
+          <>
+            <Select
+              alt="proposal form selection"
+              value={{
+                value: selectedKind,
+                label: PROPOSAL_KINDS[selectedKind],
+              }}
+              onChange={(e) => setSelectedKind(e.value)}
+              options={Object.keys(PROPOSAL_KINDS).map((kind) => ({
+                value: kind,
+                label: PROPOSAL_KINDS[kind],
+              }))}
+              className={styles.selector}
+            >
+              <Line />
+            </Select>
 
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Transfer tez proposal</h1>
-            <p>
-              Use this form to create a proposal that, if accepted, it will
-              transfer the specified amount of tez from the DAO treasury to a
-              list of tezos addresses. The proposal description will be stored
-              in IPFS for archival purposes.
-            </p>
-            <TransferTezProposalForm />
-          </section>
-
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Transfer token proposal</h1>
-            <p>
-              Use this form to create a proposal that, if accepted, it will
-              transfer the specified amount of token editions from the DAO
-              treasury to a list of tezos addresses. The proposal description
-              will be stored in IPFS for archival purposes.
-            </p>
-            <TransferTokenProposalForm />
-          </section>
-
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>Lambda function proposal</h1>
-            <p>
-              Use this form to create a proposal that, if accepted, it will
-              execute some smart contract code stored in a Michelson lambda
-              function. The proposal description will be stored in IPFS for
-              archival purposes.
-            </p>
-            <p>
-              This proposal could be used to administer other smart contracts of
-              which the DAO is the administrator (e.g. to update the Teia
-              marketplace fees), or to execute entry points from other contracts
-              (e.g. swap or collect a token, vote in anoter DAO / multisig).
-            </p>
-            <p>
-              Warning: Executing arbitrary smart contract code could compromise
-              the DAO or have unexpected consequences. The lambda function code
-              should have been revised by some trusted smart contract expert
-              before the proposal is accepted and executed.
-            </p>
-            <LambdaFunctionProposalForm />
-          </section>
-        </>
-      )}
+            <ProposalForm kind={selectedKind} />
+          </>
+        )}
+      </section>
     </div>
   )
+}
+
+function ProposalForm({ kind }) {
+  switch (kind) {
+    case 'text':
+      return (
+        <>
+          <p>
+            Use this form to create a proposal to approve a text or decission.
+          </p>
+          <p>
+            This proposal has no direct consequences on the blockchain. However,
+            if accepted and executed, it should trigger some off-chain actions
+            by one of the Teia DAO members (e.g. change a website UI, decide on
+            a dog name, buy bread at the bakery). The proposal description will
+            be stored in IPFS for archival purposes.
+          </p>
+          <TextProposalForm />
+        </>
+      )
+    case 'transferTez':
+      return (
+        <>
+          <p>
+            Use this form to create a proposal that, if accepted, it will
+            transfer the specified amount of tez from the DAO treasury to a list
+            of tezos addresses. The proposal description will be stored in IPFS
+            for archival purposes.
+          </p>
+          <TransferTezProposalForm />
+        </>
+      )
+    case 'transferToken':
+      return (
+        <>
+          <p>
+            Use this form to create a proposal that, if accepted, it will
+            transfer the specified amount of token editions from the DAO
+            treasury to a list of tezos addresses. The proposal description will
+            be stored in IPFS for archival purposes.
+          </p>
+          <TransferTokenProposalForm />
+        </>
+      )
+    case 'lambdaFunction':
+      return (
+        <>
+          <p>
+            Use this form to create a proposal that, if accepted, it will
+            execute some smart contract code stored in a Michelson lambda
+            function. The proposal description will be stored in IPFS for
+            archival purposes.
+          </p>
+          <p>
+            This proposal could be used to administer other smart contracts of
+            which the DAO is the administrator (e.g. to update the Teia
+            marketplace fees), or to execute entry points from other contracts
+            (e.g. swap or collect a token, vote in anoter DAO / multisig).
+          </p>
+          <p>
+            Warning: Executing arbitrary smart contract code could compromise
+            the DAO or have unexpected consequences. The lambda function code
+            should have been revised by some trusted smart contract expert
+            before the proposal is accepted and executed.
+          </p>
+          <LambdaFunctionProposalForm />
+        </>
+      )
+  }
 }
 
 function CommonProposalFields({
@@ -141,7 +181,6 @@ function CommonProposalFields({
         type="text"
         label="Proposal title"
         placeholder="Write here a meaningful title for your proposal"
-        minlength="10"
         maxlength="500"
         value={title}
         onChange={setTitle}
