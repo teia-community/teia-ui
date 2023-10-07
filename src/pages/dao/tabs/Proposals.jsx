@@ -38,19 +38,23 @@ export function DaoProposals() {
   const [selectedStatus, setSelectedStatus] = useState('toVote')
 
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = useGovernanceParameters(daoStorage)
-  const proposals = useProposals(daoStorage)
-  const representatives = useRepresentatives(daoStorage)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useGovernanceParameters(daoStorage)
+  const [proposals] = useProposals(daoStorage)
+  const [representatives] = useRepresentatives(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const userVotes = useUserVotes(userAddress, daoStorage)
-  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
+  const [userVotes] = useUserVotes(userAddress, daoStorage)
+  const [userCommunityVotes] = useCommunityVotes(userCommunity, daoStorage)
 
   // Get all the relevant users aliases
-  const usersAliases = useUsersAliases(userAddress, representatives, proposals)
+  const [usersAliases] = useUsersAliases(
+    userAddress,
+    representatives,
+    proposals
+  )
 
   // Separate the proposals depending of their current status
   const proposalsByStatus = {}
@@ -252,7 +256,7 @@ function ProposalList({
 
   return (
     <ul className={styles.proposal_list}>
-      {proposals.map((proposal) => (
+      {proposals.map((proposal, index) => (
         <li key={proposal.id}>
           <Proposal
             proposal={proposal}
@@ -261,6 +265,7 @@ function ProposalList({
             canEvaluate={canEvaluate}
             canExecute={canExecute}
           />
+          {index != proposals.length - 1 && <Line />}
         </li>
       ))}
     </ul>
@@ -471,16 +476,16 @@ function ProposalContent({ content }) {
 
 function ProposalVotesSummary({ proposal }) {
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = useGovernanceParameters(daoStorage)
-  const representatives = useRepresentatives(daoStorage)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useGovernanceParameters(daoStorage)
+  const [representatives] = useRepresentatives(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const userTokenBalance = useTokenBalance(userAddress)
-  const userVotes = useUserVotes(userAddress, daoStorage)
-  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
+  const [userTokenBalance] = useTokenBalance(userAddress)
+  const [userVotes] = useUserVotes(userAddress, daoStorage)
+  const [userCommunityVotes] = useCommunityVotes(userCommunity, daoStorage)
 
   // Get the proposal quorum and governance parameters
   const quorum = proposal.quorum
@@ -665,16 +670,21 @@ function VotesDisplay({ title, yes, no, abstain }) {
 
 function ProposalActions(props) {
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = useGovernanceParameters(daoStorage)
-  const representatives = useRepresentatives(daoStorage)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useGovernanceParameters(daoStorage)
+  const [representatives] = useRepresentatives(daoStorage)
+  const [, updateProposals] = useProposals(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userTokenBalance = useTokenBalance(userAddress)
   const userCommunity = representatives?.[userAddress]
-  const userVotes = useUserVotes(userAddress, daoStorage)
-  const communityVotes = useCommunityVotes(userCommunity, daoStorage)
+  const [userTokenBalance, updateUserTokenBalance] =
+    useTokenBalance(userAddress)
+  const [userVotes, updateUserVotes] = useUserVotes(userAddress, daoStorage)
+  const [communityVotes, updateCommunityVotes] = useCommunityVotes(
+    userCommunity,
+    daoStorage
+  )
 
   // Get the contract call methods from the DAO store
   const voteProposal = useDaoStore((st) => st.voteProposal)
@@ -690,25 +700,40 @@ function ProposalActions(props) {
 
   // Check if the user can vote proposals
   const proposal = props.proposal
+  const id = proposal.id
   const userCanVote =
     userTokenBalance >=
     governanceParameters[proposal.gp_index].min_amount / DAO_TOKEN_DECIMALS
 
+  // Define the callback function to be triggered when the user interacts
+  const callback = () => {
+    updateProposals()
+    updateUserVotes()
+    updateCommunityVotes()
+    updateUserTokenBalance()
+  }
+
   return (
     <div className={styles.proposal_actions}>
-      {props.canVote && userCanVote && !userVotes?.[proposal.id] && (
+      {props.canVote && userCanVote && !userVotes?.[id] && (
         <div>
           <p>Vote with your tokens:</p>
           <div className={styles.proposal_actions_buttons}>
-            <Button shadow_box onClick={() => voteProposal(proposal.id, 'yes')}>
+            <Button
+              shadow_box
+              onClick={() => voteProposal(id, 'yes', null, callback)}
+            >
               yes
             </Button>
-            <Button shadow_box onClick={() => voteProposal(proposal.id, 'no')}>
+            <Button
+              shadow_box
+              onClick={() => voteProposal(id, 'no', null, callback)}
+            >
               no
             </Button>
             <Button
               shadow_box
-              onClick={() => voteProposal(proposal.id, 'abstain')}
+              onClick={() => voteProposal(id, 'abstain', null, callback)}
             >
               abstain
             </Button>
@@ -716,26 +741,26 @@ function ProposalActions(props) {
         </div>
       )}
 
-      {props.canVote && userCommunity && !communityVotes?.[proposal.id] && (
+      {props.canVote && userCommunity && !communityVotes?.[id] && (
         <div>
           <p>Vote as representative:</p>
           <div className={styles.proposal_actions_buttons}>
             <Button
               shadow_box
-              onClick={() => voteProposalAsRepresentative(proposal.id, 'yes')}
+              onClick={() => voteProposalAsRepresentative(id, 'yes', callback)}
             >
               yes
             </Button>
             <Button
               shadow_box
-              onClick={() => voteProposalAsRepresentative(proposal.id, 'no')}
+              onClick={() => voteProposalAsRepresentative(id, 'no', callback)}
             >
               no
             </Button>
             <Button
               shadow_box
               onClick={() =>
-                voteProposalAsRepresentative(proposal.id, 'abstain')
+                voteProposalAsRepresentative(id, 'abstain', callback)
               }
             >
               abstain
@@ -746,17 +771,17 @@ function ProposalActions(props) {
 
       <div className={styles.proposal_actions_buttons}>
         {props.canCancel && proposal.issuer === userAddress && (
-          <Button shadow_box onClick={() => cancelProposal(proposal.id, true)}>
+          <Button shadow_box onClick={() => cancelProposal(id, true, callback)}>
             cancel
           </Button>
         )}
         {props.canEvaluate && isDaoMember && (
-          <Button shadow_box onClick={() => evaluateVotingResult(proposal.id)}>
+          <Button shadow_box onClick={() => evaluateVotingResult(id, callback)}>
             evaluate
           </Button>
         )}
         {props.canExecute && isDaoMember && (
-          <Button shadow_box onClick={() => executeProposal(proposal.id)}>
+          <Button shadow_box onClick={() => executeProposal(id, callback)}>
             execute
           </Button>
         )}

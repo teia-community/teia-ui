@@ -19,23 +19,27 @@ import {
 
 export const DaoParameters = () => {
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = useGovernanceParameters(daoStorage)
-  const proposals = useProposals(daoStorage)
-  const representatives = useRepresentatives(daoStorage)
-  const daoMemberCount = useDaoMemberCount()
-  const daoBalance = useBalance(DAO_GOVERNANCE_CONTRACT)
-  const daoTokenBalance = useTokenBalance(DAO_GOVERNANCE_CONTRACT)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useGovernanceParameters(daoStorage)
+  const [proposals] = useProposals(daoStorage)
+  const [representatives] = useRepresentatives(daoStorage)
+  const [daoMemberCount] = useDaoMemberCount()
+  const [daoBalance] = useBalance(DAO_GOVERNANCE_CONTRACT)
+  const [daoTokenBalance] = useTokenBalance(DAO_GOVERNANCE_CONTRACT)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const userTokenBalance = useTokenBalance(userAddress)
-  const userVotes = useUserVotes(userAddress, daoStorage)
-  const userCommunityVotes = useCommunityVotes(userCommunity, daoStorage)
+  const [userTokenBalance] = useTokenBalance(userAddress)
+  const [userVotes] = useUserVotes(userAddress, daoStorage)
+  const [userCommunityVotes] = useCommunityVotes(userCommunity, daoStorage)
 
   // Get all the relevant users aliases
-  const usersAliases = useUsersAliases(userAddress, representatives, proposals)
+  const [usersAliases] = useUsersAliases(
+    userAddress,
+    representatives,
+    proposals
+  )
 
   // Display the loading page information until all data is available
   if (!daoStorage || !governanceParameters || !representatives || !proposals) {
