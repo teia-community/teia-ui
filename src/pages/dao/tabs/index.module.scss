@@ -65,17 +65,12 @@
 }
 
 .proposal_list {
-  margin-top: 3em;
-
   & > li {
+    margin: 0;
     padding: 0.2em 0;
 
     &:before {
       content: '';
-    }
-
-    &:not(:last-child) {
-      border-bottom: 1px solid darken(white, 30%);
     }
   }
 }
@@ -113,8 +108,8 @@
 
 .proposal_id {
   display: inline-block;
-  background-color: white;
-  color: lighten(black, 20%);
+  color: var(--gray-5);
+  background-color: var(--gray-90);
   min-width: 4em;
   padding: 0 0.5em;
   margin-right: 0.5em;
@@ -128,15 +123,22 @@ details {
   }
 
   table {
+    color: var(--gray-5);
+    background-color: var(--gray-90);
     display: inline-block;
     margin: 0.5em 0 0 0;
     padding: 1em;
     border-radius: 4px;
     overflow: hidden;
+
+    a {
+      color: var(--gray-5);
+    }
   }
 
   td:first-child {
     text-align: right;
+    padding-right: 0.5em;
   }
 }
 
@@ -188,6 +190,8 @@ details {
   border-radius: 4px;
   white-space: pre-wrap;
   word-break: break-word;
+  color: var(--gray-5);
+  background-color: var(--gray-90);
 }
 
 .proposal {
@@ -196,6 +200,7 @@ details {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.5em;
+  padding: 2em 0;
 
   @include respond-to('desktop') {
     flex-direction: row;

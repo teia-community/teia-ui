@@ -8,7 +8,12 @@ import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
 import { DaoInput, Textarea } from '@atoms/input'
 import styles from '@style'
-import { useTokenBalance, useStorage, useGovernanceParameters } from '../hooks'
+import {
+  useTokenBalance,
+  useStorage,
+  useGovernanceParameters,
+  useProposals,
+} from '../hooks'
 
 const PROPOSAL_KINDS = {
   text: 'Text proposal',
@@ -22,12 +27,20 @@ export function SubmitDaoProposals() {
   const [selectedKind, setSelectedKind] = useState('text')
 
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const governanceParameters = useGovernanceParameters(daoStorage)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useGovernanceParameters(daoStorage)
+  const [, updateProposals] = useProposals(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userTokenBalance = useTokenBalance(userAddress)
+  const [userTokenBalance, updateUserTokenBalance] =
+    useTokenBalance(userAddress)
+
+  // Define the callback function to be triggered when a proposal is submitted
+  const callback = () => {
+    updateProposals()
+    updateUserTokenBalance()
+  }
 
   // Display the loading page information until all data is available
   if (!daoStorage || !governanceParameters) {
@@ -73,7 +86,7 @@ export function SubmitDaoProposals() {
               <Line />
             </Select>
 
-            <ProposalForm kind={selectedKind} />
+            <ProposalForm kind={selectedKind} callback={callback} />
           </>
         )}
       </section>
@@ -81,7 +94,7 @@ export function SubmitDaoProposals() {
   )
 }
 
-function ProposalForm({ kind }) {
+function ProposalForm({ kind, callback }) {
   switch (kind) {
     case 'text':
       return (
@@ -96,7 +109,7 @@ function ProposalForm({ kind }) {
             a dog name, buy bread at the bakery). The proposal description will
             be stored in IPFS for archival purposes.
           </p>
-          <TextProposalForm />
+          <TextProposalForm callback={callback} />
         </>
       )
     case 'transferTez':
@@ -108,7 +121,7 @@ function ProposalForm({ kind }) {
             of tezos addresses. The proposal description will be stored in IPFS
             for archival purposes.
           </p>
-          <TransferTezProposalForm />
+          <TransferTezProposalForm callback={callback} />
         </>
       )
     case 'transferToken':
@@ -120,7 +133,7 @@ function ProposalForm({ kind }) {
             treasury to a list of tezos addresses. The proposal description will
             be stored in IPFS for archival purposes.
           </p>
-          <TransferTokenProposalForm />
+          <TransferTokenProposalForm callback={callback} />
         </>
       )
     case 'lambdaFunction':
@@ -144,7 +157,7 @@ function ProposalForm({ kind }) {
             should have been revised by some trusted smart contract expert
             before the proposal is accepted and executed.
           </p>
-          <LambdaFunctionProposalForm />
+          <LambdaFunctionProposalForm callback={callback} />
         </>
       )
   }
@@ -211,7 +224,7 @@ function CommonProposalFields({
   )
 }
 
-function TextProposalForm() {
+function TextProposalForm({ callback }) {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
@@ -222,7 +235,7 @@ function TextProposalForm() {
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
-    createTextProposal(title, descriptionIpfsCid)
+    createTextProposal(title, descriptionIpfsCid, callback)
   }
 
   return (
@@ -241,7 +254,7 @@ function TextProposalForm() {
   )
 }
 
-function TransferTezProposalForm() {
+function TransferTezProposalForm({ callback }) {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
@@ -297,7 +310,8 @@ function TransferTezProposalForm() {
       transfers.map((transfer) => ({
         amount: transfer.amount * 1000000,
         destination: transfer.destination,
-      }))
+      })),
+      callback
     )
   }
 
@@ -354,7 +368,7 @@ function TransferTezProposalForm() {
   )
 }
 
-function TransferTokenProposalForm() {
+function TransferTokenProposalForm({ callback }) {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
@@ -419,7 +433,8 @@ function TransferTokenProposalForm() {
       descriptionIpfsCid,
       tokenContract,
       tokenId,
-      newTransfers
+      newTransfers,
+      callback
     )
   }
 
@@ -505,7 +520,7 @@ function TransferTokenProposalForm() {
   )
 }
 
-function LambdaFunctionProposalForm() {
+function LambdaFunctionProposalForm({ callback }) {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
@@ -519,7 +534,12 @@ function LambdaFunctionProposalForm() {
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
-    createLambdaFunctionProposal(title, descriptionIpfsCid, michelineCode)
+    createLambdaFunctionProposal(
+      title,
+      descriptionIpfsCid,
+      michelineCode,
+      callback
+    )
   }
 
   return (

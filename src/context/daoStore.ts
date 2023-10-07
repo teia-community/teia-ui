@@ -26,25 +26,25 @@ interface DaoState {
   /** Uploads a file to ipfs */
   uploadFileToIpfs: (file: any, displayUploadInformation: boolean) => OperationReturn
   /** Votes a DAO proposal using the user TEIA tokens */
-  voteProposal: (proposalId: string, vote: string, maxCheckpoints: any) => OperationReturn
+  voteProposal: (proposalId: string, vote: string, maxCheckpoints: number | null, callback: any) => OperationReturn
   /** Votes a DAO proposal as community representaive */
-  voteProposalAsRepresentative: (proposalId: string, vote: string) => OperationReturn
+  voteProposalAsRepresentative: (proposalId: string, vote: string, callback: any) => OperationReturn
   /** Cancels a DAO proposal */
-  cancelProposal: (proposalId: string, returnEscrow: boolean) => OperationReturn
+  cancelProposal: (proposalId: string, returnEscrow: boolean, callback: any) => OperationReturn
   /** Evaluates a DAO proposal voting result */
-  evaluateVotingResult: (proposalId: string) => OperationReturn
+  evaluateVotingResult: (proposalId: string, callback: any) => OperationReturn
   /** Executes a DAO proposal */
-  executeProposal: (proposalId: string) => OperationReturn
+  executeProposal: (proposalId: string, callback: any) => OperationReturn
   /** Creates a DAO proposal */
-  createProposal: (title: string, descriptionIpfsPath: string, kind: any) => OperationReturn
+  createProposal: (title: string, descriptionIpfsPath: string, kind: any, callback: any) => OperationReturn
   /** Creates a DAO text proposal */
-  createTextProposal: (title: string, descriptionIpfsPath: string) => OperationReturn
+  createTextProposal: (title: string, descriptionIpfsPath: string, callback: any) => OperationReturn
   /** Creates a DAO transfer mutez proposal */
-  createTransferMutezProposal: (title: string, descriptionIpfsPath: string, transfers: any) => OperationReturn
+  createTransferMutezProposal: (title: string, descriptionIpfsPath: string, transfers: any, callback: any) => OperationReturn
   /** Creates a DAO transfer token proposal */
-  createTransferTokenProposal: (title: string, descriptionIpfsPath: string, tokenAddress: string, tokenId: string, transfers: any) => OperationReturn
+  createTransferTokenProposal: (title: string, descriptionIpfsPath: string, tokenAddress: string, tokenId: string, transfers: any, callback: any) => OperationReturn
   /** Creates a DAO lambda function proposal */
-  createLambdaFunctionProposal: (title: string, descriptionIpfsPath: string, michelineCode: string) => OperationReturn
+  createLambdaFunctionProposal: (title: string, descriptionIpfsPath: string, michelineCode: string, callback: any) => OperationReturn
   /** Claim DAO tokens */
   claimTokens: () => OperationReturn
 }
@@ -82,7 +82,7 @@ export const useDaoStore = create<DaoState>()(
 
           return added?.data.cid
         },
-        voteProposal: async (proposalId, vote, maxCheckpoints = null) => {
+        voteProposal: async (proposalId, vote, maxCheckpoints, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -99,13 +99,16 @@ export const useDaoStore = create<DaoState>()(
               max_checkpoints: maxCheckpoints
             }
             const batch = contract.methodsObject.token_vote(parameters)
+            const opHash = await handleOp(batch, modalTitle)
 
-            return await handleOp(batch, modalTitle)
+            callback?.()
+
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        voteProposalAsRepresentative: async (proposalId, vote) => {
+        voteProposalAsRepresentative: async (proposalId, vote, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -121,13 +124,16 @@ export const useDaoStore = create<DaoState>()(
               vote: { [vote]: [['unit']] }
             }
             const batch = contract.methodsObject.representatives_vote(parameters)
+            const opHash = await handleOp(batch, modalTitle)
+            
+            callback?.()
 
-            return await handleOp(batch, modalTitle)
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        cancelProposal: async (proposalId, returnEscrow = true) => {
+        cancelProposal: async (proposalId, returnEscrow, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -139,13 +145,16 @@ export const useDaoStore = create<DaoState>()(
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
             const batch = contract.methods.cancel_proposal(proposalId, returnEscrow)
+            const opHash = await handleOp(batch, modalTitle)
+            
+            callback?.()
 
-            return await handleOp(batch, modalTitle)
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        evaluateVotingResult: async (proposalId) => {
+        evaluateVotingResult: async (proposalId, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -157,13 +166,16 @@ export const useDaoStore = create<DaoState>()(
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
             const batch = contract.methods.evaluate_voting_result(proposalId)
+            const opHash = await handleOp(batch, modalTitle)
+            
+            callback?.()
 
-            return await handleOp(batch, modalTitle)
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        executeProposal: async (proposalId) => {
+        executeProposal: async (proposalId, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -175,13 +187,16 @@ export const useDaoStore = create<DaoState>()(
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
             const batch = contract.methods.execute_proposal(proposalId)
+            const opHash = await handleOp(batch, modalTitle)
+            
+            callback?.()
 
-            return await handleOp(batch, modalTitle)
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        createProposal: async (title, descriptionIpfsPath, kind) => {
+        createProposal: async (title, descriptionIpfsPath, kind, callback) => {
           const userAddress = useUserStore.getState().address
           const handleOp = useUserStore.getState().handleOp
           const show = useModalStore.getState().show
@@ -232,17 +247,20 @@ export const useDaoStore = create<DaoState>()(
             batch = batch.withContractCall(
               tokenContract.methods.update_operators([{ remove_operator: operator }])
             )
+            const opHash = await handleOp(batch, modalTitle)
+            
+            callback?.()
 
-            return await handleOp(batch, modalTitle)
+            return opHash
           } catch (e) {
             showError(modalTitle, e)
           }
         },
-        createTextProposal: async (title, descriptionIpfsPath) => {
+        createTextProposal: async (title, descriptionIpfsPath, callback) => {
           const kind = { text: [['unit']] }
-          return get().createProposal(title, descriptionIpfsPath, kind)
+          return get().createProposal(title, descriptionIpfsPath, kind, callback)
         },
-        createTransferMutezProposal: async (title, descriptionIpfsPath, transfers) => {
+        createTransferMutezProposal: async (title, descriptionIpfsPath, transfers, callback) => {
           const show = useModalStore.getState().show
 
           for (const transfer of transfers) {
@@ -257,10 +275,10 @@ export const useDaoStore = create<DaoState>()(
             }
 
             const kind = { transfer_mutez: transfers }
-            return get().createProposal(title, descriptionIpfsPath, kind)
+            return get().createProposal(title, descriptionIpfsPath, kind, callback)
           }
         },
-        createTransferTokenProposal: async (title, descriptionIpfsPath, tokenAddress, tokenId, transfers) => {
+        createTransferTokenProposal: async (title, descriptionIpfsPath, tokenAddress, tokenId, transfers, callback) => {
           const show = useModalStore.getState().show
 
           if (!(tokenAddress && validateAddress(tokenAddress) === 3)) {
@@ -290,9 +308,9 @@ export const useDaoStore = create<DaoState>()(
               distribution: transfers,
             }
           }
-          return get().createProposal(title, descriptionIpfsPath, kind)
+          return get().createProposal(title, descriptionIpfsPath, kind, callback)
         },
-        createLambdaFunctionProposal: async (title, descriptionIpfsPath, michelineCode) => {
+        createLambdaFunctionProposal: async (title, descriptionIpfsPath, michelineCode, callback) => {
           const show = useModalStore.getState().show
 
           let lambdaFunction
@@ -309,7 +327,7 @@ export const useDaoStore = create<DaoState>()(
           }
 
           const kind = { lambda_function: lambdaFunction }
-          return get().createProposal(title, descriptionIpfsPath, kind)
+          return get().createProposal(title, descriptionIpfsPath, kind, callback)
         },
         claimTokens: async () => {
           const userAddress = useUserStore.getState().address
