@@ -4,9 +4,9 @@ import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Checkbox } from '@atoms/input'
 import { Line } from '@atoms/line'
+import { DefaultLink } from '@atoms/link'
 import { DAOIcon } from '@icons'
 import styles from '@style'
-import { DefaultLink } from './links'
 
 export const Claim = () => {
   const claimTokens = useDaoStore((st) => st.claimTokens)

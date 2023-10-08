@@ -24,27 +24,27 @@ type OperationReturn = Promise<string | undefined>
 
 interface DaoState {
   /** Uploads a file to ipfs */
-  uploadFileToIpfs: (file: any, displayUploadInformation: boolean) => OperationReturn
+  uploadFileToIpfs: (file: any, displayUploadInformation?: boolean) => OperationReturn
   /** Votes a DAO proposal using the user TEIA tokens */
-  voteProposal: (proposalId: string, vote: string, maxCheckpoints: number | null, callback: any) => OperationReturn
+  voteProposal: (proposalId: string, vote: string, maxCheckpoints: number | null, callback?: any) => OperationReturn
   /** Votes a DAO proposal as community representaive */
-  voteProposalAsRepresentative: (proposalId: string, vote: string, callback: any) => OperationReturn
+  voteProposalAsRepresentative: (proposalId: string, vote: string, callback?: any) => OperationReturn
   /** Cancels a DAO proposal */
-  cancelProposal: (proposalId: string, returnEscrow: boolean, callback: any) => OperationReturn
+  cancelProposal: (proposalId: string, returnEscrow: boolean, callback?: any) => OperationReturn
   /** Evaluates a DAO proposal voting result */
-  evaluateVotingResult: (proposalId: string, callback: any) => OperationReturn
+  evaluateVotingResult: (proposalId: string, callback?: any) => OperationReturn
   /** Executes a DAO proposal */
-  executeProposal: (proposalId: string, callback: any) => OperationReturn
+  executeProposal: (proposalId: string, callback?: any) => OperationReturn
   /** Creates a DAO proposal */
-  createProposal: (title: string, descriptionIpfsPath: string, kind: any, callback: any) => OperationReturn
+  createProposal: (title: string, descriptionIpfsPath: string, kind: any, callback?: any) => OperationReturn
   /** Creates a DAO text proposal */
-  createTextProposal: (title: string, descriptionIpfsPath: string, callback: any) => OperationReturn
+  createTextProposal: (title: string, descriptionIpfsPath: string, callback?: any) => OperationReturn
   /** Creates a DAO transfer mutez proposal */
-  createTransferMutezProposal: (title: string, descriptionIpfsPath: string, transfers: any, callback: any) => OperationReturn
+  createTransferMutezProposal: (title: string, descriptionIpfsPath: string, transfers: any, callback?: any) => OperationReturn
   /** Creates a DAO transfer token proposal */
-  createTransferTokenProposal: (title: string, descriptionIpfsPath: string, tokenAddress: string, tokenId: string, transfers: any, callback: any) => OperationReturn
+  createTransferTokenProposal: (title: string, descriptionIpfsPath: string, tokenAddress: string, tokenId: string, transfers: any, callback?: any) => OperationReturn
   /** Creates a DAO lambda function proposal */
-  createLambdaFunctionProposal: (title: string, descriptionIpfsPath: string, michelineCode: string, callback: any) => OperationReturn
+  createLambdaFunctionProposal: (title: string, descriptionIpfsPath: string, michelineCode: string, callback?: any) => OperationReturn
   /** Claim DAO tokens */
   claimTokens: () => OperationReturn
 }
@@ -73,14 +73,15 @@ export const useDaoStore = create<DaoState>()(
           }
 
           const added = await uploadFileToIPFSProxy(file)
+          const cid = added?.data.cid
 
           if (displayUploadInformation) {
             close()
           }
 
-          console.log(`File IPFS cid: ${added?.data.cid}`)
+          console.log(`File IPFS cid: ${cid}`)
 
-          return added?.data.cid
+          return cid
         },
         voteProposal: async (proposalId, vote, maxCheckpoints, callback) => {
           const handleOp = useUserStore.getState().handleOp
@@ -263,9 +264,7 @@ export const useDaoStore = create<DaoState>()(
         createTransferMutezProposal: async (title, descriptionIpfsPath, transfers, callback) => {
           const show = useModalStore.getState().show
 
-          for (const transfer of transfers) {
-            const destination = transfer.destination
-
+          for (const { destination } of transfers) {
             if (!(destination && validateAddress(destination) === 3)) {
               show(
                 'Submit DAO proposal',
@@ -289,9 +288,7 @@ export const useDaoStore = create<DaoState>()(
             return
           }
 
-          for (const transfer of transfers) {
-            const destination = transfer.destination
-
+          for (const { destination } of transfers) {
             if (!(destination && validateAddress(destination) === 3)) {
                show(
                 'Submit DAO proposal',
@@ -381,7 +378,7 @@ export const useDaoStore = create<DaoState>()(
           // Calculate the tokens that the user still can claim
           const userMerkleData = merkleData[userAddress]
           const totalTokensToClaim = parseInt(userMerkleData.tokens) / DAO_TOKEN_DECIMALS
-          const alreadyClaimedTokens = (await getClaimedDaoTokens(userAddress)) / DAO_TOKEN_DECIMALS
+          const alreadyClaimedTokens = await getClaimedDaoTokens(userAddress)
           const unclaimedTokens = totalTokensToClaim - (alreadyClaimedTokens ? alreadyClaimedTokens : 0)
 
           if (unclaimedTokens === 0) {

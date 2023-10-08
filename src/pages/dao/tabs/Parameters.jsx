@@ -2,40 +2,40 @@ import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Loading } from '@atoms/loading'
 import { Line } from '@atoms/line'
-import styles from '@style'
-import { TeiaUserLink, TezosAddressLink } from '../links'
+import { TeiaUserLink, TezosAddressLink } from '@atoms/link'
 import {
   useBalance,
-  useTokenBalance,
+  useDaoTokenBalance,
   useStorage,
-  useGovernanceParameters,
-  useProposals,
-  useRepresentatives,
-  useUserVotes,
-  useCommunityVotes,
-  useUsersAliases,
+  useDaoGovernanceParameters,
+  useDaoProposals,
+  useDaoRepresentatives,
+  useDaoUserVotes,
+  useDaoCommunityVotes,
+  useDaoUsersAliases,
   useDaoMemberCount,
-} from '../hooks'
+} from '@data/swr'
+import styles from '@style'
 
 export const DaoParameters = () => {
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const [governanceParameters] = useGovernanceParameters(daoStorage)
-  const [proposals] = useProposals(daoStorage)
-  const [representatives] = useRepresentatives(daoStorage)
-  const [daoMemberCount] = useDaoMemberCount()
+  const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
+  const [proposals] = useDaoProposals(daoStorage)
+  const [representatives] = useDaoRepresentatives(daoStorage)
+  const [daoMemberCount] = useDaoMemberCount(0)
   const [daoBalance] = useBalance(DAO_GOVERNANCE_CONTRACT)
-  const [daoTokenBalance] = useTokenBalance(DAO_GOVERNANCE_CONTRACT)
+  const [daoTokenBalance] = useDaoTokenBalance(DAO_GOVERNANCE_CONTRACT)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const [userTokenBalance] = useTokenBalance(userAddress)
-  const [userVotes] = useUserVotes(userAddress, daoStorage)
-  const [userCommunityVotes] = useCommunityVotes(userCommunity, daoStorage)
+  const [userTokenBalance] = useDaoTokenBalance(userAddress)
+  const [userVotes] = useDaoUserVotes(userAddress, daoStorage)
+  const [userCommunityVotes] = useDaoCommunityVotes(userCommunity, daoStorage)
 
   // Get all the relevant users aliases
-  const [usersAliases] = useUsersAliases(
+  const [usersAliases] = useDaoUsersAliases(
     userAddress,
     representatives,
     proposals
