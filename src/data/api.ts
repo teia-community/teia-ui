@@ -1,6 +1,6 @@
 import {
   HEN_CONTRACT_FA2,
-  DAO_TOKEN_CONTRACT,
+  DAO_TOKEN_DECIMALS,
   CLAIMED_DAO_TOKENS_BIGMAP_ID,
 } from '@constants'
 import axios from 'axios'
@@ -327,34 +327,28 @@ export const GetUserMetadata = async (walletAddr: string) => {
 }
 
 /**
- * Get user DAO token balance
+ * Get some data from the TzKT API
  */
-export async function getDaoTokenBalance(walletAddr: string) {
-  const parameters = {
-    'token.contract': DAO_TOKEN_CONTRACT,
-    'token.tokenId': '0',
-    account: walletAddr,
-    select: 'balance',
-  }
+export async function getTzktData(query: string, parameters = {}, debug = true) {
+  const url = import.meta.env.VITE_TZKT_API + query
   const response = await axios
-    .get(import.meta.env.VITE_TZKT_API + '/v1/tokens/balances', {
-      params: parameters,
-    })
+    .get(url, { params: parameters })
     .catch((error) =>
-      console.log('Error while querying the account token balance:', error)
+      console.log(`The following TzKT query returned an error: ${url}`, error)
     )
 
-  return response?.data[0] ? parseInt(response.data[0]) / 1e6 : 0
+  if (debug) console.log(`Executed TzKT query: ${url}`)
+
+  return response?.data
 }
 
 /**
  * Get user claimed tokens
  */
 export async function getClaimedDaoTokens(walletAddr: string) {
-  const response = await axios.get(
-    import.meta.env.VITE_TZKT_API +
-      `/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`
+  const data = await getTzktData(
+    `/v1/bigmaps/${CLAIMED_DAO_TOKENS_BIGMAP_ID}/keys/${walletAddr}`
   )
 
-  return response ? parseInt(response.data.value) : 0
+  return data?.value ? parseInt(data.value) / DAO_TOKEN_DECIMALS : 0
 }

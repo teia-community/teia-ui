@@ -7,13 +7,13 @@ import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
 import { DaoInput, Textarea } from '@atoms/input'
-import styles from '@style'
 import {
-  useTokenBalance,
+  useDaoTokenBalance,
   useStorage,
-  useGovernanceParameters,
-  useProposals,
-} from '../hooks'
+  useDaoGovernanceParameters,
+  useDaoProposals,
+} from '@data/swr'
+import styles from '@style'
 
 const PROPOSAL_KINDS = {
   text: 'Text proposal',
@@ -28,13 +28,13 @@ export function SubmitDaoProposals() {
 
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const [governanceParameters] = useGovernanceParameters(daoStorage)
-  const [, updateProposals] = useProposals(daoStorage)
+  const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
+  const [, updateProposals] = useDaoProposals(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const [userTokenBalance, updateUserTokenBalance] =
-    useTokenBalance(userAddress)
+    useDaoTokenBalance(userAddress)
 
   // Define the callback function to be triggered when a proposal is submitted
   const callback = () => {

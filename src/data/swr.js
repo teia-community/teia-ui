@@ -1,22 +1,9 @@
 import useSWR from 'swr'
-import axios from 'axios'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { getTzktData } from '@data/api'
 import { hexToString } from '@utils/string'
 
-async function getTzktData(query, parameters = {}, debug = true) {
-  const url = import.meta.env.VITE_TZKT_API + query
-  const response = await axios
-    .get(url, { params: parameters })
-    .catch((error) =>
-      console.log(`The following TzKT query returned an error: ${url}`, error)
-    )
-
-  if (debug) console.log(`Executed TzKT query: ${url}`)
-
-  return response?.data
-}
-
-function reorderBigmapData(data, subKey = undefined, decode = false) {
+function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
@@ -37,7 +24,7 @@ export function useBalance(address) {
   return [data ? data / 1000000 : 0, mutate]
 }
 
-export function useTokenBalance(address) {
+export function useDaoTokenBalance(address) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
     'token.tokenId': '0',
@@ -61,7 +48,7 @@ export function useStorage(contractAddress) {
   return [data, mutate]
 }
 
-export function useGovernanceParameters(daoStorage) {
+export function useDaoGovernanceParameters(daoStorage) {
   const parameters = {
     limit: 10000,
     active: true,
@@ -77,7 +64,7 @@ export function useGovernanceParameters(daoStorage) {
   return [reorderBigmapData(data), mutate]
 }
 
-export function useProposals(daoStorage) {
+export function useDaoProposals(daoStorage) {
   const parameters = {
     limit: 10000,
     active: true,
@@ -93,7 +80,7 @@ export function useProposals(daoStorage) {
   return [reorderBigmapData(data), mutate]
 }
 
-export function useRepresentatives(daoStorage) {
+export function useDaoRepresentatives(daoStorage) {
   const { data, mutate } = useSWR(
     daoStorage?.representatives
       ? `/v1/contracts/${daoStorage.representatives}/storage`
@@ -104,7 +91,7 @@ export function useRepresentatives(daoStorage) {
   return [data?.representatives, mutate]
 }
 
-export function useUserVotes(address, daoStorage) {
+export function useDaoUserVotes(address, daoStorage) {
   const parameters = {
     'key.address': address,
     limit: 10000,
@@ -121,7 +108,7 @@ export function useUserVotes(address, daoStorage) {
   return [reorderBigmapData(data, 'nat'), mutate]
 }
 
-export function useCommunityVotes(community, daoStorage) {
+export function useDaoCommunityVotes(community, daoStorage) {
   const parameters = {
     'key.string': community,
     limit: 10000,
@@ -138,7 +125,24 @@ export function useCommunityVotes(community, daoStorage) {
   return [reorderBigmapData(data, 'nat'), mutate]
 }
 
-export function useUsersAliases(userAddress, representatives, proposals) {
+export function useAliases(addresses) {
+  if (addresses?.length === 1) addresses.push(addresses[0])
+
+  const parameters = {
+    'key.in': addresses?.join(','),
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
+  const { data, mutate } = useSWR(
+    addresses?.length > 0 ? [`/v1/bigmaps/3919/keys`, parameters] : null,
+    getTzktData
+  )
+
+  return [reorderBigmapData(data, undefined, true), mutate]
+}
+
+export function useDaoUsersAliases(userAddress, representatives, proposals) {
   const addresses = []
   if (userAddress) addresses.push(userAddress)
   if (representatives)
@@ -148,25 +152,14 @@ export function useUsersAliases(userAddress, representatives, proposals) {
       addresses.push(proposal.issuer)
     )
 
-  const parameters = {
-    'key.in': addresses.join(','),
-    limit: 10000,
-    active: true,
-    select: 'key,value',
-  }
-  const { data, mutate } = useSWR(
-    representatives && proposals ? [`/v1/bigmaps/3919/keys`, parameters] : null,
-    getTzktData
-  )
-
-  return [reorderBigmapData(data, undefined, true), mutate]
+  return useAliases(addresses)
 }
 
-export function useDaoMemberCount() {
+export function useDaoMemberCount(minTokens) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
     'token.tokenId': '0',
-    'balance.gt': 0 * DAO_TOKEN_DECIMALS,
+    'balance.gt': minTokens * DAO_TOKEN_DECIMALS,
   }
   const { data, mutate } = useSWR(
     ['/v1/tokens/balances/count', parameters],

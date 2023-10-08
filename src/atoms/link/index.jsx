@@ -1,25 +1,21 @@
 import React from 'react'
+import { CIDToURL } from '@utils/index'
 import { walletPreview } from '@utils/string'
 import { TOKENS } from '@constants'
 import styles from '@style'
 
 export function TeiaUserLink({ address, alias, shorten, className, children }) {
   return (
-    <a href={`/tz/${address}`} className={className ? className : ''}>
+    <a href={`/tz/${address}`} className={className ?? ''}>
       {children}
-      {alias ? alias : shorten ? walletPreview(address) : address}
+      {alias ?? (shorten ? walletPreview(address) : address)}
     </a>
   )
 }
 
 export function DefaultLink({ href, className, children }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className={className ? className : ''}
-    >
+    <a href={href} target="_blank" rel="noreferrer" className={className ?? ''}>
       {children}
     </a>
   )
@@ -27,10 +23,7 @@ export function DefaultLink({ href, className, children }) {
 
 export function TzktLink({ link, className, children }) {
   return (
-    <DefaultLink
-      href={`https://tzkt.io/${link}`}
-      className={className ? className : ''}
-    >
+    <DefaultLink href={`https://tzkt.io/${link}`} className={className}>
       {children}
     </DefaultLink>
   )
@@ -44,9 +37,9 @@ export function TezosAddressLink({
   children,
 }) {
   return (
-    <TzktLink link={address} className={className ? className : ''}>
+    <TzktLink link={address} className={className}>
       {children}
-      {alias ? alias : shorten ? walletPreview(address) : address}
+      {alias ?? (shorten ? walletPreview(address) : address)}
     </TzktLink>
   )
 }
@@ -56,32 +49,26 @@ export function TokenLink({ fa2, id, className, children }) {
 
   if (token?.website) {
     return (
-      <DefaultLink
-        href={token.website + id}
-        className={className ? className : ''}
-      >
+      <DefaultLink href={token.website + id} className={className}>
         {children}
       </DefaultLink>
     )
   } else {
     return (
-      <TzktLink
-        link={`${fa2}/tokens/${id}`}
-        className={className ? className : ''}
-      >
+      <TzktLink link={`${fa2}/tokens/${id}`} className={className}>
         {children}
       </TzktLink>
     )
   }
 }
 
-export function IpfsLink({ cid, className, children }) {
+export function IpfsLink({ cid, type, className, children }) {
   return (
     <DefaultLink
-      href={`https://ipfs.io/ipfs/${cid}`}
-      className={styles.ipfs_link + ' ' + (className ? className : '')}
+      href={CIDToURL(cid, type ?? 'IPFS')}
+      className={`${styles.ipfs_link} ${className ?? ''}`}
     >
-      {children ? children : cid}
+      {children ?? cid}
     </DefaultLink>
   )
 }

@@ -4,8 +4,12 @@ import { useUserStore } from '@context/userStore'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Tabs } from '@atoms/tab/Tabs'
+import {
+  useDaoTokenBalance,
+  useStorage,
+  useDaoRepresentatives,
+} from '@data/swr'
 import styles from '@style'
-import { useTokenBalance, useStorage, useRepresentatives } from './hooks'
 
 const TABS = [
   {
@@ -26,12 +30,12 @@ const TABS = [
 export const DAO = () => {
   // Get all the required DAO information
   const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const representatives = useRepresentatives(daoStorage)
+  const representatives = useDaoRepresentatives(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const userTokenBalance = useTokenBalance(userAddress)
+  const userTokenBalance = useDaoTokenBalance(userAddress)
 
   return (
     <Page title="Teia DAO">
