@@ -3,11 +3,11 @@ import { DAO_GOVERNANCE_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { Tabs } from '@atoms/tab/Tabs'
+import { Tabs } from '@atoms/tab'
 import {
-  useDaoTokenBalance,
   useStorage,
   useDaoRepresentatives,
+  useDaoTokenBalance,
 } from '@data/swr'
 import styles from '@style'
 
@@ -29,37 +29,38 @@ const TABS = [
 
 export const DAO = () => {
   // Get all the required DAO information
-  const daoStorage = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const representatives = useDaoRepresentatives(daoStorage)
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [representatives] = useDaoRepresentatives(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const userCommunity = representatives?.[userAddress]
-  const userTokenBalance = useDaoTokenBalance(userAddress)
+  const [userTokenBalance] = useDaoTokenBalance(userAddress)
 
   return (
     <Page title="Teia DAO">
-      <div className={styles.headline}>
-        <h1>Teia DAO</h1>
+      <div className={styles.container}>
+        <h1 className={styles.headline}>Teia DAO</h1>
+
+        {!daoStorage || !representatives ? (
+          <Loading message="Loading DAO information" />
+        ) : (
+          <>
+            <Tabs
+              tabs={TABS}
+              filter={(tab) => {
+                if (userTokenBalance === 0 && !userCommunity && tab.private) {
+                  return null
+                }
+
+                return tab
+              }}
+            />
+
+            <Outlet />
+          </>
+        )}
       </div>
-
-      {!daoStorage || !representatives ? (
-        <Loading message="Loading DAO information" />
-      ) : (
-        <>
-          <Tabs
-            tabs={TABS}
-            filter={(tab) => {
-              if (userTokenBalance === 0 && !userCommunity && tab.private) {
-                return null
-              }
-
-              return tab
-            }}
-          />
-          <Outlet />
-        </>
-      )}
     </Page>
   )
 }

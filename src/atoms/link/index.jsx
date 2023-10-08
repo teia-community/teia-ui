@@ -1,4 +1,3 @@
-import React from 'react'
 import { CIDToURL } from '@utils/index'
 import { walletPreview } from '@utils/string'
 import { TOKENS } from '@constants'

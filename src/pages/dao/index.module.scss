@@ -1,26 +1,17 @@
 @import '@styles/mixins.scss';
-@import '@styles/variables.scss';
 
 .container {
-  padding-top: 12px;
   padding-bottom: 60px;
   width: 100%;
-
-  @include respond-to('desktop') {
-    margin: 0;
-  }
 }
 
 .headline {
   text-align: center;
-  margin-bottom: 1em;
+  margin-bottom: 1em 0;
+
   > p {
     margin: 1em 0;
   }
-}
-
-.section_title {
-  margin-bottom: 1em;
 }
 
 .section {
@@ -56,4 +47,8 @@
   @include respond-to('desktop') {
     margin-bottom: 30px;
   }
+}
+
+.section_title {
+  margin-bottom: 1em;
 }

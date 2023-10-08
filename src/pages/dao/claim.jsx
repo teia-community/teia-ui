@@ -15,12 +15,13 @@ export const Claim = () => {
   return (
     <Page title="Claim DAO tokens" large>
       <div className={styles.container}>
+        <div className={styles.headline}>
+          <h1>Welcome to the TEIA tokens claim page!</h1>
+          <p>Here you can claim your Teia DAO tokens.</p>
+          <DAOIcon />
+        </div>
+
         <section className={styles.section}>
-          <div className={styles.headline}>
-            <h1>Welcome to the TEIA tokens claim page!</h1>
-            <p>Here you can claim your Teia DAO tokens.</p>
-            <DAOIcon />
-          </div>
           <p>
             By owning TEIA tokens, you are part of the Teia DAO LLC and eligible
             to put forward and vote on DAO proposals for Teia. Teia DAO tokens,
@@ -72,6 +73,7 @@ export const Claim = () => {
               <b>Confirm you have read the disclaimer</b> by checking the box at
               the bottom of this page to get access to the claim button.
             </li>
+
             <li counter="4">
               <b>Click on the "Claim TEIA tokens" button</b> at the bottom of
               this page to initiate the token claim process and confirm the
@@ -176,6 +178,7 @@ export const Claim = () => {
           </ol>
 
           <br />
+
           <Checkbox
             alt={`click to ${
               acceptLegalDisclaimer ? 'decline' : 'accept'
@@ -195,6 +198,7 @@ export const Claim = () => {
         {acceptLegalDisclaimer && (
           <>
             <Line />
+
             <section className={styles.section}>
               <h1 className={styles.section_title}>Claim your TEIA tokens!</h1>
 
@@ -204,13 +208,14 @@ export const Claim = () => {
                 </Button>
               </p>
             </section>
+
             <Line />
 
             <section className={styles.section}>
               <h1 className={styles.section_title}>Troubleshooting</h1>
               <p>
                 Here are some of the most common solutions if the token claim
-                process fails
+                process fails.
               </p>
 
               <ol>
@@ -220,7 +225,7 @@ export const Claim = () => {
                   wallet. The transaction cost for the claim process is about
                   0.1-0.2 tez.
                 </li>
-                <li>Clear your browser cache</li>
+                <li>Clear your browser cache.</li>
                 <li>
                   Switch the rpc node in the{' '}
                   <DefaultLink href="/settings">config menu</DefaultLink>,

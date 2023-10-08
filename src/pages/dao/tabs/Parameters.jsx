@@ -4,16 +4,16 @@ import { Loading } from '@atoms/loading'
 import { Line } from '@atoms/line'
 import { TeiaUserLink, TezosAddressLink } from '@atoms/link'
 import {
-  useBalance,
-  useDaoTokenBalance,
   useStorage,
   useDaoGovernanceParameters,
   useDaoProposals,
   useDaoRepresentatives,
+  useDaoMemberCount,
+  useBalance,
+  useDaoTokenBalance,
   useDaoUserVotes,
   useDaoCommunityVotes,
   useDaoUsersAliases,
-  useDaoMemberCount,
 } from '@data/swr'
 import styles from '@style'
 
@@ -42,7 +42,7 @@ export const DaoParameters = () => {
   )
 
   // Display the loading page information until all data is available
-  if (!daoStorage || !governanceParameters || !representatives || !proposals) {
+  if (!governanceParameters || !proposals || !representatives) {
     return <Loading message="Loading DAO information" />
   }
 
@@ -55,14 +55,6 @@ export const DaoParameters = () => {
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
-  // Invert the representatives map and sort the community keys
-  const communities = {}
-  const communitiesList = Object.values(representatives).sort()
-  communitiesList.forEach((key) => (communities[key] = ''))
-  Object.entries(representatives).forEach(
-    ([representative, community]) => (communities[community] = representative)
-  )
-
   // Calculate the number of times that the user has voted
   const numberOfTimesVoted = userVotes ? Object.keys(userVotes).length : 0
   const numberOfTimesVotedAsRepresentative = userCommunityVotes
@@ -70,14 +62,15 @@ export const DaoParameters = () => {
     : 0
 
   return (
-    <div className={styles.container}>
+    <>
       {userAddress && (
         <>
           <section className={styles.section}>
             <h1 className={styles.section_title}>User information</h1>
+
             <ul className={styles.parameters_list}>
-              <li>Address: {<TeiaUserLink address={userAddress} />}</li>
-              {userCommunity && <li>Teia Community: {userCommunity}</li>}
+              <li>Address: {<TeiaUserLink address={userAddress} shorten />}</li>
+              {userCommunity && <li>Representative for {userCommunity}.</li>}
               <li>
                 DAO token balance: {Math.round(userTokenBalance * 10) / 10} TEIA
               </li>
@@ -100,11 +93,12 @@ export const DaoParameters = () => {
       )}
 
       <section className={styles.section}>
-        <h1 className={styles.section_title}>General information</h1>
+        <h1 className={styles.section_title}>DAO information</h1>
+
         <ul className={styles.parameters_list}>
-          <li>DAO members: {daoMemberCount}</li>
+          <li>Members: {daoMemberCount}</li>
           <li>
-            DAO Treasury balance: {Math.round(daoBalance)} tez and{' '}
+            Treasury balance: {Math.round(daoBalance)} tez and{' '}
             {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
           </li>
           <li>Total number of proposals: {Object.keys(proposals).length}</li>
@@ -136,16 +130,19 @@ export const DaoParameters = () => {
 
       <section className={styles.section}>
         <h1 className={styles.section_title}>Community representatives</h1>
+
         <ul className={styles.parameters_list}>
-          {Object.entries(communities).map(([community, representative]) => (
-            <li key={community}>
-              {community}:{' '}
-              <TeiaUserLink
-                address={representative}
-                alias={usersAliases?.[representative]}
-              />
-            </li>
-          ))}
+          {Object.entries(representatives).map(
+            ([representative, community]) => (
+              <li key={community}>
+                {`${community}: `}
+                <TeiaUserLink
+                  address={representative}
+                  alias={usersAliases?.[representative]}
+                />
+              </li>
+            )
+          )}
         </ul>
       </section>
 
@@ -155,6 +152,7 @@ export const DaoParameters = () => {
         <h1 className={styles.section_title}>
           Current DAO governance parameters
         </h1>
+
         <ul className={styles.parameters_list}>
           <li>
             Vote method:{' '}
@@ -203,30 +201,33 @@ export const DaoParameters = () => {
 
       <section className={styles.section}>
         <h1 className={styles.section_title}>Smart contracts</h1>
+
         <ul className={styles.parameters_list}>
           <li>
             DAO governance:{' '}
-            <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} />
+            <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} shorten />
           </li>
           <li>
-            DAO token: <TezosAddressLink address={daoStorage.token} />
+            DAO token: <TezosAddressLink address={daoStorage.token} shorten />
           </li>
           <li>
-            DAO treasury: <TezosAddressLink address={daoStorage.treasury} />
+            DAO treasury:{' '}
+            <TezosAddressLink address={daoStorage.treasury} shorten />
           </li>
           <li>
-            DAO guardians: <TezosAddressLink address={daoStorage.guardians} />
+            DAO guardians:{' '}
+            <TezosAddressLink address={daoStorage.guardians} shorten />
           </li>
           <li>
             DAO administrator:{' '}
-            <TezosAddressLink address={daoStorage.administrator} />
+            <TezosAddressLink address={daoStorage.administrator} shorten />
           </li>
           <li>
             Community representatives:{' '}
-            <TezosAddressLink address={daoStorage.representatives} />
+            <TezosAddressLink address={daoStorage.representatives} shorten />
           </li>
         </ul>
       </section>
-    </div>
+    </>
   )
 }
