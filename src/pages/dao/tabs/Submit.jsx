@@ -54,43 +54,40 @@ export function SubmitDaoProposals() {
     currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS
 
   return (
-    <div className={styles.container}>
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Submit a new DAO proposal</h1>
+    <section className={styles.section}>
+      <h1 className={styles.section_title}>Submit a new DAO proposal</h1>
 
-        {userTokenBalance === 0 ||
-        userTokenBalance < minimumTokensToCreateProposals ? (
-          userTokenBalance === 0 ? (
-            <p>Only DAO members can create proposals.</p>
-          ) : (
-            <p>
-              A minimum of {minimumTokensToCreateProposals} TEIA tokens are
-              needed to create proposals.
-            </p>
-          )
+      {userTokenBalance === 0 ||
+      userTokenBalance < minimumTokensToCreateProposals ? (
+        userTokenBalance === 0 ? (
+          <p>Only DAO members can create proposals.</p>
         ) : (
-          <>
-            <Select
-              alt="proposal form selection"
-              value={{
-                value: selectedKind,
-                label: PROPOSAL_KINDS[selectedKind],
-              }}
-              onChange={(e) => setSelectedKind(e.value)}
-              options={Object.keys(PROPOSAL_KINDS).map((kind) => ({
-                value: kind,
-                label: PROPOSAL_KINDS[kind],
-              }))}
-              className={styles.selector}
-            >
-              <Line />
-            </Select>
+          <p>
+            A minimum of {minimumTokensToCreateProposals} TEIA tokens are needed
+            to create proposals.
+          </p>
+        )
+      ) : (
+        <>
+          <Select
+            alt="proposal form selection"
+            value={{
+              value: selectedKind,
+              label: PROPOSAL_KINDS[selectedKind],
+            }}
+            onChange={(e) => setSelectedKind(e.value)}
+            options={Object.keys(PROPOSAL_KINDS).map((kind) => ({
+              value: kind,
+              label: PROPOSAL_KINDS[kind],
+            }))}
+          >
+            <Line />
+          </Select>
 
-            <ProposalForm kind={selectedKind} callback={callback} />
-          </>
-        )}
-      </section>
-    </div>
+          <ProposalForm kind={selectedKind} callback={callback} />
+        </>
+      )}
+    </section>
   )
 }
 

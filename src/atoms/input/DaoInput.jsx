@@ -19,7 +19,7 @@ export default function DaoInput({
     onChange(type === 'file' ? e.target.files?.[0] : e.target.value)
 
   return (
-    <div className={`${styles.container} ${className || ''}`}>
+    <div className={`${styles.container} ${className ?? ''}`}>
       <label>
         <p>{label}</p>
         <input

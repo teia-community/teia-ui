@@ -4,6 +4,7 @@ import {
   CLAIMED_DAO_TOKENS_BIGMAP_ID,
 } from '@constants'
 import axios from 'axios'
+
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
   artifact_uri
@@ -281,6 +282,7 @@ interface TzktMetadata {
 interface TzktData {
   data?: TzktMetadata
 }
+
 /**
  * Get User Metadata
  */

@@ -130,32 +130,29 @@ export function DaoProposals() {
   )
 
   return (
-    <div className={styles.container}>
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Teia DAO proposals</h1>
+    <section className={styles.section}>
+      <h1 className={styles.section_title}>Teia DAO proposals</h1>
 
-        <Select
-          alt="proposal group selection"
-          value={{
-            value: selectedStatus,
-            label: `${PROPOSAL_STATUS_OPTIONS[selectedStatus]} (${proposalsByStatus[selectedStatus].length})`,
-          }}
-          onChange={(e) => setSelectedStatus(e.value)}
-          options={statusToSelect.map((status) => ({
-            value: status,
-            label: `${PROPOSAL_STATUS_OPTIONS[status]} (${proposalsByStatus[status].length})`,
-          }))}
-          className={styles.selector}
-        >
-          <Line />
-        </Select>
+      <Select
+        alt="proposal group selection"
+        value={{
+          value: selectedStatus,
+          label: `${PROPOSAL_STATUS_OPTIONS[selectedStatus]} (${proposalsByStatus[selectedStatus].length})`,
+        }}
+        onChange={(e) => setSelectedStatus(e.value)}
+        options={statusToSelect.map((status) => ({
+          value: status,
+          label: `${PROPOSAL_STATUS_OPTIONS[status]} (${proposalsByStatus[status].length})`,
+        }))}
+      >
+        <Line />
+      </Select>
 
-        <ProposalGroup
-          status={selectedStatus}
-          proposals={proposalsByStatus[selectedStatus]}
-        />
-      </section>
-    </div>
+      <ProposalGroup
+        status={selectedStatus}
+        proposals={proposalsByStatus[selectedStatus]}
+      />
+    </section>
   )
 }
 

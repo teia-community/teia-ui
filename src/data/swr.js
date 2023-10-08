@@ -88,7 +88,17 @@ export function useDaoRepresentatives(daoStorage) {
     getTzktData
   )
 
-  return [data?.representatives, mutate]
+  const representatives = data?.representatives
+    ? Object.fromEntries(
+        Object.entries(data.representatives).sort(([, com1], [, com2]) => {
+          if (com1 < com2) return -1
+          if (com1 > com2) return 1
+          return 0
+        })
+      )
+    : undefined
+
+  return [representatives, mutate]
 }
 
 export function useDaoUserVotes(address, daoStorage) {
