@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
-import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
@@ -14,6 +13,7 @@ import {
   useDaoProposals,
   useDaoTokenBalance,
 } from '@data/swr'
+import LoadingDaoMessage from '../LoadingDaoMessage'
 import styles from '@style'
 
 const PROPOSAL_KINDS = {
@@ -45,7 +45,7 @@ export default function SubmitDaoProposals() {
 
   // Display the loading page information until all data is available
   if (!governanceParameters) {
-    return <Loading message="Loading DAO information" />
+    return <LoadingDaoMessage />
   }
 
   // Calculate the minimum number of tokens needed to create proposals

@@ -2,13 +2,13 @@ import { Outlet } from 'react-router-dom'
 import { DAO_GOVERNANCE_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Page } from '@atoms/layout'
-import { Loading } from '@atoms/loading'
 import { Tabs } from '@atoms/tab'
 import {
   useStorage,
   useDaoRepresentatives,
   useDaoTokenBalance,
 } from '@data/swr'
+import LoadingDaoMessage from './LoadingDaoMessage'
 import styles from '@style'
 
 const TABS = [
@@ -42,8 +42,8 @@ export default function DAO() {
       <div className={styles.container}>
         <h1 className={styles.headline}>Teia DAO</h1>
 
-        {!daoStorage || !representatives ? (
-          <Loading message="Loading DAO information" />
+        {!representatives ? (
+          <LoadingDaoMessage />
         ) : (
           <>
             <Tabs

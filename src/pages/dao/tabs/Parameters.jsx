@@ -1,6 +1,5 @@
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { useUserStore } from '@context/userStore'
-import { Loading } from '@atoms/loading'
 import { Line } from '@atoms/line'
 import { TeiaUserLink, TezosAddressLink } from '@atoms/link'
 import {
@@ -15,6 +14,7 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
+import LoadingDaoMessage from '../LoadingDaoMessage'
 import styles from '@style'
 
 export default function DaoParameters() {
@@ -43,7 +43,7 @@ export default function DaoParameters() {
 
   // Display the loading page information until all data is available
   if (!governanceParameters || !proposals || !representatives) {
-    return <Loading message="Loading DAO information" />
+    return <LoadingDaoMessage />
   }
 
   // Get the current governance parameters

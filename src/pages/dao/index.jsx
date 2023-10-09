@@ -1,2 +1,2 @@
-export { default as DAO } from './dao'
-export { default as Claim } from './claim'
+export { default as DAO } from './Dao'
+export { default as Claim } from './Claim'
