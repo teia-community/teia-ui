@@ -17,7 +17,7 @@ import {
 } from '@data/swr'
 import styles from '@style'
 
-export const DaoParameters = () => {
+export default function DaoParameters() {
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
   const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
@@ -139,6 +139,7 @@ export const DaoParameters = () => {
                 <TeiaUserLink
                   address={representative}
                   alias={usersAliases?.[representative]}
+                  shorten
                 />
               </li>
             )

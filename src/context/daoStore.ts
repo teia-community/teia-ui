@@ -17,14 +17,12 @@ import {
 import { Tezos, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'
 import { getClaimedDaoTokens } from '@data/api'
-import { downloadJsonFileFromIpfs, uploadFileToIPFSProxy } from '@utils/ipfs'
+import { downloadJsonFileFromIpfs } from '@utils/ipfs'
 import { stringToHex } from '@utils/string'
 
 type OperationReturn = Promise<string | undefined>
 
 interface DaoState {
-  /** Uploads a file to ipfs */
-  uploadFileToIpfs: (file: any, displayUploadInformation?: boolean) => OperationReturn
   /** Votes a DAO proposal using the user TEIA tokens */
   voteProposal: (proposalId: string, vote: string, maxCheckpoints: number | null, callback?: any) => OperationReturn
   /** Votes a DAO proposal as community representaive */
@@ -53,36 +51,6 @@ export const useDaoStore = create<DaoState>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
-        uploadFileToIpfs: async (file, displayUploadInformation) => {
-          const show = useModalStore.getState().show
-          const step = useModalStore.getState().step
-          const close = useModalStore.getState().close
-
-          const modalTitle = 'IPFS upload'
-
-          if (!file) {
-            show(
-              modalTitle,
-              'A file needs to be loaded before uploading to IPFS'
-            )
-            return
-          }
-
-          if (displayUploadInformation) {
-            step(modalTitle, `Uploading ${file.name} to IPFS...`)
-          }
-
-          const added = await uploadFileToIPFSProxy(file)
-          const cid = added?.data.cid
-
-          if (displayUploadInformation) {
-            close()
-          }
-
-          console.log(`File IPFS cid: ${cid}`)
-
-          return cid
-        },
         voteProposal: async (proposalId, vote, maxCheckpoints, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError

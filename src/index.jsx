@@ -9,8 +9,7 @@ import {
 } from '@pages/collaborate'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
-import { Claim } from '@pages/dao/claim'
-import { DAO } from '@pages/dao'
+import { DAO, Claim } from '@pages/dao'
 import {
   DaoParameters,
   DaoProposals,

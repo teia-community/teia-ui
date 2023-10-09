@@ -8,7 +8,7 @@ import { DefaultLink } from '@atoms/link'
 import { DAOIcon } from '@icons'
 import styles from '@style'
 
-export const Claim = () => {
+export default function Claim() {
   const claimTokens = useDaoStore((st) => st.claimTokens)
   const [acceptLegalDisclaimer, setAcceptLegalDisclaimer] = useState(false)
 
