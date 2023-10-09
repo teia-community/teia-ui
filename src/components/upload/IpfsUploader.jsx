@@ -5,9 +5,9 @@ import styles from '@style'
 
 export default function IpfsUploader({
   label,
-  description,
-  ipfsCid,
-  setIpfsCid,
+  placeholder,
+  value,
+  onChange,
   className,
   displayUploadInformation = true,
 }) {
@@ -17,14 +17,14 @@ export default function IpfsUploader({
   // Define the on change handler
   const handleChange = (e) => {
     setFile(e.target.files[0])
-    setIpfsCid('')
+    onChange('')
   }
 
   // Define the on click handler
   const handleClick = async (e) => {
     e.preventDefault()
-    if (ipfsCid !== '') return
-    setIpfsCid(await uploadFileToIpfs(file, displayUploadInformation))
+    if (value !== '') return
+    onChange(await uploadFileToIpfs(file, displayUploadInformation))
   }
 
   return (
@@ -33,12 +33,12 @@ export default function IpfsUploader({
         <strong>{label}</strong>
       </p>
       <label>
-        {file ? file.name : description}
+        {file ? file.name : placeholder}
         <input type="file" onChange={handleChange} />
       </label>
       {file && (
         <button onClick={handleClick}>
-          {ipfsCid !== ''
+          {value !== ''
             ? `${file.name} has been uploaded to IPFS`
             : `Upload ${file.name} to IPFS`}
         </button>

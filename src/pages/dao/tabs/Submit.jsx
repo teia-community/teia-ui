@@ -180,9 +180,9 @@ function CommonProposalFields({
 
       <IpfsUploader
         label="Proposal description"
-        description="Select the file with the proposal description"
-        ipfsCid={descriptionIpfsCid}
-        setIpfsCid={setDescriptionIpfsCid}
+        placeholder="Select the file with the proposal description"
+        value={descriptionIpfsCid}
+        onChange={setDescriptionIpfsCid}
         className={styles.proposal_form_field}
       />
     </>
@@ -213,6 +213,7 @@ function TextProposalForm({ callback }) {
           setDescriptionIpfsCid={setDescriptionIpfsCid}
         />
       </div>
+
       <Button shadow_box fit>
         Submit proposal
       </Button>
@@ -291,7 +292,7 @@ function TransferTezProposalForm({ callback }) {
           setDescriptionIpfsCid={setDescriptionIpfsCid}
         />
 
-        <div className={styles.transfers_fields}>
+        <div>
           {transfers.map((transfer, index) => (
             <div key={index}>
               <DaoInput
@@ -442,7 +443,7 @@ function TransferTokenProposalForm({ callback }) {
           <Line />
         </DaoInput>
 
-        <div className={styles.transfers_fields}>
+        <div>
           {transfers.map((transfer, index) => (
             <div key={index}>
               <DaoInput
