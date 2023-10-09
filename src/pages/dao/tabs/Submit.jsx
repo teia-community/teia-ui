@@ -7,11 +7,12 @@ import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
 import { DaoInput, Textarea } from '@atoms/input'
+import { IpfsUploader } from '@components/upload'
 import {
-  useDaoTokenBalance,
   useStorage,
   useDaoGovernanceParameters,
   useDaoProposals,
+  useDaoTokenBalance,
 } from '@data/swr'
 import styles from '@style'
 
@@ -22,7 +23,7 @@ const PROPOSAL_KINDS = {
   lambdaFunction: 'Lambda function proposal',
 }
 
-export function SubmitDaoProposals() {
+export default function SubmitDaoProposals() {
   // Set the component state
   const [selectedKind, setSelectedKind] = useState('text')
 
@@ -43,7 +44,7 @@ export function SubmitDaoProposals() {
   }
 
   // Display the loading page information until all data is available
-  if (!daoStorage || !governanceParameters) {
+  if (!governanceParameters) {
     return <Loading message="Loading DAO information" />
   }
 
@@ -57,16 +58,13 @@ export function SubmitDaoProposals() {
     <section className={styles.section}>
       <h1 className={styles.section_title}>Submit a new DAO proposal</h1>
 
-      {userTokenBalance === 0 ||
-      userTokenBalance < minimumTokensToCreateProposals ? (
-        userTokenBalance === 0 ? (
-          <p>Only DAO members can create proposals.</p>
-        ) : (
-          <p>
-            A minimum of {minimumTokensToCreateProposals} TEIA tokens are needed
-            to create proposals.
-          </p>
-        )
+      {userTokenBalance === 0 ? (
+        <p>Only DAO members can create proposals.</p>
+      ) : userTokenBalance < minimumTokensToCreateProposals ? (
+        <p>
+          A minimum of {minimumTokensToCreateProposals} TEIA tokens are needed
+          to create proposals.
+        </p>
       ) : (
         <>
           <Select
@@ -76,9 +74,9 @@ export function SubmitDaoProposals() {
               label: PROPOSAL_KINDS[selectedKind],
             }}
             onChange={(e) => setSelectedKind(e.value)}
-            options={Object.keys(PROPOSAL_KINDS).map((kind) => ({
+            options={Object.entries(PROPOSAL_KINDS).map(([kind, label]) => ({
               value: kind,
-              label: PROPOSAL_KINDS[kind],
+              label: label,
             }))}
           >
             <Line />
@@ -166,25 +164,6 @@ function CommonProposalFields({
   descriptionIpfsCid,
   setDescriptionIpfsCid,
 }) {
-  // Set the component state
-  const [descriptionFile, setDescriptionFile] = useState(undefined)
-
-  // Get the upload method from the DAO store
-  const uploadFileToIpfs = useDaoStore((st) => st.uploadFileToIpfs)
-
-  // Define the on change handler
-  const handleChange = (e) => {
-    setDescriptionFile(e.target.files[0])
-    setDescriptionIpfsCid('')
-  }
-
-  // Define the on click handler
-  const handleClick = async (e) => {
-    e.preventDefault()
-    if (descriptionIpfsCid !== '') return
-    setDescriptionIpfsCid(await uploadFileToIpfs(descriptionFile, true))
-  }
-
   return (
     <>
       <DaoInput
@@ -199,24 +178,13 @@ function CommonProposalFields({
         <Line />
       </DaoInput>
 
-      <div className={styles.proposal_form_field}>
-        <p className={styles.proposal_description_label}>
-          Proposal description
-        </p>
-        <label className={styles.upload_button}>
-          {descriptionFile
-            ? descriptionFile.name
-            : 'Select the file with the proposal description'}
-          <input type="file" onChange={handleChange} />
-        </label>
-        {descriptionFile && (
-          <button className={styles.upload_button} onClick={handleClick}>
-            {descriptionIpfsCid !== ''
-              ? `${descriptionFile.name} has been uploaded to IPFS`
-              : `Upload ${descriptionFile.name} to IPFS`}
-          </button>
-        )}
-      </div>
+      <IpfsUploader
+        label="Proposal description"
+        description="Select the file with the proposal description"
+        ipfsCid={descriptionIpfsCid}
+        setIpfsCid={setDescriptionIpfsCid}
+        className={styles.proposal_form_field}
+      />
     </>
   )
 }
@@ -237,13 +205,14 @@ function TextProposalForm({ callback }) {
 
   return (
     <form className={styles.proposal_form} onSubmit={handleSubmit}>
-      <CommonProposalFields
-        title={title}
-        setTitle={setTitle}
-        descriptionIpfsCid={descriptionIpfsCid}
-        setDescriptionIpfsCid={setDescriptionIpfsCid}
-      />
-
+      <div className={styles.proposal_form_fields}>
+        <CommonProposalFields
+          title={title}
+          setTitle={setTitle}
+          descriptionIpfsCid={descriptionIpfsCid}
+          setDescriptionIpfsCid={setDescriptionIpfsCid}
+        />
+      </div>
       <Button shadow_box fit>
         Submit proposal
       </Button>
@@ -314,48 +283,50 @@ function TransferTezProposalForm({ callback }) {
 
   return (
     <form className={styles.proposal_form} onSubmit={handleSubmit}>
-      <CommonProposalFields
-        title={title}
-        setTitle={setTitle}
-        descriptionIpfsCid={descriptionIpfsCid}
-        setDescriptionIpfsCid={setDescriptionIpfsCid}
-      />
+      <div className={styles.proposal_form_fields}>
+        <CommonProposalFields
+          title={title}
+          setTitle={setTitle}
+          descriptionIpfsCid={descriptionIpfsCid}
+          setDescriptionIpfsCid={setDescriptionIpfsCid}
+        />
 
-      <div className={styles.transfers_fields}>
-        {transfers.map((transfer, index) => (
-          <div key={index}>
-            <DaoInput
-              type="number"
-              label={`Amount to transfer in tez (${index + 1})`}
-              placeholder="0"
-              min="0"
-              value={transfer.amount}
-              onChange={(value) => handleChange(index, 'amount', value)}
-              className={styles.proposal_form_field}
-            >
-              <Line />
-            </DaoInput>
+        <div className={styles.transfers_fields}>
+          {transfers.map((transfer, index) => (
+            <div key={index}>
+              <DaoInput
+                type="number"
+                label={`Amount to transfer in tez (${index + 1})`}
+                placeholder="0"
+                min="0"
+                value={transfer.amount}
+                onChange={(value) => handleChange(index, 'amount', value)}
+                className={styles.proposal_form_field}
+              >
+                <Line />
+              </DaoInput>
 
-            <DaoInput
-              type="text"
-              label={`Destination address (${index + 1})`}
-              placeholder="tz1..."
-              minlenght="36"
-              maxlength="36"
-              value={transfer.destination}
-              onChange={(value) => handleChange(index, 'destination', value)}
-              className={styles.proposal_form_field}
-            >
-              <Line />
-            </DaoInput>
-          </div>
-        ))}
-        <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-          +
-        </Button>
-        <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-          -
-        </Button>
+              <DaoInput
+                type="text"
+                label={`Destination address (${index + 1})`}
+                placeholder="tz1..."
+                minlenght="36"
+                maxlength="36"
+                value={transfer.destination}
+                onChange={(value) => handleChange(index, 'destination', value)}
+                className={styles.proposal_form_field}
+              >
+                <Line />
+              </DaoInput>
+            </div>
+          ))}
+          <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
+            +
+          </Button>
+          <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
+            -
+          </Button>
+        </div>
       </div>
 
       <Button shadow_box fit>
@@ -437,77 +408,79 @@ function TransferTokenProposalForm({ callback }) {
 
   return (
     <form className={styles.proposal_form} onSubmit={handleSubmit}>
-      <CommonProposalFields
-        title={title}
-        setTitle={setTitle}
-        descriptionIpfsCid={descriptionIpfsCid}
-        setDescriptionIpfsCid={setDescriptionIpfsCid}
-      />
+      <div className={styles.proposal_form_fields}>
+        <CommonProposalFields
+          title={title}
+          setTitle={setTitle}
+          descriptionIpfsCid={descriptionIpfsCid}
+          setDescriptionIpfsCid={setDescriptionIpfsCid}
+        />
 
-      <DaoInput
-        type="text"
-        label="Token contract address"
-        placeholder="KT..."
-        minlenght="36"
-        maxlength="36"
-        value={tokenContract}
-        onChange={setTokenContract}
-        className={styles.proposal_form_field}
-      >
-        <Line />
-      </DaoInput>
+        <DaoInput
+          type="text"
+          label="Token contract address"
+          placeholder="KT..."
+          minlenght="36"
+          maxlength="36"
+          value={tokenContract}
+          onChange={setTokenContract}
+          className={styles.proposal_form_field}
+        >
+          <Line />
+        </DaoInput>
 
-      <DaoInput
-        type="number"
-        label="Token id"
-        placeholder="0"
-        min="0"
-        step="1"
-        value={tokenId}
-        onChange={setTokenId}
-        className={styles.proposal_form_field}
-      >
-        <Line />
-      </DaoInput>
+        <DaoInput
+          type="number"
+          label="Token id"
+          placeholder="0"
+          min="0"
+          step="1"
+          value={tokenId}
+          onChange={setTokenId}
+          className={styles.proposal_form_field}
+        >
+          <Line />
+        </DaoInput>
 
-      <div className={styles.transfers_fields}>
-        {transfers.map((transfer, index) => (
-          <div key={index}>
-            <DaoInput
-              type="number"
-              label={`Token editions (${index + 1})`}
-              placeholder="0"
-              min="0"
-              step="1"
-              value={transfer.amount}
-              onChange={(value) =>
-                handleChange(index, 'amount', Math.round(value))
-              }
-              className={styles.proposal_form_field}
-            >
-              <Line />
-            </DaoInput>
+        <div className={styles.transfers_fields}>
+          {transfers.map((transfer, index) => (
+            <div key={index}>
+              <DaoInput
+                type="number"
+                label={`Token editions (${index + 1})`}
+                placeholder="0"
+                min="0"
+                step="1"
+                value={transfer.amount}
+                onChange={(value) =>
+                  handleChange(index, 'amount', Math.round(value))
+                }
+                className={styles.proposal_form_field}
+              >
+                <Line />
+              </DaoInput>
 
-            <DaoInput
-              type="text"
-              label={`Destination address (${index + 1})`}
-              placeholder="tz1..."
-              minlenght="36"
-              maxlength="36"
-              value={transfer.destination}
-              onChange={(value) => handleChange(index, 'destination', value)}
-              className={styles.proposal_form_field}
-            >
-              <Line />
-            </DaoInput>
-          </div>
-        ))}
-        <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-          +
-        </Button>
-        <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-          -
-        </Button>
+              <DaoInput
+                type="text"
+                label={`Destination address (${index + 1})`}
+                placeholder="tz1..."
+                minlenght="36"
+                maxlength="36"
+                value={transfer.destination}
+                onChange={(value) => handleChange(index, 'destination', value)}
+                className={styles.proposal_form_field}
+              >
+                <Line />
+              </DaoInput>
+            </div>
+          ))}
+          <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
+            +
+          </Button>
+          <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
+            -
+          </Button>
+        </div>
       </div>
 
       <Button shadow_box fit>
@@ -541,24 +514,26 @@ function LambdaFunctionProposalForm({ callback }) {
 
   return (
     <form className={styles.proposal_form} onSubmit={handleSubmit}>
-      <CommonProposalFields
-        title={title}
-        setTitle={setTitle}
-        descriptionIpfsCid={descriptionIpfsCid}
-        setDescriptionIpfsCid={setDescriptionIpfsCid}
-      />
+      <div className={styles.proposal_form_fields}>
+        <CommonProposalFields
+          title={title}
+          setTitle={setTitle}
+          descriptionIpfsCid={descriptionIpfsCid}
+          setDescriptionIpfsCid={setDescriptionIpfsCid}
+        />
 
-      <Textarea
-        name="lambdaFunctionCode"
-        label="Lambda function code in Micheline format"
-        placeholder="Write here the lambda function code"
-        maxLength="1000"
-        value={michelineCode}
-        onChange={(e) => setMichelineCode(e.target.value)}
-        className={styles.proposal_form_field}
-      >
-        <Line />
-      </Textarea>
+        <Textarea
+          name="lambdaFunctionCode"
+          label="Lambda function code in Micheline format"
+          placeholder="Write here the lambda function code"
+          maxLength="1000"
+          value={michelineCode}
+          onChange={(e) => setMichelineCode(e.target.value)}
+          className={styles.proposal_form_field}
+        >
+          <Line />
+        </Textarea>
+      </div>
 
       <Button shadow_box fit>
         Submit proposal

@@ -38,7 +38,7 @@ const PROPOSAL_STATUS_OPTIONS = {
   cancelled: 'Cancelled proposals',
 }
 
-export function DaoProposals() {
+export default function DaoProposals() {
   // Set the component state
   const [selectedStatus, setSelectedStatus] = useState('toVote')
 
@@ -304,7 +304,7 @@ function ProposalDescription({ proposal }) {
     <div>
       <p>
         <span className={styles.proposal_id}>#{proposal.id}</span>
-        <b>{title}</b>
+        <span className={styles.proposal_title}>{title}</span>
       </p>
 
       <p>
@@ -360,7 +360,7 @@ function ProposalContent({ content }) {
       return (
         <>
           <p>Effect: Transfers {totalAmount / 1000000} tez.</p>
-          <details>
+          <details className={styles.proposal_details}>
             <summary>See transfer details</summary>
             <table>
               <tbody>
@@ -420,7 +420,7 @@ function ProposalContent({ content }) {
             </TokenLink>
             .
           </p>
-          <details>
+          <details className={styles.proposal_details}>
             <summary>See transfer details</summary>
             <table>
               <tbody>
@@ -467,7 +467,7 @@ function ProposalContent({ content }) {
     return (
       <>
         <p>Effect: Executes a lambda function.</p>
-        <details>
+        <details className={styles.proposal_details}>
           <summary>See Micheline code</summary>
           <pre className={styles.micheline_code}>{encodedMichelineCode}</pre>
         </details>
@@ -630,8 +630,8 @@ function VotesDisplay({ title, yes, no, abstain }) {
   const abstainPercent = (100 * abstain) / totalVotes
 
   return (
-    <div className={styles.votes_display}>
-      <p className={styles.votes_display_title}>{title}</p>
+    <div>
+      <p>{title}</p>
       <div className={styles.votes_display_result}>
         {totalVotes === 0 && (
           <div

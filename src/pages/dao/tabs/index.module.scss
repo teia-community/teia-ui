@@ -23,7 +23,6 @@
 
 .parameters_list {
   li {
-    margin-left: 1.5em;
     margin-top: 0.8em;
   }
 
@@ -32,12 +31,8 @@
   }
 }
 
-.ipfs_link {
-  word-break: break-word;
-}
-
 .proposal_list {
-  & > li {
+  > li {
     margin: 0;
     padding: 0.2em 0;
 
@@ -47,34 +42,28 @@
   }
 }
 
-.user_votes {
-  display: inline-block;
-  min-width: 3em;
-  padding: 0.5em;
-  border-radius: 4px;
-  background-color: white;
-  margin: 0 0.5em 0.5em 0;
+.proposal {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5em;
+  padding: 2em 0;
 
-  &:empty:before {
-    content: '\200b';
+  @include respond-to('desktop') {
+    flex-direction: row;
   }
 }
 
-.yes_vote {
-  background-color: lighten(green, 55%);
-}
-
-.no_vote {
-  background-color: lighten(red, 25%);
-}
-
-.abstain_vote {
-  background-color: lighten(yellow, 25%);
-}
-
 .proposal_information {
+  width: 100%;
+
   p {
     margin: 0.5em 0;
+  }
+
+  @include respond-to('desktop') {
+    flex: 1 1 0;
   }
 }
 
@@ -89,7 +78,11 @@
   text-align: center;
 }
 
-details {
+.proposal_title {
+  font-weight: bold;
+}
+
+.proposal_details {
   summary {
     cursor: pointer;
   }
@@ -112,6 +105,17 @@ details {
     text-align: right;
     padding-right: 0.5em;
   }
+}
+
+.micheline_code {
+  line-height: 1.4;
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--gray-5);
+  background-color: var(--gray-90);
 }
 
 .proposal_votes_summary {
@@ -143,6 +147,31 @@ details {
   background-color: lighten(yellow, 25%);
 }
 
+.user_votes {
+  display: inline-block;
+  min-width: 3em;
+  padding: 0.5em;
+  border-radius: 4px;
+  background-color: white;
+  margin: 0 0.5em 0.5em 0;
+
+  &:empty:before {
+    content: '\200b';
+  }
+}
+
+.yes_vote {
+  background-color: lighten(green, 55%);
+}
+
+.no_vote {
+  background-color: lighten(red, 25%);
+}
+
+.abstain_vote {
+  background-color: lighten(yellow, 25%);
+}
+
 .proposal_actions {
   margin-right: 0.5em;
 
@@ -152,37 +181,6 @@ details {
 
   p {
     margin: 0.5em 0;
-  }
-}
-
-.micheline_code {
-  line-height: 1.4;
-  margin: 1em 0;
-  padding: 1em;
-  border-radius: 4px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: var(--gray-5);
-  background-color: var(--gray-90);
-}
-
-.proposal {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5em;
-  padding: 2em 0;
-
-  @include respond-to('desktop') {
-    flex-direction: row;
-  }
-}
-
-.proposal_information {
-  width: 100%;
-  @include respond-to('desktop') {
-    flex: 1 1 0;
   }
 }
 
@@ -200,10 +198,10 @@ details {
 
 .proposal_form {
   margin: 3em 0 3em 0;
+}
 
-  input[type='file'] {
-    display: none;
-  }
+.proposal_form_fields {
+  margin-bottom: 1em;
 }
 
 .proposal_form_field {
@@ -217,16 +215,6 @@ details {
   color: inherit;
   pointer-events: none;
   border: 1px;
-}
-
-.upload_button {
-  display: block;
-  width: 100%;
-  margin-top: 1em;
-  padding: 6px;
-  border: 2px dashed var(--text-color);
-  text-align: center;
-  cursor: pointer;
 }
 
 .transfers_fields {

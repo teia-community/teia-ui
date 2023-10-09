@@ -1,7 +1,8 @@
 .container {
   margin-bottom: 10px;
 
-  label {
+  label,
+  button {
     display: block;
     width: 100%;
     padding: 6px;
@@ -13,6 +14,10 @@
       display: none;
       width: 100%;
     }
+  }
+
+  button {
+    margin-top: 10px;
   }
 
   .allowed {

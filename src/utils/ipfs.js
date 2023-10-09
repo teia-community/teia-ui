@@ -24,5 +24,5 @@ export async function uploadFileToIPFSProxy(file) {
     { headers: { 'Content-Type': 'multipart/form-data' } }
   )
 
-  return response
+  return response?.data?.cid
 }
