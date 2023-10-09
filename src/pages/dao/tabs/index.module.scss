@@ -23,7 +23,7 @@
 
 .parameters_list {
   li {
-    margin-top: 0.8em;
+    margin: 0.8em 0;
   }
 
   li:before {
@@ -197,7 +197,7 @@
 }
 
 .proposal_form {
-  margin: 3em 0 3em 0;
+  margin-top: 2em;
 }
 
 .proposal_form_fields {
@@ -206,17 +206,4 @@
 
 .proposal_form_field {
   margin: 1em 0;
-}
-
-.proposal_description_label {
-  display: inline-block;
-  font-weight: 700;
-  letter-spacing: $letter-spacing;
-  color: inherit;
-  pointer-events: none;
-  border: 1px;
-}
-
-.transfers_fields {
-  margin-bottom: 1em;
 }
