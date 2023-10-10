@@ -22,33 +22,25 @@
 }
 
 .parameters_list {
-  li {
+  > li {
     margin: 0.8em 0;
-  }
-
-  li:before {
-    content: '';
   }
 }
 
 .proposal_list {
-  > li {
-    margin: 0;
-    padding: 0.2em 0;
-
-    &:before {
-      content: '';
-    }
-  }
+  margin-top: 2em;
 }
 
 .proposal {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   align-items: baseline;
   gap: 0.5em;
-  padding: 2em 0;
+  margin: 1em 0;
+
+  p {
+    margin: 0.5em 0;
+  }
 
   @include respond-to('desktop') {
     flex-direction: row;
@@ -57,25 +49,14 @@
 
 .proposal_information {
   width: 100%;
-
-  p {
-    margin: 0.5em 0;
-  }
-
-  @include respond-to('desktop') {
-    flex: 1 1 0;
-  }
 }
 
 .proposal_id {
-  display: inline-block;
-  color: var(--gray-5);
-  background-color: var(--gray-90);
-  min-width: 4em;
-  padding: 0 0.5em;
   margin-right: 0.5em;
-  border-radius: 4px;
+  padding: 0 1em;
   text-align: center;
+  color: var(--background-color);
+  background-color: var(--text-color);
 }
 
 .proposal_title {
@@ -135,15 +116,18 @@
   background-color: white;
 }
 
-.vote_display_yes {
+.vote_display_yes,
+.yes_vote {
   background-color: lighten(green, 55%);
 }
 
-.vote_display_no {
+.vote_display_no,
+.no_vote {
   background-color: lighten(red, 25%);
 }
 
-.vote_display_abstain {
+.vote_display_abstain,
+.abstain_vote {
   background-color: lighten(yellow, 25%);
 }
 
@@ -160,27 +144,11 @@
   }
 }
 
-.yes_vote {
-  background-color: lighten(green, 55%);
-}
-
-.no_vote {
-  background-color: lighten(red, 25%);
-}
-
-.abstain_vote {
-  background-color: lighten(yellow, 25%);
-}
-
 .proposal_actions {
   margin-right: 0.5em;
 
   > :not(:first-child) {
     margin-top: 1em;
-  }
-
-  p {
-    margin: 0.5em 0;
   }
 }
 

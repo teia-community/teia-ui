@@ -5,7 +5,7 @@ import { useDaoStore } from '@context/daoStore'
 import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
-import { DaoInput, Textarea } from '@atoms/input'
+import { SimpleInput, TransferFields, Textarea } from '@atoms/input'
 import { IpfsUploader } from '@components/upload'
 import {
   useStorage,
@@ -166,7 +166,7 @@ function CommonProposalFields({
 }) {
   return (
     <>
-      <DaoInput
+      <SimpleInput
         type="text"
         label="Proposal title"
         placeholder="Write here a meaningful title for your proposal"
@@ -176,7 +176,7 @@ function CommonProposalFields({
         className={styles.proposal_form_field}
       >
         <Line />
-      </DaoInput>
+      </SimpleInput>
 
       <IpfsUploader
         label="Proposal description"
@@ -232,42 +232,6 @@ function TransferTezProposalForm({ callback }) {
     (st) => st.createTransferMutezProposal
   )
 
-  // Define the on change handler
-  const handleChange = (index, parameter, value) => {
-    // Copy the transfers array
-    const newTransfers = transfers.map((transfer) => ({
-      amount: transfer.amount,
-      destination: transfer.destination,
-    }))
-
-    // Update the transfer parameter value
-    newTransfers[index][parameter] = value
-
-    // Update the component state
-    setTransfers(newTransfers)
-  }
-
-  // Define the on click handler
-  const handleClick = (e, increase) => {
-    e.preventDefault()
-
-    // Copy the transfers array
-    const newTransfers = transfers.map((transfer) => ({
-      amount: transfer.amount,
-      destination: transfer.destination,
-    }))
-
-    // Add or remove a transfer from the new array
-    if (increase) {
-      newTransfers.push({ amount: '', destination: '' })
-    } else if (newTransfers.length > 1) {
-      newTransfers.pop()
-    }
-
-    // Update the component state
-    setTransfers(newTransfers)
-  }
-
   // Define the on submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -292,42 +256,17 @@ function TransferTezProposalForm({ callback }) {
           setDescriptionIpfsCid={setDescriptionIpfsCid}
         />
 
-        <div>
-          {transfers.map((transfer, index) => (
-            <div key={index}>
-              <DaoInput
-                type="number"
-                label={`Amount to transfer in tez (${index + 1})`}
-                placeholder="0"
-                min="0"
-                value={transfer.amount}
-                onChange={(value) => handleChange(index, 'amount', value)}
-                className={styles.proposal_form_field}
-              >
-                <Line />
-              </DaoInput>
-
-              <DaoInput
-                type="text"
-                label={`Destination address (${index + 1})`}
-                placeholder="tz1..."
-                minlenght="36"
-                maxlength="36"
-                value={transfer.destination}
-                onChange={(value) => handleChange(index, 'destination', value)}
-                className={styles.proposal_form_field}
-              >
-                <Line />
-              </DaoInput>
-            </div>
-          ))}
-          <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-            +
-          </Button>
-          <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-            -
-          </Button>
-        </div>
+        <TransferFields
+          labels={{
+            amount: 'Amount to transfer in tez',
+            destination: 'Destination address',
+          }}
+          transfers={transfers}
+          onChange={setTransfers}
+          className={styles.proposal_form_field}
+        >
+          <Line />
+        </TransferFields>
       </div>
 
       <Button shadow_box fit>
@@ -349,60 +288,20 @@ function TransferTokenProposalForm({ callback }) {
   const createTransferTokenProposal = useDaoStore(
     (st) => st.createTransferTokenProposal
   )
-  // Define the on change handler
-  const handleChange = (index, parameter, value) => {
-    // Copy the transfers array
-    const newTransfers = transfers.map((transfer) => ({
-      amount: transfer.amount,
-      destination: transfer.destination,
-    }))
-
-    // Update the transfer parameter value
-    newTransfers[index][parameter] = value
-
-    // Update the component state
-    setTransfers(newTransfers)
-  }
-
-  // Define the on click handler
-  const handleClick = (e, increase) => {
-    e.preventDefault()
-
-    // Copy the transfers array
-    const newTransfers = transfers.map((transfer) => ({
-      amount: transfer.amount,
-      destination: transfer.destination,
-    }))
-
-    // Add or remove a transfer from the new array
-    if (increase) {
-      newTransfers.push({ amount: '', destination: '' })
-    } else if (newTransfers.length > 1) {
-      newTransfers.pop()
-    }
-
-    // Update the component state
-    setTransfers(newTransfers)
-  }
 
   // Define the on submit handler
   const handleSubmit = (e) => {
-    e.preventDefault()
-
-    // Create a new transfers array that makes use of the correct decimals
     const token = TOKENS.find((token) => token.fa2 === tokenContract)
-    const newTransfers = transfers.map((transfer) => ({
-      amount: token ? transfer.amount * token.decimals : transfer.amount,
-      destination: transfer.destination,
-    }))
-
-    // Submit the proposal
+    e.preventDefault()
     createTransferTokenProposal(
       title,
       descriptionIpfsCid,
       tokenContract,
       tokenId,
-      newTransfers,
+      transfers.map((transfer) => ({
+        amount: token ? transfer.amount * token.decimals : transfer.amount,
+        destination: transfer.destination,
+      })),
       callback
     )
   }
@@ -417,7 +316,7 @@ function TransferTokenProposalForm({ callback }) {
           setDescriptionIpfsCid={setDescriptionIpfsCid}
         />
 
-        <DaoInput
+        <SimpleInput
           type="text"
           label="Token contract address"
           placeholder="KT..."
@@ -428,9 +327,9 @@ function TransferTokenProposalForm({ callback }) {
           className={styles.proposal_form_field}
         >
           <Line />
-        </DaoInput>
+        </SimpleInput>
 
-        <DaoInput
+        <SimpleInput
           type="number"
           label="Token id"
           placeholder="0"
@@ -441,47 +340,20 @@ function TransferTokenProposalForm({ callback }) {
           className={styles.proposal_form_field}
         >
           <Line />
-        </DaoInput>
+        </SimpleInput>
 
-        <div>
-          {transfers.map((transfer, index) => (
-            <div key={index}>
-              <DaoInput
-                type="number"
-                label={`Token editions (${index + 1})`}
-                placeholder="0"
-                min="0"
-                step="1"
-                value={transfer.amount}
-                onChange={(value) =>
-                  handleChange(index, 'amount', Math.round(value))
-                }
-                className={styles.proposal_form_field}
-              >
-                <Line />
-              </DaoInput>
-
-              <DaoInput
-                type="text"
-                label={`Destination address (${index + 1})`}
-                placeholder="tz1..."
-                minlenght="36"
-                maxlength="36"
-                value={transfer.destination}
-                onChange={(value) => handleChange(index, 'destination', value)}
-                className={styles.proposal_form_field}
-              >
-                <Line />
-              </DaoInput>
-            </div>
-          ))}
-          <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-            +
-          </Button>
-          <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-            -
-          </Button>
-        </div>
+        <TransferFields
+          labels={{
+            amount: 'Token editions',
+            destination: 'Destination address',
+          }}
+          transfers={transfers}
+          onChange={setTransfers}
+          className={styles.proposal_form_field}
+          round
+        >
+          <Line />
+        </TransferFields>
       </div>
 
       <Button shadow_box fit>

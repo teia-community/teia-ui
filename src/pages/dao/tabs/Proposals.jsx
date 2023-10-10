@@ -14,11 +14,11 @@ import {
   IpfsLink,
 } from '@atoms/link'
 import {
-  useDaoTokenBalance,
   useStorage,
   useDaoGovernanceParameters,
   useDaoProposals,
   useDaoRepresentatives,
+  useDaoTokenBalance,
   useDaoUserVotes,
   useDaoCommunityVotes,
   useDaoUsersAliases,
@@ -62,9 +62,8 @@ export default function DaoProposals() {
   )
 
   // Separate the proposals depending of their current status
-  const proposalsByStatus = {}
-  Object.keys(PROPOSAL_STATUS_OPTIONS).forEach(
-    (status) => (proposalsByStatus[status] = [])
+  const proposalsByStatus = Object.fromEntries(
+    Object.keys(PROPOSAL_STATUS_OPTIONS).map((status) => [status, []])
   )
 
   if (governanceParameters && proposals && usersAliases) {
@@ -72,12 +71,8 @@ export default function DaoProposals() {
     const now = new Date()
 
     for (const proposalId of Object.keys(proposals).reverse()) {
-      // Store the proposal id and the issuer alias inside the proposal details
-      const proposal = proposals[proposalId]
-      proposal.id = proposalId
-      proposal.issuerAlias = usersAliases[proposal.issuer]
-
       // Calculate the proposal vote and wait expiration times
+      const proposal = proposals[proposalId]
       const proposalGovernanceParameters =
         governanceParameters[proposal.gp_index]
       const votePeriod = parseInt(proposalGovernanceParameters.vote_period)
@@ -89,7 +84,9 @@ export default function DaoProposals() {
         waitExpirationTime.getDate() + votePeriod + waitPeriod
       )
 
-      // Save the information inside the proposal
+      // Save all the information inside the proposal
+      proposal.id = proposalId
+      proposal.issuerAlias = usersAliases[proposal.issuer]
       proposal.voteExpirationTime = voteExpirationTime
       proposal.waitExpirationTime = waitExpirationTime
       proposal.voteFinished = now > voteExpirationTime
@@ -175,14 +172,10 @@ function ProposalGroup({ status, proposals }) {
     case 'voted':
       return (
         <>
-          {proposals.length > 0 ? (
-            <p>
-              These proposals are still in the voting phase, but you already
-              voted them.
-            </p>
-          ) : (
-            <p>You didn't vote any proposal.</p>
-          )}
+          <p>
+            These proposals are still in the voting phase, but you already voted
+            them.
+          </p>
           <ProposalList proposals={proposals} canCancel />
         </>
       )
@@ -245,13 +238,7 @@ function ProposalGroup({ status, proposals }) {
   }
 }
 
-function ProposalList({
-  proposals,
-  canVote,
-  canCancel,
-  canEvaluate,
-  canExecute,
-}) {
+function ProposalList({ proposals, ...actions }) {
   if (proposals.length === 0) {
     return
   }
@@ -260,13 +247,7 @@ function ProposalList({
     <ul className={styles.proposal_list}>
       {proposals.map((proposal, index) => (
         <li key={proposal.id}>
-          <Proposal
-            proposal={proposal}
-            canVote={canVote}
-            canCancel={canCancel}
-            canEvaluate={canEvaluate}
-            canExecute={canExecute}
-          />
+          <Proposal proposal={proposal} {...actions} />
           {index != proposals.length - 1 && <Line />}
         </li>
       ))}
@@ -274,20 +255,14 @@ function ProposalList({
   )
 }
 
-function Proposal(props) {
+function Proposal({ proposal, ...actions }) {
   return (
     <div className={styles.proposal}>
       <div className={styles.proposal_information}>
-        <ProposalDescription proposal={props.proposal} />
-        <ProposalVotesSummary proposal={props.proposal} />
+        <ProposalDescription proposal={proposal} />
+        <ProposalVotesSummary proposal={proposal} />
       </div>
-      <ProposalActions
-        proposal={props.proposal}
-        canVote={props.canVote}
-        canCancel={props.canCancel}
-        canEvaluate={props.canEvaluate}
-        canExecute={props.canExecute}
-      />
+      <ProposalActions proposal={proposal} {...actions} />
     </div>
   )
 }
@@ -670,7 +645,13 @@ function VotesDisplay({ title, yes, no, abstain }) {
   )
 }
 
-function ProposalActions(props) {
+function ProposalActions({
+  proposal,
+  canVote,
+  canCancel,
+  canEvaluate,
+  canExecute,
+}) {
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
   const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
@@ -701,7 +682,6 @@ function ProposalActions(props) {
   const isDaoMember = userTokenBalance > 0
 
   // Check if the user can vote proposals
-  const proposal = props.proposal
   const id = proposal.id
   const userCanVote =
     userTokenBalance >=
@@ -717,7 +697,7 @@ function ProposalActions(props) {
 
   return (
     <div className={styles.proposal_actions}>
-      {props.canVote && userCanVote && !userVotes?.[id] && (
+      {canVote && userCanVote && !userVotes?.[id] && (
         <div>
           <p>Vote with your tokens:</p>
           <div className={styles.proposal_actions_buttons}>
@@ -743,7 +723,7 @@ function ProposalActions(props) {
         </div>
       )}
 
-      {props.canVote && userCommunity && !communityVotes?.[id] && (
+      {canVote && userCommunity && !communityVotes?.[id] && (
         <div>
           <p>Vote as representative:</p>
           <div className={styles.proposal_actions_buttons}>
@@ -772,17 +752,17 @@ function ProposalActions(props) {
       )}
 
       <div className={styles.proposal_actions_buttons}>
-        {props.canCancel && proposal.issuer === userAddress && (
+        {canCancel && proposal.issuer === userAddress && (
           <Button shadow_box onClick={() => cancelProposal(id, true, callback)}>
             cancel
           </Button>
         )}
-        {props.canEvaluate && isDaoMember && (
+        {canEvaluate && isDaoMember && (
           <Button shadow_box onClick={() => evaluateVotingResult(id, callback)}>
             evaluate
           </Button>
         )}
-        {props.canExecute && isDaoMember && (
+        {canExecute && isDaoMember && (
           <Button shadow_box onClick={() => executeProposal(id, callback)}>
             execute
           </Button>

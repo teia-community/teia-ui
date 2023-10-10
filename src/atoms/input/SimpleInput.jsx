@@ -1,6 +1,6 @@
 import styles from '@style'
 
-export default function DaoInput({
+export default function SimpleInput({
   type,
   label,
   min,
