@@ -23,6 +23,7 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
+import Votes from '@components/votes'
 import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
@@ -67,16 +68,14 @@ export default function DaoProposals() {
   )
 
   if (governanceParameters && proposals && usersAliases) {
-    // Loop over the complete list of proposals
     const now = new Date()
 
     for (const proposalId of Object.keys(proposals).reverse()) {
       // Calculate the proposal vote and wait expiration times
       const proposal = proposals[proposalId]
-      const proposalGovernanceParameters =
-        governanceParameters[proposal.gp_index]
-      const votePeriod = parseInt(proposalGovernanceParameters.vote_period)
-      const waitPeriod = parseInt(proposalGovernanceParameters.wait_period)
+      const gp = governanceParameters[proposal.gp_index]
+      const votePeriod = parseInt(gp.vote_period)
+      const waitPeriod = parseInt(gp.wait_period)
       const voteExpirationTime = new Date(proposal.timestamp)
       voteExpirationTime.setDate(voteExpirationTime.getDate() + votePeriod)
       const waitExpirationTime = new Date(proposal.timestamp)
@@ -273,7 +272,7 @@ function ProposalDescription({ proposal }) {
   const description = hexToString(proposal.description)
 
   // Try to extract an ipfs cid from the proposal description
-  const cid = description.split('/')[2]
+  const cid = description.split('//')[1]
 
   return (
     <div>
@@ -292,20 +291,22 @@ function ProposalDescription({ proposal }) {
         on {getWordDate(proposal.timestamp)}.
       </p>
 
-      {proposal.status.open && !proposal.voteFinished && (
-        <p>Voting period ends on {getWordDate(proposal.voteExpirationTime)}.</p>
-      )}
-
       {proposal.status.open &&
-        proposal.voteFinished &&
-        !proposal.waitFinished && (
+        (!proposal.voteFinished ? (
           <p>
-            Waiting period ends on {getWordDate(proposal.waitExpirationTime)}.
+            Voting period ends on {getWordDate(proposal.voteExpirationTime)}.
           </p>
-        )}
+        ) : (
+          !proposal.waitFinished && (
+            <p>
+              Waiting period ends on {getWordDate(proposal.waitExpirationTime)}.
+            </p>
+          )
+        ))}
 
       <p>
-        Description: {cid ? <IpfsLink cid={cid}>ipfs</IpfsLink> : description}
+        Description:{' '}
+        {cid ? <IpfsLink cid={cid}>open file in ipfs</IpfsLink> : description}
       </p>
 
       <ProposalContent content={proposal.kind} />
@@ -464,43 +465,33 @@ function ProposalVotesSummary({ proposal }) {
   const [userVotes] = useDaoUserVotes(userAddress, daoStorage)
   const [userCommunityVotes] = useDaoCommunityVotes(userCommunity, daoStorage)
 
-  // Get the proposal quorum and governance parameters
+  // Get the proposal governance parameters
+  const gp = governanceParameters[proposal.gp_index]
+  const supermajority = gp.supermajority / 100
   const quorum = proposal.quorum
-  const proposalGovernanceParameters = governanceParameters[proposal.gp_index]
 
   // Calculate the sum of the token and representatives votes
   const tokenVotes = proposal.token_votes
-  const representativesVotes = proposal.representatives_votes
-  let totalVotes = parseInt(tokenVotes.total)
-  let positiveVotes = parseInt(tokenVotes.positive)
-  let negativeVotes = parseInt(tokenVotes.negative)
-  let abstainVotes = parseInt(tokenVotes.abstain)
-
-  if (representativesVotes.total > 0) {
-    const share = Math.min(
-      proposalGovernanceParameters.representatives_share,
-      representativesVotes.total *
-        proposalGovernanceParameters.representative_max_share
-    )
-    const representativesTotalVotes = Math.floor((quorum * share) / 100)
-    totalVotes += representativesTotalVotes
-    positiveVotes += Math.floor(
-      (representativesTotalVotes * representativesVotes.positive) /
-        representativesVotes.total
-    )
-    negativeVotes += Math.floor(
-      (representativesTotalVotes * representativesVotes.negative) /
-        representativesVotes.total
-    )
-    abstainVotes += Math.floor(
-      (representativesTotalVotes * representativesVotes.abstain) /
-        representativesVotes.total
-    )
-  }
+  const repsVotes = proposal.representatives_votes
+  const representativeShare =
+    repsVotes.total > 0
+      ? Math.min(
+          gp.representatives_share / repsVotes.total,
+          gp.representative_max_share
+        ) / 100
+      : 0
+  const representativeWeight = quorum * representativeShare
+  const totalVotes =
+    parseInt(tokenVotes.total) + repsVotes.total * representativeWeight
+  const positiveVotes =
+    parseInt(tokenVotes.positive) + repsVotes.positive * representativeWeight
+  const negativeVotes =
+    parseInt(tokenVotes.negative) + repsVotes.negative * representativeWeight
+  const abstainVotes =
+    parseInt(tokenVotes.abstain) + repsVotes.abstain * representativeWeight
 
   // Check if the proposal passes the quorum and supermajority
   const passesQuorum = totalVotes > quorum
-  const supermajority = proposalGovernanceParameters.supermajority / 100
   const passesSupermajority =
     positiveVotes > Math.floor((positiveVotes + negativeVotes) * supermajority)
 
@@ -508,61 +499,52 @@ function ProposalVotesSummary({ proposal }) {
   const requiredVotesForQuorum = passesQuorum ? 0 : quorum - totalVotes
 
   // Calculate the vote scaling depending on the vote method
-  const voteScaling = proposalGovernanceParameters.vote_method.linear
+  const voteScaling = gp.vote_method.linear
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
   // Calculate the number of yes votes needed to reach supermajority
   const requiredYesVotesForSupermajority = passesSupermajority
     ? 0
-    : positiveVotes === 0
+    : totalVotes === 0
     ? voteScaling
     : (negativeVotes * supermajority) / (1 - supermajority) - positiveVotes
 
   // Check if the user is a DAO member
   const isDaoMember = userTokenBalance > 0
 
-  // Get the user vote and the vote class name
+  // Get the user votes and weights
   const userVote = userVotes?.[proposal.id]?.vote
-  const voteClassName = !userVote
-    ? ''
-    : userVote.yes
-    ? styles.yes_vote
-    : userVote.no
-    ? styles.no_vote
-    : styles.abstain_vote
-
-  // Get the user community vote and the community vote class name
+  const userVoteWeight = userVotes?.[proposal.id]?.weight
   const userCommunityVote = userCommunityVotes?.[proposal.id]
-  const communityVoteClassName = !userCommunityVote
-    ? ''
-    : userCommunityVote.yes
-    ? styles.yes_vote
-    : userCommunityVote.no
-    ? styles.no_vote
-    : styles.abstain_vote
 
   return (
     <div className={styles.proposal_votes_summary}>
-      <VotesDisplay
-        title="Token votes:"
-        yes={tokenVotes.positive / voteScaling}
-        no={tokenVotes.negative / voteScaling}
-        abstain={tokenVotes.abstain / voteScaling}
+      <p>Token votes:</p>
+      <Votes
+        votes={{
+          yes: tokenVotes.positive / voteScaling,
+          no: tokenVotes.negative / voteScaling,
+          abstain: tokenVotes.abstain / voteScaling,
+        }}
       />
 
-      <VotesDisplay
-        title="Representatives votes:"
-        yes={representativesVotes.positive}
-        no={representativesVotes.negative}
-        abstain={representativesVotes.abstain}
+      <p>Representatives votes:</p>
+      <Votes
+        votes={{
+          yes: (repsVotes.positive * representativeWeight) / voteScaling,
+          no: (repsVotes.negative * representativeWeight) / voteScaling,
+          abstain: (repsVotes.abstain * representativeWeight) / voteScaling,
+        }}
       />
 
-      <VotesDisplay
-        title="Combined votes:"
-        yes={positiveVotes / voteScaling}
-        no={negativeVotes / voteScaling}
-        abstain={abstainVotes / voteScaling}
+      <p>Combined votes:</p>
+      <Votes
+        votes={{
+          yes: positiveVotes / voteScaling,
+          no: negativeVotes / voteScaling,
+          abstain: abstainVotes / voteScaling,
+        }}
       />
 
       <p>
@@ -584,63 +566,36 @@ function ProposalVotesSummary({ proposal }) {
       </p>
 
       {(isDaoMember || (userVotes && Object.keys(userVotes).length > 0)) && (
-        <div>
-          <p>Your votes:</p>
-          <span className={styles.user_votes + ' ' + voteClassName} />
-          {userCommunity && (
-            <span
-              className={styles.user_votes + ' ' + communityVoteClassName}
+        <p>
+          Your votes:
+          <span className={styles.user_vote}>
+            <Votes
+              votes={{
+                yes: userVote?.yes ? userVoteWeight / voteScaling : 0,
+                no: userVote?.no ? userVoteWeight / voteScaling : 0,
+                abstain: userVote?.abstain ? userVoteWeight / voteScaling : 0,
+              }}
             />
+          </span>
+          {userCommunity && (
+            <span className={styles.user_vote}>
+              <Votes
+                votes={{
+                  yes: userCommunityVote?.yes
+                    ? representativeWeight / voteScaling
+                    : 0,
+                  no: userCommunityVote?.no
+                    ? representativeWeight / voteScaling
+                    : 0,
+                  abstain: userCommunityVote?.abstain
+                    ? representativeWeight / voteScaling
+                    : 0,
+                }}
+              />
+            </span>
           )}
-        </div>
+        </p>
       )}
-    </div>
-  )
-}
-
-function VotesDisplay({ title, yes, no, abstain }) {
-  const totalVotes = parseInt(yes) + parseInt(no) + parseInt(abstain)
-  const yesPercent = (100 * yes) / totalVotes
-  const noPercent = (100 * no) / totalVotes
-  const abstainPercent = (100 * abstain) / totalVotes
-
-  return (
-    <div>
-      <p>{title}</p>
-      <div className={styles.votes_display_result}>
-        {totalVotes === 0 && (
-          <div
-            className={styles.vote_display_nothing}
-            style={{ width: '100%' }}
-          >
-            0
-          </div>
-        )}
-        {yesPercent > 0 && (
-          <div
-            className={styles.vote_display_yes}
-            style={{ width: yesPercent + '%' }}
-          >
-            {Math.round(yes)}
-          </div>
-        )}
-        {noPercent > 0 && (
-          <div
-            className={styles.vote_display_no}
-            style={{ width: noPercent + '%' }}
-          >
-            {Math.round(no)}
-          </div>
-        )}
-        {abstainPercent > 0 && (
-          <div
-            className={styles.vote_display_abstain}
-            style={{ width: abstainPercent + '%' }}
-          >
-            {Math.round(abstain)}
-          </div>
-        )}
-      </div>
     </div>
   )
 }
@@ -655,8 +610,8 @@ function ProposalActions({
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
   const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
-  const [representatives] = useDaoRepresentatives(daoStorage)
   const [, updateProposals] = useDaoProposals(daoStorage)
+  const [representatives] = useDaoRepresentatives(daoStorage)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
@@ -690,17 +645,17 @@ function ProposalActions({
   // Define the callback function to be triggered when the user interacts
   const callback = () => {
     updateProposals()
+    updateUserTokenBalance()
     updateUserVotes()
     updateCommunityVotes()
-    updateUserTokenBalance()
   }
 
   return (
-    <div className={styles.proposal_actions}>
+    <div>
       {canVote && userCanVote && !userVotes?.[id] && (
         <div>
           <p>Vote with your tokens:</p>
-          <div className={styles.proposal_actions_buttons}>
+          <div className={styles.proposal_buttons}>
             <Button
               shadow_box
               onClick={() => voteProposal(id, 'yes', null, callback)}
@@ -726,7 +681,7 @@ function ProposalActions({
       {canVote && userCommunity && !communityVotes?.[id] && (
         <div>
           <p>Vote as representative:</p>
-          <div className={styles.proposal_actions_buttons}>
+          <div className={styles.proposal_buttons}>
             <Button
               shadow_box
               onClick={() => voteProposalAsRepresentative(id, 'yes', callback)}
@@ -751,12 +706,17 @@ function ProposalActions({
         </div>
       )}
 
-      <div className={styles.proposal_actions_buttons}>
-        {canCancel && proposal.issuer === userAddress && (
-          <Button shadow_box onClick={() => cancelProposal(id, true, callback)}>
-            cancel
-          </Button>
-        )}
+      <div className={styles.proposal_buttons}>
+        {canCancel &&
+          (proposal.issuer === userAddress ||
+            daoStorage?.guardians === userAddress) && (
+            <Button
+              shadow_box
+              onClick={() => cancelProposal(id, true, callback)}
+            >
+              cancel
+            </Button>
+          )}
         {canEvaluate && isDaoMember && (
           <Button shadow_box onClick={() => evaluateVotingResult(id, callback)}>
             evaluate

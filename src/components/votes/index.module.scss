@@ -1,0 +1,30 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
+.votes {
+  display: flex;
+  flex-direction: row;
+  font-size: $font-xsmall;
+  text-align: center;
+  cursor: pointer;
+
+  @include respond-to('desktop') {
+    font-size: $font-small;
+  }
+}
+
+.yes_vote {
+  background-color: var(--yes-vote-color);
+}
+
+.no_vote {
+  background-color: var(--no-vote-color);
+}
+
+.abstain_vote {
+  background-color: var(--abstain-vote-color);
+}
+
+.empty_vote {
+  background-color: var(--gray-15);
+}

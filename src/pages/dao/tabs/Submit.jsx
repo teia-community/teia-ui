@@ -49,10 +49,8 @@ export default function SubmitDaoProposals() {
   }
 
   // Calculate the minimum number of tokens needed to create proposals
-  const currentGovernanceParameters =
-    governanceParameters[daoStorage.gp_counter - 1]
-  const minimumTokensToCreateProposals =
-    currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS
+  const gp = governanceParameters[daoStorage.gp_counter - 1]
+  const minimumTokensToCreateProposals = gp.escrow_amount / DAO_TOKEN_DECIMALS
 
   return (
     <section className={styles.section}>

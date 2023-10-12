@@ -39,6 +39,9 @@ $letter-spacing: 0.015em;
   --border-color: rgba(0, 0, 0, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.2);
   --secondary-color: rgba(0, 0, 0, 0.5);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: var(--gray-80);
 }
@@ -63,6 +66,9 @@ $letter-spacing: 0.015em;
   --border-color: rgba(255, 255, 255, 0.3);
   --shadow-color: rgba(255, 255, 255, 0.3);
   --secondary-color: rgba(255, 255, 255, 0.5);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: #dedede;
 }
@@ -87,6 +93,9 @@ $letter-spacing: 0.015em;
   --border-color: rgba(255, 255, 255, 0.3);
   --shadow-color: rgba(255, 255, 255, 0.3);
   --secondary-color: rgba(255, 255, 255, 0.5);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: #00ff00;
 }
@@ -107,6 +116,10 @@ $letter-spacing: 0.015em;
   --gray-100: #111;
 
   --background-color: #111;
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
+
   --text-color: #111;
   * {
     color: #111;
@@ -147,6 +160,9 @@ $letter-spacing: 0.015em;
   --border-color: var(--gray-80);
   --shadow-color: var(--gray-80);
   --secondary-color: var(--gray-70);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: var(--gray-80);
 }
@@ -171,6 +187,9 @@ $letter-spacing: 0.015em;
   --border-color: var(--gray-80);
   --shadow-color: var(--gray-80);
   --secondary-color: var(--gray-70);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: var(--gray-90);
 }
@@ -194,6 +213,9 @@ $letter-spacing: 0.015em;
   --border-color: var(--gray-80);
   --shadow-color: var(--gray-80);
   --secondary-color: var(--gray-70);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: var(--gray-90);
 }
@@ -218,6 +240,9 @@ $letter-spacing: 0.015em;
   --border-color: var(--gray-80);
   --shadow-color: var(--gray-80);
   --secondary-color: var(--gray-70);
+  --yes-vote-color: #81c784;
+  --no-vote-color: #ff5252;
+  --abstain-vote-color: #2196f3;
 
   --text-color: var(--gray-90);
 }

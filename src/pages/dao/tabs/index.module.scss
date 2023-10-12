@@ -35,7 +35,6 @@
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  gap: 0.5em;
   margin: 1em 0;
 
   p {
@@ -44,6 +43,7 @@
 
   @include respond-to('desktop') {
     flex-direction: row;
+    gap: 0.5em;
   }
 }
 
@@ -55,8 +55,7 @@
   margin-right: 0.5em;
   padding: 0 1em;
   text-align: center;
-  color: var(--background-color);
-  background-color: var(--text-color);
+  background-color: var(--gray-15);
 }
 
 .proposal_title {
@@ -66,20 +65,23 @@
 .proposal_details {
   summary {
     cursor: pointer;
+
+    &:before {
+      margin-right: 0.5em;
+      content: '▶';
+    }
+  }
+
+  &[open] > summary:before {
+    content: '▼';
   }
 
   table {
-    color: var(--gray-5);
-    background-color: var(--gray-90);
     display: inline-block;
-    margin: 0.5em 0 0 0;
-    padding: 1em;
-    border-radius: 4px;
     overflow: hidden;
-
-    a {
-      color: var(--gray-5);
-    }
+    margin-top: 0.5em;
+    padding: 1em;
+    background-color: var(--gray-15);
   }
 
   td:first-child {
@@ -89,75 +91,26 @@
 }
 
 .micheline_code {
-  line-height: 1.4;
-  margin: 1em 0;
+  margin-top: 0.5em;
   padding: 1em;
-  border-radius: 4px;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--gray-5);
-  background-color: var(--gray-90);
+  background-color: var(--gray-15);
 }
 
-.proposal_votes_summary {
-  margin-top: 1em;
-}
-
-.votes_display_result {
-  font-size: 0.9em;
-  text-align: center;
-  color: black;
-  margin: 0 1em;
-  display: flex;
-  flex-direction: row;
-}
-
-.vote_display_nothing {
-  background-color: white;
-}
-
-.vote_display_yes,
-.yes_vote {
-  background-color: lighten(green, 55%);
-}
-
-.vote_display_no,
-.no_vote {
-  background-color: lighten(red, 25%);
-}
-
-.vote_display_abstain,
-.abstain_vote {
-  background-color: lighten(yellow, 25%);
-}
-
-.user_votes {
+.user_vote {
   display: inline-block;
-  min-width: 3em;
-  padding: 0.5em;
-  border-radius: 4px;
-  background-color: white;
-  margin: 0 0.5em 0.5em 0;
-
-  &:empty:before {
-    content: '\200b';
-  }
+  margin-left: 0.5em;
+  min-width: 4em;
 }
 
-.proposal_actions {
-  margin-right: 0.5em;
-
-  > :not(:first-child) {
-    margin-top: 1em;
-  }
-}
-
-.proposal_actions_buttons {
+.proposal_buttons {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  gap: 0.5em;
   align-items: baseline;
+  gap: 0.5em;
+  margin: 0.5em 0;
 
   @include respond-to('desktop') {
     justify-content: flex-end;

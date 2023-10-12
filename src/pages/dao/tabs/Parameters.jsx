@@ -47,11 +47,10 @@ export default function DaoParameters() {
   }
 
   // Get the current governance parameters
-  const currentGovernanceParameters =
-    governanceParameters[daoStorage.gp_counter - 1]
+  const gp = governanceParameters[daoStorage.gp_counter - 1]
 
   // Calculate the vote scaling depending on the vote method
-  const voteScaling = currentGovernanceParameters.vote_method.linear
+  const voteScaling = gp.vote_method.linear
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
@@ -157,43 +156,31 @@ export default function DaoParameters() {
         <ul className={styles.parameters_list}>
           <li>
             Vote method:{' '}
-            {currentGovernanceParameters.vote_method.linear
-              ? 'linear weight'
-              : 'quadratic weight'}
+            {gp.vote_method.linear ? 'linear weight' : 'quadratic weight'}
           </li>
           <li>
             Required quorum: {daoStorage.quorum / voteScaling} weighted votes
           </li>
           <li>
-            Percentage for supermajority:{' '}
-            {currentGovernanceParameters.supermajority}% positive votes
+            Percentage for supermajority: {gp.supermajority}% positive votes
           </li>
           <li>
-            Representatives vote share:{' '}
-            {currentGovernanceParameters.representatives_share}% of the quorum
-          </li>
-          <li>
-            Representative max vote share:{' '}
-            {currentGovernanceParameters.representative_max_share}% of the
+            Representatives vote share: {gp.representatives_share}% of the
             quorum
           </li>
           <li>
-            Proposal voting period: {currentGovernanceParameters.vote_period}{' '}
-            days
+            Representative max vote share: {gp.representative_max_share}% of the
+            quorum
           </li>
-          <li>
-            Proposal waiting period: {currentGovernanceParameters.wait_period}{' '}
-            days
-          </li>
+          <li>Proposal voting period: {gp.vote_period} days</li>
+          <li>Proposal waiting period: {gp.wait_period} days</li>
           <li>
             Number of tokens to escrow to submit a proposal:{' '}
-            {currentGovernanceParameters.escrow_amount / DAO_TOKEN_DECIMALS}{' '}
-            TEIA tokens
+            {gp.escrow_amount / DAO_TOKEN_DECIMALS} TEIA tokens
           </li>
           <li>
             Minimum number of tokens required to vote a proposal:{' '}
-            {currentGovernanceParameters.min_amount / DAO_TOKEN_DECIMALS} TEIA
-            tokens
+            {gp.min_amount / DAO_TOKEN_DECIMALS} TEIA tokens
           </li>
         </ul>
       </section>
