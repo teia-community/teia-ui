@@ -16,7 +16,7 @@ export default function Votes({
   }
 
   return (
-    <span
+    <button
       onClick={handleClick}
       className={`${styles.votes} ${className ?? ''}`}
     >
@@ -49,6 +49,6 @@ export default function Votes({
           {showValues ? 0 : labels.empty}
         </span>
       )}
-    </span>
+    </button>
   )
 }

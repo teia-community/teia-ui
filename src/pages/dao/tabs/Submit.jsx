@@ -153,6 +153,8 @@ function ProposalForm({ kind, callback }) {
           <LambdaFunctionProposalForm callback={callback} />
         </>
       )
+    default:
+      return
   }
 }
 

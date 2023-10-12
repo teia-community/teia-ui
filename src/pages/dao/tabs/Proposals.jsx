@@ -234,6 +234,8 @@ function ProposalGroup({ status, proposals }) {
           <ProposalList proposals={proposals} />
         </>
       )
+    default:
+      return
   }
 }
 
@@ -247,7 +249,7 @@ function ProposalList({ proposals, ...actions }) {
       {proposals.map((proposal, index) => (
         <li key={proposal.id}>
           <Proposal proposal={proposal} {...actions} />
-          {index != proposals.length - 1 && <Line />}
+          {index !== proposals.length - 1 && <Line />}
         </li>
       ))}
     </ul>
