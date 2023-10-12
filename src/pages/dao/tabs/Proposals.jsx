@@ -308,7 +308,7 @@ function ProposalDescription({ proposal }) {
 
       <p>
         Description:{' '}
-        {cid ? <IpfsLink cid={cid}>open file in ipfs</IpfsLink> : description}
+        {cid ? <IpfsLink cid={cid}>Open file in ipfs</IpfsLink> : description}
       </p>
 
       <ProposalContent content={proposal.kind} />
@@ -378,7 +378,7 @@ function ProposalContent({ content }) {
             ? `edition${nEditions > 1 ? 's' : ''} of token`
             : ''}{' '}
           <TokenLink fa2={fa2} id={tokenId}>
-            {token ? (token.multiasset ? '#' + tokenId : token.name) : 'tokens'}
+            {token ? (token.multiasset ? `#${tokenId}` : token.name) : 'tokens'}
           </TokenLink>{' '}
           to <TezosAddressLink address={transfers[0].destination} shorten />.
         </p>
@@ -388,11 +388,13 @@ function ProposalContent({ content }) {
         <>
           <p>
             Effect: Transfers {token ? nEditions / token.decimals : nEditions}{' '}
-            {token?.multiasset ? 'editions of token' : ''}{' '}
+            {token?.multiasset
+              ? `edition${nEditions > 1 ? 's' : ''} of token`
+              : ''}{' '}
             <TokenLink fa2={fa2} id={tokenId}>
               {token
                 ? token.multiasset
-                  ? '#' + tokenId
+                  ? `#${tokenId}`
                   : token.name
                 : 'tokens'}
             </TokenLink>
@@ -471,26 +473,35 @@ function ProposalVotesSummary({ proposal }) {
   const gp = governanceParameters[proposal.gp_index]
   const supermajority = gp.supermajority / 100
   const quorum = proposal.quorum
+  const voteScaling = gp.vote_method.linear
+    ? DAO_TOKEN_DECIMALS
+    : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
-  // Calculate the sum of the token and representatives votes
-  const tokenVotes = proposal.token_votes
-  const repsVotes = proposal.representatives_votes
+  // Calculate the weight in votes of a single representative
+  const representativesVotes = proposal.representatives_votes
   const representativeShare =
-    repsVotes.total > 0
+    representativesVotes.total > 0
       ? Math.min(
-          gp.representatives_share / repsVotes.total,
+          gp.representatives_share / representativesVotes.total,
           gp.representative_max_share
         ) / 100
       : 0
   const representativeWeight = quorum * representativeShare
+
+  // Calculate the sum of the token and representatives votes
+  const tokenVotes = proposal.token_votes
   const totalVotes =
-    parseInt(tokenVotes.total) + repsVotes.total * representativeWeight
+    parseInt(tokenVotes.total) +
+    representativesVotes.total * representativeWeight
   const positiveVotes =
-    parseInt(tokenVotes.positive) + repsVotes.positive * representativeWeight
+    parseInt(tokenVotes.positive) +
+    representativesVotes.positive * representativeWeight
   const negativeVotes =
-    parseInt(tokenVotes.negative) + repsVotes.negative * representativeWeight
+    parseInt(tokenVotes.negative) +
+    representativesVotes.negative * representativeWeight
   const abstainVotes =
-    parseInt(tokenVotes.abstain) + repsVotes.abstain * representativeWeight
+    parseInt(tokenVotes.abstain) +
+    representativesVotes.abstain * representativeWeight
 
   // Check if the proposal passes the quorum and supermajority
   const passesQuorum = totalVotes > quorum
@@ -499,11 +510,6 @@ function ProposalVotesSummary({ proposal }) {
 
   // Calculate the number of votes needed to reach the quorum
   const requiredVotesForQuorum = passesQuorum ? 0 : quorum - totalVotes
-
-  // Calculate the vote scaling depending on the vote method
-  const voteScaling = gp.vote_method.linear
-    ? DAO_TOKEN_DECIMALS
-    : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
   // Calculate the number of yes votes needed to reach supermajority
   const requiredYesVotesForSupermajority = passesSupermajority
@@ -521,7 +527,7 @@ function ProposalVotesSummary({ proposal }) {
   const userCommunityVote = userCommunityVotes?.[proposal.id]
 
   return (
-    <div className={styles.proposal_votes_summary}>
+    <div>
       <p>Token votes:</p>
       <Votes
         votes={{
@@ -534,9 +540,14 @@ function ProposalVotesSummary({ proposal }) {
       <p>Representatives votes:</p>
       <Votes
         votes={{
-          yes: (repsVotes.positive * representativeWeight) / voteScaling,
-          no: (repsVotes.negative * representativeWeight) / voteScaling,
-          abstain: (repsVotes.abstain * representativeWeight) / voteScaling,
+          yes:
+            (representativesVotes.positive * representativeWeight) /
+            voteScaling,
+          no:
+            (representativesVotes.negative * representativeWeight) /
+            voteScaling,
+          abstain:
+            (representativesVotes.abstain * representativeWeight) / voteScaling,
         }}
       />
 
@@ -552,8 +563,8 @@ function ProposalVotesSummary({ proposal }) {
       <p>
         Passes supermajority condition?{' '}
         {passesSupermajority
-          ? 'yes'
-          : `no, ${Math.ceil(
+          ? 'Yes.'
+          : `No, ${Math.ceil(
               requiredYesVotesForSupermajority / voteScaling
             )} yes votes still missing.`}
       </p>
@@ -561,13 +572,15 @@ function ProposalVotesSummary({ proposal }) {
       <p>
         Passes minimum quorum condition?{' '}
         {passesQuorum
-          ? 'yes'
-          : `no, ${Math.ceil(
+          ? 'Yes.'
+          : `No, ${Math.ceil(
               requiredVotesForQuorum / voteScaling
             )} votes still missing.`}
       </p>
 
-      {(isDaoMember || (userVotes && Object.keys(userVotes).length > 0)) && (
+      {(isDaoMember ||
+        userCommunity ||
+        (userVotes && Object.keys(userVotes).length > 0)) && (
         <p>
           Your votes:
           <span className={styles.user_vote}>

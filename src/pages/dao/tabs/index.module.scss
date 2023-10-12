@@ -63,7 +63,7 @@
 }
 
 .proposal_details {
-  summary {
+  > summary {
     cursor: pointer;
 
     &:before {
