@@ -74,6 +74,14 @@ export default function DaoParameters() {
                 DAO token balance: {Math.round(userTokenBalance * 10) / 10} TEIA
               </li>
               <li>
+                Submited proposals:{' '}
+                {Object.values(proposals).reduce(
+                  (acc, proposal) =>
+                    acc + (proposal.issuer === userAddress ? 1 : 0),
+                  0
+                )}
+              </li>
+              <li>
                 Voted in {numberOfTimesVoted} proposal
                 {numberOfTimesVoted === 1 ? '' : 's'}.
               </li>
@@ -96,11 +104,14 @@ export default function DaoParameters() {
 
         <ul className={styles.parameters_list}>
           <li>Members: {daoMemberCount}</li>
-          <li>
-            Treasury balance: {Math.round(daoBalance)} tez and{' '}
-            {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
-          </li>
           <li>Total number of proposals: {Object.keys(proposals).length}</li>
+          <li>
+            Open proposals:{' '}
+            {Object.values(proposals).reduce(
+              (acc, proposal) => acc + (proposal.status.open ? 1 : 0),
+              0
+            )}
+          </li>
           <li>
             Executed proposals:{' '}
             {Object.values(proposals).reduce(
@@ -121,6 +132,10 @@ export default function DaoParameters() {
               (acc, proposal) => acc + (proposal.status.cancelled ? 1 : 0),
               0
             )}
+          </li>
+          <li>
+            Treasury balance: {Math.round(daoBalance)} tez and{' '}
+            {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
           </li>
         </ul>
       </section>

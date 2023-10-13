@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { encodePubKey } from '@taquito/utils'
-import { Parser, emitMicheline } from '@taquito/michel-codec'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
@@ -14,6 +12,11 @@ import {
   IpfsLink,
 } from '@atoms/link'
 import {
+  TezTansfersDetails,
+  TokenTansfersDetails,
+  CodeDetails,
+} from '@components/proposal-details'
+import {
   useStorage,
   useDaoGovernanceParameters,
   useDaoProposals,
@@ -23,9 +26,10 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
-import Votes from '@components/votes'
+import { Votes } from '@components/votes'
 import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
+import { parseLambda } from '@utils/lambda'
 import styles from '@style'
 
 const PROPOSAL_STATUS_OPTIONS = {
@@ -317,140 +321,108 @@ function ProposalDescription({ proposal }) {
 }
 
 function ProposalContent({ content }) {
+  // Get all the required DAO information
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [proposals] = useDaoProposals(daoStorage)
+  const [representatives] = useDaoRepresentatives(daoStorage)
+
+  // Get all the required user information
+  const userAddress = useUserStore((st) => st.address)
+
+  // Get all the relevant users aliases
+  const [usersAliases] = useDaoUsersAliases(
+    userAddress,
+    representatives,
+    proposals
+  )
+
   if (content.text) {
     return <p>Effect: Approves a text proposal.</p>
   } else if (content.transfer_mutez) {
-    // Extract the transfers information
+    // Calculate the total amount of tez to transfer
     const transfers = content.transfer_mutez
     const totalAmount = transfers.reduce(
-      (previous, current) => previous + parseInt(current.amount),
+      (previous, current) => previous + current.amount / 1e6,
       0
     )
 
     if (transfers.length === 1) {
       return (
         <p>
-          Effect: Transfers {totalAmount / 1000000} tez to{' '}
-          <TezosAddressLink address={transfers[0].destination} shorten />.
+          Effect: Transfers {totalAmount} tez to{' '}
+          <TezosAddressLink
+            address={transfers[0].destination}
+            alias={usersAliases?.[transfers[0].destination]}
+            shorten
+          />
+          .
         </p>
       )
     } else {
       return (
         <>
-          <p>Effect: Transfers {totalAmount / 1000000} tez.</p>
-          <details className={styles.proposal_details}>
-            <summary>See transfer details</summary>
-            <table>
-              <tbody>
-                {transfers.map((transfer, index) => (
-                  <tr key={index}>
-                    <td>{transfer.amount / 1000000} tez to</td>
-                    <td>
-                      <TezosAddressLink
-                        address={transfer.destination}
-                        shorten
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
+          <p>Effect: Transfers {totalAmount} tez.</p>
+          <TezTansfersDetails
+            label="See transfer details"
+            transfers={transfers}
+            aliases={usersAliases}
+          />
         </>
       )
     }
   } else if (content.transfer_token) {
-    // Extract the transfers information
+    // Calculate the total number of token editions to transfer
     const fa2 = content.transfer_token.fa2
     const tokenId = content.transfer_token.token_id
+    const token = TOKENS.find((token) => token.fa2 === fa2)
+    const decimals = token?.decimals ?? 1
     const transfers = content.transfer_token.distribution
     const nEditions = transfers.reduce(
-      (previous, current) => previous + parseInt(current.amount),
+      (previous, current) => previous + current.amount / decimals,
       0
     )
-    const token = TOKENS.find((token) => token.fa2 === fa2)
 
     if (transfers.length === 1) {
       return (
         <p>
-          Effect: Transfers {token ? nEditions / token.decimals : nEditions}{' '}
-          {token?.multiasset
-            ? `edition${nEditions > 1 ? 's' : ''} of token`
-            : ''}{' '}
-          <TokenLink fa2={fa2} id={tokenId}>
-            {token ? (token.multiasset ? `#${tokenId}` : token.name) : 'tokens'}
-          </TokenLink>{' '}
-          to <TezosAddressLink address={transfers[0].destination} shorten />.
+          Effect: Transfers {nEditions}{' '}
+          {(!token || token.multiasset) &&
+            `edition${nEditions === 1 ? '' : 's'} of `}
+          <TokenLink fa2={fa2} id={tokenId} /> to{' '}
+          <TezosAddressLink
+            address={transfers[0].destination}
+            alias={usersAliases?.[transfers[0].destination]}
+            shorten
+          />
+          .
         </p>
       )
     } else {
       return (
         <>
           <p>
-            Effect: Transfers {token ? nEditions / token.decimals : nEditions}{' '}
-            {token?.multiasset
-              ? `edition${nEditions > 1 ? 's' : ''} of token`
-              : ''}{' '}
-            <TokenLink fa2={fa2} id={tokenId}>
-              {token
-                ? token.multiasset
-                  ? `#${tokenId}`
-                  : token.name
-                : 'tokens'}
-            </TokenLink>
-            .
+            Effect: Transfers {nEditions}{' '}
+            {(!token || token.multiasset) &&
+              `edition${nEditions === 1 ? '' : 's'} of `}
+            <TokenLink fa2={fa2} id={tokenId} />.
           </p>
-          <details className={styles.proposal_details}>
-            <summary>See transfer details</summary>
-            <table>
-              <tbody>
-                {transfers.map((transfer, index) => (
-                  <tr key={index}>
-                    <td>
-                      {token
-                        ? transfer.amount / token.decimals
-                        : transfer.amount}{' '}
-                      {token?.multiasset
-                        ? `edition${transfer.amount > 1 ? 's' : ''}`
-                        : ''}{' '}
-                      to
-                    </td>
-                    <td>
-                      <TezosAddressLink
-                        address={transfer.destination}
-                        shorten
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
+          <TokenTansfersDetails
+            label="See transfer details"
+            fa2={fa2}
+            transfers={transfers}
+            aliases={usersAliases}
+          />
         </>
       )
     }
   } else {
-    // Transform the lambda function Michelson JSON code to Micheline code
-    const parser = new Parser()
-    const michelsonCode = parser.parseJSON(JSON.parse(content.lambda_function))
-    const michelineCode = emitMicheline(michelsonCode, {
-      indent: '    ',
-      newline: '\n',
-    })
-
-    // Encode any addresses that the Micheline code might contain
-    const encodedMichelineCode = michelineCode.replace(
-      /0x0[0123]{1}[\w\d]{42}/g,
-      (match) => `"${encodePubKey(match.slice(2))}"`
-    )
-
     return (
       <>
         <p>Effect: Executes a lambda function.</p>
-        <details className={styles.proposal_details}>
-          <summary>See Micheline code</summary>
-          <pre className={styles.micheline_code}>{encodedMichelineCode}</pre>
-        </details>
+        <CodeDetails
+          label="See Micheline code"
+          code={parseLambda(content.lambda_function)}
+        />
       </>
     )
   }

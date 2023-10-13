@@ -6,8 +6,7 @@ import styles from '@style'
 export function TeiaUserLink({ address, alias, shorten, className, children }) {
   return (
     <a href={`/tz/${address}`} className={className ?? ''}>
-      {children}
-      {alias ?? (shorten ? walletPreview(address) : address)}
+      {children ?? alias ?? (shorten ? walletPreview(address) : address)}
     </a>
   )
 }
@@ -15,7 +14,7 @@ export function TeiaUserLink({ address, alias, shorten, className, children }) {
 export function DefaultLink({ href, className, children }) {
   return (
     <a href={href} target="_blank" rel="noreferrer" className={className ?? ''}>
-      {children}
+      {children ?? 'link'}
     </a>
   )
 }
@@ -23,7 +22,7 @@ export function DefaultLink({ href, className, children }) {
 export function TzktLink({ link, className, children }) {
   return (
     <DefaultLink href={`https://tzkt.io/${link}`} className={className}>
-      {children}
+      {children ?? 'TzKT link'}
     </DefaultLink>
   )
 }
@@ -37,25 +36,29 @@ export function TezosAddressLink({
 }) {
   return (
     <TzktLink link={address} className={className}>
-      {children}
-      {alias ?? (shorten ? walletPreview(address) : address)}
+      {children ?? alias ?? (shorten ? walletPreview(address) : address)}
     </TzktLink>
   )
 }
 
 export function TokenLink({ fa2, id, className, children }) {
   const token = TOKENS.find((token) => token.fa2 === fa2)
+  const tokenFullName = token
+    ? token.multiasset
+      ? `${token.name}#${id}`
+      : token.name
+    : `token #${id}`
 
   if (token?.website) {
     return (
-      <DefaultLink href={token.website + id} className={className}>
-        {children}
+      <DefaultLink href={`${token.website}${id}`} className={className}>
+        {children ?? tokenFullName}
       </DefaultLink>
     )
   } else {
     return (
       <TzktLink link={`${fa2}/tokens/${id}`} className={className}>
-        {children}
+        {children ?? tokenFullName}
       </TzktLink>
     )
   }

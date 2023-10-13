@@ -153,16 +153,31 @@ export function useAliases(addresses) {
 }
 
 export function useDaoUsersAliases(userAddress, representatives, proposals) {
-  const addresses = []
-  if (userAddress) addresses.push(userAddress)
-  if (representatives)
-    Object.keys(representatives).forEach((address) => addresses.push(address))
-  if (proposals)
-    Object.values(proposals).forEach((proposal) =>
-      addresses.push(proposal.issuer)
-    )
+  const addresses = new Set()
+  if (userAddress) {
+    addresses.add(userAddress)
+  }
 
-  return useAliases(addresses)
+  if (representatives) {
+    Object.keys(representatives).forEach((address) => addresses.add(address))
+  }
+
+  if (proposals) {
+    Object.values(proposals).forEach((proposal) => {
+      addresses.add(proposal.issuer)
+
+      if (proposal.kind.transfer_mutez) {
+        proposal.kind.transfer_mutez.forEach((transfer) =>
+          addresses.add(transfer.destination)
+        )
+      } else if (proposal.kind.transfer_token)
+        proposal.kind.transfer_token.distribution.forEach((transfer) =>
+          addresses.add(transfer.destination)
+        )
+    })
+  }
+
+  return useAliases(Array.from(addresses))
 }
 
 export function useDaoMemberCount(minTokens) {

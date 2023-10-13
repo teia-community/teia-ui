@@ -62,42 +62,6 @@
   font-weight: bold;
 }
 
-.proposal_details {
-  > summary {
-    cursor: pointer;
-
-    &:before {
-      margin-right: 0.5em;
-      content: '▶';
-    }
-  }
-
-  &[open] > summary:before {
-    content: '▼';
-  }
-
-  table {
-    display: inline-block;
-    overflow: hidden;
-    margin-top: 0.5em;
-    padding: 1em;
-    background-color: var(--gray-15);
-  }
-
-  td:first-child {
-    text-align: right;
-    padding-right: 0.5em;
-  }
-}
-
-.micheline_code {
-  margin-top: 0.5em;
-  padding: 1em;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background-color: var(--gray-15);
-}
-
 .user_vote {
   display: inline-block;
   margin-left: 0.5em;
