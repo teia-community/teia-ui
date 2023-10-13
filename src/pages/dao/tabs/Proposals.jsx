@@ -637,84 +637,132 @@ function ProposalActions({
     updateCommunityVotes()
   }
 
-  return (
-    <div>
-      {canVote && userCanVote && !userVotes?.[id] && (
-        <div>
-          <p>Vote with your tokens:</p>
-          <div className={styles.proposal_buttons}>
-            <Button
-              shadow_box
-              onClick={() => voteProposal(id, 'yes', null, callback)}
-            >
-              yes
-            </Button>
-            <Button
-              shadow_box
-              onClick={() => voteProposal(id, 'no', null, callback)}
-            >
-              no
-            </Button>
-            <Button
-              shadow_box
-              onClick={() => voteProposal(id, 'abstain', null, callback)}
-            >
-              abstain
-            </Button>
-          </div>
-        </div>
-      )}
+  // Decide which buttons will be displayed
+  const showVoteButtons = canVote && userCanVote && !userVotes?.[id]
+  const showRepresentativeVoteButtons =
+    canVote && userCommunity && !communityVotes?.[id]
+  const showEvaluateButton = canEvaluate && isDaoMember
+  const showExecuteButton = canExecute && isDaoMember
+  const showCancelButton =
+    canCancel &&
+    (proposal.issuer === userAddress || daoStorage?.guardians === userAddress)
 
-      {canVote && userCommunity && !communityVotes?.[id] && (
-        <div>
-          <p>Vote as representative:</p>
-          <div className={styles.proposal_buttons}>
-            <Button
-              shadow_box
-              onClick={() => voteProposalAsRepresentative(id, 'yes', callback)}
-            >
-              yes
-            </Button>
-            <Button
-              shadow_box
-              onClick={() => voteProposalAsRepresentative(id, 'no', callback)}
-            >
-              no
-            </Button>
-            <Button
-              shadow_box
-              onClick={() =>
-                voteProposalAsRepresentative(id, 'abstain', callback)
-              }
-            >
-              abstain
-            </Button>
+  if (
+    showVoteButtons ||
+    showRepresentativeVoteButtons ||
+    showEvaluateButton ||
+    showExecuteButton ||
+    showCancelButton
+  ) {
+    return (
+      <div>
+        {showVoteButtons && (
+          <div>
+            <p>Vote with your tokens:</p>
+            <div className={styles.proposal_buttons}>
+              <Button
+                shadow_box
+                fit
+                onClick={() => voteProposal(id, 'yes', null, callback)}
+              >
+                yes
+              </Button>
+              <Button
+                shadow_box
+                fit
+                onClick={() => voteProposal(id, 'no', null, callback)}
+              >
+                no
+              </Button>
+              <Button
+                shadow_box
+                fit
+                onClick={() => voteProposal(id, 'abstain', null, callback)}
+              >
+                abstain
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-
-      <div className={styles.proposal_buttons}>
-        {canCancel &&
-          (proposal.issuer === userAddress ||
-            daoStorage?.guardians === userAddress) && (
-            <Button
-              shadow_box
-              onClick={() => cancelProposal(id, true, callback)}
-            >
-              cancel
-            </Button>
-          )}
-        {canEvaluate && isDaoMember && (
-          <Button shadow_box onClick={() => evaluateVotingResult(id, callback)}>
-            evaluate
-          </Button>
         )}
-        {canExecute && isDaoMember && (
-          <Button shadow_box onClick={() => executeProposal(id, callback)}>
-            execute
-          </Button>
+
+        {showRepresentativeVoteButtons && (
+          <div>
+            <p>Vote as representative:</p>
+            <div className={styles.proposal_buttons}>
+              <Button
+                shadow_box
+                fit
+                onClick={() =>
+                  voteProposalAsRepresentative(id, 'yes', callback)
+                }
+              >
+                yes
+              </Button>
+              <Button
+                shadow_box
+                fit
+                onClick={() => voteProposalAsRepresentative(id, 'no', callback)}
+              >
+                no
+              </Button>
+              <Button
+                shadow_box
+                fit
+                onClick={() =>
+                  voteProposalAsRepresentative(id, 'abstain', callback)
+                }
+              >
+                abstain
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {showEvaluateButton && (
+          <div>
+            <p>Evaluate the proposal:</p>
+            <div className={styles.proposal_buttons}>
+              <Button
+                shadow_box
+                fit
+                onClick={() => evaluateVotingResult(id, callback)}
+              >
+                evaluate
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {showExecuteButton && (
+          <div>
+            <p>Execute the proposal:</p>
+            <div className={styles.proposal_buttons}>
+              <Button
+                shadow_box
+                fit
+                onClick={() => executeProposal(id, callback)}
+              >
+                execute
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {showCancelButton && (
+          <div>
+            <p>Cancel the proposal:</p>
+            <div className={styles.proposal_buttons}>
+              <Button
+                shadow_box
+                fit
+                onClick={() => cancelProposal(id, true, callback)}
+              >
+                cancel
+              </Button>
+            </div>
+          </div>
         )}
       </div>
-    </div>
-  )
+    )
+  }
 }
