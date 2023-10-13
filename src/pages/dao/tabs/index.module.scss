@@ -34,7 +34,6 @@
 .proposal {
   display: flex;
   flex-direction: column;
-  align-items: baseline;
   margin: 1em 0;
 
   p {
@@ -43,12 +42,15 @@
 
   @include respond-to('desktop') {
     flex-direction: row;
-    gap: 0.5em;
+    align-items: baseline;
+    gap: 2em;
   }
 }
 
 .proposal_information {
-  width: 100%;
+  @include respond-to('desktop') {
+    flex: 1 1 0;
+  }
 }
 
 .proposal_id {
@@ -71,14 +73,8 @@
 .proposal_buttons {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: baseline;
   gap: 0.5em;
   margin: 0.5em 0;
-
-  @include respond-to('desktop') {
-    justify-content: flex-end;
-  }
 }
 
 .proposal_form {
@@ -91,4 +87,8 @@
 
 .proposal_form_field {
   margin: 1em 0;
+
+  > p {
+    margin-bottom: 0.3em;
+  }
 }
