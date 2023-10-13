@@ -1,0 +1,39 @@
+@import '@styles/variables.scss';
+
+.details {
+  summary {
+    cursor: pointer;
+
+    &:before {
+      margin-right: 0.5em;
+      content: '▶';
+    }
+  }
+
+  &[open] summary:before {
+    content: '▼';
+  }
+}
+
+.container {
+  margin: 0.5em 0 1em 0.5em;
+  padding-left: 1em;
+  border-left: 1px solid var(--gray-20);
+}
+
+.transfers {
+  display: block;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0 0.5em;
+
+  td:first-child {
+    text-align: right;
+    padding-right: 0.5em;
+  }
+}
+
+.code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

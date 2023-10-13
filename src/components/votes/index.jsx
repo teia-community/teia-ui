@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import styles from '@style'
 
-export default function Votes({
+export function Votes({
   votes,
   labels = { yes: 'yes', no: 'no', abstain: 'abs', empty: '--' },
   className,

@@ -38,6 +38,7 @@ export default function TransferFields({
             label={`${labels.amount} (${index + 1})`}
             placeholder={placeholders?.amount ?? '0'}
             min="0"
+            step={round ? 1 : 0.000001}
             value={transfer.amount}
             onChange={(value) =>
               handleChange(index, 'amount', round ? Math.round(value) : value)
