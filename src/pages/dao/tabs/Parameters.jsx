@@ -1,7 +1,11 @@
-import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import {
+  DAO_GOVERNANCE_CONTRACT,
+  DAO_TOKEN_CONTRACT,
+  DAO_TOKEN_DECIMALS,
+} from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
-import { TeiaUserLink, TezosAddressLink } from '@atoms/link'
+import { TeiaUserLink, TezosAddressLink, TzktLink } from '@atoms/link'
 import {
   useStorage,
   useDaoGovernanceParameters,
@@ -103,7 +107,12 @@ export default function DaoParameters() {
         <h1 className={styles.section_title}>DAO information</h1>
 
         <ul className={styles.parameters_list}>
-          <li>Members: {daoMemberCount}</li>
+          <li>
+            Members:{' '}
+            <TzktLink link={`${DAO_TOKEN_CONTRACT}/tokens/0/holders`}>
+              {daoMemberCount}
+            </TzktLink>
+          </li>
           <li>Total number of proposals: {Object.keys(proposals).length}</li>
           <li>
             Open proposals:{' '}
