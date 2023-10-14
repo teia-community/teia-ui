@@ -154,6 +154,7 @@ export function useAliases(addresses) {
 
 export function useDaoUsersAliases(userAddress, representatives, proposals) {
   const addresses = new Set()
+
   if (userAddress) {
     addresses.add(userAddress)
   }

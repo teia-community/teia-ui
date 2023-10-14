@@ -32,8 +32,6 @@
 }
 
 .proposal {
-  display: flex;
-  flex-direction: column;
   margin: 1em 0;
 
   p {
@@ -41,15 +39,14 @@
   }
 
   @include respond-to('desktop') {
+    display: flex;
     flex-direction: row;
     align-items: baseline;
     gap: 2em;
-  }
-}
 
-.proposal_information {
-  @include respond-to('desktop') {
-    flex: 1 1 0;
+    > :first-child {
+      flex: 1 1 0;
+    }
   }
 }
 
@@ -75,6 +72,10 @@
   flex-direction: row;
   gap: 0.5em;
   margin: 0.5em 0;
+
+  @include respond-to('desktop') {
+    margin-bottom: 1.5em;
+  }
 }
 
 .proposal_form {

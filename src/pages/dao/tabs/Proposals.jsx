@@ -16,6 +16,7 @@ import {
   TokenTansfersDetails,
   CodeDetails,
 } from '@components/proposal-details'
+import { Votes } from '@components/votes'
 import {
   useStorage,
   useDaoGovernanceParameters,
@@ -26,7 +27,6 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
-import { Votes } from '@components/votes'
 import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import { parseLambda } from '@utils/lambda'
@@ -35,7 +35,7 @@ import styles from '@style'
 const PROPOSAL_STATUS_OPTIONS = {
   toVote: 'Proposals to vote',
   voted: 'Already voted proposals',
-  toEvaluate: 'Proposals pending votes results evaluation',
+  toEvaluate: 'Proposals to evaluate',
   approved: 'Approved proposals',
   toExecute: 'Proposals to execute',
   executed: 'Executed proposals',
@@ -59,19 +59,12 @@ export default function DaoProposals() {
   const [userVotes] = useDaoUserVotes(userAddress, daoStorage)
   const [userCommunityVotes] = useDaoCommunityVotes(userCommunity, daoStorage)
 
-  // Get all the relevant users aliases
-  const [usersAliases] = useDaoUsersAliases(
-    userAddress,
-    representatives,
-    proposals
-  )
-
   // Separate the proposals depending of their current status
   const proposalsByStatus = Object.fromEntries(
     Object.keys(PROPOSAL_STATUS_OPTIONS).map((status) => [status, []])
   )
 
-  if (governanceParameters && proposals && usersAliases) {
+  if (governanceParameters && proposals) {
     const now = new Date()
 
     for (const proposalId of Object.keys(proposals).reverse()) {
@@ -89,7 +82,6 @@ export default function DaoProposals() {
 
       // Save all the information inside the proposal
       proposal.id = proposalId
-      proposal.issuerAlias = usersAliases[proposal.issuer]
       proposal.voteExpirationTime = voteExpirationTime
       proposal.waitExpirationTime = waitExpirationTime
       proposal.voteFinished = now > voteExpirationTime
@@ -244,54 +236,60 @@ function ProposalGroup({ status, proposals }) {
 }
 
 function ProposalList({ proposals, ...actions }) {
-  if (proposals.length === 0) {
-    return
+  if (proposals.length !== 0) {
+    return (
+      <ul className={styles.proposal_list}>
+        {proposals.map((proposal, index) => (
+          <li key={index}>
+            <div className={styles.proposal}>
+              <div>
+                <ProposalDescription proposal={proposal} />
+                <ProposalVotesSummary proposal={proposal} />
+              </div>
+              <ProposalActions proposal={proposal} {...actions} />
+            </div>
+            {index !== proposals.length - 1 && <Line />}
+          </li>
+        ))}
+      </ul>
+    )
   }
-
-  return (
-    <ul className={styles.proposal_list}>
-      {proposals.map((proposal, index) => (
-        <li key={proposal.id}>
-          <Proposal proposal={proposal} {...actions} />
-          {index !== proposals.length - 1 && <Line />}
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Proposal({ proposal, ...actions }) {
-  return (
-    <div className={styles.proposal}>
-      <div className={styles.proposal_information}>
-        <ProposalDescription proposal={proposal} />
-        <ProposalVotesSummary proposal={proposal} />
-      </div>
-      <ProposalActions proposal={proposal} {...actions} />
-    </div>
-  )
 }
 
 function ProposalDescription({ proposal }) {
-  // Get the proposal title and description
-  const title = hexToString(proposal.title)
-  const description = hexToString(proposal.description)
+  // Get all the required DAO information
+  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [proposals] = useDaoProposals(daoStorage)
+  const [representatives] = useDaoRepresentatives(daoStorage)
+
+  // Get all the required user information
+  const userAddress = useUserStore((st) => st.address)
+
+  // Get all the relevant users aliases
+  const [usersAliases] = useDaoUsersAliases(
+    userAddress,
+    representatives,
+    proposals
+  )
 
   // Try to extract an ipfs cid from the proposal description
+  const description = hexToString(proposal.description)
   const cid = description.split('//')[1]
 
   return (
     <div>
       <p>
         <span className={styles.proposal_id}>#{proposal.id}</span>
-        <span className={styles.proposal_title}>{title}</span>
+        <span className={styles.proposal_title}>
+          {hexToString(proposal.title)}
+        </span>
       </p>
 
       <p>
         Proposed by{' '}
         <TeiaUserLink
           address={proposal.issuer}
-          alias={proposal.issuerAlias}
+          alias={usersAliases?.[proposal.issuer]}
           shorten
         />{' '}
         on {getWordDate(proposal.timestamp)}.
@@ -315,27 +313,12 @@ function ProposalDescription({ proposal }) {
         {cid ? <IpfsLink cid={cid}>Open file in ipfs</IpfsLink> : description}
       </p>
 
-      <ProposalContent content={proposal.kind} />
+      <ProposalContent content={proposal.kind} aliases={usersAliases} />
     </div>
   )
 }
 
-function ProposalContent({ content }) {
-  // Get all the required DAO information
-  const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
-  const [proposals] = useDaoProposals(daoStorage)
-  const [representatives] = useDaoRepresentatives(daoStorage)
-
-  // Get all the required user information
-  const userAddress = useUserStore((st) => st.address)
-
-  // Get all the relevant users aliases
-  const [usersAliases] = useDaoUsersAliases(
-    userAddress,
-    representatives,
-    proposals
-  )
-
+function ProposalContent({ content, aliases }) {
   if (content.text) {
     return <p>Effect: Approves a text proposal.</p>
   } else if (content.transfer_mutez) {
@@ -352,7 +335,7 @@ function ProposalContent({ content }) {
           Effect: Transfers {totalAmount} tez to{' '}
           <TezosAddressLink
             address={transfers[0].destination}
-            alias={usersAliases?.[transfers[0].destination]}
+            alias={aliases?.[transfers[0].destination]}
             shorten
           />
           .
@@ -365,7 +348,7 @@ function ProposalContent({ content }) {
           <TezTansfersDetails
             label="See transfer details"
             transfers={transfers}
-            aliases={usersAliases}
+            aliases={aliases}
           />
         </>
       )
@@ -391,7 +374,7 @@ function ProposalContent({ content }) {
           <TokenLink fa2={fa2} id={tokenId} /> to{' '}
           <TezosAddressLink
             address={transfers[0].destination}
-            alias={usersAliases?.[transfers[0].destination]}
+            alias={aliases?.[transfers[0].destination]}
             shorten
           />
           .
@@ -410,7 +393,7 @@ function ProposalContent({ content }) {
             label="See transfer details"
             fa2={fa2}
             transfers={transfers}
-            aliases={usersAliases}
+            aliases={aliases}
           />
         </>
       )
@@ -624,7 +607,6 @@ function ProposalActions({
   const isDaoMember = userTokenBalance > 0
 
   // Check if the user can vote proposals
-  const id = proposal.id
   const userCanVote =
     userTokenBalance >=
     governanceParameters[proposal.gp_index].min_amount / DAO_TOKEN_DECIMALS
@@ -638,6 +620,7 @@ function ProposalActions({
   }
 
   // Decide which buttons will be displayed
+  const id = proposal.id
   const showVoteButtons = canVote && userCanVote && !userVotes?.[id]
   const showRepresentativeVoteButtons =
     canVote && userCommunity && !communityVotes?.[id]
@@ -661,23 +644,23 @@ function ProposalActions({
             <p>Vote with your tokens:</p>
             <div className={styles.proposal_buttons}>
               <Button
+                onClick={() => voteProposal(id, 'yes', null, callback)}
                 shadow_box
                 fit
-                onClick={() => voteProposal(id, 'yes', null, callback)}
               >
                 yes
               </Button>
               <Button
+                onClick={() => voteProposal(id, 'no', null, callback)}
                 shadow_box
                 fit
-                onClick={() => voteProposal(id, 'no', null, callback)}
               >
                 no
               </Button>
               <Button
+                onClick={() => voteProposal(id, 'abstain', null, callback)}
                 shadow_box
                 fit
-                onClick={() => voteProposal(id, 'abstain', null, callback)}
               >
                 abstain
               </Button>
@@ -690,27 +673,27 @@ function ProposalActions({
             <p>Vote as representative:</p>
             <div className={styles.proposal_buttons}>
               <Button
-                shadow_box
-                fit
                 onClick={() =>
                   voteProposalAsRepresentative(id, 'yes', callback)
                 }
+                shadow_box
+                fit
               >
                 yes
               </Button>
               <Button
+                onClick={() => voteProposalAsRepresentative(id, 'no', callback)}
                 shadow_box
                 fit
-                onClick={() => voteProposalAsRepresentative(id, 'no', callback)}
               >
                 no
               </Button>
               <Button
-                shadow_box
-                fit
                 onClick={() =>
                   voteProposalAsRepresentative(id, 'abstain', callback)
                 }
+                shadow_box
+                fit
               >
                 abstain
               </Button>
@@ -723,9 +706,9 @@ function ProposalActions({
             <p>Evaluate the proposal:</p>
             <div className={styles.proposal_buttons}>
               <Button
+                onClick={() => evaluateVotingResult(id, callback)}
                 shadow_box
                 fit
-                onClick={() => evaluateVotingResult(id, callback)}
               >
                 evaluate
               </Button>
@@ -738,9 +721,9 @@ function ProposalActions({
             <p>Execute the proposal:</p>
             <div className={styles.proposal_buttons}>
               <Button
+                onClick={() => executeProposal(id, callback)}
                 shadow_box
                 fit
-                onClick={() => executeProposal(id, callback)}
               >
                 execute
               </Button>
@@ -753,9 +736,9 @@ function ProposalActions({
             <p>Cancel the proposal:</p>
             <div className={styles.proposal_buttons}>
               <Button
+                onClick={() => cancelProposal(id, true, callback)}
                 shadow_box
                 fit
-                onClick={() => cancelProposal(id, true, callback)}
               >
                 cancel
               </Button>
