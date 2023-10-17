@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { bytes2Char } from '@taquito/utils'
 import { POLLS_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { usePollsStore } from '@context/pollsStore'
@@ -13,7 +14,6 @@ import {
   useDaoTokenBalance,
   usePollsUsersAliases,
 } from '@data/swr'
-import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
 
@@ -153,14 +153,14 @@ function Poll({ poll, active }) {
 
   // Try to extract an ipfs cid from the poll description
   const description =
-    poll.description !== '' ? hexToString(poll.description) : ''
+    poll.description !== '' ? bytes2Char(poll.description) : ''
   const cid = description.split('//')[1]
 
   return (
     <div className={styles.poll}>
       <h3 className={styles.poll_question}>
         <span className={styles.poll_id}>#{poll.id}</span>
-        {hexToString(poll.question)}
+        {bytes2Char(poll.question)}
       </h3>
 
       <p>
@@ -228,12 +228,16 @@ function PollOptions({ poll, userVotedOption, active, callback }) {
           <button onClick={() => setShowPercents(!showPercents)}>
             <div>
               {userVotedOption === option ? <span>&nbsp;&nbsp;</span> : ''}
-              {hexToString(poll.options[option])}
+              {bytes2Char(poll.options[option])}
               {userVotedOption === option ? ' \u2714' : ''}
             </div>
             <div>
               {showPercents
-                ? `${Math.round((100 * optionVotes) / totalVotes)}%`
+                ? `${
+                    totalVotes === 0
+                      ? 0
+                      : Math.round((100 * optionVotes) / totalVotes)
+                  }%`
                 : `${Math.round(optionVotes / voteScaling)} vote${
                     parseInt(optionVotes) !== voteScaling ? 's' : ''
                   }`}

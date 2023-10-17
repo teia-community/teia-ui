@@ -5,7 +5,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { Parser } from '@taquito/michel-codec'
-import { validateAddress } from '@taquito/utils'
+import { validateAddress, char2Bytes } from '@taquito/utils'
 import {
   DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CONTRACT,
@@ -18,7 +18,6 @@ import { Tezos, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'
 import { getClaimedDaoTokens } from '@data/api'
 import { downloadJsonFileFromIpfs } from '@utils/ipfs'
-import { stringToHex } from '@utils/string'
 
 type OperationReturn = Promise<string | undefined>
 
@@ -202,8 +201,8 @@ export const useDaoStore = create<DaoState>()(
               token_id: 0,
             }
             const parameters = {
-              title: stringToHex(title),
-              description: stringToHex(`ipfs://${descriptionIpfsPath}`),
+              title: char2Bytes(title),
+              description: char2Bytes(`ipfs://${descriptionIpfsPath}`),
               kind: kind,
             }
             let batch = Tezos.wallet.batch()

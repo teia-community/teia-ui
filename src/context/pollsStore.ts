@@ -5,10 +5,10 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { MichelsonMap } from '@taquito/taquito'
+import { char2Bytes } from '@taquito/utils'
 import { POLLS_CONTRACT} from '@constants'
 import { Tezos, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'
-import { stringToHex } from '@utils/string'
 
 type OperationReturn = Promise<string | undefined>
 
@@ -79,13 +79,13 @@ export const usePollsStore = create<PollsState>()(
             const contract = await Tezos.wallet.at(POLLS_CONTRACT)
 
             const parameters = {
-              question: stringToHex(question),
+              question: char2Bytes(question),
               description: descriptionIpfsPath === ''
-                ? stringToHex('')
-                : stringToHex(`ipfs://${descriptionIpfsPath}`),
+                ? char2Bytes('')
+                : char2Bytes(`ipfs://${descriptionIpfsPath}`),
               options: MichelsonMap.fromLiteral(
                 Object.fromEntries(
-                  options.map((option, index) => [index, stringToHex(option)])
+                  options.map((option, index) => [index, char2Bytes(option)])
                 )
               ),
               vote_weight_method: { [voteWeightMethod]: [['unit']] },

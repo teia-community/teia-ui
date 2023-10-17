@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { bytes2Char } from '@taquito/utils'
 import { DAO_GOVERNANCE_CONTRACT, DAO_TOKEN_DECIMALS, TOKENS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useDaoStore } from '@context/daoStore'
@@ -27,7 +28,6 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
-import { hexToString } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import { parseLambda } from '@utils/lambda'
 import styles from '@style'
@@ -273,14 +273,14 @@ function ProposalDescription({ proposal }) {
   )
 
   // Try to extract an ipfs cid from the proposal description
-  const description = hexToString(proposal.description)
+  const description = bytes2Char(proposal.description)
   const cid = description.split('//')[1]
 
   return (
     <div>
       <h3 className={styles.proposal_title}>
         <span className={styles.proposal_id}>#{proposal.id}</span>
-        {hexToString(proposal.title)}
+        {bytes2Char(proposal.title)}
       </h3>
 
       <p>
