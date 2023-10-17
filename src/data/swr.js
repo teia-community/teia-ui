@@ -1,14 +1,14 @@
 import useSWR from 'swr'
+import { bytes2Char } from '@taquito/utils'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { getTzktData } from '@data/api'
-import { hexToString } from '@utils/string'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
       (bigmapData[subKey ? item.key[subKey] : item.key] = decode
-        ? hexToString(item.value)
+        ? bytes2Char(item.value)
         : item.value)
   )
 
