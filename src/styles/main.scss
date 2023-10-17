@@ -62,7 +62,7 @@ h1 {
 h2 {
   font-size: 22px;
   line-height: 125%;
-  @include respond-to('dekstop') {
+  @include respond-to('desktop') {
     font-size: 26px;
   }
 }
