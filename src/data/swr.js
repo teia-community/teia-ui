@@ -194,3 +194,52 @@ export function useDaoMemberCount(minTokens) {
 
   return [data ? parseInt(data) : 0, mutate]
 }
+
+export function usePolls(pollsStorage) {
+  const parameters = {
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
+  const { data, mutate } = useSWR(
+    pollsStorage?.polls
+      ? [`/v1/bigmaps/${pollsStorage.polls}/keys`, parameters]
+      : null,
+    getTzktData
+  )
+
+  return [reorderBigmapData(data), mutate]
+}
+
+export function useUserPollVotes(address, pollsStorage) {
+  const parameters = {
+    'key.address': address,
+    limit: 10000,
+    active: true,
+    select: 'key,value',
+  }
+  const { data, mutate } = useSWR(
+    address && pollsStorage?.votes
+      ? [`/v1/bigmaps/${pollsStorage.votes}/keys`, parameters]
+      : null,
+    getTzktData
+  )
+
+  return [reorderBigmapData(data, 'nat'), mutate]
+}
+
+export function usePollsUsersAliases(userAddress, polls) {
+  const addresses = new Set()
+
+  if (userAddress) {
+    addresses.add(userAddress)
+  }
+
+  if (polls) {
+    Object.values(polls).forEach((poll) => {
+      addresses.add(poll.issuer)
+    })
+  }
+
+  return useAliases(Array.from(addresses))
+}

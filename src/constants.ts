@@ -10,6 +10,7 @@ export const PATH = {
   FAQ: '/faq',
   CLAIM: '/claim',
   DAO: '/dao',
+  POLLS: '/polls',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
@@ -140,6 +141,7 @@ export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
 export const MOROCCO_QUAKE_FUNDING_CONTRACT =
   'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA'
 
+export const POLLS_CONTRACT = 'KT1NPELoSdKjKzfSs85hCTPcxWjuyJjoM4C5'
 export const DAO_GOVERNANCE_CONTRACT = 'KT1VLLPBjSFFHMp9LxoRfA65cynkxeRDfQeX'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'

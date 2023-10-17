@@ -263,6 +263,7 @@ function TransferTezProposalForm({ callback }) {
           }}
           transfers={transfers}
           onChange={setTransfers}
+          step="0.000001"
           className={styles.proposal_form_field}
         >
           <Line />
@@ -349,8 +350,8 @@ function TransferTokenProposalForm({ callback }) {
           }}
           transfers={transfers}
           onChange={setTransfers}
+          step="1"
           className={styles.proposal_form_field}
-          round
         >
           <Line />
         </TransferFields>

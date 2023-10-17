@@ -238,7 +238,7 @@ function ProposalGroup({ status, proposals }) {
 function ProposalList({ proposals, ...actions }) {
   if (proposals.length !== 0) {
     return (
-      <ul className={styles.proposal_list}>
+      <ul>
         {proposals.map((proposal, index) => (
           <li key={index}>
             <div className={styles.proposal}>
@@ -278,12 +278,10 @@ function ProposalDescription({ proposal }) {
 
   return (
     <div>
-      <p>
+      <h3 className={styles.proposal_title}>
         <span className={styles.proposal_id}>#{proposal.id}</span>
-        <span className={styles.proposal_title}>
-          {hexToString(proposal.title)}
-        </span>
-      </p>
+        {hexToString(proposal.title)}
+      </h3>
 
       <p>
         Proposed by{' '}
