@@ -12,12 +12,12 @@ type ViewMode = 'single' | 'masonry'
 export type Theme = 'dark' | 'light' | 'kawai' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
-  'https://mainnet.teia.rocks',
+  'https://mainnet.api.tez.ie',
   'https://mainnet.smartpy.io',
   'https://rpc.tzbeta.net',
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
-  'https://mainnet.api.tez.ie',
+  'https://mainnet.teia.rocks',
   'custom',
 ] as const
 
@@ -65,7 +65,7 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[0],
+  rpcNode: rpc_nodes[5],
   customRpcNode: '',
   tilted: false,
   has_seen_banner: false,
