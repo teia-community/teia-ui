@@ -5,6 +5,8 @@ import { Page } from '@atoms/layout'
 import { Tabs } from '@atoms/tab'
 import {
   useStorage,
+  useDaoGovernanceParameters,
+  useDaoProposals,
   useDaoRepresentatives,
   useDaoTokenBalance,
 } from '@data/swr'
@@ -30,6 +32,8 @@ const TABS = [
 export default function DAO() {
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
+  const [governanceParameters] = useDaoGovernanceParameters(daoStorage)
+  const [proposals] = useDaoProposals(daoStorage)
   const [representatives] = useDaoRepresentatives(daoStorage)
 
   // Get all the required user information
@@ -42,7 +46,7 @@ export default function DAO() {
       <div className={styles.container}>
         <h1 className={styles.headline}>Teia DAO</h1>
 
-        {!representatives ? (
+        {!governanceParameters || !proposals ? (
           <LoadingDaoMessage />
         ) : (
           <>

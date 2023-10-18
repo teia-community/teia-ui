@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useModalStore } from '@context/modalStore'
+import { Button } from '@atoms/button'
+import { IpfsLink } from '@atoms/link'
 import { uploadFileToIPFSProxy } from '@utils/ipfs'
 import styles from '@style'
 
@@ -10,6 +12,7 @@ export default function IpfsUploader({
   onChange,
   className,
   displayUploadInformation = true,
+  children,
 }) {
   // Set the component state
   const [file, setFile] = useState(undefined)
@@ -23,8 +26,14 @@ export default function IpfsUploader({
   // Define the on click handler
   const handleClick = async (e) => {
     e.preventDefault()
-    if (value !== '') return
     onChange(await uploadFileToIpfs(file, displayUploadInformation))
+  }
+
+  // Define the on clear handler
+  const handleClear = async (e) => {
+    e.preventDefault()
+    setFile(undefined)
+    onChange('')
   }
 
   return (
@@ -32,38 +41,54 @@ export default function IpfsUploader({
       <p>
         <strong>{label}</strong>
       </p>
-      <label>
-        {file ? file.name : placeholder}
-        <input type="file" onChange={handleChange} />
-      </label>
-      {file && (
-        <button onClick={handleClick}>
-          {value !== ''
-            ? `${file.name} has been uploaded to IPFS`
-            : `Upload ${file.name} to IPFS`}
-        </button>
+
+      {!file && (
+        <label>
+          {placeholder}
+          <input type="file" onChange={handleChange} />
+        </label>
+      )}
+
+      {file && value === '' && (
+        <>
+          <button onClick={handleClick} className={styles.ipfs_upload_button}>
+            Upload {file.name} to IPFS
+          </button>
+
+          <Button onClick={handleClear} small>
+            Clear field
+          </Button>
+        </>
+      )}
+
+      {file && value !== '' && (
+        <>
+          <p className={styles.ipfs_result}>
+            <span>
+              {file.name} <IpfsLink cid={value}>IPFS</IpfsLink>
+            </span>
+
+            <Button onClick={handleClear} small>
+              Clear field
+            </Button>
+          </p>
+
+          {children}
+        </>
       )}
     </div>
   )
 }
 
 async function uploadFileToIpfs(file, displayUploadInformation) {
-  const show = useModalStore.getState().show
   const step = useModalStore.getState().step
   const close = useModalStore.getState().close
-  const modalTitle = 'IPFS upload'
-
-  if (!file) {
-    show(modalTitle, 'You need to select a file before uploading it to IPFS')
-    return
-  }
 
   if (displayUploadInformation) {
-    step(modalTitle, `Uploading ${file.name} to IPFS...`)
+    step('IPFS upload', `Uploading ${file.name} to IPFS...`)
   }
 
   const cid = await uploadFileToIPFSProxy(file)
-  console.log(`File IPFS cid: ${cid}`)
 
   if (displayUploadInformation) {
     close()

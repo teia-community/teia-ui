@@ -37,12 +37,6 @@ export default function SubmitDaoProposals() {
   const [userTokenBalance, updateUserTokenBalance] =
     useDaoTokenBalance(userAddress)
 
-  // Define the callback function to be triggered when a proposal is submitted
-  const callback = () => {
-    updateProposals()
-    updateUserTokenBalance()
-  }
-
   // Display the loading page information until all data is available
   if (!governanceParameters) {
     return <LoadingDaoMessage />
@@ -80,7 +74,13 @@ export default function SubmitDaoProposals() {
             <Line />
           </Select>
 
-          <ProposalForm kind={selectedKind} callback={callback} />
+          <ProposalForm
+            kind={selectedKind}
+            callback={() => {
+              updateProposals()
+              updateUserTokenBalance()
+            }}
+          />
         </>
       )}
     </section>
@@ -184,7 +184,9 @@ function CommonProposalFields({
         value={descriptionIpfsCid}
         onChange={setDescriptionIpfsCid}
         className={styles.proposal_form_field}
-      />
+      >
+        <Line />
+      </IpfsUploader>
     </>
   )
 }

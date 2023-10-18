@@ -1,18 +1,18 @@
-import { useState } from 'react'
 import styles from '@style'
 
 export function Votes({
   votes,
   labels = { yes: 'yes', no: 'no', abstain: 'abs', empty: '--' },
+  showValues,
+  onClick,
   className,
 }) {
-  const [showValues, setShowValues] = useState(false)
   const { yes, no, abstain } = votes
   const totalVotes = Number(yes) + Number(no) + Number(abstain)
 
   const handleClick = (e) => {
     e.preventDefault()
-    setShowValues(!showValues)
+    onClick()
   }
 
   return (

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { POLLS_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { usePollsStore } from '@context/pollsStore'
-import { Button } from '@atoms/button'
+import { Button, IncrementButtons } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { SimpleInput } from '@atoms/input'
 import { Select } from '@atoms/select'
@@ -11,6 +11,10 @@ import { useStorage, useDaoTokenBalance, usePolls } from '@data/swr'
 import styles from '@style'
 
 export default function CreatePolls() {
+  // Get all the required polls information
+  const [pollsStorage] = useStorage(POLLS_CONTRACT)
+  const [, updatePolls] = usePolls(pollsStorage)
+
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
   const [userTokenBalance] = useDaoTokenBalance(userAddress)
@@ -24,34 +28,30 @@ export default function CreatePolls() {
       ) : (
         <>
           <p>Use this form to create new Teia polls.</p>
-          <PollForm />
+          <PollForm callback={updatePolls} />
         </>
       )}
     </section>
   )
 }
 
-function PollForm() {
+function PollForm({ callback }) {
   // Set the component state
   const [question, setQuestion] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
-  const [voteWeightMethod, setVoteWeightMethod] = useState('linear')
+  const [voteWeightMethod, setVoteWeightMethod] = useState('equal')
   const [votePeriod, setVotePeriod] = useState('')
   const [options, setOptions] = useState(['', '', ''])
-
-  // Get all the required polls information
-  const [pollsStorage] = useStorage(POLLS_CONTRACT)
-  const [, updatePolls] = usePolls(pollsStorage)
 
   // Get the create poll method from the polls store
   const createPoll = usePollsStore((st) => st.createPoll)
 
   // Define the differnt vote weight methods
   const voteWeightMethods = {
+    equal: 'Equal: one wallet, one vote',
     linear: 'Linear: proportional to the amount of TEIA tokens',
     quadratic:
       'Quadratic: proportional to the square root of the amount of TEIA tokens',
-    equal: 'Equal: one wallet, one vote',
   }
 
   // Define the on change handler
@@ -88,7 +88,7 @@ function PollForm() {
       voteWeightMethod,
       votePeriod,
       cleanOptions,
-      updatePolls
+      callback
     )
   }
 
@@ -114,7 +114,9 @@ function PollForm() {
           value={descriptionIpfsCid}
           onChange={setDescriptionIpfsCid}
           className={styles.poll_form_field}
-        />
+        >
+          <Line />
+        </IpfsUploader>
 
         <Select
           label="Method to use to calculate the vote weight"
@@ -161,12 +163,7 @@ function PollForm() {
               <Line />
             </SimpleInput>
           ))}
-          <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-            +
-          </Button>
-          <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-            -
-          </Button>
+          <IncrementButtons onClick={handleClick} />
         </div>
       </div>
 
