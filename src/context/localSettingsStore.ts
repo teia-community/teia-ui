@@ -65,7 +65,7 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[0],
+  rpcNode: rpc_nodes[5],
   customRpcNode: '',
   tilted: false,
   has_seen_banner: false,
