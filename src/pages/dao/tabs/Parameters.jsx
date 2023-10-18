@@ -50,10 +50,8 @@ export default function DaoParameters() {
     return <LoadingDaoMessage />
   }
 
-  // Get the current governance parameters
-  const gp = governanceParameters[daoStorage.gp_counter - 1]
-
   // Calculate the vote scaling depending on the vote method
+  const gp = governanceParameters[daoStorage.gp_counter - 1]
   const voteScaling = gp.vote_method.linear
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)

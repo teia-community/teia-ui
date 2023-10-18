@@ -1,3 +1,6 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
 .container {
   padding-bottom: 60px;
   width: 100%;
@@ -5,4 +8,78 @@
 
 .headline {
   text-align: center;
+}
+
+.loading_containter {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section {
+  margin: 2em 0;
+
+  a {
+    text-decoration: underline;
+  }
+
+  > p {
+    margin: 1em 0;
+  }
+}
+
+.poll {
+  margin: 2em 0 3em 0;
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  p {
+    margin: 0.5em 0;
+  }
+}
+
+.poll_id {
+  margin-right: 1em;
+  padding: 0 1em;
+  text-align: center;
+  background-color: var(--gray-15);
+}
+
+.poll_question {
+  margin-bottom: 0.5em;
+}
+
+.poll_options {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 1em;
+  text-align: center;
+
+  @include respond-to('tablet') {
+    justify-content: left;
+  }
+}
+
+.poll_option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 0.75em 1em;
+  border: 1px solid var(--gray-20);
+  min-width: 200px;
+
+  &.winner_option {
+    border: 2px solid var(--yes-vote-color);
+  }
+
+  > button {
+    padding: 0.5em;
+    cursor: pointer;
+  }
 }

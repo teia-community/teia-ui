@@ -1,4 +1,4 @@
-import { Button } from '@atoms/button'
+import { IncrementButtons } from '@atoms/button'
 import SimpleInput from './SimpleInput'
 
 export default function TransferFields({
@@ -60,12 +60,7 @@ export default function TransferFields({
           </SimpleInput>
         </div>
       ))}
-      <Button shadow_box inline onClick={(e) => handleClick(e, true)}>
-        +
-      </Button>
-      <Button shadow_box inline onClick={(e) => handleClick(e, false)}>
-        -
-      </Button>
+      <IncrementButtons onClick={handleClick} />
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import { Loading } from '@atoms/loading'
 import styles from '@style'
 
-export default function LoadingDaoMessage({ message }) {
+export default function LoadingPollsMessage({ message }) {
   return (
     <div className={styles.loading_containter}>
-      <Loading message={message ?? 'Loading DAO information'} />
+      <Loading message={message ?? 'Loading polls information'} />
     </div>
   )
 }
