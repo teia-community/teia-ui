@@ -27,7 +27,7 @@ export default function PollDisplay() {
   }
 
   return (
-    <Page title={`Teila poll #${id}`}>
+    <Page title={`Teia poll #${id}`}>
       <div className={styles.container}>
         <h1 className={styles.headline}>Teia poll</h1>
         {!polls ? (

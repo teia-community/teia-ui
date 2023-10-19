@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
-import { getTzktData } from '@data/api'
+import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -242,4 +242,13 @@ export function usePollsUsersAliases(userAddress, polls) {
   }
 
   return useAliases(Array.from(addresses))
+}
+
+export function useObjkt(id) {
+  const { data, mutate } = useSWR(id || null, fetchObjktDetails, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  })
+
+  return [data, mutate]
 }
