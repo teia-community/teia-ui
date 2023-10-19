@@ -5,13 +5,15 @@ import { PATH, POLLS_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { usePollsStore } from '@context/pollsStore'
 import { Button } from '@atoms/button'
-import { TeiaUserLink, IpfsLink } from '@atoms/link'
+import { TeiaUserLink, IpfsLink, DefaultLink } from '@atoms/link'
+import { RenderMediaType } from '@components/media-types'
 import {
   useStorage,
   usePolls,
   useDaoTokenBalance,
   useUserPollVotes,
   usePollsUsersAliases,
+  useObjkt,
 } from '@data/swr'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
@@ -145,11 +147,15 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
             }`}
           >
             <button onClick={() => setShowPercents(!showPercents)}>
-              <div>
-                {userVotedOption === option && <span>&nbsp;&nbsp;</span>}
-                {bytes2Char(poll.options[option])}
-                {userVotedOption === option && <span>{' \u2714'}</span>}
-              </div>
+              {userVotedOption === option ? (
+                <div className={styles.poll_option_container}>
+                  <span className={styles.user_vote}></span>
+                  <PollOption option={bytes2Char(poll.options[option])} />
+                  <span className={styles.user_vote}>{'\u2714'}</span>
+                </div>
+              ) : (
+                <PollOption option={bytes2Char(poll.options[option])} />
+              )}
               <div>
                 {showPercents
                   ? `${
@@ -176,5 +182,34 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
         ))}
       </ul>
     </>
+  )
+}
+
+function PollOption({ option }) {
+  if (option.indexOf('http') >= 0) {
+    return (
+      <DefaultLink href={option.slice(option.indexOf('http'))}>
+        {option.slice(0, option.indexOf('http')) || undefined}
+      </DefaultLink>
+    )
+  } else if (option.indexOf('ipfs://') >= 0) {
+    return <IpfsLink cid={option.split('ipfs://')[1]} />
+  } else if (option.indexOf('OBJKT#') === 0) {
+    return <ObjktOption id={option.split('#')[1]} />
+  } else {
+    return <span>{option}</span>
+  }
+}
+
+function ObjktOption({ id }) {
+  const [objkt] = useObjkt(id)
+
+  return objkt ? (
+    <div className={styles.poll_objkt_option}>
+      <RenderMediaType nft={objkt} />
+      <span>{`OBJKT#${id}`}</span>
+    </div>
+  ) : (
+    <span>{`OBJKT#${id}`}</span>
   )
 }
