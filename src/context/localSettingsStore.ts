@@ -18,6 +18,7 @@ export const rpc_nodes = [
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
   'https://mainnet.teia.rocks',
+  'https://teia.art/rpc',
   'custom',
 ] as const
 
