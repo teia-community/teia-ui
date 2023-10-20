@@ -1,0 +1,58 @@
+@import '@styles/mixins.scss';
+
+.container {
+  padding-top: 12px;
+  padding-bottom: 60px;
+  width: 100%;
+
+  @include respond-to('desktop') {
+    margin: 0;
+  }
+}
+
+.headline {
+  text-align: center;
+}
+
+.section_title {
+  margin-bottom: 1em;
+}
+
+.section {
+  margin: 1em 0;
+
+  b {
+    font-weight: bold;
+  }
+
+  i {
+    font-style: italic;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  p {
+    margin: 1em 0;
+  }
+
+  li {
+    margin-left: 1.5em;
+    margin-top: 0.8em;
+  }
+
+  li:before {
+    content: attr(counter) '.';
+    position: absolute;
+    margin-left: -1.5em;
+  }
+
+  button {
+    margin-bottom: 1em;
+  }
+
+  @include respond-to('desktop') {
+    margin-bottom: 30px;
+  }
+}

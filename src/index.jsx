@@ -9,6 +9,7 @@ import {
 } from '@pages/collaborate'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
+import { Claim } from '@pages/dao'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -29,6 +30,7 @@ import {
   PdfFeed,
   MarkdownFeed,
   QuakeFeed,
+  MoroccoQuakeFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -76,7 +78,7 @@ const router = createBrowserRouter(
     <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
       <Route path="feed/*" element={<Home />}>
-        <Route index element={<RecentSalesFeed />} />
+        <Route path="sales" element={<RecentSalesFeed />} />
         <Route path="lists" element={<ListsFeed />} />
 
         <Route
@@ -85,6 +87,7 @@ const router = createBrowserRouter(
         />
 
         <Route path="iran" element={<IranFeed />} />
+        <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
         <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />
         <Route path="pakistan" element={<PakistanFeed />} />
@@ -133,6 +136,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
+      <Route path="claim/*" element={<Claim />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

@@ -5,7 +5,7 @@ import { Page } from '@atoms/layout'
 import { useParams, useSearchParams, Outlet } from 'react-router-dom'
 import useSWR from 'swr'
 import { getUser } from '@data/api'
-import { GetUserMetadata } from '@data/api'
+import { GetUserMetadata, getDaoTokenBalance } from '@data/api'
 import useSettings from '@hooks/use-settings'
 import { validateAddress, ValidationResult } from '@taquito/utils'
 import Profile from './profile'
@@ -54,6 +54,9 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   if (holder.name) {
     user.subjkt = holder.name
   }
+
+  const daoTokenBalance = await getDaoTokenBalance(user.address)
+  user.daoTokenBalance = daoTokenBalance
 
   return user
 }

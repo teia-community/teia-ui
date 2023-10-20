@@ -74,7 +74,7 @@ export const ObjktDisplay = () => {
         const objkt = (await fetchObjktDetails(id)) as NFT
 
         if (!objkt) {
-          let isNum = /^\d+$/.test(id)
+          const isNum = /^\d+$/.test(id)
           if (isNum) {
             throw new Error(`Cannot find an OBJKT with id: ${id}`, {
               cause: 'Unknown OBJKT',
@@ -194,7 +194,7 @@ export const ObjktDisplay = () => {
             }
 
             if (nft?.holdings && tab.private) {
-              let holders_arr = nft.holdings.map((e) => e.holder_address)
+              const holders_arr = nft.holdings.map((e) => e.holder_address)
 
               if (
                 holders_arr.includes(address || 'UNSYNCED') === false &&

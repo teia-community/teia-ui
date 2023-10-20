@@ -73,7 +73,7 @@ export const Subjkt = () => {
         console.debug('Subjkt Infos:', res)
 
         if (res) {
-          let { metadata, name } = res
+          const { metadata, name } = res
 
           if (name) setSubjkt(name)
 
