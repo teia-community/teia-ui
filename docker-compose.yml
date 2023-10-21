@@ -14,4 +14,4 @@ services:
     image: ghcr.io/marigold-dev/tzproxy:latest-2f58f3c-1697469392
     restart: unless-stopped
     volumes:
-      - ./tzproxy.yaml:/tzproxy.yaml
+      - ./.github/workflows/tzproxy.yaml:/tzproxy.yaml
