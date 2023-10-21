@@ -1,0 +1,43 @@
+cache:
+    disabled_routes:
+        - /monitor/.*
+    enabled: true
+    size_mb: 128
+    ttl: 10
+cors:
+    enabled: false
+deny_list:
+    enabled: false
+    values: []
+deny_routes:
+    enabled: true
+    values:
+        - /injection/block
+        - /injection/protocol
+        - /network.*
+        - /workers.*
+        - /worker.*
+        - /stats.*
+        - /config
+        - /chains/main/blocks/.*/helpers/baking_rights
+        - /chains/main/blocks/.*/helpers/endorsing_rights
+        - /helpers/baking_rights
+        - /helpers/endorsing_rights
+        - /chains/main/blocks/.*/context/contracts(/?)$
+gc:
+    percent: 20
+gzip:
+    enabled: false
+host: 0.0.0.0:8080 # is used inside nginx config, tzproxy:8080
+logger:
+    bunch_size: 1000
+    pool_interval_seconds: 10
+metrics:
+    enabled: false
+    host: 0.0.0.0:9000
+    pprof: false
+rate_limit:
+    enabled: false
+    max: 300
+    minutes: 1
+tezos_host: teia-ui:8000 # references docker-compose.yml service name
