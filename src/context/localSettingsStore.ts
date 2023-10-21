@@ -18,6 +18,7 @@ export const rpc_nodes = [
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
   'https://mainnet.teia.rocks',
+  'https://teia.art/rpc',
   'custom',
 ] as const
 
@@ -65,7 +66,7 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[0],
+  rpcNode: rpc_nodes[5],
   customRpcNode: '',
   tilted: false,
   has_seen_banner: false,
