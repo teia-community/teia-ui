@@ -26,7 +26,7 @@ export const PdfComponent = memo(function ({
   const [pageNumber, setPageNumber] = useState(1)
   const [renderedPageNumber, setRenderedPageNumber] = useState<number>()
   const [loading, setLoading] = useState(displayView)
-  const [showDocument, setShowDocument] = useState(true);
+  const [showDocument, setShowDocument] = useState(true)
 
   const [height, setHeight] = useState<number>()
 
@@ -44,7 +44,7 @@ export const PdfComponent = memo(function ({
   }
 
   function onDocumentLoadError(e: Error) {
-    throw Error(e.message, { cause: 'PDF Error' })
+    console.error(`PDF Error: ${e.message}`)
   }
 
   function changePage(offset: number) {
@@ -76,22 +76,22 @@ export const PdfComponent = memo(function ({
       // Cancel button handler
       if (password === null) {
         // password will be null if user clicks on cancel
-        setShowDocument(false);
+        setShowDocument(false)
         return
       }
-      callback(password);
+      callback(password)
     }
 
     switch (reason) {
       case 1: {
-        const password = prompt("Enter the password to open this PDF file.");
-        callbackProxy(password);
-        break;
+        const password = prompt('Enter the password to open this PDF file.')
+        callbackProxy(password)
+        break
       }
       case 2: {
-        const password = prompt("Invalid password. Please try again.");
-        callbackProxy(password);
-        break;
+        const password = prompt('Invalid password. Please try again.')
+        callbackProxy(password)
+        break
       }
       default:
     }
@@ -129,7 +129,7 @@ export const PdfComponent = memo(function ({
       {!showDocument ? (
         <Button
           onClick={() => {
-            setShowDocument(true);
+            setShowDocument(true)
           }}
         >
           Reload PDF with password
