@@ -37,7 +37,7 @@ interface CIDtoURLOptions {
   size: 'raw' | 'small' | 'medium'
 }
 
-const CIDToURL = (
+export const CIDToURL = (
   cid: string,
   type: IPFSGateway = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
   options: CIDtoURLOptions

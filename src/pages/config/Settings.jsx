@@ -1,8 +1,10 @@
+/* eslint-disable no-control-regex */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Page } from '@atoms/layout'
 import { Checkbox, Input } from '@atoms/input'
 import styles from '@style'
 import { rpc_nodes, useLocalSettings } from '@context/localSettingsStore'
+import { FEED_LIST } from '@constants'
 import { Select, ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
 import { useEffect, useState } from 'react'
@@ -16,7 +18,6 @@ export const Settings = () => {
       const config_response = await fetch(`${BANNER_URL}/banner_config.json`)
       const config_text = await config_response.text()
       const config_parsed = JSON5.parse(config_text)
-      console.log(config_parsed)
       setBannerEnabled(config_parsed.enable === 1)
     }
     try {
@@ -31,6 +32,8 @@ export const Settings = () => {
     setNsfwFriendly,
     photosensitiveFriendly,
     setPhotosensitiveFriendly,
+    startFeed,
+    setStartFeed,
     rpcNode,
     setRpcNode,
     customRpcNode,
@@ -44,6 +47,8 @@ export const Settings = () => {
     st.setNsfwFriendly,
     st.photosensitiveFriendly,
     st.setPhotosensitiveFriendly,
+    st.startFeed,
+    st.setStartFeed,
     st.rpcNode,
     st.setRpcNode,
     st.customRpcNode,
@@ -84,6 +89,20 @@ export const Settings = () => {
             checked={photosensitiveFriendly}
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
+          />
+          <Select
+            label={'Start Feed'}
+            value={{
+              label: startFeed.replace(/[^\x00-\xFF]/g, ''),
+              value: startFeed,
+            }}
+            options={FEED_LIST.map((f) => ({
+              label: f.replace(/[^\x00-\xFF]/g, ''),
+              value: f,
+            }))}
+            onChange={(e) => {
+              setStartFeed(e.value)
+            }}
           />
 
           <Line />

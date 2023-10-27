@@ -210,3 +210,6 @@ export { ReactComponent as PauseIcon } from './svgs/pause.svg'
 export { ReactComponent as CloseIcon } from './svgs/close.svg'
 export { ReactComponent as FullScreenEnterIcon } from './svgs/fullscreen_enter.svg'
 export { ReactComponent as FullScreenExitIcon } from './svgs/fullscreen_exit.svg'
+
+// SVGs Extras
+export { ReactComponent as DAOIcon } from './svgs/teia-dao.svg'

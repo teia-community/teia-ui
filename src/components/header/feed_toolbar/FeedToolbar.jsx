@@ -5,14 +5,13 @@ import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { IconToggle } from '@atoms/toggles'
 import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 
-import { useState } from 'react'
 import { Button } from '@atoms/button'
 
 import { useLocalSettings } from '@context/localSettingsStore'
 import { useLocation, useNavigate } from 'react-router'
-import { useEffect } from 'react'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
+import { DEFAULT_START_FEED } from '@constants'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -24,14 +23,15 @@ import { shallow } from 'zustand/shallow'
 // }
 
 const locationMap = new Map([
-  ['/', 'Recent Sales'],
+  ['/feed/sales', 'Recent Sales'],
   ['/feed/random', 'Random'],
   ['/feed/newobjkts', 'New OBJKTs'],
   ['/feed/1-1', '1 / 1'],
   ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
-  ['/feed/quake-aid', 'Quake Aid'],
+  ['/feed/morocco-quake-aid', '🇲🇦 Quake Aid'],
+  ['/feed/quake-aid', '🇹🇷🇸🇾 Quake Aid'],
   ['/feed/ukraine', '🇺🇦 Ukraine'],
   ['/feed/pakistan', '🇵🇰 Pakistan'],
   ['/feed/iran', '🇮🇷 Iran'],
@@ -49,29 +49,19 @@ const locationMap = new Map([
 ])
 
 const locationNeedSync = ['/feed/friends']
-const locationPaths = [...locationMap.keys()]
 
 export const FeedToolbar = ({ feeds_menu = false }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
 
-  const [viewMode, setViewMode] = useLocalSettings(
-    (st) => [st.viewMode, st.setViewMode],
+  const [viewMode, setViewMode, startFeed] = useLocalSettings(
+    (st) => [st.viewMode, st.setViewMode, st.startFeed],
     shallow
   )
   const location = useLocation()
-  const [feedLabel, setFeedLabel] = useState('Recent Sales')
+  const feedLabel =
+    locationMap.get(location.pathname) || startFeed || DEFAULT_START_FEED
 
   const navigate = useNavigate()
-
-  useEffect(() => {
-    for (const pth of locationPaths.slice(1)) {
-      if (location.pathname.includes(pth)) {
-        setFeedLabel(locationMap.get(pth))
-      }
-    }
-
-    // return locationMap[location]
-  }, [location])
 
   // TODO: finish the filtering logic
   // const filters = false
