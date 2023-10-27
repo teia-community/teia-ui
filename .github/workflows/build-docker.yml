@@ -34,7 +34,7 @@ jobs:
           push: true
           tags: ${{ secrets.REGISTRY_URL }}/${{ steps.repo_name.outputs.lowercase }}/teia-ui:${{ github.ref_name }}
           context: .
-          file: ./.github/workflows/Dockerfile
+          file: ./docker/Dockerfile
       - name: Restart containers
         run: |
           curl -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
