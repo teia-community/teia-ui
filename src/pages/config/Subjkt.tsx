@@ -266,11 +266,13 @@ export const Subjkt = () => {
               value={subjkt}
               onChange={setSubjkt}
               onBlur={(e) => {
-                setSubjkt(e.target.value.replace(/[^a-z0-9-._]/g, ''))
+                if(/[^A-Za-z0-9-._]/.test(e.target.value)) {
+                  show('Subjkt contains invalid characters. This field can only contain: letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)')
+                }
               }}
-              placeholder="can contain letters (a-z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+              placeholder="can contain letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)"
               label="Username"
-              pattern="^[a-z0-9-._]*$"
+              pattern="^[A-Za-z0-9-._]*$"
             />
             <Input
               name="description"
