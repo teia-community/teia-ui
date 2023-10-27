@@ -31,7 +31,7 @@ const Field = ({ title, value }) => {
     value && (
       <div className={styles.field}>
         <strong>{title}:</strong>
-        {value}
+        <p>{value}</p>
       </div>
     )
   )
