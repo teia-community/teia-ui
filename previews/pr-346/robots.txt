@@ -1,0 +1,5 @@
+User-Agent: *
+Disallow: /settings
+Disallow: /subjkt
+Disallow: /sync
+Disallow: /feed/lists
