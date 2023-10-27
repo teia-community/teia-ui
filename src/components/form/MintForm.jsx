@@ -29,6 +29,8 @@ export default function MintForm() {
           .show(`File too big: ${data.artifact.file.size / 1e6}mb`)
         return
       }
+      const URL = window.URL || window.webkitURL
+      data.artifact.reader = URL.createObjectURL(data.artifact.file)
     }
     useMintStore.setState({ ...data, isValid: true })
     navigate('preview')
