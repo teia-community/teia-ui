@@ -26,6 +26,7 @@ export const PdfComponent = memo(function ({
   const [pageNumber, setPageNumber] = useState(1)
   const [renderedPageNumber, setRenderedPageNumber] = useState<number>()
   const [loading, setLoading] = useState(displayView)
+  const [showDocument, setShowDocument] = useState(true);
 
   const [height, setHeight] = useState<number>()
 
@@ -70,6 +71,32 @@ export const PdfComponent = memo(function ({
     setRenderedPageNumber(pageNumber)
   }
 
+  function onPassword(callback, reason) {
+    function callbackProxy(password) {
+      // Cancel button handler
+      if (password === null) {
+        // password will be null if user clicks on cancel
+        setShowDocument(false);
+        return
+      }
+      callback(password);
+    }
+
+    switch (reason) {
+      case 1: {
+        const password = prompt("Enter the password to open this PDF file.");
+        callbackProxy(password);
+        break;
+      }
+      case 2: {
+        const password = prompt("Invalid password. Please try again.");
+        callbackProxy(password);
+        break;
+      }
+      default:
+    }
+  }
+
   const cover = (
     <>
       <ImageComponent
@@ -96,33 +123,45 @@ export const PdfComponent = memo(function ({
   // })
   // const loading = renderedPageNumber !== pageNumber
   if (!displayView) return cover
+
   return (
     <div ref={container} className={styles.container}>
-      <Document
-        file={file}
-        loading={cover}
-        onLoadSuccess={onDocumentLoadSuccess}
-        onLoadError={onDocumentLoadError}
-        title={`PDF object ${nft.token_id}`}
-        options={options}
-      >
-        {renderedPageNumber && renderedPageNumber !== pageNumber && (
+      {!showDocument ? (
+        <Button
+          onClick={() => {
+            setShowDocument(true);
+          }}
+        >
+          Reload PDF with password
+        </Button>
+      ) : (
+        <Document
+          file={file}
+          loading={cover}
+          onPassword={onPassword}
+          onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={onDocumentLoadError}
+          title={`PDF object ${nft.token_id}`}
+          options={options}
+        >
+          {renderedPageNumber && renderedPageNumber !== pageNumber && (
+            <Page
+              key={`${renderedPageNumber}`}
+              className={styles.previous_page}
+              pageNumber={renderedPageNumber}
+              height={height}
+            />
+          )}
           <Page
-            key={`${renderedPageNumber}`}
-            className={styles.previous_page}
-            pageNumber={renderedPageNumber}
+            key={pageNumber}
+            className={styles.page}
+            pageNumber={pageNumber}
+            onRenderSuccess={onRender}
             height={height}
           />
-        )}
-        <Page
-          key={pageNumber}
-          className={styles.page}
-          pageNumber={pageNumber}
-          onRenderSuccess={onRender}
-          height={height}
-        />
-      </Document>
-      {!loading && (
+        </Document>
+      )}
+      {!loading && showDocument && (
         <div className={styles.pdfNav}>
           <Button disabled={pageNumber <= 1} onClick={previousPage}>
             {'Prev «'}
