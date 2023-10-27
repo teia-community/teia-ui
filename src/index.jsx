@@ -31,7 +31,6 @@ import {
   TagFeed,
   PdfFeed,
   MarkdownFeed,
-  QuakeFeed,
   MoroccoQuakeFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
