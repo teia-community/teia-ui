@@ -141,7 +141,7 @@ export const fields = [
     type: 'file',
     watch: true,
     rules: {
-      required: 'No file selected',
+      required: 'You did not select a valid file',
     },
   },
   {
