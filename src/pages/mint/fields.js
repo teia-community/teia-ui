@@ -148,7 +148,7 @@ export const fields = [
     label: 'Cover Image',
     placeHolder: 'Upload Cover image',
     name: 'cover',
-    type: 'file',
+    type: 'cover-file',
     watch: true,
     enable_if: 'needsCover',
     rules: {

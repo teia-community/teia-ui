@@ -101,7 +101,7 @@ export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.MP4,
 ]
 
-export const ALLOWED_COVER_FILETYPES_LABEL = ['jpeg, png, gif']
+export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif, mp4'
 export const MAX_EDITIONS = 10000 // Limited by contract
 export const MIN_ROYALTIES = 10
 export const MAX_ROYALTIES = 25
