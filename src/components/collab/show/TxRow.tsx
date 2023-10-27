@@ -65,6 +65,7 @@ export const TxRow = ({ tx, index, onAdd, onRemove }: TxRowProps) => {
             }
           }}
           onKeyDown={handleKeyDown}
+          onBlur={handleAdd}
         />
       </td>
       {onRemove && (
