@@ -224,7 +224,17 @@ export const prepareFile = async ({
 
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
-  if (thumbnail) {
+  if(thumbnail && thumbnail.file?.type == 'image/gif') {
+    console.debug('GIF format detected, use the same cid for thumbnail to avoid uploading again')
+    thumbnailUri = `${uri}`
+    if (thumbnail?.format) {
+      const format = JSON.parse(JSON.stringify(thumbnail.format))
+      format.uri = thumbnailUri
+      format.fileName = `thumbnail_${format.fileName}`
+      formats.push(format)
+      console.debug('thumbnail format', format)
+    }
+  } else if (thumbnail) {
     const thumbnailCid = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
       path: `thumbnail_${
