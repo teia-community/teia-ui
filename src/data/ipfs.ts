@@ -226,7 +226,7 @@ export const prepareFile = async ({
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (thumbnail && thumbnail.file?.type === 'image/gif') {
     console.debug(
-      'GIF format detected, use the same cid for thumbnail to avoid uploading again'
+      "GIF format detected, we will use the artifact's cid as the thumbnail to avoid uploading twice"
     )
     thumbnailUri = `${uri}`
     if (thumbnail?.format) {
