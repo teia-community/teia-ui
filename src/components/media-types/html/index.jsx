@@ -55,7 +55,7 @@ export const HTMLComponent = (props) => {
   const unpackZipFiles = async () => {
     unpacking.current = true
 
-    const buffer = dataRUIToBuffer(previewUri)
+    const buffer = await dataRUIToBuffer(previewUri)
 
     try {
       const filesArr = await prepareFilesFromZIP(buffer)
