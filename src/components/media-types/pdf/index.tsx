@@ -24,7 +24,6 @@ export const PdfComponent = memo(function ({
 }: MediaTypeProps) {
   const [numPages, setNumPages] = useState<number>()
   const [pageNumber, setPageNumber] = useState(1)
-  const [renderedPageNumber, setRenderedPageNumber] = useState<number>()
   const [loading, setLoading] = useState(displayView)
   const [showDocument, setShowDocument] = useState(true)
 
@@ -68,7 +67,6 @@ export const PdfComponent = memo(function ({
       setLoading(false)
       setHeight(container.current?.clientHeight)
     }
-    setRenderedPageNumber(pageNumber)
   }
 
   function onPassword(callback, reason) {
@@ -144,14 +142,6 @@ export const PdfComponent = memo(function ({
           title={`PDF object ${nft.token_id}`}
           options={options}
         >
-          {renderedPageNumber && renderedPageNumber !== pageNumber && (
-            <Page
-              key={`${renderedPageNumber}`}
-              className={styles.previous_page}
-              pageNumber={renderedPageNumber}
-              height={height}
-            />
-          )}
           <Page
             key={pageNumber}
             className={styles.page}
