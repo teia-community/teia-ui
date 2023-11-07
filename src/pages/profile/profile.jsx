@@ -6,25 +6,22 @@ import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
 import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
 
 async function reverseRecord(address) {
-  const response = await fetch('https://api.tezos.domains/graphql', {
-    headers: {
-      'content-type': 'application/json',
-    },
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'omit',
-    body: JSON.stringify({
-      query:
-        'query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}',
+  const result = await axios.post(
+    `${import.meta.env.VITE_TEZOSDOMAINS_GRAPHQL_API}`,
+    {
+      query: `query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}`,
       variables: { address },
-      operationName: 'reverseRecord',
-    }),
-  })
-
-  const result = await response.json()
-  return result?.data?.reverseRecord?.domain?.name || ''
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+  return result?.data?.data?.reverseRecord?.domain?.name || ''
 }
 
 export default function Profile({ user }) {
