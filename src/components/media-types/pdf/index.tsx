@@ -1,8 +1,15 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf/dist/esm/entry.vite'
+import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
+
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
