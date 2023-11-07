@@ -5,17 +5,17 @@ import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { pdfjs } from 'react-pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
-
-
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
 import { MediaTypeProps } from '@types'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
+
 const options = {
   cMapUrl: 'cmaps/',
   cMapPacked: true,
