@@ -60,9 +60,8 @@ jobs:
 
       - name: ⚙️ Install and Build
         run: |
-          echo "GH_BASE_URL=/teia-ui/previews/pr-${{ github.event.pull_request.number }}/" >> $GITHUB_ENV
           npm ci
-          npm run build
+          GH_BASE_URL="/teia-ui/previews/pr-${{ github.event.pull_request.number }}/" npm run build
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
