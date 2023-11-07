@@ -5,6 +5,27 @@ import Identicon from '@atoms/identicons'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
+import { useCallback, useEffect, useState } from 'react'
+
+async function reverseRecord(address) {
+  const response = await fetch('https://api.tezos.domains/graphql', {
+    headers: {
+      'content-type': 'application/json',
+    },
+    method: 'POST',
+    mode: 'cors',
+    credentials: 'omit',
+    body: JSON.stringify({
+      query:
+        'query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}',
+      variables: { address },
+      operationName: 'reverseRecord',
+    }),
+  })
+
+  const result = await response.json()
+  return result?.data?.reverseRecord?.domain?.name || ''
+}
 
 export default function Profile({ user }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
@@ -13,6 +34,17 @@ export default function Profile({ user }) {
   })
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
+  const [reverseDomain, setReverseDomain] = useState('')
+
+  const loadReverseDomain = useCallback(() => {
+    reverseRecord(user.address).then((domain) => {
+      setReverseDomain(domain)
+    })
+  }, [user.address])
+
+  useEffect(() => {
+    loadReverseDomain()
+  }, [loadReverseDomain])
 
   return (
     <div className={styles.container}>
@@ -34,7 +66,7 @@ export default function Profile({ user }) {
           )}
           <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <Button href={`https://tzkt.io/${user.address}`}>
-              {walletPreview(user.address)}
+              {reverseDomain ? reverseDomain : walletPreview(user.address)}
             </Button>
             <Button className={styles.square} onClick={setAddressCopied} />
             {isAddressCopied && 'Copied!'}
