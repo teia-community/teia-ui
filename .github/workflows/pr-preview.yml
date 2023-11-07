@@ -60,7 +60,7 @@ jobs:
 
       - name: ⚙️ Install and Build
         run: |
-          echo "GH_BASE_URL="/teia-ui/previews/pr-${{ github.event.pull_request.number }}/" >> $GITHUB_ENV
+          echo "GH_BASE_URL=/teia-ui/previews/pr-${{ github.event.pull_request.number }}/" >> $GITHUB_ENV
           npm ci
           npm run build
 
