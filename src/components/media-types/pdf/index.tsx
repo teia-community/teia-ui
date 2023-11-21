@@ -45,7 +45,7 @@ export const PdfComponent = memo(function ({
   )
 
   const cachedPage = useMemo(
-    () => changePage,
+    () => getPage,
     [pageNumber]
   )
 
@@ -177,7 +177,7 @@ export const PdfComponent = memo(function ({
           title={`PDF object ${nft.token_id}`}
           options={options}
         >
-          {getPage()}
+          {cachedPage()}
         </Document>
       )}
       {!loading && showDocument && (
