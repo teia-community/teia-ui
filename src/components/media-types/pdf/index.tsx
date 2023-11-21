@@ -1,9 +1,8 @@
-import { memo, useMemo, useRef, useState } from 'react'
+import { memo, useMemo, useRef, useState, Component } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf'
+import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import { pdfjs } from 'react-pdf';
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
@@ -29,7 +28,7 @@ export const PdfComponent = memo(function ({
   displayView,
   nft,
 }: MediaTypeProps) {
-  const [numPages, setNumPages] = useState<number>()
+  const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(displayView)
   const [showDocument, setShowDocument] = useState(true)
@@ -43,6 +42,11 @@ export const PdfComponent = memo(function ({
   const file = useMemo(
     () => (previewUri ? previewUri : artifactUri),
     [previewUri, artifactUri]
+  )
+
+  const cachedPage = useMemo(
+    () => changePage,
+    [pageNumber]
   )
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -65,6 +69,29 @@ export const PdfComponent = memo(function ({
     changePage(1)
   }
 
+  function getPage() {
+    return (
+      <>
+        <Page
+          key={pageNumber}
+          className={styles.page}
+          pageNumber={pageNumber}
+          height={height}
+          onRenderSuccess={onRender}
+        />
+        <div style={{ display: "none" }}>
+          <Page
+            key={pageNumber + 1}
+            className={styles.page}
+            pageNumber={pageNumber + 1}
+            height={height}
+            onRenderSuccess={() => console.log("caching " + (pageNumber + 1))}
+          />
+        </div>
+      </>
+    )
+  }
+
   // function onItemClick(item) {
   //   setPageNumber(item.pageNumber)
   // }
@@ -74,6 +101,7 @@ export const PdfComponent = memo(function ({
       setLoading(false)
       setHeight(container.current?.clientHeight)
     }
+    console.log(pageNumber)
   }
 
   function onPassword(callback, reason) {
@@ -149,13 +177,7 @@ export const PdfComponent = memo(function ({
           title={`PDF object ${nft.token_id}`}
           options={options}
         >
-          <Page
-            key={pageNumber}
-            className={styles.page}
-            pageNumber={pageNumber}
-            onRenderSuccess={onRender}
-            height={height}
-          />
+          {getPage()}
         </Document>
       )}
       {!loading && showDocument && (
