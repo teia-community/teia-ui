@@ -66,12 +66,6 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="Claim DAO tokens"
-            route="claim"
-          />
-
-          <MenuItem
-            className={styles.menu_label}
             label="DAO governance"
             route="dao"
           />

@@ -143,7 +143,9 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
           <li
             key={option}
             className={`${styles.poll_option} ${
-              parseInt(optionVotes) === maxVotes ? styles.winner_option : ''
+              parseInt(optionVotes) === maxVotes && maxVotes !== 0
+                ? styles.winner_option
+                : ''
             }`}
           >
             <button onClick={() => setShowPercents(!showPercents)}>
