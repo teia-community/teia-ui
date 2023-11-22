@@ -245,10 +245,14 @@ export function usePollsUsersAliases(userAddress, polls) {
 }
 
 export function useObjkt(id) {
-  const { data, mutate } = useSWR(id || null, fetchObjktDetails, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  })
+  const { data, mutate } = useSWR(
+    id ? ['/poll/objkt/', id] : null,
+    async (_, id) => fetchObjktDetails(id),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
 
   return [data, mutate]
 }

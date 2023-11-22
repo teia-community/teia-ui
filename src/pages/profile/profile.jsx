@@ -44,7 +44,7 @@ export default function Profile({ user }) {
 
           {daoTokenBalance >= 0 && (
             <p>
-              {Math.round(daoTokenBalance * 10) / 10} <a href="claim">TEIA</a>
+              {Math.round(daoTokenBalance * 10) / 10} <a href="dao">TEIA</a>
             </p>
           )}
 
