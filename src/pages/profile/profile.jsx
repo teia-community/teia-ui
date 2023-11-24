@@ -6,6 +6,24 @@ import { useDaoTokenBalance } from '@data/swr'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
+import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
+
+async function reverseRecord(address) {
+  const result = await axios.post(
+    `${import.meta.env.VITE_TEZOSDOMAINS_GRAPHQL_API}`,
+    {
+      query: `query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}`,
+      variables: { address },
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+  return result?.data?.data?.reverseRecord?.domain?.name || ''
+}
 
 export default function Profile({ user }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
@@ -15,6 +33,17 @@ export default function Profile({ user }) {
   const [daoTokenBalance] = useDaoTokenBalance(user.address)
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
+  const [reverseDomain, setReverseDomain] = useState('')
+
+  const loadReverseDomain = useCallback(() => {
+    reverseRecord(user.address).then((domain) => {
+      setReverseDomain(domain)
+    })
+  }, [user.address])
+
+  useEffect(() => {
+    loadReverseDomain()
+  }, [loadReverseDomain])
 
   return (
     <div className={styles.container}>
@@ -36,7 +65,7 @@ export default function Profile({ user }) {
           )}
           <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <Button href={`https://tzkt.io/${user.address}`}>
-              {walletPreview(user.address)}
+              {reverseDomain ? reverseDomain : walletPreview(user.address)}
             </Button>
             <Button className={styles.square} onClick={setAddressCopied} />
             {isAddressCopied && 'Copied!'}
