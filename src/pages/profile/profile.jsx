@@ -2,17 +2,48 @@ import useClipboard from 'react-use-clipboard'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
+import { useDaoTokenBalance } from '@data/swr'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
+import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
+
+async function reverseRecord(address) {
+  const result = await axios.post(
+    `${import.meta.env.VITE_TEZOSDOMAINS_GRAPHQL_API}`,
+    {
+      query: `query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}`,
+      variables: { address },
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+  return result?.data?.data?.reverseRecord?.domain?.name || ''
+}
 
 export default function Profile({ user }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
   const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
     successDuration: 2500,
   })
+  const [daoTokenBalance] = useDaoTokenBalance(user.address)
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
+  const [reverseDomain, setReverseDomain] = useState('')
+
+  const loadReverseDomain = useCallback(() => {
+    reverseRecord(user.address).then((domain) => {
+      setReverseDomain(domain)
+    })
+  }, [user.address])
+
+  useEffect(() => {
+    loadReverseDomain()
+  }, [loadReverseDomain])
 
   return (
     <div className={styles.container}>
@@ -34,16 +65,15 @@ export default function Profile({ user }) {
           )}
           <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <Button href={`https://tzkt.io/${user.address}`}>
-              {walletPreview(user.address)}
+              {reverseDomain ? reverseDomain : walletPreview(user.address)}
             </Button>
             <Button className={styles.square} onClick={setAddressCopied} />
             {isAddressCopied && 'Copied!'}
           </div>
 
-          {user.daoTokenBalance >= 0 && (
+          {daoTokenBalance >= 0 && (
             <p>
-              {Math.round(user.daoTokenBalance * 10) / 10}{' '}
-              <a href="claim">TEIA</a>
+              {Math.round(daoTokenBalance * 10) / 10} <a href="dao">TEIA</a>
             </p>
           )}
 

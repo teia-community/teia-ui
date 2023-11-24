@@ -9,7 +9,14 @@ import {
 } from '@pages/collaborate'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
-import { Claim } from '@pages/dao'
+import { DAO, Claim, ProposalDisplay } from '@pages/dao'
+import {
+  DaoParameters,
+  DaoProposals,
+  SubmitDaoProposals,
+} from '@pages/dao/tabs'
+import { TeiaPolls, PollDisplay } from '@pages/polls'
+import { Polls, CreatePolls } from '@pages/polls/tabs'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -137,6 +144,19 @@ const router = createBrowserRouter(
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />
+      <Route path="dao/*" element={<DAO />}>
+        <Route index element={<DaoParameters />} />
+        <Route path="proposals" element={<DaoProposals />} />
+        <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route path="*" element={<DaoParameters />} />
+      </Route>
+      <Route path="proposal/:id" element={<ProposalDisplay />} />
+      <Route path="polls/*" element={<TeiaPolls />}>
+        <Route index element={<Polls />} />
+        <Route path="create" element={<CreatePolls />} />
+        <Route path="*" element={<Polls />} />
+      </Route>
+      <Route path="poll/:id" element={<PollDisplay />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
