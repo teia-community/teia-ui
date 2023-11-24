@@ -5,6 +5,7 @@ import {
   TezosToolkit,
   WalletOperationBatch,
   ContractMethod,
+  ContractMethodObject,
   Wallet,
   WalletParamsWithKind,
 } from '@taquito/taquito'
@@ -16,10 +17,7 @@ import {
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
-import { 
-  getUser,
-  getClaimedDaoTokens
-} from '@data/api'
+import { getUser } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
   BURN_ADDRESS,
@@ -29,9 +27,6 @@ import {
   MARKETPLACE_CONTRACT_TEIA,
   MARKETPLACE_CONTRACT_V1,
   SUBJKT_CONTRACT,
-  DAO_TOKEN_CLAIM_CONTRACT,
-  DISTRIBUTION_MAPPING_IPFS_PATH,
-  MERKLE_DATA_IPFS_PATHS,
   teiaCancelSwapSchema,
 } from '@constants'
 import {
@@ -41,7 +36,6 @@ import {
   createSwapCalls,
   packData,
 } from '@utils/swap'
-import { downloadJsonFileFromIpfs } from '@utils/ipfs'
 import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
@@ -67,7 +61,7 @@ interface UserState {
   /** Handle the operation confirmation and error and return the ophash */
   handleOp: (
     // op: TransactionWalletOperation | BatchWalletOperation,
-    op_to_send: WalletOperationBatch | ContractMethod<Wallet>,
+    op_to_send: WalletOperationBatch | ContractMethod<Wallet> | ContractMethodObject<Wallet>,
     title: string,
     send_options?: {
       amount: number
@@ -112,8 +106,6 @@ interface UserState {
   resetProxy: () => void
   /**Transfer tokens */
   transfer: (txs: Tx[]) => OperationReturn
-  /** Claim DAO tokens */
-  claimTokens: () => OperationReturn
   /** Get the balance for the given address (or current user if not provided) */
   getBalance: (address?: string) => Promise<number>
   /** Mint the token */
@@ -410,90 +402,6 @@ export const useUserStore = create<UserState>()(
             return await handleOp(batch, 'Transfer')
           } catch (e) {
             showError('Transfer', e)
-          }
-        },
-        claimTokens: async () => {
-          const user_address = get().address
-          const handleOp = get().handleOp
-          const show = useModalStore.getState().show
-          const showError = useModalStore.getState().showError
-          const step = useModalStore.getState().step
-
-          step('Claim DAO tokens', 'Claiming Teia DAO tokens', true)
-
-          if (!user_address) {
-            show('Claim DAO tokens', 'You need to sync your wallet first')
-            return
-          }
-
-          // Download the distribution mapping file from IPFS
-          const distributionMapping = await downloadJsonFileFromIpfs(
-            DISTRIBUTION_MAPPING_IPFS_PATH
-          )
-
-          if (!distributionMapping) {
-            show(
-              'Claim DAO tokens',
-              'Could not download the distribution map from IPFS'
-            )
-            return
-          } else if (!(user_address in distributionMapping)) {
-            show(
-              'Claim DAO tokens',
-              'Your wallet is not in the distribution list.\n' +
-                "Sorry, you don't qualify to claim any tokens."
-            )
-            return
-          }
-
-          // Download the file with the user Merkle proofs
-          const fileIndex = distributionMapping[user_address]
-          const merkleData = await downloadJsonFileFromIpfs(
-            MERKLE_DATA_IPFS_PATHS[fileIndex]
-          )
-
-          if (!merkleData) {
-            show(
-              'Claim DAO tokens',
-              'Could not download the user Merkle proofs from IPFS'
-            )
-            return
-          }
-
-          const userMerkleData = merkleData[user_address]
-
-          // Calculate the tokens that the user still can claim
-          const totalTokensToClaim = parseInt(userMerkleData.tokens) / 1e6
-          const alreadyClaimedTokens = (await getClaimedDaoTokens(user_address)) / 1e6
-          const unclaimedTokens = totalTokensToClaim - (alreadyClaimedTokens? alreadyClaimedTokens : 0)
-
-          if (unclaimedTokens === 0) {
-            show(
-              'Claim DAO tokens',
-              'Sorry, but you already claimed all your tokens'
-            )
-            return
-          }
-
-          step(
-            'Claim DAO tokens',
-            'You are allowed to claim ' + unclaimedTokens + ' DAO tokens'
-          )
-
-          // Send the claim operation
-          try {
-            const dropContract = await Tezos.wallet.at(DAO_TOKEN_CLAIM_CONTRACT)
-            const batch = dropContract.methods.claim(
-              userMerkleData.proof,
-              userMerkleData.leafDataPacked
-            )
-
-            return await handleOp(batch, 'Claim DAO tokens', {
-              amount: 0,
-              storageLimit: 400,
-            })
-          } catch (e) {
-            showError('Claim DAO tokens', e)
           }
         },
         collect: async (listing) => {
