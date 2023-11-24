@@ -2,6 +2,7 @@ import useClipboard from 'react-use-clipboard'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
+import { useDaoTokenBalance } from '@data/swr'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
@@ -29,6 +30,7 @@ export default function Profile({ user }) {
   const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
     successDuration: 2500,
   })
+  const [daoTokenBalance] = useDaoTokenBalance(user.address)
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
@@ -69,10 +71,9 @@ export default function Profile({ user }) {
             {isAddressCopied && 'Copied!'}
           </div>
 
-          {user.daoTokenBalance >= 0 && (
+          {daoTokenBalance >= 0 && (
             <p>
-              {Math.round(user.daoTokenBalance * 10) / 10}{' '}
-              <a href="claim">TEIA</a>
+              {Math.round(daoTokenBalance * 10) / 10} <a href="dao">TEIA</a>
             </p>
           )}
 

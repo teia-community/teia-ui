@@ -1,0 +1,31 @@
+.section {
+  margin: 2em 0;
+
+  a {
+    text-decoration: underline;
+  }
+
+  > p {
+    margin: 1em 0;
+  }
+}
+
+.section_title {
+  margin-bottom: 0.5em;
+}
+
+.poll_form {
+  margin-top: 2em;
+}
+
+.poll_form_fields {
+  margin-bottom: 1em;
+}
+
+.poll_form_field {
+  margin: 1em 0;
+
+  > p {
+    margin-bottom: 0.3em;
+  }
+}
