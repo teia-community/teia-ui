@@ -9,6 +9,8 @@ import { useModalStore } from './modalStore'
 import {
   ALLOWED_FILETYPES_LABEL,
   ALLOWED_MIMETYPES,
+  ALLOWED_COVER_FILETYPES_LABEL,
+  ALLOWED_COVER_MIMETYPES,
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
   METADATA_CONTENT_RATING_MATURE,
   MIMETYPE,
@@ -124,6 +126,14 @@ export const useMintStore = create<MintState>()(
           if (!ALLOWED_MIMETYPES.includes(artifact.mimeType)) {
             show(
               `File format invalid. supported formats include: ${ALLOWED_FILETYPES_LABEL.toLocaleLowerCase()}`
+            )
+            return
+          }
+
+          // check cover mime type
+          if (cover && !ALLOWED_COVER_MIMETYPES.includes(cover.mimeType)) {
+            show(
+              `Cover file format invalid. supported formats include: ${ALLOWED_COVER_FILETYPES_LABEL.toLocaleLowerCase()}`
             )
             return
           }
