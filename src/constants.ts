@@ -9,6 +9,10 @@ export const PATH = {
   ABOUT: '/about',
   FAQ: '/faq',
   CLAIM: '/claim',
+  DAO: '/dao',
+  PROPOSAL: '/proposal',
+  POLLS: '/polls',
+  POLL: '/poll',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
@@ -139,6 +143,8 @@ export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
 export const MOROCCO_QUAKE_FUNDING_CONTRACT =
   'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA'
 
+export const POLLS_CONTRACT = 'KT1SUExZfkmxf2fafrVgYjZGEKDete2siWoU'
+export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
@@ -155,6 +161,30 @@ export const MERKLE_DATA_IPFS_PATHS = {
   8: 'QmW4jpn5EnjQx6aCbSAodEhh6BW2UqvZSGvubu2tv4UWCn',
 }
 export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '518731'
+export const DAO_TOKEN_DECIMALS = 1000000
+export const TOKENS = [
+  {
+    name: 'TEIA',
+    fa2: 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV',
+    multiasset: false,
+    decimals: DAO_TOKEN_DECIMALS,
+    website: undefined
+  },
+  {
+    name: 'OBJKT',
+    fa2: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+    multiasset: true,
+    decimals: 1,
+    website: 'https://teia.art/objkt/'
+  },
+  {
+    name: 'hDAO',
+    fa2: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
+    multiasset: false,
+    decimals: 1000000,
+    website: undefined
+  }
+]
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
   MARKETPLACE_CONTRACT_V2,

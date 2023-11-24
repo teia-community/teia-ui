@@ -1,0 +1,34 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
+.votes {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  font-size: $font-xsmall;
+  text-align: center;
+  cursor: pointer;
+
+  @include respond-to('desktop') {
+    font-size: $font-small;
+  }
+}
+
+.yes_vote {
+  color: var(--background-color);
+  background-color: var(--yes-vote-color);
+}
+
+.no_vote {
+  color: var(--background-color);
+  background-color: var(--no-vote-color);
+}
+
+.abstain_vote {
+  color: var(--background-color);
+  background-color: var(--abstain-vote-color);
+}
+
+.empty_vote {
+  background-color: var(--gray-15);
+}

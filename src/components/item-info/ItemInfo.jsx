@@ -78,7 +78,7 @@ const ItemInfo = ({ nft }) => {
                 <Button
                   to={
                     nft.artist_profile?.name
-                      ? `/${nft.artist_profile.name}`
+                      ? encodeURI(`/${nft.artist_profile.name}`)
                       : `${PATH.ISSUER}/${nft.artist_address}`
                   }
                 >
