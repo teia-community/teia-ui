@@ -55,7 +55,7 @@ export const HTMLComponent = (props) => {
   const unpackZipFiles = async () => {
     unpacking.current = true
 
-    const buffer = dataRUIToBuffer(previewUri)
+    const buffer = await dataRUIToBuffer(previewUri)
 
     try {
       const filesArr = await prepareFilesFromZIP(buffer)
@@ -122,7 +122,7 @@ export const HTMLComponent = (props) => {
           <iframe
             ref={iframeRef}
             title={`interactive object ${nft.token_id}`}
-            src={`https://iframe.teia.art/html?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
+            src={`https://iframe.teia.art/html/?uid=${uid}&creator=${_creator_}&viewer=${_viewer_}&objkt=${_objectId_}`}
             sandbox={sandbox_features}
             allow={allowed_features}
           />
