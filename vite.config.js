@@ -137,6 +137,9 @@ export default defineConfig(({ mode }) => {
       port: 3000,
     },
     build: {
+      commonjsOptions: {
+        transformMixedEsModules: true
+      },
       outDir: 'build',
       sourcemap: !prod,
       rollupOptions: {
