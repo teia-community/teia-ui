@@ -1,7 +1,8 @@
 .container {
   margin-bottom: 10px;
 
-  label {
+  label,
+  .ipfs_upload_button {
     display: block;
     width: 100%;
     padding: 6px;
@@ -12,6 +13,15 @@
     input {
       display: none;
       width: 100%;
+    }
+  }
+
+  .ipfs_result {
+    display: flex;
+    flex-direction: row;
+
+    :first-child {
+      flex: 1 1 auto;
     }
   }
 

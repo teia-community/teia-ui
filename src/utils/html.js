@@ -288,14 +288,9 @@ export async function validateFiles(files) {
   }
 }
 
-export function dataRUIToBuffer(dataURI) {
-  const parts = dataURI.split(',')
-  const base64 = parts[1]
-  const binaryStr = atob(base64)
-  const len = binaryStr.length
-  const bytes = new Uint8Array(len)
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryStr.charCodeAt(i)
-  }
+export async function dataRUIToBuffer(dataURI) {
+  const blob = await fetch(dataURI).then((r) => r.blob())
+  const binaryStr = await new Response(blob).arrayBuffer()
+  const bytes = new Uint8Array(binaryStr)
   return bytes
 }

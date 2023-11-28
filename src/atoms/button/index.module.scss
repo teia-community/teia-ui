@@ -158,3 +158,11 @@ $border: 2px;
   z-index: 200;
   cursor: pointer;
 }
+
+.pagination_button {
+  display: inline-block;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

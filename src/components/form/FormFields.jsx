@@ -4,7 +4,10 @@ import Select from '@atoms/select/Base'
 import styles from '@style'
 import { memo } from 'react'
 import { Upload } from '@components/upload/index'
-import { ALLOWED_FILETYPES_LABEL } from '@constants'
+import {
+  ALLOWED_FILETYPES_LABEL,
+  ALLOWED_COVER_FILETYPES_LABEL,
+} from '@constants'
 import { Controller } from 'react-hook-form'
 import classNames from 'classnames'
 
@@ -113,6 +116,31 @@ export const FormFields = ({ value, field, error, register, control }) => {
           )}
         />
       )
+
+    case 'cover-file':
+      return (
+        <Controller
+          control={control}
+          defaultValue={field.defaultValue}
+          name={name}
+          rules={field.rules}
+          render={({ field: { onChange, value, name, ref } }) => (
+            <Upload
+              ref={ref}
+              name={name}
+              file={value?.file}
+              label={field.label}
+              placeHolder={value ? value?.file?.name : field.placeHolder}
+              className={styles.field}
+              onChange={onChange}
+              allowedTypesLabel={ALLOWED_COVER_FILETYPES_LABEL}
+            >
+              {error && <FieldError error={error.message} />}
+            </Upload>
+          )}
+        />
+      )
+
     default:
       return (
         <p>

@@ -1,6 +1,6 @@
 // DEV SAMPLES
 export const sample_events = [
-    {
+  {
     title: 'TezQuakeAid - Morocco',
     icon: '🇲🇦 ',
     feed: 'morocco-quake-aid',
