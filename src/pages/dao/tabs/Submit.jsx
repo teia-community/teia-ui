@@ -93,7 +93,10 @@ function ProposalForm({ kind, callback }) {
       return (
         <>
           <p>
-            Use this form to create a proposal to approve a text or decission.
+            Use this form to create a DAO proposal for Teia. 
+            DAO proposals should primarily be used for significant decisions for the 
+            LLC and must be both practically and legally viable. For polling and smaller suggestions, 
+            please use the <a href="https://teia.art/polls">Community poll tool</a>
           </p>
           <p>
             This proposal has no direct consequences on the blockchain. However,
@@ -109,8 +112,8 @@ function ProposalForm({ kind, callback }) {
       return (
         <>
           <p>
-            Use this form to create a proposal that, if accepted, it will
-            transfer the specified amount of tez from the DAO treasury to a list
+            Use this form to create a proposal that, if accepted, will
+            transfer the specified amount of Tezos from the DAO treasury to a list
             of tezos addresses. The proposal description will be stored in IPFS
             for archival purposes.
           </p>
@@ -133,7 +136,7 @@ function ProposalForm({ kind, callback }) {
       return (
         <>
           <p>
-            Use this form to create a proposal that, if accepted, it will
+            Use this form to create a proposal that, if accepted, will
             execute some smart contract code stored in a Michelson lambda
             function. The proposal description will be stored in IPFS for
             archival purposes.
@@ -169,7 +172,7 @@ function CommonProposalFields({
       <SimpleInput
         type="text"
         label="Proposal title"
-        placeholder="Write here a meaningful title for your proposal"
+        placeholder="Write a meaningful title for your proposal here"
         maxlength="500"
         value={title}
         onChange={setTitle}
