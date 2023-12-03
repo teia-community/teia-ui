@@ -1,10 +1,27 @@
 import { memo, } from 'react'
 import { MediaTypeProps } from '@types'
+import { ImageComponent } from '../image'
 
 export const PdfComponent = memo(function ({
   artifactUri,
-  nft
+  displayUri,
+  previewUri,
+  displayView,
+  nft,
 }: MediaTypeProps) {
+  const cover = (
+    <>
+      <ImageComponent
+        key={`img-${nft.token_id}`}
+        artifactUri={displayUri}
+        displayUri={displayUri}
+        previewUri={previewUri}
+        displayView={false}
+        nft={nft}
+      />
+    </>
+  )
+  if (!displayView) return cover
   return (
     <div>
       <iframe
