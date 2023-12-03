@@ -2,14 +2,18 @@ import { memo, } from 'react'
 import { MediaTypeProps } from '@types'
 
 export const PdfComponent = memo(function ({
-  artifactUri
+  artifactUri,
+  nft
 }: MediaTypeProps) {
   return (
-    <iframe
-      src={import.meta.env.VITE_IFRAME_URL + `/pdf/?pdfSrc=${artifactUri}`}
-      height={'1000vh'}
-      width={'1000vw'}
-    />
+    <div>
+      <iframe
+        title={`PDF ${nft.token_id}`}
+        src={import.meta.env.VITE_IFRAME_URL + `/pdf/?pdfSrc=${artifactUri}`}
+        height={'500vh'}
+        width={'500vw'}
+      />
+    </div>
   )
 })
 
