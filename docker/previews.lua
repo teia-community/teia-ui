@@ -37,15 +37,16 @@ function _M.findTokenDetails(search)
 end
 
 function _M.injectOpenGraphTags(body, info)
-    local newBody = body;
-
     -- cleanup old meta tags
-    body = ngx.re.gsub(body, '<meta.*?property="og.*?/>', '', 'm')
-    body = ngx.re.gsub(body, '<meta.*?name="twitter.*?/>', '', 'm')
+    body = ngx.re.gsub(body, '\n+', '', 'jom') -- I cannot be bothered to do multiline regex stuff
+    body = ngx.re.gsub(body, '<meta.*?property="og.*?/>', '', 'jo')
+    body = ngx.re.gsub(body, '<meta.*?name="twitter.*?/>', '', 'jo')
+    body = ngx.re.gsub(body, '<!-- OPEN GRAPH -->.*?/>', '', 'jo')
 
     local url = ngx.var.scheme .. '://' .. ngx.var.host .. ngx.var.request_uri
 
     local openGraphTags = '' ..
+        '<meta name="description" content="' .. info['description'] .. '" />' ..
         '<meta property="og:type" content="website" />' ..
         '<meta property="og:title" content="' .. info['name'] .. '" />' ..
         '<meta property="og:description" content="' .. info['description'] .. '" />' ..
