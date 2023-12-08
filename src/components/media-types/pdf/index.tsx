@@ -1,6 +1,8 @@
 import { memo, } from 'react'
 import { MediaTypeProps } from '@types'
 import { ImageComponent } from '../image'
+import classnames from 'classnames'
+import styles from '@style'
 
 export const PdfComponent = memo(function ({
   artifactUri,
@@ -9,6 +11,14 @@ export const PdfComponent = memo(function ({
   displayView,
   nft,
 }: MediaTypeProps) {
+
+  const classes = classnames({
+    [styles.container]: true,
+    [styles.interactive]: displayView,
+    [styles.display]: displayView,
+  })
+
+
   const cover = (
     <>
       <ImageComponent
@@ -23,12 +33,10 @@ export const PdfComponent = memo(function ({
   )
   if (!displayView) return cover
   return (
-    <div>
+    <div className={classes}>
       <iframe
         title={`PDF ${nft.token_id}`}
         src={import.meta.env.VITE_IFRAME_URL + `/pdf/?pdfSrc=${artifactUri}`}
-        height={'500vh'}
-        width={'500vw'}
       />
     </div>
   )
