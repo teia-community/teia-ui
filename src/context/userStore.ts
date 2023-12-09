@@ -489,8 +489,8 @@ export const useUserStore = create<UserState>()(
           const show = useModalStore.getState().show
 
           step(
-            'Reswaping',
-            `reswaping ${nft.token_id} for ${price / 1e6}tz`,
+            'Reswapping',
+            `reswapping ${nft.token_id} for ${price / 1e6}tz`,
             true
           )
 
