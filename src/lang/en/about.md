@@ -48,8 +48,6 @@ Registration Number: 10020-23 (Registrated via [MIDAO Directory Services](https:
 
 ## Tech Specs
 
-The Teia Marketplace Interface and marketplace contract are code forks based on the open source Tezos NFT marketplace hic et nunc that have been and will be further developed and maintained by the Teia community. 
-
 The Teia Marketplace Interface and marketplace contract are [code forks](https://github.com/teia-community/teia-ui) based on the open source Tezos NFT marketplace [hic et nunc](https://github.com/hicetnunc2000) that have been and will be further developed and maintained by the Teia community. 
 
 The [marketplace fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees) are set to 2.5%.
