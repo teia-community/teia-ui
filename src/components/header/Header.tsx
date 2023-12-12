@@ -26,6 +26,7 @@ import { useLocalSettings } from '@context/localSettingsStore'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { shallow } from 'zustand/shallow'
+import { ArtistProfile } from '@types'
 
 export const Header = () => {
   const [
@@ -77,9 +78,9 @@ export const Header = () => {
 
   const isWide = useMedia('(min-width: 600px)')
 
-  const [logoSeed, setLogoSeed] = useState()
+  const [logoSeed, setLogoSeed] = useState<number>()
   /** the header is a bit larger just on home */
-  const [onHome, setOnHome] = useState()
+  const [onHome, setOnHome] = useState<boolean>()
 
   const [syncLabel, setSyncLabel] = useState('Sync')
   const [walletLabel, setWalletLabel] = useState('')
@@ -97,7 +98,12 @@ export const Header = () => {
 
   // on Menu Toggle or Sign in
   useEffect(() => {
-    const updateTitle = ([address, proxyAddress, proxyName, userInfo]) => {
+    const updateTitle = ([address, proxyAddress, proxyName, userInfo]: [
+      string | undefined,
+      string | undefined,
+      string | undefined,
+      ArtistProfile
+    ]) => {
       setSyncLabel(address ? 'Unsync' : 'Sync')
       if (address) {
         // is menu closed?
@@ -118,12 +124,18 @@ export const Header = () => {
     }
 
     return useUserStore.subscribe(
-      (st) => [st.address, st.proxyAddress, st.proxyName, st.userInfo],
+      (st) =>
+        [st.address, st.proxyAddress, st.proxyName, st.userInfo] as [
+          string | undefined,
+          string | undefined,
+          string | undefined,
+          ArtistProfile
+        ],
       updateTitle
     )
   }, [])
 
-  const handleRoute = (path, data) => {
+  const handleRoute = (path: string, data?: string) => {
     setCollapsed(true)
     navigate(path, { state: data })
   }

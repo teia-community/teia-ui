@@ -12,7 +12,7 @@ const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Collections() {
-  const { showFilters, showRestricted, overrideProtections, address } =
+  const { showFilters, showRestricted, overrideProtections, user_address } =
     useOutletContext()
 
   const [filter, setFilter] = useState(FILTER_ALL)
@@ -36,25 +36,28 @@ export default function Collections() {
         overrideProtections={overrideProtections}
         label="Artist's Collection"
         namespace="collections"
-        swrParams={[address]}
-        variables={{ address }}
+        swrParams={[user_address]}
+        variables={{ address: user_address }}
         emptyMessage="no collections"
         maxItems={null}
         postProcessTokens={(tokens) => {
-          if (filter === FILTER_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address }) => listing_seller_address === address
-            )
-          }
+          switch (filter) {
+            case FILTER_FOR_SALE:
+              return tokens.filter(
+                ({ listing_seller_address }) =>
+                  listing_seller_address === user_address
+              )
 
-          if (filter === FILTER_NOT_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address, artist_address }) =>
-                artist_address !== address && listing_seller_address !== address
-            )
-          }
+            case FILTER_NOT_FOR_SALE:
+              return tokens.filter(
+                ({ listing_seller_address, artist_address }) =>
+                  artist_address !== user_address &&
+                  listing_seller_address !== user_address
+              )
 
-          return tokens
+            default:
+              return tokens
+          }
         }}
         extractTokensFromResponse={(data, { postProcessTokens }) => {
           const heldTokens = data.holdings.map(({ token }) => token)

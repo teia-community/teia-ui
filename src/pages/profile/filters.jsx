@@ -1,16 +1,16 @@
 import { Button } from '@atoms/button'
-import { Container } from '@atoms/layout'
 import styles from '@style'
 
 function FilterButton({ type, children, isActive, onClick }) {
   return (
     <Button
+      small
       onClick={() => {
         onClick(type)
       }}
     >
       <div
-        className={styles.tag}
+        className={styles.filter}
         style={{ textDecoration: isActive ? 'underline' : 'none' }}
       >
         {children}
@@ -21,18 +21,16 @@ function FilterButton({ type, children, isActive, onClick }) {
 
 export default function Filters({ onChange, filter, items = [] }) {
   return (
-    <Container>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        {items.map(({ type, label }) => (
-          <FilterButton
-            key={type}
-            type={type}
-            onClick={onChange}
-            isActive={filter === type}
-            children={label}
-          />
-        ))}
-      </div>
-    </Container>
+    <div className={styles.filters}>
+      {items.map(({ type, label }) => (
+        <FilterButton
+          key={type}
+          type={type}
+          onClick={onChange}
+          isActive={filter === type}
+          children={label}
+        />
+      ))}
+    </div>
   )
 }

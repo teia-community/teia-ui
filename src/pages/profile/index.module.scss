@@ -12,6 +12,22 @@
 //     }
 //   }
 // }
+
+.filters {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: var(--max-width-internal);
+}
+
+.filter {
+  padding: 4px 8px;
+  text-transform: lowercase;
+  transition: var(--body-transition);
+}
+.filter:hover {
+  text-decoration: underline;
+}
 .identicon {
   width: 128px;
   height: 128px;

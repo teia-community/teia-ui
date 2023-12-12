@@ -75,15 +75,7 @@ export const Swap = () => {
     }
 
     // swap is valid call API
-    console.debug(
-      address,
-      nft.royalties_total,
-      parseFloat(price) * 1000000,
-      id,
-      nft.artist_address,
-      parseFloat(amount)
-    )
-    console.log([
+    console.debug([
       address,
       nft.royalties_total,
       parseFloat(price) * 1e6,

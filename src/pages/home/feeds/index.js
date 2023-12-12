@@ -1,5 +1,5 @@
 export { NewObjktsFeed } from './new-objkts-feed'
-
+export { OneOnOneFeed } from './one-one-feed'
 export {
   AudioFeed,
   GifFeed,

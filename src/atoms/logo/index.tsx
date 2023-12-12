@@ -5,7 +5,7 @@ import { memo } from 'react'
 import { useMemo } from 'react'
 import { RotatingLogoSVG } from '@icons'
 import { randomSeed } from '@utils'
-export const RotatingLogoRemote = ({ className, seed = 1 }) => {
+export const RotatingLogoRemote = ({ className = '', seed = 1 }) => {
   const theme = useLocalSettings((state) => state.theme)
   const { logos } = useSettings()
 
@@ -30,14 +30,14 @@ export const RotatingLogoRemote = ({ className, seed = 1 }) => {
   )
 }
 
-export const RotatingLogo = ({ className, seed = 1 }) => {
+export const RotatingLogo = ({ className = '', seed = 1 }) => {
   const Logo = useMemo(() => {
     return RotatingLogoSVG[
       Math.floor(randomSeed(seed) * RotatingLogoSVG.length)
     ]
   }, [seed])
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${className}`}>
       <Logo fill="var(--text-color)" width="132px" />
     </div>
   )
