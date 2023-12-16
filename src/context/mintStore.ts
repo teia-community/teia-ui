@@ -309,7 +309,7 @@ export const useMintStore = create<MintState>()(
                  "**#SwapOnTeia**", 
                  "Please consider swapping your OBJKT on Teia.art",
                  "Only swaps done on the Teia marketplace will support this non-profit community project via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees)",
-                 "*(swaps done on Teia.art will also be visisble on objkt.com)*"
+                 "*(swaps done on Teia.art will also be visible on objkt.com)*"
                 )
             reset()
           }
