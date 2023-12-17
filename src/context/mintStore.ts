@@ -306,10 +306,9 @@ export const useMintStore = create<MintState>()(
           console.debug('success', success)
           if (success) {
             show(
-                 "**#SwapOnTeia**", 
-                 "Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your OBJKT on Teia.art",
-                 "Only swaps done on the Teia marketplace will support this non-profit community project via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees)",
-                 "*(swaps done on Teia.art will also be visible on objkt.com)*"
+                 "**Minting sucessful**", 
+                 "Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your 
+              OBJKT here on Teia.art to support Teia via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees)(swaps done on Teia.art will also be visible on objkt.com)"
                 )
             reset()
           }
