@@ -11,7 +11,7 @@ services:
     volumes:
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
   tzproxy:
-    image: ghcr.io/marigold-dev/tzproxy:latest-2f58f3c-1697469392
+    image: ghcr.io/marigold-dev/tzproxy:latest
     restart: unless-stopped
     volumes:
       - ./docker/tzproxy.yaml:/tzproxy.yaml
