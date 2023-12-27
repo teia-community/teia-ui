@@ -78,7 +78,7 @@ export const Swap = () => {
     console.debug(
       address,
       nft.royalties_total,
-      parseFloat(price) * 1000000,
+      (price * 1000000).toFixed(0),
       id,
       nft.artist_address,
       parseFloat(amount)
@@ -86,7 +86,7 @@ export const Swap = () => {
     console.log([
       address,
       nft.royalties_total,
-      parseFloat(price) * 1e6,
+      (price * 1e6).toFixed(0),
       id,
       nft.artist_address,
       parseFloat(amount),
@@ -96,7 +96,7 @@ export const Swap = () => {
       await swap(
         address,
         nft.royalties_total / 1000,
-        parseFloat(price) * 1e6,
+        (price * 1e6).toFixed(0),
         id,
         nft.artist_address,
         parseFloat(amount)
