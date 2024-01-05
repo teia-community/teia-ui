@@ -1,6 +1,9 @@
 cache:
     disabled_routes:
         - /monitor/.*
+        - /chains/main/blocks/head
+        - /chains/.*/mempool
+        - /chains/.*/blocks.*head
     enabled: true
     size_mb: 128
     ttl: 10
@@ -19,16 +22,20 @@ deny_routes:
         - /worker.*
         - /stats.*
         - /config
-        - /chains/main/blocks/.*/helpers/baking_rights
-        - /chains/main/blocks/.*/helpers/endorsing_rights
+        - /chains/.*/blocks/.*/helpers/baking_rights
+        - /chains/.*/blocks/.*/helpers/endorsing_rights
         - /helpers/baking_rights
         - /helpers/endorsing_rights
-        - /chains/main/blocks/.*/context/contracts(/?)$
+        - /chains/.*/blocks/.*/context/contracts(/?)$
+        - /chains/.*/blocks/.*/context/raw/bytes
 gc:
-    percent: 20
+    optimize_memory_store: true
+    percent: 100
 gzip:
     enabled: false
 host: 0.0.0.0:8080 # is used inside nginx config, tzproxy:8080
+load_balancer:
+    ttl: 600
 logger:
     bunch_size: 1000
     pool_interval_seconds: 10
@@ -40,4 +47,7 @@ rate_limit:
     enabled: false
     max: 300
     minutes: 1
+redis:
+    enabled: false
+    host: ""
 tezos_host: teia-ui:8000 # references docker-compose.yml service name
