@@ -147,6 +147,8 @@ export const History = () => {
             [
               'OBJKT_ASK',
               'OBJKT_ASK_V2',
+              'OBJKT_ASK_V3',
+              'OBJKT_ASK_V3_PRE',
               'TEIA_SWAP',
               'HEN_SWAP',
               'HEN_SWAP_V2',

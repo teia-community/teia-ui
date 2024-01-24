@@ -149,7 +149,7 @@ query objkt($id: String!) {
     tags {
       tag
     }
-    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "VERSUM_SWAP", "FA2_TRANSFER", "OBJKT_ASK", "OBJKT_ASK_V2"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
+    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "VERSUM_SWAP", "FA2_TRANSFER", "OBJKT_ASK", "OBJKT_ASK_V2", "OBJKT_ASK_V3", "OBJKT_ASK_V3_PRE"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
       timestamp
       implements
       ophash
