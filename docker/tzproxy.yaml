@@ -28,6 +28,8 @@ deny_routes:
         - /helpers/endorsing_rights
         - /chains/.*/blocks/.*/context/contracts(/?)$
         - /chains/.*/blocks/.*/context/raw/bytes
+        - /errors.*
+        - /describe/.*
 gc:
     optimize_memory_store: true
     percent: 100
