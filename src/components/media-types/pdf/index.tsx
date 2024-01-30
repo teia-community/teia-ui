@@ -1,6 +1,6 @@
-import { memo, useMemo, useRef, useState } from 'react'
+import { memo, useMemo, useRef, useState, Component } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf/dist/esm/entry.vite'
+import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
@@ -9,6 +9,12 @@ import { Button } from '@atoms/button'
 import { MediaTypeProps } from '@types'
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
+
 const options = {
   cMapUrl: 'cmaps/',
   cMapPacked: true,
@@ -22,9 +28,8 @@ export const PdfComponent = memo(function ({
   displayView,
   nft,
 }: MediaTypeProps) {
-  const [numPages, setNumPages] = useState<number>()
+  const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState(1)
-  const [renderedPageNumber, setRenderedPageNumber] = useState<number>()
   const [loading, setLoading] = useState(displayView)
   const [showDocument, setShowDocument] = useState(true)
 
@@ -37,6 +42,11 @@ export const PdfComponent = memo(function ({
   const file = useMemo(
     () => (previewUri ? previewUri : artifactUri),
     [previewUri, artifactUri]
+  )
+
+  const cachedPage = useMemo(
+    () => getPage,
+    [pageNumber]
   )
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -59,6 +69,29 @@ export const PdfComponent = memo(function ({
     changePage(1)
   }
 
+  function getPage() {
+    return (
+      <>
+        <Page
+          key={pageNumber}
+          className={styles.page}
+          pageNumber={pageNumber}
+          height={height}
+          onRenderSuccess={onRender}
+        />
+        <div style={{ display: "none" }}>
+          <Page
+            key={pageNumber + 1}
+            className={styles.page}
+            pageNumber={pageNumber + 1}
+            height={height}
+            onRenderSuccess={() => console.log("caching " + (pageNumber + 1))}
+          />
+        </div>
+      </>
+    )
+  }
+
   // function onItemClick(item) {
   //   setPageNumber(item.pageNumber)
   // }
@@ -68,7 +101,7 @@ export const PdfComponent = memo(function ({
       setLoading(false)
       setHeight(container.current?.clientHeight)
     }
-    setRenderedPageNumber(pageNumber)
+    console.log(pageNumber)
   }
 
   function onPassword(callback, reason) {
@@ -144,21 +177,7 @@ export const PdfComponent = memo(function ({
           title={`PDF object ${nft.token_id}`}
           options={options}
         >
-          {renderedPageNumber && renderedPageNumber !== pageNumber && (
-            <Page
-              key={`${renderedPageNumber}`}
-              className={styles.previous_page}
-              pageNumber={renderedPageNumber}
-              height={height}
-            />
-          )}
-          <Page
-            key={pageNumber}
-            className={styles.page}
-            pageNumber={pageNumber}
-            onRenderSuccess={onRender}
-            height={height}
-          />
+          {cachedPage()}
         </Document>
       )}
       {!loading && showDocument && (
