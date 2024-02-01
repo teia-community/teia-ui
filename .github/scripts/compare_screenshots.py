@@ -8,7 +8,6 @@ It was just becoming a mess to handle it all in actions so this rough
 script translates the logic
 """
 
-import os
 import subprocess
 import sys
 import shutil
@@ -17,13 +16,16 @@ from pathlib import Path
 
 def run_playwright_tests(before_commit, after_commit):
     commands = [
+        "cp tests/teia.screenshots.spec.ts tests/teia.screenshots.head",
         f"git checkout {before_commit}",
+        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts"
         "sudo apt update",
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",
         "npx playwright test --project chromium",
         "echo 'before commit screenshot dir:'",
         "ls ./screenshot",
+        "git checkout tests/teia.screenshots.spec.ts",
     ]
 
     for cmd in commands:
@@ -33,11 +35,13 @@ def run_playwright_tests(before_commit, after_commit):
 
     commands = [
         f"git checkout {after_commit}",
+        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts"
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",  # yes strange but after the reinstall this is needed again
         "npx playwright test --project chromium",
         "echo 'after commit screenshot dir:'",
         "ls ./screenshot",
+        "git checkout tests/teia.screenshots.spec.ts",
     ]
     for cmd in commands:
         subprocess.run(cmd, shell=True, check=True)
