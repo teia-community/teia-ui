@@ -18,7 +18,7 @@ def run_playwright_tests(before_commit, after_commit):
     commands = [
         "cp tests/teia.screenshots.spec.ts tests/teia.screenshots.head",
         f"git checkout {before_commit}",
-        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts"
+        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts",
         "sudo apt update",
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",
@@ -35,7 +35,7 @@ def run_playwright_tests(before_commit, after_commit):
 
     commands = [
         f"git checkout {after_commit}",
-        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts"
+        "cp tests/teia.screenshots.head tests/teia.screenshots.spec.ts",
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",  # yes strange but after the reinstall this is needed again
         "npx playwright test --project chromium",
