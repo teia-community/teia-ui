@@ -22,6 +22,8 @@ def run_playwright_tests(before_commit, after_commit):
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",
         "npx playwright test --project chromium",
+        "echo 'before commit screenshot dir:'",
+        "ls ./screenshot",
     ]
 
     for cmd in commands:
@@ -34,6 +36,8 @@ def run_playwright_tests(before_commit, after_commit):
         "npm ci --maxsockets 1",
         "npx playwright install chromium --with-deps",  # yes strange but after the reinstall this is needed again
         "npx playwright test --project chromium",
+        "echo 'after commit screenshot dir:'",
+        "ls ./screenshot",
     ]
     for cmd in commands:
         subprocess.run(cmd, shell=True, check=True)
