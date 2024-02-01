@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 const session = randomUUID()
 const baseUrl = 'http://localhost:3000'
 // const baseUrl = "https://teia.art"
+const output_base_path = process.env.CI ? 'screenshot' : `screenshot/${session}`
 
 const users = [
   'afterviz',
@@ -15,7 +16,15 @@ const users = [
 ]
 const user = users[0]
 
-const themes = ['light', 'dark', 'kawaii', 'midnight', 'aqua', 'coffee']
+const themes = [
+  'light',
+  'dark',
+  'kawaii',
+  'midnight',
+  'grass',
+  'aqua',
+  'coffee',
+]
 const pages = ['', user, 'settings']
 const theme_duration = 1500
 
@@ -44,7 +53,7 @@ test('screenshots feeds menu', async ({ page }, workerInfo) => {
 
   await cycleThemes(page, async (theme: string) => {
     await page.screenshot({
-      path: `screenshot/${session}/${workerInfo.project.name}-feeds_menu-${theme}.png`,
+      path: `${output_base_path}/${workerInfo.project.name}-feeds_menu-${theme}.png`,
     })
   })
 })
@@ -61,22 +70,22 @@ test('screenshots events menu', async ({ page }, workerInfo) => {
 
   await cycleThemes(page, async (theme) => {
     await page.screenshot({
-      path: `screenshot/${session}/${workerInfo.project.name}-events_menu-${theme}.png`,
+      path: `${output_base_path}/${workerInfo.project.name}-events_menu-${theme}.png`,
     })
   })
 })
 
 test('screenshots main menu', async ({ page }, workerInfo) => {
   await page.goto(`${baseUrl}/settings`)
+
   await page.waitForLoadState()
 
   await page.getByRole('button', { name: 'show menu' }).click({ timeout: 2500 })
-
   await page.waitForTimeout(theme_duration)
 
   await cycleThemes(page, async (theme) => {
     await page.screenshot({
-      path: `screenshot/${session}/${workerInfo.project.name}-main_menu-${theme}.png`,
+      path: `${output_base_path}/${workerInfo.project.name}-main_menu-${theme}.png`,
     })
   })
 })
@@ -122,7 +131,7 @@ for (const path of pages) {
 
     await cycleThemes(page, async (theme) => {
       await page.screenshot({
-        path: `screenshot/${session}/${project}-${page_name}-${theme}.png`,
+        path: `${output_base_path}/${project}-${page_name}-${theme}.png`,
       })
     })
   })

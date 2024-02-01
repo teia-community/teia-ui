@@ -24,16 +24,22 @@
   top: 0;
   color: var(--background-color);
   a {
-    font-size: $font-small;
+    font-size: $font-xsmall;
+    @include respond-to('desktop') {
+      font-size: $font-small;
+    }
   }
   h2 {
-    font-size: $font-large;
+    font-size: $font-small;
+    @include respond-to('desktop') {
+      font-size: $font-large;
+    }
   }
 }
 .close {
   position: absolute;
   top: 13px;
-  right: 15px;
+  right: 20px;
 }
 .content {
   display: flex;
@@ -41,8 +47,12 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  max-width: var(--max-width-internal);
-
+  padding-right: 32px;
+  max-width: 100%;
+  @include respond-to('phone') {
+    /*width: 50%;*/
+    max-width: var(--max-width-internal);
+  }
   @include respond-to('desktop') {
     /*width: 50%;*/
     margin: 0 auto;
