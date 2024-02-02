@@ -15,7 +15,13 @@
 }
 
 .moderated {
-  background-color: red;
+  background: repeating-linear-gradient(
+    45deg,
+    #f43d00,
+    #ef0000 10px,
+    #621307 10px,
+    #d9240c 20px
+  );
 }
 
 .container {
