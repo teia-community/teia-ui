@@ -70,6 +70,11 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
       // onMouseLeave={() => setHover(false)}
       className={containerClasses}
     >
+      {nft.isModerated && (
+        <div className={styles.moderation_corner}>
+          <span>MODERATED</span>
+        </div>
+      )}
       {nft.mime_type?.startsWith('audio') ? (
         <RenderMediaType
           details={<TokenHover nft={nft} visible={hover && !zen} />}
