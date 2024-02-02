@@ -57,6 +57,7 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
     [styles.blur]: nft.isNSFW && !nsfwFriendly,
     [styles.photo_protect]: nft.isPhotosensitive && !photosensitiveFriendly,
     [styles.masonry]: viewMode === 'masonry',
+    [styles.moderated]: nft.isModerated,
   })
 
   return (

@@ -188,6 +188,11 @@ function TokenCollection({
             token.teia_meta?.accessibility?.hazards.includes(
               METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
             )),
+
+        isModerated:
+          (photosensitiveMap.get(token.token_id) === 1 ||
+            nsfwMap.get(token.token_id) === 1) &&
+          token.artist_address === variables.address,
       }
     })
 
