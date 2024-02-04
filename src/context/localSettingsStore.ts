@@ -22,9 +22,22 @@ export const rpc_nodes = [
   'custom',
 ] as const
 
+export const ipfs_gateways = [
+  'CDN',
+  'CLOUDFLARE',
+  'PINATA',
+  'IPFS',
+  'DWEB',
+  'NFTSTORAGE',
+  'NATIVE',
+  'custom',
+] as const
+
 type FeedType = (typeof FEED_LIST)[number]
 
 export type RPC_NODES = (typeof rpc_nodes)[number]
+
+export type IPFS_GATEWAYS = (typeof ipfs_gateways)[number]
 
 interface LocalSettingsState {
   applyTheme: (theme: Theme) => void
@@ -33,14 +46,19 @@ interface LocalSettingsState {
   photosensitiveFriendly: boolean
   startFeed: FeedType
   rpcNode: RPC_NODES
+  ipfsGateway: IPFS_GATEWAYS
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
+  getIpfsGateway: () => IPFS_GATEWAYS | string
   customRpcNode: string
+  customIpfsGateway: string
   setCustomRpcNode: (v: string) => void
+  setCustomIpfsGateway: (v: string) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setStartFeed: (v: FeedType | undefined) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
+  setIpfsGateway: (ipfsGateway?: IPFS_GATEWAYS) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
   setTilted: (tilted: boolean) => void
   setViewMode: (mode: ViewMode) => void
@@ -66,8 +84,10 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[5],
+  rpcNode: rpc_nodes[5], // https://mainnet.teia.rocks
+  ipfsGateway: ipfs_gateways[0], // CDN
   customRpcNode: '',
+  customIpfsGateway: '',
   tilted: false,
   has_seen_banner: false,
 }
@@ -123,6 +143,32 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setRpcNode: async (rpcNode) => {
           // const show = useModalStore.getState().show
           set({ rpcNode })
+          // show(
+          //   'RPC Node Changed',
+          //   'Please reload the page for it to take effect.'
+          // )
+          // await useUserStore.getState().sync({ rpcNode })
+        },
+        getIpfsGateway: () => {
+          const ipfsGateway = get().ipfsGateway
+          if (ipfsGateway === 'custom') {
+            const custom = get().customIpfsGateway
+            return custom || ipfsGateway
+          }
+          return ipfsGateway
+        },
+        setCustomIpfsGateway: (customIpfsGateway: string) => {
+          if (!customIpfsGateway) {
+            return
+          }
+          if (!customIpfsGateway.startsWith('http')) {
+            customIpfsGateway = `https://${customIpfsGateway}`
+          }
+          set({ customIpfsGateway })
+        },
+        setIpfsGateway: async (ipfsGateway) => {
+          // const show = useModalStore.getState().show
+          set({ ipfsGateway })
           // show(
           //   'RPC Node Changed',
           //   'Please reload the page for it to take effect.'

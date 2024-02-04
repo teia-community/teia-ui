@@ -3,7 +3,11 @@
 import { Page } from '@atoms/layout'
 import { Checkbox, Input } from '@atoms/input'
 import styles from '@style'
-import { rpc_nodes, useLocalSettings } from '@context/localSettingsStore'
+import {
+  rpc_nodes,
+  ipfs_gateways,
+  useLocalSettings,
+} from '@context/localSettingsStore'
 import { FEED_LIST } from '@constants'
 import { Select, ThemeSelection } from '@atoms/select'
 import { Line } from '@atoms/line'
@@ -38,6 +42,10 @@ export const Settings = () => {
     setRpcNode,
     customRpcNode,
     setCustomRpcNode,
+    ipfsGateway,
+    setIpfsGateway,
+    customIpfsGateway,
+    setCustomIpfsGateway,
     tilted,
     setTilted,
     has_seen_banner,
@@ -53,6 +61,10 @@ export const Settings = () => {
     st.setRpcNode,
     st.customRpcNode,
     st.setCustomRpcNode,
+    st.ipfsGateway,
+    st.setIpfsGateway,
+    st.customIpfsGateway,
+    st.setCustomIpfsGateway,
     st.tilted,
     st.setTilted,
     st.has_seen_banner,
@@ -128,6 +140,26 @@ export const Settings = () => {
             />
           )}
           <Line />
+          <Select
+            label={'IFPS Gateway'}
+            value={{ label: ipfsGateway, value: ipfsGateway }}
+            options={ipfs_gateways.map((e) => ({ label: e, value: e }))}
+            onChange={(e) => {
+              setIpfsGateway(e.value)
+            }}
+          />
+          {ipfsGateway === 'custom' && (
+            <Input
+              name="custom-ipfs"
+              value={customIpfsGateway}
+              onChange={setCustomIpfsGateway}
+              placeholder="url to an IPFS gateway"
+              label="Custom IPFS gateway"
+              // pattern={'^(?:https?|http):\\/\\/[^\\s\\/$.?#].[^\\s]*$'}
+            />
+          )}
+          <Line />
+
           <Checkbox
             alt={`click to enable fool around (a throwback of the 2023 april fool)`}
             checked={tilted}

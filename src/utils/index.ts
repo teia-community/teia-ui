@@ -1,5 +1,6 @@
 import { NFT } from '@types'
 import * as _ from 'lodash'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 /** Flip key value to value key */
 export const flipObject = <T>(obj: { [key: string]: T }) =>
@@ -25,28 +26,12 @@ export function randomSeed(seed: number) {
   return (s -= Math.floor(s))
 }
 
-type IPFSGateway =
-  | 'CDN'
-  | 'CLOUDFLARE'
-  | 'PINATA'
-  | 'IPFS'
-  | 'DWEB'
-  | 'NFTSTORAGE'
-
-interface CIDtoURLOptions {
-  size: 'raw' | 'small' | 'medium'
-}
-
 export const CIDToURL = (
   cid: string,
-  type: IPFSGateway = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
-  options: CIDtoURLOptions
+  type: string,
 ): string => {
   if (cid == null) {
     return ''
-  }
-  if (type !== 'CDN' && !_.isEmpty(options)) {
-    console.warn('Using options for IPFS Gateways does nothing')
   }
 
   switch (type) {
@@ -62,8 +47,12 @@ export const CIDToURL = (
       return `http://dweb.link/ipfs/${cid}`
     case 'NFTSTORAGE':
       return `https://nftstorage.link/ipfs/${cid}`
-
+    case 'NATIVE':
+      return `ipfs://${cid}`
     default:
+      if(useLocalSettings.getState().getIpfsGateway()) {
+        return useLocalSettings.getState().getIpfsGateway() + cid
+      }
       console.error('please specify type')
       return cid
   }
@@ -72,14 +61,12 @@ export const CIDToURL = (
 /**
  * Converts an ipfs hash to ipfs url
  * @param {string} hash
- * @param {'CDN' | 'CLOUDFLARE' | 'PINATA' | 'IPFS' | 'DWEB' | 'NFTSTORAGE'} type
- * @param {HashToURLOptions} [options]
+ * @param {string}  type
  * @returns {string}
  */
 export const HashToURL = (
   hash: string,
-  type = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY,
-  options: CIDtoURLOptions = { size: 'raw' }
+  type: string,
 ) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
@@ -89,7 +76,7 @@ export const HashToURL = (
   }
 
   const CID = hash.split('ipfs://')[1]
-  return CIDToURL(CID, type, options)
+  return CIDToURL(CID, type)
 }
 
 export function formatRoyalties(nft: NFT) {

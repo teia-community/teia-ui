@@ -14,6 +14,9 @@ import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
 
+import { useLocalSettings } from '@context/localSettingsStore'
+
+
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
   nft: NFT
@@ -24,7 +27,7 @@ interface RenderMediaTypeProps {
   /**false on feeds, true on objkt detail view. */
   displayView?: boolean
   /**hacky way to pass the details hover for now... */
-  details?: JSX.Element | JSX.Element[]
+  details?: JSX.Element | JSX.Element[],
 }
 
 /**
@@ -40,7 +43,7 @@ export const RenderMediaType = ({
   const parsedArtifactUri = useMemo(
     () =>
       nft.artifact_uri
-        ? HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
+        ? HashToURL(nft.artifact_uri, useLocalSettings.getState().getIpfsGateway())
         : '',
     [nft]
   )
@@ -65,10 +68,10 @@ export const RenderMediaType = ({
       return previewDisplayUri
     }
     if (nft.display_uri)
-      return HashToURL(nft.display_uri, 'CDN', { size: 'raw' })
+      return HashToURL(nft.display_uri, useLocalSettings.getState().getIpfsGateway())
 
     if (nft.mime_type?.startsWith('video')) {
-      return HashToURL(nft.artifact_uri, 'CDN', { size: 'raw' })
+      return HashToURL(nft.artifact_uri, useLocalSettings.getState().getIpfsGateway())
     }
   }, [nft, previewDisplayUri])
 
