@@ -40,6 +40,8 @@ export const Settings = () => {
     setCustomRpcNode,
     tilted,
     setTilted,
+    imgproxy,
+    setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
   ] = useLocalSettings((st) => [
@@ -55,6 +57,8 @@ export const Settings = () => {
     st.setCustomRpcNode,
     st.tilted,
     st.setTilted,
+    st.imgproxy,
+    st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
   ])
@@ -134,6 +138,14 @@ export const Settings = () => {
             onCheck={setTilted}
             className="no-fool"
             label={'Fool Around'}
+          />
+          <Line />
+          <Checkbox
+            alt={`click to disable imgproxy thumbnails and load fullsize images instead (performance penalty)`}
+            checked={imgproxy}
+            onCheck={setImgproxy}
+            initial={true}
+            label={'Use thumbnails to increase performance'}
           />
           {bannerEnabled && (
             <Checkbox
