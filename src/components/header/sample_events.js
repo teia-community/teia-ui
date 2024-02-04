@@ -1,6 +1,15 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'Tez4Pal',
+    icon: '🇵🇸',
+    feed: 'tez4pal',
+    link: 'https://twitter.com/LN0ir/status/1745946304742576400',
+    subtitle: 'January 20 to February 20 2024',
+    content:
+      'The Tezos Fundraiser  #Tez4Pal, supporting Gaza civilians, is scheduled from Jan 20 to Feb 20.',
+  },
+  {
     title: 'TezQuakeAid - Morocco',
     icon: '🇲🇦 ',
     feed: 'morocco-quake-aid',
