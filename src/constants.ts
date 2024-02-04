@@ -78,6 +78,7 @@ export const FEED_LIST = [
   'New OBJKTs',
   'Friends',
   'Quake Aid',
+  '🇵🇸 Tez4Pal',
   '🇺🇦 Ukraine',
   '🇵🇰 Pakistan',
   '🇮🇷 Iran',
@@ -136,6 +137,7 @@ export const MARKETPLACE_CONTRACTS_TO_NAME = flipObject(
 
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
 
+export const TEZ4PAL_FUNDING_ADDRESS = 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW'
 export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
 export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
@@ -405,6 +407,9 @@ export const TabIndex = {
 // TODO - get this manageable on-chain
 export const ossProjects = [
   {
+    name: 'Tez4Pal Fundraiser',
+    address: 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW',
+  },  {
     name: 'TezQuakeAid Morocco Fundraiser',
     address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
   },
