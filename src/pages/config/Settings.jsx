@@ -141,7 +141,7 @@ export const Settings = () => {
           />
           <Line />
           <Checkbox
-            alt={`click to disable imgproxy thumbnails and load fullsize images instead (performance penalty)`}
+            alt={`click to disable imgproxy thumbnails and load fullsize images from ipfs directly instead (performance penalty)`}
             checked={imgproxy}
             onCheck={setImgproxy}
             initial={true}
