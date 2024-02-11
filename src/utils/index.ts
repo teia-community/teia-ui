@@ -36,7 +36,7 @@ export const CIDToURL = (
 
   switch (type) {
     case 'CDN':
-      return `https://cache.teia.rocks/ipfs/${cid}`
+      return `https://cache.teia.art/ipfs/${cid}`
     case 'CLOUDFLARE':
       return `https://cloudflare-ipfs.com/ipfs/${cid}`
     case 'PINATA':

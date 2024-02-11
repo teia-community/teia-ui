@@ -17,7 +17,7 @@ export const rpc_nodes = [
   'https://rpc.tzbeta.net',
   'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
-  'https://mainnet.teia.rocks',
+  'https://mainnet.teia.art',
   'https://teia.art/rpc',
   'custom',
 ] as const
@@ -84,7 +84,7 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[5], // https://mainnet.teia.rocks
+  rpcNode: rpc_nodes[5], // https://mainnet.teia.art
   ipfsGateway: ipfs_gateways[0], // CDN
   customRpcNode: '',
   customIpfsGateway: '',
