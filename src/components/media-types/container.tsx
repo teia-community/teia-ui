@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
-import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
+import { FullScreenEnterIcon, FullScreenExitIcon,EnterAnav } from '@icons'
 import { NFT } from '@types'
 import { Button } from '@atoms/button'
 import { MIMETYPE } from '@constants'
@@ -19,8 +19,14 @@ import { MIMETYPE } from '@constants'
 /**
  * This component handles fullscreen mode
  * and inView prop for lazy loading
-y*
+ *
  **/
+/**
+ * This component also handles the iframe injection
+ * for the anaverse loading
+*
+ **/
+
 export const Container = ({
   nft,
   children,
@@ -46,6 +52,7 @@ export const Container = ({
   ].includes(nft.mime_type)
 
   const toggleFullScreen = () => {
+    console.log(nft)
     if (!domElement.current) return
     if (screenfull.isFullscreen) {
       screenfull.exit()
@@ -53,6 +60,30 @@ export const Container = ({
       screenfull.request(domElement.current, { navigationUI: 'hide' })
     }
   }
+
+  var asset = 0;
+
+  const toggleAnav = () => {
+
+    if (asset) {
+      document.getElementById("anavIframe").remove()
+      domElement.current.prepend(asset)
+      asset=0
+    
+    }else{
+    const iframe = document.createElement("iframe");
+    iframe.style = "border:0px;width:800px;height:600px";
+    iframe.id="anavIframe"
+    const tokenId=window.location.href.substring(window.location.href.lastIndexOf("/")+1)
+    iframe.src=`https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${tokenId}&partnerPlatform=teia.art`
+
+    asset = domElement.current.firstChild;
+    domElement.current.firstChild.remove()
+      domElement.current.prepend(iframe)
+    }
+  }
+
+  
 
   useEffect(() => {
     const fullscreenChange = (e) => {
@@ -108,6 +139,7 @@ export const Container = ({
       <div ref={domElement} className={classes}>
         {childrenWithProps}
 
+      <div style={{display: 'flex'}}>
         {displayView && !iOS && !nofullscreen && (
           <Button
             alt={'Fullscreen Button'}
@@ -125,7 +157,23 @@ export const Container = ({
             )}
           </Button>
         )}
-      </div>
+
+      {displayView && !iOS && !nofullscreen && (
+          <Button
+            alt={'Anaverse Button'}
+            className={
+              styles.icon +
+              ' svg-icon ' 
+            }
+            onClick={toggleAnav}
+          >
+            {
+              <EnterAnav width={32} />
+           }
+          </Button>
+        )}
+        </div>
+        </div>
     </div>
   )
 }
