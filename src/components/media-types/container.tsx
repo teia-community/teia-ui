@@ -61,7 +61,7 @@ export const Container = ({
     }
   }
 
-  var asset = 0;
+  let asset = 0;
 
   const toggleAnav = () => {
 
