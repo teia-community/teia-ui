@@ -8,8 +8,7 @@ import { BaseTokenFieldsFragment } from '@data/api'
 import { useOutletContext } from 'react-router'
 
 const FILTER_ALL = 'ALL'
-const FILTER_FOR_SALE = 'FOR_SALE'
-const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
+const FILTER_COLLECTED = 'FILTER_COLLECTED';
 
 export default function Collections() {
   const { showFilters, showRestricted, overrideProtections, user_address } =
@@ -25,8 +24,7 @@ export default function Collections() {
           onChange={setFilter}
           items={[
             { type: FILTER_ALL, label: 'All' },
-            { type: FILTER_FOR_SALE, label: 'For sale' },
-            { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
+            { type: FILTER_COLLECTED, label: 'Collected' },
           ]}
         />
       )}
@@ -42,21 +40,19 @@ export default function Collections() {
         maxItems={null}
         postProcessTokens={(tokens) => {
           switch (filter) {
-            case FILTER_FOR_SALE:
+            // Return all tokens that the user has collected but not created.
+            // We used to FILTER_FOR_SALE and FILTER_NOT_FOR_SALE but no
+            // reason for that. We want to see all items a user has collected
+            // but not created here.  Users who wish to sell a token that
+            // they have collected should still see it on their collections
+            // page until it has been sold and would then not match the
+            // user_address.
+            case FILTER_COLLECTED:
               return tokens.filter(
-                ({ listing_seller_address }) =>
-                  listing_seller_address === user_address
+                ({ artist_address }) => artist_address !== user_address
               )
-
-            case FILTER_NOT_FOR_SALE:
-              return tokens.filter(
-                ({ listing_seller_address, artist_address }) =>
-                  artist_address !== user_address &&
-                  listing_seller_address !== user_address
-              )
-
             default:
-              return tokens
+              return tokens;
           }
         }}
         extractTokensFromResponse={(data, { postProcessTokens }) => {
