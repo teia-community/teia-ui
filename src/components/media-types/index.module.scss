@@ -10,6 +10,15 @@
   max-height: calc($max-token-height + 20vh);
 }
 
+.anaverse_view {
+  min-height: 300px;
+  max-width: 100%;
+  width: 100vw;
+  height: $max-token-height;
+  margin: 0 auto;
+  border: none;
+}
+
 .container {
   /* FOR DEBUG (keep) */
   /*background-color: var(--gray-10);*/
