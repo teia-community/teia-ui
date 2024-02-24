@@ -1,4 +1,5 @@
 import {
+  TEZ4PAL_FUNDING_ADDRESS,
   IRAN_FUNDING_CONTRACT,
   MOROCCO_QUAKE_FUNDING_CONTRACT,
   PAKISTAN_FUNDING_CONTRACT,
@@ -92,6 +93,19 @@ export function MoroccoQuakeFeed() {
       namespace="morocco-quake-feed"
       tags={['TezQuakeAid', '#TezQuakeAid']}
       infoUrl="https://app.joyn.xyz/space/tezquakeaid-ec7f1f650671"
+    />
+  )
+}
+
+export function Tez4PalFeed() {
+  return (
+    <FundFeed
+      introText={<>The Tezos Fundraiser #Tez4Pal, supporting Gaza civilians.</>}
+      contractAddress={TEZ4PAL_FUNDING_ADDRESS}
+      cause="Supporting Gaza civilians"
+      namespace="tez4pal"
+      tags={['Tez4Pal', '#Tez4Pal', 'tez4pal', '#tez4pal']}
+      infoUrl="https://twitter.com/LN0ir/status/1745946304742576400"
     />
   )
 }

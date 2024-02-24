@@ -1,0 +1,42 @@
+name: 📷 Playwright Compare
+
+on:
+  workflow_dispatch:
+    inputs:
+      before-commit:
+        description: 'The commit hash or branch name for "before" screenshots'
+        required: true
+      after-commit:
+        description: 'The commit hash or branch name for "after" screenshots (optional)'
+        required: false
+
+jobs:
+  compare-screenshots:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      #   - name: Set up Python
+      #     uses: actions/setup-python@v2
+      #     with:
+      #       python-version: '3.x'
+
+      - name: Run Python script
+        id: run-python
+        run: |
+          before_commit="${{ github.event.inputs.before-commit }}"
+          after_commit="${{ github.event.inputs.after-commit }}"
+          if [ -z "$after_commit" ]; then
+            after_commit="${{ github.sha }}"
+          fi
+          python .github/scripts/compare_screenshots.py "$before_commit" "$after_commit"
+
+      - name: Upload side-by-side images
+        uses: actions/upload-artifact@v3
+        with:
+          name: side-by-side-images-${{ steps.run-python.outputs.cache_key }}
+          path: side_by_side_images

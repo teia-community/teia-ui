@@ -29,6 +29,7 @@ const locationMap = new Map([
   ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
+  ['/feed/tez4pal', '🇵🇸 Tez4Pal'],
   ['/feed/morocco-quake-aid', '🇲🇦 Quake Aid'],
   ['/feed/quake-aid', '🇹🇷🇸🇾 Quake Aid'],
   ['/feed/ukraine', '🇺🇦 Ukraine'],

@@ -38,6 +38,7 @@ import {
   MarkdownFeed,
   QuakeFeed,
   MoroccoQuakeFeed,
+  Tez4PalFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -94,6 +95,7 @@ const router = createBrowserRouter(
         />
 
         <Route path="iran" element={<IranFeed />} />
+        <Route path="tez4pal" element={<Tez4PalFeed />} />
         <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
         <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />

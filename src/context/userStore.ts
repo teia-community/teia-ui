@@ -8,6 +8,7 @@ import {
   ContractMethodObject,
   Wallet,
   WalletParamsWithKind,
+  MichelsonMap,
 } from '@taquito/taquito'
 import { create } from 'zustand'
 import {
@@ -148,7 +149,7 @@ export const useUserStore = create<UserState>()(
           const timeout = setTimeout(() => {
             show(
               title,
-              'Something seem to hang, did you abort the transaction?'
+              'Something seems to hang, did you abort the transaction?'
             )
           }, 15000)
 
@@ -410,7 +411,6 @@ export const useUserStore = create<UserState>()(
           const showError = useModalStore.getState().showError
 
           let batch = undefined
-
           try {
             if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
@@ -418,6 +418,9 @@ export const useUserStore = create<UserState>()(
             } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methods.fulfill_ask(listing.ask_id)
+            } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE'].includes(listing.type)) {
+              const contract = await Tezos.wallet.at(listing.contract_address)
+              batch = contract.methods.fulfill_ask(listing.ask_id, 1, null, null, MichelsonMap.fromLiteral({}))
             } else if (['VERSUM_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methods.collect_swap('1', listing.swap_id)

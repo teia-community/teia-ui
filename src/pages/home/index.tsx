@@ -26,6 +26,7 @@ export const feedComponentMap: FeedComponentMap = {
   'Quake Aid': FEEDS.QuakeFeed,
   '🇵🇰 Pakistan': FEEDS.PakistanFeed,
   '🇺🇦 Ukraine': FEEDS.UkraineFeed,
+  '🇵🇸 Tez4Pal': FEEDS.Tez4PalFeed,
   Random: FEEDS.RandomFeed,
   'New OBJKTs': FEEDS.NewObjktsFeed,
   '3D': FEEDS.GlbFeed,

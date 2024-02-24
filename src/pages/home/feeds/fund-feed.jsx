@@ -21,7 +21,7 @@ function FundFeed({
         <p>{introText}</p>
 
         <a href={infoUrl} target="_blank" rel="noreferrer">
-          More infos <strong>here</strong>
+          More info <strong>here</strong>
         </a>
       </div>
       <TokenCollection
