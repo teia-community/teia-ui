@@ -8,7 +8,7 @@ import { BaseTokenFieldsFragment } from '@data/api'
 import { useOutletContext } from 'react-router'
 
 const FILTER_ALL = 'ALL'
-const FILTER_COLLECTED = 'FILTER_COLLECTED';
+const FILTER_COLLECTED = 'FILTER_COLLECTED'
 
 export default function Collections() {
   const { showFilters, showRestricted, overrideProtections, user_address } =
@@ -52,7 +52,7 @@ export default function Collections() {
                 ({ artist_address }) => artist_address !== user_address
               )
             default:
-              return tokens;
+              return tokens
           }
         }}
         extractTokensFromResponse={(data, { postProcessTokens }) => {
