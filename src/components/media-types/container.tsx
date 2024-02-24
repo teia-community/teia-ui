@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
-import { FullScreenEnterIcon, FullScreenExitIcon,EnterAnav } from '@icons'
+import { FullScreenEnterIcon, FullScreenExitIcon, EnterAnav } from '@icons'
 import { NFT } from '@types'
 import { Button } from '@atoms/button'
 import { MIMETYPE } from '@constants'
@@ -24,8 +24,19 @@ import { MIMETYPE } from '@constants'
 /**
  * This component also handles the iframe injection
  * for the anaverse loading
-*
+ *
  **/
+
+const AnavView = (tokenId: string) => {
+  return (
+    <iframe
+      className={styles.anaverse_view}
+      title={`#${tokenId} inside Anaverse`}
+      id="anavIframe"
+      src={`https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${tokenId}&partnerPlatform=teia.art`}
+    />
+  )
+}
 
 export const Container = ({
   nft,
@@ -38,6 +49,7 @@ export const Container = ({
 }) => {
   const domElement = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState<boolean>()
+  const [inAnav, setInAnav] = useState<boolean>()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -52,7 +64,6 @@ export const Container = ({
   ].includes(nft.mime_type)
 
   const toggleFullScreen = () => {
-    console.log(nft)
     if (!domElement.current) return
     if (screenfull.isFullscreen) {
       screenfull.exit()
@@ -61,29 +72,9 @@ export const Container = ({
     }
   }
 
-  let asset = 0;
-
   const toggleAnav = () => {
-
-    if (asset) {
-      document.getElementById("anavIframe").remove()
-      domElement.current.prepend(asset)
-      asset=0
-    
-    }else{
-    const iframe = document.createElement("iframe");
-    iframe.style = "border:0px;width:800px;height:600px";
-    iframe.id="anavIframe"
-    const tokenId=window.location.href.substring(window.location.href.lastIndexOf("/")+1)
-    iframe.src=`https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${tokenId}&partnerPlatform=teia.art`
-
-    asset = domElement.current.firstChild;
-    domElement.current.firstChild.remove()
-      domElement.current.prepend(iframe)
-    }
+    setInAnav(!inAnav)
   }
-
-  
 
   useEffect(() => {
     const fullscreenChange = (e) => {
@@ -137,43 +128,40 @@ export const Container = ({
   return (
     <div ref={ref}>
       <div ref={domElement} className={classes}>
-        {childrenWithProps}
+        {inAnav ? AnavView(nft.token_id) : childrenWithProps}
 
-      <div style={{display: 'flex'}}>
-        {displayView && !iOS && !nofullscreen && (
-          <Button
-            alt={'Fullscreen Button'}
-            className={
-              styles.icon +
-              ' svg-icon ' +
-              (fullscreen ? styles.icon_fullscreen : '')
-            }
-            onClick={toggleFullScreen}
-          >
-            {fullscreen ? (
-              <FullScreenEnterIcon width={32} />
-            ) : (
-              <FullScreenExitIcon width={32} />
-            )}
-          </Button>
-        )}
+        <div style={{ display: 'flex' }}>
+          {displayView && !iOS && !nofullscreen && (
+            <Button
+              alt={'Fullscreen Button'}
+              className={
+                styles.icon +
+                ' svg-icon ' +
+                (fullscreen ? styles.icon_fullscreen : '')
+              }
+              onClick={toggleFullScreen}
+            >
+              {fullscreen ? (
+                <FullScreenEnterIcon width={32} />
+              ) : (
+                <FullScreenExitIcon width={32} />
+              )}
+            </Button>
+          )}
 
-      {displayView && !iOS && !nofullscreen && (
-          <Button
-            alt={'Anaverse Button'}
-            className={
-              styles.icon +
-              ' svg-icon ' 
-            }
-            onClick={toggleAnav}
-          >
-            {
-              <EnterAnav width={32} />
-           }
-          </Button>
-        )}
+          {displayView && !iOS && !nofullscreen && (
+            <Button
+              // TODO: Add a proper "tooltip" for buttons
+              title={'Show in Anaverse'}
+              alt={'Anaverse Button'}
+              className={styles.icon + ' svg-icon '}
+              onClick={toggleAnav}
+            >
+              {<EnterAnav width={32} />}
+            </Button>
+          )}
         </div>
-        </div>
+      </div>
     </div>
   )
 }
