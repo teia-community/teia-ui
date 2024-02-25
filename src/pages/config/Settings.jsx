@@ -133,7 +133,12 @@ export const Settings = () => {
           )}
           <Line />
           <Checkbox
-            alt={`click to enable fool around (a throwback of the 2023 april fool)`}
+            alt={`click to ${
+              tilted ? 'disable' : 'enable'
+            } fool around (a throwback of the 2023 april fool)`}
+            title={`click to ${
+              tilted ? 'disable' : 'enable'
+            } fool around (a throwback of the 2023 april fool)`}
             checked={tilted}
             onCheck={setTilted}
             className="no-fool"
@@ -141,7 +146,12 @@ export const Settings = () => {
           />
           <Line />
           <Checkbox
-            alt={`click to disable imgproxy thumbnails and load fullsize images from ipfs directly instead (performance penalty)`}
+            alt={`click to ${
+              imgproxy ? 'disable' : 'enable'
+            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
+            title={`click to ${
+              imgproxy ? 'disable' : 'enable'
+            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
             checked={imgproxy}
             onCheck={setImgproxy}
             initial={true}
@@ -149,7 +159,12 @@ export const Settings = () => {
           />
           {bannerEnabled && (
             <Checkbox
-              alt={`click to enable fool around (a throwback of the 2023 april fool)`}
+              alt={`click to ${
+                setHasSeenBanner ? 'disable' : 'enable'
+              } last event banner (this is automatically reset for you on new announcements)`}
+              title={`click to ${
+                setHasSeenBanner ? 'disable' : 'enable'
+              } last event banner (this is automatically reset for you on new announcements)`}
               checked={has_seen_banner}
               onCheck={setHasSeenBanner}
               label={'Hide banner for last announcement'}
