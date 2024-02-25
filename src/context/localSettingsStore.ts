@@ -43,6 +43,7 @@ interface LocalSettingsState {
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
   setTilted: (tilted: boolean) => void
+  setImgproxy: (imgproxy: boolean) => void
   setViewMode: (mode: ViewMode) => void
   setHasSeenBanner: (seen: boolean) => void
   setZen: (zen: boolean) => void
@@ -50,6 +51,7 @@ interface LocalSettingsState {
   themeDark: Theme
   themeLight: Theme
   tilted: boolean
+  imgproxy: boolean
   toggleTheme: () => void
   toggleViewMode: () => void
   toggleZen: () => void
@@ -69,6 +71,7 @@ const defaultValues = {
   rpcNode: rpc_nodes[5],
   customRpcNode: '',
   tilted: false,
+  imgproxy: true,
   has_seen_banner: false,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
@@ -79,6 +82,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
         ...defaultValues,
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
         setTilted: (tilted) => set({ tilted }),
+        setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>
           set((state) => ({
             viewMode: state.viewMode === 'single' ? 'masonry' : 'single',
