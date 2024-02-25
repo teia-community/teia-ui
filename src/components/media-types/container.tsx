@@ -134,18 +134,11 @@ export const Container = ({
   })
 
   const toggleAnaverse = () => {
-    // todo: check if `window.chrome` is better?
-    const userAgent = window.navigator.userAgent.toLowerCase()
-    const isChromium =
-      /(?:(?!chrome|crios|chromium|edge)mozilla).+?(?=safari|android|firefox|opr|opera|ucbrowser|brave|vivaldi|samsungbrowser|msie|trident|edge|edgios)/.test(
-        userAgent
-      )
-
+    const isChromium = window.chrome !== undefined
     if (isChromium) {
-      // window.location.href = getAnaverseUrl(nft.token_id, viewer_address)
-      window.open(getAnaverseUrl(nft.token_id, viewer_address), '_blank')
-    } else {
       setInAnaverse(!inAnaverse)
+    } else {
+      window.open(getAnaverseUrl(nft.token_id, viewer_address), '_blank')
     }
   }
 
