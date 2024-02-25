@@ -58,6 +58,14 @@ export const Info = () => {
                 value={'Photo Sensitive'}
               />
             )}
+            {nft.isModerated && nft.artist_address === viewer_address && (
+              <Attribute
+                label="Moderation"
+                value={
+                  'The TEIA content moderation team has overridden the NSFW or Photosensitive attributes on this token'
+                }
+              />
+            )}
 
             <div className={styles.info_attributes}>
               Rights:

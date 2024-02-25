@@ -214,6 +214,7 @@ export interface TxWithIndex extends Tx {
 export type NFTFiltered = {
   isNSFW?: boolean
   isPhotosensitive?: boolean
+  isModerated?: boolean
 }
 
 export type NFT = NFTBase &
