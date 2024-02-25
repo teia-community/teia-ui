@@ -17,17 +17,14 @@ import { MIMETYPE } from '@constants'
  */
 
 /**
- * This component handles fullscreen mode
- * and inView prop for lazy loading
- *
- **/
-/**
- * This component also handles the iframe injection
- * for the anaverse loading
+ * This component handles
+ * - fullscreen mode
+ * - inView prop for lazy loading
+ * - the Anaverse viewer
  *
  **/
 
-const AnavView = (tokenId: string) => {
+const AnaverseViewer = (tokenId: string) => {
   return (
     <iframe
       className={styles.anaverse_view}
@@ -49,7 +46,7 @@ export const Container = ({
 }) => {
   const domElement = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState<boolean>()
-  const [inAnav, setInAnav] = useState<boolean>()
+  const [inAnaverse, setInAnaverse] = useState<boolean>()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -72,8 +69,8 @@ export const Container = ({
     }
   }
 
-  const toggleAnav = () => {
-    setInAnav(!inAnav)
+  const toggleAnaverse = () => {
+    setInAnaverse(!inAnaverse)
   }
 
   useEffect(() => {
@@ -128,7 +125,7 @@ export const Container = ({
   return (
     <div ref={ref}>
       <div ref={domElement} className={classes}>
-        {inAnav ? AnavView(nft.token_id) : childrenWithProps}
+        {inAnaverse ? AnaverseViewer(nft.token_id) : childrenWithProps}
 
         <div style={{ display: 'flex' }}>
           {displayView && !iOS && !nofullscreen && (
@@ -155,7 +152,7 @@ export const Container = ({
               title={'Show in Anaverse'}
               alt={'Anaverse Button'}
               className={styles.icon + ' svg-icon '}
-              onClick={toggleAnav}
+              onClick={toggleAnaverse}
             >
               {<EnterAnav width={32} />}
             </Button>
