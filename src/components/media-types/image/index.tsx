@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import styles from '@style'
 import { MediaTypeProps } from '@types'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 export const ImageComponent = ({
   artifactUri,
@@ -11,6 +12,7 @@ export const ImageComponent = ({
   nft,
 }: MediaTypeProps) => {
   const [isSmol, setSmol] = useState(false)
+  const imgproxy = useLocalSettings((st) => st.imgproxy)
 
   let src
 
@@ -18,7 +20,7 @@ export const ImageComponent = ({
     src = previewUri
   } else if (displayView) {
     src = artifactUri
-  } else if (import.meta.env.VITE_IMGPROXY && nft?.teia_meta?.preview_uri) {
+  } else if (imgproxy && import.meta.env.VITE_IMGPROXY && nft?.teia_meta?.preview_uri) {
     src = `${import.meta.env.VITE_IMGPROXY}${nft.teia_meta.preview_uri}`
   } else {
     src = displayUri
