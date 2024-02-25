@@ -3,7 +3,7 @@ import { Tags } from '@components/tags'
 import styles from '@style'
 import '../style.css'
 import { HashToURL } from '@utils'
-import { LANGUAGES, LICENSE_TYPES } from '@constants'
+import { HEN_CONTRACT_FA2, LANGUAGES, LICENSE_TYPES } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
@@ -26,7 +26,9 @@ export const Info = () => {
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
       nft.token_id
     }`
-  const artifact_anaverse_url = `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
+  const artifact_anaverse_url = viewer_address
+    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
   const metadata_ipfs_url = HashToURL(nft.metadata_uri)
   return (
     <>

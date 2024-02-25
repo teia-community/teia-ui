@@ -9,7 +9,8 @@ import './style.css'
 import { FullScreenEnterIcon, FullScreenExitIcon, EnterAnav } from '@icons'
 import { NFT } from '@types'
 import { Button } from '@atoms/button'
-import { MIMETYPE } from '@constants'
+import { HEN_CONTRACT_FA2, MIMETYPE } from '@constants'
+import { useUserStore } from '@context/userStore'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -25,12 +26,17 @@ import { MIMETYPE } from '@constants'
  **/
 
 const AnaverseViewer = (tokenId: string) => {
+  // TODO: use the useObjktDisplay context outlet instead
+  const address = useUserStore((st) => st.address)
+  const url = address
+    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&partnerPlatform=teia.art`
   return (
     <iframe
       className={styles.anaverse_view}
       title={`#${tokenId} inside Anaverse`}
       id="anavIframe"
-      src={`https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${tokenId}&partnerPlatform=teia.art`}
+      src={url}
     />
   )
 }
@@ -115,6 +121,7 @@ export const Container = ({
     [styles.feed]: !displayView,
   })
 
+  const anaverseView = AnaverseViewer(nft.token_id)
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, { inView, displayView })
@@ -125,7 +132,7 @@ export const Container = ({
   return (
     <div ref={ref}>
       <div ref={domElement} className={classes}>
-        {inAnaverse ? AnaverseViewer(nft.token_id) : childrenWithProps}
+        {inAnaverse ? anaverseView : childrenWithProps}
 
         <div style={{ display: 'flex' }}>
           {displayView && !iOS && !nofullscreen && (
