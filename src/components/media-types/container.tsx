@@ -134,7 +134,7 @@ export const Container = ({
   })
 
   const toggleAnaverse = () => {
-    const isChromium = window.chrome !== undefined
+    const isChromium = !!window.chrome
     if (isChromium) {
       setInAnaverse(!inAnaverse)
     } else {
