@@ -89,19 +89,25 @@ export const ObjktDisplay = () => {
           )
         }
 
+        const isNSFW = (nsfwMap.get(objkt.token_id) === 1)
+        const isPhotosensitive = (photosensitiveMap.get(objkt.token_id) === 1)
         if (
-          nsfwMap.get(objkt.token_id) === 1 ||
+          isNSFW ||
           objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
         ) {
           objkt.isNSFW = true
         }
         if (
-          photosensitiveMap.get(objkt.token_id) === 1 ||
+          isPhotosensitive ||
           objkt.teia_meta?.accessibility?.hazards.includes(
             METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
           )
         ) {
           objkt.isPhotosensitive = true
+        }
+
+        if(isNSFW || isPhotosensitive) {
+          objkt.isModerated = true
         }
 
         objkt.restricted = walletBlockMap.get(objkt.artist_address) === 1
