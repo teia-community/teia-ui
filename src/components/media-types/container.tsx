@@ -25,12 +25,20 @@ import { useUserStore } from '@context/userStore'
  *
  **/
 
-const AnaverseViewer = (tokenId: string) => {
-  // TODO: use the useObjktDisplay context outlet instead
-  const address = useUserStore((st) => st.address)
-  const url = address
-    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${address}&partnerPlatform=teia.art`
+/**
+ * Builds the anaverse URL
+ */
+const getAnaverseUrl = (tokenId: string, viewer_address?: string) => {
+  return viewer_address
+    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${viewer_address}&partnerPlatform=teia.art`
     : `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&partnerPlatform=teia.art`
+}
+
+/**
+ * iFrame wrapper of Anaverse
+ */
+const AnaverseViewer = (tokenId: string, address?: string) => {
+  const url = getAnaverseUrl(tokenId, address)
   return (
     <iframe
       className={styles.anaverse_view}
@@ -75,10 +83,6 @@ export const Container = ({
     }
   }
 
-  const toggleAnaverse = () => {
-    setInAnaverse(!inAnaverse)
-  }
-
   useEffect(() => {
     const fullscreenChange = (e) => {
       if (iOS) {
@@ -120,14 +124,30 @@ export const Container = ({
     [styles.flex]: displayView,
     [styles.feed]: !displayView,
   })
-
-  const anaverseView = AnaverseViewer(nft.token_id)
+  const viewer_address = useUserStore((st) => st.address)
+  const anaverseView = AnaverseViewer(nft.token_id, viewer_address)
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, { inView, displayView })
     }
     return child
   })
+
+  const toggleAnaverse = () => {
+    // todo: check if `window.chrome` is better?
+    const userAgent = window.navigator.userAgent.toLowerCase()
+    const isChromium =
+      /(?:(?!chrome|crios|chromium|edge)mozilla).+?(?=safari|android|firefox|opr|opera|ucbrowser|brave|vivaldi|samsungbrowser|msie|trident|edge|edgios)/.test(
+        userAgent
+      )
+
+    if (isChromium) {
+      // window.location.href = getAnaverseUrl(nft.token_id, viewer_address)
+      window.open(getAnaverseUrl(nft.token_id, viewer_address), '_blank')
+    } else {
+      setInAnaverse(!inAnaverse)
+    }
+  }
 
   return (
     <div ref={ref}>
