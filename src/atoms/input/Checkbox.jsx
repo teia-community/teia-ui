@@ -25,6 +25,7 @@ const Checkbox = forwardRef(
       onCheck = () => null,
       onBlur = () => null,
       onWheel = () => null,
+      title = '',
       disabled,
       checked: checkedProp,
       autoFocus = false,
@@ -51,7 +52,10 @@ const Checkbox = forwardRef(
     })
 
     return (
-      <label className={`${classes} ${className ? className : ''}`}>
+      <label
+        title={title}
+        className={`${classes} ${className ? className : ''}`}
+      >
         {label}
         <input
           ref={ref}
