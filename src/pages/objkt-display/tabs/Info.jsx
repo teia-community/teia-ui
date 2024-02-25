@@ -26,6 +26,7 @@ export const Info = () => {
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
       nft.token_id
     }`
+  const artifact_anaverse_url = `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
   const metadata_ipfs_url = HashToURL(nft.metadata_uri)
   return (
     <>
@@ -83,9 +84,17 @@ export const Info = () => {
           </div>
 
           <div className={styles.info_ipfs}>
-            <a href={metadata_ipfs_url}>Metadata</a>
+            <a target="_blank" rel="noreferrer" href={metadata_ipfs_url}>
+              Metadata
+            </a>
             {' // '}
-            <a href={artifact_ipfs_url}>View on ipfs</a>
+            <a target="_blank" rel="noreferrer" href={artifact_ipfs_url}>
+              View on ipfs
+            </a>
+            {' // '}
+            <a target="_blank" rel="noreferrer" href={artifact_anaverse_url}>
+              View on anaverse
+            </a>
           </div>
         </div>
       </Container>
