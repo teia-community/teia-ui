@@ -49,7 +49,7 @@ interface LocalSettingsState {
   ipfsGateway: IPFS_GATEWAYS
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
-  getIpfsGateway: () => IPFS_GATEWAYS | string
+  getIpfsGateway: (this: LocalSettingsState) => IPFS_GATEWAYS | string
   customRpcNode: string
   customIpfsGateway: string
   setCustomRpcNode: (v: string) => void

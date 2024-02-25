@@ -15,7 +15,7 @@ import { useMemo } from 'react'
 import { NFT } from '@types'
 
 import { useLocalSettings } from '@context/localSettingsStore'
-
+import { shallow } from 'zustand/shallow'
 
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
@@ -27,7 +27,7 @@ interface RenderMediaTypeProps {
   /**false on feeds, true on objkt detail view. */
   displayView?: boolean
   /**hacky way to pass the details hover for now... */
-  details?: JSX.Element | JSX.Element[],
+  details?: JSX.Element | JSX.Element[]
 }
 
 /**
@@ -40,12 +40,10 @@ export const RenderMediaType = ({
   displayView,
   details,
 }: RenderMediaTypeProps) => {
+  const [ipfsGateway] = useLocalSettings((s) => [s.getIpfsGateway()], shallow)
   const parsedArtifactUri = useMemo(
-    () =>
-      nft.artifact_uri
-        ? HashToURL(nft.artifact_uri, useLocalSettings.getState().getIpfsGateway())
-        : '',
-    [nft]
+    () => (nft.artifact_uri ? HashToURL(nft.artifact_uri, ipfsGateway) : ''),
+    [nft, ipfsGateway]
   )
   if (!nft) {
     throw Error(`No OBJKT to render`)
@@ -67,13 +65,12 @@ export const RenderMediaType = ({
     if (previewDisplayUri) {
       return previewDisplayUri
     }
-    if (nft.display_uri)
-      return HashToURL(nft.display_uri, useLocalSettings.getState().getIpfsGateway())
+    if (nft.display_uri) return HashToURL(nft.display_uri, ipfsGateway)
 
     if (nft.mime_type?.startsWith('video')) {
-      return HashToURL(nft.artifact_uri, useLocalSettings.getState().getIpfsGateway())
+      return HashToURL(nft.artifact_uri, ipfsGateway)
     }
-  }, [nft, previewDisplayUri])
+  }, [nft, previewDisplayUri, ipfsGateway])
 
   const Media = useMemo(() => {
     switch (nft.mime_type) {

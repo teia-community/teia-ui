@@ -8,6 +8,7 @@ import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { shallow } from 'zustand/shallow'
 
 const Attribute = ({ label, value }) => {
   return (
@@ -22,15 +23,17 @@ const Attribute = ({ label, value }) => {
  */
 export const Info = () => {
   const { nft, viewer_address } = useObjktDisplayContext()
+  const [ipfsGateway] = useLocalSettings(
+    (state) => [state.getIpfsGateway()],
+    shallow
+  )
+
   const artifact_ipfs_url =
-    HashToURL(nft.artifact_uri, useLocalSettings.getState().getIpfsGateway()) +
+    HashToURL(nft.artifact_uri, ipfsGateway) +
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
       nft.token_id
     }`
-  const metadata_ipfs_url = HashToURL(
-    nft.metadata_uri,
-    useLocalSettings.getState().getIpfsGateway()
-  )
+  const metadata_ipfs_url = HashToURL(nft.metadata_uri, ipfsGateway)
   return (
     <>
       <Container>

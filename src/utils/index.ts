@@ -1,6 +1,7 @@
 import { NFT } from '@types'
 import * as _ from 'lodash'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { shallow } from 'zustand/shallow'
 
 /** Flip key value to value key */
 export const flipObject = <T>(obj: { [key: string]: T }) =>
@@ -26,10 +27,11 @@ export function randomSeed(seed: number) {
   return (s -= Math.floor(s))
 }
 
-export const CIDToURL = (
-  cid: string,
-  type: string,
-): string => {
+export const CIDToURL = (cid: string, type: string): string => {
+  const [ipfsGateway] = useLocalSettings(
+    (state) => [state.getIpfsGateway()],
+    shallow
+  )
   if (cid == null) {
     return ''
   }
@@ -49,12 +51,13 @@ export const CIDToURL = (
       return `https://nftstorage.link/ipfs/${cid}`
     case 'NATIVE':
       return `ipfs://${cid}`
-    default:
-      if(useLocalSettings.getState().getIpfsGateway()) {
-        return useLocalSettings.getState().getIpfsGateway() + cid
+    default: {
+      if (ipfsGateway) {
+        return ipfsGateway + cid
       }
       console.error('please specify type')
       return cid
+    }
   }
 }
 
@@ -64,10 +67,7 @@ export const CIDToURL = (
  * @param {string}  type
  * @returns {string}
  */
-export const HashToURL = (
-  hash: string,
-  type: string,
-) => {
+export const HashToURL = (hash: string, type: string) => {
   // when on preview the hash might be undefined.
   // its safe to return empty string as whatever called HashToURL is not going to be used
   // artifactUri or displayUri
