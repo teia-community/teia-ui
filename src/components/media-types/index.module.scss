@@ -13,7 +13,7 @@
 .anaverse_view {
   min-height: 300px;
   max-width: 100%;
-  width: 100vw;
+  width: var(--max-width-internal);
   height: $max-token-height;
   margin: 0 auto;
   border: none;
