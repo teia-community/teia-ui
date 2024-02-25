@@ -48,6 +48,8 @@ export const Settings = () => {
     setCustomIpfsGateway,
     tilted,
     setTilted,
+    imgproxy,
+    setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
   ] = useLocalSettings((st) => [
@@ -67,6 +69,8 @@ export const Settings = () => {
     st.setCustomIpfsGateway,
     st.tilted,
     st.setTilted,
+    st.imgproxy,
+    st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
   ])
@@ -161,15 +165,38 @@ export const Settings = () => {
           <Line />
 
           <Checkbox
-            alt={`click to enable fool around (a throwback of the 2023 april fool)`}
+            alt={`click to ${
+              tilted ? 'disable' : 'enable'
+            } fool around (a throwback of the 2023 april fool)`}
+            title={`click to ${
+              tilted ? 'disable' : 'enable'
+            } fool around (a throwback of the 2023 april fool)`}
             checked={tilted}
             onCheck={setTilted}
             className="no-fool"
             label={'Fool Around'}
           />
+          <Line />
+          <Checkbox
+            alt={`click to ${
+              imgproxy ? 'disable' : 'enable'
+            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
+            title={`click to ${
+              imgproxy ? 'disable' : 'enable'
+            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
+            checked={imgproxy}
+            onCheck={setImgproxy}
+            initial={true}
+            label={'Use thumbnails to increase performance'}
+          />
           {bannerEnabled && (
             <Checkbox
-              alt={`click to enable fool around (a throwback of the 2023 april fool)`}
+              alt={`click to ${
+                setHasSeenBanner ? 'disable' : 'enable'
+              } last event banner (this is automatically reset for you on new announcements)`}
+              title={`click to ${
+                setHasSeenBanner ? 'disable' : 'enable'
+              } last event banner (this is automatically reset for you on new announcements)`}
               checked={has_seen_banner}
               onCheck={setHasSeenBanner}
               label={'Hide banner for last announcement'}
