@@ -27,8 +27,8 @@ export const Info = () => {
       nft.token_id
     }`
   const artifact_anaverse_url = viewer_address
-    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
-    : `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
+    ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
   const metadata_ipfs_url = HashToURL(nft.metadata_uri)
   return (
     <>

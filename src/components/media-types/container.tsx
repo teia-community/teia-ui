@@ -30,8 +30,8 @@ import { useUserStore } from '@context/userStore'
  */
 const getAnaverseUrl = (tokenId: string, viewer_address?: string) => {
   return viewer_address
-    ? `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${viewer_address}&partnerPlatform=teia.art`
-    : `https://anaver.se/?gallery=1&loadsingle=1&&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&partnerPlatform=teia.art`
+    ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${viewer_address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&partnerPlatform=teia.art`
 }
 
 /**
