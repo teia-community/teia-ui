@@ -1,6 +1,14 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'Anaverse Integration',
+    icon: '🖼️',
+    link: 'https://blog.teia.art/blog/anaverse-integration-announcement',
+    subtitle: 'new feature',
+    content:
+      'Teia just received a nice little new feature: 3D previews for your NFTs! This new addition allows you to experience your tokens in a immersive genertive 3D space.',
+  },
+  {
     title: 'Tez4Pal',
     icon: '🇵🇸',
     feed: 'tez4pal',
