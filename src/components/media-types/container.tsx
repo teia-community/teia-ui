@@ -6,10 +6,11 @@ import classnames from 'classnames'
 import { iOS } from '@utils/os'
 import styles from '@style'
 import './style.css'
-import { FullScreenEnterIcon, FullScreenExitIcon } from '@icons'
+import { FullScreenEnterIcon, FullScreenExitIcon, EnterAnav } from '@icons'
 import { NFT } from '@types'
 import { Button } from '@atoms/button'
-import { MIMETYPE } from '@constants'
+import { HEN_CONTRACT_FA2, MIMETYPE } from '@constants'
+import { useUserStore } from '@context/userStore'
 
 /**
  * Currently fullscreen is disabled on iOS
@@ -17,10 +18,37 @@ import { MIMETYPE } from '@constants'
  */
 
 /**
- * This component handles fullscreen mode
- * and inView prop for lazy loading
-y*
+ * This component handles
+ * - fullscreen mode
+ * - inView prop for lazy loading
+ * - the Anaverse viewer
+ *
  **/
+
+/**
+ * Builds the anaverse URL
+ */
+const getAnaverseUrl = (tokenId: string, viewer_address?: string) => {
+  return viewer_address
+    ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&wallet=${viewer_address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${tokenId}&partnerPlatform=teia.art`
+}
+
+/**
+ * iFrame wrapper of Anaverse
+ */
+const AnaverseViewer = (tokenId: string, address?: string) => {
+  const url = getAnaverseUrl(tokenId, address)
+  return (
+    <iframe
+      className={styles.anaverse_view}
+      title={`#${tokenId} inside Anaverse`}
+      id="anavIframe"
+      src={url}
+    />
+  )
+}
+
 export const Container = ({
   nft,
   children,
@@ -32,6 +60,7 @@ export const Container = ({
 }) => {
   const domElement = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState<boolean>()
+  const [inAnaverse, setInAnaverse] = useState<boolean>()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -95,7 +124,8 @@ export const Container = ({
     [styles.flex]: displayView,
     [styles.feed]: !displayView,
   })
-
+  const viewer_address = useUserStore((st) => st.address)
+  const anaverseView = AnaverseViewer(nft.token_id, viewer_address)
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, { inView, displayView })
@@ -103,28 +133,51 @@ export const Container = ({
     return child
   })
 
+  const toggleAnaverse = () => {
+    const isChromium = !!window.chrome
+    if (isChromium) {
+      setInAnaverse(!inAnaverse)
+    } else {
+      window.open(getAnaverseUrl(nft.token_id, viewer_address), '_blank')
+    }
+  }
+
   return (
     <div ref={ref}>
       <div ref={domElement} className={classes}>
-        {childrenWithProps}
+        {inAnaverse ? anaverseView : childrenWithProps}
 
-        {displayView && !iOS && !nofullscreen && (
-          <Button
-            alt={'Fullscreen Button'}
-            className={
-              styles.icon +
-              ' svg-icon ' +
-              (fullscreen ? styles.icon_fullscreen : '')
-            }
-            onClick={toggleFullScreen}
-          >
-            {fullscreen ? (
-              <FullScreenEnterIcon width={32} />
-            ) : (
-              <FullScreenExitIcon width={32} />
-            )}
-          </Button>
-        )}
+        <div style={{ display: 'flex' }}>
+          {displayView && !iOS && !nofullscreen && (
+            <Button
+              alt={'Fullscreen Button'}
+              className={
+                styles.icon +
+                ' svg-icon ' +
+                (fullscreen ? styles.icon_fullscreen : '')
+              }
+              onClick={toggleFullScreen}
+            >
+              {fullscreen ? (
+                <FullScreenEnterIcon width={32} />
+              ) : (
+                <FullScreenExitIcon width={32} />
+              )}
+            </Button>
+          )}
+
+          {displayView && !iOS && !nofullscreen && (
+            <Button
+              // TODO: Add a proper "tooltip" for buttons
+              title={'Show in Anaverse'}
+              alt={'Anaverse Button'}
+              className={styles.icon + ' svg-icon '}
+              onClick={toggleAnaverse}
+            >
+              {<EnterAnav width={32} />}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   )
