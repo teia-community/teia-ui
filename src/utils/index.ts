@@ -14,7 +14,7 @@ export function rnd(min: number, max: number) {
 export function shuffle(a: string[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
+      ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
 }
@@ -28,10 +28,10 @@ export function randomSeed(seed: number) {
 }
 
 export const CIDToURL = (cid: string, type: string): string => {
-  const [ipfsGateway] = useLocalSettings(
-    (state) => [state.getIpfsGateway()],
-    shallow
-  )
+  // const [ipfsGateway] = useLocalSettings(
+  //   (state) => [state.getIpfsGateway()],
+  //   shallow
+  // )
   if (cid == null) {
     return ''
   }
@@ -52,11 +52,9 @@ export const CIDToURL = (cid: string, type: string): string => {
     case 'NATIVE':
       return `ipfs://${cid}`
     default: {
-      if (ipfsGateway) {
-        return ipfsGateway + cid
-      }
-      console.error('please specify type')
-      return cid
+      return type + cid
+      //console.error('please specify type')
+      //return cid
     }
   }
 }
