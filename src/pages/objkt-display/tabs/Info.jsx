@@ -3,7 +3,7 @@ import { Tags } from '@components/tags'
 import styles from '@style'
 import '../style.css'
 import { HashToURL } from '@utils'
-import { LANGUAGES, LICENSE_TYPES } from '@constants'
+import { HEN_CONTRACT_FA2, LANGUAGES, LICENSE_TYPES } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
@@ -33,7 +33,12 @@ export const Info = () => {
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
       nft.token_id
     }`
+
   const metadata_ipfs_url = HashToURL(nft.metadata_uri, ipfsGateway)
+  const artifact_anaverse_url = viewer_address
+    ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
+    : `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
+
   return (
     <>
       <Container>
@@ -98,9 +103,17 @@ export const Info = () => {
           </div>
 
           <div className={styles.info_ipfs}>
-            <a href={metadata_ipfs_url}>Metadata</a>
+            <a target="_blank" rel="noreferrer" href={metadata_ipfs_url}>
+              Metadata
+            </a>
             {' // '}
-            <a href={artifact_ipfs_url}>View on ipfs</a>
+            <a target="_blank" rel="noreferrer" href={artifact_ipfs_url}>
+              View on ipfs
+            </a>
+            {' // '}
+            <a target="_blank" rel="noreferrer" href={artifact_anaverse_url}>
+              View on anaverse
+            </a>
           </div>
         </div>
       </Container>
