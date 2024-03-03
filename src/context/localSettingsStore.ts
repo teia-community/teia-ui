@@ -29,6 +29,7 @@ export type RPC_NODES = (typeof rpc_nodes)[number]
 interface LocalSettingsState {
   applyTheme: (theme: Theme) => void
   has_seen_banner: boolean
+  has_seen_moderation: boolean
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
   startFeed: FeedType
@@ -46,6 +47,7 @@ interface LocalSettingsState {
   setImgproxy: (imgproxy: boolean) => void
   setViewMode: (mode: ViewMode) => void
   setHasSeenBanner: (seen: boolean) => void
+  setHasSeenModeration: (seen: boolean) => void
   setZen: (zen: boolean) => void
   theme: Theme
   themeDark: Theme
@@ -73,6 +75,7 @@ const defaultValues = {
   tilted: false,
   imgproxy: true,
   has_seen_banner: false,
+  has_seen_moderation: false,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -81,6 +84,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
       (set, get) => ({
         ...defaultValues,
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
+        setHasSeenModeration: (has_seen_moderation) => set({ has_seen_moderation }),
         setTilted: (tilted) => set({ tilted }),
         setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>

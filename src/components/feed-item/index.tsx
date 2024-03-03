@@ -43,8 +43,8 @@ const TokenHover = ({ nft, visible }: { nft: NFT; visible: boolean }) => {
 }
 
 export const FeedItem = ({ nft }: { nft: NFT }) => {
-  const [nsfwFriendly, photosensitiveFriendly] = useLocalSettings(
-    (state) => [state.nsfwFriendly, state.photosensitiveFriendly],
+  const [nsfwFriendly, photosensitiveFriendly, skipModeration] = useLocalSettings(
+    (state) => [state.nsfwFriendly, state.photosensitiveFriendly, state.has_seen_moderation],
     shallow
   )
   const zen = useLocalSettings((st) => st.zen)
@@ -70,7 +70,7 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
       // onMouseLeave={() => setHover(false)}
       className={containerClasses}
     >
-      {nft.isModerated && (
+      {nft.isModerated && !skipModeration && (
         <div className={styles.moderation_corner}>
           <span>MODERATED</span>
         </div>
