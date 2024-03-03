@@ -229,8 +229,8 @@ export const useMintStore = create<MintState>()(
                 mimeType: used_cover.mimeType,
                 fileSize: used_cover.buffer.byteLength,
                 fileName: `${removeExtension(artifact.file.name)}.${coverIsGif
-                    ? 'gif'
-                    : extensionFromMimetype(used_cover.mimeType)
+                  ? 'gif'
+                  : extensionFromMimetype(used_cover.mimeType)
                   }`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
@@ -314,13 +314,14 @@ export const useMintStore = create<MintState>()(
           console.debug('success', success)
           const tokendata = await getTzktData(`/v1/operations/transactions/${success}`) // success is ophash for some reason?
           const id = tokendata[0].storage.objkt_id - 1 // this is really strange, the objkt_id returned by the tzkt api is off by 1 :/
+          const url = `${window.location.protocol}://${window.location.host}${window.location.port ? ':' + window.location.port : ''}/objkt/${id}/swap`
           if (success) {
             show(
               "**Minting sucessful**",
               `Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your OBJKT on teia.art.
               By doing this you're supporting Teia via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees).
               Swaps done on teia.art will also be visible on objkt.com.
-              [Click here to proceed to the swap page](https://teia.art/objkt/${id}/swap)`
+              [Click here to proceed to the swap page](${url})`
             )
             reset()
           }
