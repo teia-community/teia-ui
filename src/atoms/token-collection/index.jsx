@@ -19,6 +19,7 @@ import {
 } from '@constants'
 import { IconCache } from '@utils/with-icon'
 import { shallow } from 'zustand/shallow'
+import { useUserStore } from '@context/userStore'
 
 /**
  * Single view, vertical feed
@@ -100,6 +101,7 @@ function TokenCollection({
     )
   },
 }) {
+  const [user_address] = useUserStore((state) => [state.address])
   const [searchParams, setSearchParams] = useSearchParams()
   const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
     useSettings()
@@ -188,6 +190,11 @@ function TokenCollection({
             token.teia_meta?.accessibility?.hazards.includes(
               METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS
             )),
+
+        isModerated:
+          (photosensitiveMap.get(token.token_id) === 1 ||
+            nsfwMap.get(token.token_id) === 1) &&
+          token.artist_address === user_address, // true (testing it in dev is not trivial)
       }
     })
 

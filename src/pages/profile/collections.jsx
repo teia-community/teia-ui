@@ -50,7 +50,7 @@ export default function Collections() {
           if (filter === FILTER_NOT_FOR_SALE) {
             return tokens.filter(
               ({ listing_seller_address, artist_address }) =>
-                artist_address !== address && listing_seller_address !== address
+                artist_address !== address // && listing_seller_address !== address
             )
           }
 
