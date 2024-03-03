@@ -25,11 +25,14 @@ import {
 import type { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
+import { getTzktData } from '@data/api'
 
 interface SelectField {
   label?: string
   value: string
 }
+
+type OperationReturn = Promise<string | undefined>
 
 interface MintState {
   title?: string
@@ -48,6 +51,12 @@ interface MintState {
   isValid: boolean
 
   reset: () => void
+  mint: (
+    tz: string,
+    amount: number,
+    cid: string,
+    royalties: number
+  ) => OperationReturn
 }
 
 const defaultValuesStored = {
@@ -67,7 +76,7 @@ const defaultValues = {
   artifact: undefined,
   cover: undefined,
   thumbnail: undefined,
-  getValuesStored: () => {},
+  getValuesStored: () => { },
 }
 
 export const useMintStore = create<MintState>()(
@@ -160,8 +169,8 @@ export const useMintStore = create<MintState>()(
           // Metadata accessibility
           const accessibility = photosensitive
             ? {
-                hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
-              }
+              hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
+            }
             : null
 
           const contentRating = nsfw ? METADATA_CONTENT_RATING_MATURE : null
@@ -219,11 +228,10 @@ export const useMintStore = create<MintState>()(
               used_cover.format = {
                 mimeType: used_cover.mimeType,
                 fileSize: used_cover.buffer.byteLength,
-                fileName: `${removeExtension(artifact.file.name)}.${
-                  coverIsGif
+                fileName: `${removeExtension(artifact.file.name)}.${coverIsGif
                     ? 'gif'
                     : extensionFromMimetype(used_cover.mimeType)
-                }`,
+                  }`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
                   unit: 'px',
@@ -304,12 +312,16 @@ export const useMintStore = create<MintState>()(
             royalties as number
           )
           console.debug('success', success)
+          const tokendata = await getTzktData(`/v1/operations/transactions/${success}`) // success is ophash for some reason?
+          const id = tokendata[0].storage.objkt_id - 1 // this is really strange, the objkt_id returned by the tzkt api is off by 1 :/
           if (success) {
             show(
-                 "**Minting sucessful**", 
-                 `Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your 
-              OBJKT here on Teia.art to support Teia via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees) (swaps done on Teia.art will also be visible on objkt.com)`
-                )
+              "**Minting sucessful**",
+              `Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your OBJKT on teia.art.
+              By doing this you're supporting Teia via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees).
+              Swaps done on teia.art will also be visible on objkt.com.
+              [Click here to proceed to the swap page](https://teia.art/objkt/${id}/swap)`
+            )
             reset()
           }
         },
