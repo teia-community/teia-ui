@@ -12,14 +12,6 @@ interface ImportMetaEnv {
   readonly VITE_TZPROFILES_GRAPHQL_API: string
   readonly VITE_IMGPROXY: string
   readonly VITE_IPFS_UPLOAD_PROXY: string
-  readonly VITE_IPFS_DEFAULT_GATEWAY:
-    | 'CDN'
-    | 'CLOUDFLARE'
-    | 'PINATA'
-    | 'IPFS'
-    | 'DWEB'
-    | 'NFTSTORAGE'
-  readonly VITE_TEZOS_RPC: string
 }
 
 interface ImportMeta {
