@@ -44,6 +44,8 @@ export const Settings = () => {
     setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
+    has_seen_moderation,
+    setHasSeenModeration,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -61,6 +63,8 @@ export const Settings = () => {
     st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
+    st.has_seen_moderation,
+    st.setHasSeenModeration,
   ])
 
   return (
@@ -170,6 +174,17 @@ export const Settings = () => {
               label={'Hide banner for last announcement'}
             />
           )}
+          <Checkbox
+            alt={`click to ${
+              setHasSeenModeration ? 'disable' : 'enable'
+            } the teia moderation symbol over you own tokens`}
+            title={`click to ${
+              setHasSeenModeration ? 'disable' : 'enable'
+            } the teia moderation symbol over you own tokens`}
+            checked={has_seen_moderation}
+            onCheck={setHasSeenModeration}
+            label={'Hide the moderation ribbon'}
+          />
         </div>
       </div>
     </Page>
