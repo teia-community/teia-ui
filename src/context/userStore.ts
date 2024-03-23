@@ -20,6 +20,7 @@ import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
 import { getUser } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
+import { getTzktData } from '@data/api'
 import {
   BURN_ADDRESS,
   HEN_CONTRACT_FA2,
@@ -166,6 +167,19 @@ export const useUserStore = create<UserState>()(
             // skippable
             useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
+            if(title === 'Mint' && confirm?.completed) {
+              const tokendata = await getTzktData(`/v1/operations/transactions/${op.opHash}`)
+              const id = tokendata[0].storage.objkt_id - 1 // this is really strange, the objkt_id returned by the tzkt api is off by 1 :/
+              const url = `/objkt/${id}/swap`
+              show(
+                "**Minting sucessful**",
+                `Please consider [swapping/listing](https://github.com/teia-community/teia-docs/wiki/How-to-swap-%F0%9F%94%83) your OBJKT on teia.art.
+                By doing this you're supporting Teia via the [platform fees](https://github.com/teia-community/teia-docs/wiki/Marketplace-Fees).
+                Swaps done on teia.art will also be visible on objkt.com.
+                [Click here to proceed to the swap page](${url})`
+              )
+              return op.opHash
+            }
             show(
               confirm.completed ? `${title} Successful` : `${title} Error`,
               `[see on tzkt.io](https://tzkt.io/${op.opHash})`
