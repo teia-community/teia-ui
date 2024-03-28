@@ -6,6 +6,21 @@
 .error {
   color: red;
 }
-.field {
+
+.field,
+.typed_field {
   margin: 1em 0;
+}
+
+.typed_field textarea {
+  margin-top: 0.5em;
+  font-family: 'Source Sans Pro', sans-serif;
+  height: 20rem;
+  resize: auto;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  padding: 0;
+}
+
+.typed_field textarea.mono {
+  font-family: 'Monaco', monospace !important;
 }

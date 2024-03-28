@@ -9,20 +9,47 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { useModalStore } from '@context/modalStore'
+import { processTypedInput } from '@utils/typed-art'
 
 export default function MintForm() {
-  const { artifact, license, minterName, address, balance } = useOutletContext()
+  const {
+    artifact,
+    license,
+    minterName,
+    address,
+    balance,
+    isTyped,
+    isMonoType,
+  } = useOutletContext()
   const navigate = useNavigate()
   const { control } = useFormContext()
   const { defaultValues } = useFormState({ control })
   const [needsCover, setNeedsCover] = useState(false)
+  const [isTypedArt, setIsTypedArt] = useState(false)
 
   useEffect(() => {
-    if (artifact) setNeedsCover(!artifact?.mimeType?.startsWith('image'))
-  }, [artifact])
+    if (artifact)
+      setNeedsCover(
+        !artifact?.mimeType?.startsWith('image') &&
+          artifact?.mimeType !== 'text/plain'
+      )
+
+    /** Typed  */
+    setIsTypedArt(isTyped)
+
+    /** Render correct fonts */
+    let typedTextArea = document.querySelector("textarea[name='typedinput']")
+    if (isMonoType && typedTextArea) {
+      typedTextArea.style.fontFamily = 'Monaco'
+    } else if (typedTextArea) {
+      // default font to use for typed inputs
+      typedTextArea.style.fontFamily = 'Source Sans Pro'
+    }
+  }, [artifact, isTyped, isMonoType])
 
   const onSubmit = async (data) => {
-    if (data.artifact) {
+    // other non-typed types that involves file upload
+    if (!isTyped && data.artifact) {
       if (data.artifact.file?.size && data.artifact.file?.size / 1e6 > 2000) {
         useModalStore
           .getState()
@@ -32,6 +59,12 @@ export default function MintForm() {
       const URL = window.URL || window.webkitURL
       data.artifact.reader = URL.createObjectURL(data.artifact.file)
     }
+
+    // typed input
+    else if (data.typedinput) {
+      data = await processTypedInput(data)
+    }
+
     useMintStore.setState({ ...data, isValid: true })
     navigate('preview')
   }
@@ -40,9 +73,11 @@ export default function MintForm() {
   const fields = useMemo(() => {
     return mint_fields({
       needsCover,
+      isTyped: isTypedArt,
+      showArtifact: !isTypedArt,
       useCustomLicense: license?.value === 'custom',
     })
-  }, [needsCover, license?.value])
+  }, [needsCover, isTypedArt, license?.value])
   return (
     <motion.div
       style={{ width: '100%' }}

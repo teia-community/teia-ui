@@ -69,6 +69,8 @@ export default function Mint() {
               minterName,
               address,
               artifact: methods.watch('artifact'),
+              isTyped: methods.watch('isTyped'),
+              isMonoType: methods.watch('isMonoType'),
               license:
                 methods.watch(
                   'license'

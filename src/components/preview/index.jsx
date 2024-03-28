@@ -52,6 +52,7 @@ export const Preview = () => {
     photosensitiveSeizureWarning,
     nsfw,
     editions,
+    isMonoType,
   ] = useMintStore((st) => [
     st.tags,
     st.title,
@@ -65,10 +66,11 @@ export const Preview = () => {
     st.photosensitive,
     st.nsfw,
     st.editions,
+    st.isMonoType,
   ])
 
   const { ignoreUriMap } = useSettings()
-  const token_tags = tags
+  let token_tags = tags
     ? tags === ''
       ? []
       : tags.replace(/\s/g, '').split(',')
@@ -99,7 +101,7 @@ export const Preview = () => {
       <div className={styles.media}>
         <RenderMediaType
           displayView
-          nft={{ mime_type: artifact.mimeType }}
+          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
           previewUri={artifact.reader}
           previewDisplayUri={cover?.reader}
         />

@@ -5,6 +5,8 @@ import {
 } from '@constants'
 import type { FileForm } from '@types'
 import Compressor from 'compressorjs'
+import { UltimateTextToImage } from "ultimate-text-to-image";
+import { getMimeType } from './sanitise';
 
 /**
  * Return the expected extension (as string without dot) from a given mimtetype
@@ -112,5 +114,55 @@ export const generateCoverAndThumbnail = async (
   return {
     cover,
     thumbnail: thumb,
+  }
+}
+
+export const generateTypedArtImage = async(
+  textContent: string
+): Promise<File | void> => {
+
+  if (textContent) {
+    const textToImage = await new UltimateTextToImage(textContent, {
+    fontColor: "#FFFFFF",
+    align: "center",
+    backgroundColor: "transparent",
+    margin: 20
+  }).render();
+  
+  let dataUrl = textToImage.toDataUrl(); // image/png by default
+
+  return await fetch(dataUrl)
+    .then(res => res.blob())
+    .then(blob => new File([blob], "Generated Cover.png",{ type: "image/png" })
+  )
+  }
+}
+
+export const convertFileToFileForm = async(
+  fileToConvert: File
+): Promise<FileForm> => {
+  const mimeType = fileToConvert.type === '' ? await getMimeType(fileToConvert) : fileToConvert.type
+  const buffer = Buffer.from(await fileToConvert.arrayBuffer())
+  const title = fileToConvert.name+".png";
+
+  // set reader for preview
+  let reader: any = new FileReader()
+  const blob = new Blob([buffer], { type: mimeType })
+  reader = await blobToDataURL(blob)
+
+
+  const format = {
+    mimeType: mimeType,
+    fileName: title+'.png',
+    fileSize: fileToConvert.size
+  }
+
+  return {
+    title,
+    mimeType,
+    file: fileToConvert,
+    buffer,
+    reader,
+    format
   }
 }

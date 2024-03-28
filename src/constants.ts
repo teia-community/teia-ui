@@ -47,6 +47,7 @@ export const MIMETYPE: { [key: string]: string } = {
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
+  TXT: 'text/plain'
 }
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)

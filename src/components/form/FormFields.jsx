@@ -52,6 +52,18 @@ export const FormFields = ({ value, field, error, register, control }) => {
           {error && <FieldError text error={error.message} />}
         </Textarea>
       )
+    case 'typed-textarea':
+      return (
+        <Textarea
+          className={styles.typed_field}
+          label={field.label}
+          placeholder={field.placeholder}
+          {...register(name, field.rules)}
+        >
+          <Line />
+          {error && <FieldError text error={error.message} />}
+        </Textarea>
+      )
     case 'select':
     case 'select-search':
       return (

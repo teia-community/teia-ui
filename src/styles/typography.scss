@@ -43,3 +43,23 @@
   font-style: normal;
   src: url('fonts/iosevka-extendedbold.woff2') format('woff2');
 }
+
+/* 
+  These fonts are needed to give the user the most 
+  accurate visual of their typed art in the textarea input 
+  to ensure that it displays as intended on secondary marketplaces like OBJKT 
+*/
+
+@font-face {
+  font-family: 'Monaco';
+  font-weight: 400;
+  font-style: normal;
+  src: url('fonts/monaco.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('fonts/sourcesanspro-regular.otf') format('opentype');
+}

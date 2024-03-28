@@ -18,6 +18,7 @@ export const defaultValues = {
   language: '',
   nsfw: false,
   photosensitive: false,
+  isTyped: false,
   artifact: null,
   cover: null,
 }
@@ -135,13 +136,37 @@ export const fields = [
     type: 'checkbox',
   },
   {
+    label: 'Typed Art',
+    name: 'isTyped',
+    type: 'checkbox',
+    watch: true,
+  },
+  {
+    label: 'Monospace',
+    name: 'isMonoType',
+    type: 'checkbox',
+    enable_if: 'isTyped',
+    watch: true,
+  },
+  {
     label: 'Artifact',
     placeHolder: 'Upload OBJKT',
     name: 'artifact',
     type: 'file',
     watch: true,
+    enable_if: 'showArtifact',
     rules: {
       required: 'You did not select a valid file',
+    },
+  },
+  {
+    label: 'Typed Art Input',
+    name: 'typedinput',
+    type: 'typed-textarea',
+    watch: true,
+    enable_if: 'isTyped',
+    rules: {
+      required: 'There is no input.',
     },
   },
   {

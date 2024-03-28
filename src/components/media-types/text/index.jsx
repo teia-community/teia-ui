@@ -1,0 +1,64 @@
+import React, { useRef } from 'react'
+import styles from '@style'
+
+import axios from 'axios'
+/**
+ * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
+ */
+
+export const TXT = ({
+  artifactUri,
+  displayUri,
+  displayView,
+  previewUri,
+  nft,
+}) => {
+  const [content, setContent] = React.useState('')
+  const [isMonoType, setIsMonoType] = React.useState(false)
+  const htmlRef = useRef()
+
+  React.useEffect(() => {
+    const getTextContent = async () => {
+      await fetch(displayUri)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Error reading blob')
+          }
+          return response.text()
+        })
+        .then((text) => {
+          setContent(text)
+        })
+        .catch((error) => {
+          console.error('Error fetching the file:', error)
+        })
+    }
+
+    if (artifactUri) {
+      axios.get(artifactUri).then((res) => {
+        setContent(res.data)
+      })
+    } else if (displayUri) {
+      getTextContent()
+      setIsMonoType(nft.is_mono_type)
+    }
+  }, [artifactUri, previewUri, displayView, displayUri])
+
+  return (
+    <div ref={htmlRef} className={styles.container}>
+      <div className={styles.preview}>
+        <pre
+          style={{
+            fontFamily: isMonoType
+              ? 'Monaco, monospace'
+              : 'Source Sans Pro, sans-serif',
+          }}
+        >
+          {content}
+        </pre>
+      </div>
+    </div>
+  )
+}
+
+export default TXT
