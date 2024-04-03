@@ -46,11 +46,9 @@ function _M.injectOpenGraphTags(body, info)
     body = ngx.re.gsub(body, '<!-- OPEN GRAPH -->.*?/>', '', 'jo')
 
     local url = ngx.var.scheme .. '://' .. ngx.var.host .. ngx.var.request_uri
-    local image
+    local image = info['image']
     if info['preview_uri'] then
         image = 'https://imgproxy.teia.art' .. info['preview_uri']
-    else
-        image = info['image']
     end
 
     local openGraphTags = '' ..
