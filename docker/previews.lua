@@ -46,6 +46,12 @@ function _M.injectOpenGraphTags(body, info)
     body = ngx.re.gsub(body, '<!-- OPEN GRAPH -->.*?/>', '', 'jo')
 
     local url = ngx.var.scheme .. '://' .. ngx.var.host .. ngx.var.request_uri
+    local image
+    if info['preview_uri'] then
+        image = 'https://imgproxy.teia.art' .. info['preview_uri']
+    else
+        image = info['image']
+    end
 
     local openGraphTags = '' ..
         '<meta name="description" content="' .. info['description'] .. '" />' ..
@@ -60,7 +66,7 @@ function _M.injectOpenGraphTags(body, info)
         '<meta name="twitter:description" content="' .. info['description'] .. '" />' ..
         '<meta name="twitter:image" content="' .. info['image'] .. '" />' ..
         '<meta property="fc:frame" content="vNext"/>' ..
-        '<meta property="fc:frame:image" content="https://imgproxy.teia.art' .. info['preview_uri'] .. '"/>' ..
+        '<meta property="fc:frame:image" content="' .. image .. '"/>' ..
         '<meta property="fc:frame:image:aspect_ratio" content="1:1"/>' ..
         '<meta name="fc:frame:button:1" content="Buy on Teia"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
