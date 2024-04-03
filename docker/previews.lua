@@ -56,7 +56,13 @@ function _M.injectOpenGraphTags(body, info)
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
         '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
         '<meta name="twitter:description" content="' .. info['description'] .. '" />' ..
-        '<meta name="twitter:image" content="' .. info['image'] .. '" />'
+        '<meta name="twitter:image" content="' .. info['image'] .. '" />' ..
+        '<meta property="fc:frame" content="vNext"/>' ..
+        '<meta property="fc:frame:image" content="' .. info['image'] .. '"/>' ..
+        '<meta property="fc:frame:image:aspect_ratio" content="1:1"/>' ..
+        '<meta name="fc:frame:button:1" content="Open Teia"/>' ..
+        '<meta name="fc:frame:button:1:action" content="link"/>' ..
+        '<meta name="fc:frame:button:1:target" content="' .. url .. '"/>'
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', 'https://cache.teia.rocks/ipfs/')
     local ok, content = pcall(ustring.gsub, body, '<head>', '<head>' .. openGraphTags)
