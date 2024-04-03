@@ -24,7 +24,7 @@ end
 function _M.findTokenDetails(search)
     local res = ngx.location.capture('/teztok/v1/graphql', {
         method = ngx.HTTP_POST,
-        body = '{"query":"query findTokenDetails {  token: tokens_by_pk(token_id: \\"'.. search .. '\\", fa2_address: \\"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton\\") { token_id name description display_uri artifact_uri}}"}',
+        body = '{"query":"query findTokenDetails {  token: tokens_by_pk(token_id: \\"'.. search .. '\\", fa2_address: \\"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton\\") { token_id name description display_uri artifact_uri artist_address}}"}',
     })
     -- ngx.log(ngx.ERR, "findTokenDetails: ", res.body)
     data = cjson.decode(res.body)['data']['token']
@@ -33,6 +33,7 @@ function _M.findTokenDetails(search)
     token['name'] = _M.clean(data['name'])
     token['description'] = _M.clean(data['description'])
     token['image'] = (data['display_uri'] ~= ngx.null and _M.clean(data['display_uri']) or _M.clean(data['artifact_uri']))
+    token['artist_address'] = data['artist_address']
     return token
 end
 
@@ -56,7 +57,20 @@ function _M.injectOpenGraphTags(body, info)
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
         '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
         '<meta name="twitter:description" content="' .. info['description'] .. '" />' ..
-        '<meta name="twitter:image" content="' .. info['image'] .. '" />'
+        '<meta name="twitter:image" content="' .. info['image'] .. '" />' ..
+        '<meta property="fc:frame" content="vNext"/>' ..
+        '<meta property="fc:frame:image" content="' .. info['image'] .. '"/>' ..
+        '<meta property="fc:frame:image:aspect_ratio" content="1:1"/>' ..
+        '<meta name="fc:frame:button:1" content="Buy on Teia"/>' ..
+        '<meta name="fc:frame:button:1:action" content="link"/>' ..
+        '<meta name="fc:frame:button:1:target" content="' .. url .. '"/>'
+
+    if info['artist_address'] then
+        openGraphTags = openGraphTags ..
+        '<meta name="fc:frame:button:2" content="Visit artist profile"/>' ..
+        '<meta name="fc:frame:button:2:action" content="link"/>' ..
+        '<meta name="fc:frame:button:2:target" content="https://teia.art/tz/' .. info['artist_address'] .. '"/>'
+    end
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', 'https://cache.teia.rocks/ipfs/')
     local ok, content = pcall(ustring.gsub, body, '<head>', '<head>' .. openGraphTags)
