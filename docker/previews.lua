@@ -66,7 +66,7 @@ function _M.injectOpenGraphTags(body, info)
         '<meta property="fc:frame" content="vNext"/>' ..
         '<meta property="fc:frame:image" content="' .. image .. '"/>' ..
         '<meta property="fc:frame:image:aspect_ratio" content="1:1"/>' ..
-        '<meta name="fc:frame:button:1" content="Buy on Teia"/>' ..
+        '<meta name="fc:frame:button:1" content="Collect on Teia"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
         '<meta name="fc:frame:button:1:target" content="' .. url .. '"/>'
 
