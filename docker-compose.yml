@@ -8,8 +8,11 @@ services:
     restart: unless-stopped
     ports:
       - 0.0.0.0:8080:80
-    volumes:
-      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+#    volumes:
+#      - ./docker/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+#      - ./docker/previews.lua:/lua/previews.lua
+    env_file:
+      - .env
   tzproxy:
     image: ghcr.io/marigold-dev/tzproxy:latest
     restart: unless-stopped
