@@ -118,13 +118,13 @@ export const generateCoverAndThumbnail = async (
 }
 
 export const generateTypedArtImage = async(
-  textContent: string
+  textContent: string,
+  isMono: boolean
 ): Promise<File | void> => {
-
   if (textContent) {
     const textToImage = await new UltimateTextToImage(textContent, {
     fontColor: "#FFFFFF",
-    align: "center",
+    fontFamily: isMono ? 'IBM Plex Mono' : 'Source Sans Pro',
     backgroundColor: "transparent",
     margin: 20
   }).render();

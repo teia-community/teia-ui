@@ -12,7 +12,7 @@ export const processTypedInput = async (data) => {
   data.artifact.reader = URL.createObjectURL(blob)
 
   // generate cover automatically
-  let coverFile = await generateTypedArtImage(data.typedinput)
+  let coverFile = await generateTypedArtImage(data.typedinput, data.isMonoType)
   data.cover = await convertFileToFileForm(coverFile)
 
   // add monospace to tags if not already available so that it can be rendered
