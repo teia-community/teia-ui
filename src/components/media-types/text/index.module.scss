@@ -13,7 +13,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  max-height: 60vh;
+  min-height: 60vh !important;
+  height: auto;
 
   &:after {
     content: '';

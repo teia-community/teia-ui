@@ -42,20 +42,34 @@ export const TXT = ({
       getTextContent()
       setIsMonoType(nft.is_mono_type)
     }
-  }, [artifactUri, previewUri, displayView, displayUri])
+
+    if (nft?.tags && nft?.tags?.length > 0) {
+      let transformedTags = nft.tags.map((tag) => tag.tag.toLowerCase())
+      if (
+        transformedTags.includes('monospace') ||
+        transformedTags.includes('mono')
+      ) {
+        setIsMonoType(true)
+      }
+    }
+  }, [artifactUri, previewUri, displayView, displayUri, nft])
 
   return (
     <div ref={htmlRef} className={styles.container}>
       <div className={styles.preview}>
-        <pre
-          style={{
-            fontFamily: isMonoType
-              ? 'Monaco, monospace'
-              : 'Source Sans Pro, sans-serif',
-          }}
-        >
-          {content}
-        </pre>
+        {!displayView && previewUri ? (
+          <img src={previewUri} />
+        ) : (
+          <pre
+            style={{
+              fontFamily: isMonoType
+                ? 'Monaco, monospace'
+                : 'Source Sans Pro, sans-serif',
+            }}
+          >
+            {content}
+          </pre>
+        )}
       </div>
     </div>
   )

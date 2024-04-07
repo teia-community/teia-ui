@@ -47,6 +47,11 @@ fragment baseTokenFields on tokens {
     is_signed
     preview_uri
   }
+
+  tags {
+    tag
+  }
+  
   token_id
 }
 `
