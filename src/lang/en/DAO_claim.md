@@ -15,9 +15,9 @@ For any questions or assistance regarding the token claim process get in touch w
 1.  **1) Sync your wallet** with teia.art (top right corner). Please check the URL before syncing your wallet: The only official Teia token claim page is at www.teia.art/dao.
 2.  **2) Read the legal disclaimer below** It outlines important information regarding the nature of TEIA tokens and your responsibilities as a token holder.
 3.  **3) Confirm you have read the disclaimer** by checking the box at the bottom of this page to get access to the claim button.
-4.  **4) Click on the "Claim TEIA DAO tokens" button** at the bottom of the of this page to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
+4.  **4) Click on the "Claim TEIA DAO tokens" button** at the bottom of this page to initiate the token claim process and confirm the operation with your wallet. Your tokens should arrive in your wallet after a few minutes.
 
-If you own multible elligible wallets, unsync your wallet and repeat the process for each of your wallets.
+If you own multiple eligible wallets, unsync your wallet and repeat the process for each of your wallets.
 
 ---
 
