@@ -6,6 +6,17 @@ local hmac = require "hmac"
 
 local IMGPROXY_KEY = os.getenv("IMGPROXY_KEY") or ''
 local IMGPROXY_SALT = os.getenv("IMGPROXY_SALT") or ''
+local IMGPROXY_URL = os.getenv("VITE_IMGPROXY") or ''
+
+local IPFS_GATEWAY = os.getenv("IPFS_GATEWAY") or "https://nftstorage.link/ipfs/"
+
+function _M.getInfoForCID(cid)
+    local res = ngx.location.capture('/ipfs/', {
+        method = ngx.HTTP_HEAD,
+        vars = {cid = cid},
+    })
+    return res.header
+end
 
 function _M.clean(input)
     return ngx.re.gsub(input, '"', '')
@@ -33,7 +44,7 @@ function _M.getImgproxyURL(input)
         result = ngx.re.gsub(result, '\\+', "-")
         result = ngx.re.gsub(result, '/', "_")
 
-        return '/' .. result .. input
+        return IMGPROXY_URL .. '/' .. result .. input
     end
     return input
 end
@@ -81,15 +92,23 @@ function _M.injectOpenGraphTags(body, info)
     body = ngx.re.gsub(body, '<meta.*?name="twitter.*?/>', '', 'jo')
     body = ngx.re.gsub(body, '<!-- OPEN GRAPH -->.*?/>', '', 'jo')
 
-    local url = ngx.var.scheme .. '://' .. ngx.var.host .. ngx.var.request_uri
-    local imgproxy_url = os.getenv('VITE_IMGPROXY')
+    local url = ngx.var.scheme .. '://' .. ngx.var.host
+    local source = ngx.re.sub(info['image'], 'ipfs://', '')
 
-    local image = info['image']
-    if info['preview_uri'] then
-        image = imgproxy_url .. info['preview_uri']
-    end
-    if IMGPROXY_KEY ~= '' and IMGPROXY_SALT ~= '' and (info['mime_type'] == 'video/mp4' or info['mime_type'] == 'image/gif') then
-        image = imgproxy_url .. _M.getImgproxyURL('/rs:fit:320:0:false/format:gif/plain/' .. ngx.re.sub(info['image'], 'ipfs://', ''))
+    if info['type'] == 'profile' then
+        local image_info = _M.getInfoForCID(source)
+        local content_type = image_info['Content-Type'] or ''
+        image = _M.getImgproxyURL('/rs:fit:640:0:false/format:webp/plain/' .. source)
+        if content_type == 'video/mp4' or content_type == 'image/gif' then
+            image = _M.getImgproxyURL('/rs:fit:320:0:false/format:gif/plain/' .. source)
+        end
+    else
+        if info['preview_uri'] then
+            image = IMGPROXY_URL .. info['preview_uri']
+        end
+        if info['mime_type'] == 'video/mp4' or info['mime_type'] == 'image/gif' then
+            image = _M.getImgproxyURL('/rs:fit:320:0:false/format:gif/plain/' .. source)
+        end
     end
 
     local openGraphTags = '' ..
@@ -98,7 +117,7 @@ function _M.injectOpenGraphTags(body, info)
         '<meta property="og:title" content="' .. info['name'] .. '" />' ..
         '<meta property="og:description" content="' .. info['description'] .. '" />' ..
         '<meta property="og:image" content="' .. info['image'] .. '" />' ..
-        '<meta property="og:url" content="' .. url .. '" />' ..
+        '<meta property="og:url" content="' .. url .. ngx.var.request_uri .. '" />' ..
         '<meta name="twitter:card" content="summary_large_image" />' ..
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
         '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
@@ -112,18 +131,18 @@ function _M.injectOpenGraphTags(body, info)
         openGraphTags = openGraphTags ..
         '<meta name="fc:frame:button:1" content="Collect on Teia"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
-        '<meta name="fc:frame:button:1:target" content="' .. url .. '"/>' ..
+        '<meta name="fc:frame:button:1:target" content="' .. url .. ngx.var.request_uri .. '"/>' ..
         '<meta name="fc:frame:button:2" content="Visit artist profile"/>' ..
         '<meta name="fc:frame:button:2:action" content="link"/>' ..
-        '<meta name="fc:frame:button:2:target" content="' .. ngx.var.scheme .. '://' .. ngx.var.host .. '/tz/' .. info['artist_address'] .. '"/>'
+        '<meta name="fc:frame:button:2:target" content="' .. url .. '/tz/' .. info['artist_address'] .. '"/>'
     else
         openGraphTags = openGraphTags ..
         '<meta name="fc:frame:button:1" content="Visit artist profile"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
-        '<meta name="fc:frame:button:1:target" content="' .. ngx.var.scheme .. '://' .. ngx.var.host .. '/tz/' .. info['artist_address'] .. '"/>'
+        '<meta name="fc:frame:button:1:target" content="' .. url .. '/tz/' .. info['artist_address'] .. '"/>'
     end
     
-    openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', os.getenv('IPFS_GATEWAY') or 'https://nftstorage.link/ipfs/')
+    openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', IPFS_GATEWAY)
     local ok, content = pcall(ustring.gsub, body, '<head>', '<head>' .. openGraphTags)
     if ok and content then
         return content
