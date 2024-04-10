@@ -103,12 +103,16 @@ function _M.injectOpenGraphTags(body, info)
             image = _M.getImgproxyURL('/rs:fit:320:0:false/format:gif/plain/' .. source)
         end
     else
-        if info['preview_uri'] then
+        if info['preview_uri'] ~= ngx.null then
             image = IMGPROXY_URL .. info['preview_uri']
         end
-        if info['mime_type'] == 'video/mp4' or info['mime_type'] == 'image/gif' then
+        if info['mime_type'] ~= ngx.null and (info['mime_type'] == 'video/mp4' or info['mime_type'] == 'image/gif') then
             image = _M.getImgproxyURL('/rs:fit:320:0:false/format:gif/plain/' .. source)
         end
+    end
+
+    if not image then
+        image = info['image']
     end
 
     local openGraphTags = '' ..
