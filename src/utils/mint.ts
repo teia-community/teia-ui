@@ -129,7 +129,7 @@ export const generateTypedArtImage = async(
     margin: 20
   }).render();
   
-  let dataUrl = textToImage.toDataUrl(); // image/png by default
+  const dataUrl = textToImage.toDataUrl(); // image/png by default
 
   return await fetch(dataUrl)
     .then(res => res.blob())

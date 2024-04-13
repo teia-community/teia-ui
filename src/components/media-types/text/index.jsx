@@ -58,7 +58,10 @@ export const TXT = ({
     <div ref={htmlRef} className={styles.container}>
       <div className={styles.preview}>
         {!displayView && previewUri ? (
-          <img src={previewUri} />
+          <img
+            alt={`Text NFT thumbnail for ${nft.token_id}`}
+            src={previewUri}
+          />
         ) : (
           <pre
             style={{
