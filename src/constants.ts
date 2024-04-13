@@ -31,6 +31,8 @@ export const MIMETYPE: { [key: string]: string } = {
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
+  MIDI: 'audio/midi',
+  MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
   OGA: 'audio/ogg',
