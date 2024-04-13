@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 // import { Visualiser } from './visualiser'
 import styles from '@style'
 import { PlayIcon, PauseIcon } from '@icons'
 import Button from '@atoms/button/Button'
 import { PATH } from '@constants'
-import MidiPlayer from 'react-midi-player'
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
@@ -15,40 +14,35 @@ export const MidiComponent = ({
   displayView,
   nft,
 }) => {
-  // const visualiser = useRef()
-  // const [userTouched, setUserTouched] = useState(false)
-  const audioElement = useRef()
   const [play, setPlay] = useState(false)
+  const midiRef = useRef()
+
   const togglePlay = () => {
     setPlay(!play)
   }
 
-  // user interaction
-  // useEffect(() => {
-  //   if (userTouched) {
-  //     visualiser.current.init()
-  //   }
-  // }, [userTouched])
+  useEffect(() => {
+    if (!midiRef.current) return
 
-  // useEffect(() => {
-  //   if (userTouched) {
-  //     if (play) {
-  //       visualiser.current.play()
-  //     } else {
-  //       visualiser.current.pause()
-  //     }
-  //   }
-  // }, [play, userTouched])
+    if (play) {
+      console.log(midiRef.current.querySelector("div[title='pause']"))
+      midiRef.current.querySelector("div[title='pause']").click()
+    } else {
+      midiRef.current.querySelector("div[title='pause']").click()
+    }
+  }, [play])
 
   return displayView ? (
     <div className={styles.container}>
-      <img src={displayUri} alt={`cover for midi object ${nft.token_id}`} />
+      <img src={displayUri} alt={`cover for midi nft`} />
 
-      <MidiPlayer src={previewUri ? previewUri : artifactUri} />
+      <div id="midiPlayer">
+        <MidiPlayer src={previewUri ? previewUri : artifactUri} />
+      </div>
     </div>
   ) : (
     <div className={styles.feed_container}>
-      <img alt={`cover for midi object ${nft.token_id}`} src={displayUri} />
+      <img alt={`cover for midi nft ${nft.token_id}`} src={displayUri} />
       <Button className={styles.button} onClick={togglePlay}>
         {play ? (
           <PauseIcon fill="var(--gray-10)" width={64} height={64} />
@@ -57,7 +51,17 @@ export const MidiComponent = ({
         )}
       </Button>
 
-      <MidiPlayer src={previewUri ? previewUri : artifactUri} />
+      <div
+        key={`midi_${play}`}
+        id="midiPlayer"
+        className={styles.midiPlayer}
+        ref={midiRef}
+      >
+        <MidiPlayer src={previewUri ? previewUri : artifactUri} />
+        <div title="play">Play</div>
+        <div title="pause">Pause</div>
+        <div title="stop">Stop</div>
+      </div>
     </div>
   )
 }

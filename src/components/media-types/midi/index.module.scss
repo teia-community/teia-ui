@@ -1,0 +1,38 @@
+@import '@styles/layout.scss';
+@import '@styles/variables.scss';
+
+.feed_container,
+.container {
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+  audio {
+    width: 100%;
+    min-height: 32px;
+  }
+}
+
+.container {
+  img {
+    max-height: calc($max-token-height - 20vh);
+  }
+
+  span > div {
+    margin: 0 auto !important;
+    display: block !important;
+  }
+}
+.feed_container {
+  div.midiPlayer {
+    display: block !important;
+  }
+
+  .button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+}
