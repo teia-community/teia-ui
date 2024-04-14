@@ -42,12 +42,6 @@ export const MidiComponent = ({
     if (!midiPlayerInstance && !midiData) {
       getMidiDatastring()
     }
-
-    return () => {
-      if (midiPlayerInstance) {
-        midiPlayerInstance.destroy()
-      }
-    }
   }, [artifactUri, previewUri, midiData])
 
   useEffect(() => {
@@ -64,9 +58,7 @@ export const MidiComponent = ({
     <div className={styles.container}>
       <img src={displayUri} alt={`cover for midi nft`} />
 
-      <div id="midiPlayer">
-        <MidiPlayer src={previewUri ? previewUri : artifactUri} />
-      </div>
+      <MidiPlayer src={previewUri ? previewUri : artifactUri} />
     </div>
   ) : (
     <div className={styles.feed_container}>
