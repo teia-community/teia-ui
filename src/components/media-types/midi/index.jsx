@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-// import { Visualiser } from './visualiser'
-import styles from '@style'
-import { PlayIcon, PauseIcon } from '@icons'
-import Button from '@atoms/button/Button'
-import { PATH } from '@constants'
+import { useEffect, useRef, useState } from 'react'
 import MidiPlayer from 'react-midi-player'
 import { JZZ } from 'jzz'
+import Button from '@atoms/button/Button'
+import { PlayIcon, PauseIcon } from '@icons'
+import { PATH } from '@constants'
 import { getMidiUrlData } from '@utils/media'
+import styles from '@style'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
