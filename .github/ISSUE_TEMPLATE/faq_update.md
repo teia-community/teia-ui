@@ -27,8 +27,8 @@ assignees: violetforest
 
 
 **Markdown**
-* If you've written the update using Markdown, replace the `FAQ in markfown format` below with your markdown-tagged text
+* If you've written the update using Markdown, replace the `FAQ in markdown format` below with your markdown-tagged text
 
 ```Markdown
-Add FAQ text in Markfown format
+Add FAQ text in Markdown format
 ```
