@@ -52,7 +52,9 @@ export const MIMETYPE: { [key: string]: string } = {
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  .filter((e) => e !== MIMETYPE.GLTF) // disabling GLTF from new updates
+  // disabling GLTF from new updates,
+  // disabling TXT upload since they will be done via the textarea input
+  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT) 
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
@@ -68,6 +70,7 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
         'XWAV',
         'QUICKTIME',
         'WEBP',
+        'TXT'
       ].includes(e[0])
   )
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))

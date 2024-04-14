@@ -27,6 +27,16 @@ export default function MintForm() {
   const [needsCover, setNeedsCover] = useState(false)
   const [isTypedArt, setIsTypedArt] = useState(false)
 
+  // Dynamically update conditional fields
+  const fields = useMemo(() => {
+    return mint_fields({
+      needsCover,
+      isTyped: isTypedArt,
+      showArtifact: !isTypedArt,
+      useCustomLicense: license?.value === 'custom',
+    })
+  }, [needsCover, isTypedArt, license?.value])
+
   useEffect(() => {
     if (artifact)
       setNeedsCover(
@@ -46,11 +56,11 @@ export default function MintForm() {
       // default font to use for typed inputs
       typedTextArea.style.fontFamily = 'Source Sans Pro, sans-serif'
     }
-  }, [artifact, isTyped, isMonoType])
+  }, [artifact, isTyped, isMonoType, fields])
 
   const onSubmit = async (data) => {
-    // other non-typed types that involves file upload
-    if (!isTyped && data.artifact) {
+    // other non-typed nft mints that involves file upload
+    if (!data.typedinput && data.artifact) {
       if (data.artifact.file?.size && data.artifact.file?.size / 1e6 > 2000) {
         useModalStore
           .getState()
@@ -70,15 +80,6 @@ export default function MintForm() {
     navigate('preview')
   }
 
-  // Dynamically update conditional fields
-  const fields = useMemo(() => {
-    return mint_fields({
-      needsCover,
-      isTyped: isTypedArt,
-      showArtifact: !isTypedArt,
-      useCustomLicense: license?.value === 'custom',
-    })
-  }, [needsCover, isTypedArt, license?.value])
   return (
     <motion.div
       style={{ width: '100%' }}

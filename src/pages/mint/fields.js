@@ -136,7 +136,7 @@ export const fields = [
     type: 'checkbox',
   },
   {
-    label: 'Typed Art',
+    label: 'This is a text mint',
     name: 'isTyped',
     type: 'checkbox',
     watch: true,

@@ -15,10 +15,22 @@ export const processTypedInput = async (data) => {
   let coverFile = await generateTypedArtImage(data.typedinput, data.isMonoType)
   data.cover = await convertFileToFileForm(coverFile)
 
+  let tags = data.tags.toLowerCase().split(',')
+
   // add monospace to tags if not already available so that it can be rendered
-  // with the right fonts on OBJKT and on teia
-  if (data.isMonoType && !data.tags.toLowerCase().includes('monospace')) {
-    data.tags = data.tags?.length > 0 ? data.tags + ',monospace' : 'monospace'
+  // with the right classes in OBJKT and on teia
+
+  if (data.isMonoType && !tags.includes('monospace')) {
+    tags = [...tags, 'monospace']
+    data.tags = tags.join(',')
+  }
+  // ensure if it's not monospace type, remove any occurences of `monospace` in tags
+  // otherwise it will not render correctly on objkt.
+  else if (!data.isMonoType && tags.includes('monospace')) {
+    let newTags = tags
+      .filter((tag) => tag.toLowerCase() !== 'monospace')
+      .join(',')
+    data.tags = newTags
   }
 
   return data
