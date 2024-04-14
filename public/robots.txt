@@ -1,3 +1,4 @@
+Sitemap: https://backup.teia.art/sitemap.php
 User-Agent: *
 Disallow: /settings
 Disallow: /subjkt
