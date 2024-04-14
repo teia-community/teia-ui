@@ -24,7 +24,7 @@
 - Blog: [blog.teia.art](https://blog.teia.art)
 - Announcements and Updates: [Twitter](https://twitter.com/TeiaCommunity)
 - Join the community: [discord](https://discord.com/invite/7pZrPCcgnG)
-- Report Harassent or Scams via the [Report Form](https://docs.google.com/forms/d/e/1FAIpQLSeuBmNJjTiROSbHXXiQ5e-ia6fFywHKZ7Dj4-7sZtyltGY3yA/viewform)
+- Report Harassment or Scams via the [Report Form](https://docs.google.com/forms/d/e/1FAIpQLSeuBmNJjTiROSbHXXiQ5e-ia6fFywHKZ7Dj4-7sZtyltGY3yA/viewform)
 - Report Bugs via a [Github issue](https://github.com/teia-community/teia-ui/issues)
 - DAO Agora/Forum: [discourse.teia.art](https://discourse.teia.art/)
 - Code: [Teia Github](https://github.com/teia-community)
