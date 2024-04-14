@@ -6,7 +6,7 @@ import Button from '@atoms/button/Button'
 import { PATH } from '@constants'
 import MidiPlayer from 'react-midi-player'
 import { JZZ } from 'jzz'
-import { getBlobFromUrl } from '@utils/media'
+import { getMidiUrlData } from '@utils/media'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -28,7 +28,7 @@ export const MidiComponent = ({
 
   useEffect(() => {
     const getMidiDatastring = async () => {
-      let data = await getBlobFromUrl(previewUri ? previewUri : artifactUri)
+      let data = await getMidiUrlData(previewUri ? previewUri : artifactUri)
       let smf = new JZZ.MIDI.SMF(JZZ.lib.fromBase64(data))
       setMidiData(smf)
     }
@@ -42,7 +42,7 @@ export const MidiComponent = ({
     if (!midiPlayerInstance && !midiData) {
       getMidiDatastring()
     }
-  }, [artifactUri, previewUri, midiData])
+  }, [artifactUri, previewUri, midiData, midiPlayerInstance, midiData])
 
   useEffect(() => {
     if (midiPlayerInstance && midiData) {
@@ -52,11 +52,15 @@ export const MidiComponent = ({
         midiPlayerInstance.pause()
       }
     }
-  }, [play])
+  }, [play, midiPlayerInstance, midiData])
 
   return displayView ? (
     <div className={styles.container}>
       <img src={displayUri} alt={`cover for midi nft`} />
+
+      <i>
+        Please manually stop midi player before navigating out of this page.
+      </i>
 
       <MidiPlayer src={previewUri ? previewUri : artifactUri} />
     </div>
@@ -67,7 +71,13 @@ export const MidiComponent = ({
       </Button>
       <Button className={styles.button} onClick={togglePlay}>
         {play ? (
-          <PauseIcon fill="var(--gray-10)" width={64} height={64} />
+          <div className={styles.playerButton}>
+            <PauseIcon fill="var(--gray-10)" width={64} height={64} />
+            <i>
+              Please manually stop midi player before navigating away from this
+              page.
+            </i>
+          </div>
         ) : (
           <PlayIcon fill="var(--gray-10)" width={64} height={64} />
         )}

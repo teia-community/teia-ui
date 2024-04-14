@@ -112,7 +112,7 @@ function getFileName(path) {
   return parts[parts.length - 1]
 }
 
-export async function getBlobFromUrl(url) {
+export async function getMidiUrlData(url) {
   try {
     const response = await fetch(url)
     if (!response.ok) {

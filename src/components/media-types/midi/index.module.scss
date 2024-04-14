@@ -19,6 +19,15 @@
     margin: 0 auto !important;
     display: block !important;
   }
+
+  i {
+    margin: 0 auto;
+    display: block;
+    font-size: smaller;
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
 }
 .feed_container {
   .button {
@@ -26,5 +35,22 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+    width: 70%;
+  }
+
+  .playerButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .playerButton i {
+    font-size: smaller;
+    font-style: italic;
+    line-height: 1.2;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    border-radius: 2px;
+    text-align: center;
   }
 }
