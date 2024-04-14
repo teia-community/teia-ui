@@ -15,7 +15,6 @@
   justify-content: center;
   min-height: 60vh !important;
   height: auto;
-  overflow: scroll;
   background-color: black;
 
   &:after {
@@ -79,6 +78,8 @@
     pre {
       width: fit-content;
       margin: 0 auto;
+      max-height: 60vh;
+      overflow: scroll;
     }
   }
 }
