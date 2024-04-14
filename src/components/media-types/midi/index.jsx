@@ -4,6 +4,10 @@ import styles from '@style'
 import { PlayIcon, PauseIcon } from '@icons'
 import Button from '@atoms/button/Button'
 import { PATH } from '@constants'
+import MidiPlayer from 'react-midi-player'
+import { JZZ } from 'jzz'
+import { getBlobFromUrl } from '@utils/media'
+
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
@@ -15,20 +19,44 @@ export const MidiComponent = ({
   nft,
 }) => {
   const [play, setPlay] = useState(false)
-  const midiRef = useRef()
+  const [midiPlayerInstance, setMidiPlayerInstance] = useState()
+  const [midiData, setMidiData] = useState()
 
   const togglePlay = () => {
     setPlay(!play)
   }
 
   useEffect(() => {
-    if (!midiRef.current) return
+    const getMidiDatastring = async () => {
+      let data = await getBlobFromUrl(previewUri ? previewUri : artifactUri)
+      let smf = new JZZ.MIDI.SMF(JZZ.lib.fromBase64(data))
+      setMidiData(smf)
+    }
 
-    if (play) {
-      console.log(midiRef.current.querySelector("div[title='pause']"))
-      midiRef.current.querySelector("div[title='pause']").click()
-    } else {
-      midiRef.current.querySelector("div[title='pause']").click()
+    if (!displayView && !midiPlayerInstance && midiData) {
+      let player = new JZZ.gui.Player('player')
+      player.load(midiData)
+      setMidiPlayerInstance(player)
+    }
+
+    if (!midiPlayerInstance && !midiData) {
+      getMidiDatastring()
+    }
+
+    return () => {
+      if (midiPlayerInstance) {
+        midiPlayerInstance.destroy()
+      }
+    }
+  }, [artifactUri, previewUri, midiData])
+
+  useEffect(() => {
+    if (midiPlayerInstance && midiData) {
+      if (play) {
+        midiPlayerInstance.play()
+      } else {
+        midiPlayerInstance.pause()
+      }
     }
   }, [play])
 
@@ -42,7 +70,9 @@ export const MidiComponent = ({
     </div>
   ) : (
     <div className={styles.feed_container}>
-      <img alt={`cover for midi nft ${nft.token_id}`} src={displayUri} />
+      <Button to={`${PATH.OBJKT}/${nft.token_id}`}>
+        <img alt={`cover for midi object ${nft.token_id}`} src={displayUri} />
+      </Button>
       <Button className={styles.button} onClick={togglePlay}>
         {play ? (
           <PauseIcon fill="var(--gray-10)" width={64} height={64} />
@@ -50,18 +80,7 @@ export const MidiComponent = ({
           <PlayIcon fill="var(--gray-10)" width={64} height={64} />
         )}
       </Button>
-
-      <div
-        key={`midi_${play}`}
-        id="midiPlayer"
-        className={styles.midiPlayer}
-        ref={midiRef}
-      >
-        <MidiPlayer src={previewUri ? previewUri : artifactUri} />
-        <div title="play">Play</div>
-        <div title="pause">Pause</div>
-        <div title="stop">Stop</div>
-      </div>
+      <div id="player" style={{ display: 'none' }}></div>
     </div>
   )
 }

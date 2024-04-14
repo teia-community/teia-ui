@@ -111,3 +111,17 @@ function getFileName(path) {
   const parts = path.split('/')
   return parts[parts.length - 1]
 }
+
+export async function getBlobFromUrl(url) {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    const blob = await response.blob()
+    return blobToDataURL(blob)
+  } catch (error) {
+    console.error('Error fetching the blob:', error)
+    return null
+  }
+}
