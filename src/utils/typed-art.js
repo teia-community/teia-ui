@@ -19,7 +19,6 @@ export const processTypedInput = async (data) => {
 
   // add monospace to tags if not already available so that it can be rendered
   // with the right classes in OBJKT and on teia
-
   if (data.isMonoType && !tags.includes('monospace')) {
     tags = [...tags, 'monospace']
     data.tags = tags.join(',')
@@ -32,6 +31,9 @@ export const processTypedInput = async (data) => {
       .join(',')
     data.tags = newTags
   }
+
+  // override description to the typedinput
+  data.description = data.typedinput
 
   return data
 }

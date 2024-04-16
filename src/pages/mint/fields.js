@@ -36,8 +36,15 @@ export const fields = [
     },
   },
   {
+    label: 'This is a text mint',
+    name: 'isTyped',
+    type: 'checkbox',
+    watch: true,
+  },
+  {
     label: 'Description',
     type: 'textarea',
+    enable_if: 'showArtifact',
     placeholder: 'Max 5000 characters (optional)',
     rules: {
       value: 5000,
@@ -136,13 +143,7 @@ export const fields = [
     type: 'checkbox',
   },
   {
-    label: 'This is a text mint',
-    name: 'isTyped',
-    type: 'checkbox',
-    watch: true,
-  },
-  {
-    label: 'Monospace',
+    label: 'Monospace Font Required',
     name: 'isMonoType',
     type: 'checkbox',
     enable_if: 'isTyped',
