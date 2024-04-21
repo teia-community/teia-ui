@@ -6,7 +6,7 @@ globalThis.process = Process
 // Polyfills for midi player
 // Check if the global process variable exists; if not, create it.
 if (typeof process === 'undefined') {
-  global.process = {}
+  globalThis.process = {}
 }
 
 // Check if hrtime is already defined; if not, define it.

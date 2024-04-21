@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@magenta/music": "^1.23.1",
     "@taquito/beacon-wallet": "^17.4.0",
     "@taquito/michelson-encoder": "^17.4.0",
     "@taquito/taquito": "^17.4.0",
