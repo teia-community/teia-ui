@@ -33,8 +33,7 @@
     "react-use": "^17.4.0",
     "react-use-clipboard": "^1.0.9",
     "screenfull": "^6.0.2",
-    "swr": "^1.3.0",
-    "ultimate-text-to-image": "^1.0.1"
+    "swr": "^1.3.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/assets/*.js'",

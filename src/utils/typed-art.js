@@ -1,4 +1,4 @@
-import { convertFileToFileForm, generateTypedArtImage } from './mint'
+import { convertFileToFileForm, generateTypedArtCoverImage } from './mint'
 
 export const processTypedInput = async (data) => {
   let blob = new Blob([data.typedinput], { type: 'text/plain;charset=utf-8' })
@@ -12,7 +12,10 @@ export const processTypedInput = async (data) => {
   data.artifact.reader = URL.createObjectURL(blob)
 
   // generate cover automatically
-  let coverFile = await generateTypedArtImage(data.typedinput, data.isMonoType)
+  let coverFile = await generateTypedArtCoverImage(
+    data.typedinput,
+    data.isMonoType
+  )
   data.cover = await convertFileToFileForm(coverFile)
 
   let tags = data.tags.toLowerCase().split(',')
