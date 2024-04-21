@@ -98,7 +98,7 @@ export function getVideoMetadata(blob) {
   })
 }
 
-async function blobToDataURL(blob) {
+export async function blobToDataURL(blob) {
   return new Promise((resolve, reject) => {
     let reader = new FileReader()
     reader.onerror = reject

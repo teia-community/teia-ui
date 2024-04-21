@@ -10,6 +10,89 @@
   }
 }
 
+.player_container {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+  width: 100%;
+  background: #f2f5f6;
+  border-radius: 2rem;
+  align-items: center;
+
+  midi-player::part(time) {
+    color: black !important;
+  }
+
+  midi-player::part(seek-bar),
+  .volume_slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 0.7rem !important;
+    width: 100%;
+    background: rgba(255, 255, 255, 10);
+    outline: none; /* Remove outline */
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+    border: 1px solid black;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  midi-player::part(seek-bar) {
+    height: 0.5rem !important;
+  }
+
+  /* Mouse-over effects */
+  midi-player::part(seek-bar):hover,
+  .slider:hover {
+    opacity: 1;
+  }
+
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) */
+  midi-player::part(seek-bar)::-webkit-slider-thumb,
+  .volume_slider::-webkit-slider-thumb {
+    background: var(--gray-15);
+    cursor: pointer !important;
+  }
+
+  midi-player::part(seek-bar)::-moz-range-thumb,
+  .volume_slider::-moz-range-thumb {
+    background: var(--gray-15);
+    cursor: pointer !important;
+  }
+}
+
+.volume_container {
+  width: 50%; /* Width of the outside container */
+  padding-right: 2rem;
+  display: flex;
+  column-gap: 0.4rem;
+  align-items: center;
+  height: 100%;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .player_container {
+    column-gap: 0;
+  }
+
+  .volume_container {
+    padding-right: 1.5rem;
+    width: 30%;
+  }
+
+  midi-player::part(control-panel) {
+    width: 100% !important;
+    margin: 0.2rem !important;
+  }
+}
+
 .container {
   img {
     max-height: calc($max-token-height - 20vh);
