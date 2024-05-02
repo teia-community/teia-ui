@@ -62,7 +62,6 @@ export const RenderMediaType = ({
   }, [nft])
 
   const parsedDisplayUri = useMemo(() => {
-
     if (previewDisplayUri) {
       return previewDisplayUri
     }
@@ -186,7 +185,7 @@ export const RenderMediaType = ({
             nft={nft}
           />
         )
-      
+
       /** ASCII TYPED ART */
       case MIMETYPE.TXT:
         return (

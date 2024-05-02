@@ -5,7 +5,7 @@ import {
 } from '@constants'
 import type { FileForm } from '@types'
 import Compressor from 'compressorjs'
-import { getMimeType } from './sanitise';
+import { getMimeType } from './sanitise'
 
 /**
  * Return the expected extension (as string without dot) from a given mimtetype
@@ -116,113 +116,125 @@ export const generateCoverAndThumbnail = async (
   }
 }
 
-export const generateTypedArtCoverImage = async(txt: string, monospace: boolean) => {
-    let f = "16px Source Sans Pro";
-    if (monospace === true) f = "16px IBM Plex Mono";
-    const createContext = function (width: number, height: number) {
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      return canvas.getContext("2d");
-    };
-    const c:any = createContext(512, 512);
-    c.filter = "grayscale(100%)";
-    if (txt.length >= 0) {
-      let dize = [];
-      const lines = txt.split("\n");
-      dize = lines;
-      c.font = f;
-      const x = 0;
-      const y = 16;
-      const lineheight = 16;
-      const result = dize.reduce((r, e) => (c.measureText(r).width < c.measureText(e).width ? e : r), "");
-      if (result.length > 130) {
-        c.canvas.width = 512;
-        c.canvas.height = 512;
-      } else {
-        c.canvas.width = c.measureText(result).width;
-        c.canvas.height = lineheight * dize.length + 12;
+export const generateTypedArtCoverImage = async (
+  txt: string,
+  monospace: boolean
+) => {
+  let f = '16px Source Sans Pro'
+  if (monospace === true) f = '16px IBM Plex Mono'
+  const createContext = function (width: number, height: number) {
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    return canvas.getContext('2d')
+  }
+  const c: any = createContext(512, 512)
+  c.filter = 'grayscale(100%)'
+  if (txt.length >= 0) {
+    let dize = []
+    const lines = txt.split('\n')
+    dize = lines
+    c.font = f
+    const x = 0
+    const y = 16
+    const lineheight = 16
+    const result = dize.reduce(
+      (r, e) => (c.measureText(r).width < c.measureText(e).width ? e : r),
+      ''
+    )
+    if (result.length > 130) {
+      c.canvas.width = 512
+      c.canvas.height = 512
+    } else {
+      c.canvas.width = c.measureText(result).width
+      c.canvas.height = lineheight * dize.length + 12
+    }
+    c.fillStyle = 'transparent'
+    c.fillRect(0, 0, c.canvas.width, c.canvas.height)
+    c.font = f
+    c.filter = 'grayscale(100%)'
+    c.fillStyle = 'white'
+    if (c.canvas.width === 512) {
+      const s = lines[0].substring(0, 20)
+      c.fillText(s + '...', 16, 256)
+    } else {
+      for (let i = 0; i < lines.length; i++) {
+        c.fillText(lines[i], x, y + i * lineheight)
       }
-      c.fillStyle = "transparent";
-      c.fillRect(0, 0, c.canvas.width, c.canvas.height);
-      c.font = f;
-      c.filter = "grayscale(100%)";
-      c.fillStyle = "white";
-      if (c.canvas.width === 512) {
-        const s = lines[0].substring(0, 20);
-        c.fillText(s + "...", 16, 256);
-      } else {
-        for (let i = 0; i < lines.length; i++) {
-          c.fillText(lines[i], x, y + i * lineheight);
+    }
+    const ca: any = createContext(512, 512)
+    ca.fillStyle = 'transparent'
+    ca.fillRect(0, 0, 512, 512)
+    const cerceve: any = createContext(512, 512)
+    const cImage = new Image()
+    const img = new Image()
+    return new Promise((resolve, reject) => {
+      img.src = c.canvas.toDataURL('svg')
+      //console.log(img.src);
+      img.onload = function () {
+        ca.imageSmoothingEnabled = true
+        ca.width = 512
+        ca.height = 512
+        const hRatio = ca.width / img.width
+        const vRatio = ca.height / img.height
+        const ratio = Math.min(hRatio, vRatio)
+        const centerShift_x = (ca.width - img.width * ratio) / 2
+        const centerShift_y = (ca.height - img.height * ratio) / 2
+        ca.drawImage(
+          img,
+          0,
+          0,
+          img.width,
+          img.height,
+          centerShift_x,
+          centerShift_y,
+          img.width * ratio,
+          img.height * ratio
+        )
+        const t = ca.canvas.toDataURL('svg')
+        cImage.src = t
+        cImage.onload = async function () {
+          cerceve.fillStyle = 'transparent'
+          cerceve.fillRect(0, 0, 512, 512)
+          cerceve.drawImage(cImage, 0, 0, 512, 512, 16, 16, 512 - 16, 512 - 16)
+          const ctx = cerceve.canvas.toDataURL('svg')
+
+          resolve(
+            await fetch(ctx)
+              .then((res) => res.blob())
+              .then(
+                (blob) =>
+                  new File([blob], 'Generated Cover.png', { type: 'image/png' })
+              )
+          )
         }
       }
-      const ca:any = createContext(512, 512);
-      ca.fillStyle = "transparent";
-      ca.fillRect(0, 0, 512, 512);
-      const cerceve:any = createContext(512, 512);
-      const cImage = new Image();
-      const img = new Image();
-      return new Promise((resolve, reject) => {
-        img.src = c.canvas.toDataURL("svg");
-        //console.log(img.src);
-        img.onload = function () {
-          ca.imageSmoothingEnabled = true;
-          ca.width = 512;
-          ca.height = 512;
-          const hRatio = ca.width / img.width;
-          const vRatio = ca.height / img.height;
-          const ratio = Math.min(hRatio, vRatio);
-          const centerShift_x = (ca.width - img.width * ratio) / 2;
-          const centerShift_y = (ca.height - img.height * ratio) / 2;
-          ca.drawImage(
-            img,
-            0,
-            0,
-            img.width,
-            img.height,
-            centerShift_x,
-            centerShift_y,
-            img.width * ratio,
-            img.height * ratio
-          );
-          const t = ca.canvas.toDataURL("svg");
-          cImage.src = t;
-          cImage.onload = async function () {
-            cerceve.fillStyle = "transparent";
-            cerceve.fillRect(0, 0, 512, 512);
-            cerceve.drawImage(cImage, 0, 0, 512, 512, 16, 16, 512 - 16, 512 - 16);
-            const ctx = cerceve.canvas.toDataURL("svg");
-            
-            resolve(await fetch(ctx)
-              .then(res => res.blob())
-              .then(blob => new File([blob], "Generated Cover.png",{ type: "image/png" })
-            ))
-          };
-        };
-      });
-    } else {
-      console.log("Unable to generate cover!");
-      return false;
-    }
+    })
+  } else {
+    console.log('Unable to generate cover!')
+    return false
   }
+}
 
-export const convertFileToFileForm = async(
+export const convertFileToFileForm = async (
   fileToConvert: File
 ): Promise<FileForm> => {
-  const mimeType = fileToConvert.type === '' ? await getMimeType(fileToConvert) : fileToConvert.type
+  const mimeType =
+    fileToConvert.type === ''
+      ? await getMimeType(fileToConvert)
+      : fileToConvert.type
   const buffer = Buffer.from(await fileToConvert.arrayBuffer())
-  const title = fileToConvert.name+".png";
+  const title = fileToConvert.name + '.png'
 
   // set reader for preview
   let reader: any = new FileReader()
   const blob = new Blob([buffer], { type: mimeType })
   reader = await blobToDataURL(blob)
 
-
   const format = {
     mimeType: mimeType,
-    fileName: title+'.png',
-    fileSize: fileToConvert.size
+    fileName: title + '.png',
+    fileSize: fileToConvert.size,
   }
 
   return {
@@ -231,6 +243,6 @@ export const convertFileToFileForm = async(
     file: fileToConvert,
     buffer,
     reader,
-    format
+    format,
   }
 }
