@@ -70,7 +70,7 @@ export const Preview = () => {
   ])
 
   const { ignoreUriMap } = useSettings()
-  let token_tags = tags
+  const token_tags = tags
     ? tags === ''
       ? []
       : tags.replace(/\s/g, '').split(',')

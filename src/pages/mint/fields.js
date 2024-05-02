@@ -167,7 +167,7 @@ export const fields = [
     watch: true,
     enable_if: 'isTyped',
     rules: {
-      required: 'There is no input.',
+      required: 'Typed art mints cannot be empty.',
     },
   },
   {
