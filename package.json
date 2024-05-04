@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@taquito/beacon-wallet": "^17.4.0",
-    "@taquito/michelson-encoder": "^17.4.0",
-    "@taquito/taquito": "^17.4.0",
+    "@taquito/beacon-wallet": "^19.2.0",
+    "@taquito/michelson-encoder": "^19.2.0",
+    "@taquito/taquito": "^19.2.0",
     "axios": "^0.27.2",
     "base-x": "^4.0.0",
     "bs58check": "^2.1.2",
@@ -68,7 +68,7 @@
     ]
   },
   "devDependencies": {
-    "@airgap/beacon-types": "^3.3.3",
+    "@airgap/beacon-types": "^4.2.1",
     "@babel/preset-react": "^7.18.6",
     "@google/model-viewer": "^3.0.1",
     "@hookform/devtools": "^4.3.0",
