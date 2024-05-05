@@ -23,7 +23,7 @@ const Example = () => (
 
 ## Padding
 
-A `<Padding />` component is reponsible to add paddings based on different media queries.
+A `<Padding />` component is responsible to add paddings based on different media queries.
 
 ```jsx
 const Example = () => (

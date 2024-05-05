@@ -176,7 +176,7 @@ export const useDaoStore = create<DaoState>()(
           if (!title || title.length < 10) {
             show(
               modalTitle,
-              'The proposal title must be at least 10 charactes long'
+              'The proposal title must be at least 10 characters long'
             )
             return
           }
