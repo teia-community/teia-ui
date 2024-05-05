@@ -177,9 +177,9 @@ export const generateTypedArtCoverImage = async (
 
 
   // Draw text on canvas
-  // If text is longer than 512px, then only display first 20 char with ellipsis
+  // If text is longer than 512px, then only display first 60 char with ellipsis
   if (width === 512) {
-    const truncatedText = lines[0].substring(0, 50) + '...';
+    const truncatedText = lines[0].substring(0, 60) + '...';
     c.fillText(truncatedText, 16, 256);
   } else {
     // Text does not exceed canvas width, so 
