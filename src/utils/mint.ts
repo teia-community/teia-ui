@@ -120,7 +120,8 @@ export const generateTypedArtCoverImage = async (
   txt: string,
   monospace: boolean
 ) => {
-  const font = monospace ? 'IBM Plex Mono' : 'Source Sans Pro'
+  
+  const font = monospace ? 'Iosevka' : 'Source Sans Pro'
   const cv_font = `16px ${font}`
   if (txt.length === 0) {
     return false
@@ -155,6 +156,7 @@ export const generateTypedArtCoverImage = async (
     c.canvas.height = lineheight * dize.length + 12
   }
   c.fillStyle = 'transparent'
+  c.font = cv_font
   c.fillRect(0, 0, c.canvas.width, c.canvas.height)
   c.filter = 'grayscale(100%)'
   c.fillStyle = 'white'

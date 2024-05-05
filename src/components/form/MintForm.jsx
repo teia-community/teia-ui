@@ -51,7 +51,7 @@ export default function MintForm() {
     let typedTextArea = document.querySelector("textarea[name='typedinput']")
 
     if (isMonoType && typedTextArea) {
-      typedTextArea.style.fontFamily = 'IBM Plex Mono, monospace'
+      typedTextArea.style.fontFamily = 'Iosevka, monospace'
     } else if (typedTextArea) {
       // default font to use for typed inputs
       typedTextArea.style.fontFamily = 'Source Sans Pro, sans-serif'

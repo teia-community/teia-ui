@@ -66,7 +66,7 @@ export const TXT = ({
           <pre
             style={{
               fontFamily: isMonoType
-                ? 'IBM Plex Mono, monospace'
+                ? 'Iosevka, monospace'
                 : 'Source Sans Pro, sans-serif',
             }}
           >
