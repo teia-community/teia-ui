@@ -4,7 +4,6 @@ import viteTsconfigPaths from 'vite-tsconfig-paths'
 import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
 import eslintPlugin from 'vite-plugin-eslint'
-import { splitVendorChunkPlugin } from 'vite'
 import { copySync } from 'fs-extra'
 import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 import mdPlugin from 'vite-plugin-markdown'
@@ -84,6 +83,21 @@ export default defineConfig(({ mode }) => {
     //prod_plugs.push(eslintPlugin())
   }
 
+  const processChunks = (id) => {
+    if(id.includes('taquito', 'stablelib', 'beacon')) {
+      return 'contracts'
+    }
+    if(id.includes('three')) {
+      return 'three'
+    }
+    if(id.includes('pdf')) {
+      return 'pdf'
+    }
+    if(id.includes('classnames', 'prop-types', 'react', 'react-router-dom', 'react-dom', 'framer-motion', 'zustand')) {
+      return 'ui'
+    }
+  }
+
   return {
     base: process.env.GH_BASE_URL || '/',
     clearScreen: prod,
@@ -95,7 +109,6 @@ export default defineConfig(({ mode }) => {
         include: '**/*.svg',
       }),
       react(),
-      splitVendorChunkPlugin(),
       viteTsconfigPaths(),
       // import svg as ReactComponent
       svgrPlugin(),
@@ -124,29 +137,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
         output: {
-          // manualChunks: processChunks,
-          manualChunks: {
-            three: ['three'],
-            contracts: [
-              '@taquito/beacon-wallet',
-              '@taquito/michelson-encoder',
-              '@stablelib/ed25519',
-              '@stablelib/nacl',
-              '@stablelib/x25519-session',
-              '@taquito/taquito',
-            ],
-            pdf: ['react-pdf', 'pdfjs-dist'],
-            ui: [
-              'classnames',
-              'prop-types',
-              'react',
-              'react-router-dom',
-              'react-dom',
-              'framer-motion',
-
-              'zustand',
-            ],
-          },
+          manualChunks: processChunks,
         },
       },
     },
