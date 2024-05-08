@@ -124,9 +124,9 @@ export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
-  name: 'teia.art',
-  appUrl: 'https://teia.art',
-  iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
+  name: window.location.hostname,
+  appUrl: window.location.origin,
+  iconUrl: window.location.origin + '/icons/android-chrome-512x512.png',
   preferredNetwork: NetworkType.MAINNET,
 })
 
