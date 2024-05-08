@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@airgap/beacon-sdk": "^4.2.1",
-    "@taquito/beacon-wallet": "^19.2.0",
+    "@airgap/beacon-sdk": "4.2.2-beta.3",
+    "@taquito/beacon-wallet": "19.2.1-beta.1",
     "@taquito/michelson-encoder": "^19.2.0",
     "@taquito/taquito": "^19.2.0",
     "axios": "^1.6.8",
