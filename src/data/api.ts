@@ -331,10 +331,18 @@ export const GetUserMetadata = async (walletAddr: string) => {
 /**
  * Get some data from the TzKT API
  */
-export async function getTzktData(query: string, parameters = {}, debug = false) {
-  const url = import.meta.env.VITE_TZKT_API + query
+export async function getTzktData(query: string | array, parameters = {}, debug = false) {
+  let url
+  let params
+  if(typeof query === 'string') {
+     url = import.meta.env.VITE_TZKT_API + query
+     params = parameters 
+  } else {
+     url = import.meta.env.VITE_TZKT_API + query[0]
+     params = query[1]
+  }
   const response = await axios
-    .get(url, { params: parameters })
+    .get(url, { params: params })
     .catch((error) =>
       console.log(`The following TzKT query returned an error: ${url}`, error)
     )

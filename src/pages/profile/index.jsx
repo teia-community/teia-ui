@@ -60,7 +60,7 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 export const useDisplayStore = create(
   subscribeWithSelector((get, set) => ({
     coreParticipants: undefined,
-  }))
+  })),
 )
 
 export default function Display() {
@@ -89,13 +89,13 @@ export default function Display() {
   // TODO (mel): properly remove all this once migrated to the filter panel.
   const [showFilters /*setShowFilters*/] = useState(false)
   const { data: user, error } = useSWR(
-    ['/user', address || subjkt],
-    (_, addressOrSubject) =>
+    address || subjkt,
+    (addressOrSubject) =>
       fetchUserInfo(addressOrSubject, address ? 'user_address' : 'name'),
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
-    }
+    },
   )
 
   const isRestrictedUser = useMemo(() => {

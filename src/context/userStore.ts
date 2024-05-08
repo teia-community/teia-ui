@@ -41,6 +41,7 @@ import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import type { Listing, NFT, SubjktInfo, Tx } from '@types'
+import { BeaconEvent } from '@airgap/beacon-dapp'
 
 // type OperationReturn = Promise<string | TransactionWalletOperation | undefined>
 type OperationReturn = Promise<string | undefined>
@@ -196,7 +197,14 @@ export const useUserStore = create<UserState>()(
             activeAccount?.network?.rpcUrl !== network.rpcUrl
           ) {
             await wallet.requestPermissions({ network })
-            activeAccount = await wallet.client.getActiveAccount()
+            await wallet.client.subscribeToEvent(
+              BeaconEvent.ACTIVE_ACCOUNT_SET,
+              async (account) => {
+                // An active account has been set, update the dApp UI
+                console.log(`${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `, account);
+                activeAccount = account
+              },
+            );
           }
           const current = await wallet.getPKH()
           if (current) {

@@ -11,6 +11,7 @@ import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import filterReplace from 'vite-plugin-filter-replace'
+import svgr from "vite-plugin-svgr";
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
@@ -80,15 +81,19 @@ export default defineConfig(({ mode }) => {
   let prod_plugs = []
 
   if (prod) {
-    prod_plugs.push(eslintPlugin())
+    //prod_plugs.push(eslintPlugin())
   }
 
   return {
     base: process.env.GH_BASE_URL || '/',
     clearScreen: prod,
-    appType: 'mpa',
+    appType: 'spa',
     plugins: [
       ...prod_plugs,
+      svgr({
+        svgrOptions: { exportType: 'named', ref: true, svgo: false, titleProp: true },
+        include: '**/*.svg',
+      }),
       filterReplace(
         [
           {
