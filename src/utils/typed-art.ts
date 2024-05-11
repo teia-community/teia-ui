@@ -1,7 +1,16 @@
+import { MintState } from '@context/mintStore'
 import { convertFileToFileForm, generateTypedArtCoverImage } from './mint'
 
-export const processTypedInput = async (data) => {
-  let blob = new Blob([data.typedinput], { type: 'text/plain;charset=utf-8' })
+export const processTypedInput = async (
+  data: MintState
+): Promise<MintState> => {
+  if (!data.typedinput) {
+    throw Error('No typedinput')
+  }
+
+  let blob = new Blob([data.typedinput], {
+    type: 'text/plain;charset=utf-8',
+  })
   let file = new File([blob], 'typed.txt', {
     type: 'text/plain',
     lastModified: Date.now(),
@@ -14,21 +23,26 @@ export const processTypedInput = async (data) => {
   // generate cover automatically
   let coverFile = await generateTypedArtCoverImage(
     data.typedinput,
-    data.isMonoType
+    data.isMonoType === true
   )
   data.cover = await convertFileToFileForm(coverFile)
 
-  let tags = data.tags.toLowerCase().split(',')
+  let tags: string[] = []
+  let lower_tags: string[] = []
 
+  if (data.tags) {
+    tags = data.tags.split(',')
+    lower_tags = tags.map((t) => t.toLowerCase())
+  }
   // add monospace to tags if not already available so that it can be rendered
   // with the right classes in OBJKT and on teia
-  if (data.isMonoType && !tags.includes('monospace')) {
+  if (data.isMonoType && !lower_tags.includes('monospace')) {
     tags = [...tags, 'monospace']
     data.tags = tags.join(',')
   }
   // ensure if it's not monospace type, remove any occurences of `monospace` in tags
   // otherwise it will not render correctly on objkt.
-  else if (!data.isMonoType && tags.includes('monospace')) {
+  else if (!data.isMonoType && lower_tags.includes('monospace')) {
     let newTags = tags
       .filter((tag) => tag.toLowerCase() !== 'monospace')
       .join(',')
