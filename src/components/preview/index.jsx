@@ -91,6 +91,7 @@ export const Preview = () => {
   }
   return (
     <motion.div
+      className={styles.container}
       style={{ width: '100%' }}
       initial={{ x: '20%' }}
       animate={{ x: 0 }}
