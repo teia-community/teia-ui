@@ -8,10 +8,10 @@ export const processTypedInput = async (
     throw Error('No typedinput')
   }
 
-  let blob = new Blob([data.typedinput], {
+  const blob = new Blob([data.typedinput], {
     type: 'text/plain;charset=utf-8',
   })
-  let file = new File([blob], 'typed.txt', {
+  const file = new File([blob], 'typed.txt', {
     type: 'text/plain',
     lastModified: Date.now(),
   })
@@ -21,7 +21,7 @@ export const processTypedInput = async (
   data.artifact.reader = URL.createObjectURL(blob)
 
   // generate cover automatically
-  let coverFile = await generateTypedArtCoverImage(
+  const coverFile = await generateTypedArtCoverImage(
     data.typedinput,
     data.isMonoType === true
   )
@@ -43,7 +43,7 @@ export const processTypedInput = async (
   // ensure if it's not monospace type, remove any occurences of `monospace` in tags
   // otherwise it will not render correctly on objkt.
   else if (!data.isMonoType && lower_tags.includes('monospace')) {
-    let newTags = tags
+    const newTags = tags
       .filter((tag) => tag.toLowerCase() !== 'monospace')
       .join(',')
     data.tags = newTags
