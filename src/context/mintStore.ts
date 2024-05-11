@@ -31,7 +31,7 @@ interface SelectField {
   value: string
 }
 
-interface MintState {
+export interface MintState {
   title?: string
   description?: string
   tags?: string

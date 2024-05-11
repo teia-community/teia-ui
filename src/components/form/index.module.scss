@@ -17,8 +17,15 @@
   font-family: 'Source Sans Pro', sans-serif;
   height: 20rem;
   resize: auto;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid var(--border-color) !important;
   padding: 0;
+}
+
+.typed_preview {
+  border: 1px solid var(--border-color);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .typed_field textarea.mono {

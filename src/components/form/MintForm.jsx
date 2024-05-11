@@ -4,12 +4,14 @@ import { CollabSwitch } from '@components/collab/CollabSwitch'
 import { useEffect, useMemo, useState } from 'react'
 
 import styles from '@pages/mint/index.module.scss'
+import local_styles from '@style'
 import { useNavigate, useOutletContext } from 'react-router'
 import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { useModalStore } from '@context/modalStore'
 import { processTypedInput } from '@utils/typed-art'
+import { generateTypedArtCoverImage } from '@utils/mint'
 
 export default function MintForm() {
   const {
@@ -19,6 +21,7 @@ export default function MintForm() {
     address,
     balance,
     isTyped,
+    typedinput,
     isMonoType,
   } = useOutletContext()
   const navigate = useNavigate()
@@ -26,6 +29,7 @@ export default function MintForm() {
   const { defaultValues } = useFormState({ control })
   const [needsCover, setNeedsCover] = useState(false)
   const [isTypedArt, setIsTypedArt] = useState(false)
+  const [preview, setPreview] = useState(null)
 
   // Dynamically update conditional fields
   const fields = useMemo(() => {
@@ -50,34 +54,49 @@ export default function MintForm() {
     /** Render correct fonts */
     let typedTextArea = document.querySelector("textarea[name='typedinput']")
 
-    if (isMonoType && typedTextArea) {
-      typedTextArea.style.fontFamily = 'Iosevka, monospace'
-    } else if (typedTextArea) {
-      // default font to use for typed inputs
-      typedTextArea.style.fontFamily = 'Source Sans Pro, sans-serif'
+    if (typedTextArea) {
+      typedTextArea.style.fontFamily = isMonoType
+        ? 'Iosevka, monospace'
+        : 'Source Sans Pro, sans-serif'
     }
   }, [artifact, isTyped, isMonoType, fields])
 
+  useEffect(() => {
+    if (isTypedArt) {
+      generateCoverImagePreview(typedinput)
+    } else {
+      setPreview(undefined)
+    }
+  }, [isTypedArt, typedinput, isMonoType])
+  const generateCoverImagePreview = async (inputText) => {
+    try {
+      const imageFile = await generateTypedArtCoverImage(inputText, isMonoType)
+      setPreview(imageFile)
+    } catch (error) {
+      console.error('Error generating cover image preview:', error.message)
+      setPreview(null)
+    }
+  }
+
   const onSubmit = async (data) => {
-    // other non-typed nft mints that involves file upload
-    if (!data.typedinput && data.artifact) {
-      if (data.artifact.file?.size && data.artifact.file?.size / 1e6 > 2000) {
-        useModalStore
-          .getState()
-          .show(`File too big: ${data.artifact.file.size / 1e6}mb`)
-        return
+    try {
+      // other non-typed nft mints that involves file upload
+      if (!data.typedinput && data.artifact) {
+        if (data.artifact.file?.size && data.artifact.file?.size / 1e6 > 2000) {
+          throw new Error(`File too big: ${data.artifact.file.size / 1e6}mb`)
+        }
+
+        const URL = window.URL || window.webkitURL
+        data.artifact.reader = URL.createObjectURL(data.artifact.file)
+      } else if (data.typedinput) {
+        data = await processTypedInput(data)
       }
-      const URL = window.URL || window.webkitURL
-      data.artifact.reader = URL.createObjectURL(data.artifact.file)
-    }
 
-    // typed input
-    else if (data.typedinput) {
-      data = await processTypedInput(data)
+      useMintStore.setState({ ...data, isValid: true })
+      navigate('preview')
+    } catch (error) {
+      useModalStore.getState().show(error.message)
     }
-
-    useMintStore.setState({ ...data, isValid: true })
-    navigate('preview')
   }
 
   return (
@@ -104,7 +123,15 @@ export default function MintForm() {
         onSubmit={onSubmit}
         onReset={useMintStore.getState().reset}
         fields={fields}
-      />
+      >
+        {preview && (
+          <img
+            className={local_styles.typed_preview}
+            src={URL.createObjectURL(preview)}
+            alt="Typed Art Preview"
+          />
+        )}
+      </Form>
     </motion.div>
   )
 }

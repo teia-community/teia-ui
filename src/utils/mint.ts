@@ -116,153 +116,139 @@ export const generateCoverAndThumbnail = async (
   }
 }
 
+/**
+ * Generates a cover image from the provided text.
+ * @param {string} text - The text content to be rendered on the cover image.
+ * @param {boolean} monospace - Indicates whether to use a monospace font.
+ * @returns {Promise<File>} A Promise resolving to the generated cover image file.
+ * @throws {Error} If the input text is empty.
+ */
 export const generateTypedArtCoverImage = async (
-  txt: string,
+  text: string,
   monospace: boolean
-) => {
-
-  const font = monospace ? 'Iosevka' : 'Source Sans Pro';
-  const cv_font = `16px ${font}`;
-
-  if (txt.length === 0) {
-    return false;
+): Promise<File> => {
+  if (!text || text.length === 0) {
+    throw new Error('Input text must not be empty')
   }
 
-  // Function to create a 2D canvas context with specified width and height
-  const createContext = (width: number, height: number) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Could not create canvas context');
-    return ctx;
-  };
+  const font = monospace ? 'Iosevka' : 'Source Sans Pro'
+  const font_size = 16
+  const cv_font = `${font_size}px ${font}`
 
-  // Function to calculate canvas size based on input 
-  const calculateCanvasSize = (ctx, textLines: string[]) => {
-    const lineheight = 16;
-    const longestLine = textLines.reduce(
-      (longest, current) =>
-        ctx.measureText(longest).width < ctx.measureText(current).width
-          ? current
-          : longest,
-      ''
-    );
+  const createCanvasContext = (
+    width: number,
+    height: number
+  ): CanvasRenderingContext2D => {
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not create canvas context')
+    return ctx
+  }
 
-    return longestLine.length > 130
-      ? { width: 512, height: 512 }
-      : { width: ctx.measureText(longestLine).width, height: lineheight * textLines.length + 12 };
-  };
+  const size = 1024
+  const textCtx = createCanvasContext(size, size)
 
-  // Create canvas context for drawing text
-  const c = createContext(512, 512);
-  c.filter = 'grayscale(100%)';
-  c.font = cv_font;
+  textCtx.font = cv_font
+  textCtx.filter = 'grayscale(100%)'
 
-  // Split text input into lines
-  const lines = txt.split('\n');
-  // Update canvas size based on text lines
-  const { width, height } = calculateCanvasSize(c, lines);
+  const lines = text.split('\n')
+  const longestLine = lines.reduce(
+    (longest, line) =>
+      textCtx.measureText(line).width > textCtx.measureText(longest).width
+        ? line
+        : longest,
+    ''
+  )
 
-  c.canvas.width = width;
-  c.canvas.height = height;
+  textCtx.canvas.width = Math.min(textCtx.measureText(longestLine).width, size)
+  textCtx.canvas.height = Math.min(font_size * lines.length + font_size, size)
 
-  // Fill canvas with transparent color
-  // And set text color to white
-  c.fillStyle = 'transparent';
-  c.fillRect(0, 0, c.canvas.width, c.canvas.height);
-  c.filter = 'grayscale(100%)';
-  c.fillStyle = 'white';
-  c.font = cv_font;
+  textCtx.fillStyle = 'transparent'
+  // textCtx.fillStyle = 'black'// for debugging
+  textCtx.fillRect(0, 0, textCtx.canvas.width, textCtx.canvas.height)
+  textCtx.filter = 'grayscale(100%)'
+  textCtx.fillStyle = 'white'
 
+  //NOTE: yes this is required twice... not sure why
+  textCtx.font = cv_font
 
-  // Draw text on canvas
-  // If text is longer than 512px, then only display first 60 char with ellipsis
-  if (width === 512) {
-    const truncatedText = lines[0].substring(0, 60) + '...';
-    c.fillText(truncatedText, 16, 256);
+  if (textCtx.canvas.width === size) {
+    const truncatedFirstLine = lines[0].substring(0, 20)
+    textCtx.fillText(truncatedFirstLine + '...', 0, font_size)
   } else {
-    // Text does not exceed canvas width, so 
-    // Draw the text within the canvas
-    lines.forEach((line, i) => {
-      const x = 0;
-      const y = 16 + i * 16;
-      c.fillText(line, x, y);
-    });
+    const x = 0
+    const y = font_size
+    const lineHeight = font_size
+
+    lines.forEach((line, index) =>
+      textCtx.fillText(line, x, y + index * lineHeight)
+    )
   }
 
-  // Create auxillary canvas to perform image scaling of the text canvas
-  const ca = createContext(512, 512);
-  ca.fillStyle = 'transparent';
-  ca.fillRect(0, 0, 512, 512);
-  ca.font = cv_font
+  const scaledCtx = createCanvasContext(size, size)
+  scaledCtx.fillStyle = 'transparent'
+  scaledCtx.fillRect(0, 0, size, size)
 
-  const cerceve = createContext(512, 512);
-  const cImage = new Image();
-  const img = new Image();
+  const finalCtx = createCanvasContext(size, size)
+  const coverImage = new Image()
+  const textImage = new Image()
 
-  // Return a Promise that resolves to a File object
-  return new Promise<File>((resolve, reject) => {
-
-    // convert text canvas to image
-    img.src = c.canvas.toDataURL('svg');
-
-    img.onload = function () {
-      // Configure smoothing for the auxillary canvas
-      ca.imageSmoothingEnabled = true;
-      ca.width = 512;
-      ca.height = 512;
-
-      // Calculate scaling ratio for the text image
-      const hRatio = ca.width / img.width;
-      const vRatio = ca.height / img.height;
-      const ratio = Math.min(hRatio, vRatio);
-
-      // Calculate centering offset when scaled image
-      // is placed in auxillary canvas
-      const centerShift_x = (ca.width - img.width * ratio) / 2;
-      const centerShift_y = (ca.height - img.height * ratio) / 2;
-
-      // Draw the scaled image on the auxillary canvas
-      ca.drawImage(
-        img,
+  return new Promise((resolve, reject) => {
+    textImage.src = textCtx.canvas.toDataURL('svg')
+    textImage.onload = () => {
+      scaledCtx.imageSmoothingEnabled = true
+      scaledCtx.canvas.width = size
+      scaledCtx.canvas.height = size
+      const hRatio = scaledCtx.canvas.width / textImage.width
+      const vRatio = scaledCtx.canvas.height / textImage.height
+      const ratio = Math.min(hRatio, vRatio)
+      const centerShift_x =
+        (scaledCtx.canvas.width - textImage.width * ratio) / 2
+      const centerShift_y =
+        (scaledCtx.canvas.height - textImage.height * ratio) / 2
+      scaledCtx.drawImage(
+        textImage,
         0,
         0,
-        img.width,
-        img.height,
+        textImage.width,
+        textImage.height,
         centerShift_x,
         centerShift_y,
-        img.width * ratio,
-        img.height * ratio
-      );
-
-      // Convert auxillary canvas (with text image now) to data URL
-      const t = ca.canvas.toDataURL('svg');
-      cImage.src = t;
-
-      cImage.onload = async function () {
-       
-        // Clear the frame canvas
-        cerceve.fillStyle = 'transparent';
-        cerceve.fillRect(0, 0, 512, 512);
-
-        // Draw the scaled image on the frame canvas with proper padding
-        cerceve.drawImage(cImage, 0, 0, 512, 512, 16, 16, 512 - 32, 512 - 32);
-
-        // Convert frame canvas to data URL
-        const ctx = cerceve.canvas.toDataURL('svg');
-
-        // Fetch the data URL as a blob
-        const res = await fetch(ctx);
-        const blob = await res.blob();
-        const file = new File([blob], 'Generated Cover.png', { type: 'image/png' });
-
-        resolve(file);
-      };
-    };
-  });
-};
-
+        textImage.width * ratio,
+        textImage.height * ratio
+      )
+      const scaledImage = scaledCtx.canvas.toDataURL('svg')
+      coverImage.src = scaledImage
+      coverImage.onload = async () => {
+        finalCtx.fillStyle = 'transparent'
+        finalCtx.fillRect(0, 0, size, size)
+        finalCtx.drawImage(
+          coverImage,
+          0,
+          0,
+          size,
+          size,
+          font_size,
+          font_size,
+          size - font_size,
+          size - font_size
+        )
+        finalCtx.canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error('Failed to generate image'))
+            return
+          }
+          const file = new File([blob], 'Generated Cover.png', {
+            type: 'image/png',
+          })
+          resolve(file)
+        }, 'image/png')
+      }
+    }
+  })
+}
 
 export const convertFileToFileForm = async (
   fileToConvert: File
