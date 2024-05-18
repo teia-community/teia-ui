@@ -191,25 +191,24 @@ export const useUserStore = create<UserState>()(
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
-          let activeAccount
+          let current
           await wallet.client.subscribeToEvent(
             BeaconEvent.ACTIVE_ACCOUNT_SET,
             async (account) => {
               // An active account has been set, update the dApp UI
               console.log(`${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `, account);
-              activeAccount = account
+              if(account) {
+                current = account.address
+                const info = await getUser(current)
+                console.log('getting user info', info)
+                set({
+                  address: current,
+                  userInfo: await getUser(current),
+                })
+              }
             },
           );
           await wallet.requestPermissions({ network })
-          const current = await wallet.getPKH()
-          if (current) {
-            const info = await getUser(current)
-            console.log('getting user info', info)
-            set({
-              address: current,
-              userInfo: await getUser(current),
-            })
-          }
 
           // console.log(this.state)
           return current
