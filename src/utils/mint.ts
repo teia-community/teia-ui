@@ -171,7 +171,7 @@ export const generateTypedArtCoverImage = async (
   const maxWidth = size - margin * 2
   const maxHeight = size - margin * 2
 
-  let longestLine = lines.reduce(
+  const longestLine = lines.reduce(
     (longest, line) =>
       finalCtx.measureText(line).width > finalCtx.measureText(longest).width
         ? line
