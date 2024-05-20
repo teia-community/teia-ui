@@ -125,16 +125,14 @@ export const generateCoverAndThumbnail = async (
  */
 export const generateTypedArtCoverImage = async (
   text: string,
-  monospace: boolean
+  monospace: boolean,
+  size: number,
+  horizontalAlign: boolean
 ): Promise<File> => {
-  if (!text || text.length === 0) {
+  if (!text || text.trim().length === 0) {
     throw new Error('Input text must not be empty')
   }
-
-  const font = monospace ? 'Iosevka' : 'Source Sans Pro'
-  const font_size = 16
-  const cv_font = `${font_size}px ${font}`
-
+  size = size || 1024
   const createCanvasContext = (
     width: number,
     height: number
@@ -147,106 +145,102 @@ export const generateTypedArtCoverImage = async (
     return ctx
   }
 
-  const size = 1024
-  const textCtx = createCanvasContext(size, size)
+  const font = monospace ? 'Iosevka' : 'Source Sans Pro'
+  const fontRatio = 0.75
+  const minFontSize = 16
+  let fontSize = Math.max(minFontSize, size * fontRatio)
 
-  textCtx.font = cv_font
-  textCtx.filter = 'grayscale(100%)'
+  const cv_font = `${fontSize}px ${font}`
 
-  const lines = text.split('\n')
-  const longestLine = lines.reduce(
+  const finalCtx = createCanvasContext(size, size)
+  finalCtx.font = cv_font
+  finalCtx.filter = 'grayscale(100%)'
+  finalCtx.fillStyle = 'transparent'
+  finalCtx.fillRect(0, 0, size, size)
+  finalCtx.fillStyle = 'white'
+
+  let lines = text.split('\n').filter((line, index, array) => {
+    return (
+      line.trim() !== '' ||
+      index === array.length - 1 ||
+      array[index + 1].trim() !== ''
+    )
+  })
+
+  const margin = 50
+  const maxWidth = size - margin * 2
+  const maxHeight = size - margin * 2
+
+  let longestLine = lines.reduce(
     (longest, line) =>
-      textCtx.measureText(line).width > textCtx.measureText(longest).width
+      finalCtx.measureText(line).width > finalCtx.measureText(longest).width
         ? line
         : longest,
     ''
   )
 
-  textCtx.canvas.width = Math.min(textCtx.measureText(longestLine).width, size)
-  textCtx.canvas.height = Math.min(font_size * lines.length + font_size, size)
+  let lineHeight =
+    finalCtx.measureText(')').actualBoundingBoxAscent +
+    finalCtx.measureText(')').actualBoundingBoxDescent +
+    5
+  let lineWidth = finalCtx.measureText(longestLine).width
 
-  textCtx.fillStyle = 'transparent'
-  // textCtx.fillStyle = 'black'// for debugging
-  textCtx.fillRect(0, 0, textCtx.canvas.width, textCtx.canvas.height)
-  textCtx.filter = 'grayscale(100%)'
-  textCtx.fillStyle = 'white'
+  while (lines.length * lineHeight > maxHeight || lineWidth > maxWidth) {
+    fontSize -= 1
+    finalCtx.font = `${fontSize}px ${font}`
 
-  //NOTE: yes this is required twice... not sure why
-  textCtx.font = cv_font
+    if (fontSize <= minFontSize) {
+      break
+    }
 
-  if (textCtx.canvas.width === size) {
-    const truncatedFirstLine = lines[0].substring(0, 20)
-    textCtx.fillText(truncatedFirstLine + '...', 0, font_size)
-  } else {
-    const x = 0
-    const y = font_size
-    const lineHeight = font_size
-
-    lines.forEach((line, index) =>
-      textCtx.fillText(line, x, y + index * lineHeight)
-    )
+    lineWidth = finalCtx.measureText(longestLine).width
+    lineHeight =
+      finalCtx.measureText(')').actualBoundingBoxAscent +
+      finalCtx.measureText(')').actualBoundingBoxDescent +
+      5
   }
 
-  const scaledCtx = createCanvasContext(size, size)
-  scaledCtx.fillStyle = 'transparent'
-  scaledCtx.fillRect(0, 0, size, size)
+  if (lineWidth > maxWidth) {
+    lines = [
+      text.split('\n')[0].substring(0, Math.floor(maxWidth / fontSize) - 3) +
+        '...',
+    ]
+  }
+  lineHeight =
+    finalCtx.measureText(')').actualBoundingBoxAscent +
+    finalCtx.measureText(')').actualBoundingBoxDescent +
+    5
 
-  const finalCtx = createCanvasContext(size, size)
-  const coverImage = new Image()
-  const textImage = new Image()
+  const totalTextHeight = lines.length * lineHeight
+  const baselineOffset = (size - totalTextHeight) / 2
+
+  finalCtx.imageSmoothingEnabled = true
+  finalCtx.imageSmoothingQuality = 'high'
+
+  lines.forEach((line, index) => {
+    let xPosition = margin
+    if (horizontalAlign) {
+      const textWidth = finalCtx.measureText(line).width
+      xPosition = (size - textWidth) / 2
+    }
+    finalCtx.fillText(
+      line,
+      xPosition,
+      baselineOffset + (index + 1) * lineHeight
+    )
+  })
 
   return new Promise((resolve, reject) => {
-    textImage.src = textCtx.canvas.toDataURL('svg')
-    textImage.onload = () => {
-      scaledCtx.imageSmoothingEnabled = true
-      scaledCtx.canvas.width = size
-      scaledCtx.canvas.height = size
-      const hRatio = scaledCtx.canvas.width / textImage.width
-      const vRatio = scaledCtx.canvas.height / textImage.height
-      const ratio = Math.min(hRatio, vRatio)
-      const centerShift_x =
-        (scaledCtx.canvas.width - textImage.width * ratio) / 2
-      const centerShift_y =
-        (scaledCtx.canvas.height - textImage.height * ratio) / 2
-      scaledCtx.drawImage(
-        textImage,
-        0,
-        0,
-        textImage.width,
-        textImage.height,
-        centerShift_x,
-        centerShift_y,
-        textImage.width * ratio,
-        textImage.height * ratio
-      )
-      const scaledImage = scaledCtx.canvas.toDataURL('svg')
-      coverImage.src = scaledImage
-      coverImage.onload = async () => {
-        finalCtx.fillStyle = 'transparent'
-        finalCtx.fillRect(0, 0, size, size)
-        finalCtx.drawImage(
-          coverImage,
-          0,
-          0,
-          size,
-          size,
-          font_size,
-          font_size,
-          size - font_size,
-          size - font_size
-        )
-        finalCtx.canvas.toBlob((blob) => {
-          if (!blob) {
-            reject(new Error('Failed to generate image'))
-            return
-          }
-          const file = new File([blob], 'Generated Cover.png', {
-            type: 'image/png',
-          })
-          resolve(file)
-        }, 'image/png')
+    finalCtx.canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error('Failed to generate image'))
+        return
       }
-    }
+      const file = new File([blob], 'Generated Cover.png', {
+        type: 'image/png',
+      })
+      resolve(file)
+    }, 'image/png')
   })
 }
 
