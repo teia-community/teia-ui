@@ -41,6 +41,7 @@ import { useModalStore } from './modalStore'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import type { Listing, NFT, SubjktInfo, Tx } from '@types'
+import { BeaconEvent } from '@airgap/beacon-dapp'
 
 // type OperationReturn = Promise<string | TransactionWalletOperation | undefined>
 type OperationReturn = Promise<string | undefined>
@@ -123,9 +124,9 @@ export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
-  name: 'teia.art',
-  appUrl: 'https://teia.art',
-  iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
+  name: window.location.hostname,
+  appUrl: window.location.origin,
+  iconUrl: window.location.origin + '/icons/android-chrome-512x512.png',
   preferredNetwork: NetworkType.MAINNET,
 })
 
@@ -190,23 +191,24 @@ export const useUserStore = create<UserState>()(
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
-          let activeAccount = await wallet.client.getActiveAccount()
-          if (
-            activeAccount === undefined ||
-            activeAccount?.network?.rpcUrl !== network.rpcUrl
-          ) {
-            await wallet.requestPermissions({ network })
-            activeAccount = await wallet.client.getActiveAccount()
-          }
-          const current = await wallet.getPKH()
-          if (current) {
-            const info = await getUser(current)
-            console.log('getting user info', info)
-            set({
-              address: current,
-              userInfo: await getUser(current),
-            })
-          }
+          let current
+          await wallet.client.subscribeToEvent(
+            BeaconEvent.ACTIVE_ACCOUNT_SET,
+            async (account) => {
+              // An active account has been set, update the dApp UI
+              console.log(`${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `, account);
+              if(account) {
+                current = account.address
+                const info = await getUser(current)
+                console.log('getting user info', info)
+                set({
+                  address: current,
+                  userInfo: await getUser(current),
+                })
+              }
+            },
+          );
+          await wallet.requestPermissions({ network })
 
           // console.log(this.state)
           return current

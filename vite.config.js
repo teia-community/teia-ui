@@ -4,13 +4,13 @@ import viteTsconfigPaths from 'vite-tsconfig-paths'
 import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
 import eslintPlugin from 'vite-plugin-eslint'
-import { splitVendorChunkPlugin } from 'vite'
 import { copySync } from 'fs-extra'
 import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import filterReplace from 'vite-plugin-filter-replace'
+import svgr from "vite-plugin-svgr";
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
@@ -80,43 +80,35 @@ export default defineConfig(({ mode }) => {
   let prod_plugs = []
 
   if (prod) {
-    prod_plugs.push(eslintPlugin())
+    //prod_plugs.push(eslintPlugin())
+  }
+
+  const processChunks = (id) => {
+    if(id.includes('taquito', 'stablelib', 'beacon')) {
+      return 'contracts'
+    }
+    if(id.includes('three')) {
+      return 'three'
+    }
+    if(id.includes('pdf')) {
+      return 'pdf'
+    }
+    if(id.includes('classnames', 'prop-types', 'react', 'react-router-dom', 'react-dom', 'framer-motion', 'zustand')) {
+      return 'ui'
+    }
   }
 
   return {
     base: process.env.GH_BASE_URL || '/',
     clearScreen: prod,
-    appType: 'mpa',
+    appType: 'spa',
     plugins: [
       ...prod_plugs,
-      filterReplace(
-        [
-          {
-            filter: 'node_modules/@airgap/beacon-ui/dist/esm/utils/qr.js',
-            replace: {
-              from: "import * as qrcode from 'qrcode-generator';",
-              to: "import qrcode from 'qrcode-generator';",
-            },
-          },
-          {
-            filter: [
-              'node_modules/@airgap/beacon-dapp/dist/walletbeacon.dapp.min.js',
-              'node_modules/@airgap/beacon-ui/dist/cjs/ui/alert/alert-templates.js',
-              'node_modules/@airgap/beacon-ui/dist/esm/ui/alert/alert-templates.js',
-            ],
-            replace: {
-              from: /\\n@media\s*\(min-height:\s*700px\).*translateY\(-50%\);\\n\s*\}\\n\}/g,
-              to: '',
-            },
-          },
-        ],
-        {
-          apply: 'build',
-          enforce: 'post',
-        }
-      ),
+      svgr({
+        svgrOptions: { exportType: 'named', ref: true, svgo: false, titleProp: true },
+        include: '**/*.svg',
+      }),
       react(),
-      splitVendorChunkPlugin(),
       viteTsconfigPaths(),
       // import svg as ReactComponent
       svgrPlugin(),
@@ -145,29 +137,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
         output: {
-          // manualChunks: processChunks,
-          manualChunks: {
-            three: ['three'],
-            contracts: [
-              '@taquito/beacon-wallet',
-              '@taquito/michelson-encoder',
-              '@stablelib/ed25519',
-              '@stablelib/nacl',
-              '@stablelib/x25519-session',
-              '@taquito/taquito',
-            ],
-            pdf: ['react-pdf', 'pdfjs-dist'],
-            ui: [
-              'classnames',
-              'prop-types',
-              'react',
-              'react-router-dom',
-              'react-dom',
-              'framer-motion',
-
-              'zustand',
-            ],
-          },
+          manualChunks: processChunks,
         },
       },
     },
