@@ -31,6 +31,8 @@ interface SelectField {
   value: string
 }
 
+type OperationReturn = Promise<string | undefined>
+
 interface MintState {
   title?: string
   description?: string
@@ -48,6 +50,12 @@ interface MintState {
   isValid: boolean
 
   reset: () => void
+  mint: (
+    tz: string,
+    amount: number,
+    cid: string,
+    royalties: number
+  ) => OperationReturn
 }
 
 const defaultValuesStored = {
@@ -67,7 +75,7 @@ const defaultValues = {
   artifact: undefined,
   cover: undefined,
   thumbnail: undefined,
-  getValuesStored: () => {},
+  getValuesStored: () => { },
 }
 
 export const useMintStore = create<MintState>()(
@@ -160,8 +168,8 @@ export const useMintStore = create<MintState>()(
           // Metadata accessibility
           const accessibility = photosensitive
             ? {
-                hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
-              }
+              hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
+            }
             : null
 
           const contentRating = nsfw ? METADATA_CONTENT_RATING_MATURE : null
@@ -219,11 +227,10 @@ export const useMintStore = create<MintState>()(
               used_cover.format = {
                 mimeType: used_cover.mimeType,
                 fileSize: used_cover.buffer.byteLength,
-                fileName: `${removeExtension(artifact.file.name)}.${
-                  coverIsGif
-                    ? 'gif'
-                    : extensionFromMimetype(used_cover.mimeType)
-                }`,
+                fileName: `${removeExtension(artifact.file.name)}.${coverIsGif
+                  ? 'gif'
+                  : extensionFromMimetype(used_cover.mimeType)
+                  }`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
                   unit: 'px',
@@ -304,6 +311,7 @@ export const useMintStore = create<MintState>()(
             royalties as number
           )
           console.debug('success', success)
+
           if (success) {
             reset()
           }
