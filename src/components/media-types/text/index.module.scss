@@ -80,6 +80,8 @@
       margin: 0 auto;
       max-height: 60vh;
       overflow: scroll;
+      overflow-x: auto;
+      white-space: pre-wrap;
     }
   }
 }
