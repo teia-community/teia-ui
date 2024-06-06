@@ -86,6 +86,16 @@ export function MarkdownFeed() {
   )
 }
 
+export function TextFeed() {
+  return (
+    <MimeTypeFeed
+      label="Text OBJKTs"
+      namespace="txt-feed"
+      mimeTypes={['text/plain']}
+    />
+  )
+}
+
 export function ImageFeed() {
   return (
     <MimeTypeFeed

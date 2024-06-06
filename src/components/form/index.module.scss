@@ -6,6 +6,29 @@
 .error {
   color: red;
 }
-.field {
+
+.field,
+.typed_field {
   margin: 1em 0;
+}
+
+.typed_field textarea {
+  margin-top: 0.5em;
+  font-family: 'Source Sans Pro', sans-serif;
+  height: 20rem;
+  resize: auto;
+  border: 1px solid var(--border-color) !important;
+  padding: 0;
+}
+
+.typed_preview {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.typed_field textarea.mono {
+  font-family: 'Iosevka', monospace !important;
 }

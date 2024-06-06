@@ -1,5 +1,5 @@
 // @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap');
 
 @font-face {
   font-family: 'Iosevka';
@@ -42,4 +42,17 @@
   font-stretch: expanded;
   font-style: normal;
   src: url('fonts/iosevka-extendedbold.woff2') format('woff2');
+}
+
+/* 
+  These fonts are needed to give the user the most 
+  accurate visual of their typed art in the textarea input 
+  to ensure that it displays as intended on secondary marketplaces like OBJKT 
+*/
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('fonts/sourcesanspro-regular.otf') format('opentype');
 }

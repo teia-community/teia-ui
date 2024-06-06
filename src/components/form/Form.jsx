@@ -29,6 +29,7 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
           />
         )
       })}
+      {children}
       <Button
         onClick={
           () => {

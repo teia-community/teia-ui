@@ -36,6 +36,7 @@ import {
   TagFeed,
   PdfFeed,
   MarkdownFeed,
+  TextFeed,
   QuakeFeed,
   MoroccoQuakeFeed,
   Tez4PalFeed,
@@ -110,6 +111,7 @@ const router = createBrowserRouter(
         <Route path="html-svg" element={<HtmlSvgFeed />} />
         <Route path="pdf" element={<PdfFeed />} />
         <Route path="md" element={<MarkdownFeed />} />
+        <Route path="txt" element={<TextFeed />} />
 
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />

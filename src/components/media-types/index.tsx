@@ -13,6 +13,7 @@ import { Container } from './container'
 import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
+import { TXT } from './text'
 
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
@@ -181,6 +182,18 @@ export const RenderMediaType = ({
             displayUri={parsedDisplayUri}
             displayView={displayView}
             previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      /** ASCII TYPED ART */
+      case MIMETYPE.TXT:
+        return (
+          <TXT
+            artifactUri={parsedArtifactUri}
+            displayUri={previewUri}
+            displayView={displayView}
+            previewUri={parsedDisplayUri}
             nft={nft}
           />
         )

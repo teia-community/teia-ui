@@ -47,11 +47,14 @@ export const MIMETYPE: { [key: string]: string } = {
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
+  TXT: 'text/plain',
 }
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  .filter((e) => e !== MIMETYPE.GLTF) // disabling GLTF from new updates
+  // disabling GLTF from new updates,
+  // disabling TXT upload since they will be done via the textarea input
+  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT)
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
@@ -67,6 +70,7 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
         'XWAV',
         'QUICKTIME',
         'WEBP',
+        'TXT',
       ].includes(e[0])
   )
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
@@ -170,22 +174,22 @@ export const TOKENS = [
     fa2: 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV',
     multiasset: false,
     decimals: DAO_TOKEN_DECIMALS,
-    website: undefined
+    website: undefined,
   },
   {
     name: 'OBJKT',
     fa2: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
     multiasset: true,
     decimals: 1,
-    website: 'https://teia.art/objkt/'
+    website: 'https://teia.art/objkt/',
   },
   {
     name: 'hDAO',
     fa2: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
     multiasset: false,
     decimals: 1000000,
-    website: undefined
-  }
+    website: undefined,
+  },
 ]
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
@@ -409,7 +413,8 @@ export const ossProjects = [
   {
     name: 'Tez4Pal Fundraiser',
     address: 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW',
-  },  {
+  },
+  {
     name: 'TezQuakeAid Morocco Fundraiser',
     address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
   },

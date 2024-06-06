@@ -31,7 +31,7 @@ interface SelectField {
   value: string
 }
 
-interface MintState {
+export interface MintState {
   title?: string
   description?: string
   tags?: string
@@ -42,6 +42,9 @@ interface MintState {
   language?: SelectField
   nsfw: boolean
   photosensitive: boolean
+  isTyped: boolean
+  typedinput?: string /** for typed **/
+  isMonoType?: boolean
   cover?: FileForm
   artifact?: FileForm
   thumbnail?: FileForm
@@ -104,6 +107,7 @@ export const useMintStore = create<MintState>()(
             cover,
             photosensitive,
             nsfw,
+            isMonoType,
             reset,
           } = get()
           const show = useModalStore.getState().show

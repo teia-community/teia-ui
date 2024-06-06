@@ -63,6 +63,7 @@ function _M.findProfileDetails(search)
     profile['description'] = _M.clean(data['metadata']['data']['description'])
     profile['image'] = _M.clean(data['metadata']['data']['identicon'])
     profile['type'] = 'profile'
+    profile['mime_type'] = ''
     return profile
 end
 
@@ -116,16 +117,16 @@ function _M.injectOpenGraphTags(body, info)
     end
 
     local openGraphTags = '' ..
-        '<meta name="description" content="' .. info['description'] .. '" />' ..
+        '<meta name="description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
         '<meta property="og:type" content="website" />' ..
         '<meta property="og:title" content="' .. info['name'] .. '" />' ..
-        '<meta property="og:description" content="' .. info['description'] .. '" />' ..
+        '<meta property="og:description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
         '<meta property="og:image" content="' .. info['image'] .. '" />' ..
         '<meta property="og:url" content="' .. url .. ngx.var.request_uri .. '" />' ..
         '<meta name="twitter:card" content="summary_large_image" />' ..
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
         '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
-        '<meta name="twitter:description" content="' .. info['description'] .. '" />' ..
+        '<meta name="twitter:description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
         '<meta name="twitter:image" content="' .. info['image'] .. '" />' ..
         '<meta property="fc:frame" content="vNext"/>' ..
         '<meta property="fc:frame:image" content="' .. image .. '"/>' ..

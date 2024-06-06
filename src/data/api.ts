@@ -47,6 +47,11 @@ fragment baseTokenFields on tokens {
     is_signed
     preview_uri
   }
+
+  tags {
+    tag
+  }
+  
   token_id
 }
 `
@@ -331,7 +336,11 @@ export const GetUserMetadata = async (walletAddr: string) => {
 /**
  * Get some data from the TzKT API
  */
-export async function getTzktData(query: string, parameters = {}, debug = false) {
+export async function getTzktData(
+  query: string,
+  parameters = {},
+  debug = false
+) {
   const url = import.meta.env.VITE_TZKT_API + query
   const response = await axios
     .get(url, { params: parameters })
