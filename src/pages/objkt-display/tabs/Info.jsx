@@ -7,6 +7,8 @@ import { HEN_CONTRACT_FA2, LANGUAGES, LICENSE_TYPES } from '@constants'
 import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
+import { useLocalSettings } from '@context/localSettingsStore'
+import { shallow } from 'zustand/shallow'
 
 const Attribute = ({ label, value }) => {
   return (
@@ -21,15 +23,22 @@ const Attribute = ({ label, value }) => {
  */
 export const Info = () => {
   const { nft, viewer_address } = useObjktDisplayContext()
+  const [ipfsGateway] = useLocalSettings(
+    (state) => [state.getIpfsGateway()],
+    shallow
+  )
+
   const artifact_ipfs_url =
-    HashToURL(nft.artifact_uri) +
+    HashToURL(nft.artifact_uri, ipfsGateway) +
     `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
       nft.token_id
     }`
+
+  const metadata_ipfs_url = HashToURL(nft.metadata_uri, ipfsGateway)
   const artifact_anaverse_url = viewer_address
     ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
     : `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&partnerPlatform=teia.art`
-  const metadata_ipfs_url = HashToURL(nft.metadata_uri)
+
   return (
     <>
       <Container>
