@@ -261,6 +261,7 @@ export const generateMidiCover = async (
   return new Promise((resolve, reject) => {
 
     const size = 1024;
+    const padding = 30;
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
@@ -281,30 +282,39 @@ export const generateMidiCover = async (
     ctx.lineWidth = 5;
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
+    // Adjust the drawing area for notes to be inside the padding
+    const drawingWidth = canvas.width - 2 * padding;
+    const drawingHeight = canvas.height - 2 * padding;
+    const noteYScale = drawingHeight / 128; // assuming MIDI notes range from 0 to 127
+
     // Add track name at the top, centered
     ctx.font = '40px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText(trackName, canvas.width / 2, 80);
-    ctx.fillText("(MIDI)", canvas.width/2, 130)
+    ctx.fillText(trackName, canvas.width / 2, padding + 40);
+    ctx.fillText("(MIDI)", canvas.width / 2, padding + 90); 
   
     tracks.forEach((track: TrackJSON, index: number) => {
       const notes = track.notes;
-      let totalNoteDuration = notes.reduce((accumulator: number, note: any) => {
-        return accumulator + note.duration;
-      }, 0);
+      const totalDuration = notes.reduce((acc: number, note: NoteJSON) => Math.max(acc, note.time + note.duration), 0);
+
 
       // get different opacity of white based on track
       const alpha = 0.5 + ((index / tracks.length) * 0.5);
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
 
       notes.forEach((note: NoteJSON) => {
-        const x = (note.time * (canvas.width)/totalNoteDuration);
-        const y = (canvas.height) - (note.midi * 5); // Scale MIDI note for better visibility
-        const width = ((canvas.width)/totalNoteDuration) * note.duration;
+        const x = padding + (note.time * drawingWidth / totalDuration);
+        const y = canvas.height - padding - (note.midi * noteYScale); // Scale MIDI note for better visibility
+        const width = (note.duration * drawingWidth / totalDuration);
         const height = 5;
 
-        ctx.fillRect(x, y, width, height);
+        // Ensure the width does not exceed the drawing area
+        if (x + width > canvas.width - padding) {
+          ctx.fillRect(x, y, canvas.width - padding - x, height);
+        } else {
+          ctx.fillRect(x, y, width, height);
+        }
       });
     })
 
