@@ -309,12 +309,7 @@ export const generateMidiCover = async (
         const width = (note.duration * drawingWidth / totalDuration);
         const height = 5;
 
-        // Ensure the width does not exceed the drawing area
-        if (x + width > canvas.width - padding) {
-          ctx.fillRect(x, y, canvas.width - padding - x, height);
-        } else {
-          ctx.fillRect(x, y, width, height);
-        }
+        ctx.fillRect(x, y, width, height);
       });
     })
 
