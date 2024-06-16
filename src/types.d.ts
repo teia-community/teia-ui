@@ -181,6 +181,9 @@ export type NFTBase = {
   /** the token id */
   token_id: string
 
+  /** Tags - we need this mostly to understand type of typed art (mono?) */
+  tags: string[]
+
   signatures?: Signature[]
 }
 

@@ -52,6 +52,7 @@ export const Preview = () => {
     photosensitiveSeizureWarning,
     nsfw,
     editions,
+    isMonoType,
   ] = useMintStore((st) => [
     st.tags,
     st.title,
@@ -65,6 +66,7 @@ export const Preview = () => {
     st.photosensitive,
     st.nsfw,
     st.editions,
+    st.isMonoType,
   ])
 
   const { ignoreUriMap } = useSettings()
@@ -89,6 +91,7 @@ export const Preview = () => {
   }
   return (
     <motion.div
+      className={styles.container}
       style={{ width: '100%' }}
       initial={{ x: '20%' }}
       animate={{ x: 0 }}
@@ -99,7 +102,7 @@ export const Preview = () => {
       <div className={styles.media}>
         <RenderMediaType
           displayView
-          nft={{ mime_type: artifact.mimeType }}
+          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
           previewUri={artifact.reader}
           previewDisplayUri={cover?.reader}
         />

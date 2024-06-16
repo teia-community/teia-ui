@@ -5,6 +5,7 @@ import {
 } from '@constants'
 import type { FileForm } from '@types'
 import Compressor from 'compressorjs'
+import { getMimeType } from './sanitise'
 
 /**
  * Return the expected extension (as string without dot) from a given mimtetype
@@ -112,5 +113,164 @@ export const generateCoverAndThumbnail = async (
   return {
     cover,
     thumbnail: thumb,
+  }
+}
+
+/**
+ * Generates a cover image from the provided text.
+ * @param {string} text - The text content to be rendered on the cover image.
+ * @param {boolean} monospace - Indicates whether to use a monospace font.
+ * @returns {Promise<File>} A Promise resolving to the generated cover image file.
+ * @throws {Error} If the input text is empty.
+ */
+export const generateTypedArtCoverImage = async (
+  text: string,
+  monospace: boolean,
+  size: number,
+  horizontalAlign: boolean
+): Promise<File> => {
+  if (!text || text.trim().length === 0) {
+    throw new Error('Input text must not be empty')
+  }
+  size = size || 1024
+  const createCanvasContext = (
+    width: number,
+    height: number
+  ): CanvasRenderingContext2D => {
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not create canvas context')
+    return ctx
+  }
+
+  const font = monospace ? 'Iosevka' : 'Source Sans Pro'
+  const fontRatio = 0.75
+  const minFontSize = 16
+  let fontSize = Math.max(minFontSize, size * fontRatio)
+
+  const cv_font = `${fontSize}px ${font}`
+
+  const finalCtx = createCanvasContext(size, size)
+  finalCtx.font = cv_font
+  finalCtx.filter = 'grayscale(100%)'
+  finalCtx.fillStyle = 'transparent'
+  finalCtx.fillRect(0, 0, size, size)
+  finalCtx.fillStyle = 'white'
+
+  let lines = text.split('\n').filter((line, index, array) => {
+    return (
+      line.trim() !== '' ||
+      index === array.length - 1 ||
+      array[index + 1].trim() !== ''
+    )
+  })
+
+  const margin = 50
+  const maxWidth = size - margin * 2
+  const maxHeight = size - margin * 2
+
+  const longestLine = lines.reduce(
+    (longest, line) =>
+      finalCtx.measureText(line).width > finalCtx.measureText(longest).width
+        ? line
+        : longest,
+    ''
+  )
+
+  let lineHeight =
+    finalCtx.measureText(')').actualBoundingBoxAscent +
+    finalCtx.measureText(')').actualBoundingBoxDescent +
+    5
+  let lineWidth = finalCtx.measureText(longestLine).width
+
+  while (lines.length * lineHeight > maxHeight || lineWidth > maxWidth) {
+    fontSize -= 1
+    finalCtx.font = `${fontSize}px ${font}`
+
+    if (fontSize <= minFontSize) {
+      break
+    }
+
+    lineWidth = finalCtx.measureText(longestLine).width
+    lineHeight =
+      finalCtx.measureText(')').actualBoundingBoxAscent +
+      finalCtx.measureText(')').actualBoundingBoxDescent +
+      5
+  }
+
+  if (lineWidth > maxWidth) {
+    lines = [
+      text.split('\n')[0].substring(0, Math.floor(maxWidth / fontSize) - 3) +
+        '...',
+    ]
+  }
+  lineHeight =
+    finalCtx.measureText(')').actualBoundingBoxAscent +
+    finalCtx.measureText(')').actualBoundingBoxDescent +
+    5
+
+  const totalTextHeight = lines.length * lineHeight
+  const baselineOffset = (size - totalTextHeight) / 2
+
+  finalCtx.imageSmoothingEnabled = true
+  finalCtx.imageSmoothingQuality = 'high'
+
+  lines.forEach((line, index) => {
+    let xPosition = margin
+    if (horizontalAlign) {
+      const textWidth = finalCtx.measureText(line).width
+      xPosition = (size - textWidth) / 2
+    }
+    finalCtx.fillText(
+      line,
+      xPosition,
+      baselineOffset + (index + 1) * lineHeight
+    )
+  })
+
+  return new Promise((resolve, reject) => {
+    finalCtx.canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error('Failed to generate image'))
+        return
+      }
+      const file = new File([blob], 'Generated Cover.png', {
+        type: 'image/png',
+      })
+      resolve(file)
+    }, 'image/png')
+  })
+}
+
+export const convertFileToFileForm = async (
+  fileToConvert: File
+): Promise<FileForm> => {
+  const mimeType =
+    fileToConvert.type === ''
+      ? await getMimeType(fileToConvert)
+      : fileToConvert.type
+  const buffer = Buffer.from(await fileToConvert.arrayBuffer())
+  const title = fileToConvert.name + '.png'
+
+  // set reader for preview
+  let reader: any = new FileReader()
+  const blob = new Blob([buffer], { type: mimeType })
+  reader = await blobToDataURL(blob)
+
+  const format = {
+    mimeType: mimeType,
+    fileName: title + '.png',
+    fileSize: fileToConvert.size,
+  }
+
+  return {
+    title,
+    mimeType,
+    file: fileToConvert,
+    buffer,
+    reader,
+    format,
   }
 }

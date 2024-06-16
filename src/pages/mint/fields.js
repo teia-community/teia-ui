@@ -18,6 +18,7 @@ export const defaultValues = {
   language: '',
   nsfw: false,
   photosensitive: false,
+  isTyped: false,
   artifact: null,
   cover: null,
 }
@@ -35,8 +36,15 @@ export const fields = [
     },
   },
   {
+    label: 'This is a text mint',
+    name: 'isTyped',
+    type: 'checkbox',
+    watch: true,
+  },
+  {
     label: 'Description',
     type: 'textarea',
+    enable_if: 'showArtifact',
     placeholder: 'Max 5000 characters (optional)',
     rules: {
       value: 5000,
@@ -135,13 +143,31 @@ export const fields = [
     type: 'checkbox',
   },
   {
+    label: 'Monospace Font Required',
+    name: 'isMonoType',
+    type: 'checkbox',
+    enable_if: 'isTyped',
+    watch: true,
+  },
+  {
     label: 'Artifact',
     placeHolder: 'Upload OBJKT',
     name: 'artifact',
     type: 'file',
     watch: true,
+    enable_if: 'showArtifact',
     rules: {
       required: 'You did not select a valid file',
+    },
+  },
+  {
+    label: 'Typed Art Input',
+    name: 'typedinput',
+    type: 'typed-textarea',
+    watch: true,
+    enable_if: 'isTyped',
+    rules: {
+      required: 'Typed art mints cannot be empty.',
     },
   },
   {

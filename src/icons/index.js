@@ -91,6 +91,7 @@ import { ReactComponent as txchidu_01 } from './svgs/rotating_logos/txchi-du_01.
 import { ReactComponent as viscous_01 } from './svgs/rotating_logos/viscous_01.svg'
 import { ReactComponent as wans_02 } from './svgs/rotating_logos/wans_02.svg'
 import { ReactComponent as zootghost_01 } from './svgs/rotating_logos/zootghost_01.svg'
+import { ReactComponent as HanneMaes_01 } from './svgs/rotating_logos/HanneMaes_01.svg'
 
 export const RotatingLogoSVG = [
   // - Working fine
@@ -184,6 +185,7 @@ export const RotatingLogoSVG = [
   viscous_01,
   wans_02,
   zootghost_01,
+  HanneMaes_01,
 ]
 
 // SVGs Prepared for ref (instancing icons from one source)

@@ -14,6 +14,7 @@ import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
 import { MidiComponent }  from './midi'
+import { TXT } from './text'
 
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
@@ -198,6 +199,19 @@ export const RenderMediaType = ({
             nft={nft}
           />
         )
+
+      /** ASCII TYPED ART */
+      case MIMETYPE.TXT:
+        return (
+          <TXT
+            artifactUri={parsedArtifactUri}
+            displayUri={previewUri}
+            displayView={displayView}
+            previewUri={parsedDisplayUri}
+            nft={nft}
+          />
+        )
+
       default:
         return <UnknownComponent mimeType={nft.mime_type} />
     }
