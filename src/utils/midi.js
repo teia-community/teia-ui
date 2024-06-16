@@ -1,20 +1,8 @@
 import { Midi } from '@tonejs/midi'
+import { convertFileToFileForm, generateMidiCover } from './mint'
 
 async function processMidiData(sourceUrl, volume) {
-  let response
-  let arrayBuffer
-
   try {
-    // check if we are reading on the feed / preview component
-    if (!sourceUrl.includes('blob:')) {
-      // Fetch and parse the MIDI file
-      response = await fetch(sourceUrl)
-      arrayBuffer = await response.arrayBuffer()
-    } else {
-      // blob, user is on preview component ready to mint
-      arrayBuffer = await new Response(sourceUrl).arrayBuffer()
-    }
-
     const midi = await new Midi.fromUrl(sourceUrl)
 
     const scaleFactor = parseInt(volume) / 100
@@ -38,6 +26,14 @@ async function processMidiData(sourceUrl, volume) {
     console.error('Failed to modify MIDI data:', error)
     throw error // Rethrow to allow caller to handle it
   }
+}
+
+export const processMidiCover = async (data) => {
+  const midiDataFile = new Midi(data.artifact.buffer)
+  let cover = await generateMidiCover(data.title, midiDataFile)
+  data.cover = await convertFileToFileForm(cover)
+
+  return data
 }
 
 export default processMidiData

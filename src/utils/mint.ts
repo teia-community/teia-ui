@@ -6,6 +6,9 @@ import {
 import type { FileForm } from '@types'
 import Compressor from 'compressorjs'
 import { getMimeType } from './sanitise'
+import { truncate } from 'lodash'
+import { MidiJSON, TrackJSON } from '@tonejs/midi'
+import { NoteJSON } from '@tonejs/midi/dist/Note'
 
 /**
  * Return the expected extension (as string without dot) from a given mimtetype
@@ -242,6 +245,81 @@ export const generateTypedArtCoverImage = async (
       resolve(file)
     }, 'image/png')
   })
+}
+
+/**
+ * Generates a cover image from the provided Midi JSON object.
+ * @param {string} trackTitle - The title of the track to be populated in the cover file. If not provided, default to first track title.
+ * @param {MIDIJson} midi - The midi JSON file, parsed in using new Midi(arrayBuffer)
+ * @returns {Promise<File>} A Promise resolving to the generated cover image file.
+ * @throws {Error} If the input text is empty.
+*/
+export const generateMidiCover = async (
+  trackTitle: string,
+  midi: MidiJSON
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+
+    const size = 1024;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      reject(new Error('Could not create canvas context'));
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // retrieve tracks and track name to create midi image
+    const tracks = midi.tracks;
+    const trackName = truncate((trackTitle || midi?.tracks?.[0].name || 'Midi Track'), { length: 50 })
+
+    // Add white border
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 5;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+    // Add track name at the top, centered
+    ctx.font = '40px Arial';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.fillText(trackName, canvas.width / 2, 80);
+    ctx.fillText("(MIDI)", canvas.width/2, 130)
+  
+    tracks.forEach((track: TrackJSON, index: number) => {
+      const notes = track.notes;
+      let totalNoteDuration = notes.reduce((accumulator: number, note: any) => {
+        return accumulator + note.duration;
+      }, 0);
+
+      // get different opacity of white based on track
+      const alpha = 0.5 + ((index / tracks.length) * 0.5);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+
+      notes.forEach((note: NoteJSON) => {
+        const x = (note.time * (canvas.width)/totalNoteDuration);
+        const y = (canvas.height) - (note.midi * 5); // Scale MIDI note for better visibility
+        const width = ((canvas.width)/totalNoteDuration) * note.duration;
+        const height = 5;
+
+        ctx.fillRect(x, y, width, height);
+      });
+    })
+
+    canvas.toBlob((blob) => {
+      if (!blob) {
+          reject(new Error('Failed to generate image'));
+          return;
+      }
+
+      const file = new File([blob], 'Generated_MIDI_Cover.png', {
+          type: 'image/png',
+      });
+      resolve(file);
+    }, 'image/png');
+  });
 }
 
 export const convertFileToFileForm = async (

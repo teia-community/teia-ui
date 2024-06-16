@@ -112,6 +112,12 @@ export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.MP4,
 ]
 
+export const AUTO_GENERATE_COVER_MIMETYPES = [
+  'text/plain',
+  'audio/midi',
+  'audio/mid'
+]
+
 export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif, mp4'
 export const MAX_EDITIONS = 10000 // Limited by contract
 export const MIN_ROYALTIES = 10
