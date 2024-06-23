@@ -47,6 +47,7 @@ const locationMap = new Map([
   ['/feed/pdf', 'PDF'],
   ['/feed/md', 'Markdown'],
   ['/feed/txt', 'Text'],
+  ['/feed/midi', 'Midi'],
 ])
 
 const locationNeedSync = ['/feed/friends']

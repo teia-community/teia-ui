@@ -31,6 +31,8 @@ export const MIMETYPE: { [key: string]: string } = {
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
+  MIDI: 'audio/midi',
+  MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
   OGA: 'audio/ogg',
@@ -108,6 +110,12 @@ export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.PNG,
   MIMETYPE.GIF,
   MIMETYPE.MP4,
+]
+
+export const AUTO_GENERATE_COVER_MIMETYPES = [
+  'text/plain',
+  'audio/midi',
+  'audio/mid'
 ]
 
 export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif, mp4'

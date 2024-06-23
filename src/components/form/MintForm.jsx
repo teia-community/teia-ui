@@ -11,7 +11,14 @@ import { useMintStore } from '@context/mintStore'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { useModalStore } from '@context/modalStore'
 import { processTypedInput } from '@utils/typed-art'
-import { generateTypedArtCoverImage } from '@utils/mint'
+import {
+  convertFileToFileForm,
+  generateMidiCover,
+  generateTypedArtCoverImage,
+} from '@utils/mint'
+import { AUTO_GENERATE_COVER_MIMETYPES } from '@constants'
+import { Midi } from '@tonejs/midi'
+import { processMidiCover } from '@utils/midi'
 
 export default function MintForm() {
   const {
@@ -45,7 +52,7 @@ export default function MintForm() {
     if (artifact)
       setNeedsCover(
         !artifact?.mimeType?.startsWith('image') &&
-          artifact?.mimeType !== 'text/plain'
+          !AUTO_GENERATE_COVER_MIMETYPES.includes(artifact?.mimeType)
       )
 
     /** Typed  */
@@ -68,6 +75,7 @@ export default function MintForm() {
       setPreview(undefined)
     }
   }, [isTypedArt, typedinput, isMonoType])
+
   const generateCoverImagePreview = async (inputText) => {
     try {
       const imageFile = await generateTypedArtCoverImage(inputText, isMonoType)
@@ -81,7 +89,10 @@ export default function MintForm() {
   const onSubmit = async (data) => {
     try {
       // other non-typed nft mints that involves file upload
-      if (!data.typedinput && data.artifact) {
+      if (
+        !AUTO_GENERATE_COVER_MIMETYPES.includes(data.artifact?.mimeType) &&
+        data.artifact
+      ) {
         if (data.artifact.file?.size && data.artifact.file?.size / 1e6 > 2000) {
           throw new Error(`File too big: ${data.artifact.file.size / 1e6}mb`)
         }
@@ -90,6 +101,12 @@ export default function MintForm() {
         data.artifact.reader = URL.createObjectURL(data.artifact.file)
       } else if (data.typedinput) {
         data = await processTypedInput(data)
+      } else if (
+        data.artifact.mimeType == 'audio/midi' ||
+        data.artifact.mimeType == 'audio/mid'
+      ) {
+        // generate midi cover and set as data.object
+        data = await processMidiCover(data)
       }
 
       useMintStore.setState({ ...data, isValid: true })
