@@ -7,6 +7,7 @@ import { PATH } from '@constants'
 import { blobToDataURL, getMidiUrlData } from '@utils/media'
 import styles from '@style'
 import processMidiData from '@utils/midi'
+import { MIDIPlayer } from '@magenta/music'
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
@@ -21,6 +22,7 @@ export const MidiComponent = ({
   const [midiUrl, setMidiUrl] = useState(previewUri ? previewUri : artifactUri)
   const [currentVolume, setCurrentVolume] = useState(100)
   const [play, setPlay] = useState(false)
+  const [disableVolumeControl, setDisableVolumeControl] = useState(false)
   const audioPlayer = useRef()
 
   const togglePlay = () => {
@@ -51,9 +53,20 @@ export const MidiComponent = ({
   }, [previewUri, artifactUri, currentVolume])
 
   const updateVolume = useCallback((e) => {
-    //audioPlayer.current.stop();
     setCurrentVolume(e.target.value)
   }, [])
+
+  useEffect(() => {
+    if (audioPlayer.current) {
+      audioPlayer.current.addEventListener('start', () => {
+        setDisableVolumeControl(true)
+      })
+
+      audioPlayer.current.addEventListener('stop', () => {
+        setDisableVolumeControl(false)
+      })
+    }
+  }, [audioPlayer.current])
 
   return displayView ? (
     <div className={styles.container}>
@@ -87,6 +100,7 @@ export const MidiComponent = ({
 
           <input
             onInput={updateVolume}
+            disabled={disableVolumeControl}
             type="range"
             min="1"
             max="100"
