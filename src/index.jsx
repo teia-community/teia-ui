@@ -72,6 +72,7 @@ import { IconCache } from '@utils/with-icon'
 import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
+import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
 
 const display_routes = (
   <>
@@ -112,6 +113,7 @@ const router = createBrowserRouter(
         <Route path="pdf" element={<PdfFeed />} />
         <Route path="md" element={<MarkdownFeed />} />
         <Route path="txt" element={<TextFeed />} />
+        <Route path="midi" element={<MidiFeed />} />
 
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />

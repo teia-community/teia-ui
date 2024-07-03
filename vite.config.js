@@ -72,6 +72,8 @@ const teiaAliases = {
   '@style': './index.module.scss',
   '@utils': path.resolve(__dirname, 'src', 'utils'),
   '@types': path.resolve(__dirname, 'src', 'types.d.ts'),
+  '../core/compat/globalThis': 'node_modules/@magenta/music/esm/core/compat/global.js',
+  './evaluate-audio-worklet-globalThis-scope-function': 'node_modules/standardized-audio-context/build/es2019/types/evaluate-audio-worklet-global-scope-function.js'
 }
 
 export default defineConfig(({ mode }) => {
