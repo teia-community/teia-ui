@@ -10,6 +10,7 @@ import {
 } from '@constants'
 import { Controller } from 'react-hook-form'
 import classNames from 'classnames'
+import CustomCopyrightForm from './CustomCopyrightForm'
 
 const FieldError = memo(({ error, text }) => {
   const classes = classNames({
@@ -152,6 +153,9 @@ export const FormFields = ({ value, field, error, register, control }) => {
           )}
         />
       )
+
+    case 'customCopyrightForm':
+      return <CustomCopyrightForm />
 
     default:
       return (

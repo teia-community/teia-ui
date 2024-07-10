@@ -111,17 +111,7 @@ export const fields = [
     label: 'Custom license URI',
     name: 'custom_license_uri',
     enable_if: 'useCustomLicense',
-    placeholder: 'The URI to the custom license',
-    type: 'text',
-    rules: {
-      required: true,
-      valueAs: (f) => f.value,
-      pattern: {
-        value:
-          /((https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})|(ipfs:\/\/.*))/g,
-        message: 'Invalid url (supports http, https or ipfs)',
-      },
-    },
+    type: 'customCopyrightForm',
   },
   {
     label: 'Language',
