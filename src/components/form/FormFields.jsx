@@ -155,7 +155,17 @@ export const FormFields = ({ value, field, error, register, control }) => {
       )
 
     case 'customCopyrightForm':
-      return <CustomCopyrightForm />
+      return (
+        <Controller
+          control={control}
+          name="customLicenseData"
+          defaultValue={field.defaultValue}
+          rules={field.rules}
+          render={({ field: { onChange, value } }) => (
+            <CustomCopyrightForm onChange={onChange} value={value} />
+          )}
+        />
+      )
 
     default:
       return (

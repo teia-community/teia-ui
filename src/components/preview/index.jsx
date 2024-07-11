@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
+import { ClausesDescriptions } from '@components/form/CustomCopyrightForm'
 function isHTML(mimeType) {
   return (
     mimeType === MIMETYPE.ZIP ||
@@ -46,7 +47,7 @@ export const Preview = () => {
     artifact,
     cover,
     license,
-    custom_license_uri,
+    customLicenseData,
     royalties,
     language,
     photosensitiveSeizureWarning,
@@ -60,7 +61,7 @@ export const Preview = () => {
     st.artifact,
     st.cover,
     st.license,
-    st.custom_license_uri,
+    st.customLicenseData,
     st.royalties,
     st.language,
     st.photosensitive,
@@ -68,6 +69,8 @@ export const Preview = () => {
     st.editions,
     st.isMonoType,
   ])
+
+  console.log('customLicenseData in Preview', customLicenseData)
 
   const { ignoreUriMap } = useSettings()
   const token_tags = tags
@@ -89,6 +92,7 @@ export const Preview = () => {
       </motion.div>
     )
   }
+
   return (
     <motion.div
       className={styles.container}
@@ -114,7 +118,15 @@ export const Preview = () => {
         </div>
         <Field title="Description" value={description} />
         <Field title="License" value={license?.label} />
-        <Field title="License URI" value={custom_license_uri} />
+        {customLicenseData?.clauses && license?.label === 'Custom License' && (
+          <div>
+            <ClausesDescriptions clauses={customLicenseData?.clauses} />
+            <Field
+              title="Copyright License Agreement"
+              value={customLicenseData?.documentText}
+            />
+          </div>
+        )}
         <Field title="Language" value={language?.label} />
 
         {(photosensitiveSeizureWarning || nsfw) && (

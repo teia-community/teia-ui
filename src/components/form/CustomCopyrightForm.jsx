@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Checkbox } from '@atoms/input'
 import ReactSelect from 'react-select'
 import styles from '@style'
 import { style as select_style, theme } from '../../atoms/select/styles'
 import { useOutletContext } from 'react-router'
+import { useMintStore } from '@context/mintStore'
 
 const initialClauses = {
   reproduce: false,
@@ -32,24 +33,65 @@ const exclusiveRightsOptions = [
   },
 ]
 
+export const ClausesDescriptions = ({ clauses }) => {
+  const descriptions = {
+    reproduce: {
+      true: 'Right to Reproduction: ✅',
+      false: 'Right to Reproduction: 🚫',
+    },
+    broadcast: {
+      true: 'Right to Broadcast: ✅',
+      false: 'Right to Broadcast: 🚫',
+    },
+    publicDisplay: {
+      true: 'Right to Public Display: ✅',
+      false: 'Right to Public Display: 🚫',
+    },
+    createDerivativeWorks: {
+      true: 'Right to Create Derivative Works: ✅',
+      false: 'Right to Create Derivative Works: 🚫',
+    },
+    releasePublicDomain: {
+      true: 'Released to Public Domain: ✅',
+      false: 'Released to Public Domain: 🚫',
+    },
+  }
+
+  return (
+    <div>
+      <strong>Copyright Permissions Granted on Ownership:</strong>
+      <ul>
+        {Object.entries(clauses).map(([key, value]) => {
+          if (key === 'exclusiveRights') {
+            return (
+              <li key={key}>
+                Exclusive Rights:{' '}
+                {value !== 'none'
+                  ? `Ownership share based on ${value}`
+                  : 'None'}
+              </li>
+            )
+          }
+          return <li key={key}>{descriptions[key][value]}</li>
+        })}
+      </ul>
+      <br />
+    </div>
+  )
+}
+
 function CustomCopyrightForm() {
   const { license, minterName, address } = useOutletContext()
   const [clauses, setClauses] = useState(initialClauses)
   const [generatedDocument, setGeneratedDocument] = useState('')
 
+  const updateCustomLicenseData = useMintStore(
+    (state) => state.updateCustomLicenseData
+  )
+
   let clauseNumber = 1
 
-  useEffect(() => {
-    // if none of the rights are selected, exclusive rights is set to "none"
-    const hasActiveRights =
-      clauses.reproduce ||
-      clauses.broadcast ||
-      clauses.publicDisplay ||
-      clauses.createDerivativeWorks
-    if (!hasActiveRights || clauses.releasePublicDomain) {
-      setClauses((prev) => ({ ...prev, exclusiveRights: 'none' }))
-    }
-
+  const generateDocumentText = useCallback(() => {
     let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
     let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address"). This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
@@ -120,16 +162,18 @@ Each individual claiming ownership ("Claimant") must conclusively prove that the
 
     documentText += `\n\n${clauseNumber++}. Limitation of Platform Responsibility:
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
-    setGeneratedDocument(documentText)
+
+    return documentText
   }, [address, clauseNumber, clauses, minterName])
 
-  const handleChange = (value, name) => {
+  const handleChange = useCallback((value, name) => {
     const newValue = Object.prototype.hasOwnProperty.call(value, 'value')
       ? value.value
       : value
 
     // If 'Release to Public Domain' is checked, disable and reset other clauses
     if (name === 'releasePublicDomain' && newValue === true) {
+      console.log('resetting bc public domain')
       setClauses({
         reproduce: false,
         broadcast: false,
@@ -139,6 +183,7 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
         releasePublicDomain: true,
       })
     } else {
+      console.log('setting clauses in else CCForm')
       setClauses((prev) => ({
         ...prev,
         [name]: newValue,
@@ -147,12 +192,32 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
           : null),
       }))
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    const hasActiveRights =
+      clauses.reproduce ||
+      clauses.broadcast ||
+      clauses.publicDisplay ||
+      clauses.createDerivativeWorks
+    const documentText = generateDocumentText()
+
+    setGeneratedDocument(documentText)
+    updateCustomLicenseData({ clauses: clauses, documentText })
+  }, [
+    clauses?.reproduce,
+    clauses?.broadcast,
+    clauses?.publicDisplay,
+    clauses?.createDerivativeWorks,
+    clauses?.exclusiveRights,
+    clauses?.releasePublicDomain,
+    handleChange,
+  ])
 
   return (
     <div>
       <h4>Custom License Generation Form</h4>
-      <form>
+      <div>
         {Object.keys(clauses)
           .filter((name) => name !== 'exclusiveRights')
           .map((clauseName) => (
@@ -192,7 +257,7 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
             classNamePrefix="react_select"
           />
         </div>
-      </form>
+      </div>
       <div
         style={{
           maxWidth: '100%',
