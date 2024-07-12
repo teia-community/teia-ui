@@ -36,24 +36,24 @@ const exclusiveRightsOptions = [
 export const ClausesDescriptions = ({ clauses }) => {
   const descriptions = {
     reproduce: {
-      true: 'Right to Reproduction: ✅',
-      false: 'Right to Reproduction: 🚫',
+      true: '✅',
+      false: '🚫',
     },
     broadcast: {
-      true: 'Right to Broadcast: ✅',
-      false: 'Right to Broadcast: 🚫',
+      true: '✅',
+      false: '🚫',
     },
     publicDisplay: {
-      true: 'Right to Public Display: ✅',
-      false: 'Right to Public Display: 🚫',
+      true: '✅',
+      false: '🚫',
     },
     createDerivativeWorks: {
-      true: 'Right to Create Derivative Works: ✅',
-      false: 'Right to Create Derivative Works: 🚫',
+      true: '✅',
+      false: '🚫',
     },
     releasePublicDomain: {
-      true: 'Released to Public Domain: ✅',
-      false: 'Released to Public Domain: 🚫',
+      true: '✅',
+      false: '🚫',
     },
   }
 
@@ -62,17 +62,19 @@ export const ClausesDescriptions = ({ clauses }) => {
       <strong>Copyright Permissions Granted on Ownership:</strong>
       <ul>
         {Object.entries(clauses).map(([key, value]) => {
+          // Handle exclusive rights separately to display using the options label
           if (key === 'exclusiveRights') {
-            return (
-              <li key={key}>
-                Exclusive Rights:{' '}
-                {value !== 'none'
-                  ? `Ownership share based on ${value}`
-                  : 'None'}
-              </li>
-            )
+            const exclusiveLabel =
+              exclusiveRightsOptions.find((option) => option.value === value)
+                ?.label || 'None'
+            return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
           }
-          return <li key={key}>{descriptions[key][value]}</li>
+          // For other rights, use the descriptions dictionary
+          return (
+            <li key={key}>
+              {clauseLabels[key]}: {descriptions[key][value]}
+            </li>
+          )
         })}
       </ul>
       <br />
@@ -80,10 +82,13 @@ export const ClausesDescriptions = ({ clauses }) => {
   )
 }
 
-function CustomCopyrightForm() {
+function CustomCopyrightForm({ onChange, value }) {
   const { license, minterName, address } = useOutletContext()
   const [clauses, setClauses] = useState(initialClauses)
-  const [generatedDocument, setGeneratedDocument] = useState('')
+  const [documentText, setDocumentText] = useState('No Permissions Chosen')
+  const [generatedDocument, setGeneratedDocument] = useState(
+    'No Permissions Chosen'
+  )
 
   const updateCustomLicenseData = useMintStore(
     (state) => state.updateCustomLicenseData
@@ -166,6 +171,7 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     return documentText
   }, [address, clauseNumber, clauses, minterName])
 
+  // logic for checkboxes
   const handleChange = useCallback((value, name) => {
     const newValue = Object.prototype.hasOwnProperty.call(value, 'value')
       ? value.value
@@ -173,7 +179,6 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
 
     // If 'Release to Public Domain' is checked, disable and reset other clauses
     if (name === 'releasePublicDomain' && newValue === true) {
-      console.log('resetting bc public domain')
       setClauses({
         reproduce: false,
         broadcast: false,
@@ -183,7 +188,6 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
         releasePublicDomain: true,
       })
     } else {
-      console.log('setting clauses in else CCForm')
       setClauses((prev) => ({
         ...prev,
         [name]: newValue,
@@ -194,16 +198,24 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     }
   }, [])
 
+  // Logic for metadata and document updates
   useEffect(() => {
     const hasActiveRights =
       clauses.reproduce ||
       clauses.broadcast ||
       clauses.publicDisplay ||
-      clauses.createDerivativeWorks
-    const documentText = generateDocumentText()
+      clauses.createDerivativeWorks ||
+      clauses.releasePublicDomain
 
-    setGeneratedDocument(documentText)
-    updateCustomLicenseData({ clauses: clauses, documentText })
+    if (!hasActiveRights) {
+      setGeneratedDocument('No Permissions Chosen')
+      setDocumentText('No Permissions Chosen')
+    } else {
+      const documentText = generateDocumentText()
+      setGeneratedDocument(documentText)
+      setDocumentText(documentText)
+      updateCustomLicenseData({ clauses: clauses, documentText: documentText })
+    }
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -212,7 +224,14 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     clauses?.exclusiveRights,
     clauses?.releasePublicDomain,
     handleChange,
+    generateDocumentText,
+    updateCustomLicenseData,
   ])
+
+  // sync to parent State management
+  useEffect(() => {
+    onChange({ clauses, documentText })
+  }, [clauses, documentText, onChange])
 
   return (
     <div>

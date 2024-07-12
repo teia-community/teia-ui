@@ -84,12 +84,11 @@ export const useMintStore = create<MintState>()(
         isValid: false,
         updateCustomLicenseData: (data) => {
           set((state) => ({
-              ...state,
-              customLicenseData: data // directly setting the new data
+            ...state,
+            customLicenseData: data
           }));
-          console.log("Custom license data updated in mintStore:", get().customLicenseData);
-      }
-      ,  
+          console.log("Updated customLicenseData:", get().customLicenseData);
+        },
         reset: () => {
           set({ ...defaultValuesStored, ...defaultValues })
         },
