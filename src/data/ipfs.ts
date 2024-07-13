@@ -157,6 +157,7 @@ interface PrepareProps {
   contentRating: string
   formats: any
 }
+
 export const prepareFile = async ({
   name,
   description,
@@ -494,7 +495,13 @@ async function buildMetadataFile({
   }
   if (accessibility) metadata.accessibility = accessibility
   if (contentRating) metadata.contentRating = contentRating
-  if (rights === 'custom') metadata.rightUri = rightUri
+  if (rights === 'custom' && rightUri) {
+    const rightCid = await uploadFileToIPFSProxy({
+      blob: new Blob([Buffer.from(JSON.stringify(rightUri))]),
+      path: 'license.json',
+    })
+    metadata.rightUri = `ipfs://${rightCid}`
+  }
   if (language != null) metadata.language = language
 
   return JSON.stringify(metadata)
