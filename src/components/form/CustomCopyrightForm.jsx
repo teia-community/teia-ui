@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Checkbox } from '@atoms/input'
+import { Checkbox, Input } from '@atoms/input'
 import ReactSelect from 'react-select'
 import styles from '@style'
 import { style as select_style, theme } from '../../atoms/select/styles'
@@ -13,6 +13,8 @@ const initialClauses = {
   createDerivativeWorks: false,
   exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
   releasePublicDomain: false,
+  customUriEnabled: false,
+  customUri: '',
 }
 
 const clauseLabels = {
@@ -22,38 +24,47 @@ const clauseLabels = {
   createDerivativeWorks: 'Right to Create Derivative Works',
   exclusiveRights: 'Exclusive Rights Based on Ownership Share',
   releasePublicDomain: 'Release to Public Domain',
+  customUriEnabled: 'Custom URI',
 }
 
 const exclusiveRightsOptions = [
-  { value: 'none', label: ' None (No Exclusive Rights To Any Party)' },
-  { value: 'majority', label: ' Majority Share (50%+ Editions Owned)' },
+  { value: 'none', label: ' 🚫 None (No Exclusive Rights To Any Party)' },
+  {
+    value: 'majority',
+    label: ' ⚖️ Majority Share (50%+ Editions Owned = Exclusive Rights)',
+  },
   {
     value: 'superMajority',
-    label: ' Super-Majority Share (66.667%+ Editions Owned)',
+    label:
+      ' ⚖️ Super-Majority Share (66.667%+ Editions Owned = Exclusive Rights)',
   },
 ]
 
 export const ClausesDescriptions = ({ clauses }) => {
   const descriptions = {
     reproduce: {
-      true: '✅',
-      false: '🚫',
+      true: '✅ Yes',
+      false: '🚫 No',
     },
     broadcast: {
-      true: '✅',
-      false: '🚫',
+      true: '✅ Yes',
+      false: '🚫 No',
     },
     publicDisplay: {
-      true: '✅',
-      false: '🚫',
+      true: '✅ Yes',
+      false: '🚫 No',
     },
     createDerivativeWorks: {
-      true: '✅',
-      false: '🚫',
+      true: '✅ Yes',
+      false: '🚫 No',
     },
     releasePublicDomain: {
-      true: '✅',
-      false: '🚫',
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    customUriEnabled: {
+      true: '📝 Yes',
+      false: '🚫 No',
     },
   }
 
@@ -61,21 +72,31 @@ export const ClausesDescriptions = ({ clauses }) => {
     <div>
       <strong>Copyright Permissions Granted on Ownership:</strong>
       <ul>
-        {Object.entries(clauses).map(([key, value]) => {
-          // Handle exclusive rights separately to display using the options label
-          if (key === 'exclusiveRights') {
-            const exclusiveLabel =
-              exclusiveRightsOptions.find((option) => option.value === value)
-                ?.label || 'None'
-            return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
-          }
-          // For other rights, use the descriptions dictionary
-          return (
-            <li key={key}>
-              {clauseLabels[key]}: {descriptions[key][value]}
-            </li>
-          )
-        })}
+        {clauses.customUriEnabled ? (
+          <>
+            <li>Custom URI Enabled: {descriptions.customUriEnabled[true]}</li>
+            <li>Custom URI: {clauses.customUri || 'No URI Set'}</li>
+          </>
+        ) : (
+          Object.entries(clauses).map(([key, value]) => {
+            if (key === 'exclusiveRights') {
+              const exclusiveLabel =
+                exclusiveRightsOptions.find((option) => option.value === value)
+                  ?.label || 'None'
+              return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
+            } else if (key === 'customUri') {
+              return ''
+            } else {
+              const displayValue =
+                descriptions[key]?.[value] || 'Unknown Status'
+              return (
+                <li key={key}>
+                  {clauseLabels[key]}: {displayValue}
+                </li>
+              )
+            }
+          })
+        )}
       </ul>
       <br />
     </div>
@@ -85,10 +106,11 @@ export const ClausesDescriptions = ({ clauses }) => {
 function CustomCopyrightForm({ onChange, value }) {
   const { license, minterName, address } = useOutletContext()
   const [clauses, setClauses] = useState(initialClauses)
-  const [documentText, setDocumentText] = useState('No Permissions Chosen')
   const [generatedDocument, setGeneratedDocument] = useState(
     'No Permissions Chosen'
   )
+  const [documentText, setDocumentText] = useState('No Permissions Chosen') // necessary for State management in parent element
+  const [uriError, setUriError] = useState('')
 
   const updateCustomLicenseData = useMintStore(
     (state) => state.updateCustomLicenseData
@@ -168,6 +190,12 @@ Each individual claiming ownership ("Claimant") must conclusively prove that the
     documentText += `\n\n${clauseNumber++}. Limitation of Platform Responsibility:
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
 
+    documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
+This Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
+
+    documentText += `\n\n${clauseNumber++}. Transfer of Rights Upon Change of Ownership:
+The rights and obligations stipulated in this Agreement, along with any associated privileges, shall transfer automatically to a new owner upon the change of ownership from one wallet to another. This transfer is triggered by the sale, gift, or any form of transfer of the NFT that embodies the Work. The transfer of rights becomes effective immediately following the timestamp of the transaction recorded on the blockchain. It is incumbent upon the new Owner to verify and uphold the terms set forth in this Agreement, ensuring continuity and adherence to the stipulated conditions. The previous Owner's rights under this Agreement cease concurrently with the transfer of ownership.`
+
     return documentText
   }, [address, clauseNumber, clauses, minterName])
 
@@ -177,8 +205,28 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
       ? value.value
       : value
 
-    // If 'Release to Public Domain' is checked, disable and reset other clauses
-    if (name === 'releasePublicDomain' && newValue === true) {
+    if (name === 'customUriEnabled') {
+      if (newValue) {
+        setClauses((prev) => ({
+          ...prev,
+          reproduce: false,
+          broadcast: false,
+          publicDisplay: false,
+          createDerivativeWorks: false,
+          exclusiveRights: 'none',
+          releasePublicDomain: false,
+          customUriEnabled: true,
+        }))
+      } else {
+        setClauses((prev) => ({
+          ...prev,
+          customUriEnabled: false,
+          customUri: prev.customUri,
+        }))
+      }
+    }
+    // Handle 'Release to Public Domain' logic
+    else if (name === 'releasePublicDomain' && newValue === true) {
       setClauses({
         reproduce: false,
         broadcast: false,
@@ -186,8 +234,11 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
         createDerivativeWorks: false,
         exclusiveRights: 'none',
         releasePublicDomain: true,
+        customUriEnabled: false,
+        customUri: '',
       })
     } else {
+      // Normal handling for other checkboxes
       setClauses((prev) => ({
         ...prev,
         [name]: newValue,
@@ -198,8 +249,31 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     }
   }, [])
 
+  const handleUriChange = (eventOrValue) => {
+    const value = eventOrValue.target ? eventOrValue.target.value : eventOrValue
+
+    function isValidURI(uri) {
+      try {
+        new URL(uri)
+        return true
+      } catch (error) {
+        return false
+      }
+    }
+    if (isValidURI(value)) {
+      setClauses((prev) => ({
+        ...prev,
+        customUri: value,
+      }))
+    } else {
+      // Handle error state, perhaps set an error message in state
+      console.error('Invalid URI')
+    }
+  }
+
   // Logic for metadata and document updates
   useEffect(() => {
+    let documentText
     const hasActiveRights =
       clauses.reproduce ||
       clauses.broadcast ||
@@ -207,15 +281,17 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
       clauses.createDerivativeWorks ||
       clauses.releasePublicDomain
 
-    if (!hasActiveRights) {
-      setGeneratedDocument('No Permissions Chosen')
-      setDocumentText('No Permissions Chosen')
+    if (clauses.customUriEnabled) {
+      documentText = `Custom URI: ${clauses.customUri}`
+    } else if (!hasActiveRights) {
+      documentText = 'No Permissions Chosen'
     } else {
-      const documentText = generateDocumentText()
-      setGeneratedDocument(documentText)
-      setDocumentText(documentText)
-      updateCustomLicenseData({ clauses: clauses, documentText: documentText })
+      documentText = generateDocumentText()
     }
+
+    setDocumentText(documentText)
+    setGeneratedDocument(documentText)
+    updateCustomLicenseData({ clauses: clauses, documentText: documentText })
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -233,28 +309,34 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     onChange({ clauses, documentText })
   }, [clauses, documentText, onChange])
 
+  const propertiesWithCheckboxes = [
+    'reproduce',
+    'broadcast',
+    'publicDisplay',
+    'createDerivativeWorks',
+    'releasePublicDomain',
+  ]
+
   return (
-    <div>
-      <h4>Custom License Generation Form</h4>
-      <div>
-        {Object.keys(clauses)
-          .filter((name) => name !== 'exclusiveRights')
-          .map((clauseName) => (
-            <Checkbox
-              key={clauseName}
-              name={clauseName}
-              label={clauseLabels[clauseName]}
-              checked={clauses[clauseName]}
-              onCheck={(checked) => handleChange(checked, clauseName)}
-              disabled={
-                clauseName === 'releasePublicDomain'
-                  ? clauses.releasePublicDomain
-                  : false
-              }
-            />
-          ))}
-        <div className="select-container" style={{ marginTop: '20px' }}>
-          <label>{clauseLabels.exclusiveRights}</label>
+    <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
+      <h3>Custom License Generation Form</h3>
+      <div style={{ marginTop: '1em' }}>
+        {propertiesWithCheckboxes.map((clauseName) => (
+          <Checkbox
+            key={clauseName}
+            name={clauseName}
+            label={clauseLabels[clauseName]}
+            checked={clauses[clauseName]}
+            onCheck={(checked) => handleChange(checked, clauseName)}
+            disabled={
+              clauses.customUriEnabled ||
+              (clauses.releasePublicDomain &&
+                clauseName !== 'releasePublicDomain')
+            }
+          />
+        ))}
+        <div className="select-container" style={{ marginTop: '2em' }}>
+          <h4>{clauseLabels.exclusiveRights}</h4>
           <ReactSelect
             name="exclusiveRights"
             options={exclusiveRightsOptions}
@@ -266,15 +348,33 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
             }
             placeholder="Select Ownership Share Type"
             isDisabled={
-              !Object.values(clauses).some(
-                (value) => value === true && value !== 'none'
-              )
+              clauses.customUriEnabled ||
+              !Object.values(clauses).some((value) => value && value !== 'none')
             }
             styles={select_style}
             theme={theme}
             className={styles.container}
             classNamePrefix="react_select"
           />
+        </div>
+        <div style={{ marginTop: '2em' }}>
+          <Checkbox
+            name="customUriEnabled"
+            label="Use Custom URI"
+            checked={clauses?.customUriEnabled}
+            onCheck={(checked) => handleChange(checked, 'customUriEnabled')}
+            className={styles.field}
+          />
+          {clauses?.customUriEnabled && (
+            <Input
+              type="text"
+              value={clauses?.customUri || ''}
+              onChange={(e) => handleUriChange(e)}
+              placeholder="Paste URI/URL Here (ipfs://, http://, https://)"
+              className={styles.field}
+            />
+          )}
+          {uriError && <div className={styles.errorText}>{uriError}</div>}
         </div>
       </div>
       <div
