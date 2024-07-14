@@ -12,6 +12,7 @@ const initialClauses = {
   publicDisplay: false,
   createDerivativeWorks: false,
   exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
+  retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
   releasePublicDomain: false,
   customUriEnabled: false,
   customUri: '',
@@ -23,11 +24,12 @@ const clauseLabels = {
   publicDisplay: 'Right to Public Display',
   createDerivativeWorks: 'Right to Create Derivative Works',
   exclusiveRights: 'Exclusive Rights Based on Ownership Share',
+  retainCreatorRights: 'Creator Retains Rights Even When Exclusive',
   releasePublicDomain: 'Release to Public Domain',
   customUriEnabled: 'Custom URI',
 }
 
-const exclusiveRightsOptions = [
+export const exclusiveRightsOptions = [
   { value: 'none', label: ' 🚫 None (No Exclusive Rights To Any Party)' },
   {
     value: 'majority',
@@ -65,6 +67,10 @@ export const ClausesDescriptions = ({ clauses }) => {
     customUriEnabled: {
       true: '📝 Yes',
       false: '🚫 No',
+    },
+    retainCreatorRights: {
+      true: '✅ Yes',
+      false: '⚠️ No',
     },
   }
 
@@ -175,6 +181,11 @@ No exclusive rights are granted under this Agreement. All rights are non-exclusi
 The Creator grants exclusive rights as outlined in this Agreement to the Owner(s) holding a ${rightsDescription} of the editions of the NFT at the time of its original mint. If no single party holds such a share, the rights outlined in this Agreement apply non-exclusively to all Owners. (In some cases, the Creator themselves may be the exclusive Owner.)`
     }
 
+    if (clauses.exclusiveRights !== 'none' && clauses.retainCreatorRights) {
+      documentText += `\n\n${clauseNumber++}. Retention of Creator's Rights:
+Despite reaching the threshold for exclusive rights, the Creator retains certain rights as specified under this Agreement, even if exclusivity conditions are met by other Owners. The rights are then split equally between the Creator and Owner which has been granted exclusive rights over the other Owner(s) of the Work, effective immediately after the date in which the condition for exclusivity has been met.`
+    }
+
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
@@ -214,6 +225,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
           publicDisplay: false,
           createDerivativeWorks: false,
           exclusiveRights: 'none',
+          retainCreatorRights: true,
           releasePublicDomain: false,
           customUriEnabled: true,
         }))
@@ -233,6 +245,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
         publicDisplay: false,
         createDerivativeWorks: false,
         exclusiveRights: 'none',
+        retainCreatorRights: true,
         releasePublicDomain: true,
         customUriEnabled: false,
         customUri: '',
@@ -356,6 +369,17 @@ The rights and obligations stipulated in this Agreement, along with any associat
             className={styles.container}
             classNamePrefix="react_select"
           />
+          {['majority', 'superMajority'].includes(clauses.exclusiveRights) && ( // Creator rights retention generated only when exclusive is chosen
+            <Checkbox
+              name="retainCreatorRights"
+              label="Creator Retains Their Rights Even When Exclusivity is Reached"
+              checked={clauses.retainCreatorRights}
+              onCheck={(checked) =>
+                handleChange(checked, 'retainCreatorRights')
+              }
+              className={styles.field}
+            />
+          )}
         </div>
         <div style={{ marginTop: '2em' }}>
           <Checkbox
