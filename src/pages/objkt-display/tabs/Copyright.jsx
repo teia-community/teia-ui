@@ -65,9 +65,9 @@ export const Copyright = () => {
       '⚖️ Super-Majority Share (66.667%+ Editions Owned = Exclusive Rights)',
   }
 
+  const url = HashToURL(nft?.right_uri, 'CDN', { size: 'raw' })
+
   useEffect(() => {
-    const url = HashToURL(nft?.right_uri, 'CDN', { size: 'raw' })
-    console.log('url', url)
     axios
       .get(url)
       .then((response) => {
@@ -91,8 +91,8 @@ export const Copyright = () => {
           <h3>Custom License Info</h3>
           <br />
           <h4>URI to Agreement (Permanent)</h4>
-          <a href={nft.right_uri} target="_blank" rel="noopener noreferrer">
-            {nft.right_uri}
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            Metadata
           </a>
           <br />
           <br />
