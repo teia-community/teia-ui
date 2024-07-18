@@ -7,9 +7,12 @@
   color: red;
 }
 
-.field,
-.typed_field {
+.field {
   margin: 0;
+}
+
+.typed_field {
+  margin-top: 1em;
 }
 
 .typed_field textarea {

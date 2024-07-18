@@ -19,6 +19,8 @@ const initialClauses = {
   releasePublicDomain: false,
   requireAttribution: false,
   rightsAreTransferable: true,
+  expirationDate: '',
+  expirationDateExists: false,
   customUriEnabled: false,
   customUri: '',
   addendum: '',
@@ -34,6 +36,8 @@ const clauseLabels = {
   releasePublicDomain: 'Release to Public Domain',
   requireAttribution: 'Require Attribution on Use',
   rightsAreTransferable: 'Rights are Transferable',
+  expirationDateExists: 'Clauses Have Expiration Date',
+  expirationDate: 'Date of Expiration',
   customUriEnabled: 'Custom URI',
   overview: 'Copyright Overview',
 }
@@ -81,6 +85,18 @@ export const ClausesDescriptions = ({ clauses }) => {
       true: '✅ Yes',
       false: '🚫 No',
     },
+    expirationDateExists: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    expirationDate: {
+      null: 'None',
+      default: new Date(clauses?.expirationDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+    },
     customUriEnabled: {
       true: '📝 Yes',
       false: '🚫 No',
@@ -97,18 +113,39 @@ export const ClausesDescriptions = ({ clauses }) => {
       <ul>
         {clauses.customUriEnabled ? (
           <>
-            <li>Custom URI Enabled: {descriptions.customUriEnabled[true]}</li>
+            <li>Custom URI Enabled: {descriptions?.customUriEnabled[true]}</li>
             <li>Custom URI: {clauses?.customUri || 'No URI Set'}</li>
           </>
         ) : (
           Object.entries(clauses).map(([key, value]) => {
             if (key === 'exclusiveRights') {
               const exclusiveLabel =
-                exclusiveRightsOptions.find((option) => option.value === value)
+                exclusiveRightsOptions.find((option) => option?.value === value)
                   ?.label || 'None'
               return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
-            } else if (key === 'customUri') {
+            } else if (key === 'customUri' || key === 'expirationDate') {
               return null
+            } else if (key === 'expirationDateExists') {
+              return (
+                <>
+                  <li key={key}>
+                    {clauseLabels[key]}: {descriptions[key][value]}
+                  </li>
+                  <li key="expirationDate">
+                    {clauseLabels.expirationDate}:{' '}
+                    {clauses.expirationDateExists && clauses.expirationDate
+                      ? new Date(clauses.expirationDate).toLocaleDateString(
+                          'en-US',
+                          {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          }
+                        )
+                      : 'None'}
+                  </li>
+                </>
+              )
             } else if (key === 'addendum') {
               return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
             } else {
@@ -220,6 +257,11 @@ The Creator grants exclusive rights as outlined in this Agreement to the Owner(s
 Despite reaching the threshold for exclusive rights, the Creator retains certain rights as specified under this Agreement, even if exclusivity conditions are met by other Owners. The rights are then split equally between the Creator and Owner which has been granted exclusive rights over the other Owner(s) of the Work, effective immediately after the date in which the condition for exclusivity has been met.`
     }
 
+    if (clauses.expirationDate && clauses.expirationDateExists) {
+      const readableDate = new Date(clauses.expirationDate).toLocaleDateString()
+      documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
+    }
+
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
@@ -249,7 +291,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
   // logic for checkboxes
   const handleChange = useCallback((value, name) => {
     const newValue = Object.prototype.hasOwnProperty.call(value, 'value')
-      ? value.value
+      ? value?.value
       : value
 
     if (name === 'customUriEnabled') {
@@ -264,6 +306,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
           retainCreatorRights: true,
           requireAttribution: true,
           rightsAreTransferable: true,
+          expirationDateExists: false,
+          expirationDate: null,
           releasePublicDomain: false,
           customUriEnabled: true,
         }))
@@ -285,6 +329,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
         exclusiveRights: 'none',
         retainCreatorRights: true,
         rightsAreTransferable: true,
+        expirationDateExists: false,
+        expirationDate: null,
         releasePublicDomain: true,
         customUriEnabled: false,
         customUri: '',
@@ -293,7 +339,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       // Normal handling for other checkboxes
       setClauses((prev) => ({
         ...prev,
-        [name]: newValue,
+        [name]: newValue || '',
         ...(name !== 'releasePublicDomain' && prev.releasePublicDomain
           ? { releasePublicDomain: false }
           : null),
@@ -327,17 +373,17 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
   const handleInputChange = (eventOrValue) => {
     let name, value
 
-    if (eventOrValue.target) {
-      name = eventOrValue.target.name
-      value = eventOrValue.target.value
+    if (eventOrValue?.target) {
+      name = eventOrValue?.target?.name || ''
+      value = eventOrValue?.target?.value || ''
     } else {
-      name = 'addendum'
-      value = eventOrValue
+      name = 'addendum' | ''
+      value = eventOrValue | ''
     }
 
     setClauses((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value || '',
     }))
   }
 
@@ -357,7 +403,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       documentText = `Custom URI: ${clauses.customUri}`
     } else if (!hasActiveRights) {
       documentText =
-        'No Permissions Chosen (For Addendums to show, choose at least one option in the checkboxes above.)'
+        'No Permissions Chosen (For Addendum or Expiration Date sections to show, choose at least one option in the checkboxes above.)'
     } else {
       documentText = generateDocumentText()
     }
@@ -365,6 +411,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     setDocumentText(documentText)
     setGeneratedDocument(documentText)
     updateCustomLicenseData({ clauses: clauses, documentText: documentText })
+    // "clauses" alone seems to cause issues so all dependencies are listed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -374,6 +422,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     clauses?.releasePublicDomain,
     clauses?.requireAttribution,
     clauses?.rightsAreTransferable,
+    clauses?.expirationDate,
+    clauses?.expirationDateExists,
     handleChange,
     generateDocumentText,
     updateCustomLicenseData,
@@ -384,6 +434,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     onChange({ clauses, documentText })
   }, [clauses, documentText, onChange])
 
+  // checkboxes with custom functions are not listed here
   const propertiesWithCheckboxes = [
     'reproduce',
     'broadcast',
@@ -416,6 +467,22 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       event.preventDefault()
       handleModalOpen(title)
     }
+  }
+
+  const handleDateChange = (eventOrValue, name) => {
+    let value
+    if (eventOrValue.target) {
+      // Standard input change
+      value = eventOrValue?.target?.value || '' // Fallback to empty string if undefined
+    } else {
+      // Custom handling if it's directly passed a value
+      value = eventOrValue || ''
+    }
+
+    setClauses((prev) => ({
+      ...prev,
+      [name]: value || '',
+    }))
   }
 
   return (
@@ -523,6 +590,39 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             </>
           )}
         </div>
+        <div style={{ marginTop: '1em', display: 'flex' }}>
+          <Checkbox
+            name="expirationDateExists"
+            label="Add an Expiration Date to Clauses"
+            checked={clauses.expirationDateExists}
+            onCheck={(checked) =>
+              handleDateChange(checked, 'expirationDateExists')
+            }
+            className={styles.field}
+          />
+          <span
+            role="button"
+            tabIndex={0}
+            className={styles.modalInfoIcon}
+            onClick={() => handleModalOpen('exclusiveRights')}
+            onKeyPress={(event) =>
+              handleKeyPress(event, clauseLabels['exclusiveRights'])
+            }
+          >
+            (?)
+          </span>
+        </div>
+        {clauses.expirationDateExists && (
+          <div style={{ marginTop: '1em' }}>
+            <h4>{clauseLabels.expirationDate}</h4>
+            <Input
+              type="date"
+              value={clauses.expirationDate || ''}
+              onChange={(e) => handleChange(e?.target?.value, 'expirationDate')}
+              className={styles.field}
+            />
+          </div>
+        )}
         {clauses && (
           <div style={{ marginTop: '1em' }}>
             <h4>Addendum/Notes</h4>

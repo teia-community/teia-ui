@@ -130,6 +130,22 @@ export const Copyright = () => {
                         </li>
                       )
                     }
+                    if (key === 'expirationDate') {
+                      return (
+                        <li key="expirationDate">
+                          Expiration Date:{' '}
+                          {value
+                            ? new Date(
+                                licenseData.clauses.expirationDate
+                              ).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })
+                            : 'None'}
+                        </li>
+                      )
+                    }
                     if (key === 'customUri') {
                       const uriDisplay =
                         licenseData?.clauses?.customUriEnabled && value ? (
@@ -149,7 +165,7 @@ export const Copyright = () => {
                         </li>
                       )
                     }
-                    if (key === 'addendum') {
+                    if (key === 'addendum' || key === 'expirationDateExists') {
                       return null
                     }
                     return (
