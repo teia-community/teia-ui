@@ -87,7 +87,7 @@ export const useMintStore = create<MintState>()(
             ...state,
             customLicenseData: data
           }));
-          console.log("Updated customLicenseData:", get().customLicenseData);
+          // console.log("Updated customLicenseData:", get().customLicenseData);
         },
         reset: () => {
           set({ ...defaultValuesStored, ...defaultValues })

@@ -1,10 +1,13 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useEffect, useCallback } from 'react'
-import { Checkbox, Input } from '@atoms/input'
+import { Checkbox, Input, Textarea } from '@atoms/input'
 import ReactSelect from 'react-select'
 import styles from '@style'
 import { style as select_style, theme } from '../../atoms/select/styles'
 import { useOutletContext } from 'react-router'
 import { useMintStore } from '@context/mintStore'
+import { copyrightModalText } from './copyrightmodaltext'
+import { InfoModal } from '@atoms/modal'
 
 const initialClauses = {
   reproduce: false,
@@ -16,6 +19,7 @@ const initialClauses = {
   releasePublicDomain: false,
   customUriEnabled: false,
   customUri: '',
+  addendum: '',
 }
 
 const clauseLabels = {
@@ -27,6 +31,7 @@ const clauseLabels = {
   retainCreatorRights: 'Creator Retains Rights Even When Exclusive',
   releasePublicDomain: 'Release to Public Domain',
   customUriEnabled: 'Custom URI',
+  overview: 'Copyright Overview',
 }
 
 export const exclusiveRightsOptions = [
@@ -209,6 +214,11 @@ This Agreement remains effective in perpetuity as long as the Owner(s) can concl
     documentText += `\n\n${clauseNumber++}. Transfer of Rights Upon Change of Ownership:
 The rights and obligations stipulated in this Agreement, along with any associated privileges, shall transfer automatically to a new owner upon the change of ownership from one wallet to another. This transfer is triggered by the sale, gift, or any form of transfer of the NFT that embodies the Work. The transfer of rights becomes effective immediately following the timestamp of the transaction recorded on the blockchain. It is incumbent upon the new Owner to verify and uphold the terms set forth in this Agreement, ensuring continuity and adherence to the stipulated conditions. The previous Owner's rights under this Agreement cease concurrently with the transfer of ownership.`
 
+    // Additional notes based on user input
+    if (clauses.addendum) {
+      documentText += `\n\nAddendum By Creator:\n${clauses?.addendum}`
+    }
+
     return documentText
   }, [address, clauseNumber, clauses, minterName])
 
@@ -286,6 +296,24 @@ The rights and obligations stipulated in this Agreement, along with any associat
     }
   }
 
+  // Addendum handling
+  const handleInputChange = (eventOrValue) => {
+    let name, value
+
+    if (eventOrValue.target) {
+      name = eventOrValue.target.name
+      value = eventOrValue.target.value
+    } else {
+      name = 'addendum'
+      value = eventOrValue
+    }
+
+    setClauses((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
   // Logic for metadata and document updates
   useEffect(() => {
     let documentText
@@ -332,26 +360,101 @@ The rights and obligations stipulated in this Agreement, along with any associat
     'releasePublicDomain',
   ]
 
+  // Info Modal
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: '',
+    content: '',
+  })
+
+  const handleModalOpen = (clauseName) => {
+    const modalContent = copyrightModalText[clauseName]
+
+    setModalState({
+      isOpen: true,
+      title: clauseLabels[clauseName],
+      content: modalContent || 'No detailed information available.',
+    })
+  }
+
+  const handleKeyPress = (event, title) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handleModalOpen(title)
+    }
+  }
+
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
-      <h3>Custom License Generation Form</h3>
+      <h3>
+        Custom License Generation Form
+        <span
+          style={{ marginLeft: '0.5em' }}
+          role="button"
+          tabIndex={0}
+          onClick={() => handleModalOpen('overview')}
+          onKeyPress={(event) =>
+            handleKeyPress(event, clauseLabels['overview'])
+          }
+        >
+          (?)
+        </span>
+      </h3>
       <div style={{ marginTop: '1em' }}>
         {propertiesWithCheckboxes.map((clauseName) => (
-          <Checkbox
-            key={clauseName}
-            name={clauseName}
-            label={clauseLabels[clauseName]}
-            checked={clauses[clauseName]}
-            onCheck={(checked) => handleChange(checked, clauseName)}
-            disabled={
-              clauses.customUriEnabled ||
-              (clauses.releasePublicDomain &&
-                clauseName !== 'releasePublicDomain')
+          <div style={{ display: 'flex' }} key={clauseName}>
+            <Checkbox
+              key={clauseName}
+              name={clauseName}
+              label={clauseLabels[clauseName]}
+              checked={clauses[clauseName]}
+              onCheck={(checked) => handleChange(checked, clauseName)}
+              disabled={
+                clauses.customUriEnabled ||
+                (clauses.releasePublicDomain &&
+                  clauseName !== 'releasePublicDomain')
+              }
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.modalInfoIcon}
+              onClick={() => handleModalOpen(clauseName)}
+              onKeyPress={(event) =>
+                handleKeyPress(event, clauseLabels[clauseName])
+              }
+            >
+              (?)
+            </span>
+          </div>
+        ))}
+        {modalState.isOpen && (
+          <InfoModal
+            isOpen={modalState.isOpen}
+            title={modalState.title}
+            content={
+              <div dangerouslySetInnerHTML={{ __html: modalState.content }} />
+            }
+            onClose={() =>
+              setModalState((prev) => ({ ...prev, isOpen: false }))
             }
           />
-        ))}
+        )}
         <div className="select-container" style={{ marginTop: '2em' }}>
-          <h4>{clauseLabels.exclusiveRights}</h4>
+          <div style={{ display: 'flex' }}>
+            <h4>{clauseLabels.exclusiveRights}</h4>
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.modalInfoIcon}
+              onClick={() => handleModalOpen('exclusiveRights')}
+              onKeyPress={(event) =>
+                handleKeyPress(event, clauseLabels['exclusiveRights'])
+              }
+            >
+              (?)
+            </span>
+          </div>
           <ReactSelect
             name="exclusiveRights"
             options={exclusiveRightsOptions}
@@ -383,14 +486,44 @@ The rights and obligations stipulated in this Agreement, along with any associat
             />
           )}
         </div>
-        <div style={{ marginTop: '2em' }}>
-          <Checkbox
-            name="customUriEnabled"
-            label="Use Custom URI"
-            checked={clauses?.customUriEnabled}
-            onCheck={(checked) => handleChange(checked, 'customUriEnabled')}
-            className={styles.field}
-          />
+        {(clauses.reproduce ||
+          clauses.broadcast ||
+          clauses.publicDisplay ||
+          clauses.createDerivativeWorks ||
+          clauses.releasePublicDomain) && (
+          <div style={{ marginTop: '1em' }}>
+            <h4>Addendum/Notes</h4>
+            <Textarea
+              type="text"
+              name="addendum"
+              value={clauses?.addendum || ''}
+              onChange={handleInputChange}
+              placeholder="Add additional notes, clauses, restrictions, scopes, etc."
+              className={styles.field}
+            />
+          </div>
+        )}
+        <div style={{ marginTop: '1em' }}>
+          <div style={{ display: 'flex' }}>
+            <Checkbox
+              name="customUriEnabled"
+              label="Use Custom URI"
+              checked={clauses?.customUriEnabled}
+              onCheck={(checked) => handleChange(checked, 'customUriEnabled')}
+              className={styles.field}
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.modalInfoIcon}
+              onClick={() => handleModalOpen(clauseLabels['customUriEnabled'])}
+              onKeyPress={(event) =>
+                handleKeyPress(event, clauseLabels['customUriEnabled'])
+              }
+            >
+              (?)
+            </span>
+          </div>
           {clauses?.customUriEnabled && (
             <Input
               type="text"

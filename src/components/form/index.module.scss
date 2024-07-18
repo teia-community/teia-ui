@@ -9,7 +9,7 @@
 
 .field,
 .typed_field {
-  margin: 1em 0;
+  margin: 0;
 }
 
 .typed_field textarea {
@@ -31,4 +31,15 @@
 
 .typed_field textarea.mono {
   font-family: 'Iosevka', monospace !important;
+}
+
+.modalInfoIcon {
+  user-select: none;
+  margin-left: 0.5em;
+  color: var(--gray-60);
+  cursor: pointer;
+}
+
+.modalInfoIcon:hover {
+  color: var(--highlight-color);
 }
