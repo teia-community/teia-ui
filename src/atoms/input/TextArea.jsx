@@ -10,7 +10,7 @@ const Textarea = forwardRef(
       min,
       max,
       children,
-      maxlength = 5000,
+      maxlength = 50000,
       label,
       onChange = () => null,
       onBlur = () => null,

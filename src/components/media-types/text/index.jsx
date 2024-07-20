@@ -68,6 +68,7 @@ export const TXT = ({
               fontFamily: isMonoType
                 ? 'Iosevka, monospace'
                 : 'Source Sans Pro, sans-serif',
+              overflowY: 'auto',
             }}
           >
             {content}

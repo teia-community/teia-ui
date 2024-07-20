@@ -38,12 +38,13 @@ const Checkbox = forwardRef(
 
     const handleCheck = useCallback(
       (e) => {
+        if (disabled) return
         const c = e.target.checked
         setChecked(c)
         onCheck?.(c)
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      [checked]
+      [checked, disabled]
     )
 
     const classes = classNames({
@@ -68,6 +69,7 @@ const Checkbox = forwardRef(
           onWheel={onWheel}
           checked={checkedProp}
           aria-checked={checked}
+          disabled={disabled}
         />
         <span className={styles.checkmark} />
       </label>

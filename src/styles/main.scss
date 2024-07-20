@@ -29,6 +29,22 @@ body {
   width: 100%;
 }
 
+::-webkit-scrollbar {
+  width: 0.25em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--gray-25);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--text-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gray-10);
+}
+
 body::-webkit-scrollbar {
   width: 0.25em;
 }
