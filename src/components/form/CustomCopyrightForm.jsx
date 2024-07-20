@@ -86,7 +86,7 @@ export const ClausesDescriptions = ({ clauses }) => {
         {clauses.customUriEnabled ? (
           <>
             <li>Custom URI Enabled: {descriptions.customUriEnabled[true]}</li>
-            <li>Custom URI: {clauses.customUri || 'No URI Set'}</li>
+            <li>Custom URI: {clauses?.customUri || 'No URI Set'}</li>
           </>
         ) : (
           Object.entries(clauses).map(([key, value]) => {
@@ -96,7 +96,9 @@ export const ClausesDescriptions = ({ clauses }) => {
                   ?.label || 'None'
               return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
             } else if (key === 'customUri') {
-              return ''
+              return null
+            } else if (key === 'addendum') {
+              return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
             } else {
               const displayValue =
                 descriptions[key]?.[value] || 'Unknown Status'
