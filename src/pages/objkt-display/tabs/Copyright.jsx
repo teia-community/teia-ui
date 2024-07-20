@@ -129,6 +129,9 @@ export const Copyright = () => {
                     </li>
                   )
                 }
+                if (key === 'addendum') {
+                  return null
+                }
                 return (
                   <li key={key}>
                     {title}: {displayValue}
