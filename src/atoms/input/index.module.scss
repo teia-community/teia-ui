@@ -83,6 +83,7 @@
 
       &:focus {
         outline: none;
+        border: 1px solid var(--gray-40);
       }
 
       &:focus::placeholder {
@@ -91,7 +92,9 @@
     }
 
     textarea {
-      min-height: 75px;
+      min-height: 100px; // Increased minimum height
+      height: auto; // Allow the height to be determined by content
+      resize: vertical; // Allow vertical resizing
     }
   }
 }

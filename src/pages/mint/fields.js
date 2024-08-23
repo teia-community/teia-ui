@@ -14,7 +14,7 @@ export const defaultValues = {
   editions: '',
   royalties: '',
   license: '',
-  custom_license_uri: '',
+  customLicenseData: {},
   language: '',
   nsfw: false,
   photosensitive: false,
@@ -108,20 +108,10 @@ export const fields = [
     options: LICENSE_TYPES_OPTIONS,
   },
   {
-    label: 'Custom license URI',
-    name: 'custom_license_uri',
+    label: 'Custom License',
+    name: 'customLicenseData',
     enable_if: 'useCustomLicense',
-    placeholder: 'The URI to the custom license',
-    type: 'text',
-    rules: {
-      required: true,
-      valueAs: (f) => f.value,
-      pattern: {
-        value:
-          /((https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})|(ipfs:\/\/.*))/g,
-        message: 'Invalid url (supports http, https or ipfs)',
-      },
-    },
+    type: 'customCopyrightForm',
   },
   {
     label: 'Language',

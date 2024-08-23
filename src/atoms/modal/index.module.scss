@@ -1,0 +1,39 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.382);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  overflow-y: auto;
+}
+
+.modalContent {
+  background-color: var(--background-color);
+  padding: 20px;
+  box-shadow: 1px 1px var(--text-color);
+  width: 80%;
+  max-width: 61.8%;
+  height: auto;
+  max-height: 61.8vh;
+  overflow: auto;
+  margin-top: 0 auto;
+}
+
+.modalContent div {
+  margin: 1em 0;
+}
+
+.modalContent p {
+  margin-top: 1em;
+}
+.modalContent li {
+  margin-top: 1em;
+}

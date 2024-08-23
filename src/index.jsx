@@ -50,6 +50,7 @@ import {
   History,
   Swap,
   Transfer,
+  Copyright,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
@@ -146,6 +147,7 @@ const router = createBrowserRouter(
         <Route path="swap" element={<Swap />} />
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
+        <Route path="copyright" element={<Copyright />} />
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
