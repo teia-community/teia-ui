@@ -71,7 +71,7 @@ export const ClausesDescriptions = ({ clauses }) => {
       true: '✅ Yes',
       false: '🚫 No',
     },
-    relquireAttribution: {
+    requireAttribution: {
       true: '✅ Yes',
       false: '🚫 No',
     },
