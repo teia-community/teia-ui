@@ -17,6 +17,7 @@ const initialClauses = {
   exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
   retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
   releasePublicDomain: false,
+  requireAttribution: false,
   customUriEnabled: false,
   customUri: '',
   addendum: '',
@@ -30,6 +31,7 @@ const clauseLabels = {
   exclusiveRights: 'Exclusive Rights Based on Ownership Share',
   retainCreatorRights: 'Creator Retains Rights Even When Exclusive',
   releasePublicDomain: 'Release to Public Domain',
+  requireAttribution: 'Require Attribution on Use',
   customUriEnabled: 'Custom URI',
   overview: 'Copyright Overview',
 }
@@ -66,6 +68,10 @@ export const ClausesDescriptions = ({ clauses }) => {
       false: '🚫 No',
     },
     releasePublicDomain: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    relquireAttribution: {
       true: '✅ Yes',
       false: '🚫 No',
     },
@@ -158,6 +164,10 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
         documentText += `\n\n${clauseNumber++}. Right to Create Derivative Works:
 The Creator grants to each Owner a worldwide license to publicly display the Work, either as a physical display or as a performance for live events. This license does not permit the monetization of the Work by the Owner and requires the Owner to provide full attribution to the Creator.`
       }
+      if (clauses.requireAttribution) {
+        documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
+The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This attribution must be clearly associated with the Work and must acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+      }
     }
 
     // contract defaults to "All Rights Reserved" where nothing is chosen
@@ -166,7 +176,8 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
       !clauses.reproduce &&
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
-      !clauses.releasePublicDomain
+      !clauses.releasePublicDomain &&
+      !clauses.requireAttribution
     ) {
       documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
 No rights are granted under this Agreement. All rights for the Work are reserved solely by the Creator.`
@@ -324,7 +335,8 @@ The rights and obligations stipulated in this Agreement, along with any associat
       clauses.broadcast ||
       clauses.publicDisplay ||
       clauses.createDerivativeWorks ||
-      clauses.releasePublicDomain
+      clauses.releasePublicDomain ||
+      clauses.requireAttribution
 
     if (clauses.customUriEnabled) {
       documentText = `Custom URI: ${clauses.customUri}`
@@ -344,6 +356,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
     clauses?.createDerivativeWorks,
     clauses?.exclusiveRights,
     clauses?.releasePublicDomain,
+    clauses?.requireAttribution,
     handleChange,
     generateDocumentText,
     updateCustomLicenseData,
@@ -360,6 +373,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
     'publicDisplay',
     'createDerivativeWorks',
     'releasePublicDomain',
+    'requireAttribution',
   ]
 
   // Info Modal
@@ -477,15 +491,18 @@ The rights and obligations stipulated in this Agreement, along with any associat
             classNamePrefix="react_select"
           />
           {['majority', 'superMajority'].includes(clauses.exclusiveRights) && ( // Creator rights retention generated only when exclusive is chosen
-            <Checkbox
-              name="retainCreatorRights"
-              label="Creator Retains Their Rights Even When Exclusivity is Reached"
-              checked={clauses.retainCreatorRights}
-              onCheck={(checked) =>
-                handleChange(checked, 'retainCreatorRights')
-              }
-              className={styles.field}
-            />
+            <>
+              <br />
+              <Checkbox
+                name="retainCreatorRights"
+                label="Creator Retains Their Rights Even When Exclusivity is Reached"
+                checked={clauses.retainCreatorRights}
+                onCheck={(checked) =>
+                  handleChange(checked, 'retainCreatorRights')
+                }
+                className={styles.field}
+              />
+            </>
           )}
         </div>
         {(clauses.reproduce ||

@@ -63,6 +63,11 @@ export const copyrightModalText = {
         <p>Public domain release is often irrevocable, meaning once a work is released to the public domain, the creator cannot reclaim the rights. Therefore, it's crucial for Creators to carefully consider the implications before making such a decision, especially since it can be easily referenced on the blockchain itself. ("Announcements" made on social media or other privately-owned platforms often do not constitute</p>
         <p>This option can be particularly beneficial for educational, cultural, or philanthropic purposes, contributing to the broader public good by freely sharing creative works.</p>
         `,
+    requireAttribution: `
+        <p>This is simply a requrement that whenever the work is displayed in public settings (which includes broadcasts, events, social media posts, etc.) that the Owner of the work is required to give attribution to the original Creator(s) in some way, shape, or form.</p>
+        <p>Many curators, content creators, and fans will do this out of courtesy to the artist, but there are times (like logos) where attribution may not be necessary, or even undesirable. Leaving this section blank leaves it up to the Owner as to what they want to do, but it's generally a good idea to make explicit what the usage rights are, if the artist has a preference for how they want their works used in public contexts.</p>
+        <p>If you want more granularity in the way attributions are done, you may want to consider using the Addendum portions of the Custom License or reference Creative Commons licenses to get an idea of how these clauses are applied in practice. (Note: Once a work goes to Public Domain, attributions are no longer required.)</p>
+        `,
     customUri: `
         <p>This feature allows creators to set a custom URI/URL for additional resources or information related to the NFT.</p>
         <p>The custom URI can link to a variety of content, such as detailed metadata, licensing information, or the creator's personal website.</p>
