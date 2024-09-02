@@ -87,8 +87,9 @@ export const Copyright = () => {
       .catch((error) => console.error('Failed to fetch data:', error))
   }, [nft])
 
-  if (!licenseData) {
-    return <div>Loading...</div>
+  console.log('wtf', licenseData, nft.rights)
+  if (!licenseData && !nft?.rights) {
+    return <div>N/A or License Data Not Specified. 🚫</div>
   }
 
   const isCustomUriOnly = () => {
