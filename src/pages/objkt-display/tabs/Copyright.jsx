@@ -1,20 +1,13 @@
 import { Container } from '@atoms/layout'
 import { useEffect, useState } from 'react'
-import { Tags } from '@components/tags'
-import styles from '@style'
 import '../style.css'
 import { HashToURL } from '@utils'
-import { HEN_CONTRACT_FA2, LANGUAGES, LICENSE_TYPES } from '@constants'
-import { getWordDate } from '@utils/time'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
 import axios from 'axios'
 
 export const Copyright = () => {
   const { nft, viewer_address } = useObjktDisplayContext()
-
-  console.log('nft', nft)
-
   const [licenseData, setLicenseData] = useState(null)
 
   const clauseLabels = {
@@ -87,7 +80,6 @@ export const Copyright = () => {
       .catch((error) => console.error('Failed to fetch data:', error))
   }, [nft])
 
-  console.log('wtf', licenseData, nft.rights)
   if (!licenseData && !nft?.rights) {
     return <div>N/A or License Data Not Specified. 🚫</div>
   }
