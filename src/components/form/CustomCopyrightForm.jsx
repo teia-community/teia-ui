@@ -18,6 +18,7 @@ const initialClauses = {
   retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
   releasePublicDomain: false,
   requireAttribution: false,
+  rightsAreTransferable: true,
   customUriEnabled: false,
   customUri: '',
   addendum: '',
@@ -32,6 +33,7 @@ const clauseLabels = {
   retainCreatorRights: 'Creator Retains Rights Even When Exclusive',
   releasePublicDomain: 'Release to Public Domain',
   requireAttribution: 'Require Attribution on Use',
+  rightsAreTransferable: 'Rights are Transferable',
   customUriEnabled: 'Custom URI',
   overview: 'Copyright Overview',
 }
@@ -72,6 +74,10 @@ export const ClausesDescriptions = ({ clauses }) => {
       false: '🚫 No',
     },
     requireAttribution: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    rightsAreTransferable: {
       true: '✅ Yes',
       false: '🚫 No',
     },
@@ -166,7 +172,14 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
       }
       if (clauses.requireAttribution) {
         documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
-The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This attribution must be clearly associated with the Work and must acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance.acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+      }
+      if (clauses.rightsAreTransferable) {
+        documentText += `\n\n${clauseNumber++}. Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are transferable. The Owner(s) may assign, transfer, or sublicense the rights to the Work, subject to maintaining proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to all sales and edition numbers (unless stated otherwise), including both primary and secondary sales, promoting continuous and flexible utilization of the Work across different owners. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary. Failure to comply with attribution requirements constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+      } else if (!clauses.rightsAreTransferable) {
+        documentText += `\n\n${clauseNumber++}. Non-Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
       }
     }
 
@@ -177,7 +190,8 @@ The Owner(s) of the Work are required to give proper and visible attribution to 
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
       !clauses.releasePublicDomain &&
-      !clauses.requireAttribution
+      !clauses.requireAttribution &&
+      !clauses.rightsAreTransferable
     ) {
       documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
 No rights are granted under this Agreement. All rights for the Work are reserved solely by the Creator.`
@@ -222,10 +236,7 @@ Each individual claiming ownership ("Claimant") must conclusively prove that the
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
 
     documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
-This Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
-
-    documentText += `\n\n${clauseNumber++}. Transfer of Rights Upon Change of Ownership:
-The rights and obligations stipulated in this Agreement, along with any associated privileges, shall transfer automatically to a new owner upon the change of ownership from one wallet to another. This transfer is triggered by the sale, gift, or any form of transfer of the NFT that embodies the Work. The transfer of rights becomes effective immediately following the timestamp of the transaction recorded on the blockchain. It is incumbent upon the new Owner to verify and uphold the terms set forth in this Agreement, ensuring continuity and adherence to the stipulated conditions. The previous Owner's rights under this Agreement cease concurrently with the transfer of ownership.`
+Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
 
     // Additional notes based on user input
     if (clauses.addendum) {
@@ -251,6 +262,8 @@ The rights and obligations stipulated in this Agreement, along with any associat
           createDerivativeWorks: false,
           exclusiveRights: 'none',
           retainCreatorRights: true,
+          requireAttribution: true,
+          rightsAreTransferable: true,
           releasePublicDomain: false,
           customUriEnabled: true,
         }))
@@ -271,6 +284,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
         createDerivativeWorks: false,
         exclusiveRights: 'none',
         retainCreatorRights: true,
+        rightsAreTransferable: true,
         releasePublicDomain: true,
         customUriEnabled: false,
         customUri: '',
@@ -336,12 +350,14 @@ The rights and obligations stipulated in this Agreement, along with any associat
       clauses.publicDisplay ||
       clauses.createDerivativeWorks ||
       clauses.releasePublicDomain ||
-      clauses.requireAttribution
+      clauses.requireAttribution ||
+      clauses.rightsAreTransferable
 
     if (clauses.customUriEnabled) {
       documentText = `Custom URI: ${clauses.customUri}`
     } else if (!hasActiveRights) {
-      documentText = 'No Permissions Chosen'
+      documentText =
+        'No Permissions Chosen (For Addendums to show, choose at least one option in the checkboxes above.)'
     } else {
       documentText = generateDocumentText()
     }
@@ -357,6 +373,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
     clauses?.exclusiveRights,
     clauses?.releasePublicDomain,
     clauses?.requireAttribution,
+    clauses?.rightsAreTransferable,
     handleChange,
     generateDocumentText,
     updateCustomLicenseData,
@@ -372,8 +389,9 @@ The rights and obligations stipulated in this Agreement, along with any associat
     'broadcast',
     'publicDisplay',
     'createDerivativeWorks',
-    'releasePublicDomain',
     'requireAttribution',
+    'rightsAreTransferable',
+    'releasePublicDomain',
   ]
 
   // Info Modal
@@ -505,11 +523,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
             </>
           )}
         </div>
-        {(clauses.reproduce ||
-          clauses.broadcast ||
-          clauses.publicDisplay ||
-          clauses.createDerivativeWorks ||
-          clauses.releasePublicDomain) && (
+        {clauses && (
           <div style={{ marginTop: '1em' }}>
             <h4>Addendum/Notes</h4>
             <Textarea

@@ -17,6 +17,8 @@ export const Copyright = () => {
     createDerivativeWorks: 'Right to Create Derivative Works',
     exclusiveRights: 'Exclusive Rights',
     retainCreatorRights: 'Retain Creator Rights Even When Exclusive',
+    requireAttribution: 'Require Attribution on Use',
+    rightsAreTransferable: 'Rights are Transferable (Secondary Sales)',
     releasePublicDomain: 'Release to Public Domain',
     customUriEnabled: 'Custom URI Enabled',
     customUri: 'Custom URI',
@@ -49,7 +51,15 @@ export const Copyright = () => {
     },
     retainCreatorRights: {
       true: '✅ Yes',
-      false: '⚠️ No',
+      false: '🚫 No',
+    },
+    requireAttribution: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    rightsAreTransferable: {
+      true: '✅ Yes',
+      false: '🚫 No',
     },
   }
 
@@ -104,8 +114,8 @@ export const Copyright = () => {
               <br />
               <h4>License Details</h4>
               <ul>
-                {licenseData.clauses &&
-                  Object.entries(licenseData.clauses).map(([key, value]) => {
+                {licenseData?.clauses &&
+                  Object.entries(licenseData?.clauses).map(([key, value]) => {
                     if (isCustomUriOnly() && key !== 'customUri') {
                       return null // Do not render other clauses if customUriEnabled is true
                     }
@@ -122,7 +132,7 @@ export const Copyright = () => {
                     }
                     if (key === 'customUri') {
                       const uriDisplay =
-                        licenseData.clauses.customUriEnabled && value ? (
+                        licenseData?.clauses?.customUriEnabled && value ? (
                           <a
                             href={value}
                             target="_blank"
