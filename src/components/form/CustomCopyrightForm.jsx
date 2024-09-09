@@ -207,6 +207,7 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
         documentText += `\n\n${clauseNumber++}. Right to Create Derivative Works:
 The Creator grants to each Owner a worldwide license to publicly display the Work, either as a physical display or as a performance for live events. This license does not permit the monetization of the Work by the Owner and requires the Owner to provide full attribution to the Creator.`
       }
+
       if (clauses.requireAttribution) {
         documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
 The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance.acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
@@ -226,6 +227,7 @@ The rights granted under this Agreement to the Owner(s) of the Work are non-tran
       !clauses.reproduce &&
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
+
       !clauses.releasePublicDomain &&
       !clauses.requireAttribution &&
       !clauses.rightsAreTransferable
@@ -261,7 +263,7 @@ Despite reaching the threshold for exclusive rights, the Creator retains certain
       const readableDate = new Date(clauses.expirationDate).toLocaleDateString()
       documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
     }
-
+    
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
@@ -372,7 +374,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
   // Addendum handling
   const handleInputChange = (eventOrValue) => {
     let name, value
-
     if (eventOrValue?.target) {
       name = eventOrValue?.target?.name || ''
       value = eventOrValue?.target?.value || ''
@@ -484,7 +485,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       [name]: value || '',
     }))
   }
-
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
       <h3>
