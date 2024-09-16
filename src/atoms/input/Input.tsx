@@ -60,7 +60,7 @@ function Input(
   {
     type = 'text',
     placeholder = 'placeholder',
-    name,
+    name = 'placeholder',
     min,
     max,
     maxlength = 500,
@@ -82,38 +82,43 @@ function Input(
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
-      onChange(e)
-      const target = e.target as HTMLInputElement
+      const target = e.target as HTMLInputElement;
       if (target) {
         const v =
           type === 'number'
             ? !isNaN(target.valueAsNumber)
               ? target.valueAsNumber
               : target.value
-            : target.value
-
-        setValue(v)
-        onChange(v)
+            : target.value;
+  
+        setValue(v);
+  
+        // Stops Typescript errors
+        onChange({
+          target: {
+            name: target.name,
+            value: v,
+          },
+        } as unknown as React.ChangeEvent<HTMLInputElement>);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [value]
-  )
-
+    [setValue, onChange, type]
+  );
+  
   return (
     <div className={`${styles.container} ${className || ''}`}>
-      <label htmlFor={name}>
-        <p>{label || name}</p>
+      <label htmlFor={name || label || ''}>
+        <p>{label || name || ''}</p>
         <input
           type={type}
           ref={ref}
           placeholder={placeholder}
-          name={name || label}
+          name={name || label || ''}
           min={min}
           max={max}
           maxLength={maxlength}
           defaultValue={defaultValue}
-          value={value}
+          value={value || ''}
           onChange={handleInput}
           onBlur={onBlur}
           pattern={pattern}

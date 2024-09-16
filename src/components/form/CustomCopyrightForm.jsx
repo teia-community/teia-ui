@@ -8,6 +8,8 @@ import { useOutletContext } from 'react-router'
 import { useMintStore } from '@context/mintStore'
 import { copyrightModalText } from './copyrightmodaltext'
 import { InfoModal } from '@atoms/modal'
+import { useFormContext } from 'react-hook-form'
+import { HEN_CONTRACT_FA2 } from '@constants'
 
 const initialClauses = {
   reproduce: false,
@@ -166,6 +168,7 @@ export const ClausesDescriptions = ({ clauses }) => {
 }
 
 function CustomCopyrightForm({ onChange, value }) {
+  const { watch } = useFormContext()
   const { license, minterName, address } = useOutletContext()
   const [clauses, setClauses] = useState(initialClauses)
   const [generatedDocument, setGeneratedDocument] = useState(
@@ -182,7 +185,9 @@ function CustomCopyrightForm({ onChange, value }) {
 
   const generateDocumentText = useCallback(() => {
     let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
-    let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address"). This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
+    let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address") for the Work "${watch(
+      'title'
+    )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
 
     documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
@@ -227,7 +232,6 @@ The rights granted under this Agreement to the Owner(s) of the Work are non-tran
       !clauses.reproduce &&
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
-
       !clauses.releasePublicDomain &&
       !clauses.requireAttribution &&
       !clauses.rightsAreTransferable
@@ -263,7 +267,7 @@ Despite reaching the threshold for exclusive rights, the Creator retains certain
       const readableDate = new Date(clauses.expirationDate).toLocaleDateString()
       documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
     }
-    
+
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
