@@ -9,6 +9,8 @@ import axios from 'axios'
 export const Copyright = () => {
   const { nft, viewer_address } = useObjktDisplayContext()
   const [licenseData, setLicenseData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true) // New loading state
+  const [hasError, setHasError] = useState(false) // New error state
 
   const clauseLabels = {
     reproduce: 'Right to Reproduce',
@@ -82,20 +84,38 @@ export const Copyright = () => {
   }
 
   useEffect(() => {
+    if (!url) {
+      setIsLoading(false)
+      return
+    }
+
     axios
       .get(url)
       .then((response) => {
         setLicenseData(response.data)
+        setHasError(false)
       })
-      .catch((error) => console.error('Failed to fetch data:', error))
-  }, [nft])
+      .catch((error) => {
+        console.error('Failed to fetch data:', error)
+        setHasError(true)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [url])
 
-  if (!licenseData && !nft?.rights) {
+  if (isLoading) {
+    return <div>Loading license information...</div>
+  }
+
+  if (hasError || (!licenseData && !nft?.rights)) {
     return <div>N/A or License Data Not Specified. 🚫</div>
   }
 
   const isCustomUriOnly = () => {
-    return licenseData.clauses.customUriEnabled && licenseData.clauses.customUri
+    return (
+      licenseData?.clauses?.customUriEnabled && licenseData?.clauses?.customUri
+    )
   }
 
   return (
@@ -136,7 +156,7 @@ export const Copyright = () => {
                           Expiration Date:{' '}
                           {value
                             ? new Date(
-                                licenseData.clauses.expirationDate
+                                licenseData?.clauses?.expirationDate
                               ).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
@@ -188,7 +208,7 @@ export const Copyright = () => {
                 overflowWrap: 'break-word',
               }}
             >
-              {licenseData?.documentText}
+              {licenseData?.documentText || 'No license document available.'}
             </pre>
           </Container>
         </>
@@ -196,15 +216,15 @@ export const Copyright = () => {
       {nft?.rights !== 'custom' && nft?.rights && (
         <Container>
           <h3>License Information</h3>
-          <p>{nft.rights}</p>
+          <p>{nft?.rights}</p>
           {nft?.right_uri && (
             <>
               <h4>Link to Metadata</h4>
               <a
                 href={
-                  isValidUrl(nft.right_uri)
-                    ? nft.right_uri
-                    : HashToURL(nft.right_uri, 'CDN', { size: 'raw' })
+                  isValidUrl(nft?.right_uri)
+                    ? nft?.right_uri
+                    : HashToURL(nft?.right_uri, 'CDN', { size: 'raw' })
                 }
                 target="_blank"
                 rel="noopener noreferrer"
