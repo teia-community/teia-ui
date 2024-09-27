@@ -60,7 +60,7 @@ function Input(
   {
     type = 'text',
     placeholder = 'placeholder',
-    name = 'placeholder',
+    name,
     min,
     max,
     maxlength = 500,
@@ -92,14 +92,7 @@ function Input(
             : target.value;
   
         setValue(v);
-  
-        // Stops Typescript errors
-        onChange({
-          target: {
-            name: target.name,
-            value: v,
-          },
-        } as unknown as React.ChangeEvent<HTMLInputElement>);
+        onChange(v);
       }
     },
     [setValue, onChange, type]
