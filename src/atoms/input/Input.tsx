@@ -37,7 +37,7 @@ type InputType =
 interface InputProps {
   type: InputType
   placeholder: string
-  name?: string
+  name?: string | ''
   min?: number
   max?: number
   maxlength?: number
@@ -82,10 +82,7 @@ function Input(
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
-      if (ref) {
-        onChange(e)
-        return
-      }
+      onChange(e)
       const target = e.target as HTMLInputElement
       if (target) {
         const v =

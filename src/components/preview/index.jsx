@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
+import { ClausesDescriptions } from '@components/form/CustomCopyrightForm'
 function isHTML(mimeType) {
   return (
     mimeType === MIMETYPE.ZIP ||
@@ -46,12 +47,13 @@ export const Preview = () => {
     artifact,
     cover,
     license,
-    custom_license_uri,
+    customLicenseData,
     royalties,
     language,
     photosensitiveSeizureWarning,
     nsfw,
     editions,
+    isMonoType,
   ] = useMintStore((st) => [
     st.tags,
     st.title,
@@ -59,13 +61,16 @@ export const Preview = () => {
     st.artifact,
     st.cover,
     st.license,
-    st.custom_license_uri,
+    st.customLicenseData,
     st.royalties,
     st.language,
     st.photosensitive,
     st.nsfw,
     st.editions,
+    st.isMonoType,
   ])
+
+  console.log('customLicenseData in Preview', customLicenseData)
 
   const { ignoreUriMap } = useSettings()
   const token_tags = tags
@@ -87,8 +92,10 @@ export const Preview = () => {
       </motion.div>
     )
   }
+
   return (
     <motion.div
+      className={styles.container}
       style={{ width: '100%' }}
       initial={{ x: '20%' }}
       animate={{ x: 0 }}
@@ -99,7 +106,7 @@ export const Preview = () => {
       <div className={styles.media}>
         <RenderMediaType
           displayView
-          nft={{ mime_type: artifact.mimeType }}
+          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
           previewUri={artifact.reader}
           previewDisplayUri={cover?.reader}
         />
@@ -111,7 +118,15 @@ export const Preview = () => {
         </div>
         <Field title="Description" value={description} />
         <Field title="License" value={license?.label} />
-        <Field title="License URI" value={custom_license_uri} />
+        {customLicenseData?.clauses && license?.label === 'Custom License' && (
+          <div>
+            <ClausesDescriptions clauses={customLicenseData?.clauses} />
+            <Field
+              title="Copyright License Agreement"
+              value={customLicenseData?.documentText}
+            />
+          </div>
+        )}
         <Field title="Language" value={language?.label} />
 
         {(photosensitiveSeizureWarning || nsfw) && (

@@ -3,31 +3,25 @@
 .container {
   display: flex;
   flex-direction: column !important;
+  .field {
+    p {
+      white-space: pre-wrap;
+    }
+  }
 
   .media,
   .info {
     width: 100%;
   }
-
   .info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 20px;
   }
-
-  .field {
-    white-space: pre-wrap;
-  }
-
   .attributes {
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
-  }
-  strong {
-    margin-right: 1em;
-    min-width: 75px;
   }
   .label {
     color: var(--gray-40);
@@ -46,17 +40,17 @@
     align-items: center;
   }
 
+  strong {
+    margin-right: 1em;
+    min-width: 75px;
+  }
+
   @include respond-to('tablet') {
     flex-direction: initial;
 
-    .media,
-    .info {
-      width: 100%;
-    }
-
     .media {
       min-height: 40vh;
-      display: flex;
+      // display: flex;
       align-items: center;
       justify-content: center;
     }
@@ -70,7 +64,6 @@
       .field {
         margin-bottom: 20px;
       }
-
       .title {
         font-weight: bold;
       }

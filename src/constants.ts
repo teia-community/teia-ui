@@ -31,6 +31,8 @@ export const MIMETYPE: { [key: string]: string } = {
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
+  MIDI: 'audio/midi',
+  MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
   OGA: 'audio/ogg',
@@ -47,11 +49,14 @@ export const MIMETYPE: { [key: string]: string } = {
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
+  TXT: 'text/plain',
 }
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  .filter((e) => e !== MIMETYPE.GLTF) // disabling GLTF from new updates
+  // disabling GLTF from new updates,
+  // disabling TXT upload since they will be done via the textarea input
+  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT)
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
@@ -67,6 +72,7 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
         'XWAV',
         'QUICKTIME',
         'WEBP',
+        'TXT',
       ].includes(e[0])
   )
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
@@ -104,6 +110,12 @@ export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.PNG,
   MIMETYPE.GIF,
   MIMETYPE.MP4,
+]
+
+export const AUTO_GENERATE_COVER_MIMETYPES = [
+  'text/plain',
+  'audio/midi',
+  'audio/mid'
 ]
 
 export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif, mp4'
@@ -170,22 +182,22 @@ export const TOKENS = [
     fa2: 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV',
     multiasset: false,
     decimals: DAO_TOKEN_DECIMALS,
-    website: undefined
+    website: undefined,
   },
   {
     name: 'OBJKT',
     fa2: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
     multiasset: true,
     decimals: 1,
-    website: 'https://teia.art/objkt/'
+    website: 'https://teia.art/objkt/',
   },
   {
     name: 'hDAO',
     fa2: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
     multiasset: false,
     decimals: 1000000,
-    website: undefined
-  }
+    website: undefined,
+  },
 ]
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
@@ -226,7 +238,7 @@ export const LICENSE_TYPES: { [key: string]: string } = {
   'cc-by-nc-4.0': 'CC BY-NC 4.0 (Attribution-NonCommercial)',
   'cc-by-nc-sa-4.0': 'CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)',
   'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
-  custom: 'Custom (Specify below)',
+  custom: 'Custom License',
 }
 
 export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => ({
@@ -409,7 +421,8 @@ export const ossProjects = [
   {
     name: 'Tez4Pal Fundraiser',
     address: 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW',
-  },  {
+  },
+  {
     name: 'TezQuakeAid Morocco Fundraiser',
     address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
   },

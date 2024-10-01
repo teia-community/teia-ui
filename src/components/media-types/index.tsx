@@ -13,6 +13,8 @@ import { Container } from './container'
 import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
+import { MidiComponent }  from './midi'
+import { TXT } from './text'
 
 interface RenderMediaTypeProps {
   /**The nft with the core fragments*/
@@ -37,6 +39,7 @@ export const RenderMediaType = ({
   displayView,
   details,
 }: RenderMediaTypeProps) => {
+
   const parsedArtifactUri = useMemo(
     () =>
       nft.artifact_uri
@@ -181,6 +184,30 @@ export const RenderMediaType = ({
             displayUri={parsedDisplayUri}
             displayView={displayView}
             previewUri={previewUri}
+            nft={nft}
+          />
+        )
+      /** MIDI AUDIO FILES */
+      case MIMETYPE.MIDI:
+      case MIMETYPE.MID:
+        return (
+          <MidiComponent
+            artifactUri={parsedArtifactUri}
+            displayUri={parsedDisplayUri}
+            displayView={displayView}
+            previewUri={previewUri}
+            nft={nft}
+          />
+        )
+
+      /** ASCII TYPED ART */
+      case MIMETYPE.TXT:
+        return (
+          <TXT
+            artifactUri={parsedArtifactUri}
+            displayUri={previewUri}
+            displayView={displayView}
+            previewUri={parsedDisplayUri}
             nft={nft}
           />
         )

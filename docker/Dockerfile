@@ -10,8 +10,11 @@ RUN : \
 
 FROM openresty/openresty:alpine
 EXPOSE 80
-RUN mkdir /lua; wget -O /lua/ustring.lua https://raw.githubusercontent.com/wikimedia/mediawiki-extensions-Scribunto/master/includes/Engines/LuaCommon/lualib/ustring/ustring.lua
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+RUN : \
+    && mkdir /lua \
+    && wget -O /lua/ustring.lua https://raw.githubusercontent.com/wikimedia/mediawiki-extensions-Scribunto/master/includes/Engines/LuaCommon/lualib/ustring/ustring.lua \
+    && wget -O /lua/hmac.lua https://raw.githubusercontent.com/jkeys089/lua-resty-hmac/master/lib/resty/hmac.lua
+COPY docker/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY docker/previews.lua /lua/previews.lua
 COPY docker/shared.conf /shared.conf
 COPY --from=builder /usr/src/app/build/ /usr/local/openresty/nginx/html/

@@ -56,6 +56,10 @@ const TABS = [
     to: 'transfer',
     private: true,
   },
+  { 
+    title: 'Copyright',
+    to: 'copyright',
+  }
 ]
 
 export const ObjktDisplay = () => {

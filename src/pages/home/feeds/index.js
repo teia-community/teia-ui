@@ -9,6 +9,7 @@ export {
   VideoFeed,
   PdfFeed,
   MarkdownFeed,
+  TextFeed,
 } from './mime-type-feed'
 
 export {

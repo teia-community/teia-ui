@@ -31,17 +31,20 @@ interface SelectField {
   value: string
 }
 
-interface MintState {
+export interface MintState {
   title?: string
   description?: string
   tags?: string
   editions?: number
   royalties?: number
   license?: SelectField
-  custom_license_uri?: string
+  customLicenseData?: any
   language?: SelectField
   nsfw: boolean
   photosensitive: boolean
+  isTyped: boolean
+  typedinput?: string /** for typed **/
+  isMonoType?: boolean
   cover?: FileForm
   artifact?: FileForm
   thumbnail?: FileForm
@@ -57,10 +60,11 @@ const defaultValuesStored = {
   editions: undefined,
   royalties: undefined,
   license: undefined,
-  custom_license_uri: '',
+  customLicenseData: undefined,
   language: undefined,
   nsfw: false,
   photosensitive: false,
+  isTyped: false,
 }
 
 const defaultValues = {
@@ -68,6 +72,7 @@ const defaultValues = {
   cover: undefined,
   thumbnail: undefined,
   getValuesStored: () => {},
+  updateCustomLicenseData: () => {},
 }
 
 export const useMintStore = create<MintState>()(
@@ -77,6 +82,13 @@ export const useMintStore = create<MintState>()(
         ...defaultValuesStored,
         ...defaultValues,
         isValid: false,
+        updateCustomLicenseData: (data) => {
+          set((state) => ({
+            ...state,
+            customLicenseData: data
+          }));
+          // console.log("Updated customLicenseData:", get().customLicenseData);
+        },
         reset: () => {
           set({ ...defaultValuesStored, ...defaultValues })
         },
@@ -96,7 +108,7 @@ export const useMintStore = create<MintState>()(
             editions,
             royalties,
             license,
-            custom_license_uri,
+            customLicenseData,
             artifact,
             title,
             description,
@@ -104,6 +116,7 @@ export const useMintStore = create<MintState>()(
             cover,
             photosensitive,
             nsfw,
+            isMonoType,
             reset,
           } = get()
           const show = useModalStore.getState().show
@@ -264,7 +277,7 @@ export const useMintStore = create<MintState>()(
               thumbnail: used_thumb,
               generateDisplayUri: true,
               rights: license?.value,
-              rightUri: custom_license_uri,
+              rightsUri: customLicenseData,
               language: language?.value,
               accessibility,
               contentRating,
@@ -280,9 +293,8 @@ export const useMintStore = create<MintState>()(
               file: artifact,
               cover: used_cover,
               thumbnail: used_thumb,
-
               rights: license?.value,
-              rightUri: custom_license_uri,
+              rightsUri: customLicenseData,
               language: language?.value,
               accessibility,
               contentRating,

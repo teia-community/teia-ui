@@ -36,6 +36,7 @@ import {
   TagFeed,
   PdfFeed,
   MarkdownFeed,
+  TextFeed,
   QuakeFeed,
   MoroccoQuakeFeed,
   Tez4PalFeed,
@@ -49,6 +50,7 @@ import {
   History,
   Swap,
   Transfer,
+  Copyright,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
@@ -71,6 +73,7 @@ import { IconCache } from '@utils/with-icon'
 import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
+import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
 
 const display_routes = (
   <>
@@ -110,6 +113,8 @@ const router = createBrowserRouter(
         <Route path="html-svg" element={<HtmlSvgFeed />} />
         <Route path="pdf" element={<PdfFeed />} />
         <Route path="md" element={<MarkdownFeed />} />
+        <Route path="txt" element={<TextFeed />} />
+        <Route path="midi" element={<MidiFeed />} />
 
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />
@@ -142,6 +147,7 @@ const router = createBrowserRouter(
         <Route path="swap" element={<Swap />} />
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
+        <Route path="copyright" element={<Copyright />} />
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />

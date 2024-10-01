@@ -56,6 +56,15 @@ export function AudioFeed() {
   )
 }
 
+export function MidiFeed() {
+  return (
+    <MimeTypeFeed
+      label="Midi OBJKTs"
+      namespace="midi-feed"
+      mimeTypes={['audio/mid', 'audio/midi']}
+    />
+  )
+}
 export function VideoFeed() {
   return (
     <MimeTypeFeed
@@ -82,6 +91,16 @@ export function MarkdownFeed() {
       label="Markdown OBJKTs"
       namespace="md-feed"
       mimeTypes={['text/markdown']}
+    />
+  )
+}
+
+export function TextFeed() {
+  return (
+    <MimeTypeFeed
+      label="Text OBJKTs"
+      namespace="txt-feed"
+      mimeTypes={['text/plain']}
     />
   )
 }

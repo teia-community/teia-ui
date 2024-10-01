@@ -151,12 +151,13 @@ interface PrepareProps {
   cover: FileForm
   thumbnail: FileForm
   rights: string
-  rightUri?: string
+  rightsUri?: string
   language?: string
   accessibility: string
   contentRating: string
   formats: any
 }
+
 export const prepareFile = async ({
   name,
   description,
@@ -166,7 +167,7 @@ export const prepareFile = async ({
   cover,
   thumbnail,
   rights,
-  rightUri,
+  rightsUri,
   language,
   accessibility,
   contentRating,
@@ -265,7 +266,7 @@ export const prepareFile = async ({
     displayUri,
     thumbnailUri,
     rights,
-    rightUri,
+    rightsUri,
     language,
     accessibility,
     contentRating,
@@ -290,7 +291,7 @@ export const prepareDirectory = async ({
   thumbnail,
   generateDisplayUri,
   rights,
-  rightUri,
+  rightsUri,
   language,
   accessibility,
   contentRating,
@@ -305,7 +306,7 @@ export const prepareDirectory = async ({
   thumbnail: FileForm
   generateDisplayUri: string
   rights: string
-  rightUri: string
+  rightsUri: string
   language: string
   accessibility: string
   contentRating: string
@@ -387,7 +388,7 @@ export const prepareDirectory = async ({
     displayUri,
     thumbnailUri,
     rights,
-    rightUri,
+    rightsUri,
     language,
     accessibility,
     contentRating,
@@ -455,7 +456,7 @@ async function buildMetadataFile({
   displayUri = '',
   thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI,
   rights,
-  rightUri,
+  rightsUri,
   language,
   accessibility,
   contentRating,
@@ -469,7 +470,7 @@ async function buildMetadataFile({
   displayUri: string
   thumbnailUri: string
   rights: string
-  rightUri?: string
+  rightsUri?: string
   language: string
   accessibility: string
   contentRating: string
@@ -494,7 +495,13 @@ async function buildMetadataFile({
   }
   if (accessibility) metadata.accessibility = accessibility
   if (contentRating) metadata.contentRating = contentRating
-  if (rights === 'custom') metadata.rightUri = rightUri
+  if (rights === 'custom' && rightsUri) {
+    const rightsCid = await uploadFileToIPFSProxy({
+      blob: new Blob([Buffer.from(JSON.stringify(rightsUri))]),
+      path: 'license.json',
+    })
+    metadata.rightsUri = `ipfs://${rightsCid}`
+  }
   if (language != null) metadata.language = language
 
   return JSON.stringify(metadata)
@@ -519,6 +526,6 @@ interface TeiaMetadata {
   //optional
   accessibility?: string
   contentRating?: string
-  rightUri?: string
+  rightsUri?: string
   language?: string
 }

@@ -10,6 +10,7 @@ import {
 } from '@constants'
 import { Controller } from 'react-hook-form'
 import classNames from 'classnames'
+import CustomCopyrightForm from './CustomCopyrightForm'
 
 const FieldError = memo(({ error, text }) => {
   const classes = classNames({
@@ -44,6 +45,18 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <Textarea
           className={styles.field}
+          label={field.label}
+          placeholder={field.placeholder}
+          {...register(name, field.rules)}
+        >
+          <Line />
+          {error && <FieldError text error={error.message} />}
+        </Textarea>
+      )
+    case 'typed-textarea':
+      return (
+        <Textarea
+          className={styles.typed_field}
           label={field.label}
           placeholder={field.placeholder}
           {...register(name, field.rules)}
@@ -137,6 +150,19 @@ export const FormFields = ({ value, field, error, register, control }) => {
             >
               {error && <FieldError error={error.message} />}
             </Upload>
+          )}
+        />
+      )
+
+    case 'customCopyrightForm':
+      return (
+        <Controller
+          control={control}
+          name="customLicenseData"
+          defaultValue={field.defaultValue}
+          rules={field.rules}
+          render={({ field: { onChange, value } }) => (
+            <CustomCopyrightForm onChange={onChange} value={value} />
           )}
         />
       )
