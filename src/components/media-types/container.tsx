@@ -166,7 +166,7 @@ export const Container = ({
             </Button>
           )}
 
-          {displayView && !iOS && !nofullscreen && (
+          {displayView && !iOS && (
             <Button
               // TODO: Add a proper "tooltip" for buttons
               title={'Show in Anaverse'}
