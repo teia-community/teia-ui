@@ -32,6 +32,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <Input
           className={styles.field}
+          name={name}
           type={field.type}
           label={field.label}
           placeholder={field.placeholder}

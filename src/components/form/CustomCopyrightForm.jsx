@@ -8,6 +8,8 @@ import { useOutletContext } from 'react-router'
 import { useMintStore } from '@context/mintStore'
 import { copyrightModalText } from './copyrightmodaltext'
 import { InfoModal } from '@atoms/modal'
+import { useFormContext } from 'react-hook-form'
+import { HEN_CONTRACT_FA2 } from '@constants'
 
 const initialClauses = {
   reproduce: false,
@@ -17,6 +19,10 @@ const initialClauses = {
   exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
   retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
   releasePublicDomain: false,
+  requireAttribution: false,
+  rightsAreTransferable: true,
+  expirationDate: '',
+  expirationDateExists: false,
   customUriEnabled: false,
   customUri: '',
   addendum: '',
@@ -30,6 +36,10 @@ const clauseLabels = {
   exclusiveRights: 'Exclusive Rights Based on Ownership Share',
   retainCreatorRights: 'Creator Retains Rights Even When Exclusive',
   releasePublicDomain: 'Release to Public Domain',
+  requireAttribution: 'Require Attribution on Use',
+  rightsAreTransferable: 'Rights are Transferable',
+  expirationDateExists: 'Clauses Have Expiration Date',
+  expirationDate: 'Date of Expiration',
   customUriEnabled: 'Custom URI',
   overview: 'Copyright Overview',
 }
@@ -69,6 +79,26 @@ export const ClausesDescriptions = ({ clauses }) => {
       true: '✅ Yes',
       false: '🚫 No',
     },
+    requireAttribution: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    rightsAreTransferable: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    expirationDateExists: {
+      true: '✅ Yes',
+      false: '🚫 No',
+    },
+    expirationDate: {
+      null: 'None',
+      default: new Date(clauses?.expirationDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+    },
     customUriEnabled: {
       true: '📝 Yes',
       false: '🚫 No',
@@ -85,18 +115,39 @@ export const ClausesDescriptions = ({ clauses }) => {
       <ul>
         {clauses.customUriEnabled ? (
           <>
-            <li>Custom URI Enabled: {descriptions.customUriEnabled[true]}</li>
+            <li>Custom URI Enabled: {descriptions?.customUriEnabled[true]}</li>
             <li>Custom URI: {clauses?.customUri || 'No URI Set'}</li>
           </>
         ) : (
           Object.entries(clauses).map(([key, value]) => {
             if (key === 'exclusiveRights') {
               const exclusiveLabel =
-                exclusiveRightsOptions.find((option) => option.value === value)
+                exclusiveRightsOptions.find((option) => option?.value === value)
                   ?.label || 'None'
               return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
-            } else if (key === 'customUri') {
+            } else if (key === 'customUri' || key === 'expirationDate') {
               return null
+            } else if (key === 'expirationDateExists') {
+              return (
+                <>
+                  <li key={key}>
+                    {clauseLabels[key]}: {descriptions[key][value]}
+                  </li>
+                  <li key="expirationDate">
+                    {clauseLabels.expirationDate}:{' '}
+                    {clauses.expirationDateExists && clauses.expirationDate
+                      ? new Date(clauses.expirationDate).toLocaleDateString(
+                          'en-US',
+                          {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          }
+                        )
+                      : 'None'}
+                  </li>
+                </>
+              )
             } else if (key === 'addendum') {
               return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
             } else {
@@ -117,6 +168,7 @@ export const ClausesDescriptions = ({ clauses }) => {
 }
 
 function CustomCopyrightForm({ onChange, value }) {
+  const { watch } = useFormContext()
   const { license, minterName, address } = useOutletContext()
   const [clauses, setClauses] = useState(initialClauses)
   const [generatedDocument, setGeneratedDocument] = useState(
@@ -133,7 +185,9 @@ function CustomCopyrightForm({ onChange, value }) {
 
   const generateDocumentText = useCallback(() => {
     let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
-    let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address"). This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
+    let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address") for the Work "${watch(
+      'title'
+    )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
 
     documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
@@ -158,6 +212,18 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
         documentText += `\n\n${clauseNumber++}. Right to Create Derivative Works:
 The Creator grants to each Owner a worldwide license to publicly display the Work, either as a physical display or as a performance for live events. This license does not permit the monetization of the Work by the Owner and requires the Owner to provide full attribution to the Creator.`
       }
+
+      if (clauses.requireAttribution) {
+        documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
+The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance.acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+      }
+      if (clauses.rightsAreTransferable) {
+        documentText += `\n\n${clauseNumber++}. Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are transferable. The Owner(s) may assign, transfer, or sublicense the rights to the Work, subject to maintaining proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to all sales and edition numbers (unless stated otherwise), including both primary and secondary sales, promoting continuous and flexible utilization of the Work across different owners. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary. Failure to comply with attribution requirements constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+      } else if (!clauses.rightsAreTransferable) {
+        documentText += `\n\n${clauseNumber++}. Non-Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
+      }
     }
 
     // contract defaults to "All Rights Reserved" where nothing is chosen
@@ -166,7 +232,9 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
       !clauses.reproduce &&
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
-      !clauses.releasePublicDomain
+      !clauses.releasePublicDomain &&
+      !clauses.requireAttribution &&
+      !clauses.rightsAreTransferable
     ) {
       documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
 No rights are granted under this Agreement. All rights for the Work are reserved solely by the Creator.`
@@ -195,6 +263,11 @@ The Creator grants exclusive rights as outlined in this Agreement to the Owner(s
 Despite reaching the threshold for exclusive rights, the Creator retains certain rights as specified under this Agreement, even if exclusivity conditions are met by other Owners. The rights are then split equally between the Creator and Owner which has been granted exclusive rights over the other Owner(s) of the Work, effective immediately after the date in which the condition for exclusivity has been met.`
     }
 
+    if (clauses.expirationDate && clauses.expirationDateExists) {
+      const readableDate = new Date(clauses.expirationDate).toLocaleDateString()
+      documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
+    }
+
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
@@ -211,10 +284,7 @@ Each individual claiming ownership ("Claimant") must conclusively prove that the
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
 
     documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
-This Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
-
-    documentText += `\n\n${clauseNumber++}. Transfer of Rights Upon Change of Ownership:
-The rights and obligations stipulated in this Agreement, along with any associated privileges, shall transfer automatically to a new owner upon the change of ownership from one wallet to another. This transfer is triggered by the sale, gift, or any form of transfer of the NFT that embodies the Work. The transfer of rights becomes effective immediately following the timestamp of the transaction recorded on the blockchain. It is incumbent upon the new Owner to verify and uphold the terms set forth in this Agreement, ensuring continuity and adherence to the stipulated conditions. The previous Owner's rights under this Agreement cease concurrently with the transfer of ownership.`
+Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
 
     // Additional notes based on user input
     if (clauses.addendum) {
@@ -227,7 +297,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
   // logic for checkboxes
   const handleChange = useCallback((value, name) => {
     const newValue = Object.prototype.hasOwnProperty.call(value, 'value')
-      ? value.value
+      ? value?.value
       : value
 
     if (name === 'customUriEnabled') {
@@ -240,6 +310,10 @@ The rights and obligations stipulated in this Agreement, along with any associat
           createDerivativeWorks: false,
           exclusiveRights: 'none',
           retainCreatorRights: true,
+          requireAttribution: true,
+          rightsAreTransferable: true,
+          expirationDateExists: false,
+          expirationDate: null,
           releasePublicDomain: false,
           customUriEnabled: true,
         }))
@@ -260,6 +334,9 @@ The rights and obligations stipulated in this Agreement, along with any associat
         createDerivativeWorks: false,
         exclusiveRights: 'none',
         retainCreatorRights: true,
+        rightsAreTransferable: true,
+        expirationDateExists: false,
+        expirationDate: null,
         releasePublicDomain: true,
         customUriEnabled: false,
         customUri: '',
@@ -268,7 +345,7 @@ The rights and obligations stipulated in this Agreement, along with any associat
       // Normal handling for other checkboxes
       setClauses((prev) => ({
         ...prev,
-        [name]: newValue,
+        [name]: newValue || '',
         ...(name !== 'releasePublicDomain' && prev.releasePublicDomain
           ? { releasePublicDomain: false }
           : null),
@@ -301,18 +378,17 @@ The rights and obligations stipulated in this Agreement, along with any associat
   // Addendum handling
   const handleInputChange = (eventOrValue) => {
     let name, value
-
-    if (eventOrValue.target) {
-      name = eventOrValue.target.name
-      value = eventOrValue.target.value
+    if (eventOrValue?.target) {
+      name = eventOrValue?.target?.name || ''
+      value = eventOrValue?.target?.value || ''
     } else {
-      name = 'addendum'
-      value = eventOrValue
+      name = 'addendum' | ''
+      value = eventOrValue | ''
     }
 
     setClauses((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value || '',
     }))
   }
 
@@ -324,12 +400,15 @@ The rights and obligations stipulated in this Agreement, along with any associat
       clauses.broadcast ||
       clauses.publicDisplay ||
       clauses.createDerivativeWorks ||
-      clauses.releasePublicDomain
+      clauses.releasePublicDomain ||
+      clauses.requireAttribution ||
+      clauses.rightsAreTransferable
 
     if (clauses.customUriEnabled) {
       documentText = `Custom URI: ${clauses.customUri}`
     } else if (!hasActiveRights) {
-      documentText = 'No Permissions Chosen'
+      documentText =
+        'No Permissions Chosen (For Addendum or Expiration Date sections to show, choose at least one option in the checkboxes above.)'
     } else {
       documentText = generateDocumentText()
     }
@@ -337,6 +416,8 @@ The rights and obligations stipulated in this Agreement, along with any associat
     setDocumentText(documentText)
     setGeneratedDocument(documentText)
     updateCustomLicenseData({ clauses: clauses, documentText: documentText })
+    // "clauses" alone seems to cause issues so all dependencies are listed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -344,6 +425,10 @@ The rights and obligations stipulated in this Agreement, along with any associat
     clauses?.createDerivativeWorks,
     clauses?.exclusiveRights,
     clauses?.releasePublicDomain,
+    clauses?.requireAttribution,
+    clauses?.rightsAreTransferable,
+    clauses?.expirationDate,
+    clauses?.expirationDateExists,
     handleChange,
     generateDocumentText,
     updateCustomLicenseData,
@@ -354,11 +439,14 @@ The rights and obligations stipulated in this Agreement, along with any associat
     onChange({ clauses, documentText })
   }, [clauses, documentText, onChange])
 
+  // checkboxes with custom functions are not listed here
   const propertiesWithCheckboxes = [
     'reproduce',
     'broadcast',
     'publicDisplay',
     'createDerivativeWorks',
+    'requireAttribution',
+    'rightsAreTransferable',
     'releasePublicDomain',
   ]
 
@@ -386,6 +474,21 @@ The rights and obligations stipulated in this Agreement, along with any associat
     }
   }
 
+  const handleDateChange = (eventOrValue, name) => {
+    let value
+    if (eventOrValue.target) {
+      // Standard input change
+      value = eventOrValue?.target?.value || '' // Fallback to empty string if undefined
+    } else {
+      // Custom handling if it's directly passed a value
+      value = eventOrValue || ''
+    }
+
+    setClauses((prev) => ({
+      ...prev,
+      [name]: value || '',
+    }))
+  }
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
       <h3>
@@ -477,22 +580,54 @@ The rights and obligations stipulated in this Agreement, along with any associat
             classNamePrefix="react_select"
           />
           {['majority', 'superMajority'].includes(clauses.exclusiveRights) && ( // Creator rights retention generated only when exclusive is chosen
-            <Checkbox
-              name="retainCreatorRights"
-              label="Creator Retains Their Rights Even When Exclusivity is Reached"
-              checked={clauses.retainCreatorRights}
-              onCheck={(checked) =>
-                handleChange(checked, 'retainCreatorRights')
-              }
-              className={styles.field}
-            />
+            <>
+              <br />
+              <Checkbox
+                name="retainCreatorRights"
+                label="Creator Retains Their Rights Even When Exclusivity is Reached"
+                checked={clauses.retainCreatorRights}
+                onCheck={(checked) =>
+                  handleChange(checked, 'retainCreatorRights')
+                }
+                className={styles.field}
+              />
+            </>
           )}
         </div>
-        {(clauses.reproduce ||
-          clauses.broadcast ||
-          clauses.publicDisplay ||
-          clauses.createDerivativeWorks ||
-          clauses.releasePublicDomain) && (
+        <div style={{ marginTop: '1em', display: 'flex' }}>
+          <Checkbox
+            name="expirationDateExists"
+            label="Add an Expiration Date to Clauses"
+            checked={clauses.expirationDateExists}
+            onCheck={(checked) =>
+              handleDateChange(checked, 'expirationDateExists')
+            }
+            className={styles.field}
+          />
+          <span
+            role="button"
+            tabIndex={0}
+            className={styles.modalInfoIcon}
+            onClick={() => handleModalOpen('exclusiveRights')}
+            onKeyPress={(event) =>
+              handleKeyPress(event, clauseLabels['exclusiveRights'])
+            }
+          >
+            (?)
+          </span>
+        </div>
+        {clauses.expirationDateExists && (
+          <div style={{ marginTop: '1em' }}>
+            <h4>{clauseLabels.expirationDate}</h4>
+            <Input
+              type="date"
+              value={clauses.expirationDate || ''}
+              onChange={(e) => handleChange(e?.target?.value, 'expirationDate')}
+              className={styles.field}
+            />
+          </div>
+        )}
+        {clauses && (
           <div style={{ marginTop: '1em' }}>
             <h4>Addendum/Notes</h4>
             <Textarea
