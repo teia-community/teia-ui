@@ -50,7 +50,7 @@ export default function Collections() {
           if (filter === FILTER_NOT_FOR_SALE) {
             return tokens.filter(
               ({ listing_seller_address, artist_address }) =>
-                artist_address !== address && listing_seller_address !== address
+                artist_address !== address // && listing_seller_address !== address
             )
           }
 
@@ -81,6 +81,7 @@ export default function Collections() {
                   artist_address: { _neq: $address }
                   metadata_status: { _eq: "processed" }
                 }
+                amount: { _gt: "0" }
               }
               order_by: { last_received_at: desc }
             ) {
