@@ -66,6 +66,7 @@ export const Footer = ({ menu, pin }: FooterProps) => {
       <motion.footer {...transition()} className={classes_content}>
         <div className={styles.logo}>
           Teia DAO LLC.
+          <a href="https://tzkt.io/">Powered by TzKT API</a>
           {menu && (
             <Button
               alt="teia rotating logo"
