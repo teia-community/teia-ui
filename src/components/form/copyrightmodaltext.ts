@@ -13,6 +13,7 @@ export const copyrightModalText = {
         </ul>
         <p>Note that some digital mediums (e.g. software, websites, video games) often fall into several categories, depending on how it's use. If you want a "permissive" contract, choose as many as applicable. If you want more granularity, think about use-cases and scope them as necessary. (e.g. for video games, reproduction rights will allow the developer to sell assets like art and music directly, whereas broadcasting rights will only allow to "use" them in-game.)
         <p>If geography, timelines (i.e. expiration dates), or frequency of usage (e.g. each Owner is only allowed to make X copies) is of importance, Creators can add those details in the Addendum sections to scope the Agreement as necessary.</p>
+        <p>In all cases, the written text in this document will take precident over any data or metadata displays as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s), with the statements in the Addendums having the ability to overrule or nullify statements in the auto-generated portions of the document itself in cases of conflicts or inconsistencies. (Though it is recommended that you don't create contradictions in the document itself to avoid misunderstandings or misinterpretations.)</p>
     `,
     reproduce: `
         <p>This right allows the Owner of the Work to make direct copies of the work, for both commercial and non-commercial purposes.</p>
