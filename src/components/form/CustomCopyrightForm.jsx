@@ -194,6 +194,7 @@ function CustomCopyrightForm({ onChange, value }) {
     )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
 
+    documentText += `\n\nIn all cases, the written text in this document will take precedence over any data or metadata displays on or off-chain as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s). Statements in the Addendums have the ability to overrule or nullify statements in the auto-generated portions of this document in cases of conflicts or inconsistencies.`
     documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
 
     if (clauses.releasePublicDomain) {
@@ -493,11 +494,10 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     }
   }
 
-  const handleDateChange = (event) => {
-    const { name, value } = event.target
+  const handleDateChange = (checked) => {
     setClauses((prev) => ({
       ...prev,
-      [name]: value,
+      expirationDateExists: checked,
     }))
   }
 
@@ -611,9 +611,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             name="expirationDateExists"
             label="Add an Expiration Date to Clauses"
             checked={clauses.expirationDateExists}
-            onCheck={(checked) =>
-              handleDateChange(checked, 'expirationDateExists')
-            }
+            onCheck={handleDateChange}
             className={styles.field}
           />
           <span
@@ -633,8 +631,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             <h4>{clauseLabels.expirationDate}</h4>
             <Input
               type="date"
-              value={clauses.expirationDate || ''}
-              onChange={(e) => handleChange(e?.target?.value, 'expirationDate')}
+              value={clauses.expirationDate}
+              onChange={(e) => handleChange(e, 'expirationDate')}
               className={styles.field}
             />
           </div>
