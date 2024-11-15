@@ -82,7 +82,8 @@ function Input(
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
-      const target = e.target as HTMLInputElement;
+      onChange(e)
+      const target = e.target as HTMLInputElement
       if (target) {
         const v =
           type === 'number'
@@ -91,8 +92,8 @@ function Input(
               : target.value
             : target.value;
   
-        setValue(v);
-        onChange(v);
+        setValue(v)
+        onChange(v)
       }
     },
     [setValue, onChange, type]
