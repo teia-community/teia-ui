@@ -15,7 +15,7 @@ function UsernameAndLink({ event, attr }) {
     <>
       {get(event, `${attr}_profile.name`) ? (
         <span>
-          <Button href={`/${encodeURI(get(event, `${attr}_profile.name`))}`}>
+          <Button href={`/${encodeURIComponent(get(event, `${attr}_profile.name`))}`}>
             {get(event, `${attr}_profile.name`)}
           </Button>
         </span>
@@ -224,7 +224,7 @@ export const History = () => {
                 from={<UsernameAndLink event={e} attr="from" />}
                 to={
                   <span>
-                    <Button href={`/tz/${encodeURI(BURN_ADDRESS)}`}>
+                    <Button href={`/tz/${encodeURIComponent(BURN_ADDRESS)}`}>
                       Burn Address
                     </Button>
                   </span>
