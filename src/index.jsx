@@ -40,7 +40,7 @@ import {
   QuakeFeed,
   MoroccoQuakeFeed,
   Tez4PalFeed,
-  Art4ArtistFeed,
+  Art4ArtistsFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -100,7 +100,7 @@ const router = createBrowserRouter(
 
         <Route path="iran" element={<IranFeed />} />
         <Route path="tez4pal" element={<Tez4PalFeed />} />
-        <Route path="art4artist" element={<Art4ArtistFeed />} />
+        <Route path="art4artists" element={<Art4ArtistsFeed />} />
         <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
         <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />

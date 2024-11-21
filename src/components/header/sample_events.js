@@ -1,10 +1,10 @@
 // DEV SAMPLES
 export const sample_events = [
   {
-    title: 'Art4Artist',
+    title: 'Art4Artists',
     icon: '🖼️ ',
     link: 'https://x.com/EggsUnknow/status/1848805355620602309',
-    subtitle: 'Art4Artist',
+    subtitle: 'Art4Artists',
     content:
       'Tezos Ecosystem #Art4Artists Breadfond',
   },

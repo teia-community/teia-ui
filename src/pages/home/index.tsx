@@ -21,6 +21,7 @@ type FeedComponentMap = {
 
 export const feedComponentMap: FeedComponentMap = {
   'Recent Sales': FEEDS.RecentSalesFeed,
+  'Art4Artists': FEEDS.Art4ArtistsFeed,
   '🏳️‍🌈 Tezospride': FEEDS.TagFeed as FunctionComponent<Record<string, unknown>>,
   '🇮🇷 Iran': FEEDS.IranFeed,
   'Quake Aid': FEEDS.QuakeFeed,
@@ -38,7 +39,6 @@ export const feedComponentMap: FeedComponentMap = {
   Markdown: FEEDS.MarkdownFeed,
   GIF: FEEDS.GifFeed,
   Friends: FEEDS.FriendsFeed,
-  Art4Artist: FEEDS.Art4ArtistFeed,
 }
 
 export function Home({ isSearch = false }) {

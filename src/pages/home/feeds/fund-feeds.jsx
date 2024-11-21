@@ -1,5 +1,5 @@
 import {
-  ART4ARTIST_BREADFOND_CONTRACT,
+  ART4ARTISTS_BREADFOND_CONTRACT,
   TEZ4PAL_FUNDING_ADDRESS,
   IRAN_FUNDING_CONTRACT,
   MOROCCO_QUAKE_FUNDING_CONTRACT,
@@ -111,14 +111,14 @@ export function Tez4PalFeed() {
   )
 }
 
-export function Art4ArtistFeed() {
+export function Art4ArtistsFeed() {
   return (
     <FundFeed
-      introText={<>#Art4Artist Breadfond</>}
-      contractAddress={ART4ARTIST_BREADFOND_CONTRACT}
-      cause="Art4Artist"
-      namespace="art4artist"
-      tags={['Art4Artist', '#Art4Artist']}
+      introText={<>#Art4Artists Breadfond</>}
+      contractAddress={ART4ARTISTS_BREADFOND_CONTRACT}
+      cause="Art4Artists"
+      namespace="art4artists"
+      tags={['Art4Artists', '#Art4Artists']}
       infoUrl="https://x.com/EggsUnknow/status/1848805355620602309"
     />
   )
