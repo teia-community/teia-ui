@@ -38,6 +38,7 @@ export const feedComponentMap: FeedComponentMap = {
   Markdown: FEEDS.MarkdownFeed,
   GIF: FEEDS.GifFeed,
   Friends: FEEDS.FriendsFeed,
+  Art4Artist: FEEDS.Art4ArtistFeed,
 }
 
 export function Home({ isSearch = false }) {

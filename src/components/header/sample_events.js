@@ -1,6 +1,14 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'Art4Artist',
+    icon: '🖼️ ',
+    link: 'https://x.com/EggsUnknow/status/1848805355620602309',
+    subtitle: 'Art4Artist',
+    content:
+      'Tezos Ecosystem #Art4Artists Breadfond',
+  },
+  {
     title: 'Objkt4Objkt (4th edition)',
     icon: '🖼️ ',
     link: 'https://twitter.com/kikanicolela/status/1778112619066413422',
