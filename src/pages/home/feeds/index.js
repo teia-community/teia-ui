@@ -19,6 +19,7 @@ export {
   QuakeFeed,
   MoroccoQuakeFeed,
   Tez4PalFeed,
+  Art4ArtistsFeed,
 } from './fund-feeds'
 export { FriendsFeed } from './friends-feed'
 export { RandomFeed } from './random-feed'
