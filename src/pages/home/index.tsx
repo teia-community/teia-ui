@@ -55,7 +55,7 @@ export function Home({ isSearch = false }) {
         {isSearch && (
           <Input
             type="text"
-            name="search"
+            name="Enter a search term and press enter:"
             onChange={(value) => {
               setSearchTerm(value as string)
             }}
@@ -84,7 +84,7 @@ export function Home({ isSearch = false }) {
         searchParams.get('term') ? (
           <FEEDS.SearchFeed />
         ) : (
-          <h1>Enter a search term</h1>
+          <></>
         )
       ) : (
         outlet || <FeedComponent />
