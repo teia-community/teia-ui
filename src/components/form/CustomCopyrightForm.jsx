@@ -113,58 +113,52 @@ export const ClausesDescriptions = ({ clauses }) => {
     <div>
       <strong>Copyright Permissions Granted on Ownership:</strong>
       <ul>
-        {clauses?.customUriEnabled ? (
-          <>
-            <li key="customUriEnabled">
-              Custom URI Enabled: {descriptions?.customUriEnabled[true]}
-            </li>
-            <li key="customUri">
-              Custom URI: {clauses?.customUri || 'No URI Set'}
-            </li>
-          </>
-        ) : (
-          Object.entries(clauses).map(([key, value]) => {
-            if (key === 'exclusiveRights') {
-              const exclusiveLabel =
-                exclusiveRightsOptions.find((option) => option?.value === value)
-                  ?.label || 'None'
-              return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
-            } else if (key === 'customUri' || key === 'expirationDate') {
-              return null
-            } else if (key === 'expirationDateExists') {
-              return (
-                <>
-                  <li key={key}>
-                    {clauseLabels[key]}: {descriptions[key][value]}
-                  </li>
-                  <li key="expirationDate">
-                    {clauseLabels.expirationDate}:{' '}
-                    {clauses.expirationDateExists && clauses.expirationDate
-                      ? new Date(clauses.expirationDate).toLocaleDateString(
-                          'en-US',
-                          {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          }
-                        )
-                      : 'None'}
-                  </li>
-                </>
-              )
-            } else if (key === 'addendum') {
-              return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
-            } else {
-              const displayValue =
-                descriptions[key]?.[value] || 'Unknown Status'
-              return (
+        {Object.entries(clauses).map(([key, value]) => {
+          if (key === 'exclusiveRights') {
+            const exclusiveLabel =
+              exclusiveRightsOptions.find((option) => option?.value === value)
+                ?.label || 'None'
+            return <li key={key}>Exclusive Rights: {exclusiveLabel}</li>
+          } else if (key === 'customUri' || key === 'expirationDate') {
+            return null
+          } else if (key === 'expirationDateExists') {
+            return (
+              <>
                 <li key={key}>
-                  {clauseLabels[key]}: {displayValue}
+                  {clauseLabels[key]}: {descriptions[key][value]}
                 </li>
-              )
-            }
-          })
-        )}
+                <li key="expirationDate">
+                  {clauseLabels.expirationDate}:{' '}
+                  {clauses.expirationDateExists && clauses.expirationDate
+                    ? new Date(clauses.expirationDate).toLocaleDateString(
+                        'en-US',
+                        {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }
+                      )
+                    : 'None'}
+                </li>
+              </>
+            )
+          } else if (key === 'addendum') {
+            return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
+          } else if (key === 'customUriEnabled') {
+            return value ? (
+              <li key={key}>
+                Custom URI Enabled: {descriptions?.customUriEnabled[true]}
+              </li>
+            ) : null
+          } else {
+            const displayValue = descriptions[key]?.[value] || 'Unknown Status'
+            return (
+              <li key={key}>
+                {clauseLabels[key]}: {displayValue}
+              </li>
+            )
+          }
+        })}
       </ul>
       <br />
     </div>
