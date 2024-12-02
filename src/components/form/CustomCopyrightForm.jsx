@@ -284,6 +284,20 @@ Despite reaching the threshold for exclusive rights, the Creator retains certain
       documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
     }
 
+    if (clauses.customUriEnabled && clauses.customUri) {
+      documentText += `\n\n${clauseNumber++}. Custom URI Reference and Retroactive Application:
+The Work is subject to additional terms, conditions, and declarations specified at: ${
+        clauses.customUri
+      }. These external terms are hereby incorporated by reference into this Agreement and shall be considered binding to the same extent as if they were fully set forth herein.
+    
+This URI may serve one or both of the following purposes:
+a) External Reference: The URI may contain supplementary terms, conditions, restrictions, or declarations that apply to this Work. These additional terms shall be considered as an extension of this Agreement.
+    
+b) Retroactive Application: If the URI points to a previous work by the same Creator, and the Creator can conclusively demonstrate through cryptographic proof that they control both the wallet address associated with this Work and the wallet address associated with the referenced work ${minterInfo}, then all terms, rights, and restrictions specified in this Agreement shall apply retroactively to the referenced work. Such proof must be verifiable through blockchain records or other cryptographic means that establish an undeniable connection between the Creator's wallet addresses and both works.
+    
+The Creator bears the burden of proving ownership of both works through wallet address verification, transaction histories, or other blockchain-based evidence. In the absence of such proof, the retroactive application shall be considered void while the external reference shall remain in effect. Any conflicts between the terms specified in the URI and this Agreement shall be resolved in favor of the more restrictive terms, unless explicitly stated otherwise in either document.`
+    }
+
     documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
@@ -321,31 +335,15 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     } else {
       newValue = value
     }
+
     if (name === 'customUriEnabled') {
-      if (newValue) {
-        setClauses((prev) => ({
-          ...prev,
-          reproduce: null,
-          broadcast: null,
-          publicDisplay: null,
-          createDerivativeWorks: null,
-          exclusiveRights: null,
-          retainCreatorRights: null,
-          requireAttribution: null,
-          rightsAreTransferable: null,
-          expirationDateExists: null,
-          expirationDate: '',
-          releasePublicDomain: null,
-          customUriEnabled: true,
-        }))
-      } else {
-        setClauses((prev) => ({
-          ...prev,
-          customUriEnabled: false,
-          customUri: prev.customUri,
-        }))
-      }
+      setClauses((prev) => ({
+        ...prev,
+        customUriEnabled: newValue === true, // Set to true or false
+        ...(newValue === false && { customUri: '' }), // Clear URI when disabled
+      }))
     }
+
     // Handle 'Release to Public Domain' logic
     else if (name === 'releasePublicDomain' && newValue === true) {
       setClauses({
@@ -424,9 +422,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       clauses.releasePublicDomain ||
       clauses.requireAttribution
 
-    if (clauses.customUriEnabled) {
-      documentText = `Custom URI: ${clauses.customUri}`
-    } else if (!hasActiveRights) {
+    if (!hasActiveRights && !clauses.customUriEnabled) {
       documentText =
         'No Permissions Chosen (For Addendum or Expiration Date sections to show, choose at least one option in the checkboxes above.)'
     } else {
@@ -527,9 +523,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
               checked={clauses[clauseName]}
               onCheck={(checked) => handleChange(checked, clauseName)}
               disabled={
-                clauses.customUriEnabled ||
-                (clauses.releasePublicDomain &&
-                  clauseName !== 'releasePublicDomain')
+                clauses.releasePublicDomain &&
+                clauseName !== 'releasePublicDomain'
               }
             />
             <span
@@ -583,7 +578,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             }
             placeholder="Select Ownership Share Type"
             isDisabled={
-              clauses.customUriEnabled ||
               !Object.values(clauses).some((value) => value && value !== 'none')
             }
             styles={select_style}
@@ -663,7 +657,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
               role="button"
               tabIndex={0}
               className={styles.modalInfoIcon}
-              onClick={() => handleModalOpen(clauseLabels['customUriEnabled'])}
+              onClick={() => handleModalOpen('customUri')}
               onKeyPress={(event) =>
                 handleKeyPress(event, clauseLabels['customUriEnabled'])
               }
