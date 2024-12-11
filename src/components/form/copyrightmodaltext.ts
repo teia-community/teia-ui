@@ -7,7 +7,7 @@ export const copyrightModalText = {
             <li><strong>Geographical Coverage:</strong> The rights are set globally, allowing for usage across all regions without any restrictions.</li>
             <li><strong>Duration of Rights:</strong> Rights are granted in perpetuity, meaning there is no expiration on the privileges and permissions granted to Owners after purchase.</li>
             <li><strong>Frequency of Rights:</strong> Rights are unlimited, not restricted by the number of broadcasts or platforms.</li>
-            <li><strong>Exclusivity:</strong> Exclusive rights Agreements (priviledges granted exclusive to one individual or entity and no one else), are possible using the number of Editions owned as a mechanism to facilitate these types of arrangements. (By default, all rights bestowed upon by the Creator are non-exclusive.)</li>
+            <li><strong>Exclusivity:</strong> Exclusive rights Agreements (privileges granted exclusive to one individual or entity and no one else), are possible using the number of Editions owned as a mechanism to facilitate these types of arrangements. (By default, all rights bestowed upon by the Creator are non-exclusive.)</li>
             <li><strong>Transferability:</strong> Rights are transferable because they are defined by the condition of ownership, allowing rights and associated privileges to be passed to others, unless stated otherwise.</li>
             <li><strong>Royalties:</strong> Royalties upon secondary sales still apply during transfers of ownership, which allows for Creators to earn "passive income", similar to deals that occur in traditional arts/entertainment industries.</li>
         </ul>

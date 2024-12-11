@@ -31,7 +31,7 @@ We want, however, to protect and preserve the spirit of Teia. Those core values 
     - Inclusive for everyone, no matter your race, ethnicity, religion, class, culture, national background and citizenship status, sexual orientation, gender identity and expression, age, or mental or physical disability, neurotype, health related issues, income level, mental health status or trauma
     - Inclusive for all participants, no matter the social/economic status.
     - inclusive for all art forms and mediums including but not limited to: digital, analog, graphics, vr, video, audio, music, fiber, physical and the ones to come.
-- We want to reach a parity in voice and contribution between people from all communities and sorts of priviledges and locations. This needs to be reached through concrete action and leveraging power
+- We want to reach a parity in voice and contribution between people from all communities and sorts of privileges and locations. This needs to be reached through concrete action and leveraging power
 
 ### **§2 Respect**
 - 2.1 We believe in a community that respects one another’s dignity, ideas, thoughts and art.

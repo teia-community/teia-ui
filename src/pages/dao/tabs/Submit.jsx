@@ -145,7 +145,7 @@ function ProposalForm({ kind, callback }) {
             This proposal could be used to administer other smart contracts of
             which the DAO is the administrator (e.g. to update the Teia
             marketplace fees), or to execute entry points from other contracts
-            (e.g. swap or collect a token, vote in anoter DAO / multisig).
+            (e.g. swap or collect a token, vote in another DAO / multisig).
           </p>
           <p>
             Warning: Executing arbitrary smart contract code could compromise
