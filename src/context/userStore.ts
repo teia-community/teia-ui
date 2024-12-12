@@ -418,7 +418,7 @@ export const useUserStore = create<UserState>()(
             } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methods.fulfill_ask(listing.ask_id)
-            } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE'].includes(listing.type)) {
+            } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE', 'OBJKT_ASK_V3_2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methods.fulfill_ask(listing.ask_id, 1, null, null, MichelsonMap.fromLiteral({}))
             } else if (['VERSUM_SWAP'].includes(listing.type)) {

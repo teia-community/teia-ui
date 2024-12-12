@@ -15,7 +15,9 @@ function UsernameAndLink({ event, attr }) {
     <>
       {get(event, `${attr}_profile.name`) ? (
         <span>
-          <Button href={`/${encodeURIComponent(get(event, `${attr}_profile.name`))}`}>
+          <Button
+            href={`/${encodeURIComponent(get(event, `${attr}_profile.name`))}`}
+          >
             {get(event, `${attr}_profile.name`)}
           </Button>
         </span>
@@ -149,6 +151,7 @@ export const History = () => {
               'OBJKT_ASK_V2',
               'OBJKT_ASK_V3',
               'OBJKT_ASK_V3_PRE',
+              'OBJKT_ASK_V3_2',
               'TEIA_SWAP',
               'HEN_SWAP',
               'HEN_SWAP_V2',
