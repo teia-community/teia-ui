@@ -1,4 +1,5 @@
 import {
+  ART4ARTISTS_BREADFOND_CONTRACT,
   TEZ4PAL_FUNDING_ADDRESS,
   IRAN_FUNDING_CONTRACT,
   MOROCCO_QUAKE_FUNDING_CONTRACT,
@@ -106,6 +107,19 @@ export function Tez4PalFeed() {
       namespace="tez4pal"
       tags={['Tez4Pal', '#Tez4Pal', 'tez4pal', '#tez4pal']}
       infoUrl="https://twitter.com/LN0ir/status/1745946304742576400"
+    />
+  )
+}
+
+export function Art4ArtistsFeed() {
+  return (
+    <FundFeed
+      introText={<>#Art4Artists Breadfond</>}
+      contractAddress={ART4ARTISTS_BREADFOND_CONTRACT}
+      cause="Art4Artists"
+      namespace="art4artists"
+      tags={['Art4Artists', '#Art4Artists']}
+      infoUrl="https://x.com/EggsUnknow/status/1848805355620602309"
     />
   )
 }

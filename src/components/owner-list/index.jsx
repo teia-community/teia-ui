@@ -15,7 +15,7 @@ export const OwnerList = ({ owners }) => {
         <div key={holder_address} className={styles.owner}>
           {amount}&nbsp;ed.&nbsp;
           {get(holder_profile, 'name') ? (
-            <Button to={`/${get(holder_profile, 'name')}`}>
+            <Button to={`/${encodeURIComponent(get(holder_profile, 'name'))}`}>
               {get(holder_profile, 'name')}
             </Button>
           ) : MARKETPLACE_CONTRACTS_TO_NAME[holder_address] ? (

@@ -56,7 +56,10 @@ function SubjktsSearchResults() {
       {holders.map(({ user_address, name, metadata }) => (
         <div key={name} className={styles.subjkt_result}>
           <div className={styles.flex}>
-            <Link className={styles.user_box} to={encodeURI(`/${name}`)}>
+            <Link
+              className={styles.user_box}
+              to={`/${encodeURIComponent(name)}`}
+            >
               {metadata.data && (
                 <Identicon
                   className={styles.subjkt_icon}

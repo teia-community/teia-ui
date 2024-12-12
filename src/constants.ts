@@ -89,6 +89,7 @@ export const FEED_LIST = [
   '🇵🇰 Pakistan',
   '🇮🇷 Iran',
   '🏳️‍🌈 Tezospride',
+  'Art4Artists',
   'Image',
   'Video',
   'Audio',
@@ -148,7 +149,7 @@ export const MARKETPLACE_CONTRACTS_TO_NAME = flipObject(
 )
 
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
-
+export const ART4ARTISTS_BREADFOND_CONTRACT = 'KT1LgnHXu8NVa674xJhSFhnKjrn7v2ZMsu2a'
 export const TEZ4PAL_FUNDING_ADDRESS = 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW'
 export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
@@ -418,6 +419,10 @@ export const TabIndex = {
 
 // TODO - get this manageable on-chain
 export const ossProjects = [
+  {
+    name: 'Art4Artists Breadfond',
+    address: 'KT1LgnHXu8NVa674xJhSFhnKjrn7v2ZMsu2a',
+  },
   {
     name: 'Tez4Pal Fundraiser',
     address: 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW',

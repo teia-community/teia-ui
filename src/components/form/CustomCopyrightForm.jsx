@@ -113,10 +113,14 @@ export const ClausesDescriptions = ({ clauses }) => {
     <div>
       <strong>Copyright Permissions Granted on Ownership:</strong>
       <ul>
-        {clauses.customUriEnabled ? (
+        {clauses?.customUriEnabled ? (
           <>
-            <li>Custom URI Enabled: {descriptions?.customUriEnabled[true]}</li>
-            <li>Custom URI: {clauses?.customUri || 'No URI Set'}</li>
+            <li key="customUriEnabled">
+              Custom URI Enabled: {descriptions?.customUriEnabled[true]}
+            </li>
+            <li key="customUri">
+              Custom URI: {clauses?.customUri || 'No URI Set'}
+            </li>
           </>
         ) : (
           Object.entries(clauses).map(([key, value]) => {
@@ -190,6 +194,7 @@ function CustomCopyrightForm({ onChange, value }) {
     )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
 
+    documentText += `\n\nIn all cases, the written text in this document will take precedence over any data or metadata displays on or off-chain as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s). Statements in the Addendums have the ability to overrule or nullify statements in the auto-generated portions of this document in cases of conflicts or inconsistencies.`
     documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
 
     if (clauses.releasePublicDomain) {
@@ -217,10 +222,22 @@ The Creator grants to each Owner a worldwide license to publicly display the Wor
         documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
 The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance.acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
       }
-      if (clauses.rightsAreTransferable) {
+      if (
+        clauses.rightsAreTransferable &&
+        (clauses.reproduce ||
+          clauses.broadcast ||
+          clauses.publicDisplay ||
+          clauses.createDerivativeWorks)
+      ) {
         documentText += `\n\n${clauseNumber++}. Transferable Rights:
 The rights granted under this Agreement to the Owner(s) of the Work are transferable. The Owner(s) may assign, transfer, or sublicense the rights to the Work, subject to maintaining proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to all sales and edition numbers (unless stated otherwise), including both primary and secondary sales, promoting continuous and flexible utilization of the Work across different owners. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary. Failure to comply with attribution requirements constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
-      } else if (!clauses.rightsAreTransferable) {
+      } else if (
+        !clauses.rightsAreTransferable &&
+        (clauses.reproduce ||
+          clauses.broadcast ||
+          clauses.publicDisplay ||
+          clauses.createDerivativeWorks)
+      ) {
         documentText += `\n\n${clauseNumber++}. Non-Transferable Rights:
 The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
       }
@@ -233,8 +250,7 @@ The rights granted under this Agreement to the Owner(s) of the Work are non-tran
       !clauses.broadcast &&
       !clauses.createDerivativeWorks &&
       !clauses.releasePublicDomain &&
-      !clauses.requireAttribution &&
-      !clauses.rightsAreTransferable
+      !clauses.requireAttribution
     ) {
       documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
 No rights are granted under this Agreement. All rights for the Work are reserved solely by the Creator.`
@@ -296,25 +312,30 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
 
   // logic for checkboxes
   const handleChange = useCallback((value, name) => {
-    const newValue = Object.prototype.hasOwnProperty.call(value, 'value')
-      ? value?.value
-      : value
+    let newValue
 
+    if (value === null || value === undefined) {
+      newValue = ''
+    } else if (typeof value === 'object' && 'value' in value) {
+      newValue = value.value
+    } else {
+      newValue = value
+    }
     if (name === 'customUriEnabled') {
       if (newValue) {
         setClauses((prev) => ({
           ...prev,
-          reproduce: false,
-          broadcast: false,
-          publicDisplay: false,
-          createDerivativeWorks: false,
-          exclusiveRights: 'none',
-          retainCreatorRights: true,
-          requireAttribution: true,
-          rightsAreTransferable: true,
-          expirationDateExists: false,
-          expirationDate: null,
-          releasePublicDomain: false,
+          reproduce: null,
+          broadcast: null,
+          publicDisplay: null,
+          createDerivativeWorks: null,
+          exclusiveRights: null,
+          retainCreatorRights: null,
+          requireAttribution: null,
+          rightsAreTransferable: null,
+          expirationDateExists: null,
+          expirationDate: '',
+          releasePublicDomain: null,
           customUriEnabled: true,
         }))
       } else {
@@ -333,10 +354,10 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
         publicDisplay: false,
         createDerivativeWorks: false,
         exclusiveRights: 'none',
-        retainCreatorRights: true,
-        rightsAreTransferable: true,
+        retainCreatorRights: false,
+        rightsAreTransferable: false,
         expirationDateExists: false,
-        expirationDate: null,
+        expirationDate: '',
         releasePublicDomain: true,
         customUriEnabled: false,
         customUri: '',
@@ -345,7 +366,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       // Normal handling for other checkboxes
       setClauses((prev) => ({
         ...prev,
-        [name]: newValue || '',
+        [name]: newValue,
         ...(name !== 'releasePublicDomain' && prev.releasePublicDomain
           ? { releasePublicDomain: false }
           : null),
@@ -401,8 +422,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       clauses.publicDisplay ||
       clauses.createDerivativeWorks ||
       clauses.releasePublicDomain ||
-      clauses.requireAttribution ||
-      clauses.rightsAreTransferable
+      clauses.requireAttribution
 
     if (clauses.customUriEnabled) {
       documentText = `Custom URI: ${clauses.customUri}`
@@ -474,21 +494,13 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     }
   }
 
-  const handleDateChange = (eventOrValue, name) => {
-    let value
-    if (eventOrValue.target) {
-      // Standard input change
-      value = eventOrValue?.target?.value || '' // Fallback to empty string if undefined
-    } else {
-      // Custom handling if it's directly passed a value
-      value = eventOrValue || ''
-    }
-
+  const handleDateChange = (checked) => {
     setClauses((prev) => ({
       ...prev,
-      [name]: value || '',
+      expirationDateExists: checked,
     }))
   }
+
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
       <h3>
@@ -599,9 +611,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             name="expirationDateExists"
             label="Add an Expiration Date to Clauses"
             checked={clauses.expirationDateExists}
-            onCheck={(checked) =>
-              handleDateChange(checked, 'expirationDateExists')
-            }
+            onCheck={handleDateChange}
             className={styles.field}
           />
           <span
@@ -621,8 +631,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             <h4>{clauseLabels.expirationDate}</h4>
             <Input
               type="date"
-              value={clauses.expirationDate || ''}
-              onChange={(e) => handleChange(e?.target?.value, 'expirationDate')}
+              value={clauses.expirationDate}
+              onChange={(e) => handleChange(e, 'expirationDate')}
               className={styles.field}
             />
           </div>

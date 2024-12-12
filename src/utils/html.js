@@ -195,7 +195,7 @@ export function injectCSPMetaTagIntoHTML(html) {
       https://*.tzkt.io
       https://api.hicdex.com
       https://hdapi.teztools.io
-      https://api.teia.rocks
+      https://*.teia.rocks
       https://data.objkt.com
       https://api.tzstats.com
       https://*.wikidata.org
@@ -205,6 +205,8 @@ export function injectCSPMetaTagIntoHTML(html) {
       https://*.hicetnunc.xyz
       https://teia.art
       https://*.teia.art
+      https://api.teztok.com
+      https://*.connkt.art
       https://*.hicetnunc.art
       https://*.teztools.io;
     manifest-src
