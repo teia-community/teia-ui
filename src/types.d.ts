@@ -72,6 +72,7 @@ export type ListingType =
   | 'OBJKT_ASK_V2'
   | 'OBJKT_ASK_V3'
   | 'OBJKT_ASK_V3_PRE'
+  | 'OBJKT_ASK_V3_2'
   | 'VERSUM_SWAP'
 export type MetadataAccessibility = {
   /** resource that is physiologically dangerous to some users.*/
