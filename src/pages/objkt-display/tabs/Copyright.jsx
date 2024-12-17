@@ -23,7 +23,8 @@ export const Copyright = () => {
     rightsAreTransferable: 'Rights are Transferable (Secondary Sales)',
     releasePublicDomain: 'Release to Public Domain',
     customUriEnabled: 'Custom URI Enabled',
-    customUri: 'Custom URI',
+    customUri:
+      'Custom URI (External Terms & Works Connected To This Agreement)',
   }
 
   const descriptions = {
@@ -136,9 +137,6 @@ export const Copyright = () => {
               <ul>
                 {licenseData?.clauses &&
                   Object.entries(licenseData?.clauses).map(([key, value]) => {
-                    if (isCustomUriOnly() && key !== 'customUri') {
-                      return null // Do not render other clauses if customUriEnabled is true
-                    }
                     const title = clauseLabels[key]
                     const displayValue = descriptions[key]
                       ? descriptions[key][value]
@@ -213,7 +211,7 @@ export const Copyright = () => {
           </Container>
         </>
       )}
-      {nft?.rights !== 'custom' && nft?.rights && (
+      {nft?.rights && (
         <Container>
           <h3>License Information</h3>
           <p>{nft?.rights}</p>
