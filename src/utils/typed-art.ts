@@ -40,7 +40,7 @@ export const processTypedInput = async (
     tags = [...tags, 'monospace']
     data.tags = tags.join(',')
   }
-  // ensure if it's not monospace type, remove any occurences of `monospace` in tags
+  // ensure if it's not monospace type, remove any occurrences of `monospace` in tags
   // otherwise it will not render correctly on objkt.
   else if (!data.isMonoType && lower_tags.includes('monospace')) {
     const newTags = tags
