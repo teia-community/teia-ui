@@ -8,7 +8,7 @@
 }
 
 .field {
-  margin: 0;
+  margin: 0.382em 0 0 0;
 }
 
 .typed_field {
@@ -45,4 +45,14 @@
 
 .modalInfoIcon:hover {
   color: var(--highlight-color);
+}
+
+.visualizer-image-download-button {
+  border: 1px solid white !important;
+  padding: 5px;
+  margin: 5px;
+}
+
+.visualizer-image-download-button:hover {
+  text-decoration: underline;
 }

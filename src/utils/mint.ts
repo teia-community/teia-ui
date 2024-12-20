@@ -357,3 +357,22 @@ export const convertFileToFileForm = async (
     format,
   }
 }
+
+/**
+ * Processes an audio data URI into a blob for AudioVisualizer
+ * @param {string} reader - The data URI from the artifact reader
+ * @returns {Blob} The processed audio blob
+ */
+
+export const processAudioForVisualizer = (reader: string) => {
+  const rawBase64 = reader.split(',')[1] || reader;
+  const byteString = atob(rawBase64);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+  
+  return new Blob([arrayBuffer], { type: 'audio/mpeg' });
+};
