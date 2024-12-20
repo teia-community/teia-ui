@@ -25,8 +25,8 @@ export const combineVisualizerWithMetadata = async (
       ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
       // Get both canvas elements
-      const visualizerCanvas = visualizerRef.querySelector('canvas');
-      const metadataCanvas = visualizerRef.querySelector('canvas:last-child');
+      const visualizerCanvas = visualizerRef.querySelector('canvas') as HTMLCanvasElement | null;
+      const metadataCanvas = visualizerRef.querySelector('canvas:last-child') as HTMLCanvasElement | null;
 
       if (!visualizerCanvas || !metadataCanvas) {
         throw new Error('Could not find canvas elements');
@@ -51,12 +51,14 @@ export const combineVisualizerWithMetadata = async (
 interface MetadataOverlayProps {
   title: string;
   artist: string;
+  mimeType: string;
   style?: React.CSSProperties;
 }
 
 const MetadataOverlay: React.FC<MetadataOverlayProps> = ({ 
   title,
   artist,
+  mimeType,
   style 
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -75,11 +77,12 @@ const MetadataOverlay: React.FC<MetadataOverlayProps> = ({
     ctx.globalAlpha = 0.8;
 
     // Draw metadata
-    ctx.fillText(`Title: ${title}`, 20, 30);
-    ctx.fillText(`Artist: ${artist}`, 20, 55);
-    ctx.fillText(`Date: ${new Date().toLocaleDateString()}`, 20, 80);
+    ctx.fillText(`Title: ${title}`, 20, 25);
+    ctx.fillText(`Artist: ${artist}`, 20, 45);
+    ctx.fillText(`Date: ${new Date().toLocaleDateString()}`, 20, 65);
+    ctx.fillText(`Type: ${mimeType}`, 20, 85);
     
-  }, [title, artist]);
+  }, [title, artist, mimeType]);
 
   return (
     <canvas

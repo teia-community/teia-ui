@@ -35,7 +35,7 @@ export const MIMETYPE: { [key: string]: string } = {
   MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
-  OGA: 'audio/ogg',
+  OGG: 'audio/ogg',
   OGV: 'video/ogg',
   PDF: 'application/pdf',
   PNG: 'image/png',
@@ -65,7 +65,6 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
       ![
         'ZIP1',
         'ZIP2',
-        'OGA',
         'OGV',
         'BMP',
         'TIFF',

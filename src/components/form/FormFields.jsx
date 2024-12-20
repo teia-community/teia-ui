@@ -45,6 +45,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
     'audio/wav',
     'audio/flac',
     'audio/x-flac',
+    'audio/ogg',
   ]
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
@@ -255,6 +256,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
                         <MetadataOverlay
                           title={watch('title') || 'Untitled'}
                           artist={getArtistText(userInfo, address)}
+                          mimeType={fileValue?.artifact?.mimeType}
                           style={{
                             position: 'absolute',
                             top: 0,
