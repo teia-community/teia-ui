@@ -1,3 +1,4 @@
+import { HEN_CONTRACT_FA2 } from '@constants';
 import React, { useEffect, useRef } from 'react';
 
 export const combineVisualizerWithMetadata = async (
@@ -77,10 +78,11 @@ const MetadataOverlay: React.FC<MetadataOverlayProps> = ({
     ctx.globalAlpha = 0.8;
 
     // Draw metadata
-    ctx.fillText(`Title: ${title}`, 20, 25);
-    ctx.fillText(`Artist: ${artist}`, 20, 45);
-    ctx.fillText(`Date: ${new Date().toLocaleDateString()}`, 20, 65);
-    ctx.fillText(`Type: ${mimeType}`, 20, 85);
+    ctx.fillText(`Title: ${title}`, 15, 25);
+    ctx.fillText(`Wallet: ${artist}`, 15, 45);
+    ctx.fillText(`${new Date().toISOString()}`, 15, 65);
+    ctx.fillText(`${mimeType}`, 15, 85);
+    ctx.fillText(`Mint Contract: ${HEN_CONTRACT_FA2} (HEN/TEIA)`, 15, 370);
     
   }, [title, artist, mimeType]);
 
