@@ -39,6 +39,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
     shallow
   )
   const [showVisualizer, setShowVisualizer] = useState(false)
+  const [audioBlob, setAudioBlob] = useState(null)
   const visualizerRef = useRef(null)
   const AUDIO_MIME_TYPES = [
     'audio/mpeg',
@@ -168,13 +169,20 @@ export const FormFields = ({ value, field, error, register, control }) => {
           rules={field.rules}
           render={({ field: { onChange, value, name, ref } }) => {
             const fileValue = watch(value)
-
             const isAudioMimeType =
               fileValue &&
               AUDIO_MIME_TYPES.includes(fileValue.artifact?.mimeType)
-            const audioBlob = processAudioForVisualizer(
-              fileValue?.artifact.reader
-            )
+
+            const handleShowVisualizer = () => {
+              if (!showVisualizer && fileValue?.artifact?.reader) {
+                const blob = processAudioForVisualizer(
+                  fileValue.artifact.reader
+                )
+                // Store the processed blob on the fileValue object itself
+                setAudioBlob(blob)
+              }
+              setShowVisualizer(true)
+            }
 
             const containerStyle = {
               position: 'relative',
@@ -228,7 +236,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
                 {isAudioMimeType && !showVisualizer && (
                   <Button
                     className={styles['visualizer-image-download-button']}
-                    onClick={() => setShowVisualizer(true)}
+                    onClick={() => handleShowVisualizer(true)}
                   >
                     Generate Audio Visualization
                   </Button>
