@@ -64,6 +64,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
           name={name}
           type={field.type}
           label={field.label}
+          defaultValue={field.defaultValue}
           placeholder={field.placeholder}
           {...register(name, field.rules)}
         >
@@ -77,6 +78,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
           className={styles.field}
           label={field.label}
           placeholder={field.placeholder}
+          defaultValue={field.defaultValue}
           {...register(name, field.rules)}
         >
           <Line />
@@ -89,6 +91,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
           className={styles.typed_field}
           label={field.label}
           placeholder={field.placeholder}
+          defaultValue={field.defaultValue}
           {...register(name, field.rules)}
         >
           <Line />
@@ -112,6 +115,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               search={field.type === 'select-search'}
               label={field.label}
               placeholder={field.placeholder}
+              defaultValue={field.defaultValue}
               onChange={onChange}
             />
           )}
@@ -129,6 +133,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               ref={ref}
               className={styles.field}
               label={field.label}
+              defaultValue={field.defaultValue}
               checked={value}
               onCheck={(v) => onChange(v)}
             />
@@ -311,7 +316,11 @@ export const FormFields = ({ value, field, error, register, control }) => {
           defaultValue={field.defaultValue}
           rules={field.rules}
           render={({ field: { onChange, value } }) => (
-            <CustomCopyrightForm onChange={onChange} value={value} />
+            <CustomCopyrightForm
+              onChange={onChange}
+              value={value}
+              defaultValue={field.defaultValue}
+            />
           )}
         />
       )
