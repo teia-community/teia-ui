@@ -193,8 +193,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               position: 'relative',
               width: '100%',
               maxWidth: '618px',
-              height: '382px',
-              maxHeight: '382px',
+              aspectRatio: '618/382',
               backgroundColor: 'black',
               overflow: 'hidden',
             }
