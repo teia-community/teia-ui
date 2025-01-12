@@ -35,7 +35,7 @@ export const MIMETYPE: { [key: string]: string } = {
   MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
-  OGA: 'audio/ogg',
+  OGG: 'audio/ogg',
   OGV: 'video/ogg',
   PDF: 'application/pdf',
   PNG: 'image/png',
@@ -52,6 +52,14 @@ export const MIMETYPE: { [key: string]: string } = {
   TXT: 'text/plain',
 }
 
+export const AUDIO_MIME_TYPES = [
+  'audio/mpeg',
+  'audio/wav',
+  'audio/flac',
+  'audio/x-flac',
+  'audio/ogg',
+]
+
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
   // disabling GLTF from new updates,
@@ -65,7 +73,6 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
       ![
         'ZIP1',
         'ZIP2',
-        'OGA',
         'OGV',
         'BMP',
         'TIFF',

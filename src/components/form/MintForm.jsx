@@ -17,7 +17,6 @@ import {
   generateTypedArtCoverImage,
 } from '@utils/mint'
 import { AUTO_GENERATE_COVER_MIMETYPES } from '@constants'
-import { Midi } from '@tonejs/midi'
 import { processMidiCover } from '@utils/midi'
 
 export default function MintForm() {
@@ -102,8 +101,8 @@ export default function MintForm() {
       } else if (data.typedinput) {
         data = await processTypedInput(data)
       } else if (
-        data.artifact.mimeType == 'audio/midi' ||
-        data.artifact.mimeType == 'audio/mid'
+        data.artifact.mimeType === 'audio/midi' ||
+        data.artifact.mimeType === 'audio/mid'
       ) {
         // generate midi cover and set as data.object
         data = await processMidiCover(data)

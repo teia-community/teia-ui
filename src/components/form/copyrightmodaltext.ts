@@ -61,7 +61,7 @@ export const copyrightModalText = {
     releasePublicDomain: `
         <p>This clause allows the work to be released to the public domain, effectively removing all copyright restrictions associated with it.</p>
         <p>By releasing the work to the public domain, the creator permits anyone to use, modify, and distribute the work without needing to seek permission or pay royalties. This can be a strategic decision for creators who wish to maximize the work's exposure and accessibility.</p>
-        <p>Public domain release is often irrevocable, meaning once a work is released to the public domain, the creator cannot reclaim the rights. Therefore, it's crucial for Creators to carefully consider the implications before making such a decision, especially since it can be easily referenced on the blockchain itself. ("Announcements" made on social media or other privately-owned platforms often do not constitute</p>
+        <p>Public domain release is often irrevocable, meaning once a work is released to the public domain, the creator cannot reclaim the rights. Therefore, it's crucial for Creators to carefully consider the implications before making such a decision, especially since it can be easily referenced on the blockchain itself. ("Announcements" made on social media or other privately-owned platforms may or may not be admissible as a declaration so it may be risky to assume so.</p>
         <p>This option can be particularly beneficial for educational, cultural, or philanthropic purposes, contributing to the broader public good by freely sharing creative works.</p>
         `,
     requireAttribution: `
