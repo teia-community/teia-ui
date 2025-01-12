@@ -52,6 +52,14 @@ export const MIMETYPE: { [key: string]: string } = {
   TXT: 'text/plain',
 }
 
+export const AUDIO_MIME_TYPES = [
+  'audio/mpeg',
+  'audio/wav',
+  'audio/flac',
+  'audio/x-flac',
+  'audio/ogg',
+]
+
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
   // disabling GLTF from new updates,
