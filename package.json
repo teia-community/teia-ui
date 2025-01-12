@@ -24,6 +24,7 @@
     "markdown-to-jsx": "^7.1.9",
     "mime-types": "^2.1.35",
     "react": "^18.2.0",
+    "react-audio-visualize": "^1.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.1",
     "react-infinite-scroller": "^1.2.6",

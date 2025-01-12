@@ -19,7 +19,7 @@ const initialClauses = {
   exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
   retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
   releasePublicDomain: false,
-  requireAttribution: false,
+  requireAttribution: true,
   rightsAreTransferable: true,
   expirationDate: '',
   expirationDateExists: false,
@@ -165,10 +165,12 @@ export const ClausesDescriptions = ({ clauses }) => {
   )
 }
 
-function CustomCopyrightForm({ onChange, value }) {
+function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const { watch } = useFormContext()
   const { license, minterName, address } = useOutletContext()
-  const [clauses, setClauses] = useState(initialClauses)
+  const [clauses, setClauses] = useState(
+    defaultValue?.clauses || initialClauses
+  )
   const [generatedDocument, setGeneratedDocument] = useState(
     'No Permissions Chosen'
   )
@@ -598,7 +600,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
           <Checkbox
             name="expirationDateExists"
             label="Add an Expiration Date to Clauses"
-            checked={clauses.expirationDateExists}
+            checked={clauses?.expirationDateExists}
+            defaultValue={defaultValue?.clauses?.expirationDateExists}
             onCheck={handleDateChange}
             className={styles.field}
           />
@@ -619,8 +622,9 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             <h4>{clauseLabels.expirationDate}</h4>
             <Input
               type="date"
-              value={clauses.expirationDate}
+              value={clauses?.expirationDate}
               onChange={(e) => handleChange(e, 'expirationDate')}
+              defaultValue={defaultValue?.clauses?.expirationDate}
               className={styles.field}
             />
           </div>
@@ -634,6 +638,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
               value={clauses?.addendum || ''}
               onChange={handleInputChange}
               placeholder="Add additional notes, clauses, restrictions, scopes, etc."
+              defaultValue={defaultValue?.clauses?.addendum}
               className={styles.field}
             />
           </div>

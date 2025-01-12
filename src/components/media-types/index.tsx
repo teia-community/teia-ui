@@ -152,6 +152,7 @@ export const RenderMediaType = ({
         )
       /* AUDIO */
       case MIMETYPE.MP3:
+      case MIMETYPE.OGG:
       case MIMETYPE.OGA:
       case MIMETYPE.FLAC:
       case MIMETYPE.WAV:

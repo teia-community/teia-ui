@@ -1,8 +1,9 @@
 import Button from '@atoms/button/Button'
 import { get } from 'lodash'
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FormFields } from './FormFields'
+import { useMintStore } from '@context/mintStore'
 
 function Form({ fields, defaultValues, children, onSubmit, onReset }) {
   const {
@@ -14,6 +15,14 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
     formState: { errors },
   } = useFormContext()
 
+  // Watch all form values and update mintStore
+  const formValues = watch()
+  useEffect(() => {
+    if (Object.keys(formValues).length > 0) {
+      useMintStore.setState(formValues)
+    }
+  }, [formValues])
+
   return (
     <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
       {fields.map((f) => {
@@ -24,7 +33,10 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
             register={register}
             value={value}
             control={control}
-            field={f}
+            field={{
+              ...f,
+              defaultValue: defaultValues?.[f.name],
+            }}
             error={get(errors, f.name)}
           />
         )
