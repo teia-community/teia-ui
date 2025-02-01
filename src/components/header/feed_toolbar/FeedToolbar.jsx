@@ -8,10 +8,10 @@ import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 import { Button } from '@atoms/button'
 
 import { useLocalSettings } from '@context/localSettingsStore'
-import { useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
-import { DEFAULT_START_FEED } from '@constants'
+import { useUserStore } from '@context/userStore'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -26,7 +26,7 @@ const locationMap = new Map([
   ['/feed/sales', 'Recent Sales'],
   ['/feed/random', 'Random'],
   ['/feed/newobjkts', 'New OBJKTs'],
-  ['/feed/friends', 'Friends'],
+  ['/feed/friends*', 'Friends'],
   // separator
   ['---fund_feeds', 'fund_feeds'],
   ['/feed/art4artists', 'Art4Artists'],
@@ -62,9 +62,12 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   )
   const location = useLocation()
   const feedLabel =
-    locationMap.get(location.pathname) || startFeed || DEFAULT_START_FEED
+    [...locationMap.entries()].find(([key]) =>
+      location.pathname.startsWith(key.replace('*', ''))
+    )?.[1] || 'Sort' // Default to "Sort" if no match is found
 
   const navigate = useNavigate()
+  const walletAddress = useUserStore((st) => [st.address], shallow)
 
   // TODO: finish the filtering logic
   // const filters = false
@@ -98,7 +101,14 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
                     )
                   }
                   return (
-                    <Button key={k} to={k}>
+                    <Button
+                      key={k.replace('*', '')}
+                      to={
+                        k.startsWith('/feed/friends*')
+                          ? `/feed/friends/${walletAddress}`
+                          : k.replace('*', '')
+                      }
+                    >
                       {locationMap.get(k)}
                     </Button>
                   )

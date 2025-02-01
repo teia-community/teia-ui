@@ -55,7 +55,7 @@ export function FriendsFeed() {
       <div className={styles.feed_info}>
         <p>
           {
-            'This feed show OBJKTs of your collectors and artists you collected from.'
+            'This feed shows OBJKTs of your collectors and artists you collected from.'
           }
         </p>
       </div>

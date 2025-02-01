@@ -34,7 +34,31 @@ export const MainMenu = () => {
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
           <MenuItem className={styles.menu_label} route="about" />
-          <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
+          <MenuItem
+            className={styles.menu_label}
+            label="Getting Started"
+            route="faq"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Core Values"
+            route="corevalues"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Code of Conduct"
+            route="codeofconduct"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Terms and Conditions"
+            route="terms"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Privacy Policy"
+            route="privacypolicy"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>

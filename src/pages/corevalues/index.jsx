@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Page, Container } from '@atoms/layout'
 import Markdown from 'markdown-to-jsx'
 
-export const Terms = () => {
+export const CoreValues = () => {
   const [terms, setTerms] = useState('')
 
-  const document = `src/lang/en/terms.md`
+  const document = `src/lang/en/corevalues.md`
   fetch(document)
     .then((response) => response.text())
     .then((text) => {
