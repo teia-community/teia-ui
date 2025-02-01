@@ -327,6 +327,53 @@ export const FAQ = () => {
 </div>
 `}
           />
+          <Question
+            text="How Do I Get Started With Selling Copy and Usage Rights With TEIA?"
+            answer={`
+<div class="markdown-body">
+  <br />
+  <h2>TEIA's Copyright Features©️</h2>
+  <p>TEIA empowers artists to attach copy and usage rights clauses to each minted OBJKT (NFT). These clauses are determined and declared by the artist at the time of minting. If you are interested in using this feature, it is essential to carefully read and understand the descriptions, explanations, and implications of each option before proceeding.</p>
+  <br />
+  <p>The primary purpose of this feature is to enable artists to sell usage rights for their works in a transparent, legal, and fair manner. The blockchain facilitates this process by providing clear, objective, and easily traceable documentation of the agreement and the involved parties.</p>
+  <br />
+  <p>Collectors may acquire these rights for purposes such as broadcasting, reproduction, merchandise sales, soundtracks, game assets, etc. TEIA DAO acts as a neutral platform that facilitates these agreements but does not intervene in or enforce the terms of the agreements. Please note that support for these clauses may vary across platforms, as the data is minted on-chain but not all platforms may choose to display or honor it.</p>
+  <br />
+  <p><strong>Disclaimer:</strong> TEIA is not a legal entity, organization, or institution with the authority to enforce laws or resolve disputes. The agreements attached to each mint (NFT) constitute a direct contractual relationship between the artist (licensor) and the collector (licensee). The terms of these agreements are determined at the time of minting and must be resolved through mutually agreed-upon means in the event of a dispute. Both parties are responsible for conclusively proving ownership of the relevant wallet(s) if required.</p>
+  <br />
+  <h3>Step-by-Step Guide</h3>
+  <ol>
+    <li>
+      <p><strong>Sync Your Wallet:</strong> Ensure your wallet is synced with TEIA and that it is the correct wallet address you wish to associate with the agreements.</p>
+    </li>
+    <li>
+      <p><strong>Navigate to "Mint":</strong> Go to the "Mint" section to begin creating your OBJKT.</p>
+    </li>
+    <li>
+      <p><strong>Select "Custom License":</strong> Fill in the required details for your OBJKT, then choose "Custom License" from the License menu.</p>
+    </li>
+    <li>
+      <p><strong>Define Your Terms:</strong> Review the available options for copyright clauses and permissions. Each option includes detailed explanations—read them thoroughly to select the agreement that best suits your work. If additional details or modifications are needed, use the Addendum section to customize the agreement.</p>
+    </li>
+    <li>
+      <p><strong>Mint Your OBJKT:</strong> Once the terms are finalized, proceed to mint your OBJKT as usual.</p>
+    </li>
+    <li>
+      <p><strong>Verify the Agreement:</strong> After minting, visit the "Asset" page to confirm that the clauses were saved correctly. Your work, along with its associated agreements, is now permanently registered on-chain. This makes it searchable on any platform that supports the metadata format. <a href="/objkt/863531/copyright" target="_blank" rel="noopener noreferrer">(View Example)</a></p>
+    </li>
+  </ol>
+  <br />
+  <h3>Important Notes</h3>
+  <ul>
+    <li><strong>Artist Responsibility:</strong> As the artist, you are responsible for clearly defining the terms of the agreement and ensuring they align with your intentions for the work.</li>
+    <li><strong>Collector Responsibility:</strong> Collectors must review and agree to the terms before purchasing the OBJKT. Failure to comply with the terms may result in legal consequences.</li>
+    <li><strong>Dispute Resolution:</strong> In the event of a dispute, both parties are encouraged to resolve the matter amicably. If necessary, seek legal counsel to enforce or interpret the terms of the agreement.</li>
+  </ul>
+  <br />
+  <p>By using TEIA's copyright features, you acknowledge and agree to these terms. TEIA provides the tools to facilitate these agreements but assumes no liability for their enforcement or interpretation.</p>
+</div>
+`}
+          />
         </ul>
       </div>
       <br />
