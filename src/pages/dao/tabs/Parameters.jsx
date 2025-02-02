@@ -2,6 +2,7 @@ import {
   DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CONTRACT,
   DAO_TOKEN_DECIMALS,
+  DAO_TREASURY_CONTRACT,
 } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
@@ -21,6 +22,7 @@ import {
 import LoadingDaoMessage from '../LoadingDaoMessage'
 import styles from '@style'
 import TeiaTokenMetadata from './TeiaDAOMetadataTzkt'
+import DonateInput from '@atoms/button/DonateButton'
 
 export default function DaoParameters() {
   // Get all the required DAO information
@@ -29,8 +31,8 @@ export default function DaoParameters() {
   const [proposals] = useDaoProposals(daoStorage)
   const [representatives] = useDaoRepresentatives(daoStorage)
   const [daoMemberCount] = useDaoMemberCount(0)
-  const [daoBalance] = useBalance(DAO_GOVERNANCE_CONTRACT)
-  const [daoTokenBalance] = useDaoTokenBalance(DAO_GOVERNANCE_CONTRACT)
+  const [daoBalance] = useBalance(DAO_TREASURY_CONTRACT)
+  const [daoTokenBalance] = useDaoTokenBalance(DAO_TREASURY_CONTRACT)
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
@@ -168,10 +170,11 @@ export default function DaoParameters() {
             )}
           </li>
           <li>
-            Treasury Balance: {Math.round(daoBalance)} tez and{' '}
-            {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
+            Treasury Balance ({DAO_TREASURY_CONTRACT}): {Math.round(daoBalance)}{' '}
+            tez and {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
           </li>
         </ul>
+        <DonateInput destinationAddress={daoStorage.treasury} />
         <br />
         <TeiaTokenMetadata />
         <p>

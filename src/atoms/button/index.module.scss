@@ -166,3 +166,107 @@ $border: 2px;
     text-decoration: none;
   }
 }
+
+/* Styles for the DonateInput component */
+.daoDonateButton {
+  font-family: var(--text-font);
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid var(--gray-20);
+  border-radius: 0.1em;
+  background-color: var(--gray-4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--body-transition);
+
+  h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: var(--text-color);
+  }
+
+  p {
+    margin: 0 0 15px;
+    font-size: 14px;
+    color: var(--gray-60);
+  }
+
+  .donateInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--gray-20);
+    border-radius: 0.1em;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: var(--body-transition);
+
+    &:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+  }
+
+  .donateButton {
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken(grey, 10%);
+    }
+
+    &:active {
+      background-color: darken(black, 20%);
+    }
+  }
+}
+
+// Responsive adjustments
+@include respond-to('tablet') {
+  .daoDonateButton {
+    max-width: 100%;
+    padding: 15px;
+
+    h4 {
+      font-size: 16px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+
+    .donateInput,
+    .donateButton {
+      font-size: 14px;
+    }
+  }
+}
+
+@include respond-to('mobile') {
+  .daoDonateButton {
+    padding: 10px;
+
+    h4 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+
+    .donateInput,
+    .donateButton {
+      font-size: 12px;
+    }
+  }
+}
