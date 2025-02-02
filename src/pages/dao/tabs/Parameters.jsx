@@ -20,6 +20,7 @@ import {
 } from '@data/swr'
 import LoadingDaoMessage from '../LoadingDaoMessage'
 import styles from '@style'
+import TeiaTokenMetadata from './TeiaDAOMetadataTzkt'
 
 export default function DaoParameters() {
   // Get all the required DAO information
@@ -125,6 +126,11 @@ export default function DaoParameters() {
           </a>
           .
         </p>
+        <p>
+          The information for the DAO is sourced from tzkt.io and
+          cross-referenced with TEIA's own indexer, both pulling from Tezos'
+          on-chain data.
+        </p>
         <ul className={styles.parameters_list}>
           <li>
             Members:{' '}
@@ -166,6 +172,17 @@ export default function DaoParameters() {
             {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
           </li>
         </ul>
+        <br />
+        <TeiaTokenMetadata />
+        <p>
+          <a
+            href="https://quipuswap.com/swap/tez-KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV_0"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Convert XTZ to TEIA on Quipuswap (Decentralized Exchange)
+          </a>
+        </p>
       </section>
 
       <Line />
@@ -180,7 +197,18 @@ export default function DaoParameters() {
           the DAO defaults to direct participation based on the number of TEIA
           tokens each wallet holds.
         </p>
-        <p>For more information, read the </p>
+        <p>
+          For more information, read the{' '}
+          <a
+            href="https://github.com/teia-community/teia-docs/wiki/Governance-on-Teia"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Governance on Teia Documentation
+          </a>{' '}
+          for more details.
+        </p>
+        <h4>Currently Active Community Representatives</h4>
         <ul className={styles.parameters_list}>
           {Object.entries(representatives).map(
             ([representative, community]) => (
@@ -257,22 +285,22 @@ export default function DaoParameters() {
             <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} shorten />
           </li>
           <li>
-            DAO token: <TezosAddressLink address={daoStorage.token} shorten />
+            DAO Token: <TezosAddressLink address={daoStorage.token} shorten />
           </li>
           <li>
-            DAO treasury:{' '}
+            DAO Treasury:{' '}
             <TezosAddressLink address={daoStorage.treasury} shorten />
           </li>
           <li>
-            DAO guardians:{' '}
+            DAO Guardians:{' '}
             <TezosAddressLink address={daoStorage.guardians} shorten />
           </li>
           <li>
-            DAO administrator:{' '}
+            DAO Administrator:{' '}
             <TezosAddressLink address={daoStorage.administrator} shorten />
           </li>
           <li>
-            Community representatives:{' '}
+            Community Representatives:{' '}
             <TezosAddressLink address={daoStorage.representatives} shorten />
           </li>
         </ul>
@@ -289,13 +317,10 @@ export default function DaoParameters() {
           measuring community sentiment around certain issues, or just for fun.
         </p>
         <p>
-          TEIA's polling system can be found{' '}
-          <a href="/polls/" target="_blank">
-            here.
-          </a>{' '}
-          (The DAO is typically reserved for issues that affect core
-          administration, budgeting, and existential issues that require the
-          full participation of the community itself.)
+          TEIA's polling system can be found <a href="/polls">here.</a> (The DAO
+          is typically reserved for issues that affect core administration,
+          budgeting, and existential issues that require the full participation
+          of the community itself.)
         </p>
       </section>
     </>

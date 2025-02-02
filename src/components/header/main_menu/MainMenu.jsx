@@ -90,7 +90,7 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="DAO governance"
+            label="DAO Governance"
             route="dao"
           />
 

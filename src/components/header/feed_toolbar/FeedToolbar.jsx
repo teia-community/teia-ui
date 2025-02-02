@@ -28,7 +28,7 @@ const locationMap = new Map([
   ['/feed/newobjkts', 'New OBJKTs'],
   ['/feed/friends*', 'Friends'],
   // separator
-  ['---fund_feeds', 'fund_feeds'],
+  ['---fund_feeds', 'Event Feeds'],
   ['/feed/art4artists', 'Art4Artists'],
   ['/feed/tez4pal', '🇵🇸 Tez4Pal'],
   ['/feed/morocco-quake-aid', '🇲🇦 Quake Aid'],
@@ -38,7 +38,7 @@ const locationMap = new Map([
   ['/feed/iran', '🇮🇷 Iran'],
   ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
   // separator
-  ['---mime_feeds', 'mime_feeds'],
+  ['---mime_feeds', 'By Format'],
   ['/feed/image', 'Image'],
   ['/feed/video', 'Video'],
   ['/feed/audio', 'Audio'],
@@ -64,7 +64,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   const feedLabel =
     [...locationMap.entries()].find(([key]) =>
       location.pathname.startsWith(key.replace('*', ''))
-    )?.[1] || 'Sort' // Default to "Sort" if no match is found
+    )?.[1] || 'Sort Feed' // Default to "Sort" if no match is found
 
   const navigate = useNavigate()
   const walletAddress = useUserStore((st) => [st.address], shallow)
@@ -86,7 +86,14 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
               <div className={styles.feeds_button}>
                 {[...locationMap.keys()].map((k) => {
                   if (k.startsWith('-')) {
-                    return <Line className={styles.separator} key={k} />
+                    return (
+                      <>
+                        <Line className={styles.separator} key={k} />
+                        <span className={styles.subtitle}>
+                          {locationMap.get(k)}
+                        </span>
+                      </>
+                    )
                   }
                   if (locationNeedSync.includes(k)) {
                     return (
