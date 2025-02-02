@@ -174,6 +174,7 @@ export default function DaoParameters() {
             tez and {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
           </li>
         </ul>
+        <br />
         <DonateInput destinationAddress={daoStorage.treasury} />
         <br />
         <TeiaTokenMetadata />
@@ -270,6 +271,20 @@ export default function DaoParameters() {
             {gp.min_amount / DAO_TOKEN_DECIMALS} TEIA tokens
           </li>
         </ul>
+        <p>
+          Currently TEIA's marketplace contract is handled by{' '}
+          <a
+            href="https://core-team-multisig.onrender.com/proposals"
+            target="_blank"
+          >
+            TEIA's Core Team Multisig
+          </a>{' '}
+          for teia.art's day-to-day activities. TEIA token holders are legally
+          defined as "operating members" of TEIA DAO LLC, which gives them
+          ultimate authority over the actions and functions of the community,
+          expressed through the voting and proposal mechanisms of the DAO
+          itself.
+        </p>
       </section>
 
       <Line />
