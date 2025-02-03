@@ -8,6 +8,7 @@ import { AudioVisualizer } from 'react-audio-visualize'
 import {
   ALLOWED_FILETYPES_LABEL,
   ALLOWED_COVER_FILETYPES_LABEL,
+  AUDIO_MIME_TYPES,
 } from '@constants'
 import { Controller, useFormContext } from 'react-hook-form'
 import classNames from 'classnames'
@@ -48,6 +49,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
     'audio/x-flac',
     'audio/ogg',
   ]
+=======
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
       return `${userInfo.name} (${address})`
