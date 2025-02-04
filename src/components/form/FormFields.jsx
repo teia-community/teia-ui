@@ -49,7 +49,6 @@ export const FormFields = ({ value, field, error, register, control }) => {
     'audio/x-flac',
     'audio/ogg',
   ]
-=======
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
       return `${userInfo.name} (${address})`
