@@ -193,10 +193,7 @@ export const useUserStore = create<UserState>()(
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
           let activeAccount = await wallet.client.getActiveAccount()
-          if (
-            activeAccount === undefined ||
-            activeAccount?.network?.rpcUrl !== network.rpcUrl
-          ) {
+          if (activeAccount === undefined) {
             await wallet.requestPermissions({ network })
             activeAccount = await wallet.client.getActiveAccount()
           }
