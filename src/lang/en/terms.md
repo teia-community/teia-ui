@@ -74,7 +74,7 @@ If you find any content on our platform that is offensive for any reason, you ar
 
 ## Content Warning**
 
-`The art on the Teia.art marketplace is user-created and some of it might not be suitable for all ages. If you are underaged, don’t use the platform without your legal guardians.`
+The art on the Teia.art marketplace is user-created and some of it might not be suitable for all ages. If you are underaged, don’t use the platform without your legal guardians.
 
 ## Jurisdiction
 

@@ -1,26 +1,13 @@
-import { useState } from 'react'
-import { Page, Container } from '@atoms/layout'
-import Markdown from 'markdown-to-jsx'
+import { Page } from '@atoms/layout'
+import styles from '@style'
+import { ReactComponent as CoreValuesMD } from '../../lang/en/corevalues.md'
 
-export const CoreValues = () => {
-  const [terms, setTerms] = useState('')
-
-  const document = `src/lang/en/corevalues.md`
-  fetch(document)
-    .then((response) => response.text())
-    .then((text) => {
-      setTerms(text)
-    })
-
+export function CoreValues() {
   return (
-    <Page title="terms" large>
-      <Container>
-        {terms && (
-          <Markdown options={{ forceBlock: true }} className="markdown-doc">
-            {terms}
-          </Markdown>
-        )}
-      </Container>
+    <Page title="corevalues">
+      <div className={styles.corevalues}>
+        <CoreValuesMD />
+      </div>
     </Page>
   )
 }

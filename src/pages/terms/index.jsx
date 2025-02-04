@@ -1,26 +1,13 @@
-import { useState } from 'react'
-import { Page, Container } from '@atoms/layout'
-import Markdown from 'markdown-to-jsx'
+import { Page } from '@atoms/layout'
+import styles from '@style'
+import { ReactComponent as TermsMD } from '../../lang/en/terms.md'
 
-export const Terms = () => {
-  const [terms, setTerms] = useState('')
-
-  const document = `src/lang/en/terms.md`
-  fetch(document)
-    .then((response) => response.text())
-    .then((text) => {
-      setTerms(text)
-    })
-
+export function Terms() {
   return (
-    <Page title="terms" large>
-      <Container>
-        {terms && (
-          <Markdown options={{ forceBlock: true }} className="markdown-doc">
-            {terms}
-          </Markdown>
-        )}
-      </Container>
+    <Page title="terms">
+      <div className={styles.terms}>
+        <TermsMD />
+      </div>
     </Page>
   )
 }

@@ -1,26 +1,13 @@
-import { useState } from 'react'
-import { Page, Container } from '@atoms/layout'
-import Markdown from 'markdown-to-jsx'
+import { Page } from '@atoms/layout'
+import styles from '@style'
+import { ReactComponent as CodeOfConductMD } from '../../lang/en/codeofconduct.md'
 
-export const CodeOfConduct = () => {
-  const [terms, setTerms] = useState('')
-
-  const document = `src/lang/en/codeofconduct.md`
-  fetch(document)
-    .then((response) => response.text())
-    .then((text) => {
-      setTerms(text)
-    })
-
+export function CodeOfConduct() {
   return (
-    <Page title="terms" large>
-      <Container>
-        {terms && (
-          <Markdown options={{ forceBlock: true }} className="markdown-doc">
-            {terms}
-          </Markdown>
-        )}
-      </Container>
+    <Page title="codeofconduct">
+      <div className={styles.codeofconduct}>
+        <CodeOfConductMD />
+      </div>
     </Page>
   )
 }
