@@ -416,6 +416,7 @@ export const useUserStore = create<UserState>()(
             show('Invalid amount', 'Please enter a valid donation amount')
           }
           try {
+            await get().sync()
             const list: WalletParamsWithKind[] = [
               {
                 to: destinationAddress,
