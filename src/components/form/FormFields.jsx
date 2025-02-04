@@ -42,13 +42,6 @@ export const FormFields = ({ value, field, error, register, control }) => {
   const [showVisualizer, setShowVisualizer] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
   const visualizerRef = useRef(null)
-  const AUDIO_MIME_TYPES = [
-    'audio/mpeg',
-    'audio/wav',
-    'audio/flac',
-    'audio/x-flac',
-    'audio/ogg',
-  ]
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
       return `${userInfo.name} (${address})`
