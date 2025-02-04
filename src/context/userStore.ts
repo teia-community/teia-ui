@@ -322,7 +322,7 @@ export const useUserStore = create<UserState>()(
               ),
             ]
 
-            const batch = (operations)
+            const batch = Tezos.wallet.batch(operations)
 
             // const op = await batch.send()
 
