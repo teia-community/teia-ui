@@ -1,10 +1,11 @@
 import { useUserStore } from '@context/userStore'
+import { DAO_TREASURY_CONTRACT } from '@constants'
 
 import React, { useState } from 'react'
 import styles from './index.module.scss' // Import the SCSS module
 
 // Donation input component with user-defined amount
-const DonateInput = ({ destinationAddress }) => {
+const DonateInput = () => {
   const [amount, setAmount] = useState('')
   const [donate] = useUserStore((st) => [st.donate])
 
@@ -18,13 +19,13 @@ const DonateInput = ({ destinationAddress }) => {
       alert('Please enter a valid donation amount')
       return
     }
-    donate(amountAsNumber, destinationAddress)
+    donate(amountAsNumber, DAO_TREASURY_CONTRACT)
   }
 
   return (
     <div className={styles.daoDonateButton}>
       <h4>Donate to DAO Treasury</h4>
-      <p>Address: {destinationAddress}</p>
+      <p>Address: {DAO_TREASURY_CONTRACT}</p>
       <input
         type="number"
         value={amount}
