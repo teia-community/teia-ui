@@ -8,10 +8,11 @@ import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
 import { Button } from '@atoms/button'
 
 import { useLocalSettings } from '@context/localSettingsStore'
-import { useLocation, useNavigate, useParams } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { Line } from '@atoms/line'
 import { shallow } from 'zustand/shallow'
 import { useUserStore } from '@context/userStore'
+import { DEFAULT_START_FEED } from '@constants'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -23,6 +24,7 @@ import { useUserStore } from '@context/userStore'
 // }
 
 const locationMap = new Map([
+  ['---sort_feeds', 'Sort Feeds'],
   ['/feed/sales', 'Recent Sales'],
   ['/feed/random', 'Random'],
   ['/feed/newobjkts', 'New OBJKTs'],
@@ -62,9 +64,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   )
   const location = useLocation()
   const feedLabel =
-    [...locationMap.entries()].find(([key]) =>
-      location.pathname.startsWith(key.replace('*', ''))
-    )?.[1] || 'Sort Feed' // Default to "Sort" if no match is found
+    locationMap.get(location.pathname) || startFeed || DEFAULT_START_FEED
 
   const navigate = useNavigate()
   const walletAddress = useUserStore((st) => [st.address], shallow)
