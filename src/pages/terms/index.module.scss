@@ -1,3 +1,45 @@
-.terms p {
-  margin-bottom: 1em;
+@import '@styles/layout.scss';
+@import '@styles/variables.scss';
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.terms {
+  margin-top: 40px;
+  width: 80%;
+  line-height: 1.5;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin-top: 1em;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+
+  ul {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    list-style: disc outside;
+  }
+
+  li::marker ul::marker {
+    content: unset;
+  }
+
+  ul li {
+    margin-left: 2em;
+    display: list-item;
+  }
+
+  hr {
+    flex: 1 1 auto;
+    border: none;
+    height: 2em;
+  }
 }
