@@ -28,7 +28,7 @@ const locationMap = new Map([
   ['/feed/sales', 'Recent Sales'],
   ['/feed/random', 'Random'],
   ['/feed/newobjkts', 'New OBJKTs'],
-  ['/feed/friends*', 'Friends'],
+  ['/feed/friends', 'Friends'],
   // separator
   ['---fund_feeds', 'Event Feeds'],
   ['/feed/art4artists', 'Art4Artists'],
@@ -64,8 +64,9 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
   )
   const location = useLocation()
   const feedLabel =
-    locationMap.get(location.pathname) || startFeed || DEFAULT_START_FEED
-
+    locationMap.get('/' + location.pathname.split('/').slice(1, 3).join('/')) ||
+    startFeed ||
+    DEFAULT_START_FEED
   const navigate = useNavigate()
   const walletAddress = useUserStore((st) => [st.address], shallow)
 
@@ -108,14 +109,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
                     )
                   }
                   return (
-                    <Button
-                      key={k.replace('*', '')}
-                      to={
-                        k.startsWith('/feed/friends*')
-                          ? `/feed/friends/${walletAddress}`
-                          : k.replace('*', '')
-                      }
-                    >
+                    <Button key={k} to={k}>
                       {locationMap.get(k)}
                     </Button>
                   )
