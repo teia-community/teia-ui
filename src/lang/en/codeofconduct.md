@@ -1,48 +1,45 @@
-# **Code of Conduct**
+#  **Code of Conduct**
 
 Teia is a community of artists, creators, and collectors from all around the world, who come together to grow and inspire others. All participants in the community are expected to act lawfully, honestly, ethically, and in the best interest of the community. All users are expected to follow the rules and guidelines laid out in this document, acting against this CoC in any of Teias spaces might result in account restrictions or bans.
 
-## **1. Contribute and Help Improve the Community** 
+## 1. **Contribute and Help Improve the Community** 
 
-   1.1 Look for ways to contribute and find positive solutions. Stay open minded and empathetic around areas of improvements. And take initiative to help out where you can.   
+- Look for ways to contribute and find positive solutions. Stay open minded and empathetic around areas of improvements. And take initiative to help out where you can.
+- Try to share your knowledge with the community.
+- Your participation matters. If you feel that you or the group you identify with is underrepresented or does not have a voice in the community, know that you are welcome here. Be the first to fill that gap, invite your peers, and make yourself heard.
+- Bugs and security flaws in the platform, blockchain or smart contract should be disclosed responsibly, according to regulations and best practices regarding those procedures.
 
-   1.2 Try to share your knowledge with the community.  
-
-   1.3 Your participation matters. If you feel that you or the group you identify with is underrepresented or does not have a voice in the community, know that you are welcome here. Be the first to fill that gap, invite your peers, and make yourself heard.   
-
-   1.4 Bugs and security flaws in the platform, blockchain or smart contract should be disclosed responsibly, according to regulations and best practices regarding those procedures.
-
-## **2. Unacceptable Behavior**
+## 2. **Unacceptable Behavior**
 
 We do not condone harassment or abuse against any member in any community environment, online or offline, for any reason. This includes the usage of Teia Infrastructure and smartcontracts related to Teia. Abusive actors can get banned from any Teia related spaces.
 
 People with significant experience and/or connections within the community are expected to behave with special care with regards to their privilege. i.e. negative comments and behaviour from them towards others may carry an unintended backlash or harm.
 
-####   Harassment Includes 
+### 2.1. Harassment Includes 
 
-2.1 targeting individuals in a manner that makes them feel uncomfortable, unwelcome, or afraid.  
-2.2 offensive verbal, visual or text based comments related to gender, age, sexual orientation, disability, neurotype, health related issues, income level, mental health status, trauma, physical appearance, body size, race, ethnicity, religion.  
-2.3 deliberate intimidation, stalking, following, sustained disruption of conversation.   
-2.4 Violence, threats of violence or violent language directed against another person.  
-2.5 Posting or displaying sexually explicit or violent material outside of the context of artistic expression.  
-2.6 Posting or threatening to post other people's personally identifying information ("doxxing").  
-2.7 Inappropriate photography or recording.  
-2.8 Inappropriate physical contact, unwelcomed sexual attention or advances, inappropriate touching, groping. You should always have someone's active consent before touching them.
+- Targeting individuals in a manner that makes them feel uncomfortable, unwelcome, or afraid.  
+- offensive verbal, visual or text based comments related to gender, age, sexual orientation, disability, neurotype, health related issues, income level, mental health status, trauma, physical appearance, body size, race, ethnicity, religion.  
+- Deliberate intimidation, stalking, following, sustained disruption of conversation.   
+- Violence, threats of violence or violent language directed against another person.  
+- Posting or displaying sexually explicit or violent material outside of the context of artistic expression.  
+- Posting or threatening to post other people's personally identifying information ("doxxing").  
+- Inappropriate photography or recording.  
+- Inappropriate physical contact, unwelcomed sexual attention or advances, inappropriate touching, groping. You should always have someone's active consent before touching them.
 
-#### Abuse Includes
+### 2.2. Abuse Includes
 
-2.9 Using one's authority, reputation or knowledge to intimidate or threaten others.  
-2.10 Maliciously causing someone to doubt their own perceptions, senses, or understanding with the objective to win an argument or force someone to behave the way you want.
+- Using one's authority, reputation or knowledge to intimidate or threaten others.  
+- Maliciously causing someone to doubt their own perceptions, senses, or understanding with the objective to win an argument or force someone to behave the way you want.
 
-#### Other Unacceptable Behavior
+### 2.3. Other Unacceptable Behavior
 
-2.11 Impersonating others and plagiarizing  
-2.12 Spamming or vandalizing any of Teias spaces, online or offline, on-chain or off-chain.  
-2.13 Scamming and social engineering.  
-2.14 Sustained disruption of community events, including talks and presentations.  
-2.15 Advocating for, or encouraging any of the above behavior.
-
-### Consequences of Unacceptable Behavior
+- Impersonating others and plagiarizing  
+- Spamming or vandalizing any of Teias spaces, online or offline, on-chain or off-chain.  
+- Scamming and social engineering.  
+- Sustained disruption of community events, including talks and presentations.  
+- Advocating for, or encouraging any of the above behavior.
+  
+## 3. Consequences of Unacceptable Behavior
 
 Unacceptable behavior from any community member, including sponsors and those with decision-making authority, will not be tolerated.
 
@@ -52,35 +49,27 @@ If a community member engages in unacceptable behavior, the community organizers
 
 If a community manager does not actively investigate any reported and unacceptable behavior fairly, they will need to be held responsible and might be removed from their position.
 
-## **3. Fairplay on the Marketplace**
+## 4. **Fairplay on the Marketplace**
 
-3.1 Collectors should voluntarily refrain from using automated tools for collecting, from  hindering other participants from collecting and from interfering with the site and the smart contracts in any way.   
+- Collectors should voluntarily refrain from using automated tools for collecting, from  hindering other participants from collecting and from interfering with the site and the smart contracts in any way.   
+- Collectors should voluntarily refrain from collecting excessively such as collecting large amounts of a “free” or low priced edition. Participants should apply their discretion as to what counts as “excessive”. 
+- Artists have certain moral rights to work they create. We believe Art and also NFTs are more than simple financial assets and should be treated as such. owners of tokens should refrain from using NFT mechanisms such as burning in ways that could impact the creators moral rights to their work or reputation or endager the digital artwork/concept without the creators consent.   
+- Users are expected to refrain from any market manipulation such as wash trading and conspiring to artificially increase the perceived demand or price.  
+- Users should voluntarily refrain from minting other peoples work even if consent has been given by the original creator. While there are legitimate reasons for minting pieces by other artists for them (such as gallery projects) this goes against the spirit of NFTs and has proven to be problematic for various reasons. Gallery projects are asked to mint other artists work via Teia’s collab contracts with the main creator as co-collaborator.
 
-3.2 Collectors should voluntarily refrain from collecting excessively such as collecting large amounts of a “free” or low priced edition. Participants should apply their discretion as to what counts as “excessive”. 
+## 5. **Reporting Guidelines**
 
-3.3 Artists have certain moral rights to work they create. We believe Art and also NFTs are more than simple financial assets and should be treated as such. owners of tokens should refrain from using NFT mechanisms such as burning in ways that could impact the creators moral rights to their work or reputation or endager the digital artwork/concept without the creators consent.   
+If you are subject to or witness unacceptable behavior, or have any other concerns, please notify a community organizer as soon as possible either via the report form, the discord channel #report or a mail to "info@teia.art"  
+For reporting copymints, please use the discord channel #report-copyminters or send a mail to “info@teia.art”. If you report accounts via mail, please make sure to include: The full longform Tezos address of the reported account, and evidence of unacceptable behavior.  
+Community moderators are available to help those experiencing unacceptable behavior feel safe.   
+In the context of in-person events, organizers will also provide escorts as desired by the person experiencing distress.  
+If you feel you have been falsely or unfairly accused of violating this Code of Conduct, you should notify Teia with a concise description of your grievance via mail. Your grievance will be handled in accordance with our existing governing policies.
 
-3.4 Users are expected to refrain from any market manipulation such as wash trading and conspiring to artificially increase the perceived demand or price.  
-
-3.5 Users should voluntarily refrain from minting other peoples work even if consent has been given by the original creator. While there are legitimate reasons for minting pieces by other artists for them (such as gallery projects) this goes against the spirit of NFTs and has proven to be problematic for various reasons. Gallery projects are asked to mint other artists work via Teia’s collab contracts with the main creator as co-collaborator.
-
-## **4. Reporting Guidelines**
-
-4.1 If you are subject to or witness unacceptable behavior, or have any other concerns, please notify a community organizer as soon as possible either via the report form, the discord channel #report or a mail to "info@teia.art"  
-
-4.2 For reporting copymints, please use the discord channel #report-copyminters or send a mail to “info@teia.art”. If you report accounts via mail, please make sure to include: The full longform Tezos address of the reported account, and evidence of unacceptable behavior.  
-
-4.3 Community moderators are available to help those experiencing unacceptable behavior feel safe.   
-
-4.4 In the context of in-person events, organizers will also provide escorts as desired by the person experiencing distress.  
-
-4.5 If you feel you have been falsely or unfairly accused of violating this Code of Conduct, you should notify Teia with a concise description of your grievance via mail. Your grievance will be handled in accordance with our existing governing policies.
-
-## **5. Content Rules and Teia Profile Restrictions**
+## 6. **Content Rules and Teia Profile Restrictions**
 
 The Teia community reserves its right to moderate content and ban/restrict wallets from the marketplace to make Teia a fair and safe experience for all.
 
-The content moderation team operates on the following Terms and works voluntarily to protect TEIA collectors and artists from copyminting and other types of malicious activity. 
+The content moderation team operates on the following Terms and works voluntarily to protect TEIA collectors and artists from copyminting and other types of malicious activity.
 
 Please understand their role and that processes like this do generate mistakes. The team investigates when alerted through the #report-copyminters channel in the TEIA Discord. Please respect their work, and help them by being courteous and accurate with the information that will help your inquiry.
 
@@ -88,13 +77,13 @@ Various other Tezos marketplaces also use the TEIA restricted list of accounts, 
 
 Since TEIA is a decentralized application, restricted OBJKTs are only restricted on Teia's user interface, meaning that they are still available through APIs and on-chain data.
 
-### 5.1 Types of Profile Restrictions
+### 6.1. Types of Profile Restrictions
 
 **“Restricted account”** Accounts that TEIA restricts are labeled “restricted account,” and OBJKTs that a restricted account has minted are labeled “restricted OBJKT” in the marketplace. 
 
 **“Account under review”** Accounts that are marked as “under review” have been flagged for further investigation or minor misbehaviour or general red flags. Accounts under review can still trade on the Teia UI. Users whose account has been put under review are asked to come to the #report-copyminters channel on the Teia discord for clarification.
 
-### 5.2 Copyright and Intellectual Property
+### 6.2. Copyright and Intellectual Property
 
 As artists and collectors of art, we want to acknowledge and protect intellectual property as it is crucial for our integrity and work but we also acknowledge that some forms of art need to use the works of others (i.e. remixes, tributes, quotes). 
 
@@ -112,13 +101,13 @@ When creating a tribute piece to somebody else’s work, an artist should get wr
 
 [*] taken from page 11 of the “Code of Best Practices in Fair Use for the Visual Arts” by Patricia Aufderheide and Peter Jaszi, 2015)
 
-### 5.3 Proper Content Classification
+### 6.3. Proper Content Classification
 
 **NSFW content:** explicit, overtly sexual or violent imagery or potentially disturbing (“Not safe for work”) material should always be tagged as “NSFW” in the provided check box in the minting interface. This content is not banned but will be moderated differently on the platform.  
 
 **Photosensitive content:** Content that contains flashing/stroboscopic animations may cause harm to users and must be tagged accordingly with the checkbox provided in the minting UI to help make Teia a safe space for its users.
 
-### 5.4 Possible Reasons for an account restriction:
+### 6.4. Possible Reasons for an account restriction:
 
 **Copyminting**: Minting another artist(s) work without their consent. Copyminting can also include works based on another artist's work, with minimal filters or modifications applied  
 
@@ -148,7 +137,7 @@ This rule might get lifted in the future with the implementation of new systems 
 
 **Violating the Terms of Service or Code of Conduct in other ways:** Mainly if it is overtly abusive to another group, invokes violence, or intimidates, harasses or impersonates.
 
-###  5.5 Procedure if your Teia account has been restricted
+### 6.5. Procedure if your Teia account has been restricted
 
 If you are banned, please don’t create new accounts to circumvent the account restriction but request for an unban first, those accounts might get automatically banned. If you want to keep on minting, please get in touch with the content moderation team first and discuss the way forward.
 
