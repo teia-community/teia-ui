@@ -1,7 +1,7 @@
 import { useUserStore } from '@context/userStore'
 import { DAO_TREASURY_CONTRACT } from '@constants'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styles from './index.module.scss' // Import the SCSS module
 
 // Donation input component with user-defined amount
