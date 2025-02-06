@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
+import { getTzktData } from '@data/api'
 
 const TeiaTokenMetadata = () => {
   const [tokenData, setTokenData] = useState(null)
@@ -9,11 +9,11 @@ const TeiaTokenMetadata = () => {
   useEffect(() => {
     const fetchTokenData = async () => {
       try {
-        const response = await axios.get(
-          'https://api.tzkt.io/v1/tokens?contract=KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV&tokenId=0'
+        const response = await getTzktData(
+          '/v1/tokens?contract=KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV&tokenId=0'
         )
-        if (response.data && response.data.length > 0) {
-          setTokenData(response.data[0])
+        if (response && response.length > 0) {
+          setTokenData(response[0])
         } else {
           setError('No token data found.')
         }
