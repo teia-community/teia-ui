@@ -28,7 +28,7 @@
     list-style: disc outside;
   }
 
-  li::marker ul::marker {
+  ::marker {
     content: unset;
   }
 
