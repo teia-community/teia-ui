@@ -123,6 +123,7 @@ export const Swap = () => {
 
           <Container>
             <div className={styles.container}>
+              <h4>Quantity</h4>
               <Input
                 type="number"
                 placeholder="OBJKT quantity"
@@ -138,11 +139,12 @@ export const Swap = () => {
                 disabled={progress}
               />
               <div style={{ width: '100%', display: 'flex' }}>
-                <div style={{ width: '90%' }}>
+                <div style={{ width: '100%' }}>
+                  <h4>Price</h4>
                   <Input
                     style={style}
                     type="number"
-                    placeholder="Price per OBJKT"
+                    placeholder="Price Per OBJKT (XTZ)"
                     value={price}
                     initial={0}
                     onChange={setPrice}
@@ -157,14 +159,6 @@ export const Swap = () => {
                     }}
                     disabled={progress}
                   />
-                </div>
-                <div>
-                  <select
-                    onChange={onChange}
-                    style={{ float: 'right', display: 'inline' }}
-                  >
-                    <option value="tezos">tez</option>
-                  </select>
                 </div>
               </div>
               <Button shadow_box onClick={handleSubmit} fit disabled={progress}>
