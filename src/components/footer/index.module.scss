@@ -41,7 +41,6 @@
   @include respond-to('tablet') {
     grid-template-rows: none;
     grid-template-areas: 'Logo Copyright Menu Tools';
-    grid-template-columns: 1fr 2fr repeat(2, 1fr);
   }
 }
 
@@ -71,7 +70,12 @@
   text-align: left;
   align-items: flex-start;
 }
-
+.menu_label_row {
+  display: inline-block;
+  margin-right: 1em;
+  font-size: $font-small;
+  text-decoration: underline;
+}
 .address {
   color: var(--gray-20);
 }

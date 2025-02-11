@@ -76,8 +76,33 @@ export const Footer = ({ menu, pin }: FooterProps) => {
             </Button>
           )}
         </div>
-
-        <div className={styles.copyright}>{language.footer.mint}</div>
+        <div className={styles.copyright}>
+          <div>
+          {language.footer.mint}
+          </div>
+          <div>
+          <MenuItem
+            className={styles.menu_label_row}
+            label="Core Values"
+            route="corevalues"
+          />
+          <MenuItem
+            className={styles.menu_label_row}
+            label="Code of Conduct"
+            route="codeofconduct"
+          />
+          <MenuItem
+            className={styles.menu_label_row}
+            label="Terms and Conditions"
+            route="terms"
+          />
+          <MenuItem
+            className={styles.menu_label_row}
+            label="Privacy Policy"
+            route="privacypolicy"
+          />
+          </div>
+        </div>
         {menu && (
           <>
             <div className={styles.menus}>

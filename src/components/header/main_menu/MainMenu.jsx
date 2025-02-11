@@ -39,26 +39,6 @@ export const MainMenu = () => {
             label="Getting Started"
             route="faq"
           />
-          <MenuItem
-            className={styles.menu_label}
-            label="Core Values"
-            route="corevalues"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Code of Conduct"
-            route="codeofconduct"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Terms and Conditions"
-            route="terms"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Privacy Policy"
-            route="privacypolicy"
-          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
