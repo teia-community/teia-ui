@@ -66,19 +66,28 @@ export const Footer = ({ menu, pin }: FooterProps) => {
       <motion.footer {...transition()} className={classes_content}>
         <div className={styles.logo}>
           Teia DAO LLC.
-          <a href="https://tzkt.io/">Powered by TzKT API</a>
-          {menu && (
+          {menu && (<>
             <Button
               alt="teia rotating logo"
               onClick={() => setLogoSeed(Math.random() * 100)}
             >
               <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
             </Button>
+            <div className={styles.menu_left}>
+                <MenuItem className={styles.menu_label} route="about" />
+                <MenuItem
+                  className={styles.menu_label}
+                  label="F.A.Q"
+                  route="faq"
+                />
+              </div>
+            </>
           )}
-        </div>
+          <a href="https://tzkt.io/">Powered by TzKT API</a>
+          </div>
         <div className={styles.copyright}>
           <div>
-          {language.footer.mint}
+            {language.footer.mint}
           </div>
           <div>
           <MenuItem
@@ -106,14 +115,7 @@ export const Footer = ({ menu, pin }: FooterProps) => {
         {menu && (
           <>
             <div className={styles.menus}>
-              <div className={styles.menu_left}>
-                <MenuItem className={styles.menu_label} route="about" />
-                <MenuItem
-                  className={styles.menu_label}
-                  label="F.A.Q"
-                  route="faq"
-                />
-              </div>
+
               <Line vertical />
 
               <div className={styles.menu_right}>
