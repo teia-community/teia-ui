@@ -73,7 +73,7 @@
 .menu_label_row {
   display: inline-block !important;
   margin-right: 1em;
-  font-size: $font-small;
+  font-size: $font-small !important;
   text-decoration: underline;
 }
 .address {
