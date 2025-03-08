@@ -123,7 +123,7 @@ export const ClausesDescriptions = ({ clauses }) => {
             return null
           } else if (key === 'expirationDateExists') {
             return (
-              <>
+              <React.Fragment key={key}>
                 <li key={key}>
                   {clauseLabels[key]}: {descriptions[key][value]}
                 </li>
@@ -140,7 +140,7 @@ export const ClausesDescriptions = ({ clauses }) => {
                       )
                     : 'None'}
                 </li>
-              </>
+              </React.Fragment>
             )
           } else if (key === 'addendum') {
             return <li key={key}>Addendum: {value ? '✅ Yes' : '🚫 No'}</li>
