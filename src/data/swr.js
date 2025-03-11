@@ -256,3 +256,19 @@ export function useObjkt(id) {
 
   return [data, mutate]
 }
+
+export function useTokenMetadata(contractAddress, tokenId) {
+  console.log('contractAddress', contractAddress)
+  console.log('tokenId', tokenId)
+  const parameters = {
+    contract: contractAddress,
+    tokenId: tokenId,
+  };
+  const { data, mutate } = useSWR(
+    contractAddress && tokenId ? ['/v1/tokens', parameters] : null,
+    getTzktData
+  );
+  console.log('data', data)
+
+  return [data?.[0]?.metadata, mutate];
+}
