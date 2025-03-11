@@ -75,6 +75,9 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import CopyrightForm from '@components/copyright/form/CopyrightForm'
+import CopyrightPage from '@pages/copyright'
+import { CopyrightPreview } from '@components/copyright/preview'
 
 const display_routes = (
   <>
@@ -137,6 +140,10 @@ const router = createBrowserRouter(
       <Route exact path="mint/*" element={<Mint />}>
         <Route index element={<MintForm />} />
         <Route path="preview" element={<Preview />} />
+      </Route>
+      <Route exact path="copyright/*" element={<CopyrightPage />}>
+        <Route index element={<CopyrightForm />} />
+        <Route path="copyrightpreview" element={<CopyrightPreview />} />
       </Route>
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
