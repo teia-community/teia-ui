@@ -1,26 +1,38 @@
-import { useOutletContext } from 'react-router'
-import { useFormContext, useFormState } from 'react-hook-form'
-import { useNavigate } from 'react-router'
-import { motion } from 'framer-motion'
-import { useCopyrightStore } from '@context/copyrightStore'
-import CopyrightMainForm from './CopyrightMainForm'
+import { useOutletContext } from 'react-router';
+import { useFormContext, useFormState } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import { motion } from 'framer-motion';
+import { useCopyrightStore } from '@context/copyrightStore';
+import CopyrightMainForm from './CopyrightMainForm';
 
 export default function CopyrightForm() {
-  const { address, minterName } = useOutletContext()
-  const navigate = useNavigate()
-  const { control } = useFormContext()
-  const { defaultValues } = useFormState({ control })
+  const { address, minterName } = useOutletContext();
+  const navigate = useNavigate();
+  const { control } = useFormContext();
+  const { defaultValues } = useFormState({ control });
+
+  // Load existing data from Zustand store
+  const { customLicenseData } = useCopyrightStore();
 
   const handleCopyrightCreation = async (data) => {
     try {
-      console.log('Minting Copyright with data:', data) 
-      useCopyrightStore.setState({ ...data, isValid: true })
-      navigate('preview')
+      const { customLicenseData } = useCopyrightStore.getState();
+  
+      useCopyrightStore.setState({
+        ...data,
+        customLicenseData: { 
+          ...data.customLicenseData, 
+          tokens: customLicenseData?.tokens || [],
+        },
+        isValid: true,
+      });
+  
+      navigate('copyrightpreview');
     } catch (error) {
-      console.error('Copyright creation failed:', error.message)
+      console.error('Copyright creation failed:', error.message);
     }
-  }
-
+  };
+  
   return (
     <motion.div
       style={{ width: '100%' }}
@@ -30,10 +42,10 @@ export default function CopyrightForm() {
       transition={{ ease: 'easeInOut' }}
     >
       <CopyrightMainForm
-        defaultValues={defaultValues}
+        defaultValues={{ ...defaultValues, customLicenseData }}
         onSubmit={handleCopyrightCreation}
-        fields={[{ name: 'customLicenseData', defaultValue: {} }]}
+        fields={[{ name: 'customLicenseData', defaultValue: customLicenseData || {} }]}
       />
     </motion.div>
-  )
+  );
 }
