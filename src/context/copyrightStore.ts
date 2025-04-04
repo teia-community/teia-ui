@@ -1,15 +1,14 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 import {
   createJSONStorage,
   persist,
   subscribeWithSelector,
-} from 'zustand/middleware'
+} from 'zustand/middleware';
 
 export interface CopyrightStore {
-  customLicenseData?: any
-
-  setCustomLicenseData: (data: any) => void
-  reset: () => void
+  customLicenseData?: any;
+  setCustomLicenseData: (data: any) => void;
+  reset: () => void;
 }
 
 export const useCopyrightStore = create<CopyrightStore>()(
@@ -19,11 +18,11 @@ export const useCopyrightStore = create<CopyrightStore>()(
         customLicenseData: undefined,
 
         setCustomLicenseData: (data) => {
-          set({ customLicenseData: data })
+          set({ customLicenseData: data });
         },
 
         reset: () => {
-          set({ customLicenseData: undefined })
+          set({ customLicenseData: undefined });
         },
       }),
       {
@@ -32,4 +31,4 @@ export const useCopyrightStore = create<CopyrightStore>()(
       }
     )
   )
-)
+);
