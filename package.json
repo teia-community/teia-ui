@@ -6,7 +6,7 @@
     "@magenta/music": "^1.23.1",
     "@taquito/beacon-wallet": "^17.4.0",
     "@taquito/michelson-encoder": "^17.4.0",
-    "@taquito/taquito": "^17.4.0",
+    "@taquito/taquito": "^21.0.4",
     "@tonejs/midi": "^2.0.28",
     "axios": "^0.27.2",
     "base-x": "^4.0.0",
