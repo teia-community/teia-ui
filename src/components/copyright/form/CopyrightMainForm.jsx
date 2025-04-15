@@ -7,7 +7,6 @@ function CopyrightMainForm({ fields, defaultValues, onSubmit }) {
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useFormContext()
 
@@ -21,15 +20,13 @@ function CopyrightMainForm({ fields, defaultValues, onSubmit }) {
             ...f,
             defaultValue: defaultValues?.[f.name],
           }}
-          error={errors[f.name]}
         />
       ))}
-
       <Button type="submit" fit shadow_box disabled={Object.keys(errors).length > 0}>
         Create Copyright
       </Button>
     </form>
-  )
+  );
 }
 
 export default memo(CopyrightMainForm)
