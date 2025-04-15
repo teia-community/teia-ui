@@ -70,7 +70,18 @@ export function CopyrightPreview() {
       {/* Buttons */}
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
         <Button style={{ border: '1px solid #ccc', padding: '15px', marginTop: '15px' }} onClick={() => navigate('/copyright')}>Go Back</Button>
-        <Button style={{ border: '1px solid #ccc', padding: '15px', marginTop: '15px' }} onClick={() => console.log('Final Data:', customLicenseData)}>Confirm & Submit</Button>
+        <Button 
+          style={{ border: '1px solid #ccc', padding: '15px', marginTop: '15px' }} 
+          onClick={async () => {
+            const { submitCopyrightAgreement } = useCopyrightStore.getState();
+            const opHash = await submitCopyrightAgreement();
+            if (opHash) {
+              console.log('Operation successful:', opHash);
+            }
+          }}
+        >
+          Confirm & Submit
+        </Button>
       </div>
     </div>
   );
