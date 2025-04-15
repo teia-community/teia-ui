@@ -12,6 +12,7 @@ import { useFormContext } from 'react-hook-form'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { HashToURL } from '@utils'
+import { fetchTokenMetadata } from '@data/swr'
 
 const initialClauses = {
   reproduce: false,
@@ -215,28 +216,19 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     }
 
     try {
-      const tzktUrl = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${
-        token.contractAddress
-      }&tokenId=${token.tokenId}`
-      const response = await fetch(tzktUrl)
-      const data = await response.json()
-
-      if (data.length > 0) {
-        const tokenCreators = data[0]?.metadata?.creators || []
-
-        if (!tokenCreators.includes(address)) {
-          openModal('Ownership Verification', 'This is not your token.')
-          setFetchingToken(false)
-          return
-        }
-
-        setCurrentToken({ ...token, metadata: data[0].metadata })
-      } else {
-        openModal('Error', 'Token metadata not found.')
+      const tokenData = await fetchTokenMetadata(token.contractAddress, token.tokenId)
+      const tokenCreators = tokenData?.metadata?.creators || []
+  
+      if (!tokenCreators.includes(address)) {
+        openModal('Ownership Verification', 'This is not your token.')
+        setFetchingToken(false)
+        return
       }
-    } catch (error) {
-      console.error('Error fetching metadata:', error)
-      openModal('Error', 'Error fetching metadata.')
+  
+      setCurrentToken({ ...token, metadata: tokenData.metadata })
+    } catch (err) {
+      console.error(err)
+      openModal('Error', 'Could not fetch token data.')
     }
 
     setFetchingToken(false)

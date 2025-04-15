@@ -257,18 +257,29 @@ export function useObjkt(id) {
   return [data, mutate]
 }
 
-export function useTokenMetadata(contractAddress, tokenId) {
-  console.log('contractAddress', contractAddress)
-  console.log('tokenId', tokenId)
-  const parameters = {
-    contract: contractAddress,
-    tokenId: tokenId,
-  };
-  const { data, mutate } = useSWR(
-    contractAddress && tokenId ? ['/v1/tokens', parameters] : null,
-    getTzktData
-  );
-  console.log('data', data)
+export const fetchTokenMetadata = async (contractAddress, tokenId) => {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const response = await fetch(url)
+  if (!response.ok) throw new Error('Failed to fetch metadata')
+  const data = await response.json()
+  return data[0]
+}
 
-  return [data?.[0]?.metadata, mutate];
+export async function fetchUserCopyrights(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/bigmaps/copyrights/keys?key.address=${address}&limit=100&select=value`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
 }
