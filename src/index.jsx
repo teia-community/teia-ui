@@ -78,6 +78,7 @@ import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
 import CopyrightForm from '@components/copyright/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/preview'
+import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
 
 const display_routes = (
   <>
@@ -145,6 +146,7 @@ const router = createBrowserRouter(
         <Route index element={<CopyrightForm />} />
         <Route path="copyrightpreview" element={<CopyrightPreview />} />
       </Route>
+      <Route path="copyrightdisplay" element={<CopyrightDisplay />} />
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
