@@ -5,7 +5,6 @@ import ReactSelect from 'react-select'
 import styles from '@style'
 import { style as select_style, theme } from '../../../atoms/select/styles'
 import { useOutletContext } from 'react-router'
-import { useMintStore } from '@context/mintStore'
 import { copyrightModalText } from './copyrightmodaltext'
 import { InfoModal } from '@atoms/modal'
 import { useFormContext } from 'react-hook-form'
@@ -178,43 +177,58 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     'No Permissions Chosen'
   )
   const [documentText, setDocumentText] = useState('No Permissions Chosen')
-  const [uriError, setUriError] = useState('')
-
-  const updateCustomLicenseData = useMintStore(
-    (state) => state.updateCustomLicenseData
-  )
 
   const [searchTokenQuery, setSearchTokenQuery] = useState('')
   const { customLicenseData } = useCopyrightStore()
   const [tokens, setTokens] = useState(customLicenseData?.tokens || [])
   const [currentToken, setCurrentToken] = useState(null)
+  const [currentExternalToken, setCurrentExternalToken] = useState(null)
   const [fetchingToken, setFetchingToken] = useState(false)
 
   const handleSearchTokenSubmit = async (e) => {
     e.preventDefault()
     setFetchingToken(true)
     setCurrentToken(null)
-
-    const token = extractTokenFromString(searchTokenQuery)
-    console.log('searchTokenQuery', searchTokenQuery)
-    if (!token || searchTokenQuery == '') {
-      openModal('Invalid Link', 'The link you provided is invalid.')
+  
+    if (!searchTokenQuery || searchTokenQuery.trim() === '') {
+      openModal('Invalid Input', 'The input cannot be empty.')
       setFetchingToken(false)
       return
     }
-
+  
+    const token = extractTokenFromString(searchTokenQuery)
+  
+    if (!token) {
+    
+      const externalToken = {
+        contractAddress: 'external',
+        tokenId: null,
+        metadata: {
+          name: searchTokenQuery,
+          thumbnailUri: '',
+          creators: [address],
+          description: 'External or custom token reference - please be sure what you do.',
+        },
+      }
+    
+      setCurrentExternalToken(externalToken)
+      setFetchingToken(false)
+      return
+    }
+    
+  
     const isDuplicate = tokens.some(
       (addedToken) =>
         addedToken.contractAddress === token.contractAddress &&
         addedToken.tokenId === token.tokenId
     )
-
+  
     if (isDuplicate) {
       openModal('Duplicate Token', 'This token has already been added.')
       setFetchingToken(false)
       return
     }
-
+  
     try {
       const tokenData = await fetchTokenMetadata(token.contractAddress, token.tokenId)
       const tokenCreators = tokenData?.metadata?.creators || []
@@ -233,7 +247,6 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
     setFetchingToken(false)
   }
-
   const extractTokenFromString = (url) => {
     try {
       const match = url.match(/(KT1\w+)?\/(\d+)/)
@@ -543,7 +556,13 @@ Any modification to this Agreement's terms requires explicit consent from both t
 
     setDocumentText(documentText)
     setGeneratedDocument(documentText)
-    updateCustomLicenseData({ clauses: clauses, documentText: documentText })
+    useCopyrightStore.setState((prevState) => ({
+      customLicenseData: {
+        ...prevState.customLicenseData,
+        clauses,
+        documentText,
+      },
+    }))    
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -556,8 +575,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
     clauses?.expirationDate,
     clauses?.expirationDateExists,
     handleChange,
-    generateDocumentText,
-    updateCustomLicenseData,
+    generateDocumentText
   ])
 
   useEffect(() => {
@@ -825,7 +843,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             type="text"
             value={searchTokenQuery}
             onChange={handleSearchTokenInputChange}
-            placeholder="Enter Teia or Objkt.com link"
+            placeholder="Enter Teia or Objkt.com link or any link to any token you own on any chain"
             className={styles.field}
           />
           <button
@@ -883,10 +901,13 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 }))
                 setDocumentText(documentText)
                 setGeneratedDocument(documentText)
-                updateCustomLicenseData({
-                  clauses: clauses,
-                  documentText: documentText,
-                })
+                useCopyrightStore.setState((prevState) => ({
+                  customLicenseData: {
+                    ...prevState.customLicenseData,
+                    clauses,
+                    documentText,
+                  },
+                }))                
               }}
               style={{
                 border: '1px solid #ccc',
@@ -895,6 +916,55 @@ Any modification to this Agreement's terms requires explicit consent from both t
               }}
             >
               ➕ Add Token to Copyright Agreement
+            </button>
+          </div>
+        )}
+        {currentExternalToken && (
+          <div className="token-preview">
+            <h3>External Reference Found:</h3>
+
+            <div
+              className="token-list"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '15px',
+                marginTop: '15px',
+              }}
+            >
+              <div style={{ border: '1px solid #ddd', padding: '15px' }}>
+                <h4>Title/Link:</h4>
+                <p>{currentExternalToken.metadata.name}</p>
+                <p>{currentExternalToken.metadata.description}</p>
+                <p>
+                  <strong>Type:</strong> External / Manual Entry
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                const updatedTokens = [...tokens, currentExternalToken]
+                setTokens(updatedTokens)
+                setCurrentExternalToken(null)
+                setSearchTokenQuery('')
+
+                useCopyrightStore.setState((prevState) => ({
+                  customLicenseData: {
+                    ...prevState.customLicenseData,
+                    clauses,
+                    documentText,
+                    tokens: updatedTokens,
+                  },
+                }))
+              }}
+              style={{
+                border: '1px solid #ccc',
+                padding: '15px',
+                marginTop: '15px',
+              }}
+            >
+              ➕ Add External Reference to Copyright Agreement
             </button>
           </div>
         )}
@@ -922,15 +992,17 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     textAlign: 'center',
                   }}
                 >
-                  <img
-                    src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
-                    alt={token.metadata.name}
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      borderRadius: '4px',
-                    }}
-                  />
+                  {token.contractAddress !== 'external' && (
+                    <img
+                      src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                      alt={token.metadata.name}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  )}
                   <div style={{ marginTop: '10px' }}>
                     <h4
                       style={{
