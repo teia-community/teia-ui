@@ -189,17 +189,16 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     e.preventDefault()
     setFetchingToken(true)
     setCurrentToken(null)
-  
+
     if (!searchTokenQuery || searchTokenQuery.trim() === '') {
       openModal('Invalid Input', 'The input cannot be empty.')
       setFetchingToken(false)
       return
     }
-  
+
     const token = extractTokenFromString(searchTokenQuery)
-  
+
     if (!token) {
-    
       const externalToken = {
         contractAddress: 'external',
         tokenId: null,
@@ -207,38 +206,41 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
           name: searchTokenQuery,
           thumbnailUri: '',
           creators: [address],
-          description: 'External or custom token reference - please be sure what you do.',
+          description:
+            "*This is an external or custom token reference - make sure that the link is valid and will be maintained for the agreement's applicable usage and time frames.",
         },
       }
-    
+
       setCurrentExternalToken(externalToken)
       setFetchingToken(false)
       return
     }
-    
-  
+
     const isDuplicate = tokens.some(
       (addedToken) =>
         addedToken.contractAddress === token.contractAddress &&
         addedToken.tokenId === token.tokenId
     )
-  
+
     if (isDuplicate) {
       openModal('Duplicate Token', 'This token has already been added.')
       setFetchingToken(false)
       return
     }
-  
+
     try {
-      const tokenData = await fetchTokenMetadata(token.contractAddress, token.tokenId)
+      const tokenData = await fetchTokenMetadata(
+        token.contractAddress,
+        token.tokenId
+      )
       const tokenCreators = tokenData?.metadata?.creators || []
-  
+
       if (!tokenCreators.includes(address)) {
         openModal('Ownership Verification', 'This is not your token.')
         setFetchingToken(false)
         return
       }
-  
+
       setCurrentToken({ ...token, metadata: tokenData.metadata })
     } catch (err) {
       console.error(err)
@@ -562,7 +564,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
         clauses,
         documentText,
       },
-    }))    
+    }))
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -575,7 +577,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
     clauses?.expirationDate,
     clauses?.expirationDateExists,
     handleChange,
-    generateDocumentText
+    generateDocumentText,
   ])
 
   useEffect(() => {
@@ -629,6 +631,17 @@ Any modification to this Agreement's terms requires explicit consent from both t
     }))
   }
 
+  function isValidUrl(string) {
+    if (!string) return false
+
+    try {
+      new URL(string)
+      return true
+    } catch (_) {
+      return false
+    }
+  }
+
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
       <br />
@@ -636,10 +649,10 @@ Any modification to this Agreement's terms requires explicit consent from both t
       <br />
       <p>
         The TEIA copyright registration system enables creators to establish
-        binding terms governing permitted and prohibited uses of their works
-        upon sale or transfer of ownership. These terms are permanently recorded
-        on the Tezos blockchain, creating an immutable, neutral, and transparent
-        record.
+        binding terms (a declaration by the Creator) governing permitted and
+        prohibited uses of their works upon sale or transfer of ownership. These
+        terms are permanently recorded on the Tezos blockchain, creating an
+        immutable, neutral, and transparent record.
       </p>
       <br />
       <p>
@@ -833,7 +846,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
           <br />
           <p>
             ✅ Input the URL of an NFT minted on Tezos (XTZ) that you created to
-            recieve a verified status on registration. (The currently sync'd
+            receive a verified status on registration. (The currently sync'd
             wallet must match the creator/author of the work for it to
             verified.)
           </p>
@@ -843,7 +856,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             type="text"
             value={searchTokenQuery}
             onChange={handleSearchTokenInputChange}
-            placeholder="Enter Teia or Objkt.com link or any link to any token you own on any chain"
+            placeholder="Enter a Tezos Token URL or External URL"
             className={styles.field}
           />
           <button
@@ -856,6 +869,13 @@ Any modification to this Agreement's terms requires explicit consent from both t
           >
             Search Token
           </button>
+          {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
+            <p style={{ color: 'yellow', marginTop: '5px' }}>
+              ⚠️ Warning: The above input does not follow a standard URL/URI
+              scheme. (Non-standard inputs are still allowed, this is just a
+              reminder.)
+            </p>
+          )}
         </div>
 
         {fetchingToken && <div className="loading-spinner"></div>}
@@ -907,7 +927,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     clauses,
                     documentText,
                   },
-                }))                
+                }))
               }}
               style={{
                 border: '1px solid #ccc',
@@ -935,7 +955,11 @@ Any modification to this Agreement's terms requires explicit consent from both t
               <div style={{ border: '1px solid #ddd', padding: '15px' }}>
                 <h4>Title/Link:</h4>
                 <p>{currentExternalToken.metadata.name}</p>
-                <p>{currentExternalToken.metadata.description}</p>
+                <br />
+                <p style={{ color: 'yellow' }}>
+                  {currentExternalToken.metadata.description}
+                </p>
+                <br />
                 <p>
                   <strong>Type:</strong> External / Manual Entry
                 </p>
@@ -970,6 +994,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
         )}
         {tokens.length > 0 && (
           <div className="token-list">
+            <br />
             <h3>Selected Tokens:</h3>
             <div
               className="token-list"
