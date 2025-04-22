@@ -993,7 +993,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
         {tokens.length > 0 && (
           <div className="token-list">
             <br />
-            <h3>Selected Tokens:</h3>
+            <h3>Selected Works To Apply Copyright Agreement:</h3>
             <div
               className="token-list"
               style={{
