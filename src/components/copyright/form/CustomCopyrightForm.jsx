@@ -453,7 +453,8 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
 Any modification to this Agreement's terms requires explicit consent from both the Creator(s) and current Owner(s). Such amendments shall only apply to consenting parties and shall not alter existing agreements with non-consenting Owners. The Agreement shall maintain its original terms for any Owner-Creator relationship where mutual consent to amendments is not obtained, resulting in potentially differing agreement versions existing concurrently between different Owners of the same work. Smart contract execution shall serve as conclusive evidence of acceptance of amended terms.`
 
     if (clauses.addendum) {
-      documentText += `\n\nAddendum By Creator:\n${minterName}`
+      documentText += `\n\nAddendum By Creator:\n${minterName}\n\n`
+      documentText += `${clauses?.addendum}`
     }
 
     return documentText
@@ -657,12 +658,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
       <br />
       <p>
         - Ownership of a work is determined by possession of the wallet
-        containing the corresponding token.
-      </p>
-      <br />
-      <p>
-        - In disputes, wallet owners bear the burden of proving ownership in the
-        relevant jurisdiction or before the chosen mediator.
+        containing the corresponding token. In disputes, wallet owners bear the
+        burden of proving ownership in the relevant jurisdiction or before the
+        chosen mediator.
       </p>
       <br />
       <p>
