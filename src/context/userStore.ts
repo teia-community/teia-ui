@@ -1,4 +1,5 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
+import { BeaconEvent } from '@airgap/beacon-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -131,6 +132,22 @@ const wallet = new BeaconWallet({
 
 Tezos.setWalletProvider(wallet)
 
+let current: string
+wallet.client.subscribeToEvent(
+  BeaconEvent.ACTIVE_ACCOUNT_SET,
+  async (account) => {
+    console.log(
+      `${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `,
+      account?.address,
+    )
+    if (!account) {
+      return;
+    }
+    current = account.address
+  },
+);
+
+
 export const useUserStore = create<UserState>()(
   subscribeWithSelector(
     persist(
@@ -190,24 +207,14 @@ export const useUserStore = create<UserState>()(
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
-          let activeAccount = await wallet.client.getActiveAccount()
-          if (
-            activeAccount === undefined ||
-            activeAccount?.network?.rpcUrl !== network.rpcUrl
-          ) {
-            await wallet.requestPermissions({ network })
-            activeAccount = await wallet.client.getActiveAccount()
-          }
-          const current = await wallet.getPKH()
-          if (current) {
-            const info = await getUser(current)
-            console.log('getting user info', info)
-            set({
-              address: current,
-              userInfo: await getUser(current),
-            })
-          }
 
+          await wallet.client.requestPermissions({ network })
+          const info = await getUser(current)
+          console.log('getting user info', info)
+          set({
+            address: current,
+            userInfo: await getUser(current),
+          })
           // console.log(this.state)
           return current
         },
