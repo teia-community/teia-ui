@@ -1,5 +1,6 @@
 @import '@styles/variables.scss';
 @import '@styles/layout.scss';
+
 .container {
   width: 100%;
   display: flex;
@@ -9,11 +10,13 @@
   background-color: var(--background-color);
   transition: var(--body-transition);
   flex-direction: column;
+
   &.pinned {
     position: fixed;
     bottom: 0;
   }
 }
+
 .content {
   padding: 1em;
   text-align: center;
@@ -46,6 +49,7 @@
 
 .minimal {
   grid-template-columns: 2fr 2fr;
+
   .logo {
     align-items: flex-start;
   }
@@ -58,24 +62,28 @@
   gap: 1em;
   justify-content: center;
 }
+
 .menu_left {
   display: flex;
   flex-direction: column;
   text-align: right;
   align-items: flex-end;
 }
+
 .menu_right {
   display: flex;
   flex-direction: column;
   text-align: left;
   align-items: flex-start;
 }
+
 .menu_label_row {
   display: inline-block !important;
   margin-right: 1em;
   font-size: $font-small !important;
   text-decoration: underline;
 }
+
 .address {
   color: var(--gray-20);
 }
@@ -85,9 +93,11 @@
   justify-content: center;
   align-items: center;
   grid-area: Logo;
+
   @include respond-to('phone') {
     display: none;
   }
+
   @include respond-to('tablet') {
     display: flex;
   }
@@ -95,7 +105,11 @@
 
 .copyright {
   grid-area: Copyright;
-  text-align: left;
+  text-align: right;
+}
+
+.menuitems {
+  margin-top: 2em;
 }
 
 .state_buttons {
@@ -103,6 +117,7 @@
     width: 2em;
     height: 2em;
   }
+
   display: flex;
   flex: row;
   gap: 0.5em;

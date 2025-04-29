@@ -73,43 +73,44 @@ export const Footer = ({ menu, pin }: FooterProps) => {
             >
               <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
             </Button>
-            <div className={styles.menu_left}>
-                <MenuItem className={styles.menu_label} route="about" />
-                <MenuItem
-                  className={styles.menu_label}
-                  label="F.A.Q"
-                  route="faq"
-                />
-              </div>
-            </>
+          </>
           )}
           <a href="https://tzkt.io/">Powered by TzKT API</a>
-          </div>
+        </div>
         <div className={styles.copyright}>
           <div>
             {language.footer.mint}
           </div>
-          <div>
-          <MenuItem
-            className={styles.menu_label_row}
-            label="Core Values"
-            route="corevalues"
-          />
-          <MenuItem
-            className={styles.menu_label_row}
-            label="Code of Conduct"
-            route="codeofconduct"
-          />
-          <MenuItem
-            className={styles.menu_label_row}
-            label="Terms and Conditions"
-            route="terms"
-          />
-          <MenuItem
-            className={styles.menu_label_row}
-            label="Privacy Policy"
-            route="privacypolicy"
-          />
+          <div className={styles.menuitems}>
+            <MenuItem
+              className={styles.menu_label_row}
+              route="about"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="F.A.Q"
+              route="faq"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Core Values"
+              route="corevalues"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Code of Conduct"
+              route="codeofconduct"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Terms and Conditions"
+              route="terms"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Privacy Policy"
+              route="privacypolicy"
+            />
           </div>
         </div>
         {menu && (
@@ -118,33 +119,6 @@ export const Footer = ({ menu, pin }: FooterProps) => {
 
               <Line vertical />
 
-              <div className={styles.menu_right}>
-                <div className={styles.address}>{walletPreview(address)}</div>
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Mint"
-                  route="mint"
-                  need_sync
-                />
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Assets"
-                  route="tz"
-                  need_sync
-                />
-                <MenuItem
-                  need_sync
-                  className={styles.menu_label}
-                  route="collaborate"
-                />
-
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Profile"
-                  route="subjkt"
-                  need_sync
-                />
-              </div>
             </div>
             {false && (
               <div className={styles.state_buttons}>
