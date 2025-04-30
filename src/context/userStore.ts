@@ -98,6 +98,8 @@ interface UserState {
     price: string
     ask_id: any
   }) => OperationReturn
+  /** Donate amount */
+  donate: (amount: number, destinationAddress: string) => OperationReturn
   /** Cancel Swap */
   cancel: (contract: string, swap_id: number) => OperationReturn
   /** Cancel Swap from V1 */
@@ -410,6 +412,28 @@ export const useUserStore = create<UserState>()(
             return await handleOp(batch, 'Transfer')
           } catch (e) {
             showError('Transfer', e)
+          }
+        },
+        donate: async (amount, destinationAddress) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const show = useModalStore.getState().show
+
+          if (isNaN(amount) || amount <= 0) {
+            show('Invalid amount', 'Please enter a valid donation amount')
+          }
+          try {
+            await get().sync()
+            const list: WalletParamsWithKind[] = [
+              {
+                to: destinationAddress,
+                amount: amount,
+                kind: OpKind.TRANSACTION,
+              },
+            ]
+            return await handleOp(Tezos.wallet.batch(list), 'Donate')
+          } catch (e) {
+            showError('Donate', e)
           }
         },
         collect: async (listing) => {
