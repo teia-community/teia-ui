@@ -271,13 +271,17 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
   const handleRemoveToken = (indexToRemove) => {
     const updatedTokens = tokens.filter((_, index) => index !== indexToRemove)
+    const newDocumentText = generateDocumentText(updatedTokens)
     setTokens(updatedTokens)
+    setDocumentText(newDocumentText)
+    setGeneratedDocument(newDocumentText)
+    //console.log('remove', newDocumentText)
     useCopyrightStore.setState((prevState) => ({
       customLicenseData: {
         ...prevState.customLicenseData,
         tokens: updatedTokens,
         clauses,
-        documentText,
+        documentText: newDocumentText,
       },
     }))
   }
@@ -292,11 +296,23 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
   let clauseNumber = 1
 
-  const generateDocumentText = useCallback(() => {
+  const generateDocumentText = useCallback((customTokens = tokens) => {
     let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
+    {/**
     const tokenTitles = tokens
       .map((token) => `"${token.metadata.name}"`)
-      .join(', ')
+      .join(', ') */}
+    const tokenTitles = customTokens
+      .map((token, index) => {
+        const id = `#${index + 1}`
+        if (token.contractAddress === 'external') {
+          return `${id}: "${token.metadata.name}" (External Reference)`
+        } else {
+          return `${id}: "${token.metadata.name}" (Token ID: ${token.tokenId}, Contract: ${token.contractAddress})`
+        }
+      })
+      .join('\n')
+
     const nonTeiaTokens = tokens.filter(
       (token) => token.contractAddress !== HEN_CONTRACT_FA2
     )
@@ -315,7 +331,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
     let documentText = `This License Agreement ("Agreement") is granted by the creator ("Creator") identified by the wallet address ${minterInfo} ("Wallet Address") for the following Work(s): 
     
-${tokenTitles} ((Need this to be a list with unique identifiers))
+${tokenTitles}
     
 ${mintingContractsInfo}. 
 
@@ -554,16 +570,16 @@ Any modification to this Agreement's terms requires explicit consent from both t
       documentText =
         'No Permissions Chosen (For Addendum or Expiration Date sections to show, choose at least one option in the checkboxes above.)'
     } else {
-      documentText = generateDocumentText()
+      documentText = generateDocumentText(tokens)
     }
-
+    const newDocumentText = generateDocumentText(tokens)
     setDocumentText(documentText)
     setGeneratedDocument(documentText)
     useCopyrightStore.setState((prevState) => ({
       customLicenseData: {
         ...prevState.customLicenseData,
         clauses,
-        documentText,
+        documentText: newDocumentText,
       },
     }))
   }, [
@@ -579,6 +595,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
     clauses?.expirationDateExists,
     handleChange,
     generateDocumentText,
+    tokens
   ])
 
   useEffect(() => {
@@ -906,6 +923,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             <button
               onClick={() => {
                 const updatedTokens = [...tokens, currentToken]
+                const newDocumentText = generateDocumentText(updatedTokens)
                 setTokens(updatedTokens)
                 setCurrentToken(null)
                 setSearchTokenQuery('')
@@ -913,12 +931,12 @@ Any modification to this Agreement's terms requires explicit consent from both t
                   customLicenseData: {
                     ...prevState.customLicenseData,
                     clauses,
-                    documentText,
+                    documentText: newDocumentText,
                     tokens: updatedTokens,
                   },
                 }))
-                setDocumentText(documentText)
-                setGeneratedDocument(documentText)
+                setDocumentText(newDocumentText)
+                setGeneratedDocument(newDocumentText)
                 useCopyrightStore.setState((prevState) => ({
                   customLicenseData: {
                     ...prevState.customLicenseData,
@@ -967,16 +985,19 @@ Any modification to this Agreement's terms requires explicit consent from both t
             <button
               onClick={() => {
                 const updatedTokens = [...tokens, currentExternalToken]
+                const newDocumentText = generateDocumentText(updatedTokens)
                 setTokens(updatedTokens)
                 setCurrentExternalToken(null)
                 setSearchTokenQuery('')
-
+                setDocumentText(newDocumentText)
+                setGeneratedDocument(newDocumentText)
                 useCopyrightStore.setState((prevState) => ({
                   customLicenseData: {
                     ...prevState.customLicenseData,
                     clauses,
                     documentText,
                     tokens: updatedTokens,
+                    documentText: newDocumentText,
                   },
                 }))
               }}
