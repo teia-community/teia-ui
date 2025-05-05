@@ -995,9 +995,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
                   customLicenseData: {
                     ...prevState.customLicenseData,
                     clauses,
-                    documentText,
-                    tokens: updatedTokens,
                     documentText: newDocumentText,
+                    tokens: updatedTokens,
                   },
                 }))
               }}
