@@ -31,11 +31,12 @@ export default function MintForm() {
     isMonoType,
   } = useOutletContext()
   const navigate = useNavigate()
-  const { control } = useFormContext()
-  const { defaultValues } = useFormState({ control })
   const [needsCover, setNeedsCover] = useState(false)
   const [isTypedArt, setIsTypedArt] = useState(false)
   const [preview, setPreview] = useState(null)
+
+  // Get the current state from the mint store
+  const mintStoreState = useMintStore((state) => state)
 
   // Dynamically update conditional fields
   const fields = useMemo(() => {
@@ -135,7 +136,7 @@ export default function MintForm() {
         </div>
       )}
       <Form
-        defaultValues={defaultValues}
+        defaultValues={mintStoreState}
         onSubmit={onSubmit}
         onReset={useMintStore.getState().reset}
         fields={fields}
