@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -268,7 +268,7 @@ export const fetchTokenMetadata = async (contractAddress, tokenId) => {
 export async function fetchUserCopyrights(address) {
   if (!address) return []
 
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/bigmaps/copyrights/keys?key.address=${address}&limit=100&select=value`
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -278,6 +278,7 @@ export async function fetchUserCopyrights(address) {
 
     const data = await res.json()
     return data
+    
   } catch (err) {
     console.error('Failed to fetch user copyrights:', err)
     return []
