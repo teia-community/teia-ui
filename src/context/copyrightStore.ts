@@ -30,7 +30,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
         },
 
         submitCopyrightAgreement: async (): Promise<string | undefined> => {
-          const handleOp = useUserStore.getState().handleOp
+          const handleOp = useUserStore.getState().handleOp // needs to be fixed!
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
           const { customLicenseData } = useCopyrightStore.getState()
@@ -72,7 +72,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
                 related_external_nfts: customLicenseData.tokens
                   .filter(t => t.contractAddress === 'external')
                   .map(t => t.metadata.name),
-              }).send()
+              }).send({ amount: 0.1, storageLimit: 310 })
             
               console.log('[DEBUG] Operation sent:', op.opHash)
               const opHash = await handleOp(op, 'Submit Copyright')
