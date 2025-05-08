@@ -39,11 +39,21 @@ export const useCopyrightStore = create<CopyrightStore>()(
           step(modalTitle, 'Waiting for confirmation', true)
         
           try {
-            const allCreators = new Set<string>()
-
+            const tokenCreators = (customLicenseData.tokens || [])
+            .flatMap(t => t.metadata?.creators || [])
+          
+            const creators = Array.from(new Set([
+              useUserStore.getState().address,
+              ...tokenCreators
+            ]))
             try {
               const contract = await Tezos.wallet.at(COPYRIGHT_CONTRACT)
+              const firstParagraph = customLicenseData.documentText.includes('This Agreement outlines the')
+              ? customLicenseData.documentText.split('This Agreement outlines the')[0].trim()
+              : customLicenseData.documentText.slice(0, 530).trim()
             
+              console.log('firstParagraph', firstParagraph)
+
               const op = await contract.methodsObject.create_copyright({
                 clauses: {
                   addendum: customLicenseData.clauses.addendum || null,
@@ -54,7 +64,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
                   exclusiveRights: customLicenseData.clauses.exclusiveRights || null,
                   expirationDate: customLicenseData.clauses.expirationDate || null,
                   expirationDateExists: customLicenseData.clauses.expirationDateExists,
-                  firstParagraph: customLicenseData.documentText?.slice(0, 500) || '',
+                  firstParagraph: firstParagraph || '',
                   publicDisplay: customLicenseData.clauses.publicDisplay,
                   releasePublicDomain: customLicenseData.clauses.releasePublicDomain,
                   reproduce: customLicenseData.clauses.reproduce,
@@ -62,7 +72,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
                   retainCreatorRights: customLicenseData.clauses.retainCreatorRights,
                   rightsAreTransferable: customLicenseData.clauses.rightsAreTransferable,
                 },
-                creators: Array.from(allCreators),
+                creators: Array.from(creators),
                 related_tezos_nfts: customLicenseData.tokens
                   .filter(t => t.contractAddress !== 'external')
                   .map(t => ({
