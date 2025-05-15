@@ -4,7 +4,6 @@ import {
   persist,
   subscribeWithSelector,
 } from 'zustand/middleware';
-import { char2Bytes } from '@taquito/utils';
 import { Tezos, useUserStore } from './userStore';
 import { useModalStore } from './modalStore';
 import { COPYRIGHT_CONTRACT } from '../constants';
@@ -30,9 +29,9 @@ export const useCopyrightStore = create<CopyrightStore>()(
         },
 
         submitCopyrightAgreement: async (): Promise<string | undefined> => {
-          const handleOp = useUserStore.getState().handleOp // needs to be fixed!
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
+          const show = useModalStore.getState().show
           const { customLicenseData } = useCopyrightStore.getState()
         
           const modalTitle = 'Submit Copyright Agreement'
@@ -53,39 +52,43 @@ export const useCopyrightStore = create<CopyrightStore>()(
               : customLicenseData.documentText.slice(0, 530).trim()
             
               console.log('firstParagraph', firstParagraph)
+              const handleOp = useUserStore.getState().handleOp
+              const opHash = await handleOp(
+                contract.methodsObject.create_copyright({
+                  clauses: {
+                    addendum: customLicenseData.clauses.addendum || null,
+                    broadcast: customLicenseData.clauses.broadcast,
+                    createDerivativeWorks: customLicenseData.clauses.createDerivativeWorks,
+                    customUri: customLicenseData.clauses.customUri || null,
+                    customUriEnabled: customLicenseData.clauses.customUriEnabled,
+                    exclusiveRights: customLicenseData.clauses.exclusiveRights || null,
+                    expirationDate: customLicenseData.clauses.expirationDate || null,
+                    expirationDateExists: customLicenseData.clauses.expirationDateExists,
+                    firstParagraph: firstParagraph || '',
+                    publicDisplay: customLicenseData.clauses.publicDisplay,
+                    releasePublicDomain: customLicenseData.clauses.releasePublicDomain,
+                    reproduce: customLicenseData.clauses.reproduce,
+                    requireAttribution: customLicenseData.clauses.requireAttribution,
+                    retainCreatorRights: customLicenseData.clauses.retainCreatorRights,
+                    rightsAreTransferable: customLicenseData.clauses.rightsAreTransferable,
+                  },
+                  creators: Array.from(creators),
+                  related_tezos_nfts: customLicenseData.tokens
+                    .filter(t => t.contractAddress !== 'external')
+                    .map(t => ({
+                      contract: t.contractAddress,
+                      token_id: parseInt(t.tokenId),
+                    })),
+                  related_external_nfts: customLicenseData.tokens
+                    .filter(t => t.contractAddress === 'external')
+                    .map(t => t.metadata.name),
+                  }),
+                modalTitle,
+                { amount: 0.1 }
+              )
 
-              const op = await contract.methodsObject.create_copyright({
-                clauses: {
-                  addendum: customLicenseData.clauses.addendum || null,
-                  broadcast: customLicenseData.clauses.broadcast,
-                  createDerivativeWorks: customLicenseData.clauses.createDerivativeWorks,
-                  customUri: customLicenseData.clauses.customUri || null,
-                  customUriEnabled: customLicenseData.clauses.customUriEnabled,
-                  exclusiveRights: customLicenseData.clauses.exclusiveRights || null,
-                  expirationDate: customLicenseData.clauses.expirationDate || null,
-                  expirationDateExists: customLicenseData.clauses.expirationDateExists,
-                  firstParagraph: firstParagraph || '',
-                  publicDisplay: customLicenseData.clauses.publicDisplay,
-                  releasePublicDomain: customLicenseData.clauses.releasePublicDomain,
-                  reproduce: customLicenseData.clauses.reproduce,
-                  requireAttribution: customLicenseData.clauses.requireAttribution,
-                  retainCreatorRights: customLicenseData.clauses.retainCreatorRights,
-                  rightsAreTransferable: customLicenseData.clauses.rightsAreTransferable,
-                },
-                creators: Array.from(creators),
-                related_tezos_nfts: customLicenseData.tokens
-                  .filter(t => t.contractAddress !== 'external')
-                  .map(t => ({
-                    contract: t.contractAddress,
-                    token_id: parseInt(t.tokenId),
-                  })),
-                related_external_nfts: customLicenseData.tokens
-                  .filter(t => t.contractAddress === 'external')
-                  .map(t => t.metadata.name),
-              }).send({ amount: 0.1, storageLimit: 310 })
-            
-              console.log('[DEBUG] Operation sent:', op.opHash)
-              const opHash = await handleOp(op, 'Submit Copyright')
+              console.log('[DEBUG] Operation sent:', opHash)
+              show(modalTitle, `Copyright submitted https://tzkt.io/${opHash}`, true)
               return opHash
             } catch (err) {
               console.error('[ERROR]', err)
