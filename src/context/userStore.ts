@@ -1,4 +1,5 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
+import { BeaconEvent } from '@airgap/beacon-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -97,6 +98,8 @@ interface UserState {
     price: string
     ask_id: any
   }) => OperationReturn
+  /** Donate amount */
+  donate: (amount: number, destinationAddress: string) => OperationReturn
   /** Cancel Swap */
   cancel: (contract: string, swap_id: number) => OperationReturn
   /** Cancel Swap from V1 */
@@ -130,6 +133,22 @@ const wallet = new BeaconWallet({
 })
 
 Tezos.setWalletProvider(wallet)
+
+let current: string
+wallet.client.subscribeToEvent(
+  BeaconEvent.ACTIVE_ACCOUNT_SET,
+  async (account) => {
+    console.log(
+      `${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `,
+      account?.address,
+    )
+    if (!account) {
+      return;
+    }
+    current = account.address
+  },
+);
+
 
 export const useUserStore = create<UserState>()(
   subscribeWithSelector(
@@ -190,24 +209,14 @@ export const useUserStore = create<UserState>()(
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
-          let activeAccount = await wallet.client.getActiveAccount()
-          if (
-            activeAccount === undefined ||
-            activeAccount?.network?.rpcUrl !== network.rpcUrl
-          ) {
-            await wallet.requestPermissions({ network })
-            activeAccount = await wallet.client.getActiveAccount()
-          }
-          const current = await wallet.getPKH()
-          if (current) {
-            const info = await getUser(current)
-            console.log('getting user info', info)
-            set({
-              address: current,
-              userInfo: await getUser(current),
-            })
-          }
 
+          await wallet.client.requestPermissions({ network })
+          const info = await getUser(current)
+          console.log('getting user info', info)
+          set({
+            address: current,
+            userInfo: await getUser(current),
+          })
           // console.log(this.state)
           return current
         },
@@ -403,6 +412,28 @@ export const useUserStore = create<UserState>()(
             return await handleOp(batch, 'Transfer')
           } catch (e) {
             showError('Transfer', e)
+          }
+        },
+        donate: async (amount, destinationAddress) => {
+          const handleOp = get().handleOp
+          const showError = useModalStore.getState().showError
+          const show = useModalStore.getState().show
+
+          if (isNaN(amount) || amount <= 0) {
+            show('Invalid amount', 'Please enter a valid donation amount')
+          }
+          try {
+            await get().sync()
+            const list: WalletParamsWithKind[] = [
+              {
+                to: destinationAddress,
+                amount: amount,
+                kind: OpKind.TRANSACTION,
+              },
+            ]
+            return await handleOp(Tezos.wallet.batch(list), 'Donate')
+          } catch (e) {
+            showError('Donate', e)
           }
         },
         collect: async (listing) => {

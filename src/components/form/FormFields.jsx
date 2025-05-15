@@ -41,7 +41,6 @@ export const FormFields = ({ value, field, error, register, control }) => {
   const [showVisualizer, setShowVisualizer] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
   const visualizerRef = useRef(null)
-
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
       return `${userInfo.name} (${address})`

@@ -79,6 +79,9 @@ import CopyrightForm from '@components/copyright/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/preview'
 import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
+import { CodeOfConduct } from '@pages/codeofconduct'
+import { CoreValues } from '@pages/corevalues'
+import { PrivacyPolicy } from '@pages/privacypolicy'
 
 const display_routes = (
   <>
@@ -136,7 +139,9 @@ const router = createBrowserRouter(
       <Route exact path="about" element={<About />} />
       <Route exact path="terms" element={<Terms />} />
       <Route exact path="faq" element={<FAQ />} />
-
+      <Route exact path="codeofconduct" element={<CodeOfConduct />} />
+      <Route exact path="corevalues" element={<CoreValues />} />
+      <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
       <Route path="sync" element={<Sync />} />
       <Route exact path="mint/*" element={<Mint />}>
         <Route index element={<MintForm />} />
