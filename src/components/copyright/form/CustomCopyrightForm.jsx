@@ -3,21 +3,23 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Checkbox, Input, Textarea } from '@atoms/input'
 import ReactSelect from 'react-select'
 import styles from '@style'
-import { style as select_style, theme } from '../../atoms/select/styles'
+import { style as select_style, theme } from '../../../atoms/select/styles'
 import { useOutletContext } from 'react-router'
-import { useMintStore } from '@context/mintStore'
 import { copyrightModalText } from './copyrightmodaltext'
 import { InfoModal } from '@atoms/modal'
 import { useFormContext } from 'react-hook-form'
 import { HEN_CONTRACT_FA2 } from '@constants'
+import { useCopyrightStore } from '@context/copyrightStore'
+import { HashToURL } from '@utils'
+import { fetchTokenMetadata } from '@data/swr'
 
 const initialClauses = {
   reproduce: false,
   broadcast: false,
   publicDisplay: false,
   createDerivativeWorks: false,
-  exclusiveRights: 'none', // Options are 'none', 'majority', 'superMajority'
-  retainCreatorRights: true, // When exclusive rights conditions are met, does the Creator retain their rights to their own work?
+  exclusiveRights: 'none',
+  retainCreatorRights: true,
   releasePublicDomain: false,
   requireAttribution: true,
   rightsAreTransferable: true,
@@ -174,22 +176,176 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const [generatedDocument, setGeneratedDocument] = useState(
     'No Permissions Chosen'
   )
-  const [documentText, setDocumentText] = useState('No Permissions Chosen') // necessary for State management in parent element
-  const [uriError, setUriError] = useState('')
+  const [documentText, setDocumentText] = useState('No Permissions Chosen')
 
-  const updateCustomLicenseData = useMintStore(
-    (state) => state.updateCustomLicenseData
-  )
+  const [searchTokenQuery, setSearchTokenQuery] = useState('')
+  const { customLicenseData } = useCopyrightStore()
+  const [tokens, setTokens] = useState(customLicenseData?.tokens || [])
+  const [currentToken, setCurrentToken] = useState(null)
+  const [currentExternalToken, setCurrentExternalToken] = useState(null)
+  const [fetchingToken, setFetchingToken] = useState(false)
+
+  const handleSearchTokenSubmit = async (e) => {
+    e.preventDefault()
+    setFetchingToken(true)
+    setCurrentToken(null)
+
+    if (!searchTokenQuery || searchTokenQuery.trim() === '') {
+      openModal('Invalid Input', 'The input cannot be empty.')
+      setFetchingToken(false)
+      return
+    }
+
+    const token = extractTokenFromString(searchTokenQuery)
+
+    if (!token) {
+      const externalToken = {
+        contractAddress: 'external',
+        tokenId: null,
+        metadata: {
+          name: searchTokenQuery,
+          thumbnailUri: '',
+          creators: [address],
+          description:
+            "*This is an external or custom token reference - make sure that the link is valid and will be maintained for the agreement's applicable usage and time frames.",
+        },
+      }
+
+      setCurrentExternalToken(externalToken)
+      setFetchingToken(false)
+      return
+    }
+
+    const isDuplicate = tokens.some(
+      (addedToken) =>
+        addedToken.contractAddress === token.contractAddress &&
+        addedToken.tokenId === token.tokenId
+    )
+
+    if (isDuplicate) {
+      openModal('Duplicate Token', 'This token has already been added.')
+      setFetchingToken(false)
+      return
+    }
+
+    try {
+      const tokenData = await fetchTokenMetadata(
+        token.contractAddress,
+        token.tokenId
+      )
+      const tokenCreators = tokenData?.metadata?.creators || []
+
+      if (!tokenCreators.includes(address)) {
+        openModal('Ownership Verification', 'This is not your token.')
+        setFetchingToken(false)
+        return
+      }
+
+      setCurrentToken({ ...token, metadata: tokenData.metadata })
+    } catch (err) {
+      console.error(err)
+      openModal('Error', 'Could not fetch token data.')
+    }
+
+    setFetchingToken(false)
+  }
+  const extractTokenFromString = (url) => {
+    try {
+      const match = url.match(/(KT1\w+)?\/(\d+)/)
+      if (match) {
+        return {
+          contractAddress: match[1] || HEN_CONTRACT_FA2,
+          tokenId: match[2],
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting token:', error)
+    }
+    return null
+  }
+
+  const handleSearchTokenInputChange = (event) => {
+    //console.log('event', event)
+    setSearchTokenQuery(event)
+  }
+
+  const handleRemoveToken = (indexToRemove) => {
+    const updatedTokens = tokens.filter((_, index) => index !== indexToRemove)
+    const newDocumentText = generateDocumentText(updatedTokens)
+    setTokens(updatedTokens)
+    setDocumentText(newDocumentText)
+    setGeneratedDocument(newDocumentText)
+    //console.log('remove', newDocumentText)
+    useCopyrightStore.setState((prevState) => ({
+      customLicenseData: {
+        ...prevState.customLicenseData,
+        tokens: updatedTokens,
+        clauses,
+        documentText: newDocumentText,
+      },
+    }))
+  }
+
+  const openModal = (title, content) => {
+    setModalState({ isOpen: true, title, content })
+  }
+
+  const closeModal = () => {
+    setModalState({ isOpen: false, title: '', content: '' })
+  }
 
   let clauseNumber = 1
 
-  const generateDocumentText = useCallback(() => {
+  const generateDocumentText = useCallback((customTokens = tokens) => {
     let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
+    {/**
+    const tokenTitles = tokens
+      .map((token) => `"${token.metadata.name}"`)
+      .join(', ') */}
+    const tokenTitles = customTokens
+      .map((token, index) => {
+        const id = `#${index + 1}`
+        if (token.contractAddress === 'external') {
+          return `${id}: "${token.metadata.name}" (External Reference)`
+        } else {
+          return `${id}: "${token.metadata.name}" (Token ID: ${token.tokenId}, Contract: ${token.contractAddress})`
+        }
+      })
+      .join('\n')
+
+    const nonTeiaTokens = tokens.filter(
+      (token) => token.contractAddress !== HEN_CONTRACT_FA2
+    )
+
+    let mintingContractsInfo = ''
+    if (nonTeiaTokens.length > 0) {
+      const uniqueContracts = [
+        ...new Set(nonTeiaTokens.map((t) => t.contractAddress)),
+      ]
+      mintingContractsInfo = `Under various minting contracts, including but not limited to TEIA DAO LLC [${HEN_CONTRACT_FA2}] and contracts: ${uniqueContracts.join(
+        ', '
+      )}`
+    } else {
+      mintingContractsInfo = `Under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]`
+    }
+
+    let documentText = `This License Agreement ("Agreement") is granted by the creator ("Creator") identified by the wallet address ${minterInfo} ("Wallet Address") for the following Work(s): 
+    
+${tokenTitles}
+    
+${mintingContractsInfo}. 
+
+This Agreement outlines the rights and obligations associated with the ownership and use of the NFT(s)' likeness(es) and any derivatives thereof ("Work").
+    
+“Editions” refers to the total number of authorized copies of the NFT(s) that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
+    {
+      /**
     let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address") for the Work "${watch(
       'title'
     )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
-
+ */
+    }
     documentText += `\n\nIn all cases, the written text in this document will take precedence over any data or metadata displays on or off-chain as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s). Statements in the Addendums have the ability to overrule or nullify statements in the auto-generated portions of this document in cases of conflicts or inconsistencies.`
     documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
 
@@ -238,8 +394,6 @@ The rights granted under this Agreement to the Owner(s) of the Work are transfer
 The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
       }
     }
-
-    // contract defaults to "All Rights Reserved" where nothing is chosen
     if (
       !clauses.publicDisplay &&
       !clauses.reproduce &&
@@ -261,7 +415,6 @@ No exclusive rights are granted under this Agreement. All rights are non-exclusi
       clauses.publicDisplay ||
       clauses.createDerivativeWorks
     ) {
-      // at least one rights clause must be picked for exclusive rights to be an option
       const rightsDescription =
         clauses.exclusiveRights === 'majority'
           ? 'majority share (over 50%)'
@@ -304,7 +457,7 @@ Each Owner (including the Creator and all Collaborators) affirms that the wallet
 This Agreement may be amended or modified only by a written document signed by both the Creator and the Owner(s) holding the relevant majority or super-majority share, as applicable.`
 
     documentText += `\n\n${clauseNumber++}. Proof of Ownership and Responsibility:
-Each individual claiming ownership ("Claimant") must conclusively prove that they are the legitimate Owner or Creator of the specified wallet address associated with this Agreement. It is the sole responsibility of the Claimant to provide irrefutable evidence supporting their claim. This proof may include, but is not limited to, cryptographic signatures, transaction histories, and other blockchain-based verifications that establish an undeniable link between the Claimant and the wallet address in question. Failure to provide satisfactory evidence will result in the denial of any rights, privileges, or access purportedly associated with the wallet address under the terms of this Agreement.`
+Each individual claiming ownership ("Claimant") must conclusively prove that they are the legitimate Owner or Creator of the specified wallet address associated with this Agreement. It is the sole responsibility of the Claimant to provide irrefutable evidence supporting their claim. This proof may include, but is not limited to, cryptographic signatures, transaction histories, and other blockchain-based verifications that establish an undeniable link between the Claimant and the wallet address in question. For any references (both "verified" and external) linked through the registered work, the Registrar bears full responsibility for: (a) maintaining valid proof of ownership or proper authorization for such references; (b) ensuring the continued accessibility and accuracy of such references; and (c) providing verification of such ownership upon request. Failure to provide satisfactory evidence for either wallet ownership or external reference authorization will result in the denial of any rights, privileges, or access purportedly associated with the work under the terms of this Agreement.`
 
     documentText += `\n\n${clauseNumber++}. Limitation of Platform Responsibility:
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
@@ -312,15 +465,17 @@ This Agreement is entered into solely between the Creator and the Owner(s) of th
     documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
 Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
 
-    // Additional notes based on user input
+    documentText += `\n\n${clauseNumber++}. Agreement Modifications:
+Any modification to this Agreement's terms requires explicit consent from both the Creator(s) and current Owner(s). Such amendments shall only apply to consenting parties and shall not alter existing agreements with non-consenting Owners. The Agreement shall maintain its original terms for any Owner-Creator relationship where mutual consent to amendments is not obtained, resulting in potentially differing agreement versions existing concurrently between different Owners of the same work. Smart contract execution shall serve as conclusive evidence of acceptance of amended terms.`
+
     if (clauses.addendum) {
-      documentText += `\n\nAddendum By Creator:\n${clauses?.addendum}`
+      documentText += `\n\nAddendum By Creator:\n${minterName}\n\n`
+      documentText += `${clauses?.addendum}`
     }
 
     return documentText
   }, [address, clauseNumber, clauses, minterName])
 
-  // logic for checkboxes
   const handleChange = useCallback((value, name) => {
     let newValue
 
@@ -335,13 +490,10 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     if (name === 'customUriEnabled') {
       setClauses((prev) => ({
         ...prev,
-        customUriEnabled: newValue === true, // Set to true or false
-        ...(newValue === false && { customUri: '' }), // Clear URI when disabled
+        customUriEnabled: newValue === true,
+        ...(newValue === false && { customUri: '' }),
       }))
-    }
-
-    // Handle 'Release to Public Domain' logic
-    else if (name === 'releasePublicDomain' && newValue === true) {
+    } else if (name === 'releasePublicDomain' && newValue === true) {
       setClauses({
         reproduce: false,
         broadcast: false,
@@ -357,7 +509,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
         customUri: '',
       })
     } else {
-      // Normal handling for other checkboxes
       setClauses((prev) => ({
         ...prev,
         [name]: newValue,
@@ -385,12 +536,10 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
         customUri: value,
       }))
     } else {
-      // Handle error state, perhaps set an error message in state
       console.error('Invalid URI')
     }
   }
 
-  // Addendum handling
   const handleInputChange = (eventOrValue) => {
     let name, value
     if (eventOrValue?.target) {
@@ -407,7 +556,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     }))
   }
 
-  // Logic for metadata and document updates
   useEffect(() => {
     let documentText
     const hasActiveRights =
@@ -422,14 +570,18 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
       documentText =
         'No Permissions Chosen (For Addendum or Expiration Date sections to show, choose at least one option in the checkboxes above.)'
     } else {
-      documentText = generateDocumentText()
+      documentText = generateDocumentText(tokens)
     }
-
+    const newDocumentText = generateDocumentText(tokens)
     setDocumentText(documentText)
     setGeneratedDocument(documentText)
-    updateCustomLicenseData({ clauses: clauses, documentText: documentText })
-    // "clauses" alone seems to cause issues so all dependencies are listed
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useCopyrightStore.setState((prevState) => ({
+      customLicenseData: {
+        ...prevState.customLicenseData,
+        clauses,
+        documentText: newDocumentText,
+      },
+    }))
   }, [
     clauses?.reproduce,
     clauses?.broadcast,
@@ -443,15 +595,16 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     clauses?.expirationDateExists,
     handleChange,
     generateDocumentText,
-    updateCustomLicenseData,
+    tokens
   ])
 
-  // sync to parent State management
   useEffect(() => {
-    onChange({ clauses, documentText })
-  }, [clauses, documentText, onChange])
+    onChange({ clauses, documentText, tokens })
+    useCopyrightStore.setState({
+      customLicenseData: { clauses, documentText, tokens },
+    })
+  }, [clauses, documentText, tokens, onChange])
 
-  // checkboxes with custom functions are not listed here
   const propertiesWithCheckboxes = [
     'reproduce',
     'broadcast',
@@ -462,14 +615,17 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     'releasePublicDomain',
   ]
 
-  // Info Modal
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: '',
     content: '',
   })
 
-  const handleModalOpen = (clauseName) => {
+  const handleModalOpen = (clauseKey) => {
+    openModal(clauseLabels[clauseKey], copyrightModalText[clauseKey])
+  }
+
+  const handleModalOpen2 = (clauseName) => {
     const modalContent = copyrightModalText[clauseName]
 
     setModalState({
@@ -493,23 +649,59 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
     }))
   }
 
+  function isValidUrl(string) {
+    if (!string) return false
+
+    try {
+      new URL(string)
+      return true
+    } catch (_) {
+      return false
+    }
+  }
+
   return (
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
-      <h3>
-        Custom License Generation Form
-        <span
-          style={{ marginLeft: '0.5em' }}
-          role="button"
-          tabIndex={0}
-          onClick={() => handleModalOpen('overview')}
-          onKeyPress={(event) =>
-            handleKeyPress(event, clauseLabels['overview'])
-          }
-        >
-          (?)
-        </span>
-      </h3>
+      <br />
+      <h3>TEIA Copyright Licensing and Registration System</h3>
+      <br />
+      <p>
+        The TEIA copyright registration system enables creators to establish
+        binding terms (a declaration by the Creator) governing permitted and
+        prohibited uses of their works upon sale or transfer of ownership. These
+        terms are permanently recorded on the Tezos blockchain, creating an
+        immutable, neutral, and transparent record.
+      </p>
+      <br />
+      <p>
+        - Ownership of a work is determined by possession of the wallet
+        containing the corresponding token. In disputes, wallet owners bear the
+        burden of proving ownership in the relevant jurisdiction or before the
+        chosen mediator.
+      </p>
+      <br />
+      <p>
+        - The registration contract is maintained by TEIA DAO LLC, a Marshall
+        Islands non-profit entity. While the DAO administers the registration
+        process, enforcement remains subject to applicable local laws and
+        jurisdictions.
+      </p>
+      <br />
+      <p>
+        - To gain the "✅ Verified" status, the registrar must match the wallet
+        addresses of the listed Work(s) with the original creator. For external
+        references, the registrar assumes responsibility for maintaining and
+        verifying ownership upon request.
+      </p>
+      <br />
+      <p>
+        - People may also register works from other blockchains or digital works
+        of any format provided that they can conclusively prove that they are
+        the Creator(s) of said works. ("External references.")
+      </p>
       <div style={{ marginTop: '1em' }}>
+        <h3>📝 Clauses</h3>
+        <br />
         {propertiesWithCheckboxes.map((clauseName) => (
           <div style={{ display: 'flex' }} key={clauseName}>
             <Checkbox
@@ -536,18 +728,6 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             </span>
           </div>
         ))}
-        {modalState.isOpen && (
-          <InfoModal
-            isOpen={modalState.isOpen}
-            title={modalState.title}
-            content={
-              <div dangerouslySetInnerHTML={{ __html: modalState.content }} />
-            }
-            onClose={() =>
-              setModalState((prev) => ({ ...prev, isOpen: false }))
-            }
-          />
-        )}
         <div className="select-container" style={{ marginTop: '2em' }}>
           <div style={{ display: 'flex' }}>
             <h4>{clauseLabels.exclusiveRights}</h4>
@@ -581,7 +761,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             className={styles.container}
             classNamePrefix="react_select"
           />
-          {['majority', 'superMajority'].includes(clauses.exclusiveRights) && ( // Creator rights retention generated only when exclusive is chosen
+          {['majority', 'superMajority'].includes(clauses.exclusiveRights) && (
             <>
               <br />
               <Checkbox
@@ -596,7 +776,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             </>
           )}
         </div>
-        <div style={{ marginTop: '1em', display: 'flex' }}>
+        <div style={{ display: 'flex' }}>
           <Checkbox
             name="expirationDateExists"
             label="Add an Expiration Date to Clauses"
@@ -643,7 +823,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             />
           </div>
         )}
-        <div style={{ marginTop: '1em' }}>
+        {/* <div style={{ marginTop: '1em' }}>
           <div style={{ display: 'flex' }}>
             <Checkbox
               name="customUriEnabled"
@@ -674,7 +854,224 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
             />
           )}
           {uriError && <div className={styles.errorText}>{uriError}</div>}
+        </div> */}
+        <br />
+        <div style={{ marginBottom: '1em' }}>
+          <h3>🔎 Token Search</h3>
+          <br />
+          <p>
+            ✅ Input the URL of an NFT minted on Tezos (XTZ) that you created to
+            receive a verified status on registration. (The currently sync'd
+            wallet must match the creator/author of the work for it to
+            verified.)
+          </p>
+          <br />
+          <h4>Enter Token URL</h4>
+          <Input
+            type="text"
+            value={searchTokenQuery}
+            onChange={handleSearchTokenInputChange}
+            placeholder="Enter a Tezos Token URL or External URL"
+            className={styles.field}
+          />
+          <button
+            onClick={handleSearchTokenSubmit}
+            style={{
+              border: '1px solid #ccc',
+              padding: '15px',
+              marginTop: '15px',
+            }}
+          >
+            Search Token
+          </button>
+          {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
+            <p style={{ color: 'yellow', marginTop: '5px' }}>
+              ⚠️ Warning: The above input does not follow a standard URL/URI
+              scheme. (Non-standard inputs are still allowed, this is just a
+              reminder.)
+            </p>
+          )}
         </div>
+
+        {fetchingToken && <div className="loading-spinner"></div>}
+
+        {currentToken && (
+          <div className="token-preview">
+            <h3>Token Found:</h3>
+
+            <div
+              className="token-list"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '15px',
+                marginTop: '15px',
+              }}
+            >
+              <img
+                src={HashToURL(currentToken.metadata.thumbnailUri, 'IPFS')}
+                alt={currentToken.metadata.name}
+              />
+              <div>
+                <h4>Title: {currentToken.metadata.name}</h4>
+                <h4>Creator(s): {currentToken.metadata.creators}</h4>
+                <h4>Mint Date: (?) {currentToken.metadata.mintDate}</h4>
+                <br />
+                <p>{currentToken.metadata.description}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const updatedTokens = [...tokens, currentToken]
+                const newDocumentText = generateDocumentText(updatedTokens)
+                setTokens(updatedTokens)
+                setCurrentToken(null)
+                setSearchTokenQuery('')
+                useCopyrightStore.setState((prevState) => ({
+                  customLicenseData: {
+                    ...prevState.customLicenseData,
+                    clauses,
+                    documentText: newDocumentText,
+                    tokens: updatedTokens,
+                  },
+                }))
+                setDocumentText(newDocumentText)
+                setGeneratedDocument(newDocumentText)
+                useCopyrightStore.setState((prevState) => ({
+                  customLicenseData: {
+                    ...prevState.customLicenseData,
+                    clauses,
+                    documentText,
+                  },
+                }))
+              }}
+              style={{
+                border: '1px solid #ccc',
+                padding: '15px',
+                marginTop: '15px',
+              }}
+            >
+              ➕ Add Token to Copyright Agreement
+            </button>
+          </div>
+        )}
+        {currentExternalToken && (
+          <div className="token-preview">
+            <h3>External Reference Found:</h3>
+
+            <div
+              className="token-list"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '15px',
+                marginTop: '15px',
+              }}
+            >
+              <div style={{ border: '1px solid #ddd', padding: '15px' }}>
+                <h4>Title/Link:</h4>
+                <p>{currentExternalToken.metadata.name}</p>
+                <br />
+                <p style={{ color: 'yellow' }}>
+                  {currentExternalToken.metadata.description}
+                </p>
+                <br />
+                <p>
+                  <strong>Type:</strong> External / Manual Entry
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                const updatedTokens = [...tokens, currentExternalToken]
+                const newDocumentText = generateDocumentText(updatedTokens)
+                setTokens(updatedTokens)
+                setCurrentExternalToken(null)
+                setSearchTokenQuery('')
+                setDocumentText(newDocumentText)
+                setGeneratedDocument(newDocumentText)
+                useCopyrightStore.setState((prevState) => ({
+                  customLicenseData: {
+                    ...prevState.customLicenseData,
+                    clauses,
+                    documentText: newDocumentText,
+                    tokens: updatedTokens,
+                  },
+                }))
+              }}
+              style={{
+                border: '1px solid #ccc',
+                padding: '15px',
+                marginTop: '15px',
+              }}
+            >
+              ➕ Add External Reference to Copyright Agreement
+            </button>
+          </div>
+        )}
+        {tokens.length > 0 && (
+          <div className="token-list">
+            <br />
+            <h3>Selected Works To Apply Copyright Agreement:</h3>
+            <div
+              className="token-list"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '15px',
+                marginTop: '15px',
+              }}
+            >
+              {tokens.map((token, index) => (
+                <div
+                  key={index}
+                  className="token-preview"
+                  style={{
+                    width: '220px',
+                    border: '1px solid #ddd',
+                    padding: '10px',
+                    boxSizing: 'border-box',
+                    textAlign: 'center',
+                  }}
+                >
+                  {token.contractAddress !== 'external' && (
+                    <img
+                      src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                      alt={token.metadata.name}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  )}
+                  <div style={{ marginTop: '10px' }}>
+                    <h4
+                      style={{
+                        fontSize: '14px',
+                        margin: '6px 0',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {token.metadata.name}
+                    </h4>
+                    <button
+                      onClick={() => handleRemoveToken(index)}
+                      style={{
+                        border: '1px solid #ccc',
+                        padding: '15px',
+                        marginTop: '15px',
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div
         style={{
@@ -686,7 +1083,7 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
           whiteSpace: 'pre-wrap',
         }}
       >
-        <h2>Custom License Agreement</h2>
+        <h2>License Agreement</h2>
         <pre
           style={{
             whiteSpace: 'pre-wrap',
@@ -697,6 +1094,14 @@ Unless stated otherwise (in this Agreement itself), this Agreement remains effec
           {generatedDocument}
         </pre>
       </div>
+      {modalState.isOpen && (
+        <InfoModal
+          isOpen={modalState.isOpen}
+          title={modalState.title}
+          content={modalState.content}
+          onClose={closeModal}
+        />
+      )}
     </div>
   )
 }

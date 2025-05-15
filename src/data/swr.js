@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -255,4 +255,32 @@ export function useObjkt(id) {
   )
 
   return [data, mutate]
+}
+
+export const fetchTokenMetadata = async (contractAddress, tokenId) => {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const response = await fetch(url)
+  if (!response.ok) throw new Error('Failed to fetch metadata')
+  const data = await response.json()
+  return data[0]
+}
+
+export async function fetchUserCopyrights(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
 }
