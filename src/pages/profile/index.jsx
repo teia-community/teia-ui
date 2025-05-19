@@ -125,6 +125,7 @@ export default function Display() {
     { title: 'Creations', to: '' },
     { title: 'Collection', to: 'collection' },
     { title: 'Collabs', to: 'collabs' },
+    { title: 'Copyrights', to: 'copyrights' },
   ]
 
   return (

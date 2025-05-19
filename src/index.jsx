@@ -88,6 +88,7 @@ const display_routes = (
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="collabs" element={<Collabs />} />
+    <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
 
