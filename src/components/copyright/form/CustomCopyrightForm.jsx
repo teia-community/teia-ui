@@ -1056,6 +1056,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     >
                       {token.metadata.name}
                     </h4>
+                    
+                    ☑️ TEIA Verified 
+                    ✅ Tezos Verified
                     <button
                       onClick={() => handleRemoveToken(index)}
                       style={{

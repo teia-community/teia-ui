@@ -59,11 +59,6 @@ interface CopyrightBigMapEntry {
   updates: number
 }
 
-function resolveIpfs(uri?: string): string | undefined {
-  if (!uri) return
-  return uri.startsWith('ipfs://') ? uri.replace('ipfs://', 'https://ipfs.io/ipfs/') : uri
-}
-
 export default function CopyrightDisplay() {
   const address = useUserStore((state) => state.address)
   const [records, setRecords] = useState<CopyrightBigMapEntry[]>([])
@@ -138,6 +133,8 @@ export default function CopyrightDisplay() {
                             className="w-full h-48 object-cover bg-gray-100"
                           />
                           <div className="p-3">
+                            ☑️ TEIA Verified 
+                            ✅ Tezos Verified
                             <h3 className="font-medium text-sm truncate">
                               {meta.name || `Token #${nft.token_id}`}
                             </h3>
@@ -202,15 +199,19 @@ export default function CopyrightDisplay() {
                   <div className="mt-2">
                     <p className="text-sm font-medium mb-1">External References:</p>
                     {extLinks.map((url, i) => (
-                      <a
-                        key={i}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 text-sm underline block truncate"
-                      >
-                        {url}
-                      </a>
+                      <>
+                        ⚠️ External Link
+                        <a
+
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 text-sm underline block truncate"
+                        >
+                          {url}
+                        </a>
+                      </>
                     ))}
                   </div>
                 )}
