@@ -284,3 +284,42 @@ export async function fetchUserCopyrights(address) {
     return []
   }
 }
+
+export async function fetchCopyrights(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
+}
+export async function fetchProposals(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
+}
