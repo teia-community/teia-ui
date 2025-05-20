@@ -57,6 +57,7 @@ import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
+import Curation from '@pages/profile/curation'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -83,6 +84,7 @@ const display_routes = (
   <>
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
+    <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
   </>
 )
