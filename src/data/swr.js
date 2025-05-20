@@ -323,3 +323,22 @@ export async function fetchProposals(address) {
     return []
   }
 }
+export async function fetchAllVotes(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
+}

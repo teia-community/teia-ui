@@ -5,6 +5,7 @@ import { COPYRIGHT_CONTRACT } from '../constants'
 
 interface ProposalStore {
   submitProposal: (kind: string, text: string) => Promise<void>
+  voteOnProposal: (proposalId: number, approval: boolean) => Promise<void>
 }
 
 export const useProposalStore = create<ProposalStore>(() => ({
@@ -13,7 +14,6 @@ export const useProposalStore = create<ProposalStore>(() => ({
     const step = useModalStore.getState().step
     const showError = useModalStore.getState().showError
     const handleOp = useUserStore.getState().handleOp
-    const address = useUserStore.getState().address
 
     const modalTitle = 'Submit Proposal'
     step(modalTitle, 'Waiting for confirmation...', true)
@@ -49,6 +49,34 @@ export const useProposalStore = create<ProposalStore>(() => ({
       show(modalTitle, `Proposal submitted: https://tzkt.io/${opHash}`, true)
     } catch (err) {
       console.error('[Proposal Error]', err)
+      showError(modalTitle, err)
+      throw err
+    }
+  },
+
+  voteOnProposal: async (proposalId, approval) => {
+    const show = useModalStore.getState().show
+    const step = useModalStore.getState().step
+    const showError = useModalStore.getState().showError
+    const handleOp = useUserStore.getState().handleOp
+
+    const modalTitle = `Vote Proposal #${proposalId}`
+    step(modalTitle, 'Awaiting signature...', true)
+
+    try {
+      const contract = await Tezos.wallet.at(COPYRIGHT_CONTRACT)
+
+      const opHash = await handleOp(
+        contract.methodsObject.vote_proposal({
+          proposal_id: proposalId,
+          approval,
+        }),
+        modalTitle
+      )
+
+      show(modalTitle, `Vote sent: https://tzkt.io/${opHash}`, true)
+    } catch (err) {
+      console.error('[Vote Error]', err)
       showError(modalTitle, err)
       throw err
     }
