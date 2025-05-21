@@ -6,6 +6,7 @@ import { COPYRIGHT_CONTRACT } from '../constants'
 interface ProposalStore {
   submitProposal: (kind: string, text: string) => Promise<void>
   voteOnProposal: (proposalId: number, approval: boolean) => Promise<void>
+  executeProposal: (proposalId: number) => Promise<void>
 }
 
 export const useProposalStore = create<ProposalStore>(() => ({
@@ -77,6 +78,30 @@ export const useProposalStore = create<ProposalStore>(() => ({
       show(modalTitle, `Vote sent: https://tzkt.io/${opHash}`, true)
     } catch (err) {
       console.error('[Vote Error]', err)
+      showError(modalTitle, err)
+      throw err
+    }
+  },
+  executeProposal: async (proposalId) => {
+    const show = useModalStore.getState().show
+    const step = useModalStore.getState().step
+    const showError = useModalStore.getState().showError
+    const handleOp = useUserStore.getState().handleOp
+
+    const modalTitle = `Execute Proposal #${proposalId}`
+    step(modalTitle, 'Preparing execution...', true)
+
+    try {
+      const contract = await Tezos.wallet.at(COPYRIGHT_CONTRACT)
+
+      const opHash = await handleOp(
+        contract.methods.execute_proposal(proposalId),
+        modalTitle
+      )
+
+      show(modalTitle, `Proposal executed: https://tzkt.io/${opHash}`, true)
+    } catch (err) {
+      console.error('[Execute Error]', err)
       showError(modalTitle, err)
       throw err
     }

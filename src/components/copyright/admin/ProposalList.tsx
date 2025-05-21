@@ -8,6 +8,8 @@ import { useProposalStore } from '@context/proposalStore'
 export default function ProposalList() {
   const address = useUserStore((state) => state.address)
   const voteOnProposal = useProposalStore((s) => s.voteOnProposal)
+  const executeProposal = useProposalStore((s) => s.executeProposal)
+
   const [proposals, setProposals] = useState([])
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,6 +43,9 @@ export default function ProposalList() {
           const proposalId = entry.key
           const kind = Object.keys(entry.value.kind)[0]
           const userVote = getUserVote(proposalId)
+          const votes = entry.value.positive_votes
+          const minVotes = entry.value.minimum_votes
+          const isExecutable = votes >= minVotes && !entry.value.executed
 
           return (
             <div key={entry.id} className={styles.card}>
@@ -58,6 +63,15 @@ export default function ProposalList() {
                 <Button shadow_box fit onClick={() => voteOnProposal(proposalId, true)}>Vote Yes</Button>
                 <Button shadow_box fit onClick={() => voteOnProposal(proposalId, false)}>Vote No</Button>
               </div>
+              {isExecutable && (
+                <Button
+                  shadow_box
+                  fit
+                  onClick={() => executeProposal(proposalId)}
+                >
+                  ✅ Execute Proposal
+                </Button>
+              )}
             </div>
           )
         })}
