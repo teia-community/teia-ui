@@ -31,7 +31,6 @@ export default function ProposalList() {
     return match?.value ?? null
   }
 
-  if (!address) return <p className={styles.error}>Connect your wallet to see proposals.</p>
   if (loading) return <p>Loading proposals...</p>
   if (!proposals.length) return <p>No proposals found.</p>
 
