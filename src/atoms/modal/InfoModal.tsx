@@ -27,7 +27,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ isOpen, title, content, on
     <div id="modal-overlay" className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <h2>{title}</h2>
-        <div>{content}</div>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
       </div>
     </div>
   );
