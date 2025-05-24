@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT } from '@constants'
+import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -323,5 +323,18 @@ export async function fetchAllVotes() {
   } catch (err) {
     console.error('Failed to fetch votes:', err)
     return []
+  }
+}
+
+export async function fetchExpirationTime() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    const data = await res.json()
+    return parseInt(data.expiration_time)
+  } catch (err) {
+    console.error('Failed to fetch expiration_time:', err)
+    return 0
   }
 }
