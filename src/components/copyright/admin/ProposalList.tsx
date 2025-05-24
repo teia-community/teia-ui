@@ -15,8 +15,7 @@ export default function ProposalList() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!address) return
-    Promise.all([fetchProposals(address), fetchAllVotes(address)])
+    Promise.all([fetchProposals(), address ? fetchAllVotes(address) : Promise.resolve([])])
       .then(([proposalsData, votesData]) => {
         setProposals(proposalsData)
         setVotes(votesData)
@@ -42,16 +41,23 @@ export default function ProposalList() {
           const proposalId = entry.key
           const kind = Object.keys(entry.value.kind)[0]
           const userVote = getUserVote(proposalId)
-          const votes = entry.value.positive_votes
+          const positiveVotes  = entry.value.positive_votes
           const minVotes = entry.value.minimum_votes
-          const isExecutable = votes >= minVotes && !entry.value.executed
+          const isExecutable = positiveVotes >= minVotes && !entry.value.executed
+          const yesVotes = votes.filter(
+            (v) => v.key[0] === proposalId && v.value === true
+          ).length
+
+          const noVotes = votes.filter(
+            (v) => v.key[0] === proposalId && v.value === false
+          ).length
 
           return (
             <div key={entry.id} className={styles.card}>
               <p><strong>ID:</strong> {proposalId}</p>
               <p><strong>Kind:</strong> {kind}</p>
               <p><strong>Issuer:</strong> {entry.value.issuer}</p>
-              <p><strong>Votes:</strong> {entry.value.positive_votes} / {entry.value.minimum_votes}</p>
+              <p><strong>Votes:</strong> ✅ {yesVotes} / ❌ {noVotes} (Min: {entry.value.minimum_votes})</p>
               <p><strong>Status:</strong> {entry.value.executed ? '✅ Executed' : '⏳ Pending'}</p>
               <p><strong>Your Vote:</strong> {
                 userVote === true ? '✅ Yes' :
@@ -59,8 +65,24 @@ export default function ProposalList() {
                 '❓ Not Voted'
               }</p>
               <div className={styles.button_group}>
-                <Button shadow_box fit onClick={() => voteOnProposal(proposalId, true)}>Vote Yes</Button>
-                <Button shadow_box fit onClick={() => voteOnProposal(proposalId, false)}>Vote No</Button>
+                <Button
+                  shadow_box
+                  fit
+                  disabled={!address}
+                  onClick={() => voteOnProposal(proposalId, true)}
+                  className={userVote === true ? styles.active : ''}
+                >
+                  ✅ Vote Yes
+                </Button>
+                <Button
+                  shadow_box
+                  fit
+                  disabled={!address}
+                  onClick={() => voteOnProposal(proposalId, false)}
+                  className={userVote === false ? styles.active : ''}
+                >
+                  ❌ Vote No
+                </Button>
               </div>
               {isExecutable && (
                 <Button

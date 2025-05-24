@@ -3,7 +3,7 @@ import Button from '@atoms/button/Button'
 import { Input, Textarea } from '@atoms/input'
 import styles from './index.module.scss'
 import { useProposalStore } from '@context/proposalStore'
-import { fetchCopyrights } from '@data/swr'
+import { fetchAllCopyrights } from '@data/swr'
 
 import { useUserStore } from '@context/userStore'
 
@@ -25,9 +25,11 @@ export default function SubmitProposal() {
 
   useEffect(() => {
     if (kind === 'copyright_state') {
-      fetchCopyrights(address).then(setExistingCopyrights)
+      fetchAllCopyrights().then(setExistingCopyrights)
+    } else {
+      setExistingCopyrights([])
     }
-  }, [kind, address])
+  }, [kind])
 
   const handleSubmit = async () => {
     setSubmitting(true)

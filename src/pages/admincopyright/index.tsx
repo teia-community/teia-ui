@@ -8,7 +8,7 @@ export default function AdminCopyrightPage() {
       <div className="space-y-8">
         <h1 className="text-3xl font-bold">Copyright Proposals</h1>
         <SubmitProposal />
-        <ProposalList address={undefined} />
+        <ProposalList />
       </div>
     </Page>
   );
