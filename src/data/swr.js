@@ -285,28 +285,20 @@ export async function fetchUserCopyrights(address) {
   }
 }
 
-export async function fetchCopyrights(address) {
-  if (!address) return []
-
+export async function fetchAllCopyrights() {
   const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
 
   try {
     const res = await fetch(url)
-    if (!res.ok) {
-      throw new Error(`TzKT API error: ${res.statusText}`)
-    }
-
-    const data = await res.json()
-    return data
-    
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
   } catch (err) {
-    console.error('Failed to fetch user copyrights:', err)
+    console.error('Failed to fetch all copyrights:', err)
     return []
   }
 }
-export async function fetchProposals(address) {
-  if (!address) return []
 
+export async function fetchProposals() {
   const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
 
   try {
@@ -315,30 +307,21 @@ export async function fetchProposals(address) {
       throw new Error(`TzKT API error: ${res.statusText}`)
     }
 
-    const data = await res.json()
-    return data
-    
+    return await res.json()
   } catch (err) {
-    console.error('Failed to fetch user copyrights:', err)
+    console.error('Failed to fetch proposals:', err)
     return []
   }
 }
-export async function fetchAllVotes(address) {
-  if (!address) return []
 
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=100&active=true`
-
+export async function fetchAllVotes() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
   try {
     const res = await fetch(url)
-    if (!res.ok) {
-      throw new Error(`TzKT API error: ${res.statusText}`)
-    }
-
-    const data = await res.json()
-    return data
-    
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
   } catch (err) {
-    console.error('Failed to fetch user copyrights:', err)
+    console.error('Failed to fetch votes:', err)
     return []
   }
 }
