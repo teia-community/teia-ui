@@ -25,59 +25,34 @@ export default function ProposalList() {
       .finally(() => setLoading(false))
   }, [address])
 
+  const getUserVote = (proposalId: number) => {
+    const match = votes.find(
+      (v) => Number(v.key.nat) === Number(proposalId) && v.key.address === address
+    )
+    return match?.value ?? null
+  }
+  const getExpirationTime = (timestamp: string, expirationDays: number) => {
+    const proposalDate = new Date(timestamp)
+    const expirationDate = new Date(proposalDate.getTime() + expirationDays * 86400000)
+    const now = new Date()
+    const diff = expirationDate.getTime() - now.getTime()
+
+    if (diff <= 0) return '⛔ Expired'
+
+    const days = Math.floor(diff / 86400000)
+    const hours = Math.floor((diff % 86400000) / 3600000)
+    const minutes = Math.floor((diff % 3600000) / 60000)
+
+    return `${days}d ${hours}h ${minutes}m`
+  }
   useEffect(() => {
     fetchExpirationTime()
       .then((days) => setExpirationTime(Number(days)))
       .catch((err) => {
         console.error('Failed to fetch expiration time:', err)
-        setExpirationTime(10)
+        setExpirationTime(10) // fallback value
       })
   }, [])
-
-  function processProposal(entry, votes, address, expirationTime) {
-    const proposalId = entry.key
-    const kind = Object.keys(entry.value.kind)[0]
-    const userVote = votes.find(
-      (v) => Number(v.key.nat) === Number(proposalId) && v.key.address === address
-    )?.value ?? null
-
-    const yesVotes = votes.filter(
-      (v) => Number(v.key.nat) === Number(proposalId) && v.value === true
-    ).length
-
-    const noVotes = votes.filter(
-      (v) => Number(v.key.nat) === Number(proposalId) && v.value === false
-    ).length
-
-    const minVotes = entry.value.minimum_votes
-    const positiveVotes = entry.value.positive_votes
-    const isExecutable = positiveVotes >= minVotes && !entry.value.executed
-
-    const expiresIn = (() => {
-      const proposalDate = new Date(entry.value.timestamp)
-      const expirationDate = new Date(proposalDate.getTime() + expirationTime * 86400000)
-      const now = new Date()
-      const diff = expirationDate.getTime() - now.getTime()
-      if (diff <= 0) return '⛔ Expired'
-      const days = Math.floor(diff / 86400000)
-      const hours = Math.floor((diff % 86400000) / 3600000)
-      const minutes = Math.floor((diff % 3600000) / 60000)
-      return `${days}d ${hours}h ${minutes}m`
-    })()
-
-    return {
-      proposalId,
-      kind,
-      userVote,
-      yesVotes,
-      noVotes,
-      minVotes,
-      isExecutable,
-      expiresIn,
-      issuer: entry.value.issuer,
-      executed: entry.value.executed,
-    }
-  }
 
   if (loading) return <p>Loading proposals...</p>
   if (!proposals.length) return <p>No proposals found.</p>
@@ -86,29 +61,29 @@ export default function ProposalList() {
     <div className={styles.form_section}>
       <h2 className={styles.title}>Active Proposals</h2>
       <div className={styles.list}>
-        
         {proposals.map((entry) => {
-          const {
-            proposalId,
-            kind,
-            userVote,
-            yesVotes,
-            noVotes,
-            minVotes,
-            isExecutable,
-            expiresIn,
-            issuer,
-            executed,
-          } = processProposal(entry, votes, address, expirationTime)
+          const proposalId = entry.key
+          const kind = Object.keys(entry.value.kind)[0]
+          const userVote = getUserVote(proposalId)
+          const positiveVotes  = entry.value.positive_votes
+          const minVotes = entry.value.minimum_votes
+          const isExecutable = positiveVotes >= minVotes && !entry.value.executed
+          const yesVotes = votes.filter(
+            (v) => Number(v.key.nat) === Number(proposalId) && v.value === true
+          ).length
+
+          const noVotes = votes.filter(
+            (v) => Number(v.key.nat) === Number(proposalId) && v.value === false
+          ).length
 
           return (
             <div key={entry.id} className={styles.card}>
               <p><strong>ID:</strong> {proposalId}</p>
               <p><strong>Kind:</strong> {kind}</p>
-              <p><strong>Issuer:</strong> {issuer}</p>
-              <p><strong>Votes:</strong> ✅ {yesVotes} / ❌ {noVotes} (Min: {minVotes})</p>
-              <p><strong>Expires In:</strong> {expiresIn}</p>
-              <p><strong>Status:</strong> {executed ? '✅ Executed' : '⏳ Pending'}</p>
+              <p><strong>Issuer:</strong> {entry.value.issuer}</p>
+              <p><strong>Votes:</strong> ✅ {yesVotes} / ❌ {noVotes} (Min: {entry.value.minimum_votes})</p>
+              <p><strong>Expires In:</strong> {getExpirationTime(entry.value.timestamp, expirationTime)}</p>
+              <p><strong>Status:</strong> {entry.value.executed ? '✅ Executed' : '⏳ Pending'}</p>
               <p><strong>Your Vote:</strong> {
                 userVote === true ? '✅ Yes' :
                 userVote === false ? '❌ No' :
