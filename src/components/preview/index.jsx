@@ -69,8 +69,6 @@ export const Preview = () => {
     st.isMonoType,
   ])
 
-  console.log('customLicenseData in Preview', customLicenseData)
-
   const { ignoreUriMap } = useSettings()
   const token_tags = tags
     ? tags === ''
