@@ -66,58 +66,59 @@ export const Footer = ({ menu, pin }: FooterProps) => {
       <motion.footer {...transition()} className={classes_content}>
         <div className={styles.logo}>
           Teia DAO LLC.
-          <a href="https://tzkt.io/">Powered by TzKT API</a>
-          {menu && (
+          {menu && (<>
             <Button
               alt="teia rotating logo"
               onClick={() => setLogoSeed(Math.random() * 100)}
             >
               <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
             </Button>
+          </>
           )}
+          <a href="https://tzkt.io/">Powered by TzKT API</a>
         </div>
-
-        <div className={styles.copyright}>{language.footer.mint}</div>
+        <div className={styles.copyright}>
+          <div>
+            {language.footer.mint}
+          </div>
+          <div className={styles.menuitems}>
+            <MenuItem
+              className={styles.menu_label_row}
+              route="about"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="F.A.Q"
+              route="faq"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Core Values"
+              route="corevalues"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Code of Conduct"
+              route="codeofconduct"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Terms and Conditions"
+              route="terms"
+            />
+            <MenuItem
+              className={styles.menu_label_row}
+              label="Privacy Policy"
+              route="privacypolicy"
+            />
+          </div>
+        </div>
         {menu && (
           <>
             <div className={styles.menus}>
-              <div className={styles.menu_left}>
-                <MenuItem className={styles.menu_label} route="about" />
-                <MenuItem
-                  className={styles.menu_label}
-                  label="F.A.Q"
-                  route="faq"
-                />
-              </div>
+
               <Line vertical />
 
-              <div className={styles.menu_right}>
-                <div className={styles.address}>{walletPreview(address)}</div>
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Mint"
-                  route="mint"
-                  need_sync
-                />
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Assets"
-                  route="tz"
-                  need_sync
-                />
-                <MenuItem
-                  need_sync
-                  className={styles.menu_label}
-                  route="collaborate"
-                />
-
-                <MenuItem
-                  className={styles.menu_label}
-                  label="Profile"
-                  route="subjkt"
-                  need_sync
-                />
-              </div>
             </div>
             {false && (
               <div className={styles.state_buttons}>

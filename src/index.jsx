@@ -57,6 +57,7 @@ import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
+import Curation from '@pages/profile/curation'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -75,11 +76,15 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import { CodeOfConduct } from '@pages/codeofconduct'
+import { CoreValues } from '@pages/corevalues'
+import { PrivacyPolicy } from '@pages/privacypolicy'
 
 const display_routes = (
   <>
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
+    <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
   </>
 )
@@ -132,7 +137,9 @@ const router = createBrowserRouter(
       <Route exact path="about" element={<About />} />
       <Route exact path="terms" element={<Terms />} />
       <Route exact path="faq" element={<FAQ />} />
-
+      <Route exact path="codeofconduct" element={<CodeOfConduct />} />
+      <Route exact path="corevalues" element={<CoreValues />} />
+      <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
       <Route path="sync" element={<Sync />} />
       <Route exact path="mint/*" element={<Mint />}>
         <Route index element={<MintForm />} />

@@ -21,6 +21,12 @@
   }
 }
 
+.faq__container li button {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 .faq__container:last-of-type {
   margin-top: 20px;
 
@@ -37,7 +43,7 @@
 }
 
 .faq__outer__container {
-  padding-top: 80px;
+  padding-top: 2em;
   width: 100%;
 
   @include respond-to('desktop') {
