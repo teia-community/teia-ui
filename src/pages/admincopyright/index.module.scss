@@ -1,0 +1,50 @@
+@import '@styles/layout.scss';
+@import '@styles/variables.scss';
+
+.fundsWarning {
+  font-weight: 500;
+  border: var(--text-color) 0.1em solid;
+  padding: 1em;
+  // background: repeating-linear-gradient(
+  //   45deg,
+  //   #606dbc,
+  //   #606dbc 10px,
+  //   #465298 10px,
+  //   #465298 20px
+  // );
+}
+
+.attributes_checkboxes {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1em;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+::selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+::-moz-selection {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+
+.mint_form {
+  width: 100%;
+  margin-bottom: 80px;
+}
+
+.field {
+  margin-bottom: 10px;
+}
+
+.line {
+  margin-bottom: 20px;
+}
+
+.collab_bar {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}

@@ -76,9 +76,14 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import CopyrightForm from '@components/copyright/form/CopyrightForm'
+import CopyrightPage from '@pages/copyright'
+import { CopyrightPreview } from '@components/copyright/preview'
+import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
+import AdminCopyrightPage from '@pages/admincopyright'
 
 const display_routes = (
   <>
@@ -86,6 +91,7 @@ const display_routes = (
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
+    <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
 
@@ -94,6 +100,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
+      <Route path="admincopyright" element={<AdminCopyrightPage />} />
       <Route path="feed/*" element={<Home />}>
         <Route path="sales" element={<RecentSalesFeed />} />
         <Route path="lists" element={<ListsFeed />} />
@@ -145,6 +152,11 @@ const router = createBrowserRouter(
         <Route index element={<MintForm />} />
         <Route path="preview" element={<Preview />} />
       </Route>
+      <Route exact path="copyright/*" element={<CopyrightPage />}>
+        <Route index element={<CopyrightForm />} />
+        <Route path="copyrightpreview" element={<CopyrightPreview />} />
+      </Route>
+      <Route path="copyrightdisplay" element={<CopyrightDisplay />} />
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
