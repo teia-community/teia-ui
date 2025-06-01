@@ -12,6 +12,7 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { HashToURL } from '@utils'
 import { fetchTokenMetadata } from '@data/swr'
+import AgreementViewer from '../display/AgreementViewer'
 
 const initialClauses = {
   reproduce: false,
@@ -675,6 +676,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
     <div style={{ borderBottom: '1px solid var(--gray-20)' }}>
       <br />
       <h3>TEIA Copyright Licensing and Registration System</h3>
+      <br />
+      <AgreementViewer />
       <br />
       <p>
         The TEIA copyright registration system enables creators to establish

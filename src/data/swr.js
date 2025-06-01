@@ -327,12 +327,25 @@ export async function fetchAllVotes() {
 }
 
 export async function fetchExpirationTime() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage`
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
     const data = await res.json()
-    return parseInt(data.expiration_time)
+    return parseInt(data)
+  } catch (err) {
+    console.error('Failed to fetch expiration_time:', err)
+    return 0
+  }
+}
+
+export async function fetchAgreementText() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    const data = await res.json()
+    return data
   } catch (err) {
     console.error('Failed to fetch expiration_time:', err)
     return 0
