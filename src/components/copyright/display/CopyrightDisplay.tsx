@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useUserStore } from '@context/userStore'
 import { fetchUserCopyrights, fetchTokenMetadata } from '@data/swr'
 import { HashToURL } from '@utils'
+import styles from './index.module.css'
+import { HEN_CONTRACT_FA2 } from '@constants'
 
 interface TezosNFTReference {
   contract: string
@@ -64,6 +66,14 @@ export default function CopyrightDisplay() {
   const [records, setRecords] = useState<CopyrightBigMapEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [metadataMap, setMetadataMap] = useState<Record<string, NFTMetadata>>({})
+  const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({})
+
+  const toggleItem = (id: number) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
 
   useEffect(() => {
     if (!address) return
@@ -71,8 +81,10 @@ export default function CopyrightDisplay() {
     setLoading(true)
     fetchUserCopyrights(address).then(async (data) => {
       const metaMap: Record<string, NFTMetadata> = {}
+      const initialExpandedState: Record<number, boolean> = {}
 
       for (const entry of data) {
+        initialExpandedState[entry.id] = false
         for (const nft of entry.value.related_tezos_nfts) {
           const key = `${nft.contract}:${nft.token_id}`
           if (!metaMap[key]) {
@@ -89,130 +101,169 @@ export default function CopyrightDisplay() {
 
       setMetadataMap(metaMap)
       setRecords(data)
+      setExpandedItems(initialExpandedState)
       setLoading(false)
     })
   }, [address])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-6">Your Registered Copyrights</h1>
+    <div className={styles.mainContainer}>
+      <h1 className="text-2xl font-semibold mb-6">©️ Your Registered Copyrights</h1>
+      <br />
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <p>Loading...</p>
       ) : records.length === 0 ? (
-        <p className="text-gray-500">No records found.</p>
+        <p>No records found.</p>
       ) : (
-        <div className="space-y-8">
+        <div className={styles.assetContainer}>
           {records.map((entry, idx) => {
             const { value } = entry
             const nfts = value.related_tezos_nfts
             const extLinks = value.related_external_nfts
 
             return (
-              <div key={idx} className="border rounded-lg p-4 shadow-sm">
-                <h2 className="font-bold text-lg mb-1">Copyright #{entry.key.nat}</h2>
-                <p className="text-xs text-gray-400 mb-2">Creator: {entry.key.address}</p>
+              <div key={entry.id} className="border rounded-lg p-4 shadow-sm mb-4">
+                <button
+                  className={styles.copyrightListItem}
+                  onClick={() => toggleItem(entry.id)}
+                  aria-expanded={expandedItems[entry.id]}
+                  aria-controls={`copyright-content-${entry.id}`}
+                >
+                  <h2 className="text-lg font-medium flex items-center">
+                    Copyright #{entry.key.nat}
+                    <span className="ml-2">
+                      {expandedItems[entry.id] ? '▼' : '▶'}
+                    </span>
+                  </h2>
+                </button>
+                
+                {expandedItems[entry.id] && (
+                  <div className={styles.agreementDetails}>
+                    <br />
+                    <h3>Agreement Details</h3>
+                    <br />
+                    <div className={styles.agreementText}>
+                      <p>
+                        {value.clauses.firstParagraph}
+                      </p>
+                    </div>
+                    <br />
+                    <p>Registrar Address: {entry.key.address}</p>
+                    <br />
+                    <h3>Clauses</h3>
+                    {value?.clauses && (
+                      <div className="mt-3">
+                        <ul className="text-sm list-disc pl-5 space-y-1">
+                          {Object.entries(value.clauses).map(([key, val]) => {
+                            if (key === 'firstParagraph') return null
 
-                {nfts.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                    {nfts.map((nft) => {
-                      const key = `${nft.contract}:${nft.token_id}`
-                      const meta = metadataMap[key] || {}
-                      const imageSrc =
-                        (meta.thumbnailUri && HashToURL(meta.thumbnailUri, 'IPFS')) ||
-                        (meta.displayUri && HashToURL(meta.displayUri, 'IPFS')) ||
-                        (meta.artifactUri && HashToURL(meta.artifactUri, 'IPFS'))
+                            let label = key.replace(/([A-Z])/g, ' $1')
+                            label = label.charAt(0).toUpperCase() + label.slice(1)
 
-                      return (
-                        <div
-                          key={key}
-                          className="border rounded-md overflow-hidden bg-white shadow"
-                        >
-                          <img
-                            src={imageSrc}
-                            alt={meta.name || 'Artwork'}
-                            className="w-full h-48 object-cover bg-gray-100"
-                          />
-                          <div className="p-3">
-                            ☑️ TEIA Verified 
-                            ✅ Tezos Verified
-                            <h3 className="font-medium text-sm truncate">
-                              {meta.name || `Token #${nft.token_id}`}
-                            </h3>
-                            <p className="text-xs text-gray-600 truncate">
-                              {meta.description || 'No description.'}
-                            </p>
-                            <p className="text-[11px] text-gray-400 mt-1">
-                              {nft.contract} / #{nft.token_id}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-                {value?.clauses && (
-                  <div className="mt-3">
-                    <h4 className="text-sm font-semibold mb-1">Clauses:</h4>
-                    <ul className="text-sm list-disc pl-5 space-y-1">
-                      {Object.entries(value.clauses).map(([key, val]) => {
-                        if (key === 'firstParagraph') return null
+                            if (key === 'customUri' && val) {
+                              return (
+                                <li key={key}>
+                                  {label}:{' '}
+                                  <a
+                                    href={val as string}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 underline"
+                                  >
+                                    {val}
+                                  </a>
+                                </li>
+                              )
+                            }
 
-                        let label = key.replace(/([A-Z])/g, ' $1')
-                        label = label.charAt(0).toUpperCase() + label.slice(1)
+                            return (
+                              <li key={key}>
+                                {label}: {typeof val === 'boolean' ? (val ? '✅ Yes' : '❌ No') : val || '—'}
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      </div>
+                    )}
+                    <br />
+                    <h3>Registered Works</h3>
+                    <br />
+                    {nfts.length > 0 && (
+                      <div className={styles.nftContainer}>
+                        {nfts.map((nft) => {
+                          const key = `${nft.contract}:${nft.token_id}`
+                          const meta = metadataMap[key] || {}
+                          const imageSrc =
+                            (meta.thumbnailUri && HashToURL(meta.thumbnailUri, 'IPFS')) ||
+                            (meta.displayUri && HashToURL(meta.displayUri, 'IPFS')) ||
+                            (meta.artifactUri && HashToURL(meta.artifactUri, 'IPFS'))
 
-                        if (key === 'customUri' && val) {
                           return (
-                            <li key={key}>
-                              {label}:{' '}
-                              <a
-                                href={val as string}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 underline"
-                              >
-                                {val}
-                              </a>
-                            </li>
+                            <div
+                              key={key}
+                              className={styles.nftImageWrapper}
+                            >
+                              <img
+                                src={imageSrc}
+                                alt={meta.name || 'Artwork'}
+                                className={styles.nftImage}
+                              />
+                              <div className={styles.nftDetails}>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span>☑️ TEIA Verified</span>
+                                  <br />
+                                  <span>✅ Tezos Verified</span>
+                                </div>
+                                <br />
+                                <h3 className="font-medium text-sm truncate">
+                                  {meta.name || `Token #${nft.token_id}`}
+                                </h3>
+                                <p className="text-[11px] text-gray-400 mt-1">
+                                  {nft.contract} / #{nft.token_id}
+                                  {nft.contract === HEN_CONTRACT_FA2 && (
+                                    <span className="ml-1"> (☑️ TEIA Verified)</span>
+                                  )}
+                                  {nft.contract.startsWith("KT1") && nft.contract !== "KT1whoa" && (
+                                    <span className="ml-1"> (✅ Tezos Verified)</span>
+                                  )}
+                                </p>
+                                <br />
+                                <p className={styles.descriptionPreview}>
+                                  {meta.description || 'No description.'}
+                                </p>
+                              </div>
+                            </div>
                           )
-                        }
+                        })}
+                      </div>
+                    )}
+                    <p className="text-sm mb-1">
+                      <strong>Exclusive Rights:</strong> {value.clauses.exclusiveRights}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1 mb-2">
+                      <strong>Status:</strong> {value.active ? 'Active' : 'Inactive'}
+                    </p>
 
-                        return (
-                          <li key={key}>
-                            {label}: {typeof val === 'boolean' ? (val ? '✅ Yes' : '❌ No') : val || '—'}
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </div>
-                )}
-                <p className="text-sm text-gray-700 mb-1">
-                  <strong>First Paragraph:</strong> {value.clauses.firstParagraph}
-                </p>
-                <p className="text-sm mb-1">
-                  <strong>Exclusive Rights:</strong> {value.clauses.exclusiveRights}
-                </p>
-                <p className="text-xs text-gray-400 mt-1 mb-2">
-                  Status: {value.active ? 'Active' : 'Inactive'}
-                </p>
-
-                {extLinks.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium mb-1">External References:</p>
-                    {extLinks.map((url, i) => (
-                      <>
-                        ⚠️ External Link
-                        <a
-
-                          key={i}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 text-sm underline block truncate"
-                        >
-                          {url}
-                        </a>
-                      </>
-                    ))}
+                    {extLinks.length > 0 && (
+                      <div className="mt-2">
+                        <p><strong>External Registration:</strong></p>
+                        {extLinks.map((url, i) => (
+                          <div key={i}>
+                            ⚠️ External Link:{" "}
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 text-sm underline block truncate"
+                            >
+                              {url}
+                            </a>
+                          </div>
+                        ))}
+                        <br />
+                        <p>*Registration of external URLs and URIs must be proven and maintained by the registrar.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

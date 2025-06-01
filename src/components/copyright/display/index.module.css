@@ -1,0 +1,58 @@
+.mainContainer {
+    margin: 10px;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.assetContainer {
+    width: 100%; 
+    border-top: 1px solid white;
+}
+
+.copyrightListItem {
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px dashed white;
+    padding: 10px;
+}
+
+.agreementDetails {
+    width: 100%;
+    padding: 10px;
+    border-bottom: 3px solid white;
+}
+
+.agreementText {
+    width: 100%;
+    border: 1px solid white;
+    padding: 10px;
+}
+
+.descriptionPreview {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    max-height: calc(1.4em * 4);
+}
+
+.nftImageWrapper {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1em;
+    border: 1px solid white;
+}
+
+.nftContainer {
+  overflow: hidden;
+}
+
+.nftImage {
+  float: right;
+  margin-left: 20px;
+  margin-bottom: 15px;
+  max-width: 300px;
+  height: auto;
+}

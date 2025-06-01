@@ -22,11 +22,17 @@ function CopyrightMainForm({ fields, defaultValues, onSubmit }) {
           }}
         />
       ))}
-      <Button type="submit" fit shadow_box disabled={Object.keys(errors).length > 0}>
+      <br />
+      <Button
+        type="submit"
+        fit
+        shadow_box
+        disabled={Object.keys(errors).length > 0}
+      >
         Create Copyright
       </Button>
     </form>
-  );
+  )
 }
 
 export default memo(CopyrightMainForm)

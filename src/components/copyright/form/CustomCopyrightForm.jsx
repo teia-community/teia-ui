@@ -269,7 +269,9 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     setSearchTokenQuery(event)
   }
 
-  const handleRemoveToken = (indexToRemove) => {
+  const handleRemoveToken = (indexToRemove, event) => {
+    event.preventDefault()
+    event.stopPropagation()
     const updatedTokens = tokens.filter((_, index) => index !== indexToRemove)
     const newDocumentText = generateDocumentText(updatedTokens)
     setTokens(updatedTokens)
@@ -296,40 +298,45 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
   let clauseNumber = 1
 
-  const generateDocumentText = useCallback((customTokens = tokens) => {
-    let minterInfo = minterName ? `[${minterName}, ${address}]` : `[${address}]`
-    {/**
+  const generateDocumentText = useCallback(
+    (customTokens = tokens) => {
+      let minterInfo = minterName
+        ? `[${minterName}, ${address}]`
+        : `[${address}]`
+      {
+        /**
     const tokenTitles = tokens
       .map((token) => `"${token.metadata.name}"`)
-      .join(', ') */}
-    const tokenTitles = customTokens
-      .map((token, index) => {
-        const id = `#${index + 1}`
-        if (token.contractAddress === 'external') {
-          return `${id}: "${token.metadata.name}" (External Reference)`
-        } else {
-          return `${id}: "${token.metadata.name}" (Token ID: ${token.tokenId}, Contract: ${token.contractAddress})`
-        }
-      })
-      .join('\n')
+      .join(', ') */
+      }
+      const tokenTitles = customTokens
+        .map((token, index) => {
+          const id = `#${index + 1}`
+          if (token.contractAddress === 'external') {
+            return `${id}: "${token.metadata.name}" (External Reference)`
+          } else {
+            return `${id}: "${token.metadata.name}" (Token ID: ${token.tokenId}, Contract: ${token.contractAddress})`
+          }
+        })
+        .join('\n')
 
-    const nonTeiaTokens = tokens.filter(
-      (token) => token.contractAddress !== HEN_CONTRACT_FA2
-    )
+      const nonTeiaTokens = tokens.filter(
+        (token) => token.contractAddress !== HEN_CONTRACT_FA2
+      )
 
-    let mintingContractsInfo = ''
-    if (nonTeiaTokens.length > 0) {
-      const uniqueContracts = [
-        ...new Set(nonTeiaTokens.map((t) => t.contractAddress)),
-      ]
-      mintingContractsInfo = `Under various minting contracts, including but not limited to TEIA DAO LLC [${HEN_CONTRACT_FA2}] and contracts: ${uniqueContracts.join(
-        ', '
-      )}`
-    } else {
-      mintingContractsInfo = `Under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]`
-    }
+      let mintingContractsInfo = ''
+      if (nonTeiaTokens.length > 0) {
+        const uniqueContracts = [
+          ...new Set(nonTeiaTokens.map((t) => t.contractAddress)),
+        ]
+        mintingContractsInfo = `Under various minting contracts, including but not limited to TEIA DAO LLC [${HEN_CONTRACT_FA2}] and contracts: ${uniqueContracts.join(
+          ', '
+        )}`
+      } else {
+        mintingContractsInfo = `Under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]`
+      }
 
-    let documentText = `This License Agreement ("Agreement") is granted by the creator ("Creator") identified by the wallet address ${minterInfo} ("Wallet Address") for the following Work(s): 
+      let documentText = `This License Agreement ("Agreement") is granted by the creator ("Creator") identified by the wallet address ${minterInfo} ("Wallet Address") for the following Work(s): 
     
 ${tokenTitles}
     
@@ -338,106 +345,108 @@ ${mintingContractsInfo}.
 This Agreement outlines the rights and obligations associated with the ownership and use of the NFT(s)' likeness(es) and any derivatives thereof ("Work").
     
 “Editions” refers to the total number of authorized copies of the NFT(s) that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
-    {
-      /**
+      {
+        /**
     let documentText = `This Custom License Agreement ("Agreement") is granted by the creator ("Creator") of the Non-Fungible Token ("NFT") identified by the owner of wallet address ${minterInfo} ("Wallet Address") for the Work "${watch(
       'title'
     )}" under the Minting Contract managed by the TEIA DAO LLC [${HEN_CONTRACT_FA2}]. This Agreement outlines the rights and obligations associated with the ownership and use of the NFT's likeness and any derivatives thereof ("Work").
 \n“Editions” refers to the total number of authorized copies of the NFT that the Creator issues at the time of minting. Each copy represents an "Edition" of the NFT, allowing multiple Owners (or one Owner holding multiple copies) to hold rights to the Work under the terms of this Agreement.`
  */
-    }
-    documentText += `\n\nIn all cases, the written text in this document will take precedence over any data or metadata displays on or off-chain as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s). Statements in the Addendums have the ability to overrule or nullify statements in the auto-generated portions of this document in cases of conflicts or inconsistencies.`
-    documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
+      }
+      documentText += `\n\nIn all cases, the written text in this document will take precedence over any data or metadata displays on or off-chain as the authoritative permissions for the Work, applied to both the Creator(s) and Owner(s). Statements in the Addendums have the ability to overrule or nullify statements in the auto-generated portions of this document in cases of conflicts or inconsistencies.`
+      documentText += `\n\nIn cases where multiple Creators or Collaborators have contributed to the creation of the Work, the rights and obligations stipulated herein apply equally to all Creators. Each Creator is entitled to the rights granted under this Agreement, and such rights are shared collectively among all Creators unless specified otherwise.`
 
-    if (clauses.releasePublicDomain) {
-      documentText += `\n\n${clauseNumber++}. Release to Public Domain:
+      if (clauses.releasePublicDomain) {
+        documentText += `\n\n${clauseNumber++}. Release to Public Domain:
 The Creator hereby releases all copyright and related rights, title, and interest in and to the Work into the public domain, free from any copyright restrictions. This release applies globally, allowing for the free use, reproduction, and modification of the Work without any compensation due to the Creator.`
-    } else {
-      if (clauses.reproduce) {
-        documentText += `\n\n${clauseNumber++}. Right to Reproduce:
+      } else {
+        if (clauses.reproduce) {
+          documentText += `\n\n${clauseNumber++}. Right to Reproduce:
 The Creator hereby grants to each owner of the NFT ("Owner") a worldwide license to use the Work for both commercial and non-commercial reproduction purposes.`
-      }
-      if (clauses.broadcast) {
-        documentText += `\n\n${clauseNumber++}. Right to Broadcast:
+        }
+        if (clauses.broadcast) {
+          documentText += `\n\n${clauseNumber++}. Right to Broadcast:
 The Creator grants to each Owner a worldwide license to use the Work for broadcasting purposes for both commercial and non-commercial use.`
-      }
-      if (clauses.publicDisplay) {
-        documentText += `\n\n${clauseNumber++}. Right to Public Display:
+        }
+        if (clauses.publicDisplay) {
+          documentText += `\n\n${clauseNumber++}. Right to Public Display:
 The Creator grants to each Owner a worldwide license to publicly display the Work, either as a physical display or as a performance for live events. This license does not permit the monetization of the Work by the Owner and requires the Owner to provide full attribution to the Creator.`
-      }
-      if (clauses.createDerivativeWorks) {
-        documentText += `\n\n${clauseNumber++}. Right to Create Derivative Works:
+        }
+        if (clauses.createDerivativeWorks) {
+          documentText += `\n\n${clauseNumber++}. Right to Create Derivative Works:
 The Creator grants to each Owner a worldwide license to publicly display the Work, either as a physical display or as a performance for live events. This license does not permit the monetization of the Work by the Owner and requires the Owner to provide full attribution to the Creator.`
-      }
+        }
 
-      if (clauses.requireAttribution) {
-        documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
+        if (clauses.requireAttribution) {
+          documentText += `\n\n${clauseNumber++}. Requirement for Attribution:
 The Owner(s) of the Work are required to give proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance.acknowledge the Creator(s) by name or wallet address, unless otherwise agreed upon in writing by all parties involved. Failure to provide such attribution constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+        }
+        if (
+          clauses.rightsAreTransferable &&
+          (clauses.reproduce ||
+            clauses.broadcast ||
+            clauses.publicDisplay ||
+            clauses.createDerivativeWorks)
+        ) {
+          documentText += `\n\n${clauseNumber++}. Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are transferable. The Owner(s) may assign, transfer, or sublicense the rights to the Work, subject to maintaining proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to all sales and edition numbers (unless stated otherwise), including both primary and secondary sales, promoting continuous and flexible utilization of the Work across different owners. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary. Failure to comply with attribution requirements constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
+        } else if (
+          !clauses.rightsAreTransferable &&
+          (clauses.reproduce ||
+            clauses.broadcast ||
+            clauses.publicDisplay ||
+            clauses.createDerivativeWorks)
+        ) {
+          documentText += `\n\n${clauseNumber++}. Non-Transferable Rights:
+The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
+        }
       }
       if (
-        clauses.rightsAreTransferable &&
-        (clauses.reproduce ||
-          clauses.broadcast ||
-          clauses.publicDisplay ||
-          clauses.createDerivativeWorks)
+        !clauses.publicDisplay &&
+        !clauses.reproduce &&
+        !clauses.broadcast &&
+        !clauses.createDerivativeWorks &&
+        !clauses.releasePublicDomain &&
+        !clauses.requireAttribution
       ) {
-        documentText += `\n\n${clauseNumber++}. Transferable Rights:
-The rights granted under this Agreement to the Owner(s) of the Work are transferable. The Owner(s) may assign, transfer, or sublicense the rights to the Work, subject to maintaining proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to all sales and edition numbers (unless stated otherwise), including both primary and secondary sales, promoting continuous and flexible utilization of the Work across different owners. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary. Failure to comply with attribution requirements constitutes a breach of this Agreement, subject to the remedies available under applicable law.`
-      } else if (
-        !clauses.rightsAreTransferable &&
-        (clauses.reproduce ||
-          clauses.broadcast ||
-          clauses.publicDisplay ||
-          clauses.createDerivativeWorks)
-      ) {
-        documentText += `\n\n${clauseNumber++}. Non-Transferable Rights:
-The rights granted under this Agreement to the Owner(s) of the Work are non-transferable. Any attempt to transfer, assign, or sublicense the rights without explicit written consent from the Creator(s) is void. The Owner(s) must maintain proper and visible attribution to the Creator(s) whenever the Work is used in public settings, broadcasts, or any other form of public display or performance. This clause is applicable to Primary Sales, as defined as a direct sale from the Creator(s) to the first Owner(s) of an Edition of the Work from any Marketplace Contract. Upon any Secondary Sale, the rights and privileges initially granted are nullified. In case of a dispute, ledger records from sales transactions will serve to confirm or deny claims as necessary.`
-      }
-    }
-    if (
-      !clauses.publicDisplay &&
-      !clauses.reproduce &&
-      !clauses.broadcast &&
-      !clauses.createDerivativeWorks &&
-      !clauses.releasePublicDomain &&
-      !clauses.requireAttribution
-    ) {
-      documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
+        documentText += `\n\n${clauseNumber++}. All Rights Reserved: 
 No rights are granted under this Agreement. All rights for the Work are reserved solely by the Creator.`
-    }
+      }
 
-    if (clauses.exclusiveRights === 'none') {
-      documentText += `\n\n${clauseNumber++}. Exclusive Rights:
+      if (clauses.exclusiveRights === 'none') {
+        documentText += `\n\n${clauseNumber++}. Exclusive Rights:
 No exclusive rights are granted under this Agreement. All rights are non-exclusive and shared among all rightful owners or licensees - or in cases of "All Rights Reserved", exclusivity is granted solely to the Creator themselves.`
-    } else if (
-      clauses.reproduce ||
-      clauses.broadcast ||
-      clauses.publicDisplay ||
-      clauses.createDerivativeWorks
-    ) {
-      const rightsDescription =
-        clauses.exclusiveRights === 'majority'
-          ? 'majority share (over 50%)'
-          : 'super-majority share (66.667%+ or exactly 2/3rds)'
-      documentText += `\n\n${clauseNumber++}. Exclusive Rights:
+      } else if (
+        clauses.reproduce ||
+        clauses.broadcast ||
+        clauses.publicDisplay ||
+        clauses.createDerivativeWorks
+      ) {
+        const rightsDescription =
+          clauses.exclusiveRights === 'majority'
+            ? 'majority share (over 50%)'
+            : 'super-majority share (66.667%+ or exactly 2/3rds)'
+        documentText += `\n\n${clauseNumber++}. Exclusive Rights:
 The Creator grants exclusive rights as outlined in this Agreement to the Owner(s) holding a ${rightsDescription} of the editions of the NFT at the time of its original mint. If no single party holds such a share, the rights outlined in this Agreement apply non-exclusively to all Owners. (In some cases, the Creator themselves may be the exclusive Owner.)`
-    }
+      }
 
-    if (clauses.exclusiveRights !== 'none' && clauses.retainCreatorRights) {
-      documentText += `\n\n${clauseNumber++}. Retention of Creator's Rights:
+      if (clauses.exclusiveRights !== 'none' && clauses.retainCreatorRights) {
+        documentText += `\n\n${clauseNumber++}. Retention of Creator's Rights:
 Despite reaching the threshold for exclusive rights, the Creator retains certain rights as specified under this Agreement, even if exclusivity conditions are met by other Owners. The rights are then split equally between the Creator and Owner which has been granted exclusive rights over the other Owner(s) of the Work, effective immediately after the date in which the condition for exclusivity has been met.`
-    }
+      }
 
-    if (clauses.expirationDate && clauses.expirationDateExists) {
-      const readableDate = new Date(clauses.expirationDate).toLocaleDateString()
-      documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
-    }
+      if (clauses.expirationDate && clauses.expirationDateExists) {
+        const readableDate = new Date(
+          clauses.expirationDate
+        ).toLocaleDateString()
+        documentText += `\n\n${clauseNumber++}. Expiration Date:\nThis Agreement is effective until the date of ${readableDate} (relative to the time of mint of the Work), after which the rights granted herein will terminate unless expressly renewed or extended in writing by the Creator. Upon expiration, all rights (including exclusive rights) returns back to the Creator's ownership and control.`
+      }
 
-    if (clauses.customUriEnabled && clauses.customUri) {
-      documentText += `\n\n${clauseNumber++}. Custom URI Reference and Retroactive Application:
+      if (clauses.customUriEnabled && clauses.customUri) {
+        documentText += `\n\n${clauseNumber++}. Custom URI Reference and Retroactive Application:
 The Work is subject to additional terms, conditions, and declarations specified at: ${
-        clauses.customUri
-      }. These external terms are hereby incorporated by reference into this Agreement and shall be considered binding to the same extent as if they were fully set forth herein.
+          clauses.customUri
+        }. These external terms are hereby incorporated by reference into this Agreement and shall be considered binding to the same extent as if they were fully set forth herein.
     
 This URI may serve one or both of the following purposes:
 a) External Reference: The URI may contain supplementary terms, conditions, restrictions, or declarations that apply to this Work. These additional terms shall be considered as an extension of this Agreement.
@@ -445,36 +454,38 @@ a) External Reference: The URI may contain supplementary terms, conditions, rest
 b) Retroactive Application: If the URI points to a previous work by the same Creator, and the Creator can conclusively demonstrate through cryptographic proof that they control both the wallet address associated with this Work and the wallet address associated with the referenced work ${minterInfo}, then all terms, rights, and restrictions specified in this Agreement shall apply retroactively to the referenced work. Such proof must be verifiable through blockchain records or other cryptographic means that establish an undeniable connection between the Creator's wallet addresses and both works.
     
 The Creator bears the burden of proving ownership of both works through wallet address verification, transaction histories, or other blockchain-based evidence. In the absence of such proof, the retroactive application shall be considered void while the external reference shall remain in effect. Any conflicts between the terms specified in the URI and this Agreement shall be resolved in favor of the more restrictive terms, unless explicitly stated otherwise in either document.`
-    }
+      }
 
-    documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
+      documentText += `\n\n${clauseNumber++}. Jurisdiction and Legal Authority:
 This Agreement is subject to and shall be interpreted in accordance with the laws of the jurisdiction in which the Creator and Owner(s) are domiciled. The rights granted hereunder are subject to any applicable international, national, and local copyright and distribution laws.`
 
-    documentText += `\n\n${clauseNumber++}. Identification and Representation:
+      documentText += `\n\n${clauseNumber++}. Identification and Representation:
 Each Owner (including the Creator and all Collaborators) affirms that the wallet address provided is under their control or under the control of the party they legitimately represent. Each Owner accepts all responsibility for validating their ownership or representative authority of the said wallet address. It is the Owner's duty to provide satisfactory proof of ownership or authorization as may be required to establish their connection to the wallet address in question. Failure to conclusively demonstrate such ownership or authority may result in denial of access to services, rights, or privileges associated with the wallet address under this Agreement.`
 
-    documentText += `\n\n${clauseNumber++}. Amendments and Modifications:
+      documentText += `\n\n${clauseNumber++}. Amendments and Modifications:
 This Agreement may be amended or modified only by a written document signed by both the Creator and the Owner(s) holding the relevant majority or super-majority share, as applicable.`
 
-    documentText += `\n\n${clauseNumber++}. Proof of Ownership and Responsibility:
+      documentText += `\n\n${clauseNumber++}. Proof of Ownership and Responsibility:
 Each individual claiming ownership ("Claimant") must conclusively prove that they are the legitimate Owner or Creator of the specified wallet address associated with this Agreement. It is the sole responsibility of the Claimant to provide irrefutable evidence supporting their claim. This proof may include, but is not limited to, cryptographic signatures, transaction histories, and other blockchain-based verifications that establish an undeniable link between the Claimant and the wallet address in question. For any references (both "verified" and external) linked through the registered work, the Registrar bears full responsibility for: (a) maintaining valid proof of ownership or proper authorization for such references; (b) ensuring the continued accessibility and accuracy of such references; and (c) providing verification of such ownership upon request. Failure to provide satisfactory evidence for either wallet ownership or external reference authorization will result in the denial of any rights, privileges, or access purportedly associated with the work under the terms of this Agreement.`
 
-    documentText += `\n\n${clauseNumber++}. Limitation of Platform Responsibility:
+      documentText += `\n\n${clauseNumber++}. Limitation of Platform Responsibility:
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
 
-    documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
+      documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
 Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
 
-    documentText += `\n\n${clauseNumber++}. Agreement Modifications:
+      documentText += `\n\n${clauseNumber++}. Agreement Modifications:
 Any modification to this Agreement's terms requires explicit consent from both the Creator(s) and current Owner(s). Such amendments shall only apply to consenting parties and shall not alter existing agreements with non-consenting Owners. The Agreement shall maintain its original terms for any Owner-Creator relationship where mutual consent to amendments is not obtained, resulting in potentially differing agreement versions existing concurrently between different Owners of the same work. Smart contract execution shall serve as conclusive evidence of acceptance of amended terms.`
 
-    if (clauses.addendum) {
-      documentText += `\n\nAddendum By Creator:\n${minterName}\n\n`
-      documentText += `${clauses?.addendum}`
-    }
+      if (clauses.addendum) {
+        documentText += `\n\nAddendum By Creator:\n${minterName}\n\n`
+        documentText += `${clauses?.addendum}`
+      }
 
-    return documentText
-  }, [address, clauseNumber, clauses, minterName])
+      return documentText
+    },
+    [address, clauseNumber, clauses, minterName]
+  )
 
   const handleChange = useCallback((value, name) => {
     let newValue
@@ -595,7 +606,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
     clauses?.expirationDateExists,
     handleChange,
     generateDocumentText,
-    tokens
+    tokens,
   ])
 
   useEffect(() => {
@@ -699,7 +710,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
         of any format provided that they can conclusively prove that they are
         the Creator(s) of said works. ("External references.")
       </p>
-      <div style={{ marginTop: '1em' }}>
+      <div style={{ marginTop: '1em', borderTop: '1px solid white' }}>
+        <br />
         <h3>📝 Clauses</h3>
         <br />
         {propertiesWithCheckboxes.map((clauseName) => (
@@ -856,7 +868,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
           {uriError && <div className={styles.errorText}>{uriError}</div>}
         </div> */}
         <br />
-        <div style={{ marginBottom: '1em' }}>
+        <div style={{ marginTop: '1em', borderTop: '1px solid white' }}>
+          <br />
           <h3>🔎 Token Search</h3>
           <br />
           <p>
@@ -896,9 +909,12 @@ Any modification to this Agreement's terms requires explicit consent from both t
         {fetchingToken && <div className="loading-spinner"></div>}
 
         {currentToken && (
-          <div className="token-preview">
+          <div
+            className="token-preview"
+            style={{ marginTop: '1em', borderTop: '1px solid white' }}
+          >
+            <br />
             <h3>Token Found:</h3>
-
             <div
               className="token-list"
               style={{
@@ -957,8 +973,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
         )}
         {currentExternalToken && (
           <div className="token-preview">
+            <br />
             <h3>External Reference Found:</h3>
-
             <div
               className="token-list"
               style={{
@@ -1011,7 +1027,10 @@ Any modification to this Agreement's terms requires explicit consent from both t
           </div>
         )}
         {tokens.length > 0 && (
-          <div className="token-list">
+          <div
+            className="token-list"
+            style={{ marginTop: '1em', borderTop: '1px solid white' }}
+          >
             <br />
             <h3>Selected Works To Apply Copyright Agreement:</h3>
             <div
@@ -1056,11 +1075,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     >
                       {token.metadata.name}
                     </h4>
-                    
-                    ☑️ TEIA Verified 
-                    ✅ Tezos Verified
+                    ☑️ TEIA Verified ✅ Tezos Verified
                     <button
-                      onClick={() => handleRemoveToken(index)}
+                      onClick={(e) => handleRemoveToken(index, e)}
                       style={{
                         border: '1px solid #ccc',
                         padding: '15px',
@@ -1081,8 +1098,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
           maxWidth: '100%',
           overflow: 'auto',
           padding: '15px',
-          margin: '20px 0',
-          border: '1px solid #ccc',
+          marginTop: '1em',
+          border: '1px solid white',
           whiteSpace: 'pre-wrap',
         }}
       >

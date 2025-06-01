@@ -45,10 +45,12 @@ export default function SubmitProposal() {
   return (
     <div className={styles.form_section}>
       <h2 className={styles.title}>Create Proposal</h2>
-
+      <p>Admin area for the copyright registration process. This uses the same multisig contract functions as "KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb" in order to administer the current registration contract.</p>
       {/* Kind Selector */}
       <div className={styles.field}>
-        <label className={styles.label} htmlFor="kind">Proposal Kind</label>
+        <br />
+        <label className={styles.label} htmlFor="kind">Proposal Type</label>
+        <br />
         <select
           id="kind"
           className={styles.select}
@@ -64,6 +66,7 @@ export default function SubmitProposal() {
             </option>
           ))}
         </select>
+        <br />
       </div>
 
       {/* Dynamic Input Field */}
@@ -73,6 +76,7 @@ export default function SubmitProposal() {
             <label className={styles.label} htmlFor="text">IPFS Hash or Text</label>
             <Textarea
               name="text"
+              style={{ border: '1px solid var(--text-color)'}}
               placeholder="e.g. ipfs://Qm... or full agreement body"
               value={text}
               onChange={(e) => setText(e.target.value)}

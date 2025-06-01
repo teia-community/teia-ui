@@ -7,8 +7,16 @@
   color: red;
 }
 
+.form_section {
+  padding: 10px;
+}
+
+.label {
+  font-weight: bold;
+}
+
 .field {
-  margin: 0 0 0 0;
+  margin: 1em 0 0 0;
 }
 
 .typed_field {
@@ -60,4 +68,47 @@
 .active {
   background-color: #22c55e !important;
   color: white;
+}
+
+// In your ./index.module.scss file
+.select {
+  // Base styles
+  appearance: none; // Removes default system styling
+  background-color: var(--background-color);
+  border: 1px solid var(--text-color);
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  width: 100%;
+  max-width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  // Focus state
+  &:focus {
+    outline: none;
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+
+  // Disabled state
+  &:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  // Dropdown arrow (custom)
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+// If you need to style the options dropdown
+.select option {
+  border-radius: 0;
+  padding: 0.5rem;
+  background: var(--background-color);
+  color: #333;
 }
