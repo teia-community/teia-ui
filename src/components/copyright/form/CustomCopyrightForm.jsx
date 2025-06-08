@@ -12,7 +12,6 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { HashToURL } from '@utils'
 import { fetchTokenMetadata } from '@data/swr'
-import AgreementViewer from '../display/AgreementViewer'
 
 const initialClauses = {
   reproduce: false,
@@ -677,8 +676,6 @@ Any modification to this Agreement's terms requires explicit consent from both t
       <br />
       <h3>TEIA Copyright Licensing and Registration System</h3>
       <br />
-      <AgreementViewer />
-      <br />
       <p>
         The TEIA copyright registration system enables creators to establish
         binding terms (a declaration by the Creator) governing permitted and
@@ -928,7 +925,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               }}
             >
               <img
-                src={HashToURL(currentToken.metadata.thumbnailUri, 'IPFS')}
+                src={HashToURL(currentToken.metadata.displayUri, 'IPFS')}
                 alt={currentToken.metadata.name}
               />
               <div>
@@ -1059,7 +1056,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 >
                   {token.contractAddress !== 'external' && (
                     <img
-                      src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                      src={HashToURL(token.metadata.displayUri, 'IPFS')}
                       alt={token.metadata.name}
                       style={{
                         width: '100%',
@@ -1078,7 +1075,19 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     >
                       {token.metadata.name}
                     </h4>
-                    ☑️ TEIA Verified ✅ Tezos Verified
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      {token.contractAddress && token.tokenId && (
+                        <>
+                          {token.contractAddress} / #{token.tokenId}
+                        </>
+                      )}
+                      {token.contractAddress && token.contractAddress === HEN_CONTRACT_FA2 && (
+                        <span className="ml-1"> (☑️ TEIA Verified)</span>
+                      )}
+                      {token.contractAddress && token.contractAddress.startsWith("KT1") && token.contractAddress !== "KT1whoa" && (
+                        <span className="ml-1"> (✅ Tezos Verified)</span>
+                      )}
+                    </p>
                     <button
                       onClick={(e) => handleRemoveToken(index, e)}
                       style={{
