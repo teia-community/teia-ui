@@ -6,6 +6,7 @@ import { fetchUserCopyrights, fetchTokenMetadata } from '@data/swr'
 import { HashToURL } from '@utils'
 import styles from './index.module.css'
 import { HEN_CONTRACT_FA2 } from '@constants'
+import AgreementViewer from './AgreementViewer'
 
 interface TezosNFTReference {
   contract: string
@@ -134,6 +135,11 @@ export default function CopyrightDisplay() {
                     <span className="ml-2">
                       {expandedItems[entry.id] ? '▼' : '▶'}
                     </span>
+                    <span className="ml-2">
+                      {/**
+                      Level {entry.firstLevel}
+                       */}
+                    </span>
                   </h2>
                 </button>
                 
@@ -146,6 +152,7 @@ export default function CopyrightDisplay() {
                       <p>
                         {value.clauses.firstParagraph}
                       </p>
+                      <AgreementViewer />
                     </div>
                     <br />
                     <p>Registrar Address: {entry.key.address}</p>
@@ -209,11 +216,6 @@ export default function CopyrightDisplay() {
                                 className={styles.nftImage}
                               />
                               <div className={styles.nftDetails}>
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span>☑️ TEIA Verified</span>
-                                  <br />
-                                  <span>✅ Tezos Verified</span>
-                                </div>
                                 <br />
                                 <h3 className="font-medium text-sm truncate">
                                   {meta.name || `Token #${nft.token_id}`}
