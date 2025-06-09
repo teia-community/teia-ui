@@ -43,6 +43,7 @@
     padding: 10px;
     margin-bottom: 1em;
     border: 1px solid white;
+    overflow: hidden;
 }
 
 .nftContainer {
@@ -61,9 +62,8 @@
   background: #000000;
   border-radius: 8px;
   padding: 1.5rem;
-  max-width: 900px;
   margin: 2rem auto;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  width: 100%
 }
 
 .title {
@@ -81,4 +81,59 @@
 .actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.fullTextButton {
+  align-items: center;
+  border: 1px solid var(--text-color);
+  padding: 10px;
+}
+
+.fullTextButton:hover {
+  text-decoration: underline;
+}
+
+/* Add to your existing styles */
+.header_actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.action_buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.print_button {
+  background-color: #f0f0f0;
+  color: #333;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+  min-height: 40px;
+}
+
+.print_button:hover {
+  background-color: #e0e0e0;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-agreement, #printable-agreement * {
+    visibility: visible;
+  }
+  #printable-agreement {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }

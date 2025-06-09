@@ -8,7 +8,7 @@ export function CopyrightPreview() {
   const { customLicenseData } = useCopyrightStore()
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+    <div style={{ margin: '0 auto', textAlign: 'center' }}>
       <h2>Preview Copyright Information</h2>
       <br />
       {/* Display Tokens */}
@@ -26,12 +26,21 @@ export function CopyrightPreview() {
             {customLicenseData.tokens.map((token, index) => (
               <div
                 key={index}
-                style={{ padding: '10px', border: '1px solid #ddd' }}
+                style={{
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  textAlign: 'center',
+                }}
               >
-                <img
-                  src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
-                  alt={token.metadata.name}
-                />
+                {token.metadata?.thumbnailUri ? (
+                  <img
+                    src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                    alt={token.metadata.name}
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
+                ) : (
+                  <p>⚠️ External Link</p>
+                )}
                 <p>{token.metadata?.name}</p>
               </div>
             ))}

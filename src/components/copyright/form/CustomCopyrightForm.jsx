@@ -677,8 +677,6 @@ Any modification to this Agreement's terms requires explicit consent from both t
       <br />
       <h3>TEIA Copyright Licensing and Registration System</h3>
       <br />
-      <AgreementViewer />
-      <br />
       <p>
         The TEIA copyright registration system enables creators to establish
         binding terms (a declaration by the Creator) governing permitted and
@@ -702,10 +700,21 @@ Any modification to this Agreement's terms requires explicit consent from both t
       </p>
       <br />
       <p>
-        - To gain the "✅ Verified" status, the registrar must match the wallet
-        addresses of the listed Work(s) with the original creator. For external
-        references, the registrar assumes responsibility for maintaining and
-        verifying ownership upon request.
+        - To gain the "☑️✅ Verified" status, the registrar must match the
+        wallet addresses of the listed Work(s) with the original creator. For
+        external references, the registrar assumes responsibility for
+        maintaining and verifying ownership upon request.
+      </p>
+      <br />
+      <p>
+        "☑️TEIA Verified" indicates that both contracts for the works and
+        registration were done on TEIA. (Most secure.)
+      </p>
+      <br />
+      <p>
+        "✅Tezos Verified" indicates that the work was created on a
+        Tezos-compatible minting contract, but registered with TEIA's
+        registration contract.
       </p>
       <br />
       <p>
@@ -1078,7 +1087,16 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     >
                       {token.metadata.name}
                     </h4>
-                    ☑️ TEIA Verified ✅ Tezos Verified
+                    <div className={styles.verifiedStatus}>
+                      {token.contractAddress === HEN_CONTRACT_FA2 ? (
+                        <>☑️✅ TEIA + Tezos Verified</>
+                      ) : token.contractAddress.startsWith('KT1') ? (
+                        <>✅ Tezos Verified</>
+                      ) : (
+                        <>⚠️ External Link</>
+                      )}
+                    </div>
+                    <br />
                     <button
                       onClick={(e) => handleRemoveToken(index, e)}
                       style={{

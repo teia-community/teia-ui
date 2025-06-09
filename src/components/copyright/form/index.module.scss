@@ -56,3 +56,8 @@
 .visualizer-image-download-button:hover {
   text-decoration: underline;
 }
+
+.verifiedStatus {
+  border: 1px dashed var(--text-color);
+  padding: 5px;
+}
