@@ -12,7 +12,6 @@ import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { HashToURL } from '@utils'
 import { fetchTokenMetadata } from '@data/swr'
-import AgreementViewer from '../display/AgreementViewer'
 
 const initialClauses = {
   reproduce: false,
@@ -937,7 +936,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               }}
             >
               <img
-                src={HashToURL(currentToken.metadata.thumbnailUri, 'IPFS')}
+                src={HashToURL(currentToken.metadata.displayUri, 'IPFS')}
                 alt={currentToken.metadata.name}
               />
               <div>
@@ -1068,7 +1067,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 >
                   {token.contractAddress !== 'external' && (
                     <img
-                      src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                      src={HashToURL(token.metadata.displayUri, 'IPFS')}
                       alt={token.metadata.name}
                       style={{
                         width: '100%',

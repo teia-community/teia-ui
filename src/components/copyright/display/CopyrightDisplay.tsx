@@ -7,6 +7,7 @@ import { HashToURL } from '@utils'
 import styles from './index.module.css'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import AgreementViewer from './AgreementViewer'
+import AgreementViewer from './AgreementViewer'
 
 interface TezosNFTReference {
   contract: string
@@ -145,6 +146,55 @@ export default function CopyrightDisplay() {
                 </button>
                 {expandedItems[entry.id] && (
                   <div className={styles.agreementDetails}>
+                    <br />
+                    <h3>Agreement Details</h3>
+                    <br />
+                    <div className={styles.agreementText}>
+                      <p>
+                        {value.clauses.firstParagraph}
+                      </p>
+                      <AgreementViewer />
+                    </div>
+                    <br />
+                    <p>Registrar Address: {entry.key.address}</p>
+                    <br />
+                    <h3>Clauses</h3>
+                    {value?.clauses && (
+                      <div className="mt-3">
+                        <ul className="text-sm list-disc pl-5 space-y-1">
+                          {Object.entries(value.clauses).map(([key, val]) => {
+                            if (key === 'firstParagraph') return null
+
+                            let label = key.replace(/([A-Z])/g, ' $1')
+                            label = label.charAt(0).toUpperCase() + label.slice(1)
+
+                            if (key === 'customUri' && val) {
+                              return (
+                                <li key={key}>
+                                  {label}:{' '}
+                                  <a
+                                    href={val as string}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 underline"
+                                  >
+                                    {val}
+                                  </a>
+                                </li>
+                              )
+                            }
+
+                            return (
+                              <li key={key}>
+                                {label}: {typeof val === 'boolean' ? (val ? '✅ Yes' : '❌ No') : val || '—'}
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      </div>
+                    )}
+                    <br />
+                    <h3>Registered Works</h3>
                       <h3>Registered Works</h3>
                     <br />
                     {nfts.length > 0 && (
