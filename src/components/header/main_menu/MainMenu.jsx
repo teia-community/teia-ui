@@ -78,6 +78,7 @@ export const MainMenu = () => {
             className={styles.menu_label}
             label="Copyright"
             route="copyright"
+            need_sync
           />
 
           <MenuItem className={styles.menu_label} label="Polls" route="polls" />
