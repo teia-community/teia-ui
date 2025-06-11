@@ -10,6 +10,7 @@ export const PATH = {
   FAQ: '/faq',
   CLAIM: '/claim',
   DAO: '/dao',
+  COPYRIGHT: '/copyright',
   PROPOSAL: '/proposal',
   POLLS: '/polls',
   POLL: '/poll',
