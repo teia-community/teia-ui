@@ -22,13 +22,6 @@ export const MenuItem = ({
   const address = useUserStore((st) => st.address)
   const setCollapsed = useModalStore((st) => st.setCollapsed)
 
-  console.log('NAVIGATING:', {
-  route,
-  need_sync,
-  address,
-  passing_state: need_sync ? `/${route}` : null
-});
-
   return (
     <Button
       className={`${need_sync && !address ? styles.disabled : ''} ${
