@@ -27,8 +27,8 @@ export const MenuItem = ({
       className={`${need_sync && !address ? styles.disabled : ''} ${
         className ? className : ''
       } `}
-      to={need_sync ? '/sync' : `/${route}`}
-      state={need_sync ? `/${route}` : null}
+      to={need_sync && !address ? '/sync' : `/${route}`}
+      state={need_sync && address ? `/${route}` : null}
       onTo={() => setCollapsed(true)}
     >
       {label}

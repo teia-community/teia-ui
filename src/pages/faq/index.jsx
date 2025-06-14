@@ -344,26 +344,9 @@ export const FAQ = () => {
   <p><strong>Disclaimer:</strong> TEIA is not a legal entity, organization, or institution with the authority to enforce laws or resolve disputes. The agreements attached to each mint (NFT) constitute a direct contractual relationship between the artist (licensor) and the collector (licensee). The terms of these agreements are determined at the time of minting and must be resolved through mutually agreed-upon means in the event of a dispute. Both parties are responsible for conclusively proving ownership of the relevant wallet(s) if required.</p>
   <br />
   <h3>Step-by-Step Guide</h3>
-  <ol>
-    <li>
-      <p><strong>Sync Your Wallet:</strong> Ensure your wallet is synced with TEIA and that it is the correct wallet address you wish to associate with the agreements.</p>
-    </li>
-    <li>
-      <p><strong>Navigate to "Mint":</strong> Go to the "Mint" section to begin creating your OBJKT.</p>
-    </li>
-    <li>
-      <p><strong>Select "Custom License":</strong> Fill in the required details for your OBJKT, then choose "Custom License" from the License menu.</p>
-    </li>
-    <li>
-      <p><strong>Define Your Terms:</strong> Review the available options for copyright clauses and permissions. Each option includes detailed explanations—read them thoroughly to select the agreement that best suits your work. If additional details or modifications are needed, use the Addendum section to customize the agreement.</p>
-    </li>
-    <li>
-      <p><strong>Mint Your OBJKT:</strong> Once the terms are finalized, proceed to mint your OBJKT as usual.</p>
-    </li>
-    <li>
-      <p><strong>Verify the Agreement:</strong> After minting, visit the "Asset" page to confirm that the clauses were saved correctly. Your work, along with its associated agreements, is now permanently registered on-chain. This makes it searchable on any platform that supports the metadata format. <a href="/objkt/863531/copyright" target="_blank" rel="noopener noreferrer">(View Example)</a></p>
-    </li>
-  </ol>
+  <p>A member of the TEIA organization has minted the latest guide as an NFT here:</p>
+  <br />
+  <p><a href="/objkt/869379" target="_blank">©️ TEIA Copyright Registration and Licensing Guide</a></p>
   <br />
   <h3>Important Notes</h3>
   <ul>
