@@ -23,8 +23,10 @@ const initialClauses = {
   releasePublicDomain: false,
   requireAttribution: true,
   rightsAreTransferable: true,
-  expirationDate: '',
-  expirationDateExists: false,
+  expirationDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+    .toISOString()
+    .split('T')[0],
+  expirationDateExists: true,
   customUriEnabled: false,
   customUri: '',
   addendum: '',
@@ -131,7 +133,7 @@ export const ClausesDescriptions = ({ clauses }) => {
                 </li>
                 <li key="expirationDate">
                   {clauseLabels.expirationDate}:{' '}
-                  {clauses.expirationDateExists && clauses.expirationDate
+                  {clauses.expirationDate
                     ? new Date(clauses.expirationDate).toLocaleDateString(
                         'en-US',
                         {
@@ -472,7 +474,7 @@ Each individual claiming ownership ("Claimant") must conclusively prove that the
 This Agreement is entered into solely between the Creator and the Owner(s) of the Non-Fungible Token ("NFT") and the associated digital or physical artwork ("Work"). TEIA (teia.art), formally operating under TEIA DAO LLC, and its affiliated members, collectively referred to as "Platform," do not bear any responsibility for the enforcement, execution, or maintenance of this Agreement. The Platform serves only as a venue for the creation, display, and trading of NFTs and does not participate in any legal relationships established under this Agreement between the Creator and the Owner(s). All responsibilities related to the enforcement and adherence to the terms of this Agreement rest solely with the Creator and the Owner(s). The Platform disclaims all liability for any actions or omissions of any user related to the provisions of this Agreement.`
 
       documentText += `\n\n${clauseNumber++}. Perpetuity of Agreement:
-Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated.`
+Unless stated otherwise (in this Agreement itself), this Agreement remains effective in perpetuity as long as the Owner(s) can conclusively demonstrate proof of ownership of the NFT representing the Work, beyond reasonable doubt. Proof of ownership must be substantiated through reliable and verifiable means, which may include, but are not limited to, transaction records, cryptographic proofs, or any other blockchain-based evidence that unequivocally establishes ownership. This perpetual license ensures that the rights and privileges granted under this Agreement persist as long as the ownership criteria are met and validated. Expiry dates mentioned in the Agreement above will override the perpetuity of this clause on the date specified.`
 
       documentText += `\n\n${clauseNumber++}. Agreement Modifications:
 Any modification to this Agreement's terms requires explicit consent from both the Creator(s) and current Owner(s). Such amendments shall only apply to consenting parties and shall not alter existing agreements with non-consenting Owners. The Agreement shall maintain its original terms for any Owner-Creator relationship where mutual consent to amendments is not obtained, resulting in potentially differing agreement versions existing concurrently between different Owners of the same work. Smart contract execution shall serve as conclusive evidence of acceptance of amended terms.`
@@ -825,9 +827,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
             <h4>{clauseLabels.expirationDate}</h4>
             <Input
               type="date"
-              value={clauses?.expirationDate}
+              value={clauses?.expirationDate || initialClauses?.expirationDate}
               onChange={(e) => handleChange(e, 'expirationDate')}
-              defaultValue={defaultValue?.clauses?.expirationDate}
+              defaultValue={initialClauses?.expirationDate}
               className={styles.field}
             />
           </div>
