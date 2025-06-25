@@ -318,6 +318,7 @@ export const FAQ = () => {
     </li>
   </ol>
   <br />
+  <p>After your swap is active, the listing will show up in the <strong>Curation</strong> tab on your profile.</p>
   <p><em>IMPORTANT: Once swapping something up for sale, it is held in the Teia escrow wallet while it is "on the market." Therefore, the OBJKT will disappear from your collections. Don't worry; it's still up for sale!</em></p>
   <hr>
   <br />
