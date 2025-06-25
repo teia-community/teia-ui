@@ -1,0 +1,72 @@
+@import '@styles/layout.scss';
+
+.container {
+  display: flex;
+  flex-direction: column !important;
+  .field {
+    p {
+      white-space: pre-wrap;
+    }
+  }
+
+  .media,
+  .info {
+    width: 100%;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .attributes {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+  .label {
+    color: var(--gray-40);
+    border: 1px solid var(--gray-30);
+    padding: 6px 8px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: default;
+    --borderWidth: 2px;
+    position: relative;
+    white-space: nowrap;
+    margin-right: 10px;
+    display: flex;
+    min-width: fit-content;
+    max-width: fit-content;
+    align-items: center;
+  }
+
+  strong {
+    margin-right: 1em;
+    min-width: 75px;
+  }
+
+  @include respond-to('tablet') {
+    flex-direction: initial;
+
+    .media {
+      min-height: 40vh;
+      // display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      padding-left: 10px;
+
+      .title,
+      .field {
+        margin-bottom: 20px;
+      }
+      .title {
+        font-weight: bold;
+      }
+    }
+  }
+}

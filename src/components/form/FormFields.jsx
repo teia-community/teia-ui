@@ -12,7 +12,6 @@ import {
 } from '@constants'
 import { Controller, useFormContext } from 'react-hook-form'
 import classNames from 'classnames'
-import CustomCopyrightForm from './CustomCopyrightForm'
 import { processAudioForVisualizer } from '@utils/mint'
 import { Button } from '@atoms/button'
 import MetadataOverlay, {
@@ -298,23 +297,6 @@ export const FormFields = ({ value, field, error, register, control }) => {
               </>
             )
           }}
-        />
-      )
-
-    case 'customCopyrightForm':
-      return (
-        <Controller
-          control={control}
-          name="customLicenseData"
-          defaultValue={field.defaultValue}
-          rules={field.rules}
-          render={({ field: { onChange, value } }) => (
-            <CustomCopyrightForm
-              onChange={onChange}
-              value={value}
-              defaultValue={field.defaultValue}
-            />
-          )}
         />
       )
 

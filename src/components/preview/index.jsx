@@ -7,7 +7,6 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
-import { ClausesDescriptions } from '@components/form/CustomCopyrightForm'
 function isHTML(mimeType) {
   return (
     mimeType === MIMETYPE.ZIP ||
@@ -116,15 +115,6 @@ export const Preview = () => {
         </div>
         <Field title="Description" value={description} />
         <Field title="License" value={license?.label} />
-        {customLicenseData?.clauses && license?.label === 'Custom License' && (
-          <div>
-            <ClausesDescriptions clauses={customLicenseData?.clauses} />
-            <Field
-              title="Copyright License Agreement"
-              value={customLicenseData?.documentText}
-            />
-          </div>
-        )}
         <Field title="Language" value={language?.label} />
 
         {(photosensitiveSeizureWarning || nsfw) && (
