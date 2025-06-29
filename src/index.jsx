@@ -64,6 +64,7 @@ import { Terms } from '@pages/terms'
 import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
@@ -96,7 +97,10 @@ const display_routes = (
 )
 
 //TODO(mel): Check/Update site map / robot.txt
-const router = createBrowserRouter(
+
+const routerCreator =
+  import.meta.env.BASE_URL === '/' ? createBrowserRouter : createHashRouter
+const router = routerCreator(
   createRoutesFromElements(
     <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
@@ -195,7 +199,10 @@ const router = createBrowserRouter(
         {display_routes}
       </Route>
     </Route>
-  )
+  ),
+  {
+    basename: import.meta.env.BASE_URL,
+  }
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
