@@ -11,7 +11,7 @@ import { useFormContext } from 'react-hook-form'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { HashToURL } from '@utils'
-import { fetchTokenMetadata } from '@data/swr'
+import { fetchTokenMetadataForCopyrightSearch } from '@data/swr'
 
 const initialClauses = {
   reproduce: false,
@@ -231,7 +231,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     }
 
     try {
-      const tokenData = await fetchTokenMetadata(
+      const tokenData = await fetchTokenMetadataForCopyrightSearch(
         token.contractAddress,
         token.tokenId
       )

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useUserStore } from '@context/userStore'
-import { fetchUserCopyrights, fetchTokenMetadata } from '@data/swr'
+import { fetchUserCopyrights, fetchTokenMetadataForCopyrightSearch } from '@data/swr'
 import { HashToURL } from '@utils'
 import styles from './index.module.css'
 import { HEN_CONTRACT_FA2 } from '@constants'
@@ -91,7 +91,7 @@ export default function CopyrightDisplay() {
           const key = `${nft.contract}:${nft.token_id}`
           if (!metaMap[key]) {
             try {
-              const meta = await fetchTokenMetadata(nft.contract, nft.token_id)
+              const meta = await fetchTokenMetadataForCopyrightSearch(nft.contract, nft.token_id)
               metaMap[key] = meta?.metadata || {}
             } catch (err) {
               console.warn(`Failed to fetch metadata for ${key}`, err)
