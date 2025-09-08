@@ -274,7 +274,7 @@ interface TzktData {
  */
 export const GetUserMetadata = async (walletAddr: string) => {
   const tzktData: TzktData = await getTzktData(
-    `/v1/accounts/${walletAddr}/metadata`
+    `/v1/accounts/${walletAddr}`
   )
 
   return tzktData
