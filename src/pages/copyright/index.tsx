@@ -33,9 +33,22 @@ export default function CopyrightPage() {
   });
 
   const tabs = useMemo(() => {
-    TABS[1].disabled = isDirty || !isValid || Object.keys(errors).length > 0;
+    const { customLicenseData } = useCopyrightStore.getState();
+    
+    // Preview tab: Enable when we have tokens and at least some clauses selected
+    const hasTokens = customLicenseData?.tokens?.length > 0;
+    const hasClauses = customLicenseData?.clauses && Object.values(customLicenseData.clauses).some(value => 
+      value === true || (typeof value === 'string' && value !== 'none' && value !== '')
+    );
+    
+    TABS[1].disabled = !hasTokens || !hasClauses;
+    
+    // Create tab: Enable when preview requirements are met and form is valid
+    TABS[2].disabled = !hasTokens || !hasClauses || !isValid || Object.keys(errors).length > 0;
+    TABS[2].to = 'copyrightcreate';
+    
     return TABS;
-  }, [isValid, errors, isDirty]);
+  }, [isValid, errors]);
 
   const minterName = useMemo(() => {
     return proxyName || proxyAddress || userInfo?.name || address;
