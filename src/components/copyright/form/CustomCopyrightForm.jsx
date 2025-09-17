@@ -181,6 +181,9 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const [documentText, setDocumentText] = useState('No Permissions Chosen')
 
   const [searchTokenQuery, setSearchTokenQuery] = useState('')
+  const [contractAddress, setContractAddress] = useState('')
+  const [tokenId, setTokenId] = useState('')
+  const [inputMode, setInputMode] = useState('url') // 'url' or 'contract'
   const { customLicenseData } = useCopyrightStore()
   const [tokens, setTokens] = useState(customLicenseData?.tokens || [])
   const [currentToken, setCurrentToken] = useState(null)
@@ -192,30 +195,65 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     setFetchingToken(true)
     setCurrentToken(null)
 
-    if (!searchTokenQuery || searchTokenQuery.trim() === '') {
-      openModal('Invalid Input', 'The input cannot be empty.')
-      setFetchingToken(false)
-      return
+    let token
+    
+    if (inputMode === 'url') {
+      if (!searchTokenQuery || searchTokenQuery.trim() === '') {
+        openModal('Invalid Input', 'The input cannot be empty.')
+        setFetchingToken(false)
+        return
+      }
+      token = extractTokenFromString(searchTokenQuery)
+    } else {
+      // Contract/Token ID mode
+      if (!contractAddress || !tokenId || contractAddress.trim() === '' || tokenId.trim() === '') {
+        openModal('Invalid Input', 'Both contract address and token ID are required.')
+        setFetchingToken(false)
+        return
+      }
+      
+      // Validate contract address format
+      if (!contractAddress.startsWith('KT1') || contractAddress.length !== 36) {
+        openModal('Invalid Contract', 'Please enter a valid Tezos contract address (starts with KT1).')
+        setFetchingToken(false)
+        return
+      }
+      
+      // Validate token ID is a number
+      if (!/^\d+$/.test(tokenId)) {
+        openModal('Invalid Token ID', 'Token ID must be a number.')
+        setFetchingToken(false)
+        return
+      }
+      
+      token = {
+        contractAddress: contractAddress,
+        tokenId: tokenId
+      }
     }
 
-    const token = extractTokenFromString(searchTokenQuery)
-
     if (!token) {
-      const externalToken = {
-        contractAddress: 'external',
-        tokenId: null,
-        metadata: {
-          name: searchTokenQuery,
-          thumbnailUri: '',
-          creators: [address],
-          description:
-            "*This is an external or custom token reference - make sure that the link is valid and will be maintained for the agreement's applicable usage and time frames.",
-        },
-      }
+      if (inputMode === 'url') {
+        const externalToken = {
+          contractAddress: 'external',
+          tokenId: null,
+          metadata: {
+            name: searchTokenQuery,
+            thumbnailUri: '',
+            creators: [address],
+            description:
+              "*This is an external or custom token reference - make sure that the link is valid and will be maintained for the agreement's applicable usage and time frames.",
+          },
+        }
 
-      setCurrentExternalToken(externalToken)
-      setFetchingToken(false)
-      return
+        setCurrentExternalToken(externalToken)
+        setFetchingToken(false)
+        return
+      } else {
+        openModal('Error', 'Could not process the contract and token ID.')
+        setFetchingToken(false)
+        return
+      }
     }
 
     const isDuplicate = tokens.some(
@@ -235,18 +273,57 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
         token.contractAddress,
         token.tokenId
       )
-      const tokenCreators = tokenData?.metadata?.creators || []
-
-      if (!tokenCreators.includes(address)) {
-        openModal('Ownership Verification', 'This is not your token.')
-        setFetchingToken(false)
-        return
+      
+      if (tokenData?.metadata) {
+        const tokenCreators = tokenData.metadata.creators || []
+        
+        if (!tokenCreators.includes(address)) {
+          openModal('Ownership Verification', 'This is not your token.')
+          setFetchingToken(false)
+          return
+        }
+        
+        setCurrentToken({ ...token, metadata: tokenData.metadata })
+      } else {
+        // No metadata found, handle based on input mode
+        if (inputMode === 'contract') {
+          // For contract + token ID mode, always add the token even if no metadata
+          const fallbackToken = {
+            contractAddress: token.contractAddress,
+            tokenId: token.tokenId,
+            metadata: {
+              name: `Token ${token.tokenId}`,
+              displayUri: '',
+              creators: [address],
+              description: `Token ID: ${token.tokenId}, Contract: ${token.contractAddress} - Metadata could not be fetched but token will be included as Tezos verification.`,
+            },
+          }
+          setCurrentToken(fallbackToken)
+        } else {
+          // For URL mode, suggest using contract & token ID instead
+          openModal('Metadata Not Found', 'The search feature could not find a token related to that URL. This does not, however, mean that the work itself does not exist. Please select Contract + Token ID to enter your token details manually to ensure that the work gets properly registered.')
+        }
       }
-
-      setCurrentToken({ ...token, metadata: tokenData.metadata })
     } catch (err) {
       console.error(err)
-      openModal('Error', 'Could not fetch token data.')
+      
+      if (inputMode === 'contract') {
+        // For contract + token ID mode, always add the token even if fetch fails
+        const fallbackToken = {
+          contractAddress: token.contractAddress,
+          tokenId: token.tokenId,
+          metadata: {
+            name: `Token ${token.tokenId}`,
+            displayUri: '',
+            creators: [address],
+            description: `Token ID: ${token.tokenId}, Contract: ${token.contractAddress} - Metadata could not be fetched but token will be included as Tezos verification.`,
+          },
+        }
+        setCurrentToken(fallbackToken)
+      } else {
+        // For URL mode, suggest using contract & token ID instead
+        openModal('Metadata Not Found', 'Could not fetch token metadata from the provided URL. Please try using the "Contract + Token ID" option instead if you know the specific contract address and token ID.')
+      }
     }
 
     setFetchingToken(false)
@@ -613,9 +690,14 @@ Any modification to this Agreement's terms requires explicit consent from both t
 
   useEffect(() => {
     onChange({ clauses, documentText, tokens })
-    useCopyrightStore.setState({
-      customLicenseData: { clauses, documentText, tokens },
-    })
+    useCopyrightStore.setState((prevState) => ({
+      customLicenseData: {
+        ...prevState.customLicenseData,
+        clauses,
+        documentText,
+        tokens,
+      },
+    }))
   }, [clauses, documentText, tokens, onChange])
 
   const propertiesWithCheckboxes = [
@@ -636,16 +718,6 @@ Any modification to this Agreement's terms requires explicit consent from both t
 
   const handleModalOpen = (clauseKey) => {
     openModal(clauseLabels[clauseKey], copyrightModalText[clauseKey])
-  }
-
-  const handleModalOpen2 = (clauseName) => {
-    const modalContent = copyrightModalText[clauseName]
-
-    setModalState({
-      isOpen: true,
-      title: clauseLabels[clauseName],
-      content: modalContent || 'No detailed information available.',
-    })
   }
 
   const handleKeyPress = (event, title) => {
@@ -892,14 +964,87 @@ Any modification to this Agreement's terms requires explicit consent from both t
             verified.)
           </p>
           <br />
-          <h4>Enter Token URL</h4>
-          <Input
-            type="text"
-            value={searchTokenQuery}
-            onChange={handleSearchTokenInputChange}
-            placeholder="Enter a Tezos Token URL or External URL"
-            className={styles.field}
-          />
+          
+          <div style={{ marginBottom: '1em', display: 'flex', gap: '10px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setInputMode('url')
+                // Clear inputs when switching modes
+                setSearchTokenQuery('')
+                setContractAddress('')
+                setTokenId('')
+              }}
+              style={{
+                border: '1px solid #ccc',
+                padding: '10px 15px',
+                backgroundColor: inputMode === 'url' ? '#FFFFFF' : 'transparent',
+                color: inputMode === 'contract' ? 'white' : 'black',
+                cursor: 'pointer',
+              }}
+            >
+              URL Input
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setInputMode('contract')
+                // Clear inputs when switching modes
+                setSearchTokenQuery('')
+                setContractAddress('')
+                setTokenId('')
+              }}
+              style={{
+                border: '1px solid #ccc',
+                padding: '10px 15px',
+                backgroundColor: inputMode === 'contract' ? '#FFFFFF' : 'transparent',
+                color: inputMode === 'contract' ? 'black' : 'white',
+                cursor: 'pointer',
+              }}
+            >
+              Contract + Token ID
+            </button>
+          </div>
+          
+          {inputMode === 'url' ? (
+            <>
+              <h4>Enter Token URL</h4>
+              <Input
+                type="text"
+                value={searchTokenQuery}
+                onChange={handleSearchTokenInputChange}
+                placeholder="Enter a Tezos Token URL or External URL"
+                className={styles.field}
+              />
+              {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
+                <p style={{ color: 'yellow', marginTop: '5px' }}>
+                  ⚠️ Warning: The above input does not follow a standard URL/URI
+                  scheme. (Non-standard inputs are still allowed, this is just a
+                  reminder.)
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <h4>Enter Contract Address</h4>
+              <Input
+                type="text"
+                value={contractAddress}
+                onChange={(e) => setContractAddress(e?.target?.value || e || '')}
+                placeholder="Enter contract address (e.g., KT1...)"
+                className={styles.field}
+              />
+              <h4 style={{ marginTop: '1em' }}>Enter Token ID</h4>
+              <Input
+                type="text"
+                value={tokenId}
+                onChange={(e) => setTokenId(e?.target?.value || e || '')}
+                placeholder="Enter token ID (e.g., 123456)"
+                className={styles.field}
+              />
+            </>
+          )}
+          
           <button
             onClick={handleSearchTokenSubmit}
             style={{
@@ -910,13 +1055,6 @@ Any modification to this Agreement's terms requires explicit consent from both t
           >
             Search Token
           </button>
-          {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
-            <p style={{ color: 'yellow', marginTop: '5px' }}>
-              ⚠️ Warning: The above input does not follow a standard URL/URI
-              scheme. (Non-standard inputs are still allowed, this is just a
-              reminder.)
-            </p>
-          )}
         </div>
 
         {fetchingToken && <div className="loading-spinner"></div>}
@@ -956,21 +1094,16 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 setTokens(updatedTokens)
                 setCurrentToken(null)
                 setSearchTokenQuery('')
-                useCopyrightStore.setState((prevState) => ({
-                  customLicenseData: {
-                    ...prevState.customLicenseData,
-                    clauses,
-                    documentText: newDocumentText,
-                    tokens: updatedTokens,
-                  },
-                }))
+                setContractAddress('')
+                setTokenId('')
                 setDocumentText(newDocumentText)
                 setGeneratedDocument(newDocumentText)
                 useCopyrightStore.setState((prevState) => ({
                   customLicenseData: {
                     ...prevState.customLicenseData,
                     clauses,
-                    documentText,
+                    documentText: newDocumentText,
+                    tokens: updatedTokens,
                   },
                 }))
               }}
@@ -1018,6 +1151,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 setTokens(updatedTokens)
                 setCurrentExternalToken(null)
                 setSearchTokenQuery('')
+                setContractAddress('')
+                setTokenId('')
                 setDocumentText(newDocumentText)
                 setGeneratedDocument(newDocumentText)
                 useCopyrightStore.setState((prevState) => ({
