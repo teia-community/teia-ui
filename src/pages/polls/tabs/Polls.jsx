@@ -62,6 +62,15 @@ export default function Polls() {
         guide <a href="/dao">here.</a>
       </p>
       <p>
+        To discuss the details of polls or proposals, you can use{' '}
+        <a href="https://discourse.teia.art/" target="_blank" rel="noreferrer">
+          this forum
+        </a>{' '}
+        to start a new thread with the poll number and title as the reference.
+        (Note that this is a third-party service and will not get recorded
+        "officially" on-chain.)
+      </p>
+      <p>
         <a
           href="https://quipuswap.com/swap/tez-KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV_0"
           target="_blank"
