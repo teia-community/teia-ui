@@ -2,178 +2,111 @@ import { useNavigate } from 'react-router'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { Button } from '@atoms/button'
 import { HashToURL } from '@utils'
+import { HEN_CONTRACT_FA2 } from '@constants'
+import { ClausesDescriptions } from '../form/CustomCopyrightForm'
+import styles from './index.module.scss'
 
 export function CopyrightPreview() {
   const navigate = useNavigate()
   const { customLicenseData } = useCopyrightStore()
 
+  if (!customLicenseData?.tokens?.length) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.emptyState}>
+          <h2>No Copyright Data Available</h2>
+          <p>Please go back to the Edit tab to create your copyright agreement.</p>
+          <Button onClick={() => navigate('/copyright')}>
+            Go to Edit Tab
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div style={{ margin: '0 auto', textAlign: 'center' }}>
-      <h2>Preview Copyright Information</h2>
-      <br />
-      {/* Display Tokens */}
-      {customLicenseData?.tokens?.length > 0 && (
-        <div>
-          <h3>Selected Works to Apply Copyright:</h3>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '10px',
-            }}
-          >
+    <div className={styles.container}>
+      <h2>Preview Copyright Agreement</h2>
+      
+      <div className={styles.previewContent}>
+        {/* Selected Works Section */}
+        <div className={styles.section}>
+          <h3>Selected Works to Apply Copyright Agreement ({customLicenseData.tokens.length})</h3>
+          <div className={styles.tokenGrid}>
             {customLicenseData.tokens.map((token, index) => (
-              <div
-                key={index}
-                style={{
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  textAlign: 'center',
-                }}
-              >
-                {token.metadata?.thumbnailUri ? (
+              <div key={index} className={styles.tokenCard}>
+                {token.contractAddress !== 'external' && token.metadata?.displayUri ? (
+                  <img
+                    src={HashToURL(token.metadata.displayUri, 'IPFS')}
+                    alt={token.metadata.name}
+                    className={styles.tokenImage}
+                  />
+                ) : token.contractAddress !== 'external' && token.metadata?.thumbnailUri ? (
                   <img
                     src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
                     alt={token.metadata.name}
-                    style={{ maxWidth: '100%', height: 'auto' }}
+                    className={styles.tokenImage}
                   />
                 ) : (
-                  <p>⚠️ External Link</p>
+                  <div className={styles.placeholderImage}>
+                    {token.contractAddress === 'external' ? '🌐' : '🖼️'}
+                  </div>
                 )}
-                <p>{token.metadata?.name}</p>
+                <div className={styles.tokenInfo}>
+                  <h4>{token.metadata?.name || `Token ${token.tokenId}`}</h4>
+                  <div className={styles.verificationStatus}>
+                    {token.contractAddress === HEN_CONTRACT_FA2 ? (
+                      <span className={styles.verified}>☑️✅ TEIA + Tezos Verified</span>
+                    ) : token.contractAddress.startsWith('KT1') ? (
+                      <span className={styles.tezosVerified}>✅ Tezos Verified</span>
+                    ) : (
+                      <span className={styles.external}>⚠️ External Link</span>
+                    )}
+                  </div>
+                  {token.contractAddress !== 'external' && (
+                    <div className={styles.tokenDetails}>
+                      <small>Token ID: {token.tokenId}</small>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
-      )}
 
-      <div
-        style={{
-          textAlign: 'left',
-          marginTop: '20px',
-          padding: '10px',
-          border: '1px solid #ddd',
-        }}
-      >
-        <h3>Selected Clauses:</h3>
-        <ul>
-          <li>
-            Right to Reproduce:{' '}
-            {customLicenseData?.clauses.reproduce ? '✅ Yes' : '🚫 No'}
-          </li>
-          <li>
-            Right to Broadcast:{' '}
-            {customLicenseData?.clauses.broadcast ? '✅ Yes' : '🚫 No'}
-          </li>
-          <li>
-            Right to Public Display:{' '}
-            {customLicenseData?.clauses.publicDisplay ? '✅ Yes' : '🚫 No'}
-          </li>
-          <li>
-            Right to Create Derivative Works:{' '}
-            {customLicenseData?.clauses.createDerivativeWorks
-              ? '✅ Yes'
-              : '🚫 No'}
-          </li>
-          <li>
-            Exclusive Rights: {customLicenseData?.clauses.exclusiveRights}
-          </li>
-          <li>
-            Creator Retains Rights:{' '}
-            {customLicenseData?.clauses.retainCreatorRights
-              ? '✅ Yes'
-              : '⚠️ No'}
-          </li>
-          <li>
-            Rights Are Transferable:{' '}
-            {customLicenseData?.clauses.rightsAreTransferable
-              ? '✅ Yes'
-              : '🚫 No'}
-          </li>
-          <li>
-            Clauses Have Expiration Date:{' '}
-            {customLicenseData?.clauses.expirationDateExists
-              ? '✅ Yes'
-              : '🚫 No'}
-          </li>
-          {customLicenseData?.clauses.expirationDateExists && (
-            <li>
-              Expiration Date:{' '}
-              {customLicenseData.clauses.expirationDate || 'None'}
-            </li>
-          )}
-          <li>
-            Release to Public Domain:{' '}
-            {customLicenseData?.clauses.releasePublicDomain
-              ? '✅ Yes'
-              : '🚫 No'}
-          </li>
-          <li>
-            Custom URI Enabled:{' '}
-            {customLicenseData?.clauses.customUriEnabled ? '✅ Yes' : '🚫 No'}
-          </li>
-          {customLicenseData?.clauses.customUriEnabled && (
-            <li>Custom URI: {customLicenseData.clauses.customUri}</li>
-          )}
-          {customLicenseData?.clauses.addendum && (
-            <li>Addendum: {customLicenseData.clauses.addendum}</li>
-          )}
-        </ul>
+        {/* Rights and Clauses Section */}
+        <div className={styles.section}>
+          <h3>Copyright Terms & Permissions</h3>
+          <div className={styles.clausesContainer}>
+            <ClausesDescriptions clauses={customLicenseData.clauses} />
+          </div>
+        </div>
+
+        {/* Full Agreement Section */}
+        <div className={styles.section}>
+          <h3>Complete License Agreement</h3>
+          <div className={styles.agreementContainer}>
+            <div className={styles.agreementHeader}>
+              <p>This is the complete legal text that will be registered on the blockchain:</p>
+            </div>
+            <pre className={styles.agreementText}>
+              {customLicenseData?.documentText || 'No document text available.'}
+            </pre>
+          </div>
+        </div>
       </div>
 
-      {/* Display Agreement */}
-      <div
-        style={{ border: '1px solid #ccc', padding: '15px', marginTop: '15px' }}
-      >
-        <h3>Generated Copyright Agreement:</h3>
-
-        <pre
-          style={{
-            whiteSpace: 'pre-wrap',
-            overflowWrap: 'break-word',
-            wordWrap: 'break-word',
-            textAlign: 'left',
-          }}
-        >
-          {customLicenseData?.documentText || 'No document text available.'}
-        </pre>
-      </div>
-
-      {/* Buttons */}
-      <div
-        style={{
-          marginTop: '20px',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '10px',
-        }}
-      >
-        <Button
-          style={{
-            border: '1px solid #ccc',
-            padding: '15px',
-            marginTop: '15px',
-          }}
-          onClick={() => navigate('/copyright')}
-        >
-          Go Back
+      {/* Navigation Buttons */}
+      <div className={styles.actions}>
+        <Button onClick={() => navigate('/copyright')}>
+          ← Back to Edit
         </Button>
-        <Button
-          style={{
-            border: '1px solid #ccc',
-            padding: '15px',
-            marginTop: '15px',
-          }}
-          onClick={async () => {
-            const { submitCopyrightAgreement } = useCopyrightStore.getState()
-            const opHash = await submitCopyrightAgreement()
-            if (opHash) {
-              console.log('Operation successful:', opHash)
-            }
-          }}
+        
+        <Button 
+          onClick={() => navigate('/copyright/copyrightcreate')}
+          shadow_box
         >
-          Confirm & Submit
+          Proceed to Create →
         </Button>
       </div>
     </div>

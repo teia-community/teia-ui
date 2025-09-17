@@ -1,72 +1,202 @@
 @import '@styles/layout.scss';
 
 .container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  
+  h2 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+  
+  p {
+    margin-bottom: 2rem;
+    color: var(--gray-60);
+  }
+}
+
+.previewContent {
   display: flex;
-  flex-direction: column !important;
-  .field {
-    p {
-      white-space: pre-wrap;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section {
+  background: var(--gray-00);
+  border: 1px solid var(--gray-20);
+  border-radius: 8px;
+  padding: 1.5rem;
+  
+  h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+  }
+}
+
+.tokenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.tokenCard {
+  border: 1px solid var(--gray-20);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--background-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.tokenImage {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  background: var(--gray-10);
+}
+
+.placeholderImage {
+  width: 100%;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-10);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  font-size: 2rem;
+}
+
+.tokenInfo {
+  text-align: center;
+  
+  h4 {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 600;
+  }
+}
+
+.verificationStatus {
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+  
+  .verified {
+    color: #28a745;
+    font-weight: 600;
+  }
+  
+  .tezosVerified {
+    color: #17a2b8;
+    font-weight: 600;
+  }
+  
+  .external {
+    color: #ffc107;
+    font-weight: 600;
+  }
+}
+
+.tokenDetails {
+  margin-top: 0.5rem;
+  
+  small {
+    color: var(--gray-60);
+    font-size: 0.75rem;
+  }
+}
+
+.clausesContainer {
+  background: var(--gray-05);
+  border-radius: 6px;
+  padding: 1.5rem;
+  
+  ul {
+    margin: 0;
+    
+    li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--gray-15);
+      
+      &:last-child {
+        border-bottom: none;
+      }
     }
   }
+}
 
-  .media,
-  .info {
-    width: 100%;
+.agreementContainer {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--gray-25);
+}
+
+.agreementHeader {
+  background: var(--gray-05);
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-25);
+  
+  p {
+    margin: 0;
+    font-style: italic;
+    color: var(--gray-60);
   }
-  .info {
-    display: flex;
+}
+
+.agreementText {
+  background: var(--background-color);
+  padding: 1.5rem;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-height: 400px;
+  overflow-y: auto;
+  border: none;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-20);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .tokenGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
     flex-direction: column;
-    align-items: flex-start;
   }
-  .attributes {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 20px;
-  }
-  .label {
-    color: var(--gray-40);
-    border: 1px solid var(--gray-30);
-    padding: 6px 8px;
-    font-weight: bold;
-    font-size: 12px;
-    cursor: default;
-    --borderWidth: 2px;
-    position: relative;
-    white-space: nowrap;
-    margin-right: 10px;
-    display: flex;
-    min-width: fit-content;
-    max-width: fit-content;
-    align-items: center;
-  }
-
-  strong {
-    margin-right: 1em;
-    min-width: 75px;
-  }
-
-  @include respond-to('tablet') {
-    flex-direction: initial;
-
-    .media {
-      min-height: 40vh;
-      // display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .info {
-      display: flex;
-      flex-direction: column;
-      padding-left: 10px;
-
-      .title,
-      .field {
-        margin-bottom: 20px;
-      }
-      .title {
-        font-weight: bold;
-      }
-    }
+  
+  .agreementText {
+    font-size: 0.8rem;
+    padding: 1rem;
   }
 }
