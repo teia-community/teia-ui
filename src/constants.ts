@@ -110,7 +110,7 @@ export const FEED_LIST = [
 
 export type FeedType = (typeof FEED_LIST)[number]
 
-export const DEFAULT_START_FEED: FeedType = 'Recent Sales'
+export const DEFAULT_START_FEED: FeedType = 'New OBJKTs'
 
 //- Mint stuff
 
