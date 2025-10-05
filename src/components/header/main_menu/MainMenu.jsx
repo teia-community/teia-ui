@@ -34,7 +34,11 @@ export const MainMenu = () => {
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
           <MenuItem className={styles.menu_label} route="about" />
-          <MenuItem className={styles.menu_label} label="F.A.Q" route="faq" />
+          <MenuItem
+            className={styles.menu_label}
+            label="Getting Started"
+            route="faq"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
@@ -66,8 +70,15 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="DAO governance"
+            label="DAO Governance"
             route="dao"
+          />
+
+          <MenuItem
+            className={styles.menu_label}
+            label="Copyright"
+            route="copyright"
+            need_sync
           />
 
           <MenuItem className={styles.menu_label} label="Polls" route="polls" />

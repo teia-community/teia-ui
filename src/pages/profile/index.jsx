@@ -38,7 +38,8 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
     })
   }
 
-  const userMetadata = (await GetUserMetadata(holder.user_address)).data
+  const userMetadata = await GetUserMetadata(holder.user_address)
+  console.log(userMetadata)
   const user = userMetadata ? { ...userMetadata } : {}
 
   user.address = holder.user_address
@@ -123,7 +124,9 @@ export default function Display() {
   const TABS = [
     { title: 'Creations', to: '' },
     { title: 'Collection', to: 'collection' },
+    { title: 'Curation', to: 'curation' },
     { title: 'Collabs', to: 'collabs' },
+    { title: 'Copyrights', to: 'copyrights' },
   ]
 
   return (

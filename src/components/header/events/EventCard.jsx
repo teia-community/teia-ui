@@ -37,12 +37,12 @@ export const EventCard = ({ event }) => {
             )}
           </Button>
         ) : (
-          <>
+          <Button>
             {event.title}
             {event.icon && (
               <span className={styles.event_icon}>{event.icon}</span>
             )}
-          </>
+          </Button>
         )}
       </motion.h1>
       <motion.p variants={itemVariants} className={styles.event_tag_line}>

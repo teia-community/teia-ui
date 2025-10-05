@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
+import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -255,4 +255,99 @@ export function useObjkt(id) {
   )
 
   return [data, mutate]
+}
+
+export const fetchTokenMetadata = async (contractAddress, tokenId) => {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const response = await fetch(url)
+  if (!response.ok) throw new Error('Failed to fetch metadata')
+  const data = await response.json()
+  return data[0]
+}
+
+export async function fetchUserCopyrights(address) {
+  if (!address) return []
+
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Failed to fetch user copyrights:', err)
+    return []
+  }
+}
+
+export async function fetchAllCopyrights() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
+  } catch (err) {
+    console.error('Failed to fetch all copyrights:', err)
+    return []
+  }
+}
+
+export async function fetchProposals() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`TzKT API error: ${res.statusText}`)
+    }
+
+    return await res.json()
+  } catch (err) {
+    console.error('Failed to fetch proposals:', err)
+    return []
+  }
+}
+
+export async function fetchAllVotes() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
+  } catch (err) {
+    console.error('Failed to fetch votes:', err)
+    return []
+  }
+}
+
+export async function fetchExpirationTime() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    const data = await res.json()
+    return parseInt(data)
+  } catch (err) {
+    console.error('Failed to fetch expiration_time:', err)
+    return 0
+  }
+}
+
+export async function fetchAgreementText() {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    const data = await res.json()
+    return data
+  } catch (err) {
+    console.error('Failed to fetch expiration_time:', err)
+    return 0
+  }
 }

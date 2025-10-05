@@ -1,0 +1,59 @@
+.text_field_error {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.error {
+  color: red;
+}
+
+.field {
+  margin: 0.382em 0 0 0;
+  resize: vertical;
+}
+
+.typed_field {
+  margin-top: 1em;
+}
+
+.typed_field textarea {
+  margin-top: 0.5em;
+  font-family: 'Source Sans Pro', sans-serif;
+  height: 20rem;
+  resize: auto;
+  border: 1px solid var(--border-color) !important;
+  padding: 0;
+}
+
+.typed_preview {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.typed_field textarea.mono {
+  font-family: 'Iosevka', monospace !important;
+}
+
+.modalInfoIcon {
+  user-select: none;
+  margin-left: 0.5em;
+  color: var(--gray-60);
+  cursor: pointer;
+}
+
+.modalInfoIcon:hover {
+  color: var(--highlight-color);
+}
+
+.visualizer-image-download-button {
+  border: 1px solid white !important;
+  padding: 5px;
+  margin: 5px;
+}
+
+.visualizer-image-download-button:hover {
+  text-decoration: underline;
+}

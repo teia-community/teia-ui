@@ -10,6 +10,7 @@ export const PATH = {
   FAQ: '/faq',
   CLAIM: '/claim',
   DAO: '/dao',
+  COPYRIGHT: '/copyright',
   PROPOSAL: '/proposal',
   POLLS: '/polls',
   POLL: '/poll',
@@ -31,9 +32,11 @@ export const MIMETYPE: { [key: string]: string } = {
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
+  MIDI: 'audio/midi',
+  MID: 'audio/mid',
   MP3: 'audio/mpeg',
   MP4: 'video/mp4',
-  OGA: 'audio/ogg',
+  OGG: 'audio/ogg',
   OGV: 'video/ogg',
   PDF: 'application/pdf',
   PNG: 'image/png',
@@ -47,11 +50,22 @@ export const MIMETYPE: { [key: string]: string } = {
   ZIP: 'application/zip',
   ZIP1: 'application/x-zip-compressed',
   ZIP2: 'multipart/x-zip',
+  TXT: 'text/plain',
 }
+
+export const AUDIO_MIME_TYPES = [
+  'audio/mpeg',
+  'audio/wav',
+  'audio/flac',
+  'audio/x-flac',
+  'audio/ogg',
+]
 
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  .filter((e) => e !== MIMETYPE.GLTF) // disabling GLTF from new updates
+  // disabling GLTF from new updates,
+  // disabling TXT upload since they will be done via the textarea input
+  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT)
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
@@ -60,13 +74,13 @@ export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
       ![
         'ZIP1',
         'ZIP2',
-        'OGA',
         'OGV',
         'BMP',
         'TIFF',
         'XWAV',
         'QUICKTIME',
         'WEBP',
+        'TXT',
       ].includes(e[0])
   )
   .map((e) => (e[0] === 'ZIP' ? 'HTML (ZIP ARCHIVE)' : e[0]))
@@ -83,6 +97,7 @@ export const FEED_LIST = [
   '🇵🇰 Pakistan',
   '🇮🇷 Iran',
   '🏳️‍🌈 Tezospride',
+  'Art4Artists',
   'Image',
   'Video',
   'Audio',
@@ -95,7 +110,7 @@ export const FEED_LIST = [
 
 export type FeedType = (typeof FEED_LIST)[number]
 
-export const DEFAULT_START_FEED: FeedType = 'Recent Sales'
+export const DEFAULT_START_FEED: FeedType = 'New OBJKTs'
 
 //- Mint stuff
 
@@ -103,10 +118,15 @@ export const ALLOWED_COVER_MIMETYPES = [
   MIMETYPE.JPEG,
   MIMETYPE.PNG,
   MIMETYPE.GIF,
-  MIMETYPE.MP4,
 ]
 
-export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif, mp4'
+export const AUTO_GENERATE_COVER_MIMETYPES = [
+  'text/plain',
+  'audio/midi',
+  'audio/mid'
+]
+
+export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif'
 export const MAX_EDITIONS = 10000 // Limited by contract
 export const MIN_ROYALTIES = 10
 export const MAX_ROYALTIES = 25
@@ -136,17 +156,19 @@ export const MARKETPLACE_CONTRACTS_TO_NAME = flipObject(
 )
 
 export const HEN_CONTRACT_FA2 = 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton'
-
+export const ART4ARTISTS_BREADFOND_CONTRACT = 'KT1LgnHXu8NVa674xJhSFhnKjrn7v2ZMsu2a'
 export const TEZ4PAL_FUNDING_ADDRESS = 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW'
 export const UKRAINE_FUNDING_CONTRACT = 'KT1DWnLiUkNtAQDErXxudFEH63JC6mqg3HEx'
 export const PAKISTAN_FUNDING_CONTRACT = 'KT1Jpf2TAcZS7QfBraQMBeCxjFhH6kAdDL4z'
 export const IRAN_FUNDING_CONTRACT = 'KT1KYfj97fpdomqyKsZSBdSVvh9afh93b4Ge'
 export const QUAKE_FUNDING_CONTRACT = 'KT1X1jyohFrZyDYWvCPXw9KvWxk2VDwxyg2g'
+export const COPYRIGHT_CONTRACT = 'KT1XAiMoaddkmLUhMYMrc3ghm9uBdLgVbiFK'
 export const MOROCCO_QUAKE_FUNDING_CONTRACT =
   'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA'
 
 export const POLLS_CONTRACT = 'KT1SUExZfkmxf2fafrVgYjZGEKDete2siWoU'
 export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
+export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
@@ -170,22 +192,22 @@ export const TOKENS = [
     fa2: 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV',
     multiasset: false,
     decimals: DAO_TOKEN_DECIMALS,
-    website: undefined
+    website: undefined,
   },
   {
     name: 'OBJKT',
     fa2: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
     multiasset: true,
     decimals: 1,
-    website: 'https://teia.art/objkt/'
+    website: 'https://teia.art/objkt/',
   },
   {
     name: 'hDAO',
     fa2: 'KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW',
     multiasset: false,
     decimals: 1000000,
-    website: undefined
-  }
+    website: undefined,
+  },
 ]
 
 export const SUPPORTED_MARKETPLACE_CONTRACTS = [
@@ -226,7 +248,6 @@ export const LICENSE_TYPES: { [key: string]: string } = {
   'cc-by-nc-4.0': 'CC BY-NC 4.0 (Attribution-NonCommercial)',
   'cc-by-nc-sa-4.0': 'CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)',
   'cc-by-nc-nd-4.0': 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivs)',
-  custom: 'Custom (Specify below)',
 }
 
 export const LICENSE_TYPES_OPTIONS = Object.keys(LICENSE_TYPES).map((k) => ({
@@ -407,9 +428,14 @@ export const TabIndex = {
 // TODO - get this manageable on-chain
 export const ossProjects = [
   {
+    name: 'Art4Artists Breadfond',
+    address: 'KT1LgnHXu8NVa674xJhSFhnKjrn7v2ZMsu2a',
+  },
+  {
     name: 'Tez4Pal Fundraiser',
     address: 'tz2TfuukrHVoeUqFvcRViPJ2VqL7nEQi7xgW',
-  },  {
+  },
+  {
     name: 'TezQuakeAid Morocco Fundraiser',
     address: 'KT1RwXEP8Sj1UQDHPG4oEjRohBdzG2R7FCpA',
   },

@@ -46,12 +46,13 @@ export const Preview = () => {
     artifact,
     cover,
     license,
-    custom_license_uri,
+    customLicenseData,
     royalties,
     language,
     photosensitiveSeizureWarning,
     nsfw,
     editions,
+    isMonoType,
   ] = useMintStore((st) => [
     st.tags,
     st.title,
@@ -59,12 +60,13 @@ export const Preview = () => {
     st.artifact,
     st.cover,
     st.license,
-    st.custom_license_uri,
+    st.customLicenseData,
     st.royalties,
     st.language,
     st.photosensitive,
     st.nsfw,
     st.editions,
+    st.isMonoType,
   ])
 
   const { ignoreUriMap } = useSettings()
@@ -87,8 +89,10 @@ export const Preview = () => {
       </motion.div>
     )
   }
+
   return (
     <motion.div
+      className={styles.container}
       style={{ width: '100%' }}
       initial={{ x: '20%' }}
       animate={{ x: 0 }}
@@ -99,7 +103,7 @@ export const Preview = () => {
       <div className={styles.media}>
         <RenderMediaType
           displayView
-          nft={{ mime_type: artifact.mimeType }}
+          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
           previewUri={artifact.reader}
           previewDisplayUri={cover?.reader}
         />
@@ -111,7 +115,6 @@ export const Preview = () => {
         </div>
         <Field title="Description" value={description} />
         <Field title="License" value={license?.label} />
-        <Field title="License URI" value={custom_license_uri} />
         <Field title="Language" value={language?.label} />
 
         {(photosensitiveSeizureWarning || nsfw) && (

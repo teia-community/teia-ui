@@ -116,9 +116,10 @@ export const useLocalSettings = create<LocalSettingsState>()(
           return rpcNode
         },
         setCustomRpcNode: (customRpcNode: string) => {
-          if (!customRpcNode) {
+          if (!customRpcNode || typeof customRpcNode !== 'string') {
             return
           }
+
           if (!customRpcNode.startsWith('http')) {
             customRpcNode = `https://${customRpcNode}`
           }

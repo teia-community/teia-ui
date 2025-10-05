@@ -47,6 +47,11 @@ fragment baseTokenFields on tokens {
     is_signed
     preview_uri
   }
+
+  tags {
+    tag
+  }
+  
   token_id
 }
 `
@@ -149,7 +154,7 @@ query objkt($id: String!) {
     tags {
       tag
     }
-    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "VERSUM_SWAP", "FA2_TRANSFER", "OBJKT_ASK", "OBJKT_ASK_V2", "OBJKT_ASK_V3", "OBJKT_ASK_V3_PRE"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
+    events(where: { _or: [{ implements: {_eq: "SALE"} }, { type: {_in: ["HEN_MINT", "TEIA_SWAP", "HEN_SWAP", "HEN_SWAP_V2", "VERSUM_SWAP", "FA2_TRANSFER", "OBJKT_ASK", "OBJKT_ASK_V2", "OBJKT_ASK_V3", "OBJKT_ASK_V3_PRE", "OBJKT_ASK_V3_2"]} }]}, order_by: [{level: desc}, {opid: desc}]) {
       timestamp
       implements
       ophash
@@ -255,25 +260,6 @@ export async function fetchObjktDetails(id: string) {
   return data.tokens_by_pk
 }
 
-/**
- * Get User claims from their tzprofile
- */
-const GetUserClaims = async (walletAddr: string) => {
-  return await axios.post(import.meta.env.VITE_TZPROFILES_GRAPHQL_API, {
-    query: `query MyQuery { tzprofiles_by_pk(account: "${walletAddr}") { valid_claims } }`,
-    variables: null,
-    operationName: 'MyQuery',
-  })
-}
-
-interface TzpMetadata {
-  alias?: string
-  tzprofile?: string
-  twitter?: string
-  discord?: string
-  github?: string
-  dns?: string
-}
 interface TzktMetadata {
   twitter?: string
   alias?: string
@@ -287,51 +273,21 @@ interface TzktData {
  * Get User Metadata
  */
 export const GetUserMetadata = async (walletAddr: string) => {
-  const tzktData: TzktData = {}
+  const tzktData: TzktData = await getTzktData(
+    `/v1/accounts/${walletAddr}`
+  )
 
-  const tzpData: TzpMetadata = {}
-  try {
-    const claims = await GetUserClaims(walletAddr)
-    if (claims.data.data.tzprofiles_by_pk !== null)
-      for (const claim of claims.data.data.tzprofiles_by_pk.valid_claims) {
-        const claimJSON = JSON.parse(claim[1])
-        if (claimJSON.type.includes('TwitterVerification')) {
-          if (!tzktData.data || !tzktData.data.twitter) {
-            tzpData.twitter = claimJSON.evidence.handle
-          }
-        } else if (claimJSON.type.includes('BasicProfile')) {
-          if (claimJSON.credentialSubject.alias !== '' && !tzktData.data?.alias)
-            tzpData.alias = claimJSON.credentialSubject.alias
-          tzpData.tzprofile = walletAddr
-        } else if (claimJSON.type.includes('DiscordVerification')) {
-          if (!tzktData.data) {
-            tzpData.discord = claimJSON.evidence.handle
-          }
-        } else if (claimJSON.type.includes('GitHubVerification')) {
-          if (!tzktData.data) {
-            tzpData.github = claimJSON.evidence.handle
-          }
-        } else if (
-          claimJSON.type.includes('DnsVerification') &&
-          !tzktData.data
-        ) {
-          tzpData.dns = claimJSON.credentialSubject.sameAs.slice(4)
-        }
-      }
-  } catch (e: any) {
-    console.error(e, e.stack)
-  }
-
-  if (tzpData) {
-    tzktData.data = tzpData
-  }
   return tzktData
 }
 
 /**
  * Get some data from the TzKT API
  */
-export async function getTzktData(query: string, parameters = {}, debug = false) {
+export async function getTzktData(
+  query: string,
+  parameters = {},
+  debug = false
+) {
   const url = import.meta.env.VITE_TZKT_API + query
   const response = await axios
     .get(url, { params: parameters })

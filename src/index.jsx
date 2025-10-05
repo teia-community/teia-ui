@@ -36,9 +36,11 @@ import {
   TagFeed,
   PdfFeed,
   MarkdownFeed,
+  TextFeed,
   QuakeFeed,
   MoroccoQuakeFeed,
   Tez4PalFeed,
+  Art4ArtistsFeed,
 } from '@pages/home/feeds'
 import Mint from '@pages/mint'
 import { ObjktDisplay } from '@pages/objkt-display'
@@ -49,11 +51,13 @@ import {
   History,
   Swap,
   Transfer,
+  Copyright,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
+import Curation from '@pages/profile/curation'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -71,12 +75,23 @@ import { IconCache } from '@utils/with-icon'
 import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
+import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import CopyrightForm from '@components/copyright/form/CopyrightForm'
+import CopyrightPage from '@pages/copyright'
+import { CopyrightPreview } from '@components/copyright/preview'
+import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
+import { CodeOfConduct } from '@pages/codeofconduct'
+import { CoreValues } from '@pages/corevalues'
+import { PrivacyPolicy } from '@pages/privacypolicy'
+import AdminCopyrightPage from '@pages/admincopyright'
 
 const display_routes = (
   <>
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
+    <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
+    <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
 
@@ -85,6 +100,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
       <Route path="/*" index element={<Home />} />
+      <Route path="admincopyright" element={<AdminCopyrightPage />} />
       <Route path="feed/*" element={<Home />}>
         <Route path="sales" element={<RecentSalesFeed />} />
         <Route path="lists" element={<ListsFeed />} />
@@ -96,6 +112,7 @@ const router = createBrowserRouter(
 
         <Route path="iran" element={<IranFeed />} />
         <Route path="tez4pal" element={<Tez4PalFeed />} />
+        <Route path="art4artists" element={<Art4ArtistsFeed />} />
         <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
         <Route path="quake-aid" element={<QuakeFeed />} />
         <Route path="iran" element={<IranFeed />} />
@@ -110,6 +127,8 @@ const router = createBrowserRouter(
         <Route path="html-svg" element={<HtmlSvgFeed />} />
         <Route path="pdf" element={<PdfFeed />} />
         <Route path="md" element={<MarkdownFeed />} />
+        <Route path="txt" element={<TextFeed />} />
+        <Route path="midi" element={<MidiFeed />} />
 
         <Route path="gif" element={<GifFeed />} />
         <Route path="friends/:address" element={<FriendsFeed />} />
@@ -125,12 +144,19 @@ const router = createBrowserRouter(
       <Route exact path="about" element={<About />} />
       <Route exact path="terms" element={<Terms />} />
       <Route exact path="faq" element={<FAQ />} />
-
+      <Route exact path="codeofconduct" element={<CodeOfConduct />} />
+      <Route exact path="corevalues" element={<CoreValues />} />
+      <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
       <Route path="sync" element={<Sync />} />
       <Route exact path="mint/*" element={<Mint />}>
         <Route index element={<MintForm />} />
         <Route path="preview" element={<Preview />} />
       </Route>
+      <Route exact path="copyright/*" element={<CopyrightPage />}>
+        <Route index element={<CopyrightForm />} />
+        <Route path="copyrightpreview" element={<CopyrightPreview />} />
+      </Route>
+      <Route path="copyrightdisplay" element={<CopyrightDisplay />} />
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
@@ -142,6 +168,7 @@ const router = createBrowserRouter(
         <Route path="swap" element={<Swap />} />
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
+        <Route path="copyright" element={<Copyright />} />
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />

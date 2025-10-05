@@ -1,8 +1,24 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'Art4Artists',
+    icon: '🖼️ ',
+    link: 'https://x.com/EggsUnknow/status/1848805355620602309',
+    subtitle: 'Art4Artists',
+    content:
+      'Tezos Ecosystem #Art4Artists Breadfond',
+  },
+  {
+    title: 'Objkt4Objkt (4th edition)',
+    icon: '🖼️ ',
+    link: 'https://twitter.com/kikanicolela/status/1778112619066413422',
+    subtitle: 'Objkt4Objkt',
+    content:
+      'Community art event to celebrate the creativity and talent in the space, in an inclusive way!',
+  },
+  {
     title: 'Anaverse Integration',
-    icon: '🖼️',
+    icon: '🖼️ ',
     link: 'https://blog.teia.art/blog/anaverse-integration-announcement',
     subtitle: 'new feature',
     content:
@@ -35,7 +51,6 @@ export const sample_events = [
     content:
       'TezosPride is a continuous event to celebrate and support the 2SLGBTQ+ community in the Tezos ecosystem. The main event spans Pride Month (June) annually.',
   },
-
   {
     title: 'TezQuakeAid - Turkey/Syria',
     icon: '🇹🇷🇸🇾 ',

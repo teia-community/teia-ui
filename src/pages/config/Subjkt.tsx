@@ -293,10 +293,10 @@ export const Subjkt = () => {
               <a
                 style={{ fontWeight: 'bold' }}
                 target="_blank"
-                href="https://tzprofiles.com"
+                href="https://profiles.tzkt.io"
                 rel="noreferrer"
               >
-                Tezos Profiles
+                TzKT Profiles
               </a>
             </span>
           </p>

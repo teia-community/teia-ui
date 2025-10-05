@@ -14,10 +14,11 @@ export const defaultValues = {
   editions: '',
   royalties: '',
   license: '',
-  custom_license_uri: '',
+  customLicenseData: {},
   language: '',
   nsfw: false,
   photosensitive: false,
+  isTyped: false,
   artifact: null,
   cover: null,
 }
@@ -35,8 +36,15 @@ export const fields = [
     },
   },
   {
+    label: 'This is a text mint',
+    name: 'isTyped',
+    type: 'checkbox',
+    watch: true,
+  },
+  {
     label: 'Description',
     type: 'textarea',
+    enable_if: 'showArtifact',
     placeholder: 'Max 5000 characters (optional)',
     rules: {
       value: 5000,
@@ -100,20 +108,10 @@ export const fields = [
     options: LICENSE_TYPES_OPTIONS,
   },
   {
-    label: 'Custom license URI',
-    name: 'custom_license_uri',
+    label: 'Custom License',
+    name: 'customLicenseData',
     enable_if: 'useCustomLicense',
-    placeholder: 'The URI to the custom license',
-    type: 'text',
-    rules: {
-      required: true,
-      valueAs: (f) => f.value,
-      pattern: {
-        value:
-          /((https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})|(ipfs:\/\/.*))/g,
-        message: 'Invalid url (supports http, https or ipfs)',
-      },
-    },
+    type: 'customCopyrightForm',
   },
   {
     label: 'Language',
@@ -135,13 +133,31 @@ export const fields = [
     type: 'checkbox',
   },
   {
+    label: 'Monospace Font Required',
+    name: 'isMonoType',
+    type: 'checkbox',
+    enable_if: 'isTyped',
+    watch: true,
+  },
+  {
     label: 'Artifact',
     placeHolder: 'Upload OBJKT',
     name: 'artifact',
     type: 'file',
     watch: true,
+    enable_if: 'showArtifact',
     rules: {
       required: 'You did not select a valid file',
+    },
+  },
+  {
+    label: 'Typed Art Input',
+    name: 'typedinput',
+    type: 'typed-textarea',
+    watch: true,
+    enable_if: 'isTyped',
+    rules: {
+      required: 'Typed art mints cannot be empty.',
     },
   },
   {
