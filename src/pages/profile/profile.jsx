@@ -26,7 +26,9 @@ async function reverseRecord(address) {
 }
 
 export default function Profile({ user }) {
-  const [isDiscordCopied, setDiscordCopied] = useClipboard(user.discord)
+  const [isDiscordCopied, setDiscordCopied] = useClipboard(
+    user.extras?.profile?.discord
+  )
   const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
     successDuration: 2500,
   })
@@ -78,10 +80,10 @@ export default function Profile({ user }) {
           )}
 
           <div className={styles.socials}>
-            {user.twitter && (
+            {user.extras?.profile?.twitter && (
               <Button
-                alt={`User profile on Twitter (@${user.twitter})`}
-                href={`https://twitter.com/${user.twitter}`}
+                alt={`User profile on Twitter (@${user.extras?.profile?.twitter})`}
+                href={`https://twitter.com/${user.extras?.profile?.twitter}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -100,15 +102,17 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.discord && (
+            {user.extras?.profile?.discord && (
               <Button
-                alt={`User profile on Discord, click to copy (${user.discord})`}
+                alt={`User profile on Discord, click to copy (${user.extras?.profile?.discord})`}
                 onClick={setDiscordCopied}
               >
                 <span
                   className={styles.top}
                   data-position={'top'}
-                  data-tooltip={isDiscordCopied ? 'Copied' : user.discord} // TODO: add spaces logic
+                  data-tooltip={
+                    isDiscordCopied ? 'Copied' : user.extras?.profile?.discord
+                  } // TODO: add spaces logic
                   style={{
                     marginRight: '10px',
                   }}
@@ -130,10 +134,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.github && (
+            {user.extras?.profile?.github && (
               <Button
-                alt={`User profile on Github (@${user.github})`}
-                href={`https://github.com/${user.github}`}
+                alt={`User profile on Github (@${user.extras?.profile?.github})`}
+                href={`https://github.com/${user.extras?.profile?.github}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,10 +156,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.gitlab && (
+            {user.extras?.profile?.gitlab && (
               <Button
-                alt={`User profile on gitlab (@${user.gitlab})`}
-                href={`https://gitlab.com/${user.gitlab}`}
+                alt={`User profile on gitlab (@${user.extras?.profile?.gitlab})`}
+                href={`https://gitlab.com/${user.extras?.profile?.gitlab}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -174,8 +178,11 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.site && (
-              <Button alt={`User web site ${user.site}`} href={`${user.site}`}>
+            {user.extras?.profile?.site && (
+              <Button
+                alt={`User web site ${user.extras?.profile?.site}`}
+                href={`${user.extras?.profile?.site}`}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -193,10 +200,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.email && (
+            {user.extras?.profile?.email && (
               <Button
-                alt={`User email address ${user.email}`}
-                href={`mailto: ${user.email}`}
+                alt={`User email address ${user.extras?.profile?.email}`}
+                href={`mailto: ${user.extras?.profile?.email}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -215,10 +222,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.reddit && (
+            {user.extras?.profile?.reddit && (
               <Button
-                alt={`User reddit account (${user.reddit})`}
-                href={`https://www.reddit.com/${user.reddit}`}
+                alt={`User reddit account (${user.extras?.profile?.reddit})`}
+                href={`https://www.reddit.com/${user.extras?.profile?.reddit}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -237,10 +244,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.mailchain && (
+            {user.extras?.profile?.mailchain && (
               <Button
-                alt={`User mailchain address (${user.mailchain})`}
-                href={`https://app.mailchain.com/mailto:${user.mailchain}@tezos.mailchain.com`}
+                alt={`User mailchain address (${user.extras?.profile?.mailchain})`}
+                href={`https://app.mailchain.com/mailto:${user.extras?.profile?.mailchain}@tezos.mailchain.com`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -259,10 +266,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.telegram && (
+            {user.extras?.profile?.telegram && (
               <Button
-                alt={`User telegram account (${user.telegram})`}
-                href={`https://t.me/${user.telegram}`}
+                alt={`User telegram account (${user.extras?.profile?.telegram})`}
+                href={`https://t.me/${user.extras?.profile?.telegram}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -281,10 +288,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.facebook && (
+            {user.extras?.profile?.facebook && (
               <Button
-                alt={`User facebook account (${user.facebook})`}
-                href={`https://www.facebook.com/${user.facebook}`}
+                alt={`User facebook account (${user.extras?.profile?.facebook})`}
+                href={`https://www.facebook.com/${user.extras?.profile?.facebook}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -303,10 +310,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.instagram && (
+            {user.extras?.profile?.instagram && (
               <Button
-                alt={`User instagram account (${user.instagram})`}
-                href={`https://www.instagram.com/${user.instagram}`}
+                alt={`User instagram account (${user.extras?.profile?.instagram})`}
+                href={`https://www.instagram.com/${user.extras?.profile?.instagram}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -325,10 +332,10 @@ export default function Profile({ user }) {
               </Button>
             )}
 
-            {user.dns && (
+            {user.extras?.profile?.dns && (
               <Button
-                alt={`User DNS Profile (${user.dns})`}
-                href={`http://${user.dns}`}
+                alt={`User DNS Profile (${user.extras?.profile?.dns})`}
+                href={`http://${user.extras?.profile?.dns}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
