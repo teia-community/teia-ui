@@ -57,9 +57,16 @@ export default function Polls() {
       </p>
       <p>
         To start or participate in a poll, the wallet sync'd must have a
-        non-zero amount of TEIA tokens, which is a Layer-2 token under the Tezos
-        (XTZ) chain. If you're interested in acquiring $TEIA, you can read the
-        guide <a href="/dao">here.</a>
+        non-zero amount of TEIA tokens, which is a on the Tezos (XTZ) chain. If
+        you're interested in acquiring $TEIA, you can read the guide{' '}
+        <a href="/dao">here.</a>
+      </p>
+      <p>
+        Use Teia DAO tokens to vote, only one vote per person will be counted.
+      </p>
+      <p>
+        The wallet will only be eligible to vote if it had $TEIA at the time of
+        poll creation.
       </p>
       <p>
         To discuss the details of polls or proposals, you can use{' '}
