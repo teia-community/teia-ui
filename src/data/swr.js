@@ -1,6 +1,11 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT } from '@constants'
+import {
+  DAO_TOKEN_CONTRACT,
+  DAO_TOKEN_DECIMALS,
+  COPYRIGHT_CONTRACT,
+  DAO_TREASURY_CONTRACT,
+} from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -258,7 +263,9 @@ export function useObjkt(id) {
 }
 
 export const fetchTokenMetadata = async (contractAddress, tokenId) => {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
   const response = await fetch(url)
   if (!response.ok) throw new Error('Failed to fetch metadata')
   const data = await response.json()
@@ -268,7 +275,9 @@ export const fetchTokenMetadata = async (contractAddress, tokenId) => {
 export async function fetchUserCopyrights(address) {
   if (!address) return []
 
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -278,7 +287,6 @@ export async function fetchUserCopyrights(address) {
 
     const data = await res.json()
     return data
-    
   } catch (err) {
     console.error('Failed to fetch user copyrights:', err)
     return []
@@ -286,7 +294,9 @@ export async function fetchUserCopyrights(address) {
 }
 
 export async function fetchAllCopyrights() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -299,7 +309,9 @@ export async function fetchAllCopyrights() {
 }
 
 export async function fetchProposals() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -315,7 +327,9 @@ export async function fetchProposals() {
 }
 
 export async function fetchAllVotes() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -327,7 +341,9 @@ export async function fetchAllVotes() {
 }
 
 export async function fetchExpirationTime() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -340,7 +356,9 @@ export async function fetchExpirationTime() {
 }
 
 export async function fetchAgreementText() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -350,4 +368,68 @@ export async function fetchAgreementText() {
     console.error('Failed to fetch expiration_time:', err)
     return 0
   }
+}
+
+export function useDaoTokenHolders(limit = 10) {
+  const { data, mutate, error } = useSWR(
+    [`/dao/token-holders/${limit}`, limit],
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&sort.desc=balance&limit=${limit}`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const holders = await res.json()
+
+        return holders.map((holder) => ({
+          address: holder.account.address,
+          alias: holder.account.alias,
+          balance: parseInt(holder.balance) / DAO_TOKEN_DECIMALS,
+          transfersCount: holder.transfersCount,
+          firstTime: holder.firstTime,
+          lastTime: holder.lastTime,
+        }))
+      } catch (err) {
+        console.error('Failed to fetch token holders:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useFountainDonations(contractAddress, limit = 10000) {
+  const { data, mutate, error } = useSWR(
+    contractAddress
+      ? [`/contract-donations/${contractAddress}`, contractAddress, limit]
+      : null,
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/operations/transactions?target=${contractAddress}&select=sender,amount,timestamp&limit=${limit}&status=applied`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const transactions = await res.json()
+        return transactions
+      } catch (err) {
+        console.error('Failed to fetch contract donations:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
 }
