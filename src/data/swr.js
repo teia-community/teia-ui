@@ -429,7 +429,7 @@ export async function fetchAgreementText() {
   }
 }
 
-export function fetchDaoTokenHolders(limit = 10) {
+export function useDaoTokenHolders(limit = 10) {
   const { data, mutate, error } = useSWR(
     [`/dao/token-holders/${limit}`, limit],
     async () => {
@@ -464,7 +464,7 @@ export function fetchDaoTokenHolders(limit = 10) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
-export function fetchFountainDonations(contractAddress, limit = 10000) {
+export function useFountainDonations(contractAddress, limit = 10000) {
   const { data, mutate, error } = useSWR(
     contractAddress
       ? [`/contract-donations/${contractAddress}`, contractAddress, limit]

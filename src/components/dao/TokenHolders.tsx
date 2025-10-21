@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { fetchDaoTokenHolders } from '@data/swr'
+import { useDaoTokenHolders } from '@data/swr'
 import { DAO_TOKEN_CONTRACT, TZKT_API_URL } from '@constants'
 import styles from './TokenHolders.module.css'
 
@@ -15,7 +15,7 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
   showRank = true
 }) => {
   const [currentLimit, setCurrentLimit] = useState(initialLimit)
-  const { data: holders, error, isLoading } = fetchDaoTokenHolders(currentLimit)
+  const { data: holders, error, isLoading } = useDaoTokenHolders(currentLimit)
 
   if (isLoading) {
     return (

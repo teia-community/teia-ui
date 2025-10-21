@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { fetchFountainDonations } from '@data/swr'
+import { useFountainDonations } from '@data/swr'
 import {
   TEIA_FOUNTAIN_CONTRACT,
   DONATION_EXCLUDED_ADDRESSES,
@@ -16,7 +16,7 @@ export function FountainDonors({
     data: transactions,
     isLoading,
     error,
-  } = fetchFountainDonations(TEIA_FOUNTAIN_CONTRACT)
+  } = useFountainDonations(TEIA_FOUNTAIN_CONTRACT)
 
   const allDonors = useMemo(() => {
     if (!transactions) return []

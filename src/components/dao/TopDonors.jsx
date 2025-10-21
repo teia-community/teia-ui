@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { fetchFountainDonations } from '@data/swr'
+import { useFountainDonations } from '@data/swr'
 import { DONATION_EXCLUDED_ADDRESSES, TZKT_API_URL } from '@constants'
 import styles from './TopDonors.module.scss'
 
@@ -13,7 +13,7 @@ export function TopDonors({
     data: transactions,
     isLoading,
     error,
-  } = fetchFountainDonations(contractAddress)
+  } = useFountainDonations(contractAddress)
 
   const allDonors = useMemo(() => {
     if (!transactions) return []
