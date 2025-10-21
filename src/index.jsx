@@ -144,7 +144,7 @@ const router = createBrowserRouter(
         <Route index element={<CollabDisplay />} />
       </Route>
       <Route exact path="about" element={<About />} />
-      <Route exact path="donate" element={<Donate />} />
+      <Route path="donate/*" element={<Donate />} />
       <Route exact path="terms" element={<Terms />} />
       <Route exact path="faq" element={<FAQ />} />
       <Route exact path="codeofconduct" element={<CodeOfConduct />} />
