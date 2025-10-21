@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { fetchFountainDonations } from '@data/swr'
-import { DONATION_EXCLUDED_ADDRESSES } from '@constants'
+import { DONATION_EXCLUDED_ADDRESSES, TZKT_API_URL } from '@constants'
 import styles from './TopDonors.module.scss'
 
 export function TopDonors({
@@ -95,9 +95,25 @@ export function TopDonors({
             <div className={styles.rank}>{index + 1}</div>
             <div className={styles.info}>
               <div className={styles.name}>
-                {donor.alias || `${donor.address.slice(0, 8)}...`}
+                <a
+                  href={`https://tzkt.io/${donor.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`View ${donor.alias || donor.address} profile on TzKT`}
+                >
+                  {donor.alias || `${donor.address.slice(0, 8)}...`}
+                </a>
               </div>
-              <div className={styles.address}>{donor.address}</div>
+              <div className={styles.address}>
+                <a
+                  href={`${TZKT_API_URL}/operations/transactions?target=${contractAddress}&sender=${donor.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="View donation transactions (API data)"
+                >
+                  {donor.address}
+                </a>
+              </div>
             </div>
             <div className={styles.stats}>
               <div className={styles.amount}>

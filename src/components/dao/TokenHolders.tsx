@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { fetchDaoTokenHolders } from '@data/swr'
+import { DAO_TOKEN_CONTRACT, TZKT_API_URL } from '@constants'
 import styles from './TokenHolders.module.css'
 
 interface TokenHoldersProps {
@@ -98,7 +99,14 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
                 {formatBalance(holder.balance)}
               </div>
               <div className={styles.transfers}>
-                {holder.transfersCount}
+                <a
+                  href={`${TZKT_API_URL}/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="View token transfer transactions (API data)"
+                >
+                  {holder.transfersCount}
+                </a>
               </div>
               <div className={styles.lastActive}>
                 {formatDate(holder.lastTime)}
