@@ -1,6 +1,12 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2  } from '@constants'
+import {
+  DAO_TOKEN_CONTRACT,
+  DAO_TOKEN_DECIMALS,
+  COPYRIGHT_CONTRACT,
+  DAO_TREASURY_CONTRACT,
+  HEN_CONTRACT_FA2,
+} from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -257,26 +263,34 @@ export function useObjkt(id) {
   return [data, mutate]
 }
 
-export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, tokenId) => {
-    // Use TEIA GraphQL API via fetchObjktDetails
+export const fetchTokenMetadataForCopyrightSearch = async (
+  contractAddress,
+  tokenId
+) => {
+  // Use TEIA GraphQL API via fetchObjktDetails
   if (contractAddress === HEN_CONTRACT_FA2) {
     try {
       const tokenData = await fetchObjktDetails(tokenId.toString())
-      
+
       console.log('swr result ', tokenData)
       if (tokenData) {
         let creators = []
-        if (tokenData.artist_profile?.is_split && tokenData.artist_profile?.split_contract?.shareholders) {
+        if (
+          tokenData.artist_profile?.is_split &&
+          tokenData.artist_profile?.split_contract?.shareholders
+        ) {
           // For split contracts, include all shareholders as creators
-          creators = tokenData.artist_profile.split_contract.shareholders.map(s => s.shareholder_address)
+          creators = tokenData.artist_profile.split_contract.shareholders.map(
+            (s) => s.shareholder_address
+          )
         } else {
           // Single creator
           creators = [tokenData.artist_address]
         }
-        
+
         return {
           contract: {
-            address: tokenData.fa2_address
+            address: tokenData.fa2_address,
           },
           tokenId: tokenData.token_id,
           metadata: {
@@ -287,25 +301,30 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
             artifactUri: tokenData.artifact_uri,
             mimeType: tokenData.mime_type,
             creators: creators,
-            decimals: "0",
+            decimals: '0',
             royalties: tokenData.royalties,
             editions: tokenData.editions,
             mintedAt: tokenData.minted_at,
-            tags: tokenData.tags?.map(t => t.tag) || [],
+            tags: tokenData.tags?.map((t) => t.tag) || [],
             artist_profile: tokenData.artist_profile,
             teia_meta: tokenData.teia_meta,
             rights: tokenData.rights,
-            right_uri: tokenData.right_uri
-          }
+            right_uri: tokenData.right_uri,
+          },
         }
       }
     } catch (error) {
-      console.log('Error fetching from TEIA GraphQL, falling back to TzKT:', error)
+      console.log(
+        'Error fetching from TEIA GraphQL, falling back to TzKT:',
+        error
+      )
     }
   }
-  
+
   // Default TzKT API for non-HEN tokens
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
   const response = await fetch(url)
   if (!response.ok) throw new Error('Failed to fetch metadata')
   const data = await response.json()
@@ -410,7 +429,7 @@ export async function fetchAgreementText() {
   }
 }
 
-export function useDaoTokenHolders(limit = 10) {
+export function fetchDaoTokenHolders(limit = 10) {
   const { data, mutate, error } = useSWR(
     [`/dao/token-holders/${limit}`, limit],
     async () => {
@@ -445,7 +464,7 @@ export function useDaoTokenHolders(limit = 10) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
-export function useFountainDonations(contractAddress, limit = 10000) {
+export function fetchFountainDonations(contractAddress, limit = 10000) {
   const { data, mutate, error } = useSWR(
     contractAddress
       ? [`/contract-donations/${contractAddress}`, contractAddress, limit]

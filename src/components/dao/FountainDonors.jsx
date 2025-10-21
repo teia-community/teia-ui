@@ -1,27 +1,33 @@
-import { useMemo } from 'react'
-import { useFountainDonations } from '@data/swr'
-import { TEIA_FOUNTAIN_CONTRACT } from '@constants'
+import { useMemo, useState } from 'react'
+import { fetchFountainDonations } from '@data/swr'
+import { TEIA_FOUNTAIN_CONTRACT, DONATION_EXCLUDED_ADDRESSES } from '@constants'
 import styles from './TopDonors.module.scss'
 
-export function FountainDonors({ limit = 10 }) {
+export function FountainDonors({
+  limit: initialLimit = 10,
+  excludeAddresses = DONATION_EXCLUDED_ADDRESSES,
+}) {
+  const [displayLimit, setDisplayLimit] = useState(initialLimit)
   const {
     data: transactions,
     isLoading,
     error,
-  } = useFountainDonations(TEIA_FOUNTAIN_CONTRACT)
+  } = fetchFountainDonations(TEIA_FOUNTAIN_CONTRACT)
 
-  const topDonors = useMemo(() => {
+  const allDonors = useMemo(() => {
     if (!transactions) return []
 
     // Aggregate donations by sender address
     const donorMap = {}
+    const excludeSet = new Set(excludeAddresses)
 
     transactions.forEach((tx) => {
       const address = tx.sender?.address
       const alias = tx.sender?.alias
       const amount = parseInt(tx.amount) || 0
 
-      if (address) {
+      // Skip excluded addresses
+      if (address && !excludeSet.has(address)) {
         if (!donorMap[address]) {
           donorMap[address] = {
             address,
@@ -51,12 +57,15 @@ export function FountainDonors({ limit = 10 }) {
     // Convert to array and sort by total amount (descending)
     return Object.values(donorMap)
       .sort((a, b) => b.totalAmount - a.totalAmount)
-      .slice(0, limit)
       .map((donor) => ({
         ...donor,
         totalAmount: donor.totalAmount / 1000000, // Convert from mutez to tez
       }))
-  }, [transactions, limit])
+  }, [transactions, excludeAddresses])
+
+  const topDonors = useMemo(() => {
+    return allDonors.slice(0, displayLimit)
+  }, [allDonors, displayLimit])
 
   if (isLoading) {
     return <div className={styles.loading}>Loading donations...</div>
@@ -69,6 +78,12 @@ export function FountainDonors({ limit = 10 }) {
   if (!topDonors || topDonors.length === 0) {
     return <div className={styles.empty}>No donations found</div>
   }
+
+  const handleLoadMore = () => {
+    setDisplayLimit((prev) => prev + initialLimit)
+  }
+
+  const hasMore = allDonors.length > displayLimit
 
   return (
     <div className={styles.container}>
@@ -95,6 +110,15 @@ export function FountainDonors({ limit = 10 }) {
           </div>
         ))}
       </div>
+      {hasMore && (
+        <button
+          className={styles.loadMoreButton}
+          onClick={handleLoadMore}
+          disabled={isLoading}
+        >
+          Load More
+        </button>
+      )}
     </div>
   )
 }

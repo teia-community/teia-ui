@@ -1,5 +1,5 @@
-import React from 'react'
-import { useDaoTokenHolders } from '@data/swr'
+import React, { useState } from 'react'
+import { fetchDaoTokenHolders } from '@data/swr'
 import styles from './TokenHolders.module.css'
 
 interface TokenHoldersProps {
@@ -9,11 +9,12 @@ interface TokenHoldersProps {
 }
 
 const TokenHolders: React.FC<TokenHoldersProps> = ({
-  limit = 10,
+  limit: initialLimit = 10,
   title = 'Top Token Holders',
   showRank = true
 }) => {
-  const { data: holders, error, isLoading } = useDaoTokenHolders(limit)
+  const [currentLimit, setCurrentLimit] = useState(initialLimit)
+  const { data: holders, error, isLoading } = fetchDaoTokenHolders(currentLimit)
 
   if (isLoading) {
     return (
@@ -61,6 +62,10 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
 
+  const handleLoadMore = () => {
+    setCurrentLimit((prev) => prev + initialLimit)
+  }
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>{title}</h3>
@@ -102,6 +107,15 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
           ))}
         </div>
       </div>
+      {holders && holders.length >= currentLimit && (
+        <button
+          className={styles.loadMoreButton}
+          onClick={handleLoadMore}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Loading...' : 'Load More'}
+        </button>
+      )}
     </div>
   )
 }
