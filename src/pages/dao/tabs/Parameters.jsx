@@ -24,8 +24,6 @@ import styles from '@style'
 import TeiaTokenMetadata from './TeiaDAOMetadataTzkt'
 import DonateInput from '@atoms/button/DonateButton'
 import TokenHolders from '@components/dao/TokenHolders'
-import { TopDonors } from '@components/dao/TopDonors'
-import { FountainDonors } from '@components/dao/FountainDonors'
 
 export default function DaoParameters() {
   // Get all the required DAO information
@@ -195,14 +193,6 @@ export default function DaoParameters() {
       <Line />
 
       <TokenHolders limit={10} title="Top 10 Token Holders" />
-
-      <Line />
-
-      <TopDonors contractAddress={DAO_TREASURY_CONTRACT} limit={10} />
-
-      <Line />
-
-      <FountainDonors limit={10} />
 
       <Line />
       <section className={styles.section}>
