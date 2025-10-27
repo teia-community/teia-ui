@@ -14,8 +14,10 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
   title = 'Top Token Holders',
   showRank = true
 }) => {
-  const [currentLimit, setCurrentLimit] = useState(initialLimit)
-  const { data: holders, error, isLoading } = useDaoTokenHolders(currentLimit)
+  const [displayLimit, setDisplayLimit] = useState(initialLimit)
+  const { data: allHolders, error, isLoading } = useDaoTokenHolders(1000)
+
+  const holders = allHolders ? allHolders.slice(0, displayLimit) : []
 
   if (isLoading) {
     return (
@@ -64,8 +66,10 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
   }
 
   const handleLoadMore = () => {
-    setCurrentLimit((prev) => prev + initialLimit)
+    setDisplayLimit((prev) => prev + initialLimit)
   }
+
+  const hasMore = allHolders && allHolders.length > displayLimit
 
   return (
     <div className={styles.container}>
@@ -82,7 +86,7 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
           {holders.map((holder, index) => (
             <div key={holder.address} className={styles.row}>
               {showRank && (
-                <div className={styles.rank}>#{index + 1}</div>
+                <div className={styles.rank}>{index + 1}</div>
               )}
               <div className={styles.holder}>
                 <a
@@ -96,32 +100,31 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
                 </a>
               </div>
               <div className={styles.balance}>
-                {formatBalance(holder.balance)}
-              </div>
-              <div className={styles.transfers}>
-                <a
-                  href={`${TZKT_API_URL}/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="View token transfer transactions (API data)"
-                >
-                  {holder.transfersCount}
-                </a>
-              </div>
-              <div className={styles.lastActive}>
-                {formatDate(holder.lastTime)}
+                <div className={styles.balanceAmount}>
+                  {formatBalance(holder.balance)} TEIA
+                </div>
+                <div className={styles.transfers}>
+                  <a
+                    href={`${TZKT_API_URL}/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View token transfer transactions (API data)"
+                  >
+                    {holder.transfersCount} transfer{holder.transfersCount !== 1 ? 's' : ''}
+                  </a>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-      {holders && holders.length >= currentLimit && (
+      {hasMore && (
         <button
           className={styles.loadMoreButton}
           onClick={handleLoadMore}
           disabled={isLoading}
         >
-          {isLoading ? 'Loading...' : 'Load More'}
+          Load More
         </button>
       )}
     </div>
