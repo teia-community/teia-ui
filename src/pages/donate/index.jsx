@@ -65,7 +65,10 @@ export function Donate() {
         </p>
       </section>
 
+      <Line />
+
       <section className={styles.section}>
+        <h2 className={styles.section_title}>Teia Fountain</h2>
         <p>
           The Teia Fountain is a community funded place for new artists to apply
           to and receive a small amount of XTZ for the purposes of minting their
