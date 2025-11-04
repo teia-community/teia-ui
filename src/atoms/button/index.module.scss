@@ -170,7 +170,7 @@ $border: 2px;
 /* Styles for the DonateInput component */
 .daoDonateButton {
   font-family: var(--text-font);
-  max-width: 300px;
+  width: 100%;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid var(--gray-20);
@@ -234,7 +234,6 @@ $border: 2px;
 // Responsive adjustments
 @include respond-to('tablet') {
   .daoDonateButton {
-    max-width: 100%;
     padding: 15px;
 
     h4 {

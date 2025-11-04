@@ -76,6 +76,12 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
+            label="Donate"
+            route="donate"
+          />
+
+          <MenuItem
+            className={styles.menu_label}
             label="Copyright"
             route="copyright"
             need_sync

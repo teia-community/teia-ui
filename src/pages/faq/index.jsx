@@ -68,7 +68,7 @@ export const FAQ = () => {
   <br />
   <p>Please fill out this google form:</p>
   <ul>
-    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSeT1Bm95K1ASVPMv2F0864COcKmm_-FGKortlEHMtMMLfNFZQ/viewform" rel="nofollow">https://docs.google.com/forms/d/e/1FAIpQLSeT1Bm95K1ASVPMv2F0864COcKmm_-FGKortlEHMtMMLfNFZQ/viewform</a></li>
+    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScUYFFw2eUXX64RHOPwUD1LZ8hD4qaiGRpOg-Su1El-W2OXGQ/viewform" rel="nofollow">https://docs.google.com/forms/d/e/1FAIpQLScUYFFw2eUXX64RHOPwUD1LZ8hD4qaiGRpOg-Su1El-W2OXGQ/viewform</a></li>
     <li>After filling out the form, please send us a message in the #fountain channel on the Discord saying that you filled out the form.</li>
   </ul>
   <br />
