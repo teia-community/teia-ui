@@ -196,7 +196,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     setCurrentToken(null)
 
     let token
-    
+
     if (inputMode === 'url') {
       if (!searchTokenQuery || searchTokenQuery.trim() === '') {
         openModal('Invalid Input', 'The input cannot be empty.')
@@ -206,29 +206,40 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
       token = extractTokenFromString(searchTokenQuery)
     } else {
       // Contract/Token ID mode
-      if (!contractAddress || !tokenId || contractAddress.trim() === '' || tokenId.trim() === '') {
-        openModal('Invalid Input', 'Both contract address and token ID are required.')
+      if (
+        !contractAddress ||
+        !tokenId ||
+        contractAddress.trim() === '' ||
+        tokenId.trim() === ''
+      ) {
+        openModal(
+          'Invalid Input',
+          'Both contract address and token ID are required.'
+        )
         setFetchingToken(false)
         return
       }
-      
+
       // Validate contract address format
       if (!contractAddress.startsWith('KT1') || contractAddress.length !== 36) {
-        openModal('Invalid Contract', 'Please enter a valid Tezos contract address (starts with KT1).')
+        openModal(
+          'Invalid Contract',
+          'Please enter a valid Tezos contract address (starts with KT1).'
+        )
         setFetchingToken(false)
         return
       }
-      
+
       // Validate token ID is a number
       if (!/^\d+$/.test(tokenId)) {
         openModal('Invalid Token ID', 'Token ID must be a number.')
         setFetchingToken(false)
         return
       }
-      
+
       token = {
         contractAddress: contractAddress,
-        tokenId: tokenId
+        tokenId: tokenId,
       }
     }
 
@@ -273,16 +284,16 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
         token.contractAddress,
         token.tokenId
       )
-      
+
       if (tokenData?.metadata) {
         const tokenCreators = tokenData.metadata.creators || []
-        
+
         if (!tokenCreators.includes(address)) {
           openModal('Ownership Verification', 'This is not your token.')
           setFetchingToken(false)
           return
         }
-        
+
         setCurrentToken({ ...token, metadata: tokenData.metadata })
       } else {
         // No metadata found, handle based on input mode
@@ -301,12 +312,15 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
           setCurrentToken(fallbackToken)
         } else {
           // For URL mode, suggest using contract & token ID instead
-          openModal('Metadata Not Found', 'The search feature could not find a token related to that URL. This does not, however, mean that the work itself does not exist. Please select Contract + Token ID to enter your token details manually to ensure that the work gets properly registered.')
+          openModal(
+            'Metadata Not Found',
+            'The search feature could not find a token related to that URL. This does not, however, mean that the work itself does not exist. Please select Contract + Token ID to enter your token details manually to ensure that the work gets properly registered.'
+          )
         }
       }
     } catch (err) {
       console.error(err)
-      
+
       if (inputMode === 'contract') {
         // For contract + token ID mode, always add the token even if fetch fails
         const fallbackToken = {
@@ -322,7 +336,10 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
         setCurrentToken(fallbackToken)
       } else {
         // For URL mode, suggest using contract & token ID instead
-        openModal('Metadata Not Found', 'Could not fetch token metadata from the provided URL. Please try using the "Contract + Token ID" option instead if you know the specific contract address and token ID.')
+        openModal(
+          'Metadata Not Found',
+          'Could not fetch token metadata from the provided URL. Please try using the "Contract + Token ID" option instead if you know the specific contract address and token ID.'
+        )
       }
     }
 
@@ -375,8 +392,6 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     setModalState({ isOpen: false, title: '', content: '' })
   }
 
-  let clauseNumber = 1
-
   const generateDocumentText = useCallback(
     (customTokens = tokens) => {
       let minterInfo = minterName
@@ -398,6 +413,8 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
           }
         })
         .join('\n')
+
+      let clauseNumber = 1
 
       const nonTeiaTokens = tokens.filter(
         (token) => token.contractAddress !== HEN_CONTRACT_FA2
@@ -563,7 +580,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
 
       return documentText
     },
-    [address, clauseNumber, clauses, minterName]
+    [address, clauses, minterName]
   )
 
   const handleChange = useCallback((value, name) => {
@@ -964,7 +981,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             verified.)
           </p>
           <br />
-          
+
           <div style={{ marginBottom: '1em', display: 'flex', gap: '10px' }}>
             <button
               type="button"
@@ -978,7 +995,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
               style={{
                 border: '1px solid #ccc',
                 padding: '10px 15px',
-                backgroundColor: inputMode === 'url' ? '#FFFFFF' : 'transparent',
+                backgroundColor:
+                  inputMode === 'url' ? '#FFFFFF' : 'transparent',
                 color: inputMode === 'contract' ? 'white' : 'black',
                 cursor: 'pointer',
               }}
@@ -997,7 +1015,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
               style={{
                 border: '1px solid #ccc',
                 padding: '10px 15px',
-                backgroundColor: inputMode === 'contract' ? '#FFFFFF' : 'transparent',
+                backgroundColor:
+                  inputMode === 'contract' ? '#FFFFFF' : 'transparent',
                 color: inputMode === 'contract' ? 'black' : 'white',
                 cursor: 'pointer',
               }}
@@ -1005,7 +1024,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               Contract + Token ID
             </button>
           </div>
-          
+
           {inputMode === 'url' ? (
             <>
               <h4>Enter Token URL</h4>
@@ -1030,7 +1049,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
               <Input
                 type="text"
                 value={contractAddress}
-                onChange={(e) => setContractAddress(e?.target?.value || e || '')}
+                onChange={(e) =>
+                  setContractAddress(e?.target?.value || e || '')
+                }
                 placeholder="Enter contract address (e.g., KT1...)"
                 className={styles.field}
               />
@@ -1044,7 +1065,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               />
             </>
           )}
-          
+
           <button
             onClick={handleSearchTokenSubmit}
             style={{
