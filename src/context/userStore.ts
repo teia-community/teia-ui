@@ -120,6 +120,26 @@ interface UserState {
     royalties: number
   ) => OperationReturn
 }
+
+/**
+ * Check the rpc node endpoint.
+ * @param {string} rpcNode
+ * @returns {boolean}
+ */
+export const checkRpcNode = async (rpcNode) => {
+  try {
+    const req = await fetch(`${rpcNode}/version`, {
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+    await req.json()
+    return true
+  } catch (e) {
+    console.error(e)
+    return false
+  }
+}
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
 export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
 
@@ -195,16 +215,12 @@ export const useUserStore = create<UserState>()(
           }
         },
         sync: async (opts) => {
+          const { showError } = useModalStore.getState()
+          const rpcNode = opts?.rpcNode || useLocalSettings.getState().getRpcNode()
           const network = {
             type: NetworkType.MAINNET,
-            rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
+            rpcUrl: rpcNode,
           }
-
-          // Set the client theme
-          // const theme = JSON.parse(localStorage.getItem('settings:theme'))
-          // await wallet.client.setColorMode(
-          //   ['midnight', 'dark'].includes(theme) ? 'dark' : 'light'
-          // )
 
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
