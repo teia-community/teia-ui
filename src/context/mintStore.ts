@@ -123,7 +123,6 @@ export const useMintStore = create<MintState>()(
           const show = useModalStore.getState().show
           const step = useModalStore.getState().step
           const close = useModalStore.getState().close
-          const { showError } = useModalStore.getState()
 
           if (!artifact || !artifact.file) {
             return
@@ -133,7 +132,7 @@ export const useMintStore = create<MintState>()(
             useLocalSettings.getState().getRpcNode() as string
           )
           if (!rpcCheck) {
-            showError(
+            show(
               'RPC Node',
               'The selected RPC node is not working, please select another one in the settings'
             )
