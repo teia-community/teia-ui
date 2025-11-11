@@ -222,6 +222,12 @@ export const useUserStore = create<UserState>()(
             rpcUrl: rpcNode,
           }
 
+          // Set the client theme
+          // const theme = JSON.parse(localStorage.getItem('settings:theme'))
+          // await wallet.client.setColorMode(
+          //   ['midnight', 'dark'].includes(theme) ? 'dark' : 'light'
+          // )
+
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
