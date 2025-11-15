@@ -97,11 +97,11 @@ export const Settings = () => {
           <Select
             label={'Start Feed'}
             value={{
-              label: startFeed.replace(/[^\x00-\xFF]/g, ''),
+              label: startFeed,
               value: startFeed,
             }}
             options={FEED_LIST.map((f) => ({
-              label: f.replace(/[^\x00-\xFF]/g, ''),
+              label: f,
               value: f,
             }))}
             onChange={(e) => {
