@@ -38,7 +38,7 @@ const locationMap = new Map([
   ['/feed/ukraine', 'UA Ukraine'],
   ['/feed/pakistan', 'PK Pakistan'],
   ['/feed/iran', 'IR Iran'],
-  ['/feed/tezospride', '🏳️‍🌈 Tezospride'],
+  ['/feed/tezospride', 'Tezospride'],
   // separator
   ['---mime_feeds', 'By Format'],
   ['/feed/image', 'Image'],
