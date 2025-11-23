@@ -130,6 +130,10 @@ const wallet = new BeaconWallet({
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
   preferredNetwork: NetworkType.MAINNET,
+  network: {
+    type: NetworkType.MAINNET,
+    rpcUrl: useLocalSettings.getState().getRpcNode(),
+  },
 })
 
 Tezos.setWalletProvider(wallet)
@@ -195,10 +199,10 @@ export const useUserStore = create<UserState>()(
           }
         },
         sync: async (opts) => {
-          const network = {
-            type: NetworkType.MAINNET,
-            rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
-          }
+          // const network = {
+          //   type: NetworkType.MAINNET,
+          //   rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
+          // }
 
           // Set the client theme
           // const theme = JSON.parse(localStorage.getItem('settings:theme'))
@@ -210,7 +214,7 @@ export const useUserStore = create<UserState>()(
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
 
-          await wallet.client.requestPermissions({ network })
+          await wallet.client.requestPermissions()
           const info = await getUser(current)
           console.log('getting user info', info)
           set({
