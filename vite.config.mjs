@@ -1,16 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import viteTsconfigPaths from 'vite-tsconfig-paths'
-import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
-import eslintPlugin from 'vite-plugin-eslint'
-import { splitVendorChunkPlugin } from 'vite'
-import { copySync } from 'fs-extra'
-import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
-import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
-import { ViteEjsPlugin } from 'vite-plugin-ejs'
-import filterReplace from 'vite-plugin-filter-replace'
+import { createRequire } from 'module'
+import { fileURLToPath } from 'url'
+import viteTsconfigPaths from 'vite-tsconfig-paths'
+
+const require = createRequire(import.meta.url)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// const viteTsconfigPaths = require('vite-tsconfig-paths').default || require('vite-tsconfig-paths')
+const svgrPlugin = require('vite-plugin-svgr').default || require('vite-plugin-svgr')
+const eslintPlugin = require('vite-plugin-eslint').default || require('vite-plugin-eslint')
+const { copySync } = require('fs-extra')
+const rollupNodePolyFill = require('rollup-plugin-polyfill-node').default || require('rollup-plugin-polyfill-node')
+const mdPlugin = require('vite-plugin-markdown').plugin || require('vite-plugin-markdown').default || require('vite-plugin-markdown')
+const { ViteEjsPlugin } = require('vite-plugin-ejs')
+const filterReplace = require('vite-plugin-filter-replace').default || require('vite-plugin-filter-replace')
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
@@ -47,13 +53,13 @@ const copyPdfData = () => {
     name: 'vite-plugin-copy-react-pdf',
     buildStart: !prod
       ? () => {
-          copy_data('public/')
-        }
+        copy_data('public/')
+      }
       : null,
     writeBundle: prod
       ? () => {
-          copy_data('build/')
-        }
+        copy_data('build/')
+      }
       : null,
   }
 }
@@ -118,7 +124,7 @@ export default defineConfig(({ mode }) => {
         }
       ),
       react(),
-      splitVendorChunkPlugin(),
+      // splitVendorChunkPlugin(),
       viteTsconfigPaths(),
       // import svg as ReactComponent
       svgrPlugin(),
@@ -188,6 +194,11 @@ export default defineConfig(({ mode }) => {
         util: 'rollup-plugin-node-polyfills/polyfills/util',
         ...teiaAliases,
       },
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      include: ['src/**/*.{test,spec}.{js,jsx}'],
     },
   }
 })
