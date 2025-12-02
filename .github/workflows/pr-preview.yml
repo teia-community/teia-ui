@@ -46,7 +46,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [24]
         
     steps:
       - name: ⏬ Checkout
