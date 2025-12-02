@@ -43,7 +43,7 @@ const TeiaTokenMetadata = () => {
   return (
     <div className="teia-token-metadata">
       <h2>
-        <strong>Symbol:</strong> {tokenData.metadata.symbol}
+        <strong>Symbol:</strong> {tokenData.metadata?.symbol || "Teia DAO token"}
       </h2>
       <br />
       <p>
