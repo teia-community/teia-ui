@@ -93,7 +93,7 @@ export const useDaoStore = create<DaoState>()(
             }
             const batch = contract.methodsObject.representatives_vote(parameters)
             const opHash = await handleOp(batch, modalTitle)
-            
+
             callback?.()
 
             return opHash
@@ -114,7 +114,7 @@ export const useDaoStore = create<DaoState>()(
 
             const batch = contract.methods.cancel_proposal(proposalId, returnEscrow)
             const opHash = await handleOp(batch, modalTitle)
-            
+
             callback?.()
 
             return opHash
@@ -135,7 +135,7 @@ export const useDaoStore = create<DaoState>()(
 
             const batch = contract.methods.evaluate_voting_result(proposalId)
             const opHash = await handleOp(batch, modalTitle)
-            
+
             callback?.()
 
             return opHash
@@ -156,7 +156,7 @@ export const useDaoStore = create<DaoState>()(
 
             const batch = contract.methods.execute_proposal(proposalId)
             const opHash = await handleOp(batch, modalTitle)
-            
+
             callback?.()
 
             return opHash
@@ -216,7 +216,7 @@ export const useDaoStore = create<DaoState>()(
               tokenContract.methods.update_operators([{ remove_operator: operator }])
             )
             const opHash = await handleOp(batch, modalTitle)
-            
+
             callback?.()
 
             return opHash
@@ -257,7 +257,7 @@ export const useDaoStore = create<DaoState>()(
 
           for (const { destination } of transfers) {
             if (!(destination && validateAddress(destination) === 3)) {
-               show(
+              show(
                 'Submit DAO proposal',
                 `The provided address is not a valid tezos address: ${destination}`
               )
@@ -323,13 +323,13 @@ export const useDaoStore = create<DaoState>()(
             show(
               modalTitle,
               'Your wallet is not in the distribution list.\n' +
-                "Sorry, you don't qualify to claim any tokens."
+              "Sorry, you don't qualify to claim any tokens."
             )
             return
           }
 
           // Download the file with the user Merkle proofs
-          const fileIndex = distributionMapping[userAddress]
+          const fileIndex = distributionMapping[userAddress] as keyof typeof MERKLE_DATA_IPFS_PATHS
           const merkleData = await downloadJsonFileFromIpfs(
             MERKLE_DATA_IPFS_PATHS[fileIndex]
           )

@@ -304,7 +304,7 @@ export const prepareFile = async ({
   console.debug('Uploading metadata file:', JSON.parse(metadata))
 
   return await uploadFileToIPFSProxy({
-    blob: new Blob([Buffer.from(metadata)]),
+    blob: new Blob([Buffer.from(metadata) as any]),
     path: 'metadata.json',
   })
 }

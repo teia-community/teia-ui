@@ -186,7 +186,7 @@ export const useUserStore = create<UserState>()(
             useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
             show(
-              confirm.completed ? `${title} Successful` : `${title} Error`,
+              confirm?.completed ? `${title} Successful` : `${title} Error`,
               `[see on tzkt.io](https://tzkt.io/${op.opHash})`
             )
             return op.opHash

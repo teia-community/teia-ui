@@ -47,8 +47,8 @@ export const useProposalStore = create<ProposalStore>(() => ({
         modalTitle
       )
 
-      show(modalTitle, `Proposal submitted: https://tzkt.io/${opHash}`, true)
-    } catch (err) {
+      show(modalTitle, `Proposal submitted: https://tzkt.io/${opHash}`)
+    } catch (err: unknown) {
       console.error('[Proposal Error]', err)
       showError(modalTitle, err)
       throw err
@@ -75,8 +75,8 @@ export const useProposalStore = create<ProposalStore>(() => ({
         modalTitle
       )
 
-      show(modalTitle, `Vote sent: https://tzkt.io/${opHash}`, true)
-    } catch (err) {
+      show(modalTitle, `Vote sent: https://tzkt.io/${opHash}`)
+    } catch (err: unknown) {
       console.error('[Vote Error]', err)
       showError(modalTitle, err)
       throw err
@@ -99,8 +99,8 @@ export const useProposalStore = create<ProposalStore>(() => ({
         modalTitle
       )
 
-      show(modalTitle, `Proposal executed: https://tzkt.io/${opHash}`, true)
-    } catch (err) {
+      show(modalTitle, `Proposal executed: https://tzkt.io/${opHash}`)
+    } catch (err: unknown) {
       console.error('[Execute Error]', err)
       showError(modalTitle, err)
       throw err

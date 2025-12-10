@@ -33,14 +33,14 @@ export const useCopyrightStore = create<CopyrightStore>()(
           const step = useModalStore.getState().step
           const show = useModalStore.getState().show
           const { customLicenseData } = useCopyrightStore.getState()
-        
+
           const modalTitle = 'Submit Copyright Agreement'
           step(modalTitle, 'Waiting for confirmation', true)
-        
+
           try {
             const tokenCreators = (customLicenseData.tokens || [])
-            .flatMap(t => t.metadata?.creators || [])
-          
+              .flatMap((t: { metadata?: { creators?: string[] } }) => t.metadata?.creators || [])
+
             const creators = Array.from(new Set([
               useUserStore.getState().address,
               ...tokenCreators
@@ -48,9 +48,9 @@ export const useCopyrightStore = create<CopyrightStore>()(
             try {
               const contract = await Tezos.wallet.at(COPYRIGHT_CONTRACT)
               const firstParagraph = customLicenseData.documentText.includes('This Agreement outlines the')
-              ? customLicenseData.documentText.split('This Agreement outlines the')[0].trim()
-              : customLicenseData.documentText.slice(0, 530).trim()
-            
+                ? customLicenseData.documentText.split('This Agreement outlines the')[0].trim()
+                : customLicenseData.documentText.slice(0, 530).trim()
+
               console.log('firstParagraph', firstParagraph)
               const handleOp = useUserStore.getState().handleOp
               const opHash = await handleOp(
@@ -74,31 +74,31 @@ export const useCopyrightStore = create<CopyrightStore>()(
                   },
                   creators: Array.from(creators),
                   related_tezos_nfts: customLicenseData.tokens
-                    .filter(t => t.contractAddress !== 'external')
-                    .map(t => ({
+                    .filter((t: { contractAddress: string }) => t.contractAddress !== 'external')
+                    .map((t: { contractAddress: string; tokenId: string }) => ({
                       contract: t.contractAddress,
                       token_id: parseInt(t.tokenId),
                     })),
                   related_external_nfts: customLicenseData.tokens
-                    .filter(t => t.contractAddress === 'external')
-                    .map(t => t.metadata.name),
-                  }),
+                    .filter((t: { contractAddress: string }) => t.contractAddress === 'external')
+                    .map((t: { metadata: { name: string } }) => t.metadata.name),
+                }),
                 modalTitle,
                 { amount: 0.1 }
               )
 
               console.log('[DEBUG] Operation sent:', opHash)
-              show(modalTitle, `Copyright submitted https://tzkt.io/${opHash}`, true)
+              show(modalTitle, `Copyright submitted https://tzkt.io/${opHash}`)
               return opHash
-            } catch (err) {
+            } catch (err: unknown) {
               console.error('[ERROR]', err)
               showError('Submit Copyright Agreement', err)
             }
 
-          } catch (err) {
+          } catch (err: unknown) {
             showError(modalTitle, err)
           }
-        }        
+        }
       }),
       {
         name: 'mint-copyright',

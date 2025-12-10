@@ -183,7 +183,7 @@ export const MERKLE_DATA_IPFS_PATHS = {
   6: 'QmdrhhjL2R49SYdwdPF3eEVU1GHDSdJ4Ykya3jvt7TdRTu',
   7: 'QmXiD3T5erwNAZ5yFYpz3AA2h6FXfPMt7XzKCDrKwJSMDX',
   8: 'QmW4jpn5EnjQx6aCbSAodEhh6BW2UqvZSGvubu2tv4UWCn',
-}
+} as const
 export const CLAIMED_DAO_TOKENS_BIGMAP_ID = '518731'
 export const DAO_TOKEN_DECIMALS = 1000000
 export const TOKENS = [

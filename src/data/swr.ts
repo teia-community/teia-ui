@@ -1,15 +1,15 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2  } from '@constants'
+import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2 } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
-      (bigmapData[subKey ? item.key[subKey] : item.key] = decode
-        ? bytes2Char(item.value)
-        : item.value)
+    (bigmapData[subKey ? item.key[subKey] : item.key] = decode
+      ? bytes2Char(item.value)
+      : item.value)
   )
 
   return bigmapData
@@ -90,12 +90,12 @@ export function useDaoRepresentatives(daoStorage) {
 
   const representatives = data?.representatives
     ? Object.fromEntries(
-        Object.entries(data.representatives).sort(([, com1], [, com2]) => {
-          if (com1 < com2) return -1
-          if (com1 > com2) return 1
-          return 0
-        })
-      )
+      Object.entries(data.representatives).sort(([, com1], [, com2]) => {
+        if (com1 < com2) return -1
+        if (com1 > com2) return 1
+        return 0
+      })
+    )
     : undefined
 
   return [representatives, mutate]
@@ -258,11 +258,11 @@ export function useObjkt(id) {
 }
 
 export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, tokenId) => {
-    // Use TEIA GraphQL API via fetchObjktDetails
+  // Use TEIA GraphQL API via fetchObjktDetails
   if (contractAddress === HEN_CONTRACT_FA2) {
     try {
       const tokenData = await fetchObjktDetails(tokenId.toString())
-      
+
       console.log('swr result ', tokenData)
       if (tokenData) {
         let creators = []
@@ -273,7 +273,7 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
           // Single creator
           creators = [tokenData.artist_address]
         }
-        
+
         return {
           contract: {
             address: tokenData.fa2_address
@@ -303,7 +303,7 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
       console.log('Error fetching from TEIA GraphQL, falling back to TzKT:', error)
     }
   }
-  
+
   // Default TzKT API for non-HEN tokens
   const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
   const response = await fetch(url)
@@ -325,7 +325,7 @@ export async function fetchUserCopyrights(address) {
 
     const data = await res.json()
     return data
-    
+
   } catch (err) {
     console.error('Failed to fetch user copyrights:', err)
     return []
