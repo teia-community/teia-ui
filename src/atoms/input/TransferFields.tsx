@@ -1,5 +1,21 @@
 import { IncrementButtons } from '@atoms/button'
 import SimpleInput from './SimpleInput'
+import { ReactNode, MouseEvent } from 'react'
+
+type Transfer = {
+  amount: string | number
+  destination: string
+}
+
+type TransferFieldsProps = {
+  labels: { amount: string; destination: string }
+  placeholders?: { amount?: string; destination?: string }
+  transfers: Transfer[]
+  onChange: (transfers: Transfer[]) => void
+  className?: string
+  step?: string | number
+  children?: ReactNode
+}
 
 export default function TransferFields({
   labels,
@@ -9,14 +25,14 @@ export default function TransferFields({
   className,
   step,
   children,
-}) {
-  const handleChange = (index, parameter, value) => {
+}: TransferFieldsProps) {
+  const handleChange = (index: number, parameter: keyof Transfer, value: any) => {
     const newTransfers = transfers.map((transfer) => ({ ...transfer }))
     newTransfers[index][parameter] = value
     onChange(newTransfers)
   }
 
-  const handleClick = (e, increase) => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>, increase: boolean) => {
     e.preventDefault()
     const newTransfers = transfers.map((transfer) => ({ ...transfer }))
 
@@ -50,8 +66,8 @@ export default function TransferFields({
             type="text"
             label={`${labels.destination} (${index + 1})`}
             placeholder={placeholders?.destination ?? 'tz1...'}
-            minlenght="36"
-            maxlength="36"
+            minlength={36}
+            maxlength={36}
             value={transfer.destination}
             onChange={(value) => handleChange(index, 'destination', value)}
             className={className}

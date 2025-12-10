@@ -1,7 +1,23 @@
 import styles from '@style'
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, ChangeEvent, ReactNode } from 'react'
 
-const Textarea = forwardRef(
+interface TextareaProps {
+  type?: string
+  placeholder?: string
+  name?: string
+  min?: number | string
+  max?: number | string
+  children?: ReactNode
+  maxlength?: number
+  label?: string
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
+  onBlur?: (e: ChangeEvent<HTMLTextAreaElement>) => void
+  disabled?: boolean
+  value?: string | number
+  className?: string
+}
+
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       type = 'text',
@@ -25,11 +41,8 @@ const Textarea = forwardRef(
         <p>{label}</p>
         <textarea
           ref={ref}
-          type={type}
           placeholder={placeholder}
           name={name}
-          min={min}
-          max={max}
           maxLength={maxlength}
           value={value}
           onChange={onChange}

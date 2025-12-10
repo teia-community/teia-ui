@@ -1,7 +1,7 @@
 import { useUserStore } from '@context/userStore'
 import { DAO_TREASURY_CONTRACT } from '@constants'
 
-import { useState } from 'react'
+import { useState, ChangeEvent } from 'react'
 import styles from './index.module.scss' // Import the SCSS module
 
 // Donation input component with user-defined amount
@@ -9,7 +9,7 @@ const DonateInput = () => {
   const [amount, setAmount] = useState('')
   const [donate] = useUserStore((st) => [st.donate])
 
-  const handleAmountChange = (event) => {
+  const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     setAmount(event.target.value)
   }
 

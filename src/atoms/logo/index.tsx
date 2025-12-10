@@ -5,7 +5,13 @@ import { memo } from 'react'
 import { useMemo } from 'react'
 import { RotatingLogoSVG } from '@icons'
 import { randomSeed } from '@utils'
-export const RotatingLogoRemote = ({ className, seed = 1 }) => {
+
+interface RotatingLogoProps {
+  className?: string
+  seed?: number
+}
+
+export const RotatingLogoRemote = ({ className, seed = 1 }: RotatingLogoProps) => {
   const theme = useLocalSettings((state) => state.theme)
   const { logos } = useSettings()
 
@@ -20,9 +26,8 @@ export const RotatingLogoRemote = ({ className, seed = 1 }) => {
     <div className={`${styles.logo} ${className ? className : ''}`}>
       {true && theme !== 'unset' && logo && (
         <img
-          src={`${import.meta.env.VITE_LOGOS}/logos${
-            logo.themable ? `/${theme}` : ''
-          }${logo.collection ? `/${logo.collection}` : ''}/${logo.name}`}
+          src={`${import.meta.env.VITE_LOGOS}/logos${logo.themable ? `/${theme}` : ''
+            }${logo.collection ? `/${logo.collection}` : ''}/${logo.name}`}
           alt="teia-logo"
         />
       )}
@@ -30,7 +35,7 @@ export const RotatingLogoRemote = ({ className, seed = 1 }) => {
   )
 }
 
-export const RotatingLogo = ({ className, seed = 1 }) => {
+export const RotatingLogo = ({ className, seed = 1 }: RotatingLogoProps) => {
   const Logo = useMemo(() => {
     return RotatingLogoSVG[
       Math.floor(randomSeed(seed) * RotatingLogoSVG.length)

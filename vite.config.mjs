@@ -82,6 +82,44 @@ const teiaAliases = {
   './evaluate-audio-worklet-globalThis-scope-function': 'node_modules/standardized-audio-context/build/es2019/types/evaluate-audio-worklet-global-scope-function.js'
 }
 
+// manual chunking
+// anything not listed here will be processed by splitVendorChunkPlugin
+
+const chunkGroups = {
+  three: ['three'],
+  contracts: [
+    '@taquito/beacon-wallet',
+    '@taquito/michelson-encoder',
+    '@stablelib/ed25519',
+    '@stablelib/nacl',
+    '@stablelib/x25519-session',
+    '@taquito/taquito',
+  ],
+  pdf: ['react-pdf', 'pdfjs-dist'],
+  ui: [
+    'classnames',
+    'prop-types',
+    'react',
+    'react-router-dom',
+    'react-dom',
+    'framer-motion',
+    'zustand',
+  ],
+}
+
+function manualChunks(id) {
+  if (!id.includes('node_modules')) return
+
+  for (const [chunkName, packages] of Object.entries(chunkGroups)) {
+    if (packages.some(pkg => id.includes(`/node_modules/${pkg}/`))) {
+      return chunkName
+    }
+  }
+
+  // fallback to Vite's default vendor chunking
+  return splitVendorChunk(id)
+}
+
 export default defineConfig(({ mode }) => {
   const prod = mode === 'production'
 
@@ -153,7 +191,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
         output: {
-          // manualChunks: processChunks,
           manualChunks: {
             three: ['three'],
             contracts: [
@@ -172,7 +209,6 @@ export default defineConfig(({ mode }) => {
               'react-router-dom',
               'react-dom',
               'framer-motion',
-
               'zustand',
             ],
           },

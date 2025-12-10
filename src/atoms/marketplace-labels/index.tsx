@@ -1,7 +1,16 @@
 import styles from '@style'
-import { memo } from 'react'
+import { memo, ReactNode } from 'react'
+import { Listing } from '@types'
 
-const ListingLabel = ({ children, className, label, alt, tooltip }) => {
+interface ListingLabelProps {
+  children?: ReactNode
+  className?: string
+  label: string
+  alt: string
+  tooltip?: string
+}
+
+const ListingLabel = ({ className, label, alt, tooltip }: ListingLabelProps) => {
   return (
     <div
       className={`${styles.swapLabel} ${className ? className : ''}`}
@@ -42,12 +51,14 @@ export const VersumLabel = () => (
   <ListingLabel label="Versum.xyz" alt="This swap is through versum.xyz" />
 )
 
+interface MarketplaceLabelProps {
+  listing: Listing
+}
+
 /**
  * Dynamic label from listing type.
- * @param {{listing:import('@types').Listing}} options
- * @returns {JSX.Element | null}
  */
-const MarketplaceLabel = ({ listing }) => {
+const MarketplaceLabel = ({ listing }: MarketplaceLabelProps) => {
   if (listing.type.startsWith('TEIA')) {
     return <TeiaLabel />
   }

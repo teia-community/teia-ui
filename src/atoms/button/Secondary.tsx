@@ -1,8 +1,14 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { memo } from 'react'
+import { memo, ReactNode } from 'react'
 
-const Secondary = ({ children, selected, label = '' }) => {
+type SecondaryProps = {
+  children: ReactNode
+  selected?: boolean
+  label?: string
+}
+
+const Secondary = ({ children, selected, label = '' }: SecondaryProps) => {
   const classes = classnames({
     [styles.secondary]: true,
     [styles.selected]: selected,

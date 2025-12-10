@@ -1,7 +1,14 @@
 import Button from './Button'
 import styles from '@style'
 
-export default function PaginationButtons({ path, current, min, max }) {
+type PaginationButtonsProps = {
+  path: string
+  current: number
+  min: number
+  max: number
+}
+
+export default function PaginationButtons({ path, current, min, max }: PaginationButtonsProps) {
   return (
     <div>
       <Button

@@ -1,4 +1,21 @@
 import styles from '@style'
+import { ChangeEvent, ReactNode } from 'react'
+
+interface SimpleInputProps {
+  type: string
+  label?: string
+  min?: number | string
+  max?: number | string
+  step?: number | string
+  minlength?: number
+  maxlength?: number
+  placeholder?: string
+  value?: string | number
+  onChange: (value: any) => void
+  pattern?: string
+  className?: string
+  children?: ReactNode
+}
 
 export default function SimpleInput({
   type,
@@ -14,8 +31,8 @@ export default function SimpleInput({
   pattern,
   className,
   children,
-}) {
-  const handleInput = (e) =>
+}: SimpleInputProps) {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) =>
     onChange(type === 'file' ? e.target.files?.[0] : e.target.value)
 
   return (

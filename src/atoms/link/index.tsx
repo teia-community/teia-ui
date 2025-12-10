@@ -2,8 +2,38 @@ import { CIDToURL } from '@utils/index'
 import { walletPreview } from '@utils/string'
 import { TOKENS } from '@constants'
 import styles from '@style'
+import { ReactNode } from 'react'
 
-export function TeiaUserLink({ address, alias, shorten, className, children }) {
+interface LinkProps {
+  className?: string
+  children?: ReactNode
+}
+
+interface HrefLinkProps extends LinkProps {
+  href: string
+}
+
+interface AddressLinkProps extends LinkProps {
+  address: string
+  alias?: string
+  shorten?: boolean
+}
+
+interface TzktLinkProps extends LinkProps {
+  link: string
+}
+
+interface TokenLinkProps extends LinkProps {
+  fa2: string
+  id: string
+}
+
+interface IpfsLinkProps extends LinkProps {
+  cid: string
+  type?: string
+}
+
+export function TeiaUserLink({ address, alias, shorten, className, children }: AddressLinkProps) {
   return (
     <a href={`/tz/${address}`} className={className ?? ''}>
       {children ?? alias ?? (shorten ? walletPreview(address) : address)}
@@ -11,7 +41,7 @@ export function TeiaUserLink({ address, alias, shorten, className, children }) {
   )
 }
 
-export function DefaultLink({ href, className, children }) {
+export function DefaultLink({ href, className, children }: HrefLinkProps) {
   return (
     <a href={href} target="_blank" rel="noreferrer" className={className ?? ''}>
       {children ?? 'link'}
@@ -19,7 +49,7 @@ export function DefaultLink({ href, className, children }) {
   )
 }
 
-export function TzktLink({ link, className, children }) {
+export function TzktLink({ link, className, children }: TzktLinkProps) {
   return (
     <DefaultLink href={`https://tzkt.io/${link}`} className={className}>
       {children ?? 'TzKT link'}
@@ -33,7 +63,7 @@ export function TezosAddressLink({
   shorten,
   className,
   children,
-}) {
+}: AddressLinkProps) {
   return (
     <TzktLink link={address} className={className}>
       {children ?? alias ?? (shorten ? walletPreview(address) : address)}
@@ -41,7 +71,7 @@ export function TezosAddressLink({
   )
 }
 
-export function TokenLink({ fa2, id, className, children }) {
+export function TokenLink({ fa2, id, className, children }: TokenLinkProps) {
   const token = TOKENS.find((token) => token.fa2 === fa2)
   const tokenFullName = token
     ? token.multiasset
@@ -64,7 +94,7 @@ export function TokenLink({ fa2, id, className, children }) {
   }
 }
 
-export function IpfsLink({ cid, type, className, children }) {
+export function IpfsLink({ cid, type, className, children }: IpfsLinkProps) {
   return (
     <DefaultLink
       href={CIDToURL(cid, type ?? 'IPFS')}

@@ -1,12 +1,12 @@
 import { useKeyboard } from '@hooks/use-keyboard'
 
 import styles from '@style'
-import { useState } from 'react'
-import React from 'react'
+import { useState, useEffect } from 'react'
+
 const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = React.useState({ x: null, y: null })
-  React.useEffect(() => {
-    const updateMousePosition = (ev) => {
+  const [mousePosition, setMousePosition] = useState<{ x: number | null; y: number | null }>({ x: null, y: null })
+  useEffect(() => {
+    const updateMousePosition = (ev: MouseEvent) => {
       setMousePosition({ x: ev.clientX, y: ev.clientY })
     }
     window.addEventListener('mousemove', updateMousePosition)
@@ -44,14 +44,13 @@ export const DebugCenter = () => {
       style={
         track
           ? {
-              top: trackY ? mouse.y - window.innerHeight / 2 : 'unset',
-              left: trackX ? mouse.x - window.innerWidth / 2 : 'unset',
-            }
+            top: trackY && mouse.y !== null ? mouse.y - window.innerHeight / 2 : 'unset',
+            left: trackX && mouse.x !== null ? mouse.x - window.innerWidth / 2 : 'unset',
+          }
           : {}
       }
-      className={`${styles.debug_center} ${cross ? styles.cross : ''} ${
-        fill ? styles.fill : ''
-      }`}
+      className={`${styles.debug_center} ${cross ? styles.cross : ''} ${fill ? styles.fill : ''
+        }`}
     />
   )
 }

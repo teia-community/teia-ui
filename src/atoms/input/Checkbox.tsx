@@ -1,21 +1,28 @@
 import { useControlled } from '@hooks/use-controlled'
 import styles from '@style'
 import classNames from 'classnames'
-import { forwardRef, useCallback } from 'react'
-import { memo } from 'react'
+import { forwardRef, useCallback, memo, ChangeEvent, ReactNode } from 'react'
+
+interface CheckboxProps {
+  name?: string
+  label?: ReactNode
+  alt?: string
+  initial?: boolean
+  onCheck?: (checked: boolean) => void
+  onBlur?: () => void
+  onWheel?: () => void
+  title?: string
+  disabled?: boolean
+  checked?: boolean
+  autoFocus?: boolean
+  className?: string
+  small?: boolean
+}
 
 /**
  * Core checkbox
- * @param {Object} checkboxProps
- * @param {string} checkboxProps.label - The text or icon used for the toggle
- * @param {boolean} checkboxProps.initial - The initial value
- * @param {boolean} checkboxProps.checked - If set the control becomes controlled
- * @param {boolean} checkboxProps.style - Style object (as a last resort)
- * @param {React.EffectCallback} checkboxProps.onCheck
- * @param {boolean} checkboxProps.disabled - Disables the checkbox
- *
  */
-const Checkbox = forwardRef(
+const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   (
     {
       name,
@@ -37,7 +44,7 @@ const Checkbox = forwardRef(
     const [checked, setChecked] = useControlled(checkedProp, initial)
 
     const handleCheck = useCallback(
-      (e) => {
+      (e: ChangeEvent<HTMLInputElement>) => {
         if (disabled) return
         const c = e.target.checked
         setChecked(c)
@@ -70,6 +77,7 @@ const Checkbox = forwardRef(
           checked={checkedProp}
           aria-checked={checked}
           disabled={disabled}
+          autoFocus={autoFocus}
         />
         <span className={styles.checkmark} />
       </label>

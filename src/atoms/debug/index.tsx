@@ -7,7 +7,8 @@ import { Line } from '@atoms/line'
 import { useInterval } from 'react-use'
 import { get } from 'lodash'
 import { useUserStore } from '@context/userStore'
-const LocalKey = ({ name }) => {
+
+const LocalKey = ({ name }: { name: string }) => {
   return (
     <p>
       <span className={styles.name}>{`${name} -> `}</span>
@@ -37,7 +38,7 @@ export const Debug = () => {
     setCount(count + 1)
   }, 300)
 
-  const ContextValue = ({ name }) => {
+  const ContextValue = ({ name }: { name: string }) => {
     return (
       <p>
         <span className={styles.name}>{`${name} -> `}</span>

@@ -1,6 +1,11 @@
 import Button from './Button'
+import { MouseEvent } from 'react'
 
-export default function IncrementButtons({ onClick }) {
+type IncrementButtonsProps = {
+  onClick: (e: MouseEvent<HTMLButtonElement>, increment: boolean) => void
+}
+
+export default function IncrementButtons({ onClick }: IncrementButtonsProps) {
   return (
     <div>
       <Button shadow_box inline onClick={(e) => onClick(e, true)}>

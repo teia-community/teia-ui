@@ -12,7 +12,7 @@ interface ButtonProps {
   /** If provided return a "a" */
   href?: string
   /**onClick callback, ignore if to is provided */
-  onClick?: () => void
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   /**@deprecated onClick for NavLinks */
   onTo?: () => void
   children?: string | React.ReactNode

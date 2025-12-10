@@ -1,6 +1,10 @@
 import styles from '@style'
 
-export const Loading = ({ message }) => {
+type LoadingProps = {
+  message?: string
+}
+
+export const Loading = ({ message }: LoadingProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.loader}>
