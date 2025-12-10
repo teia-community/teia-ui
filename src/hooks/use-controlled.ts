@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 
-export const useControlled = (controlled, initial) => {
+export const useControlled = <T>(controlled: T | undefined, initial: T) => {
   const controlledRef = useRef(false)
   controlledRef.current = controlled !== undefined
 
@@ -9,7 +9,7 @@ export const useControlled = (controlled, initial) => {
   const value = controlledRef.current ? controlled : uncontrolledValue
 
   const setValue = useCallback(
-    (nextValue) => {
+    (nextValue: T) => {
       if (!controlledRef.current) {
         setUncontrolledValue(nextValue)
       }
@@ -17,5 +17,5 @@ export const useControlled = (controlled, initial) => {
     [controlledRef]
   )
 
-  return [value, setValue, controlledRef.current]
+  return [value, setValue, controlledRef.current] as const
 }

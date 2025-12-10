@@ -4,8 +4,8 @@ import { MIMETYPE, MARKETPLACE_CONTRACT_V1 } from '@constants'
  * If a OBJKT is missing a relevant property, we filter it out.
  * As example http://localhost:3000/objkt/2862 (has no token_info)
  */
-export const SanitiseOBJKT = (objkt) => {
-  return objkt.filter((o) => {
+export const SanitiseOBJKT = (objkt: any[]) => {
+  return objkt.filter((o: any) => {
     if (Object.keys(o).length === 0) {
       // if empty object ignore
       return true
@@ -18,21 +18,21 @@ export const SanitiseOBJKT = (objkt) => {
   })
 }
 
-export const SanitizeDipDup = (objkt) => {
+export const SanitizeDipDup = (objkt: any) => {
   objkt.token_id = objkt.owner
   objkt.artifactUri = objkt.artifact_uri
   return objkt
 }
 
 // check for mymetype using FileReader API (should read any file including binaries)
-export const getMimeType = (file) => {
+export const getMimeType = (file: File) => {
   return new Promise((resolve) => {
     const filereader = new FileReader()
-    filereader.onloadend = function (e) {
+    filereader.onloadend = function (e: any) {
       if (e.target.readyState === FileReader.DONE) {
         const uint = new Uint8Array(e.target.result)
-        const bytes = []
-        uint.forEach((byte) => {
+        const bytes: string[] = []
+        uint.forEach((byte: number) => {
           bytes.push(byte.toString(16))
         })
         const hex = bytes.join('').toUpperCase()
@@ -62,13 +62,13 @@ export const getMimeType = (file) => {
  * TODO:
  * Receives an array of objects and filters them out if they're part of the blocklist (o.json)
  */
-export const filterObjkts = (items) => {
+export const filterObjkts = (items: any[]) => {
   return items
 }
 
-export const getTotalSales = ({ owners, creators }) => {
+export const getTotalSales = ({ owners, creators }: { owners: any; creators: string[] }) => {
   if (!owners) return 0
-  return Object.keys(owners).reduce((edition, ownerID) => {
+  return Object.keys(owners).reduce((edition: number, ownerID: string) => {
     // not the platform or the creator
     if (ownerID !== MARKETPLACE_CONTRACT_V1 && !creators.includes(ownerID)) {
       // add the count of market owned editions
@@ -82,7 +82,7 @@ export const getTotalSales = ({ owners, creators }) => {
  * Human-readable file size
  *
  */
-export const formatBytes = (bytes, decimals = 2) => {
+export const formatBytes = (bytes: number, decimals = 2) => {
   if (bytes === 0) return '0 Bytes'
 
   const k = 1024

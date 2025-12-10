@@ -206,7 +206,7 @@ export const generateTypedArtCoverImage = async (
   if (lineWidth > maxWidth) {
     lines = [
       text.split('\n')[0].substring(0, Math.floor(maxWidth / fontSize) - 3) +
-        '...',
+      '...',
     ]
   }
   lineHeight =
@@ -292,8 +292,8 @@ export const generateMidiCover = async (
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.fillText(trackName, canvas.width / 2, padding + 40);
-    ctx.fillText("(MIDI)", canvas.width / 2, padding + 90); 
-  
+    ctx.fillText("(MIDI)", canvas.width / 2, padding + 90);
+
     tracks.forEach((track: TrackJSON, index: number) => {
       const notes = track.notes;
       const totalDuration = notes.reduce((acc: number, note: NoteJSON) => Math.max(acc, note.time + note.duration), 0);
@@ -315,12 +315,12 @@ export const generateMidiCover = async (
 
     canvas.toBlob((blob) => {
       if (!blob) {
-          reject(new Error('Failed to generate image'));
-          return;
+        reject(new Error('Failed to generate image'));
+        return;
       }
 
       const file = new File([blob], 'Generated_MIDI_Cover.png', {
-          type: 'image/png',
+        type: 'image/png',
       });
       resolve(file);
     }, 'image/png');
@@ -330,21 +330,21 @@ export const generateMidiCover = async (
 export const convertFileToFileForm = async (
   fileToConvert: File
 ): Promise<FileForm> => {
-  const mimeType =
+  const mimeType: string =
     fileToConvert.type === ''
-      ? await getMimeType(fileToConvert)
+      ? await getMimeType(fileToConvert) as string
       : fileToConvert.type
-  const buffer = Buffer.from(await fileToConvert.arrayBuffer())
-  const title = fileToConvert.name + '.png'
+  const buffer = await fileToConvert.arrayBuffer()
+  const title = fileToConvert.name + '.' + mimeType.split('/')[1]
 
   // set reader for preview
   let reader: any = new FileReader()
-  const blob = new Blob([buffer], { type: mimeType })
+  const blob = new Blob([buffer as any], { type: mimeType as string })
   reader = await blobToDataURL(blob)
 
   const format = {
     mimeType: mimeType,
-    fileName: title + '.png',
+    fileName: title,
     fileSize: fileToConvert.size,
   }
 
@@ -369,10 +369,10 @@ export const processAudioForVisualizer = (reader: string) => {
   const byteString = atob(rawBase64);
   const arrayBuffer = new ArrayBuffer(byteString.length);
   const uint8Array = new Uint8Array(arrayBuffer);
-  
+
   for (let i = 0; i < byteString.length; i++) {
     uint8Array[i] = byteString.charCodeAt(i);
   }
-  
+
   return new Blob([arrayBuffer], { type: 'audio/mpeg' });
 };

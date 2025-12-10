@@ -18,12 +18,16 @@ export const processTypedInput = async (
 
   // add to artifact object so it is consistent with all other types
   data.artifact = await convertFileToFileForm(file)
-  data.artifact.reader = URL.createObjectURL(blob)
+  if (data.artifact) {
+    data.artifact.reader = URL.createObjectURL(blob)
+  }
 
   // generate cover automatically
   const coverFile = await generateTypedArtCoverImage(
     data.typedinput,
-    data.isMonoType === true
+    data.isMonoType === true,
+    1024,
+    false
   )
   data.cover = await convertFileToFileForm(coverFile)
 

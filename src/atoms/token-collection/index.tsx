@@ -21,13 +21,16 @@ import { IconCache } from '@utils/with-icon'
 import { shallow } from 'zustand/shallow'
 import { useUserStore } from '@context/userStore'
 
+import { NFT } from '@types'
+
+interface ViewProps {
+  tokens: NFT[]
+}
+
 /**
  * Single view, vertical feed
- * @param {Object} feedProps - The options for the feed item
- * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
- * @returns {React.ReactElement} The feed
  */
-function SingleView({ tokens }) {
+function SingleView({ tokens }: ViewProps) {
   return (
     <div className={`${styles.single_view} no-fool`}>
       {tokens.map((token) => (
@@ -38,44 +41,47 @@ function SingleView({ tokens }) {
 }
 
 /**
- * Massorny view feed
- * @param {Object} feedProps - The options for the feed item
- * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
- * @returns {React.ReactElement} The feed
+ * Masonry view feed
  */
-function MasonryView({ tokens }) {
+function MasonryView({ tokens }: ViewProps) {
   return (
     <ResponsiveMasonry>
       {tokens.map((token) => (
-        // <motion.div
-        //   exit={{ opacity: 0, x: -1000 }}
-        //   key={token.key || token.token_id}
-        // >
-        <FeedItem key={token.key || token.token_id} nft={token} />
-        // </motion.div>
+        <FeedItem key={(token as any).key || token.token_id} nft={token} />
       ))}
     </ResponsiveMasonry>
   )
 }
-/**
- * @typedef {import("@types").NFT} NFT
- */
 
-// TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
+interface ExtractTokensParams {
+  postProcessTokens: (tokens: any[]) => any[]
+  resultsPath: string
+  tokenPath: string
+  keyPath: string
+}
+
+interface TokenCollectionProps {
+  query: string | any
+  label?: string
+  namespace?: string
+  showRestricted?: boolean
+  overrideProtections?: boolean
+  feeds_menu?: boolean
+  disable?: boolean
+  variables?: Record<string, any>
+  swrParams?: any[]
+  itemsPerLoad?: number
+  maxItems?: number
+  resultsPath?: string
+  tokenPath?: string
+  keyPath?: string
+  emptyMessage?: string
+  postProcessTokens?: (tokens: any[]) => any[]
+  extractTokensFromResponse?: (data: any, params: ExtractTokensParams) => any[]
+}
+
 /**
  * Main feed component that can be either in Single or Masonry mode.
- * @param {Object} tkProps - The props
- * @param {string} tkProps.query - The graphql query
- * @param {boolean} [tkProps.disable] - Disable the feed
- * @param {string} [tkProps.label] - Label for the feed
- * @param {string} [tkProps.namespace] - Namespace for the feed
- * @param {Object} [tkProps.variables] - Variables for the query
- * @param {any[]} [tkProps.swrParams] - Extra params for SWR key
- * @param {number} [tkProps.itemsPerLoad] - Batch size
- * @param {number} [tkProps.maxItems] - Max items to fetch from the indexer
- * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} [tkProps.extractTokensFromResponse] - Function to filter the response
- * @param {([NFT]) => [NFT]} [tkProps.postProcessTokens] - Final filter pass over tokens?
- * @returns {React.ReactElement} The feed
  */
 function TokenCollection({
   query,
@@ -99,19 +105,17 @@ function TokenCollection({
     { postProcessTokens, resultsPath, tokenPath, keyPath }
   ) => {
     return postProcessTokens(
-      get(data, resultsPath).map((result) => ({
+      get(data, resultsPath).map((result: any) => ({
         ...(tokenPath ? get(result, tokenPath) : result),
         key: get(result, keyPath),
       }))
     )
   },
-}) {
+}: TokenCollectionProps) {
   const [user_address] = useUserStore((state) => [state.address])
   const [searchParams, setSearchParams] = useSearchParams()
   const { walletBlockMap, nsfwMap, photosensitiveMap, objktBlockMap } =
     useSettings()
-
-  // const { viewMode, toggleViewMode, toggleZen } = useLocalSettings()
 
   const [viewMode, toggleViewMode, toggleZen] = useLocalSettings(
     (state) => [state.viewMode, state.toggleViewMode, state.toggleZen],
@@ -120,22 +124,18 @@ function TokenCollection({
   useKeyboard('v', toggleViewMode)
   useKeyboard('z', toggleZen)
 
-  // let inViewMode = searchParams.get('view')
-  //   ? searchParams.get('view')
-  //   : viewMode
-
-  const limit = searchParams.get(namespace)
-    ? parseInt(searchParams.get(namespace), 10)
+  const limit = searchParams.get(namespace || '')
+    ? parseInt(searchParams.get(namespace || '') || '0', 10)
     : itemsPerLoad
 
   const { data, error } = useSWR(
     disable ? null : [namespace, ...swrParams],
-    async (ns) => {
+    async (ns: any) => {
       return typeof query === 'string'
         ? request(import.meta.env.VITE_TEIA_GRAPHQL_API, query, {
-            ...variables,
-            ...(maxItems ? { limit: maxItems } : {}),
-          })
+          ...variables,
+          ...(maxItems ? { limit: maxItems } : {}),
+        })
         : query
     },
     {
@@ -166,7 +166,7 @@ function TokenCollection({
   if (walletBlockMap === undefined) {
     throw new Error('Please try again in a few minutes.', {
       cause: 'Could not retrieve the ban list',
-    })
+    } as any)
   }
 
   const tokens = extractTokensFromResponse(data, {
@@ -175,13 +175,13 @@ function TokenCollection({
     tokenPath,
     keyPath,
   })
-    .filter((token) =>
+    .filter((token: any) =>
       showRestricted
         ? true
         : walletBlockMap.get(token.artist_address) !== 1 &&
-          objktBlockMap.get(token.id) !== 1
+        objktBlockMap.get(token.id) !== 1
     )
-    .map((token) => {
+    .map((token: any) => {
       return {
         ...token,
         isNSFW:
@@ -199,7 +199,7 @@ function TokenCollection({
         isModerated:
           (photosensitiveMap.get(token.token_id) === 1 ||
             nsfwMap.get(token.token_id) === 1) &&
-          token.artist_address === user_address, // true (testing it in dev is not trivial)
+          token.artist_address === user_address,
       }
     })
 
@@ -223,13 +223,12 @@ function TokenCollection({
         <InfiniteScroll
           className={`${styles.infinite_scroll} no-fool`}
           loadMore={() => {
-            setSearchParams(
-              {
-                ...Object.fromEntries(searchParams),
-                [namespace]: limit + itemsPerLoad,
-              },
-              { preventScrollReset: true }
-            )
+            const newParams: Record<string, string> = {}
+            searchParams.forEach((value, key) => {
+              newParams[key] = value
+            })
+            newParams[namespace || ''] = String(limit + itemsPerLoad)
+            setSearchParams(newParams, { preventScrollReset: true })
           }}
           hasMore={limit < tokens.length}
         >

@@ -3,8 +3,8 @@ import { useRef, useEffect, useCallback } from 'react'
 // taken from https://swr.vercel.app/docs/middleware#keep-previous-result
 
 // This is a SWR middleware for keeping the data even if key changes.
-function laggy(useSWRNext) {
-  return (key, fetcher, config) => {
+function laggy(useSWRNext: any) {
+  return (key: any, fetcher: any, config: any) => {
     // Use a ref to store previous returned data.
     const laggyDataRef = useRef()
 

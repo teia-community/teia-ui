@@ -1,7 +1,7 @@
 import { encodePubKey, encodeKeyHash } from '@taquito/utils'
 import { Parser, emitMicheline } from '@taquito/michel-codec'
 
-export function parseLambda(lambdaCode) {
+export function parseLambda(lambdaCode: string) {
   // Transform the lambda function Michelson JSON code to Micheline code
   const parser = new Parser()
   const michelsonCode = parser.parseJSON(JSON.parse(lambdaCode))

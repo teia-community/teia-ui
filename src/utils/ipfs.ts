@@ -1,8 +1,8 @@
 import { CIDToURL } from '@utils/index'
 
 // Downloads a json file from ipfs
-export async function downloadJsonFileFromIpfs(cid) {
-  const response = await fetch(CIDToURL(cid))
+export async function downloadJsonFileFromIpfs(cid: string) {
+  const response = await fetch(CIDToURL(cid, 'IPFS', { size: 'raw' }))
 
   if (!response.ok) {
     console.error(
@@ -14,7 +14,7 @@ export async function downloadJsonFileFromIpfs(cid) {
 }
 
 // Uploads a file to the ipfs proxy
-export async function uploadFileToIPFSProxy(file) {
+export async function uploadFileToIPFSProxy(file: File) {
   const form_data = new FormData()
   form_data.append('asset', file)
   const response = await fetch(

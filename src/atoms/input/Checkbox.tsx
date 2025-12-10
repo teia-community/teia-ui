@@ -41,7 +41,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     },
     ref
   ) => {
-    const [checked, setChecked] = useControlled(checkedProp, initial)
+    const [checked, setChecked] = useControlled<boolean | undefined>(checkedProp, initial)
 
     const handleCheck = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {

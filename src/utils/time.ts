@@ -1,21 +1,21 @@
-export function toHHMMSS(sec) {
+export function toHHMMSS(sec: number) {
   let hours = Math.floor(sec / 3600)
   let minutes = Math.floor((sec - hours * 3600) / 60)
   let seconds = sec - hours * 3600 - minutes * 60
 
   if (hours < 10) {
-    hours = `0${hours}`
+    hours = `0${hours}` as any
   }
   if (minutes < 10) {
-    minutes = `0${minutes}`
+    minutes = `0${minutes}` as any
   }
   if (seconds < 10) {
-    seconds = `0${seconds}`
+    seconds = `0${seconds}` as any
   }
   return `${hours}:${minutes}:${seconds}`
 }
 
-export const getTimeAgo = (timestamp) => {
+export const getTimeAgo = (timestamp: string | number | Date) => {
   const stamp = Math.round(new Date(timestamp).getTime() / 1000)
   const now = Math.round(new Date().getTime() / 1000)
 
@@ -49,15 +49,15 @@ export const getTimeAgo = (timestamp) => {
   return `${value} ${unit} ago`
 }
 
-export const getISODate = (timestamp) => {
-  const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s)
+export const getISODate = (timestamp: string | number | Date) => {
+  const pad = (n: number, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s)
   const d = new Date(timestamp)
   return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(
     d.getDate()
   )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 }
 
-export const getWordDate = (timestamp) => {
+export const getWordDate = (timestamp: string | number | Date) => {
   const date = new Date(timestamp)
   const options = {
     year: 'numeric',
@@ -65,7 +65,7 @@ export const getWordDate = (timestamp) => {
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-  }
+  } as Intl.DateTimeFormatOptions
 
   //return date.toLocaleString(navigator.language, options)
   return date.toLocaleString('en-GB', options)

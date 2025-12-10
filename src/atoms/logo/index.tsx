@@ -24,7 +24,7 @@ export const RotatingLogoRemote = ({ className, seed = 1 }: RotatingLogoProps) =
   )
   return (
     <div className={`${styles.logo} ${className ? className : ''}`}>
-      {true && theme !== 'unset' && logo && (
+      {theme && logo && (
         <img
           src={`${import.meta.env.VITE_LOGOS}/logos${logo.themable ? `/${theme}` : ''
             }${logo.collection ? `/${logo.collection}` : ''}/${logo.name}`}

@@ -32,7 +32,7 @@ export const Page = ({
   //   setFooterVisible(y > 50)
   // }, [y])
 
-  useTitle(title)
+  useTitle(title || '')
 
   return (
     <>

@@ -97,7 +97,7 @@ export function TokenLink({ fa2, id, className, children }: TokenLinkProps) {
 export function IpfsLink({ cid, type, className, children }: IpfsLinkProps) {
   return (
     <DefaultLink
-      href={CIDToURL(cid, type ?? 'IPFS')}
+      href={CIDToURL(cid, (type ?? 'IPFS') as any, { size: 'raw' })}
       className={`${styles.ipfs_link} ${className ?? ''}`}
     >
       {children ?? cid}

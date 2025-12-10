@@ -24,7 +24,7 @@ export const Toggle = ({
   onToggle,
   className,
 }: ToggleProps) => {
-  const [toggled, setToggled] = useControlled(toggledProp, initial)
+  const [toggled, setToggled] = useControlled<boolean | undefined>(toggledProp, initial)
 
   const handleToggle = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {

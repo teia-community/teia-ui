@@ -1,4 +1,4 @@
-export const validAddress = (input) => {
+export const validAddress = (input: string) => {
   if (!input.length) {
     return false
   }
@@ -13,7 +13,7 @@ export const validAddress = (input) => {
   return isAddressFormat
 }
 
-export const extractAddress = (input) => {
+export const extractAddress = (input: string) => {
   let matches
 
   // const tezDomainPattern = /^(.*\.tez)$/i
@@ -40,29 +40,29 @@ export const extractAddress = (input) => {
   return matches[1]
 }
 
-export const groupShareTotal = (collaborators) =>
+export const groupShareTotal = (collaborators: any[]) =>
   collaborators.reduce(
     (sharesAllocated, c) => (c.shares || 0) + sharesAllocated,
     0
   )
 
-export function userHasSignedObjkt({ objktId, address, creator }) {
+export function userHasSignedObjkt({ objktId, address, creator }: { objktId: string; address: string; creator: any }) {
   if (!address) {
     return false
   }
 
   const signedObjktsForAddress = creator.shares[0].shareholder
     .filter(
-      ({ holder_type, holder_id }) =>
+      ({ holder_type, holder_id }: any) =>
         holder_type === 'core_participant' && holder_id === address
     )
-    .map((participant) => participant.holder.holder_signatures)
+    .map((participant: any) => participant.holder.holder_signatures)
 
-  return signedObjktsForAddress.map((o) => o.token_id).includes(objktId)
+  return signedObjktsForAddress.map((o: any) => o.token_id).includes(objktId)
 }
 
 // @marchingsquare
-export async function resolveTezosDomain(domain) {
+export async function resolveTezosDomain(domain: string) {
   try {
     const result = await fetch('https://api.tezos.domains/graphql', {
       headers: {

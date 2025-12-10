@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 
-const addBodyClass = (className) => document.body.classList.add(className)
-const removeBodyClass = (className) => document.body.classList.remove(className)
+const addBodyClass = (className: string) => document.body.classList.add(className)
+const removeBodyClass = (className: string) => document.body.classList.remove(className)
 
 /**
  * Hook to add a class to the body from a mounted component (used by dropdowns to dim background)
  * @param {string} className The class name to add.
  */
-export default function useBodyClass(className) {
+export default function useBodyClass(className: string | string[]) {
   useEffect(() => {
     // Set up
     className instanceof Array

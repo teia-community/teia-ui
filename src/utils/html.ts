@@ -2,10 +2,10 @@ import * as fflate from 'fflate'
 import mime from 'mime-types'
 import { MIMETYPE } from '@constants'
 
-export async function prepareFilesFromZIP(buffer) {
+export async function prepareFilesFromZIP(buffer: Uint8Array) {
   console.debug('Preparing files from ZIP')
   // unzip files
-  let files = await unzipBuffer(buffer)
+  let files: any = await unzipBuffer(buffer)
 
   // save raw index file
   const indexBlob = files['index.html']
@@ -23,7 +23,7 @@ export async function prepareFilesFromZIP(buffer) {
   }
 
   // reformat
-  files = Object.entries(files).map((file) => {
+  files = Object.entries(files).map((file: any) => {
     console.debug('Entry: ', file)
     return {
       path: file[0],
@@ -32,15 +32,15 @@ export async function prepareFilesFromZIP(buffer) {
   })
 
   // remove top level dir
-  files = files.filter((f) => f.path !== '')
+  files = files.filter((f: any) => f.path !== '')
 
   return files
 }
 
-export async function unzipBuffer(buffer) {
+export async function unzipBuffer(buffer: Uint8Array) {
   console.debug('Unzipping buffer')
-  let entries = fflate.unzipSync(buffer)
-  entries = Object.entries(entries).map((entry) => {
+  let entries: any = fflate.unzipSync(buffer)
+  entries = Object.entries(entries).map((entry: any) => {
     console.debug('Entry: ', entry)
     return {
       path: entry[0],
@@ -49,8 +49,8 @@ export async function unzipBuffer(buffer) {
   })
 
   // Find root dir
-  let rootDir = null
-  for (const entry of entries) {
+  let rootDir: string | null = null
+  for (const entry of entries as any) {
     const filename = entry.path.replace(/^.*[\\/]/, '')
     if (filename === 'index.html') {
       const matchRoot = entry.path.match(/.*\//) || '/'
@@ -69,8 +69,8 @@ export async function unzipBuffer(buffer) {
 
   console.debug('Creating file map')
   // Create files map
-  const files = {}
-  entries.forEach((entry, index) => {
+  const files: any = {}
+  entries.forEach((entry: any, index: number) => {
     const relPath =
       rootDir === '/' ? entry.path : entry.path.replace(`${rootDir}`, '')
     console.debug('Entry relPath: ', relPath)
@@ -81,7 +81,7 @@ export async function unzipBuffer(buffer) {
     ) {
       type = MIMETYPE.DIRECTORY
     } else {
-      type = mime.lookup(entry.path)
+      type = mime.lookup(entry.path) as any
     }
 
     files[relPath] = new Blob([entry.buffer], {
@@ -92,7 +92,7 @@ export async function unzipBuffer(buffer) {
   return files
 }
 
-export function injectCSPMetaTagIntoDataURI(dataURI) {
+export function injectCSPMetaTagIntoDataURI(dataURI: string) {
   // data URI -> HTML
   const prefix = 'data:text/html;base64,'
   const base64 = dataURI.replace(prefix, '')
@@ -105,7 +105,7 @@ export function injectCSPMetaTagIntoDataURI(dataURI) {
   return `${prefix}${btoa(safeHTML)}`
 }
 
-export function injectCSPMetaTagIntoBuffer(buffer) {
+export function injectCSPMetaTagIntoBuffer(buffer: Uint8Array) {
   // buffer -> HTML
   const html = new TextDecoder().decode(buffer)
 
@@ -116,7 +116,7 @@ export function injectCSPMetaTagIntoBuffer(buffer) {
   return new TextEncoder().encode(safeHTML)
 }
 
-export function injectCSPMetaTagIntoHTML(html) {
+export function injectCSPMetaTagIntoHTML(html: string) {
   // HTML -> doc
   const parser = new DOMParser()
   const doc = parser.parseFromString(html, 'text/html')
@@ -240,7 +240,7 @@ export function injectCSPMetaTagIntoHTML(html) {
   return `<!DOCTYPE html><html>${doc.documentElement.innerHTML}</html>`
 }
 
-export function getCoverImagePathFromBuffer(buffer) {
+export function getCoverImagePathFromBuffer(buffer: Uint8Array) {
   // buffer -> html
   const html = new TextDecoder().decode(buffer)
 
@@ -251,7 +251,7 @@ export function getCoverImagePathFromBuffer(buffer) {
   return getCoverImagePathFromDoc(doc)
 }
 
-function getCoverImagePathFromDoc(doc) {
+function getCoverImagePathFromDoc(doc: Document) {
   let meta = doc.head.querySelector('meta[property="cover-image"]')
   if (!meta) {
     meta = doc.head.querySelector('meta[property="og:image"]')
@@ -262,7 +262,7 @@ function getCoverImagePathFromDoc(doc) {
   return meta.getAttribute('content')
 }
 
-export async function validateFiles(files) {
+export async function validateFiles(files: any) {
   // check for index.html file
   if (!files['index.html']) {
     return {
@@ -290,8 +290,8 @@ export async function validateFiles(files) {
   }
 }
 
-export async function dataRUIToBuffer(dataURI) {
-  const blob = await fetch(dataURI).then((r) => r.blob())
+export async function dataRUIToBuffer(dataURI: string) {
+  const blob = await fetch(dataURI).then((r: Response) => r.blob())
   const binaryStr = await new Response(blob).arrayBuffer()
   const bytes = new Uint8Array(binaryStr)
   return bytes

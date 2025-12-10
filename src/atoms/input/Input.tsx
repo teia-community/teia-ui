@@ -92,7 +92,7 @@ function Input(
               : target.value
             : target.value;
 
-        setValue(v)
+        setValue(v as any)
         onChange(v)
       }
     },

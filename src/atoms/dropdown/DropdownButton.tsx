@@ -71,7 +71,8 @@ function DropdownButton({
       <AnimatePresence>
         {children &&
           open &&
-          React.cloneElement(children, { setOpen, ...props })}
+          React.isValidElement(children) &&
+          React.cloneElement(children, { setOpen, ...props } as any)}
       </AnimatePresence>
     </motion.div>
   )

@@ -6,11 +6,11 @@ import { useEffect } from 'react'
  * @param {*} callback The callback to call when we clicked outside.
  * @param {boolean} ignore_parent If true, clicking on the direct parent won't trigger the callback.
  */
-export const useClickOutside = (ref, callback, ignore_parent = false) => {
-  const onClickOut = (event) => {
-    if (ref.current && !ref.current.contains(event.target)) {
+export const useClickOutside = (ref: React.RefObject<HTMLElement>, callback: () => void, ignore_parent = false) => {
+  const onClickOut = (event: MouseEvent) => {
+    if (ref.current && !ref.current.contains(event.target as Node)) {
       if (ignore_parent) {
-        if (!ref.current.parentElement.contains(event.target)) {
+        if (ref.current.parentElement && !ref.current.parentElement.contains(event.target as Node)) {
           callback()
         }
       } else {

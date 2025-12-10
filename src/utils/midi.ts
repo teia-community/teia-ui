@@ -1,15 +1,15 @@
 import { Midi } from '@tonejs/midi'
 import { convertFileToFileForm, generateMidiCover } from './mint'
 
-async function processMidiData(sourceUrl, volume) {
+async function processMidiData(sourceUrl: string, volume: string | number) {
   try {
-    const midi = await new Midi.fromUrl(sourceUrl)
+    const midi: any = await new (Midi as any).fromUrl(sourceUrl)
 
-    const scaleFactor = parseInt(volume) / 100
+    const scaleFactor = parseInt(String(volume)) / 100
 
     // Modify MIDI data
-    midi.tracks.forEach((track) => {
-      track.notes.forEach((note) => {
+    midi.tracks.forEach((track: any) => {
+      track.notes.forEach((note: any) => {
         note.velocity *= scaleFactor // Apply scale factor to velocity
       })
     })
@@ -28,7 +28,7 @@ async function processMidiData(sourceUrl, volume) {
   }
 }
 
-export const processMidiCover = async (data) => {
+export const processMidiCover = async (data: any) => {
   const midiDataFile = new Midi(data.artifact.buffer)
   let cover = await generateMidiCover(data.title, midiDataFile)
   data.cover = await convertFileToFileForm(cover)

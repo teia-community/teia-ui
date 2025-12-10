@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useMount, useUpdateEffect } from 'react-use'
 
-export const useKeyboard = (combination, keydown, keyup) => {
-  const [state, set] = useState([false, null])
-  const [keyboardJs, setKeyboardJs] = useState(null)
+type KeyHandler = (event?: KeyboardEvent) => void
+
+export const useKeyboard = (
+  combination: string | string[],
+  keydown?: KeyHandler,
+  keyup?: KeyHandler
+) => {
+  const [state, set] = useState<[boolean, KeyboardEvent | null]>([false, null])
+  const [keyboardJs, setKeyboardJs] = useState<any>(null)
 
   useMount(() => {
     import('keyboardjs').then((k) => setKeyboardJs(k.default || k))
@@ -14,8 +20,8 @@ export const useKeyboard = (combination, keydown, keyup) => {
       return
     }
 
-    const down = (event) => set([true, event])
-    const up = (event) => set([false, event])
+    const down = (event: KeyboardEvent) => set([true, event])
+    const up = (event: KeyboardEvent) => set([false, event])
     keyboardJs.bind(combination, down, up, true)
 
     return () => {

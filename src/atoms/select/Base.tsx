@@ -10,7 +10,23 @@ import { style as select_style, theme } from './styles'
  * @param {*} param0
  * @returns
  */
-const Select = forwardRef(
+interface SelectProps {
+  label?: string
+  alt?: string
+  value?: any
+  search?: boolean
+  defaultValue?: any
+  options?: any[]
+  onChange?: (value: any) => void
+  disabled?: boolean
+  children?: React.ReactNode
+  placeholder?: string
+  className?: string
+  style?: React.CSSProperties
+  [key: string]: any
+}
+
+const Select = forwardRef<any, SelectProps>(
   (
     {
       label,
@@ -32,7 +48,7 @@ const Select = forwardRef(
     const [value, setValue] = useControlled(gValue, defaultValue)
 
     const handleChange = useCallback(
-      (e) => {
+      (e: any) => {
         setValue(e)
         onChange(e)
       },
@@ -44,7 +60,7 @@ const Select = forwardRef(
       <label style={style} className={`${styles.label} ${className || ''}`}>
         <p>{label}</p>
         <ReactSelect
-          inputRef={ref}
+          ref={ref}
           aria-label={alt || label}
           styles={select_style}
           theme={theme}
@@ -52,11 +68,11 @@ const Select = forwardRef(
           classNamePrefix="react_select"
           onChange={handleChange}
           options={options}
-          disabled={disabled}
+          isDisabled={disabled}
           placeholder={placeholder}
           isSearchable={search}
           menuPortalTarget={document.querySelector('body')}
-          value={value === (null || undefined) ? '' : value}
+          value={value == null ? '' : value}
           {...props}
         />
         {children}
