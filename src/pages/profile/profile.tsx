@@ -7,32 +7,41 @@ import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
 import { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
 
-async function reverseRecord(address) {
-  const result = await axios.post(
-    `${import.meta.env.VITE_TEZOSDOMAINS_GRAPHQL_API}`,
-    {
-      query: `query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}`,
-      variables: { address },
-    },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
-  return result?.data?.data?.reverseRecord?.domain?.name || ''
+
+async function reverseRecord(address: string) {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_TEZOSDOMAINS_GRAPHQL_API}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query reverseRecord($address: String!) { reverseRecord(address: $address) { domain { name }}}`,
+          variables: { address },
+        }),
+      }
+    )
+    const result = await response.json()
+    return result?.data?.reverseRecord?.domain?.name || ''
+  } catch (e) {
+    console.error(e)
+    return ''
+  }
 }
 
-export default function Profile({ user }) {
+import { ArtistProfile } from '@types'
+
+export default function Profile({ user }: { user: ArtistProfile & { extras?: any; alias?: string; description?: string; subjkt?: string; identicon?: string; address: string } }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(
     user.extras?.profile?.discord
   )
   const [isAddressCopied, setAddressCopied] = useClipboard(user.address, {
     successDuration: 2500,
   })
-  const [daoTokenBalance] = useDaoTokenBalance(user.address)
+  const [daoTokenBalance] = useDaoTokenBalance(user.address) as [number, any]
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')

@@ -245,63 +245,65 @@ export const Subjkt = () => {
 
   // delete account
 
-  return (
-    !loading && (
-      <Page>
-        <h1>Subjkt Settings</h1>
+  if (loading) return null
 
-        <Line className={styles.title_line} />
-        <div className={styles.subjkt_editor}>
-          <div className={styles.fields}>
-            <Identicon
-              className={styles.identicon}
-              address={address}
-              logo={preview || identicon}
-            />
-            <input type="file" onChange={onFileChange} title="avatar file" />
-          </div>
-          <div className={styles.fields}>
-            <Input
-              name="subjkt"
-              value={subjkt}
-              onChange={setSubjkt}
-              onBlur={(e) => {
-                if(/[^A-Za-z0-9-._]/.test(e.target.value)) {
-                  show('Subjkt contains invalid characters. This field can only contain: letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)')
-                }
-              }}
-              placeholder="can contain letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)"
-              label="Username"
-              pattern="^[A-Za-z0-9-._]*$"
-            />
-            <Input
-              name="description"
-              value={description}
-              onChange={setDescription}
-              placeholder="(Max length 500 characters)"
-              label="Description"
-            />
-          </div>
+  return (
+    <Page>
+      <h1>Subjkt Settings</h1>
+
+      <Line className={styles.title_line} />
+      <div className={styles.subjkt_editor}>
+        <div className={styles.fields}>
+          <Identicon
+            className={styles.identicon}
+            address={address}
+            logo={preview || identicon}
+          />
+          <input type="file" onChange={onFileChange} title="avatar file" />
         </div>
-        <Button shadow_box onClick={subjkt_config}>
-          Save Profile
-        </Button>
-        <div style={{ display: 'inline' }}>
-          <p style={{ paddingTop: '7.5px' }}>
-            <span>Link your Twitter, Discord, GitHub, and website with </span>
-            <span>
-              <a
-                style={{ fontWeight: 'bold' }}
-                target="_blank"
-                href="https://profiles.tzkt.io"
-                rel="noreferrer"
-              >
-                TzKT Profiles
-              </a>
-            </span>
-          </p>
+        <div className={styles.fields}>
+          <Input
+            type="text"
+            name="subjkt"
+            value={subjkt}
+            onChange={(e) => setSubjkt(e as string)}
+            onBlur={(e) => {
+              if (e && /[^A-Za-z0-9-._]/.test(e.target.value)) {
+                show('Subjkt contains invalid characters. This field can only contain: letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)')
+              }
+            }}
+            placeholder="can contain letters (a-z A-Z), numbers (0-9), . (dot), - (dash), _ (underscore)"
+            label="Username"
+            pattern="^[A-Za-z0-9-._]*$"
+          />
+          <Input
+            type="text"
+            name="description"
+            value={description}
+            onChange={(e) => setDescription(e as string)}
+            placeholder="(Max length 500 characters)"
+            label="Description"
+          />
         </div>
-      </Page>
-    )
+      </div>
+      <Button shadow_box onClick={subjkt_config}>
+        Save Profile
+      </Button>
+      <div style={{ display: 'inline' }}>
+        <p style={{ paddingTop: '7.5px' }}>
+          <span>Link your Twitter, Discord, GitHub, and website with </span>
+          <span>
+            <a
+              style={{ fontWeight: 'bold' }}
+              target="_blank"
+              href="https://profiles.tzkt.io"
+              rel="noreferrer"
+            >
+              TzKT Profiles
+            </a>
+          </span>
+        </p>
+      </div>
+    </Page >
   )
 }

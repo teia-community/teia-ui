@@ -65,11 +65,16 @@ function MasonryView({ tokens }) {
 /**
  * Main feed component that can be either in Single or Masonry mode.
  * @param {Object} tkProps - The props
- * @param {[import("graphql-request").gql]} tkProps.query - The graphql query
- * @param {number} tkProps.itemsPerLoad - Batch size
- * @param {number} tkProps.maxItems - Max items to fetch from the indexer
- * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} tkProps.extractTokensFromResponse - Function to filter the response
- * @param {([NFT]) => [NFT]} tkProps.postProcessTokens - Final filter pass over tokens?
+ * @param {string} tkProps.query - The graphql query
+ * @param {boolean} [tkProps.disable] - Disable the feed
+ * @param {string} [tkProps.label] - Label for the feed
+ * @param {string} [tkProps.namespace] - Namespace for the feed
+ * @param {Object} [tkProps.variables] - Variables for the query
+ * @param {any[]} [tkProps.swrParams] - Extra params for SWR key
+ * @param {number} [tkProps.itemsPerLoad] - Batch size
+ * @param {number} [tkProps.maxItems] - Max items to fetch from the indexer
+ * @param {(data:NFT, extra:import("@types").TokenResponse) => [NFT]} [tkProps.extractTokensFromResponse] - Function to filter the response
+ * @param {([NFT]) => [NFT]} [tkProps.postProcessTokens] - Final filter pass over tokens?
  * @returns {React.ReactElement} The feed
  */
 function TokenCollection({

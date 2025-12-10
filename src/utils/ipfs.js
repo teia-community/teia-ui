@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { CIDToURL } from '@utils/index'
 
 // Downloads a json file from ipfs
@@ -18,11 +17,14 @@ export async function downloadJsonFileFromIpfs(cid) {
 export async function uploadFileToIPFSProxy(file) {
   const form_data = new FormData()
   form_data.append('asset', file)
-  const response = await axios.post(
+  const response = await fetch(
     `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`,
-    form_data,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
+    {
+      method: 'POST',
+      body: form_data,
+    }
   )
 
-  return response?.data?.cid
+  const data = await response.json()
+  return data.cid
 }

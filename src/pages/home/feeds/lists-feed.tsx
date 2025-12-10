@@ -5,11 +5,12 @@ import { gql } from 'graphql-request'
 import { Input } from '@atoms/input'
 import { useState } from 'react'
 import { Button } from '@atoms/button'
-import axios from 'axios'
 
-async function fetchList(url) {
-  const data = await axios.get(url)
-  return data.data.map((e) => e.toString())
+
+async function fetchList(url: string) {
+  const response = await fetch(url)
+  const data = await response.json()
+  return data.map((e: string | number) => e.toString())
 }
 
 const lists = {
@@ -38,10 +39,11 @@ export function ListsFeed() {
       <div style={{ display: 'flex', gap: '1em' }}>
         {Object.keys(lists).map((k) => (
           <Button
+            key={k}
             box
             onClick={() => {
-              setUrl(lists[k])
-              _setUrl(lists[k])
+              setUrl(lists[k as keyof typeof lists])
+              _setUrl(lists[k as keyof typeof lists])
             }}
           >
             {k}
@@ -62,7 +64,7 @@ export function ListsFeed() {
           placeholder="link to a json list of tokens"
           type="text"
           value={_url}
-          onChange={_setUrl}
+          onChange={(e) => _setUrl(e as string)}
         />
         <Button
           onClick={() => {

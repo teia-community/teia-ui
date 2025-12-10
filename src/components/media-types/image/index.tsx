@@ -38,22 +38,7 @@ export const ImageComponent = ({
       setSmol(true)
     }
   }
-  // useEffect(() => {
-  //   axios
-  //     .head(src)
-  //     .then((x) => {
-  //       const type = x.headers['content-type']
-  //       console.debug(`Detected type: ${type}`)
-  //       setIsVideo(type.split('/')[0].trim() === 'video')
-  //     })
-  //     .catch((e) => {
-  //       // happens too often
-  //       //console.error(e)
-  //     })
-  //     .finally(() => {
-  //       setReady(true)
-  //     })
-  // }, [src])
+
 
   return displayView ? (
     <>

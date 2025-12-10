@@ -183,9 +183,13 @@ export type NFTBase = {
   token_id: string
 
   /** Tags - we need this mostly to understand type of typed art (mono?) */
-  tags: string[]
+  /** Tags - we need this mostly to understand type of typed art (mono?) */
+  tags: { tag: string }[]
+  is_mono_type?: boolean
 
   signatures?: Signature[]
+  rights?: string
+  right_uri?: string
 }
 
 export interface SubjktMeta {

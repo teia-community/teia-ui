@@ -1,10 +1,12 @@
 import React, { useRef } from 'react'
 import styles from '@style'
 
-import axios from 'axios'
+
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
+
+import { MediaTypeProps } from '@types'
 
 export const TXT = ({
   artifactUri,
@@ -12,13 +14,14 @@ export const TXT = ({
   displayView,
   previewUri,
   nft,
-}) => {
+}: MediaTypeProps) => {
   const [content, setContent] = React.useState('')
   const [isMonoType, setIsMonoType] = React.useState(false)
-  const htmlRef = useRef()
+  const htmlRef = useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
     const getTextContent = async () => {
+      if (!displayUri) return
       await fetch(displayUri)
         .then((response) => {
           if (!response.ok) {
@@ -35,12 +38,15 @@ export const TXT = ({
     }
 
     if (artifactUri) {
-      axios.get(artifactUri).then((res) => {
-        setContent(res.data)
-      })
+      fetch(artifactUri)
+        .then((res) => res.text())
+        .then((data) => {
+          setContent(data)
+        })
+        .catch((err) => console.error(err))
     } else if (displayUri) {
       getTextContent()
-      setIsMonoType(nft.is_mono_type)
+      setIsMonoType(nft.is_mono_type || false)
     }
 
     if (nft?.tags && nft?.tags?.length > 0) {

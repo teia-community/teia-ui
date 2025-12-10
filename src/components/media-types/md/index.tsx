@@ -4,11 +4,13 @@ import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import styles from '@style'
 
-import axios from 'axios'
+
 
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
+import { MediaTypeProps } from '@types'
+
 export const MD = ({
   displayView,
   displayUri,
@@ -16,18 +18,17 @@ export const MD = ({
   previewUri,
   preview,
   objktID,
-}) => {
+}: MediaTypeProps & { preview?: boolean; objktID?: string }) => {
   const [content, setContent] = React.useState('')
 
   React.useEffect(() => {
     if (artifactUri) {
-      // const artifactHash = artifactUri.split('/ipfs/')[1]
-      axios
-        .get(artifactUri)
-        // .get(`https://cloudflare-ipfs.com/ipfs/${artifactHash}`)
-        .then((res) => {
-          setContent(res.data)
+      fetch(artifactUri)
+        .then((res) => res.text())
+        .then((data) => {
+          setContent(data)
         })
+        .catch((err) => console.error(err))
     }
 
     if (preview && previewUri) {

@@ -1,4 +1,4 @@
-import axios from 'axios'
+
 import {
   createProxySchema,
   PROXY_FACTORY_CONTRACT,
@@ -35,53 +35,58 @@ export const useCollabStore = create<CollabState>()(
 
           step('Originating Contract', 'Checking network for collab contract')
 
-          axios
-            .get(`https://api.tzkt.io/v1/operations/originations/${hash}`)
-            .then((response) => {
-              const { data } = response
+          try {
+            const response = await fetch(`https://api.tzkt.io/v1/operations/originations/${hash}`)
+            const data = await response.json()
 
-              console.log('response from originations call', data[0])
+            console.log('response from originations call', data[0])
 
-              if (data[0]) {
-                console.log('There is correct data', data[0])
+            if (data[0]) {
+              console.log('There is correct data', data[0])
 
-                // Send the originated contract to the UI via context
-                const { originatedContract } = data[0]
+              // Send the originated contract to the UI via context
+              const { originatedContract } = data[0]
 
-                set({
-                  originatedContract,
-                  originationOpHash: undefined,
-                }) // save hash
+              set({
+                originatedContract,
+                originationOpHash: undefined,
+              }) // save hash
 
-                console.log(
-                  'Saved state originatedContract',
-                  originatedContract
-                )
+              console.log(
+                'Saved state originatedContract',
+                originatedContract
+              )
 
-                // We have got our contract address
-                step(
-                  'Originating Contract',
-                  'Collaborative contract created successfully'
-                )
+              // We have got our contract address
+              step(
+                'Originating Contract',
+                'Collaborative contract created successfully'
+              )
 
-                setTimeout(() => {
-                  closeModal()
-                }, 2500)
-              } else {
-                console.log('missing data')
-
-                // We have got our contract address
-                showModal(
-                  'Originating Contract (Error)',
-                  'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address'
-                )
-              }
-
-              // Hide after 2 seconds
               setTimeout(() => {
                 closeModal()
-              }, 2000)
-            })
+              }, 2500)
+            } else {
+              console.log('missing data')
+
+              // We have got our contract address
+              showModal(
+                'Originating Contract (Error)',
+                'Sorry, there was possibly an error creating the collaborative contract - please check tzkt.io for your wallet address'
+              )
+            }
+
+            // Hide after 2 seconds
+            setTimeout(() => {
+              closeModal()
+            }, 2000)
+          } catch (error) {
+            console.error(error)
+            showModal(
+              'Originating Contract (Error)',
+              'Error checking network for collab contract'
+            )
+          }
         },
 
         sign: async (objkt_id) => {

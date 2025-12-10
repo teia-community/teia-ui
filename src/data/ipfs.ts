@@ -1,7 +1,7 @@
 import { MIMETYPE, IPFS_DEFAULT_THUMBNAIL_URI } from '@constants'
 
 import mime from 'mime-types'
-import axios from 'axios'
+
 import { Buffer } from 'buffer'
 import { fetchGraphQL } from './api'
 import { useUserStore } from '@context/userStore'
@@ -40,22 +40,37 @@ export async function uploadFileToIPFSProxy(
 
   form.append('asset', new File([file.blob], file.path, { type: file_type }))
 
-  const res = await axios.post(
-    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`,
-    form,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: (pe) => {
-        const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
-        step(
-          title,
-          `uploading ${file.path}${total_size} as ${file_type}
+  const xhr = new XMLHttpRequest()
+  const url = `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`
+
+  return new Promise((resolve, reject) => {
+    xhr.open('POST', url)
+
+    xhr.upload.onprogress = (pe) => {
+      const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
+      step(
+        title,
+        `uploading ${file.path}${total_size} as ${file_type}
 ## ${progress}%`
-        )
-      },
+      )
     }
-  )
-  return res.data.cid
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText)
+          resolve(data.cid)
+        } catch (e) {
+          reject(e)
+        }
+      } else {
+        reject(new Error(`Upload failed with status ${xhr.status}`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Upload failed'))
+    xhr.send(form)
+  })
 }
 
 /**
@@ -76,23 +91,37 @@ export async function uploadMultipleFilesToIPFSProxy(files: FileMint[]) {
     )
   })
 
-  const res = await axios.post(
-    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/multiple`,
-    form,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: (pe: ProgressEvent) => {
-        const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
-        step(
-          'Preparing OBJKT',
-          `uploading multiple files
-## ${progress}%`
-        )
-      },
-    }
-  )
+  const xhr = new XMLHttpRequest()
+  const url = `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/multiple`
 
-  return res.data.cid
+  return new Promise((resolve, reject) => {
+    xhr.open('POST', url)
+
+    xhr.upload.onprogress = (pe) => {
+      const progress = Number((pe.loaded / pe.total) * 100).toFixed(1)
+      step(
+        'Preparing OBJKT',
+        `uploading multiple files
+## ${progress}%`
+      )
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText)
+          resolve(data.cid)
+        } catch (e) {
+          reject(e)
+        }
+      } else {
+        reject(new Error(`Upload failed with status ${xhr.status}`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Upload failed'))
+    xhr.send(form)
+  })
 }
 
 const isDoubleMint = async (uri: string) => {
@@ -240,9 +269,8 @@ export const prepareFile = async ({
   } else if (thumbnail) {
     const thumbnailCid = await uploadFileToIPFSProxy({
       blob: new Blob([thumbnail.buffer]),
-      path: `thumbnail_${
-        thumbnail.file ? thumbnail.file.name : thumbnail.format?.fileName
-      }`,
+      path: `thumbnail_${thumbnail.file ? thumbnail.file.name : thumbnail.format?.fileName
+        }`,
       size: thumbnail.file?.size,
     })
     thumbnailUri = `ipfs://${thumbnailCid}`

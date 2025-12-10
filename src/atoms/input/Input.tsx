@@ -45,7 +45,7 @@ interface InputProps {
   onChange?: (
     value: number | string | React.FormEvent<HTMLInputElement>
   ) => void
-  onBlur?: () => void
+  onBlur?: (e?: React.FocusEvent<HTMLInputElement>) => void
   // onWheel?: () => void
   disabled?: boolean
   value?: string
@@ -66,7 +66,7 @@ function Input(
     maxlength = 500,
     label,
     onChange = (value) => null,
-    onBlur = () => null,
+    onBlur = (e) => null,
     // onWheel = () => null,
     disabled,
     value: valueProp,
@@ -91,14 +91,14 @@ function Input(
               ? target.valueAsNumber
               : target.value
             : target.value;
-  
+
         setValue(v)
         onChange(v)
       }
     },
     [setValue, onChange, type]
   );
-  
+
   return (
     <div className={`${styles.container} ${className || ''}`}>
       <label htmlFor={name || label || ''}>

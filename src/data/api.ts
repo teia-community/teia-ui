@@ -3,7 +3,7 @@ import {
   DAO_TOKEN_DECIMALS,
   CLAIMED_DAO_TOKENS_BIGMAP_ID,
 } from '@constants'
-import axios from 'axios'
+
 
 export const BaseTokenFieldsFragment = `
 fragment baseTokenFields on tokens {
@@ -214,21 +214,19 @@ export async function fetchCollabCreations(
     `
     ${BaseTokenFieldsFragment}
     query GetCollabCreations($addressOrSubjkt: String!) {
-      tokens(where: {${
-        type === 'address'
-          ? `artist_address: {_eq: $addressOrSubjkt}`
-          : `artist_profile: {name: {_eq: $addressOrSubjkt }}`
-      }, editions: {_gt: "0"}}, order_by: {token_id: desc}) {
+      tokens(where: {${type === 'address'
+      ? `artist_address: {_eq: $addressOrSubjkt}`
+      : `artist_profile: {name: {_eq: $addressOrSubjkt }}`
+    }, editions: {_gt: "0"}}, order_by: {token_id: desc}) {
         ...baseTokenFields
         tags {
           tag
         }
       }
-      split_contracts: teia_split_contracts(where: {${
-        type === 'address'
-          ? `contract_address: {_eq: $addressOrSubjkt}`
-          : `contract_profile: {name: {_eq: $addressOrSubjkt}}`
-      }}) {
+      split_contracts: teia_split_contracts(where: {${type === 'address'
+      ? `contract_address: {_eq: $addressOrSubjkt}`
+      : `contract_profile: {name: {_eq: $addressOrSubjkt}}`
+    }}) {
         administrator_address
         shareholders {
           shareholder_address
@@ -289,15 +287,21 @@ export async function getTzktData(
   debug = false
 ) {
   const url = import.meta.env.VITE_TZKT_API + query
-  const response = await axios
-    .get(url, { params: parameters })
-    .catch((error) =>
-      console.log(`The following TzKT query returned an error: ${url}`, error)
-    )
+  const queryString = new URLSearchParams(parameters).toString()
+  const fullUrl = queryString ? `${url}?${queryString}` : url
 
-  if (debug) console.log(`Executed TzKT query: ${url}`)
-
-  return response?.data
+  try {
+    const response = await fetch(fullUrl)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    if (debug) console.log(`Executed TzKT query: ${fullUrl}`)
+    return data
+  } catch (error) {
+    console.log(`The following TzKT query returned an error: ${fullUrl}`, error)
+    return null
+  }
 }
 
 /**

@@ -287,3 +287,35 @@
   min-height: 550px;
   width: 100%;
 }
+
+/* Merged from style.css */
+.objktview_zipembed {
+  // was .objktview-zipembed.objktview
+  // merging with existing .objktview styles if needed, or keeping separate
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  border: none;
+  width: 100vw;
+  height: 100vw;
+
+  @include respond-to('tablet') {
+    width: 550px;
+    height: 550px;
+  }
+
+  @include respond-to('desktop') {
+    min-height: 550px;
+    min-width: 550px;
+    width: calc(100vh - 280px);
+    height: calc(100vh - 280px);
+  }
+}
+
+.message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}

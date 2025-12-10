@@ -12,7 +12,6 @@ import { Page } from '@atoms/layout'
 import { RenderMediaType } from '@components/media-types'
 import { ItemInfo } from '@components/item-info'
 import styles from '@style'
-import './style.css'
 import useSettings from '@hooks/use-settings'
 import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
@@ -56,7 +55,7 @@ const TABS = [
     to: 'transfer',
     private: true,
   },
-  { 
+  {
     title: 'Copyright',
     to: 'copyright',
   }
@@ -110,7 +109,7 @@ export const ObjktDisplay = () => {
           objkt.isPhotosensitive = true
         }
 
-        if(isNSFW || isPhotosensitive) {
+        if (isNSFW || isPhotosensitive) {
           objkt.isModerated = true
         }
 
@@ -141,7 +140,7 @@ export const ObjktDisplay = () => {
   }
 
   if (!nft) {
-    return
+    return null
   }
   return (
     <Page className={styles.profile_page} title={nft?.name}>

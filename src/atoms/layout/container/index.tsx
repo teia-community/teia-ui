@@ -1,8 +1,14 @@
 import classnames from 'classnames'
 import styles from '@style'
-import { memo } from 'react'
+import { memo, ReactNode } from 'react'
 
-const Container = ({ children = null, large = false, xlarge = false }) => {
+type ContainerProps = {
+  children?: ReactNode
+  large?: boolean
+  xlarge?: boolean
+}
+
+const Container = ({ children = null, large = false, xlarge = false }: ContainerProps) => {
   const classes = classnames({
     [styles.container]: true,
     [styles.large]: large,

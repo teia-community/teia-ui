@@ -1,3 +1,4 @@
+import React from 'react'
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
 import { Tags } from '@pages/tags/index'
 import { About } from '@pages/about'
@@ -89,10 +90,10 @@ import AdminCopyrightPage from '@pages/admincopyright'
 const display_routes = (
   <>
     <Route index element={<Creations />} />
-    <Route exact path="collection" element={<Collections />} />
-    <Route exact path="curation" element={<Curation />} />
-    <Route exact path="collabs" element={<Collabs />} />
-    <Route exact path="copyrights" element={<CopyrightDisplay />} />
+    <Route path="collection" element={<Collections />} />
+    <Route path="curation" element={<Curation />} />
+    <Route path="collabs" element={<Collabs />} />
+    <Route path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
 
@@ -142,18 +143,18 @@ const router = createBrowserRouter(
       <Route path="collab/:name" element={<Display />}>
         <Route index element={<CollabDisplay />} />
       </Route>
-      <Route exact path="about" element={<About />} />
-      <Route exact path="terms" element={<Terms />} />
-      <Route exact path="faq" element={<FAQ />} />
-      <Route exact path="codeofconduct" element={<CodeOfConduct />} />
-      <Route exact path="corevalues" element={<CoreValues />} />
-      <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
+      <Route path="about" element={<About />} />
+      <Route path="terms" element={<Terms />} />
+      <Route path="faq" element={<FAQ />} />
+      <Route path="codeofconduct" element={<CodeOfConduct />} />
+      <Route path="corevalues" element={<CoreValues />} />
+      <Route path="privacypolicy" element={<PrivacyPolicy />} />
       <Route path="sync" element={<Sync />} />
-      <Route exact path="mint/*" element={<Mint />}>
+      <Route path="mint/*" element={<Mint />}>
         <Route index element={<MintForm />} />
         <Route path="preview" element={<Preview />} />
       </Route>
-      <Route exact path="copyright/*" element={<CopyrightPage />}>
+      <Route path="copyright/*" element={<CopyrightPage />}>
         <Route index element={<CopyrightForm />} />
         <Route path="copyrightpreview" element={<CopyrightPreview />} />
         <Route path="copyrightcreate" element={<CopyrightCreate />} />
@@ -192,22 +193,16 @@ const router = createBrowserRouter(
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
       </Route>
-
-      <Route path=":name/*" element={<Display />}>
-        {display_routes}
-      </Route>
     </Route>
   )
 )
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
-
-  <IconCache.Provider value={{}}>
-    <RouterProvider router={router} />
-  </IconCache.Provider>
-
-  // </React.StrictMode>,
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <IconCache.Provider value={{}}>
+      <RouterProvider router={router} />
+    </IconCache.Provider>
+  </React.StrictMode>,
 )
 
 // If you want your app to work offline and load faster, you can change

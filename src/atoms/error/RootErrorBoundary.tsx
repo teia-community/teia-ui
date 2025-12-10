@@ -18,8 +18,8 @@ export function RootErrorBoundary({
   title,
   msg: message,
 }: {
-  title: string
-  msg: string
+  title?: string
+  msg?: string
 }) {
   const error = useRouteError() as Error
   let msg = ''
