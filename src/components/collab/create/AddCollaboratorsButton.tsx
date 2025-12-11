@@ -3,9 +3,9 @@ import { memo } from 'react'
 import { validAddress } from '@utils/collab'
 import styles from '../index.module.scss'
 
-const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }) => {
+const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }: { collaborators: any[]; onClick: () => void; threshold?: number }) => {
   const validCollaborators = collaborators.filter(
-    (c) => !!c.shares && validAddress(c.address)
+    (c: any) => !!c.shares && validAddress(c.address)
   )
 
   return (

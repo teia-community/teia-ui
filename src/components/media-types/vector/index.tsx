@@ -11,6 +11,11 @@ export const VectorComponent = ({
   previewUri,
   displayView,
   nft,
+}: {
+  artifactUri: string
+  previewUri?: string
+  displayView?: boolean
+  nft: any
 }) => {
   const address = useUserStore((st) => st.address)
   const classes = classnames({
@@ -19,8 +24,8 @@ export const VectorComponent = ({
     [styles.display]: displayView,
   })
 
-  let _viewer_ = false
-  let _objkt_ = false
+  let _viewer_: string | undefined = undefined
+  let _objkt_: string | undefined = undefined
 
   if (address) {
     _viewer_ = address
@@ -51,13 +56,13 @@ export const VectorComponent = ({
         src={path}
         sandbox="allow-scripts"
         scrolling="no"
-        // onLoad={(o)=>{
-        //   console.log(o)
-        //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
-        // }}
-        // onLoad={
-        // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-        // }
+      // onLoad={(o)=>{
+      //   console.log(o)
+      //   o.target.style.height=o.target.contentWindow.document.body.scrollHeight+"px";
+      // }}
+      // onLoad={
+      // 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
+      // }
       />
     </div>
   )

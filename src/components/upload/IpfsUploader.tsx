@@ -13,24 +13,32 @@ export default function IpfsUploader({
   className,
   displayUploadInformation = true,
   children,
+}: {
+  label: string
+  placeholder: string
+  value: string
+  onChange: (value: string) => void
+  className?: string
+  displayUploadInformation?: boolean
+  children?: React.ReactNode
 }) {
   // Set the component state
-  const [file, setFile] = useState(undefined)
+  const [file, setFile] = useState<File | undefined>(undefined)
 
   // Define the on change handler
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files[0])
     onChange('')
   }
 
   // Define the on click handler
-  const handleClick = async (e) => {
+  const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     onChange(await uploadFileToIpfs(file, displayUploadInformation))
   }
 
   // Define the on clear handler
-  const handleClear = async (e) => {
+  const handleClear = async (e: React.MouseEvent) => {
     e.preventDefault()
     setFile(undefined)
     onChange('')
@@ -80,7 +88,7 @@ export default function IpfsUploader({
   )
 }
 
-async function uploadFileToIpfs(file, displayUploadInformation) {
+async function uploadFileToIpfs(file: File, displayUploadInformation: boolean) {
   const step = useModalStore.getState().step
   const close = useModalStore.getState().close
 

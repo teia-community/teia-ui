@@ -16,7 +16,7 @@ export const CollabIssuerInfo = ({ creator }: { creator: ArtistProfile }) => {
     creator,
     'split_contract.shareholders',
     []
-  ).filter((h) => h.holder_type === CollaboratorType.CORE_PARTICIPANT)
+  ).filter((h: any) => h.holder_type === CollaboratorType.CORE_PARTICIPANT)
   const path = name ? `/collab/${name}` : `${PATH.COLLAB}/${user_address}`
 
   return (
@@ -27,7 +27,7 @@ export const CollabIssuerInfo = ({ creator }: { creator: ArtistProfile }) => {
       onBlur={() => setShowCollabSummary(false)}
     >
       <Button className={styles.issuerBtn} to={path}>
-        {name === '' ? walletPreview(user_address) : name}
+        {name === '' ? walletPreview(user_address || '') : name}
       </Button>
 
       {showCollabSummary && (

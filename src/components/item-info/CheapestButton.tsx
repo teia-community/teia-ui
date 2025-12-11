@@ -3,7 +3,7 @@ import MarketplaceLabel from '@atoms/marketplace-labels'
 import styles from '@style'
 import { useUserStore } from '@context/userStore'
 
-const CheapestButton = ({ listing }) => {
+const CheapestButton = ({ listing }: { listing: any }) => {
   const [address, sync, collect] = useUserStore((st) => [
     st.address,
     st.sync,

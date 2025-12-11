@@ -75,8 +75,8 @@ export const PdfComponent = memo(function ({
     setRenderedPageNumber(pageNumber)
   }
 
-  function onPassword(callback, reason) {
-    function callbackProxy(password) {
+  function onPassword(callback: (password: string) => void, reason: number) {
+    function callbackProxy(password: string | null) {
       // Cancel button handler
       if (password === null) {
         // password will be null if user clicks on cancel

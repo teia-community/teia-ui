@@ -6,13 +6,19 @@ export function Votes({
   showValues,
   onClick,
   className,
+}: {
+  votes: { yes: number; no: number; abstain: number }
+  labels?: { yes: string; no: string; abstain: string; empty: string }
+  showValues?: boolean
+  onClick?: () => void
+  className?: string
 }) {
   const { yes, no, abstain } = votes
   const totalVotes = Number(yes) + Number(no) + Number(abstain)
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    onClick()
+    onClick?.()
   }
 
   return (

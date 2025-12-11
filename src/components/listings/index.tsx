@@ -26,7 +26,7 @@ function ListingRow({
   onCollectClick: (listing: Listing) => void
   reswapPrices: { [key: string]: number }
   setReswapPrices: React.Dispatch<
-    React.SetStateAction<{ [key: string]: string }>
+    React.SetStateAction<{ [key: string]: number }>
   >
   reswap: (nft: NFT, price: number, listing: Listing) => void
   cancel: (contract: string, swap_id: string) => void
@@ -143,16 +143,16 @@ export const Listings = ({
   // proxyAddress,
   handleCollect,
 }: // handleCollectObjktcomAsk,
-// cancel,
-// restricted,
-// reswap,
-{
-  proxyAdminAddress: string
-  nft: NFT
-  handleCollect: (listing: Listing) => void
-}) => {
-  const [reswapPrices, setReswapPrices] = useState({})
-  const listingsWithKeys = nft.listings?.map((listing) => ({
+  // cancel,
+  // restricted,
+  // reswap,
+  {
+    proxyAdminAddress: string
+    nft: NFT
+    handleCollect: (listing: Listing) => void
+  }) => {
+  const [reswapPrices, setReswapPrices] = useState<{ [key: string]: number }>({})
+  const listingsWithKeys = nft.listings?.map((listing: any) => ({
     ...listing,
     key: listing.swap_id || listing.ask_id || listing.offer_id,
   }))

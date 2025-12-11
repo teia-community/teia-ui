@@ -4,7 +4,7 @@ import { CollabParticipantInfo } from './CollabParticipantInfo'
 import styles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 
-export const CollabList = ({ description, collabs }) => {
+export const CollabList = ({ description, collabs }: { description?: string; collabs: any[] }) => {
   const [showDetail, setShowDetail] = useState(false)
 
   const headerStyle = classNames(styles.flex, styles.flexBetween)
@@ -23,7 +23,7 @@ export const CollabList = ({ description, collabs }) => {
       </div>
 
       <ul>
-        {collabs.map((collab) => (
+        {collabs.map((collab: any) => (
           <CollabParticipantInfo
             key={collab.contract_address}
             collabData={collab}

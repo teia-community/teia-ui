@@ -1,7 +1,7 @@
 import styles from '../index.module.scss'
 import { tipOptions } from '@constants'
 
-export const TipSelector = ({ onSelect }) => {
+export const TipSelector = ({ onSelect }: { onSelect: (percentage: number) => void }) => {
   return (
     <div className={styles.tipSelect}>
       {tipOptions.map((percentage) => {

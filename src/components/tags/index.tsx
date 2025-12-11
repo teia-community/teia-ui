@@ -2,11 +2,11 @@ import { PATH } from '@constants'
 import { Button } from '@atoms/button'
 import styles from '@style'
 
-export const Tags = ({ tags }) => {
+export const Tags = ({ tags }: { tags: string[] }) => {
   return (
     <div className={styles.container}>
       {tags
-        .filter((e) => e !== '')
+        .filter((e: string) => e !== '')
         .map((tag, index) => {
           return (
             <Button

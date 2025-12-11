@@ -15,16 +15,25 @@ export const VideoComponent = ({
   displayView,
   nft,
   forceVideo: force,
+}: {
+  artifactUri: string
+  displayUri?: string
+  previewUri?: string
+  inView?: boolean
+  displayView?: boolean
+  nft: any
+  forceVideo?: boolean
 }) => {
-  const domElement = useRef()
+  const domElement = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     if (!displayView) {
       return
     }
-    const isVideoAvailable = (video) => iOS || video.readyState > 2
+    const isVideoAvailable = (video: HTMLVideoElement | null) => iOS || (video && video.readyState > 2)
 
-    const isVideoPlaying = (video) =>
+    const isVideoPlaying = (video: HTMLVideoElement | null) =>
+      video &&
       video.currentTime > 0 &&
       !video.paused &&
       !video.ended &&

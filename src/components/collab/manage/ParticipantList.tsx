@@ -2,7 +2,7 @@ import { CollabParticipant } from '../show/CollabParticipant'
 import styles from '../index.module.scss'
 import { memo } from 'react'
 
-const ParticipantList = ({ title, participants }) => {
+const ParticipantList = ({ title, participants }: { title?: string | boolean; participants: any[] }) => {
   return (
     <div>
       <div className={styles.flex}>
@@ -12,7 +12,7 @@ const ParticipantList = ({ title, participants }) => {
           </p>
         )}
         <div>
-          {participants.map((participant, index) => [
+          {participants.map((participant: any, index: number) => [
             index > 0 && index < participants.length - 1 && ', ',
             index > 0 && index === participants.length - 1 && ', ',
             <CollabParticipant

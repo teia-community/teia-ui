@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import styles from '@style'
 
 // TODO: I removed color config for now, relying on the theme's bg/fg styles
-export const TopBanner = ({ children, color }) => {
+export const TopBanner = ({ children, color }: { children: React.ReactNode; color?: string }) => {
   const [visible, setVisible] = useState(true)
   const { y } = useWindowScroll()
 

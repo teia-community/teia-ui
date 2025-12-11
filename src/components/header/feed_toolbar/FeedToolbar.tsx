@@ -55,7 +55,7 @@ const locationMap = new Map([
 
 const locationNeedSync = ['/feed/friends']
 
-export const FeedToolbar = ({ feeds_menu = false }) => {
+export const FeedToolbar = ({ feeds_menu = false }: { feeds_menu?: boolean }) => {
   // const [price, setPrice] = useState({ from: 0, to: 0 })
 
   const [viewMode, setViewMode, startFeed] = useLocalSettings(
@@ -85,7 +85,7 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
           >
             <DropDown menuID="feeds">
               <div className={styles.feeds_button}>
-                {[...locationMap.keys()].map((k) => {
+                {[...locationMap.keys()].map((k: string) => {
                   if (k.startsWith('-')) {
                     return (
                       <>

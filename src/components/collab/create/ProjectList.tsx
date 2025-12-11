@@ -4,11 +4,11 @@ import { Secondary } from '@atoms/button'
 import styles from '../index.module.scss'
 import { ossProjects } from '@constants'
 
-export const ProjectList = ({ beneficiaries, onSelect }) => {
+export const ProjectList = ({ beneficiaries, onSelect }: { beneficiaries: any[]; onSelect: (address: string, name: string) => void }) => {
   const [showList, setShowList] = useState(false)
 
-  const beneficiaryAddresses = beneficiaries.map((b) => b.address)
-  const validBeneficiaries = beneficiaries.filter((b) => b.address && b.shares)
+  const beneficiaryAddresses = beneficiaries.map((b: any) => b.address)
+  const validBeneficiaries = beneficiaries.filter((b: any) => b.address && b.shares)
   const unselectedProjects = ossProjects.filter(
     (project) => !beneficiaryAddresses.includes(project.address)
   )
@@ -20,13 +20,13 @@ export const ProjectList = ({ beneficiaries, onSelect }) => {
     [styles.absolute]: showList,
   })
 
-  const _select = (address, name) => {
+  const _select = (address: string, name: string) => {
     onSelect(address, name)
     setShowList(false)
   }
 
   return unselectedProjects.length > 0 ? (
-    <div className={showList ? styles.projectList : null}>
+    <div className={showList ? styles.projectList : undefined}>
       <button className={btnClass} onClick={() => setShowList(!showList)}>
         <Secondary>
           {showList ? 'Close' : 'Choose from popular projects'}
@@ -35,7 +35,7 @@ export const ProjectList = ({ beneficiaries, onSelect }) => {
 
       {showList && (
         <ul className={styles.list}>
-          {unselectedProjects.map((project) => {
+          {unselectedProjects.map((project: any) => {
             const { name, address } = project
 
             return (

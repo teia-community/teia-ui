@@ -8,7 +8,7 @@ import ParticipantList from './ParticipantList'
 import { Link } from 'react-router-dom'
 import { useUserStore } from '@context/userStore'
 
-export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
+export const CollabParticipantInfo = ({ collabData, expanded = false }: { collabData: any; expanded?: boolean }) => {
   const [proxyAddress, address] = useUserStore((st) => [
     st.proxyAddress,
     st.address,
@@ -25,12 +25,12 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
 
   // Core participants
   const coreParticipants = shareholders.filter(
-    ({ holder_type }) => holder_type === CollaboratorType.CORE_PARTICIPANT
+    ({ holder_type }: any) => holder_type === CollaboratorType.CORE_PARTICIPANT
   )
 
   // beneficiaries
   const beneficiaries = shareholders.filter(
-    ({ holder_type }) => holder_type === CollaboratorType.BENEFACTOR
+    ({ holder_type }: any) => holder_type === CollaboratorType.BENEFICIARY
   )
 
   // Combine various styles

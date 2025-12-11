@@ -1,7 +1,7 @@
 import { default as MarkdownToJSX } from 'markdown-to-jsx'
 import styles from '@style'
 
-const LinkRenderer = (props) => {
+const LinkRenderer = (props: { href: string; children: React.ReactNode }) => {
   return (
     <a href={props.href} target="_blank" rel="noreferrer">
       {props.children}
@@ -9,7 +9,7 @@ const LinkRenderer = (props) => {
   )
 }
 
-export const Markdown = ({ children, className }) => {
+export const Markdown = ({ children, className }: { children: string; className?: string }) => {
   return (
     <MarkdownToJSX
       options={{

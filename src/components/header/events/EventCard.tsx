@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
  * @param {import("@types").FeedEvent } eventOptions.event - The event object
  * @returns {React.ReactElement} The card
  */
-export const EventCard = ({ event }) => {
+export const EventCard = ({ event }: { event: any }) => {
   const itemVariants = {
     hidden: {
       opacity: 0,

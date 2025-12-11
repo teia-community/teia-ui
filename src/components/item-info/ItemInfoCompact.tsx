@@ -8,7 +8,7 @@ import { PATH } from '@constants'
 import { useParams } from 'react-router'
 import { useLocalSettings } from '@context/localSettingsStore'
 
-const Price = ({ price }) => (
+const Price = ({ price }: { price: string | null }) => (
   <div className={styles.price_box}>
     {price}
     <TezosIcon size={16} />
@@ -18,7 +18,7 @@ const Price = ({ price }) => (
  * @param {Object} itemInfoCompactOptions
  * @param {import("@types").NFT} itemInfoCompactOptions.nft
  **/
-const ItemInfoCompact = ({ nft }) => {
+const ItemInfoCompact = ({ nft }: { nft: any }) => {
   const [zen, viewMode] = useLocalSettings((st) => [st.zen, st.viewMode])
 
   const param = useParams()

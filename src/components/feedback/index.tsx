@@ -26,7 +26,7 @@ export const FeedbackComponent = () => {
             <div className={styles.loader}>{progress && <Loading />}</div>
             {confirm && (
               <div className={styles.buttons}>
-                <Button shadow_box onClick={() => confirmCallback()}>
+                <Button shadow_box onClick={() => confirmCallback?.()}>
                   close
                 </Button>
               </div>

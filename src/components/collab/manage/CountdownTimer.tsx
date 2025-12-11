@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 
-export const CountdownTimer = ({ endDate, onComplete }) => {
+export const CountdownTimer = ({ endDate, onComplete }: { endDate: Date; onComplete: () => void }) => {
   const calculateTimeRemaining = () => {
     const now = new Date()
-    const difference = Math.abs(endDate - now)
+    const difference = Math.abs(endDate.getTime() - now.getTime())
 
     return Math.floor((difference / 1000) % 60)
   }

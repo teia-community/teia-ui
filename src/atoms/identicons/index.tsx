@@ -77,7 +77,7 @@ function dummyAddress(): string {
  * @return {array} An array containing the path and the sum of the avatar
  * @throws {Error} If the provided address is not a valid Tezos address
  */
-function avatar(address: string): Array<any> {
+function avatar(address: string): [string, number] {
   address = address ? address : dummyAddress()
   const decoded = base58.decode(address.trim().substr(3))
   const hex = Buffer.from(decoded).toString('hex') as string
@@ -87,7 +87,7 @@ function avatar(address: string): Array<any> {
     .slice(-5)
     .reduce((sum, x) => sum + parseInt(x, 16), 0)
 
-  const xsb = []
+  const xsb = [] as { x: number; y: number; n: number }[]
   for (let i = 0; i < hex.length - 2; i++) {
     const n = parseInt(`${hex[i]}${hex[i + 1]}${hex[i + 2]}`, 16) + check
     const x = bound(Math.round((n || s / 2) / s), s)

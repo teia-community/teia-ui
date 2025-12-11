@@ -1,13 +1,13 @@
 import styles from '../index.module.scss'
 
-export const ShareAllocationNotice = ({ collaborators, muted }) => {
+export const ShareAllocationNotice = ({ collaborators, muted }: { collaborators: any[]; muted?: boolean }) => {
   // Add everything up and see if the total is less than 100. If so, show this notice
   const totalAllocated = Math.min(
-    collaborators.reduce((total, c) => total + (Number(c.percentage) || 0), 0),
+    collaborators.reduce((total: number, c: any) => total + (Number(c.percentage) || 0), 0),
     100
   )
   const validCollaborators = collaborators.filter(
-    (c) => c.percentage && c.address
+    (c: any) => c.percentage && c.address
   )
   const showPercentageMismatchNotice =
     totalAllocated > 0 &&
@@ -15,7 +15,7 @@ export const ShareAllocationNotice = ({ collaborators, muted }) => {
     validCollaborators.length > 0
 
   return showPercentageMismatchNotice ? (
-    <div className={muted ? styles.muted : null}>
+    <div className={muted ? styles.muted : undefined}>
       <p>{totalAllocated}% allocated</p>
       {totalAllocated < 100 && (
         <p>

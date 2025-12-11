@@ -9,8 +9,8 @@ import { CloseIcon } from '@icons'
 import { useLocalSettings } from '@context/localSettingsStore'
 
 export const EventBanner = () => {
-  const [content, setContent] = useState()
-  const [config, setConfig] = useState()
+  const [content, setContent] = useState<string | undefined>()
+  const [config, setConfig] = useState<{ enable?: number; color?: string } | undefined>()
   const [has_seen_banner, setHasSeenBanner] = useLocalSettings((state) => [
     state.has_seen_banner,
     state.setHasSeenBanner,

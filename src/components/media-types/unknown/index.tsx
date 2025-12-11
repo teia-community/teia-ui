@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const UnknownComponent = ({ mimeType }) => {
+export const UnknownComponent = ({ mimeType }: { mimeType?: string }) => {
   const [processingState, setProcessingState] = useState('checking')
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import { FormFields } from './FormFields'
 import { useMintStore } from '@context/mintStore'
 
-function Form({ fields, defaultValues, children, onSubmit, onReset }) {
+function Form({ fields, defaultValues, children, onSubmit, onReset }: { fields: any[]; defaultValues?: any; children?: React.ReactNode; onSubmit: (data: any) => void; onReset?: () => void }) {
   const {
     register,
     control,
@@ -17,7 +17,7 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
 
   return (
     <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-      {fields.map((f) => {
+      {fields.map((f: any) => {
         const value = f.watch ? watch(f.name) : null
         return (
           <FormFields

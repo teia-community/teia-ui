@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { CopyrightFormFields } from './CopyrightFormFields'
 import { Button } from '@atoms/button'
 
-function CopyrightMainForm({ fields, defaultValues, onSubmit }) {
+function CopyrightMainForm({ fields, defaultValues, onSubmit }: { fields: any[]; defaultValues?: any; onSubmit: (data: any) => void }) {
   const {
     control,
     handleSubmit,
@@ -12,7 +12,7 @@ function CopyrightMainForm({ fields, defaultValues, onSubmit }) {
 
   return (
     <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-      {fields.map((f) => (
+      {fields.map((f: any) => (
         <CopyrightFormFields
           key={f.name}
           control={control}

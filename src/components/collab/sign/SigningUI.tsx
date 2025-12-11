@@ -2,11 +2,11 @@ import { Button } from '@atoms/button'
 import styles from '../index.module.scss'
 import { useCollabStore } from '@context/collabStore'
 
-export const SigningUI = ({ id, hasSigned }) => {
+export const SigningUI = ({ id, hasSigned }: { id: string; hasSigned: boolean }) => {
   const sign = useCollabStore((st) => st.sign)
 
   const do_sign = () => {
-    sign(id).then((response) => console.log(response))
+    sign(id)
   }
 
   return hasSigned ? (

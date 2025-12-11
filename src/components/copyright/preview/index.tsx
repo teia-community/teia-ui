@@ -27,13 +27,13 @@ export function CopyrightPreview() {
   return (
     <div className={styles.container}>
       <h2>Preview Copyright Agreement</h2>
-      
+
       <div className={styles.previewContent}>
         {/* Selected Works Section */}
         <div className={styles.section}>
           <h3>Selected Works to Apply Copyright Agreement ({customLicenseData.tokens.length})</h3>
           <div className={styles.tokenGrid}>
-            {customLicenseData.tokens.map((token, index) => (
+            {customLicenseData.tokens.map((token: any, index: number) => (
               <div key={index} className={styles.tokenCard}>
                 {token.contractAddress !== 'external' && token.metadata?.displayUri ? (
                   <img
@@ -101,8 +101,8 @@ export function CopyrightPreview() {
         <Button onClick={() => navigate('/copyright')}>
           ← Back to Edit
         </Button>
-        
-        <Button 
+
+        <Button
           onClick={() => navigate('/copyright/copyrightcreate')}
           shadow_box
         >

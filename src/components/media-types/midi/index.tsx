@@ -18,12 +18,18 @@ export const MidiComponent = ({
   previewUri,
   displayView,
   nft,
+}: {
+  artifactUri: string
+  displayUri?: string
+  previewUri?: string
+  displayView?: boolean
+  nft: any
 }) => {
   const [midiUrl, setMidiUrl] = useState(previewUri ? previewUri : artifactUri)
   const [currentVolume, setCurrentVolume] = useState(100)
   const [play, setPlay] = useState(false)
   const [disableVolumeControl, setDisableVolumeControl] = useState(false)
-  const audioPlayer = useRef()
+  const audioPlayer = useRef<any>(null)
 
   const togglePlay = () => {
     setPlay(!play)
@@ -42,7 +48,7 @@ export const MidiComponent = ({
   useEffect(() => {
     if (previewUri || artifactUri) {
       processMidiData(previewUri ? previewUri : artifactUri, currentVolume)
-        .then((data) => {
+        .then((data: string) => {
           // Set the state with the new midi blob based on the adjusted volume
           setMidiUrl(data)
         })
@@ -52,7 +58,7 @@ export const MidiComponent = ({
     }
   }, [previewUri, artifactUri, currentVolume])
 
-  const updateVolume = useCallback((e) => {
+  const updateVolume = useCallback((e: React.FormEvent<HTMLInputElement>) => {
     setCurrentVolume(e.target.value)
   }, [])
 

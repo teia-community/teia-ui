@@ -2,10 +2,10 @@ import styles from '../index.module.scss'
 import { ossProjects } from '@constants'
 import { TipSelector } from './TipSelector'
 
-export const TipJar = ({ tips, setTips }) => {
-  const tipsByAddress = tips.map((t) => t.address)
+export const TipJar = ({ tips, setTips }: { tips: any[]; setTips: (tips: any[]) => void }) => {
+  const tipsByAddress = tips.map((t: any) => t.address)
 
-  const toggleTip = (address) => {
+  const toggleTip = (address: string) => {
     const updatedTips = [...tips]
 
     const index = tipsByAddress.indexOf(address)
@@ -13,7 +13,7 @@ export const TipJar = ({ tips, setTips }) => {
     if (index > -1) {
       updatedTips.splice(index, 1)
     } else {
-      const projectsByAddress = ossProjects.map((project) => project.address)
+      const projectsByAddress = ossProjects.map((project: any) => project.address)
       const index = projectsByAddress.indexOf(address)
       const project = ossProjects[index]
 
@@ -23,9 +23,9 @@ export const TipJar = ({ tips, setTips }) => {
     setTips(updatedTips)
   }
 
-  const _updateTip = (address, percentage) => {
+  const _updateTip = (address: string, percentage: number) => {
     const updatedTips = [...tips]
-    const projectsByAddress = updatedTips.map((t) => t.address)
+    const projectsByAddress = updatedTips.map((t: any) => t.address)
     const index = projectsByAddress.indexOf(address)
 
     // toggle if it's the same value
@@ -43,7 +43,7 @@ export const TipJar = ({ tips, setTips }) => {
 
   return (
     <ul className={styles.list}>
-      {ossProjects.map((project, projectIndex) => {
+      {ossProjects.map((project: any, projectIndex: number) => {
         const { name, address } = project
         const isChecked = tipsByAddress.includes(address)
 
@@ -63,8 +63,7 @@ export const TipJar = ({ tips, setTips }) => {
 
               {isChecked && (
                 <TipSelector
-                  tip={tips[projectIndex]}
-                  onUpdate={(percentage) =>
+                  onSelect={(percentage: number) =>
                     _updateTip(project.address, percentage)
                   }
                 />

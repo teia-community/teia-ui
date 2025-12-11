@@ -13,10 +13,16 @@ export const AudioComponent = ({
   previewUri,
   displayView,
   nft,
+}: {
+  artifactUri: string
+  displayUri?: string
+  previewUri?: string
+  displayView?: boolean
+  nft: any
 }) => {
   // const visualiser = useRef()
   // const [userTouched, setUserTouched] = useState(false)
-  const audioElement = useRef()
+  const audioElement = useRef<HTMLAudioElement>(null)
   const [play, setPlay] = useState(false)
   const togglePlay = () => {
     setPlay(!play)

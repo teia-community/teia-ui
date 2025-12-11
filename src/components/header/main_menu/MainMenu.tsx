@@ -42,7 +42,7 @@ export const MainMenu = () => {
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
-          <div className={styles.address}>{walletPreview(address)}</div>
+          <div className={styles.address}>{walletPreview(address || '')}</div>
           <MenuItem
             className={styles.menu_label}
             label="Mint"

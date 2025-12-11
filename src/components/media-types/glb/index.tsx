@@ -13,6 +13,12 @@ export const GLBComponent = ({
   previewUri,
   displayView,
   nft,
+}: {
+  artifactUri: string
+  displayUri?: string
+  previewUri?: string
+  displayView?: boolean
+  nft: any
 }) => {
   // const ref = useRef()
   // const [width, setWidth] = useState('100px')

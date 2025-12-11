@@ -7,7 +7,7 @@ const transition = {
   ease: [0.43, 0.13, 0.23, 0.96],
 }
 
-export const Menu = memo(({ isOpen = false }) => {
+export const Menu = memo(({ isOpen = false }: { isOpen?: boolean }) => {
   const variant = isOpen ? 'opened' : 'closed'
 
   const top = {

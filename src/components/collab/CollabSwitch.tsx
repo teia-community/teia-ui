@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react'
 import collabStyles from '@components/collab/index.module.scss'
 import classNames from 'classnames'
 
-export const CollabSwitch = ({ address, name, className }) => {
-  const [collabs, setCollabs] = useState([])
+export const CollabSwitch = ({ address, name, className }: { address: string; name: string; className?: string }) => {
+  const [collabs, setCollabs] = useState<any[]>([])
   const [selectCollab, setSelectCollab] = useState(false)
 
   useEffect(() => {

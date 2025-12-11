@@ -12,25 +12,25 @@ export default function CopyrightForm() {
   // Load existing data from Zustand store
   const { customLicenseData } = useCopyrightStore()
 
-  const handleCopyrightCreation = async (data) => {
+  const handleCopyrightCreation = async (data: any) => {
     try {
       const { customLicenseData } = useCopyrightStore.getState()
-  
+
       useCopyrightStore.setState({
         ...data,
-        customLicenseData: { 
-          ...data.customLicenseData, 
+        customLicenseData: {
+          ...data.customLicenseData,
           tokens: customLicenseData?.tokens || [],
         },
         isValid: true,
       })
-  
+
       navigate('copyrightpreview')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Copyright creation failed:', error.message)
     }
   };
-  
+
   return (
     <motion.div
       style={{ width: '100%' }}

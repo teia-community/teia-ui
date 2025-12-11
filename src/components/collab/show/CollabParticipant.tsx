@@ -3,7 +3,7 @@ import { PATH } from '@constants'
 import { Link } from 'react-router-dom'
 import styles from '../index.module.scss'
 
-export const CollabParticipant = ({ participant }) => {
+export const CollabParticipant = ({ participant }: { participant: any }) => {
   const displayName = get(participant, 'shareholder_profile.name')
     ? get(participant, 'shareholder_profile.name')
     : participant.shareholder_address

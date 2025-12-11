@@ -6,15 +6,15 @@ import { memo, useMemo } from 'react'
  * @param {Object} editionOptions
  * @param {import("@types").NFT} editionOptions.nft
  **/
-const Editions = ({ prefix, nft, className }) => {
+const Editions = ({ prefix, nft, className }: { prefix?: boolean; nft: any; className?: string }) => {
   const { walletBlockMap, isLoading } = useSettings()
 
   const editionsForSale = useMemo(() => {
     if (isLoading) return
     return sum(
       nft.listings
-        ?.filter((listing) => walletBlockMap.get(listing.seller_address) !== 1)
-        .map(({ amount_left }) => amount_left)
+        ?.filter((listing: any) => walletBlockMap.get(listing.seller_address) !== 1)
+        .map(({ amount_left }: any) => amount_left)
     )
   }, [isLoading, nft.listings, walletBlockMap])
   const ed = editionsForSale || 'X'

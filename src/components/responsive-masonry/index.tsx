@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Masonry from 'react-masonry-css'
 import styles from '@style'
 
-export const ResponsiveMasonry = ({ children }) => {
+export const ResponsiveMasonry = ({ children }: { children: React.ReactNode }) => {
   const getColumns = () => {
     if (global.innerWidth > 1170) {
       return 4

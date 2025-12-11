@@ -16,7 +16,7 @@ export const BeneficiaryRow = ({
   onSelectPercentage,
   minimalView,
 }) => {
-  const [meta, setMeta] = useState()
+  const [meta, setMeta] = useState<any>(null) // TODO: type
   const [address, setAddress] = useState(beneficiary.address)
   const [shares, setShares] = useState(beneficiary.shares)
 
@@ -28,7 +28,7 @@ export const BeneficiaryRow = ({
     }
 
     if (meta && !address) {
-      setMeta()
+      setMeta(null)
     }
 
     setAddress(address)

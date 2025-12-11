@@ -23,7 +23,7 @@ const sandbox_features =
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
-export const HTMLComponent = (props) => {
+export const HTMLComponent = (props: any) => {
   const { artifactUri, displayUri, previewUri, nft, displayView } = props
 
   const address = useUserStore((st) => st.address)
@@ -49,8 +49,8 @@ export const HTMLComponent = (props) => {
   const iframeRef = useRef(null)
   const unpackedFiles = useRef(null)
   const unpacking = useRef(false)
-  const [validHTML, setValidHTML] = useState(null)
-  const [validationError, setValidationError] = useState(null)
+  const [validHTML, setValidHTML] = useState<boolean | null>(null)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const unpackZipFiles = async () => {
     unpacking.current = true
@@ -60,7 +60,7 @@ export const HTMLComponent = (props) => {
     try {
       const filesArr = await prepareFilesFromZIP(buffer)
       const files = filesArr.reduce(
-        (memo, f) => ({ ...memo, [f.path]: f.blob }),
+        (memo: any, f: any) => ({ ...memo, [f.path]: f.blob }),
         {}
       )
 
@@ -88,7 +88,7 @@ export const HTMLComponent = (props) => {
   }
 
   useEffect(() => {
-    const handler = async (event) => {
+    const handler = async (event: MessageEvent) => {
       if (event.data !== uid) {
         return
       }

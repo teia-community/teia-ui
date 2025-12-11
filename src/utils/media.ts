@@ -24,7 +24,7 @@ export async function unzipMedia(buffer: Uint8Array) {
     })
 
   // format as: { meta, blob, reader }
-  const media = []
+  const media = [] as { meta: any; buffer: Uint8Array; reader: string }[]
   for (let i = 0; i < entries.length; i++) {
     const buffer = entries[i].buffer
     const type = entries[i].mimeType
@@ -35,7 +35,7 @@ export async function unzipMedia(buffer: Uint8Array) {
     } else if (blob.type.indexOf('image') === 0) {
       meta = await getImageMetadata(blob)
     }
-    const reader = await blobToDataURL(blob)
+    const reader = await blobToDataURL(blob) as string
     media.push({ meta, buffer, reader })
   }
 

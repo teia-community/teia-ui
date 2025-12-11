@@ -4,14 +4,14 @@ import { BURN_ADDRESS, MARKETPLACE_CONTRACTS_TO_NAME } from '@constants'
 import { walletPreview } from '@utils/string'
 import styles from '@style'
 
-export const OwnerList = ({ owners }) => {
+export const OwnerList = ({ owners }: { owners: any[] }) => {
   const ownersWithoutBurn = owners.filter(
-    (e) => e.holder_address !== BURN_ADDRESS
+    (e: any) => e.holder_address !== BURN_ADDRESS
   )
 
   return (
     <div className={styles.container}>
-      {ownersWithoutBurn.map(({ amount, holder_address, holder_profile }) => (
+      {ownersWithoutBurn.map(({ amount, holder_address, holder_profile }: any) => (
         <div key={holder_address} className={styles.owner}>
           {amount}&nbsp;ed.&nbsp;
           {get(holder_profile, 'name') ? (

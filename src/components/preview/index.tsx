@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
-function isHTML(mimeType) {
+function isHTML(mimeType: string) {
   return (
     mimeType === MIMETYPE.ZIP ||
     mimeType === MIMETYPE.ZIP1 ||
@@ -15,7 +15,7 @@ function isHTML(mimeType) {
   )
 }
 
-const Attribute = ({ title, children }) => {
+const Attribute = ({ title, children }: { title: string; children?: React.ReactNode }) => {
   return (
     children && (
       <div className={styles.attributes}>
@@ -26,7 +26,7 @@ const Attribute = ({ title, children }) => {
   )
 }
 
-const Field = ({ title, value }) => {
+const Field = ({ title, value }: { title: string; value?: string }) => {
   return (
     value && (
       <div className={styles.field}>

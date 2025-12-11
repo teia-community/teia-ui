@@ -20,7 +20,7 @@ import Editions from './Editions'
  * @param {Object} itemInfoOptions
  * @param {import("@types").NFT} itemInfoOptions.nft
  **/
-const ItemInfo = ({ nft }) => {
+const ItemInfo = ({ nft }: { nft: any }) => {
   const address = useUserStore((st) => st.address)
 
   const { walletBlockMap } = useSettings()
@@ -29,7 +29,7 @@ const ItemInfo = ({ nft }) => {
   const restricted = walletBlockMap.get(nft.artist_address) === 1
 
   const cheapestListing = nft.listings.find(
-    (listing) => walletBlockMap.get(listing.seller_address) !== 1
+    (listing: any) => walletBlockMap.get(listing.seller_address) !== 1
   )
 
   // Check collab status
@@ -41,20 +41,20 @@ const ItemInfo = ({ nft }) => {
 
   const isCoreParticipant = isCollab
     ? shareholders.some(
-        ({ shareholder_address, holder_type }) =>
-          address === shareholder_address &&
-          holder_type === CollaboratorType.CORE_PARTICIPANT
-      )
+      ({ shareholder_address, holder_type }: { shareholder_address: string; holder_type: string }) =>
+        address === shareholder_address &&
+        holder_type === CollaboratorType.CORE_PARTICIPANT
+    )
     : false
 
   // Show the signing UI if required
   const userHasSigned = nft.signatures.find(
-    (sig) => sig.shareholder_address === address
+    (sig: any) => sig.shareholder_address === address
   )
   const coreParticipants = isCollab
     ? shareholders.filter(
-        (h) => h.holder_type === CollaboratorType.CORE_PARTICIPANT
-      )
+      (h: any) => h.holder_type === CollaboratorType.CORE_PARTICIPANT
+    )
     : null
 
   const signStatusStyles = classNames(

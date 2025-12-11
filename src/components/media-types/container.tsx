@@ -84,7 +84,7 @@ export const Container = ({
   }
 
   useEffect(() => {
-    const fullscreenChange = (e) => {
+    const fullscreenChange = (e: Event) => {
       if (iOS) {
         return
       }
@@ -128,7 +128,7 @@ export const Container = ({
   const anaverseView = AnaverseViewer(nft.token_id, viewer_address)
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, { inView, displayView })
+      return React.cloneElement(child, { inView, displayView } as any)
     }
     return child
   })
