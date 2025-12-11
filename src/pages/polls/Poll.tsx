@@ -17,6 +17,7 @@ import {
 } from '@data/swr'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
+import LoadingPollsMessage from './LoadingPollsMessage'
 
 export default function Poll({ pollId }) {
   // Get all the required teia polls information
@@ -36,7 +37,7 @@ export default function Poll({ pollId }) {
 
   // Return if we are missing important information
   if (!polls) {
-    return
+    return <LoadingPollsMessage />
   }
 
   // Check if the poll vote period finished
@@ -132,8 +133,8 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
   const voteScaling = poll.vote_weight_method.linear
     ? DAO_TOKEN_DECIMALS
     : poll.vote_weight_method.quadratic
-    ? Math.pow(DAO_TOKEN_DECIMALS, 0.5)
-    : 1
+      ? Math.pow(DAO_TOKEN_DECIMALS, 0.5)
+      : 1
 
   return (
     <>
@@ -142,11 +143,10 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
         {Object.entries(poll.votes_count).map(([option, optionVotes]) => (
           <li
             key={option}
-            className={`${styles.poll_option} ${
-              parseInt(optionVotes) === maxVotes && maxVotes !== 0
+            className={`${styles.poll_option} ${parseInt(optionVotes) === maxVotes && maxVotes !== 0
                 ? styles.winner_option
                 : ''
-            }`}
+              }`}
           >
             <button onClick={() => setShowPercents(!showPercents)}>
               {userVotedOption === option ? (
@@ -160,14 +160,12 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
               )}
               <div>
                 {showPercents
-                  ? `${
-                      totalVotes === 0
-                        ? 0
-                        : Math.round((100 * optionVotes) / totalVotes)
-                    }%`
-                  : `${Math.round(optionVotes / voteScaling)} vote${
-                      parseInt(optionVotes) !== voteScaling ? 's' : ''
-                    }`}
+                  ? `${totalVotes === 0
+                    ? 0
+                    : Math.round((100 * optionVotes) / totalVotes)
+                  }%`
+                  : `${Math.round(optionVotes / voteScaling)} vote${parseInt(optionVotes) !== voteScaling ? 's' : ''
+                  }`}
               </div>
             </button>
 

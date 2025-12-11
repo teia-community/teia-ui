@@ -258,12 +258,12 @@ export async function fetchObjktDetails(id: string) {
   return data.tokens_by_pk
 }
 
-interface TzktMetadata {
+export interface TzktMetadata {
   twitter?: string
   alias?: string
 }
 
-interface TzktData {
+export interface TzktData {
   data?: TzktMetadata
 }
 

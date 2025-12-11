@@ -22,16 +22,16 @@ function ListingRow({
 }: {
   nft: NFT
   listing: Listing
-  proxyAddress: string
+  proxyAddress?: string
   onCollectClick: (listing: Listing) => void
   reswapPrices: { [key: string]: number }
   setReswapPrices: React.Dispatch<
     React.SetStateAction<{ [key: string]: number }>
   >
-  reswap: (nft: NFT, price: number, listing: Listing) => void
-  cancel: (contract: string, swap_id: string) => void
-  address: string
-  proxyAdminAddress: string
+  reswap?: (nft: NFT, price: number, listing: Listing) => void
+  cancel?: (contract: string, swap_id: string) => void
+  address?: string
+  proxyAdminAddress?: string
   rowId: string
 }) {
   const { walletBlockMap } = useSettings()
@@ -88,7 +88,7 @@ function ListingRow({
                   const { value } = ev.target
                   setReswapPrices((prevVal) => ({
                     ...prevVal,
-                    [rowId]: value,
+                    [rowId]: Number(value),
                   }))
                 }}
                 type="number"

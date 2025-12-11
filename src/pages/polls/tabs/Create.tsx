@@ -99,8 +99,8 @@ function PollForm({ callback }) {
           type="text"
           label="Poll question"
           placeholder="Write here the question you want to ask"
-          minlength="10"
-          maxlength="500"
+          minlength={10}
+          maxlength={500}
           value={question}
           onChange={setQuestion}
           className={styles.poll_form_field}
@@ -155,7 +155,7 @@ function PollForm({ callback }) {
               type="text"
               label={`Option ${index + 1}`}
               placeholder={'A possible option to vote'}
-              minLength="1"
+              minlength={1}
               value={option}
               onChange={(value) => handleChange(index, value)}
               className={styles.poll_form_field}

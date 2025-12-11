@@ -26,9 +26,11 @@ export default function Polls() {
   }
 
   // Separate the poll ids depending of their current status
-  const pollIdsByStatus = Object.fromEntries(
-    Object.keys(POLL_STATUS_OPTIONS).map((status) => [status, []])
-  )
+  const pollIdsByStatus = {
+    active: [] as string[],
+    finished: [] as string[],
+  }
+
   const now = new Date()
 
   for (const pollId of Object.keys(polls).reverse()) {

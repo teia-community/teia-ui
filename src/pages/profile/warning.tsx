@@ -6,7 +6,7 @@ import styles from './warning.module.scss'
 
 export const Warning = ({ onInteract }) => {
   const [remember, setRemember] = useState(false)
-  const { setNsfwFriendly, setPhotosensitiveFriendly } = useLocalSettings(
+  const [setNsfwFriendly, setPhotosensitiveFriendly] = useLocalSettings(
     (st) => [st.setNsfwFriendly, st.setPhotosensitiveFriendly]
   )
 

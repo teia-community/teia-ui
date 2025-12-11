@@ -77,9 +77,9 @@ export const Header = () => {
 
   const isWide = useMedia('(min-width: 600px)')
 
-  const [logoSeed, setLogoSeed] = useState()
+  const [logoSeed, setLogoSeed] = useState(1)
   /** the header is a bit larger just on home */
-  const [onHome, setOnHome] = useState()
+  const [onHome, setOnHome] = useState(false)
 
   const [syncLabel, setSyncLabel] = useState('Sync')
   const [walletLabel, setWalletLabel] = useState('')
@@ -123,9 +123,13 @@ export const Header = () => {
     )
   }, [])
 
-  const handleRoute = (path, data) => {
+  const handleRoute = (path, data = null) => {
     setCollapsed(true)
-    navigate(path, { state: data })
+    if (data) {
+      navigate(path, { state: data })
+    } else {
+      navigate(path)
+    }
   }
 
   const handleSyncUnsync = () => {
@@ -185,7 +189,7 @@ export const Header = () => {
           </div>
           <Button
             alt="teia logo"
-            to={!onHome ? '/' : null}
+            to={onHome ? '/' : undefined}
             onTo={() => {
               setCollapsed(true)
               setOnHome(onHome)
@@ -237,8 +241,8 @@ export const Header = () => {
                     ? 'unsync'
                     : 'sync'
                   : accountPreview
-                  ? `wallet account ending in ${accountPreview}`
-                  : 'sync wallet'
+                    ? `wallet account ending in ${accountPreview}`
+                    : 'sync wallet'
               }
             >
               {/* {isWide && syncLabel} */}

@@ -1,3 +1,5 @@
+// to do: update vite react-pdf using vite-plugin-static-copy
+
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf'

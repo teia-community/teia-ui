@@ -40,7 +40,7 @@ export function TokenTansfersDetails({
   fa2,
   transfers,
   aliases,
-  className,
+  className = '',
 }) {
   const token = TOKENS.find((token) => token.fa2 === fa2)
   const decimals = token?.decimals ?? 1

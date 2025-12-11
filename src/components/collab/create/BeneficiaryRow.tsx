@@ -5,7 +5,7 @@ import styles from '../index.module.scss'
 import inputStyles from '@atoms/input/index.module.scss'
 import classNames from 'classnames'
 import { CloseIcon } from '@icons'
-import { GetUserMetadata } from '@data/api'
+import { GetUserMetadata, TzktMetadata } from '@data/api'
 
 export const BeneficiaryRow = ({
   beneficiary,
@@ -14,9 +14,9 @@ export const BeneficiaryRow = ({
   onRemove,
   onPasteMulti,
   onSelectPercentage,
-  minimalView,
+  minimalView = false
 }) => {
-  const [meta, setMeta] = useState<any>(null) // TODO: type
+  const [meta, setMeta] = useState<TzktMetadata | null>(null)
   const [address, setAddress] = useState(beneficiary.address)
   const [shares, setShares] = useState(beneficiary.shares)
 
@@ -24,7 +24,7 @@ export const BeneficiaryRow = ({
     const { address, shares } = beneficiary
 
     if (!meta && address) {
-      GetUserMetadata(address).then(({ data }) => setMeta(data))
+      GetUserMetadata(address).then(({ data }) => setMeta(data || null))
     }
 
     if (meta && !address) {

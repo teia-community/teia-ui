@@ -16,11 +16,20 @@ export default function PollDisplay() {
   // Get the poll id from the url
   const { id } = useParams()
 
+  if (!id) {
+    return (
+      <RootErrorBoundary
+        title="Invalid poll id"
+        msg="Invalid or no poll id provided"
+      />
+    )
+  }
+
   // Return an error if the poll doesn't exist
   if (polls && !polls[id]) {
     return (
       <RootErrorBoundary
-        title="Wrong poll id"
+        title="Poll not found"
         msg={`The last Teia poll id is ${pollsStorage.counter - 1}`}
       />
     )

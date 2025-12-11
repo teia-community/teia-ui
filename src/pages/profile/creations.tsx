@@ -42,7 +42,6 @@ export default function Creations() {
         swrParams={[address]}
         variables={{ address }}
         emptyMessage="no creations"
-        maxItems={null}
         extractTokensFromResponse={(data) => {
           const tokens = data.artist_tokens
           const collab_tokens = data.artist_single_collabs

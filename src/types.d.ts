@@ -250,6 +250,8 @@ export type ArtistProfile = {
   split_contract?: SplitContract
 }
 
+export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
+
 export type LocalSettingsContext = {
   /**The feed view mode */
   viewMode: 'single' | 'masonry'
@@ -280,9 +282,9 @@ export type LocalSettingsContext = {
   /**Utility function to toggle the zen preference */
   toggleZen: () => void
   /**The theme preference*/
-  theme: 'light' | 'dark'
+  theme: Theme
   /**Set the theme preference*/
-  setTheme: (theme: 'light' | 'dark') => void
+  setTheme: (theme: Theme) => void
   /**Delete the localstorage for the theme preference */
   // rmTheme: () => void
   /**Utility function to toggle the current theme */
@@ -324,4 +326,11 @@ export type MediaTypeProps = SharedMediaProps & {
 
   /** Older video tokens did not require a cover image, load the video in these cases. */
   forceVideo?: boolean
+}
+
+export type Collaborator = {
+  address: string
+  tezAddress: string
+  shares: number
+  name?: string
 }

@@ -6,10 +6,9 @@ import {
 } from 'zustand/middleware'
 // import { useModalStore } from './modalStore'
 import { FEED_LIST, DEFAULT_START_FEED } from '@constants'
+import { Theme } from '@types'
 
 type ViewMode = 'single' | 'masonry'
-
-export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
   'https://mainnet.api.tez.ie',

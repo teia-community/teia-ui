@@ -26,7 +26,7 @@ export const FAQ = () => {
   }
 
   return (
-    <Page title="faq" large>
+    <Page title="faq">
       <div className={styles.faq__outer__container}>
         <h1 className={styles.faq__title}>
           Getting Started with the TEIA Community

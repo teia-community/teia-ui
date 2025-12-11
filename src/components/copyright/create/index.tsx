@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useCopyrightStore } from '@context/copyrightStore'
-import { useUserStore } from '@context/userStore'
+// import { useUserStore } from '@context/userStore'
 import { Button } from '@atoms/button'
 import { HashToURL } from '@utils'
 import { HEN_CONTRACT_FA2 } from '@constants'
@@ -10,18 +10,18 @@ import styles from './index.module.scss'
 export function CopyrightCreate() {
   const navigate = useNavigate()
   const { customLicenseData } = useCopyrightStore()
-  const address = useUserStore((st) => st.address)
+  // const address = useUserStore((st) => st.address)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionStatus, setSubmissionStatus] = useState(null)
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
     setSubmissionStatus(null)
-    
+
     try {
       const { submitCopyrightAgreement } = useCopyrightStore.getState()
       const opHash = await submitCopyrightAgreement()
-      
+
       if (opHash) {
         setSubmissionStatus({
           type: 'success',
@@ -60,17 +60,17 @@ export function CopyrightCreate() {
   return (
     <div className={styles.container}>
       <h2>Create Copyright Agreement</h2>
-      
+
       {submissionStatus && (
         <div className={`${styles.status} ${styles[submissionStatus.type]}`}>
           <p>{submissionStatus.message}</p>
           {submissionStatus.opHash && (
             <p>
               <small>
-                View on explorer: 
-                <a 
+                View on explorer:
+                <a
                   href={`https://better-call.dev/mainnet/opg/${submissionStatus.opHash}`}
-                  target="_blank" 
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   {submissionStatus.opHash}
@@ -83,7 +83,7 @@ export function CopyrightCreate() {
 
       <div className={styles.summary}>
         <h3>Summary</h3>
-        
+
         <div className={styles.section}>
           <h4>Selected Works ({customLicenseData.tokens.length})</h4>
           <div className={styles.tokenGrid}>
@@ -138,14 +138,14 @@ export function CopyrightCreate() {
       </div>
 
       <div className={styles.actions}>
-        <Button 
+        <Button
           onClick={() => navigate('/copyright/copyrightpreview')}
           disabled={isSubmitting}
         >
           Back to Preview
         </Button>
-        
-        <Button 
+
+        <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
           shadow_box

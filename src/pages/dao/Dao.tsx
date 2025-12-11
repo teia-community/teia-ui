@@ -38,7 +38,7 @@ export default function DAO() {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity = representatives?.[userAddress]
+  const userCommunity = representatives?.[userAddress ?? '']
   const [userTokenBalance] = useDaoTokenBalance(userAddress)
 
   return (

@@ -23,7 +23,7 @@ export const Burn = () => {
     st.message,
   ])
 
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState(0)
 
   const proxyAdminAddress =
     nft.artist_profile?.split_contract?.administrator_address
@@ -41,7 +41,7 @@ export const Burn = () => {
   const totalOwned = useMemo(() => found?.amount || 0, [found])
 
   const handleSubmit = () => {
-    if (amount === '' || amount === '0') {
+    if (amount === 0) {
       alert('Error: No amount specified.')
       return
     }
@@ -63,7 +63,7 @@ export const Burn = () => {
           <Container>
             <div className={styles.container}>
               <p>
-                You own {totalOwned} editions of OBJKT#{nft.id}. How many would
+                You own {totalOwned} editions of OBJKT#{nft.token_id}. How many would
                 you like to burn?
               </p>
             </div>
@@ -72,15 +72,10 @@ export const Burn = () => {
             <div className={styles.container}>
               <Input
                 type="number"
+                min={0}
+                max={totalOwned}
                 placeholder="OBJKTs to burn"
-                value={amount}
-                onChange={setAmount}
-                onBlur={(e) => {
-                  if (parseInt(e.target.value) >= totalOwned) {
-                    setAmount(totalOwned)
-                  }
-                }}
-                // disabled={modalVisible}
+                value={amount.toString()}
               />
             </div>
           </Container>

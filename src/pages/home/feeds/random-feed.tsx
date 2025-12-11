@@ -22,7 +22,7 @@ export function RandomFeed({ firstId = 196, lastId = 1_592_463, max = 200 }) {
       feeds_menu
       label="Random"
       namespace="random-feed"
-      enableInfinityScroll={false}
+      // enableInfinityScroll={false}
       variables={{ tokenIds }}
       maxItems={200}
       query={gql`

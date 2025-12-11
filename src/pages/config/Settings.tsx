@@ -79,17 +79,15 @@ export const Settings = () => {
             <strong>Feed preferences</strong>
           </p>
           <Checkbox
-            alt={`click to ${
-              nsfwFriendly ? 'disable' : 'enable'
-            } the blurring of NSFW tokens on feeds`}
+            alt={`click to ${nsfwFriendly ? 'disable' : 'enable'
+              } the blurring of NSFW tokens on feeds`}
             checked={nsfwFriendly}
             onCheck={setNsfwFriendly}
             label={'Allow NSFW on feeds'}
           />
           <Checkbox
-            alt={`click to ${
-              photosensitiveFriendly ? 'disable' : 'enable'
-            } the blurring of photosensitive tokens on feeds`}
+            alt={`click to ${photosensitiveFriendly ? 'disable' : 'enable'
+              } the blurring of photosensitive tokens on feeds`}
             checked={photosensitiveFriendly}
             onCheck={setPhotosensitiveFriendly}
             label={'Allow Photosensitive on feeds'}
@@ -128,17 +126,15 @@ export const Settings = () => {
               onChange={setCustomRpcNode}
               placeholder="url to a RPC node"
               label="Custom RPC node"
-              // pattern={'^(?:https?|http):\\/\\/[^\\s\\/$.?#].[^\\s]*$'}
+            // pattern={'^(?:https?|http):\\/\\/[^\\s\\/$.?#].[^\\s]*$'}
             />
           )}
           <Line />
           <Checkbox
-            alt={`click to ${
-              tilted ? 'disable' : 'enable'
-            } fool around (a throwback of the 2023 april fool)`}
-            title={`click to ${
-              tilted ? 'disable' : 'enable'
-            } fool around (a throwback of the 2023 april fool)`}
+            alt={`click to ${tilted ? 'disable' : 'enable'
+              } fool around (a throwback of the 2023 april fool)`}
+            title={`click to ${tilted ? 'disable' : 'enable'
+              } fool around (a throwback of the 2023 april fool)`}
             checked={tilted}
             onCheck={setTilted}
             className="no-fool"
@@ -146,12 +142,10 @@ export const Settings = () => {
           />
           <Line />
           <Checkbox
-            alt={`click to ${
-              imgproxy ? 'disable' : 'enable'
-            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
-            title={`click to ${
-              imgproxy ? 'disable' : 'enable'
-            } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
+            alt={`click to ${imgproxy ? 'disable' : 'enable'
+              } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
+            title={`click to ${imgproxy ? 'disable' : 'enable'
+              } imgproxy thumbnails. Not using imgproxy will load fullsize images from ipfs directly instead (performance penalty)`}
             checked={imgproxy}
             onCheck={setImgproxy}
             initial={true}
@@ -159,12 +153,10 @@ export const Settings = () => {
           />
           {bannerEnabled && (
             <Checkbox
-              alt={`click to ${
-                setHasSeenBanner ? 'disable' : 'enable'
-              } last event banner (this is automatically reset for you on new announcements)`}
-              title={`click to ${
-                setHasSeenBanner ? 'disable' : 'enable'
-              } last event banner (this is automatically reset for you on new announcements)`}
+              alt={`click to ${has_seen_banner ? 'disable' : 'enable'
+                } last event banner (this is automatically reset for you on new announcements)`}
+              title={`click to ${has_seen_banner ? 'disable' : 'enable'
+                } last event banner (this is automatically reset for you on new announcements)`}
               checked={has_seen_banner}
               onCheck={setHasSeenBanner}
               label={'Hide banner for last announcement'}

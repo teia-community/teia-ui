@@ -63,7 +63,7 @@ export default function Proposal({ proposalId }) {
 
   // Return if we are missing important information
   if (!governanceParameters || !proposals) {
-    return
+    return null;
   }
 
   // Check if the user is a DAO member and has enough tokens to vote proposals
@@ -315,9 +315,9 @@ function ProposalVotesSummary({
   const representativeShare =
     representativesVotes.total > 0
       ? Math.min(
-          gp.representatives_share / representativesVotes.total,
-          gp.representative_max_share
-        ) / 100
+        gp.representatives_share / representativesVotes.total,
+        gp.representative_max_share
+      ) / 100
       : 0
   const representativeWeight = quorum * representativeShare
 
@@ -347,8 +347,8 @@ function ProposalVotesSummary({
   const requiredYesVotesForSupermajority = passesSupermajority
     ? 0
     : totalVotes === 0
-    ? voteScaling
-    : (negativeVotes * supermajority) / (1 - supermajority) - positiveVotes
+      ? voteScaling
+      : (negativeVotes * supermajority) / (1 - supermajority) - positiveVotes
 
   return (
     <div>
@@ -395,19 +395,17 @@ function ProposalVotesSummary({
         {passesSupermajority
           ? 'Yes.'
           : `No, ${Math.ceil(
-              requiredYesVotesForSupermajority / voteScaling
-            )} yes vote${
-              requiredYesVotesForSupermajority !== voteScaling ? 's' : ''
-            } still missing.`}
+            requiredYesVotesForSupermajority / voteScaling
+          )} yes vote${requiredYesVotesForSupermajority !== voteScaling ? 's' : ''
+          } still missing.`}
       </p>
 
       <p>
         Passes minimum quorum condition?{' '}
         {passesQuorum
           ? 'Yes.'
-          : `No, ${Math.ceil(requiredVotesForQuorum / voteScaling)} vote${
-              requiredVotesForQuorum !== voteScaling ? 's' : ''
-            } still missing.`}
+          : `No, ${Math.ceil(requiredVotesForQuorum / voteScaling)} vote${requiredVotesForQuorum !== voteScaling ? 's' : ''
+          } still missing.`}
       </p>
 
       {showUserVotes && (

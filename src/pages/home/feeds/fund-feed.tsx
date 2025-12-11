@@ -13,7 +13,7 @@ function FundFeed({
   contractAddress,
   cause,
   namespace,
-  tags = null,
+  tags = null as string[] | null,
 }) {
   return (
     <>
@@ -45,7 +45,7 @@ function FundFeed({
                                 shareholder.shareholder_address
                               ) &&
                               (shareholder.shares / total_shares) * 100 >=
-                                minShares
+                              minShares
                             ) {
                               return created_tokens
                             }
@@ -80,16 +80,15 @@ function FundFeed({
               ...baseTokenFields
             }
           }
-          ${
-            tags
-              ? `
+          ${tags
+            ? `
             tokens_by_tag: tokens(where: {tags: {tag: {_in: [${tags.map(
               (tag) => `"${tag}"`
             )}]}}, editions: {_gt: "0"}, metadata_status: { _eq: "processed" },}, limit: $limit, order_by: { minted_at: desc }) {
               ...baseTokenFields
             }
           `
-              : ''
+            : ''
           }
         }
       `}

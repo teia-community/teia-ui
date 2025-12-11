@@ -135,13 +135,13 @@ export const ClausesDescriptions = ({ clauses }) => {
                   {clauseLabels.expirationDate}:{' '}
                   {clauses.expirationDate
                     ? new Date(clauses.expirationDate).toLocaleDateString(
-                        'en-US',
-                        {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        }
-                      )
+                      'en-US',
+                      {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      }
+                    )
                     : 'None'}
                 </li>
               </React.Fragment>
@@ -169,6 +169,18 @@ export const ClausesDescriptions = ({ clauses }) => {
   )
 }
 
+interface TokenData {
+  contractAddress: string;
+  tokenId: string | null;
+  metadata: {
+    name: string;
+    thumbnailUri: string;
+    creators: any[];
+    description: string;
+  };
+}
+
+
 function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const { watch } = useFormContext()
   const { license, minterName, address } = useOutletContext()
@@ -187,7 +199,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const { customLicenseData } = useCopyrightStore()
   const [tokens, setTokens] = useState(customLicenseData?.tokens || [])
   const [currentToken, setCurrentToken] = useState(null)
-  const [currentExternalToken, setCurrentExternalToken] = useState(null)
+  const [currentExternalToken, setCurrentExternalToken] = useState<TokenData | null>(null)
   const [fetchingToken, setFetchingToken] = useState(false)
 
   const handleSearchTokenSubmit = async (e) => {
@@ -245,7 +257,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
     if (!token) {
       if (inputMode === 'url') {
-        const externalToken = {
+        const externalToken: ExternalToken = {
           contractAddress: 'external',
           tokenId: null,
           metadata: {
@@ -299,7 +311,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
         // No metadata found, handle based on input mode
         if (inputMode === 'contract') {
           // For contract + token ID mode, always add the token even if no metadata
-          const fallbackToken = {
+          const fallbackToken: TokenData = {
             contractAddress: token.contractAddress,
             tokenId: token.tokenId,
             metadata: {
@@ -540,9 +552,8 @@ Despite reaching the threshold for exclusive rights, the Creator retains certain
 
       if (clauses.customUriEnabled && clauses.customUri) {
         documentText += `\n\n${clauseNumber++}. Custom URI Reference and Retroactive Application:
-The Work is subject to additional terms, conditions, and declarations specified at: ${
-          clauses.customUri
-        }. These external terms are hereby incorporated by reference into this Agreement and shall be considered binding to the same extent as if they were fully set forth herein.
+The Work is subject to additional terms, conditions, and declarations specified at: ${clauses.customUri
+          }. These external terms are hereby incorporated by reference into this Agreement and shall be considered binding to the same extent as if they were fully set forth herein.
     
 This URI may serve one or both of the following purposes:
 a) External Reference: The URI may contain supplementary terms, conditions, restrictions, or declarations that apply to this Work. These additional terms shall be considered as an extension of this Agreement.

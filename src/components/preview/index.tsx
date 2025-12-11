@@ -17,23 +17,23 @@ function isHTML(mimeType: string) {
 
 const Attribute = ({ title, children }: { title: string; children?: React.ReactNode }) => {
   return (
-    children && (
+    children ? (
       <div className={styles.attributes}>
         <strong>{title}:</strong>
         {children}
       </div>
-    )
+    ) : null
   )
 }
 
 const Field = ({ title, value }: { title: string; value?: string }) => {
   return (
-    value && (
+    value ? (
       <div className={styles.field}>
         <strong>{title}:</strong>
         <p>{value}</p>
       </div>
-    )
+    ) : null
   )
 }
 export const Preview = () => {

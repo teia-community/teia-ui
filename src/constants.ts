@@ -1,3 +1,4 @@
+import { Collaborator } from '@types'
 import { flipObject } from './utils'
 
 export const BANNER_URL = 'https://lists.teia.art/teia-status'
@@ -477,10 +478,10 @@ export const ossProjects = [
   },
 ]
 
-export const collaboratorTemplate = {
+export const collaboratorTemplate: Collaborator = {
   address: '',
   tezAddress: '',
-  shares: undefined,
+  shares: 0,
 }
 
 export const tipOptions = [1, 5, 10]

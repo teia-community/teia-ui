@@ -5,14 +5,16 @@ import { memo } from 'react'
 import { useMemo } from 'react'
 import { RotatingLogoSVG } from '@icons'
 import { randomSeed } from '@utils'
+import { Theme } from '@types'
 
 interface RotatingLogoProps {
   className?: string
   seed?: number
+  theme?: Theme
 }
 
-export const RotatingLogoRemote = ({ className, seed = 1 }: RotatingLogoProps) => {
-  const theme = useLocalSettings((state) => state.theme)
+export const RotatingLogoRemote = ({ className, seed = 1, theme }: RotatingLogoProps) => {
+  theme = theme || useLocalSettings((state) => state.theme)
   const { logos } = useSettings()
 
   const logo = useMemo(

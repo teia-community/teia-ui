@@ -1,11 +1,13 @@
 import { useState, Fragment } from 'react'
 import styles from '../index.module.scss'
 import { Button, Secondary } from '@atoms/button'
-import { BeneficiaryRow, collaboratorTemplate } from '..'
+import { BeneficiaryRow } from '..'
 import { extractAddress } from '@utils/collab'
 import classNames from 'classnames'
 import { ProjectList } from './ProjectList'
 import AddCollaboratorsButton from './AddCollaboratorsButton'
+import { Collaborator } from '@types'
+import { collaboratorTemplate } from '@constants'
 
 export const BeneficiariesUI = ({
   beneficiaries,
@@ -18,16 +20,16 @@ export const BeneficiariesUI = ({
   const [multilineContent, setMultilineContent] = useState('')
 
   // Add beneficiary - the name will be available if coming from the OSS project list
-  const addBeneficiary = (address, name) => {
+  const addBeneficiary = (address: string, name?: string) => {
     if (typeof address === 'object') {
       address = ''
     }
 
     const validBeneficiaries = beneficiaries.filter((b) => b.address)
-    const newBeneficiary = {
-      ...collaboratorTemplate,
+    const newBeneficiary: Collaborator = {
       address: address || '',
-      name,
+      tezAddress: '',
+      shares: 0
     }
 
     setBeneficiaries([...validBeneficiaries, newBeneficiary])
@@ -102,13 +104,13 @@ export const BeneficiariesUI = ({
 
       {beneficiaries.length === 0 && (
         <p className={notesClass}>
-          Do you want to include anyone that wasn’t a collaborator, eg. the team
-          who made the collab contract ;)
+          {` Do you want to include anyone that wasn’t a collaborator, eg. the team
+          who made the collab contract ;) `}
         </p>
       )}
 
       {beneficiaries.length === 0 && (
-        <button className={styles.btn} onClick={addBeneficiary}>
+        <button className={styles.btn} onClick={() => addBeneficiary('')}>
           <Secondary>Add address manually</Secondary>
         </button>
       )}
@@ -143,7 +145,7 @@ export const BeneficiariesUI = ({
                 <td>
                   <button
                     className={styles.btn}
-                    onClick={() => addBeneficiary()}
+                    onClick={() => addBeneficiary('')}
                     disabled={disableAddButton}
                   >
                     Add another beneficiary

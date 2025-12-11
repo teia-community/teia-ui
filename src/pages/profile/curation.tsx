@@ -15,7 +15,6 @@ export default function Curation() {
       swrParams={[address]}
       variables={{ address }}
       emptyMessage="no curated tokens"
-      maxItems={null}
       extractTokensFromResponse={(data) => {
         return data.listings.map(({ token, seller_address }) => ({
           ...token,

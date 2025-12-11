@@ -3,8 +3,9 @@ import React from 'react'
 import { MemoryRouter } from 'react-router'
 import { IconCache } from '@utils/with-icon'
 import { useEffect } from 'react'
-import { useLocalSettings, type Theme } from '@context/localSettingsStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { DecoratorFunction } from '@storybook/types'
+import { Theme } from '@types'
 
 interface ThemeProviderProps {
   theme: Theme

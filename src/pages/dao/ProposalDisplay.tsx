@@ -20,12 +20,20 @@ export default function ProposalDisplay() {
 
   // Get the proposal id from the url
   const { id } = useParams()
+  if (!id) {
+    return (
+      <RootErrorBoundary
+        title="Invalid DAO proposal id"
+        msg="Invalid or no proposal id provided"
+      />
+    )
+  }
 
   // Return an error if the proposal doesn't exist
   if (proposals && !proposals[id]) {
     return (
       <RootErrorBoundary
-        title="Wrong DAO proposal id"
+        title="Invalid DAO proposal id"
         msg={`The last DAO proposal id is ${daoStorage.counter - 1}`}
       />
     )

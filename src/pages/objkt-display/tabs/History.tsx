@@ -32,7 +32,15 @@ function UsernameAndLink({ event, attr }) {
   )
 }
 
-function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
+interface HistoryRowProps {
+  eventType: React.ReactNode
+  editions: number
+  timestamp: string
+  from?: React.ReactNode
+  to?: React.ReactNode
+  price?: number
+}
+function HistoryRow({ eventType, from, to, editions, price, timestamp }: HistoryRowProps) {
   return (
     <div className={`${styles.history}`}>
       <div className={styles.history__event__container}>{eventType}</div>
@@ -68,7 +76,7 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
       </div>
 
       <div className={`${styles.history__price} ${styles.history__desktop}`}>
-        {isNumber(price) ? `${parseFloat(price / 1e6)} tez` : null}
+        {isNumber(price) ? `${(price / 1e6)} tez` : null}
       </div>
 
       <div
@@ -86,7 +94,7 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
         <div className={styles.history__ed}>ed. {editions}</div>
 
         <div className={styles.history__price}>
-          {isNumber(price) ? `${parseFloat(price / 1e6)} tez` : null}
+          {isNumber(price) ? `${price / 1e6} tez` : null}
         </div>
       </div>
     </div>

@@ -6,13 +6,13 @@ import Button from '@atoms/button/Button'
 import { useTwemoji } from '@hooks/use-twemoji'
 interface DropdownButtonProps {
   menuID: string
-  direction: 'left' | 'right'
+  direction?: 'left' | 'right'
   label: string
   alt: string
   icon?: React.ReactNode
-  toggled: boolean
+  toggled?: boolean
   children: React.ReactNode
-  onClick: () => void
+  onClick?: () => void
   className?: string
 }
 
@@ -26,9 +26,9 @@ function DropdownButton({
   label,
   alt,
   icon,
-  toggled,
+  toggled = false,
   children,
-  onClick,
+  onClick = () => { },
   className,
 }: DropdownButtonProps) {
   const [open, setOpen] = useState(false)

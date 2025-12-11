@@ -181,7 +181,7 @@ interface PrepareProps {
   thumbnail: FileForm
   rights: string
   rightsUri?: string
-  language?: string
+  language: string
   accessibility: string
   contentRating: string
   formats: any
@@ -530,7 +530,7 @@ async function buildMetadataFile({
     })
     metadata.rightsUri = `ipfs://${rightsCid}`
   }
-  if (language != null) metadata.language = language
+  if (language) metadata.language = language
 
   return JSON.stringify(metadata)
 }
