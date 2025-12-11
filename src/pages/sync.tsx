@@ -27,7 +27,7 @@ export default function Sync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 
-  const locationSync = (state) => {
+  const locationSync = (state: string) => {
     //TODO(mel): is proxy compatible with friends?
     const tg_address = proxyAddress || address
     switch (state) {

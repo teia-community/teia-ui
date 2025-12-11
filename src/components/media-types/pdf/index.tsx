@@ -1,4 +1,5 @@
 // to do: update vite react-pdf using vite-plugin-static-copy
+// ie https://github.com/wojtekmaj/react-pdf?tab=readme-ov-file#vite-2
 
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'

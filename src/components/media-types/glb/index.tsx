@@ -3,22 +3,24 @@
 
 import styles from '@style'
 import { ImageComponent } from '../image'
-import '@google/model-viewer'
+import '@google/model-viewer';
+
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
-export const GLBComponent = ({
+type GLBProps = {
+  artifactUri: string;
+  displayUri?: string;
+  previewUri?: string;
+  displayView?: boolean;
+  nft: { token_id: string };
+};
+export const GLBComponent: React.FC<GLBProps> = ({
   artifactUri,
   displayUri,
   previewUri,
   displayView,
-  nft,
-}: {
-  artifactUri: string
-  displayUri?: string
-  previewUri?: string
-  displayView?: boolean
-  nft: any
+  nft
 }) => {
   // const ref = useRef()
   // const [width, setWidth] = useState('100px')
