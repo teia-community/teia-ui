@@ -4,8 +4,9 @@ import {
   persist,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { useUserStore } from './userStore'
+import { checkRpcNode, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'
+import { useLocalSettings } from './localSettingsStore'
 import {
   ALLOWED_FILETYPES_LABEL,
   ALLOWED_MIMETYPES,
@@ -124,6 +125,17 @@ export const useMintStore = create<MintState>()(
           const close = useModalStore.getState().close
 
           if (!artifact || !artifact.file) {
+            return
+          }
+
+          const rpcCheck = await checkRpcNode(
+            useLocalSettings.getState().getRpcNode() as string
+          )
+          if (!rpcCheck) {
+            show(
+              'RPC Node',
+              'The selected RPC node is not working, please select another one in the settings'
+            )
             return
           }
 
