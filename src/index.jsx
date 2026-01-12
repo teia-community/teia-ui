@@ -17,7 +17,7 @@ import {
   SubmitDaoProposals,
 } from '@pages/dao/tabs'
 import { TeiaPolls, PollDisplay } from '@pages/polls'
-import { Polls, CreatePolls } from '@pages/polls/tabs'
+import { Polls, CreatePolls, Discourse } from '@pages/polls/tabs'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -187,6 +187,7 @@ const router = createBrowserRouter(
       <Route path="polls/*" element={<TeiaPolls />}>
         <Route index element={<Polls />} />
         <Route path="create" element={<CreatePolls />} />
+        <Route path="discourse" element={<Discourse />} />
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
