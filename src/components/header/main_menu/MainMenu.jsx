@@ -52,7 +52,7 @@ export const MainMenu = () => {
           <MenuItem
             className={styles.menu_label}
             label="Assets"
-            route={`${currentName || currentAddress}` || 'tz'}
+            route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
           />
           <MenuItem
