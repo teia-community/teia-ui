@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUserStore } from '@context/userStore'
+import { useOutletContext } from 'react-router'
 import { fetchUserCopyrights, fetchTokenMetadataForCopyrightSearch } from '@data/swr'
 import { HashToURL } from '@utils'
 import styles from './index.module.css'
@@ -63,7 +63,7 @@ interface CopyrightBigMapEntry {
 }
 
 export default function CopyrightDisplay() {
-  const address = useUserStore((state) => state.address)
+  const { address } = useOutletContext<{ address: string }>()
   const [records, setRecords] = useState<CopyrightBigMapEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [metadataMap, setMetadataMap] = useState<Record<string, NFTMetadata>>({})
@@ -110,7 +110,7 @@ export default function CopyrightDisplay() {
 
   return (
     <div className={styles.mainContainer}>
-      <h1>©️ Your Registered Copyrights</h1>
+      <h1>©️ Registered Copyrights</h1>
       <br />
       {loading ? (
         <p>Loading...</p>
