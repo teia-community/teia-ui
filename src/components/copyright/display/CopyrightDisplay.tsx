@@ -110,7 +110,6 @@ export default function CopyrightDisplay() {
 
   return (
     <div className={styles.mainContainer}>
-      <h1>©️ Registered Copyrights</h1>
       <br />
       {loading ? (
         <p>Loading...</p>
