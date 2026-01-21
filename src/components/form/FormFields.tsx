@@ -126,7 +126,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               ref={ref}
               className={styles.field}
               label={field.label}
-              defaultValue={field.defaultValue}
+              initial={field.defaultValue}
               checked={value}
               onCheck={(v) => onChange(v)}
             />

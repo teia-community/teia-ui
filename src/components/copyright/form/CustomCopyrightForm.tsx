@@ -906,7 +906,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             name="expirationDateExists"
             label="Add an Expiration Date to Clauses"
             checked={clauses?.expirationDateExists}
-            defaultValue={defaultValue?.clauses?.expirationDateExists}
+            initial={defaultValue?.clauses?.expirationDateExists}
             onCheck={handleDateChange}
             className={styles.field}
           />
