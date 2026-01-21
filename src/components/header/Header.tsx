@@ -189,7 +189,7 @@ export const Header = () => {
           </div>
           <Button
             alt="teia logo"
-            to={onHome ? '/' : undefined}
+            to={onHome ? undefined : '/'}
             onTo={() => {
               setCollapsed(true)
               setOnHome(onHome)
@@ -198,7 +198,6 @@ export const Header = () => {
               setLogoSeed(Math.random() * 100)
             }}
           >
-            {/* <p className={styles.logo}>TEIA</p> */}
             <RotatingLogo seed={logoSeed} className={styles.logo} />
           </Button>
           <div className={styles.right}>
