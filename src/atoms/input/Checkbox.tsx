@@ -14,7 +14,7 @@ interface CheckboxProps {
   title?: string
   disabled?: boolean
   checked?: boolean
-  autoFocus?: boolean
+
   className?: string
   small?: boolean
 }
@@ -35,7 +35,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       title = '',
       disabled,
       checked: checkedProp,
-      autoFocus = false,
+
       className,
       small,
     },
@@ -77,7 +77,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           checked={checkedProp}
           aria-checked={checked}
           disabled={disabled}
-          autoFocus={autoFocus}
+
         />
         <span className={styles.checkmark} />
       </label>
