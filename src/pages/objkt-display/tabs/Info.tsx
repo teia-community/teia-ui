@@ -51,9 +51,12 @@ export const Info = () => {
         <div className={styles.infos_attributes_container}>
           <div className={styles.infos_attributes_flex}>
             <Attribute label="Mimetype" value={nft.mime_type} />
-            {nft.language && (
-              <Attribute label="Language" value={LANGUAGES[nft.language]} />
-            )}
+            {(() => {
+              const language = (nft as any).language || 'not specified'
+              return language !== 'not specified' && (
+                <Attribute label="Language" value={LANGUAGES[language]} />
+              )
+            })()}
             {nft.isNSFW && (
               <Attribute label="Content Rating" value={'NSFW (Mature)'} />
             )}

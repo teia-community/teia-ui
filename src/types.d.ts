@@ -176,6 +176,8 @@ export type NFTBase = {
   royalty_receivers?: RoyaltyReceiver[]
 
   teia_meta?: TeiaMeta
+  events?: any[]
+  language?: string
 
   /** List of addresses currently owning that token */
   token_holders?: string[]

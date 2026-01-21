@@ -1,8 +1,6 @@
 build/assets/index-r-MRVt9f.js(9359,6435): error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
 src/components/copyright/create/index.tsx(26,15): error TS2339: Property 'submitCopyrightAgreement' does not exist on type 'CopyrightStore'.
 src/components/copyright/create/index.tsx(45,28): error TS18046: 'error' is of type 'unknown'.
-src/components/copyright/form/CustomCopyrightForm.tsx(670,14): error TS2873: This kind of expression is always falsy.
-src/components/form/MintForm.tsx(81,31): error TS2554: Expected 4 arguments, but got 2.
 src/components/item-info/ItemInfo.tsx(92,21): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.
 src/components/media-types/audio/visualiser.tsx(82,37): error TS2345: Argument of type 'Float32Array<ArrayBufferLike>' is not assignable to parameter of type 'Float32Array<ArrayBuffer>'.
   Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
@@ -10,72 +8,18 @@ src/components/media-types/audio/visualiser.tsx(82,37): error TS2345: Argument o
       Types of property '[Symbol.toStringTag]' are incompatible.
         Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
 src/components/media-types/glb/index.tsx(36,7): error TS2353: Object literal may only specify known properties, and 'autoplay' does not exist in type '{ src: string; }'.
-src/components/media-types/glb/index.tsx(85,7): error TS2322: Type '{ token_id: string; }' is not assignable to type 'NFT'.
-  Type '{ token_id: string; }' is missing the following properties from type 'NFTBase': artifact_uri, display_uri, thumbnail_uri, metadata_uri, and 12 more.
 src/components/media-types/index.tsx(102,13): error TS2322: Type '{ artifactUri: string; displayUri: string | undefined; displayView: boolean | undefined; previewUri: string | undefined; nft: NFT; }' is not assignable to type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
   Property 'displayUri' does not exist on type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
 src/components/media-types/video/index.tsx(46,11): error TS18047: 'domElement.current' is possibly 'null'.
 src/components/media-types/video/index.tsx(58,11): error TS18047: 'domElement.current' is possibly 'null'.
-src/components/preview/index.tsx(106,11): error TS2322: Type '{ mime_type: string; is_mono_type: boolean; }' is not assignable to type 'NFT'.
-  Type '{ mime_type: string; is_mono_type: boolean; }' is missing the following properties from type 'NFTBase': artifact_uri, display_uri, thumbnail_uri, metadata_uri, and 12 more.
-src/components/preview/index.tsx(107,11): error TS2322: Type 'string | ArrayBuffer | null' is not assignable to type 'string | undefined'.
-  Type 'null' is not assignable to type 'string | undefined'.
-src/components/preview/index.tsx(108,11): error TS2322: Type 'string | ArrayBuffer | null | undefined' is not assignable to type 'string | undefined'.
-  Type 'null' is not assignable to type 'string | undefined'.
-src/components/preview/index.tsx(145,48): error TS2339: Property 'mint' does not exist on type 'MintState'.
 src/components/upload/IpfsUploader.tsx(30,13): error TS18047: 'e.target.files' is possibly 'null'.
 src/components/upload/IpfsUploader.tsx(37,37): error TS2345: Argument of type 'File | undefined' is not assignable to parameter of type 'File'.
   Type 'undefined' is not assignable to type 'File'.
-src/context/mintStore.ts(268,53): error TS2345: Argument of type 'ArrayBuffer' is not assignable to parameter of type 'Uint8Array<ArrayBufferLike>'.
-  Type 'ArrayBuffer' is missing the following properties from type 'Uint8Array<ArrayBufferLike>': BYTES_PER_ELEMENT, buffer, byteOffset, copyWithin, and 24 more.
-src/context/mintStore.ts(276,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
-  Type 'undefined' is not assignable to type 'FileForm'.
-src/context/mintStore.ts(277,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
-  Type 'undefined' is not assignable to type 'FileForm'.
-src/context/mintStore.ts(279,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(281,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(282,15): error TS2322: Type '{ hazards: string[]; } | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-src/context/mintStore.ts(283,15): error TS2322: Type 'string | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-src/context/mintStore.ts(289,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(290,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(291,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(294,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
-  Type 'undefined' is not assignable to type 'FileForm'.
-src/context/mintStore.ts(295,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
-  Type 'undefined' is not assignable to type 'FileForm'.
-src/context/mintStore.ts(296,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(298,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/context/mintStore.ts(299,15): error TS2322: Type '{ hazards: string[]; } | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-src/context/mintStore.ts(300,15): error TS2322: Type 'string | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
 src/context/userStore.ts(213,52): error TS2353: Object literal may only specify known properties, and 'network' does not exist in type 'RequestPermissionInput'.
 src/context/userStore.ts(448,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
 src/context/userStore.ts(451,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
 src/context/userStore.ts(454,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
 src/context/userStore.ts(457,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
-src/data/ipfs.ts(345,47): error TS2345: Argument of type 'FileForm[]' is not assignable to parameter of type 'FileMint[]'.
-  Type 'FileForm' is missing the following properties from type 'FileMint': path, blob
-src/data/ipfs.ts(411,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/data/ipfs.ts(412,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/data/ipfs.ts(413,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-src/data/swr.ts(10,6): error TS18048: 'bigmapData' is possibly 'undefined'.
-src/data/swr.ts(94,13): error TS18046: 'com1' is of type 'unknown'.
-src/data/swr.ts(94,20): error TS18046: 'com2' is of type 'unknown'.
-src/data/swr.ts(95,13): error TS18046: 'com1' is of type 'unknown'.
-src/data/swr.ts(95,20): error TS18046: 'com2' is of type 'unknown'.
 src/data/swr.ts(168,21): error TS18046: 'proposal' is of type 'unknown'.
 src/data/swr.ts(170,11): error TS18046: 'proposal' is of type 'unknown'.
 src/data/swr.ts(171,9): error TS18046: 'proposal' is of type 'unknown'.
@@ -102,10 +46,6 @@ src/pages/dao/Proposal.tsx(286,10): error TS2741: Property 'className' is missin
 src/pages/dao/tabs/Proposals.tsx(41,43): error TS2538: Type 'undefined' cannot be used as an index type.
 src/pages/objkt-display/tabs/Collectors.tsx(35,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
   Type 'undefined' is not assignable to type 'string'.
-src/pages/objkt-display/tabs/History.tsx(113,36): error TS2339: Property 'events' does not exist on type 'NFT'.
-src/pages/objkt-display/tabs/History.tsx(131,14): error TS2339: Property 'events' does not exist on type 'NFT'.
-src/pages/objkt-display/tabs/Info.tsx(54,18): error TS2339: Property 'language' does not exist on type 'NFT'.
-src/pages/objkt-display/tabs/Info.tsx(55,64): error TS2339: Property 'language' does not exist on type 'NFT'.
 src/pages/objkt-display/tabs/Swap.tsx(50,7): error TS18048: 'nft.artist_profile.split_contract' is possibly 'undefined'.
 src/pages/objkt-display/tabs/Swap.tsx(72,26): error TS2365: Operator '<' cannot be applied to types 'string' and 'number'.
 src/pages/objkt-display/tabs/Swap.tsx(81,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.

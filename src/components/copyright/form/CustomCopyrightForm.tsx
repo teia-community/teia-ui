@@ -667,8 +667,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
       name = eventOrValue?.target?.name || ''
       value = eventOrValue?.target?.value || ''
     } else {
-      name = ('' as any) || ''
-      value = (eventOrValue as any) || ''
+      name = 'addendum'
+      value = eventOrValue || ''
     }
 
     setClauses((prev) => ({

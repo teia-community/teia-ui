@@ -78,7 +78,7 @@ export default function MintForm() {
 
   const generateCoverImagePreview = async (inputText) => {
     try {
-      const imageFile = await generateTypedArtCoverImage(inputText, isMonoType as any)
+      const imageFile = await generateTypedArtCoverImage(inputText, isMonoType as any, 1024, false)
       setPreview(imageFile)
     } catch (error: any) {
       console.error('Error generating cover image preview:', error.message)

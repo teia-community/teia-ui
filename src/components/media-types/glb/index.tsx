@@ -13,7 +13,7 @@ type GLBProps = {
   displayUri?: string;
   previewUri?: string;
   displayView?: boolean;
-  nft: { token_id: string };
+  nft: any;
 };
 export const GLBComponent: React.FC<GLBProps> = ({
   artifactUri,
@@ -60,7 +60,7 @@ export const GLBComponent: React.FC<GLBProps> = ({
   //   }
   // }, [width, height])
   return displayView ? (
-    <model-viewer {...props} title={`GLB object ${nft.token_id}`}>
+    <model-viewer {...(props as any)} title={`GLB object ${nft.token_id}`}>
       <button slot="ar-button" className={styles.arButton}>
         AR
       </button>

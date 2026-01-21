@@ -103,9 +103,9 @@ export const Preview = () => {
       <div className={styles.media}>
         <RenderMediaType
           displayView
-          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
-          previewUri={artifact.reader}
-          previewDisplayUri={cover?.reader}
+          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType } as any}
+          previewUri={artifact.reader as string}
+          previewDisplayUri={cover?.reader as string}
         />
       </div>
       <div className={styles.info}>

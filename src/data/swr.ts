@@ -7,7 +7,7 @@ function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
-    (bigmapData[subKey ? item.key[subKey] : item.key] = decode
+    ((bigmapData as any)[subKey ? item.key[subKey] : item.key] = decode
       ? bytes2Char(item.value)
       : item.value)
   )
@@ -91,8 +91,8 @@ export function useDaoRepresentatives(daoStorage) {
   const representatives = data?.representatives
     ? Object.fromEntries(
       Object.entries(data.representatives).sort(([, com1], [, com2]) => {
-        if (com1 < com2) return -1
-        if (com1 > com2) return 1
+        if ((com1 as any) < (com2 as any)) return -1
+        if ((com1 as any) > (com2 as any)) return 1
         return 0
       })
     )

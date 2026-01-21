@@ -172,18 +172,18 @@ const isDoubleMint = async (uri: string) => {
 }
 
 interface PrepareProps {
-  name: string
-  description: string
-  tags: string
+  name?: string
+  description?: string
+  tags?: string
   address: string
   file: FileForm
-  cover: FileForm
-  thumbnail: FileForm
-  rights: string
+  cover?: FileForm
+  thumbnail?: FileForm
+  rights?: string
   rightsUri?: string
-  language: string
-  accessibility: string
-  contentRating: string
+  language?: string
+  accessibility?: string
+  contentRating?: string
   formats: any
 }
 
@@ -286,14 +286,14 @@ export const prepareFile = async ({
   }
 
   const metadata = await buildMetadataFile({
-    name,
-    description,
-    tags,
+    name: name || '',
+    description: description || '',
+    tags: tags || '',
     uri,
     address,
     displayUri,
     thumbnailUri,
-    rights,
+    rights: rights || '',
     rightsUri,
     language,
     accessibility,
@@ -336,13 +336,19 @@ export const prepareDirectory = async ({
   rights: string
   rightsUri: string
   language: string
-  accessibility: string
-  contentRating: string
+  accessibility?: string
+  contentRating?: string
   formats: MintFormat[]
 }) => {
   const step = useModalStore.getState().step
 
-  const hashes = await uploadFilesToDirectory(files)
+  const hashes = await uploadFilesToDirectory(
+    files.map((f) => ({
+      path: f.file?.name || '',
+      blob: new Blob([f.buffer]),
+      size: f.file?.size,
+    }))
+  )
 
   step(
     'Preparing OBJKT',
@@ -384,8 +390,6 @@ export const prepareDirectory = async ({
   //     formats.push(format)
   //     console.debug('cover format', format)
   //   }
-  // }
-
   // upload thumbnail image
   let thumbnailUri = IPFS_DEFAULT_THUMBNAIL_URI
   if (generateDisplayUri && thumbnail) {
@@ -408,9 +412,9 @@ export const prepareDirectory = async ({
   }
 
   const metadata = await buildMetadataFile({
-    name,
-    description,
-    tags,
+    name: name as string,
+    description: description as string,
+    tags: tags as string,
     uri,
     address,
     displayUri,
@@ -447,32 +451,9 @@ async function uploadFilesToDirectory(files: FileMint[]) {
   console.debug('uploadFilesToDirectory', files)
   files = files.filter(not_directory)
 
-  const directory = await uploadMultipleFilesToIPFSProxy(files)
+  const directoryCid = await uploadMultipleFilesToIPFSProxy(files)
 
-  // TODO: Parse index.html to find the cover
-  // TODO: Remove this once generateDisplayUri option is gone
-  /*
-  const data = readJsonLines(res.data)QmcjamRcHkdcADx6pYjBb5g4znZZtgenmQJyj3cwVZCzYv
-  //get cover hash
-
-  let cover = null
-  const indexFile = files.find((f) => f.path === 'index.html')
-  if (indexFile) {
-    const indexBuffer = await indexFile.blob.arrayBuffer()
-    const coverImagePath = getCoverImagePathFromBuffer(indexBuffer)
-    if (coverImagePath) {
-      const coverEntry = data.find((f) => f.Name === coverImagePath)
-      if (coverEntry) {
-        cover = coverEntry.Hash
-      }
-    }
-  }
-  const rootDir = data.find((e) => e.Name === '')
-
-  const directory = rootDir.Hash
-  */
-
-  return { directory }
+  return { directory: directoryCid as string }
 }
 
 async function buildMetadataFile({
@@ -499,9 +480,9 @@ async function buildMetadataFile({
   thumbnailUri: string
   rights: string
   rightsUri?: string
-  language: string
-  accessibility: string
-  contentRating: string
+  language?: string
+  accessibility?: string
+  contentRating?: string
   formats: MintFormat[]
 }) {
   const metadata: TeiaMetadata = {

@@ -51,6 +51,7 @@ export interface MintState {
   isValid: boolean
 
   reset: () => void
+  mint: (ignoreUriMap: Map<string, number>) => Promise<void>
 }
 
 const defaultValuesStored = {
@@ -71,8 +72,8 @@ const defaultValues = {
   artifact: undefined,
   cover: undefined,
   thumbnail: undefined,
-  getValuesStored: () => {},
-  updateCustomLicenseData: () => {},
+  getValuesStored: () => { },
+  updateCustomLicenseData: () => { },
 }
 
 export const useMintStore = create<MintState>()(
@@ -173,8 +174,8 @@ export const useMintStore = create<MintState>()(
           // Metadata accessibility
           const accessibility = photosensitive
             ? {
-                hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
-              }
+              hazards: [METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS],
+            }
             : null
 
           const contentRating = nsfw ? METADATA_CONTENT_RATING_MATURE : null
@@ -232,11 +233,10 @@ export const useMintStore = create<MintState>()(
               used_cover.format = {
                 mimeType: used_cover.mimeType,
                 fileSize: used_cover.buffer.byteLength,
-                fileName: `${removeExtension(artifact.file.name)}.${
-                  coverIsGif
-                    ? 'gif'
-                    : extensionFromMimetype(used_cover.mimeType)
-                }`,
+                fileName: `${removeExtension(artifact.file.name)}.${coverIsGif
+                  ? 'gif'
+                  : extensionFromMimetype(used_cover.mimeType)
+                  }`,
                 dimensions: {
                   value: `${imageWidth}x${imageHeight}`,
                   unit: 'px',
@@ -265,22 +265,22 @@ export const useMintStore = create<MintState>()(
           let nftCid
 
           if (isDirectory) {
-            const files = await prepareFilesFromZIP(artifact.buffer)
+            const files = await prepareFilesFromZIP(new Uint8Array(artifact.buffer as ArrayBuffer))
 
             nftCid = await prepareDirectory({
               name: title,
               description,
-              tags,
-              address: minterAddress,
+              tags: tags || '',
+              address: address as string,
               files,
-              cover: used_cover,
-              thumbnail: used_thumb,
+              cover: used_cover as FileForm,
+              thumbnail: used_thumb as FileForm,
               generateDisplayUri: true,
-              rights: license?.value,
+              rights: license?.value as string,
               rightsUri: customLicenseData,
-              language: language?.value,
-              accessibility,
-              contentRating,
+              language: language?.value as string,
+              accessibility: accessibility as any,
+              contentRating: contentRating as any,
               formats,
             })
           } else {
@@ -288,16 +288,16 @@ export const useMintStore = create<MintState>()(
             nftCid = await prepareFile({
               name: title,
               description,
-              tags,
-              address: minterAddress,
-              file: artifact,
+              tags: tags || '',
+              address: address as string,
+              file: artifact as FileForm,
               cover: used_cover,
               thumbnail: used_thumb,
-              rights: license?.value,
+              rights: license?.value as string,
               rightsUri: customLicenseData,
-              language: language?.value,
-              accessibility,
-              contentRating,
+              language: language?.value as string,
+              accessibility: accessibility as any,
+              contentRating: contentRating as any,
               formats,
             })
           }
