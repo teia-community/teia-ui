@@ -4,8 +4,8 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf'
-import 'react-pdf/dist/esm/Page/TextLayer.css'
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import 'react-pdf/dist/Page/TextLayer.css'
+import 'react-pdf/dist/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
@@ -148,7 +148,6 @@ export const PdfComponent = memo(function ({
           onPassword={onPassword}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
-          title={`PDF object ${nft.token_id}`}
           options={options}
         >
           {renderedPageNumber && renderedPageNumber !== pageNumber && (
