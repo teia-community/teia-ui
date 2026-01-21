@@ -1,6 +1,5 @@
 import { Page } from '@atoms/layout'
 import { Line } from '@atoms/line'
-import { DAO_TREASURY_CONTRACT } from '@constants'
 import { TopDonors } from '@components/dao/TopDonors'
 import { FountainDonors } from '@components/dao/FountainDonors'
 import DonateButton from '@atoms/button/DonateButton'
@@ -43,7 +42,7 @@ export function Donate() {
 
       <Line />
 
-      <TopDonors contractAddress={DAO_TREASURY_CONTRACT} limit={10} />
+      <TopDonors limit={100} />
 
       <Line />
 

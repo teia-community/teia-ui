@@ -1,72 +1,39 @@
 import { useMemo, useState } from 'react'
-import { useFountainDonations } from '@data/swr'
-import { DONATION_EXCLUDED_ADDRESSES, TZKT_API_URL } from '@constants'
+import { useTopDonors } from '@data/swr'
+import {
+  DONATION_EXCLUDED_ADDRESSES,
+  TZKT_API_URL,
+  DAO_TREASURY_CONTRACT,
+} from '@constants'
 import styles from './TopDonors.module.scss'
 
 export function TopDonors({
-  contractAddress,
   limit: initialLimit = 10,
   excludeAddresses = DONATION_EXCLUDED_ADDRESSES,
 }) {
   const [displayLimit, setDisplayLimit] = useState(initialLimit)
-  const {
-    data: transactions,
-    isLoading,
-    error,
-  } = useFountainDonations(contractAddress)
+  const { data: donators, isLoading, error } = useTopDonors(excludeAddresses)
 
   const allDonors = useMemo(() => {
-    if (!transactions) return []
+    if (!donators) return []
 
-    // Aggregate donations by sender address
-    const donorMap = {}
-    const excludeSet = new Set(excludeAddresses)
+    return donators.map((donor) => ({
+      address: donor.donator_address,
+      alias: donor.donator_alias,
+      totalAmount: donor.total_donated_tez,
+      donationCount: donor.transaction_count,
+      firstDonation: donor.first_donation,
+      lastDonation: donor.last_donation,
+    }))
+  }, [donators])
 
-    transactions.forEach((tx) => {
-      const address = tx.sender?.address
-      const alias = tx.sender?.alias
-      const amount = parseInt(tx.amount) || 0
-
-      // Skip excluded addresses
-      if (address && !excludeSet.has(address)) {
-        if (!donorMap[address]) {
-          donorMap[address] = {
-            address,
-            alias,
-            totalAmount: 0,
-            donationCount: 0,
-            firstDonation: tx.timestamp,
-            lastDonation: tx.timestamp,
-          }
-        }
-
-        donorMap[address].totalAmount += amount
-        donorMap[address].donationCount += 1
-
-        // Update first/last donation timestamps
-        if (
-          new Date(tx.timestamp) < new Date(donorMap[address].firstDonation)
-        ) {
-          donorMap[address].firstDonation = tx.timestamp
-        }
-        if (new Date(tx.timestamp) > new Date(donorMap[address].lastDonation)) {
-          donorMap[address].lastDonation = tx.timestamp
-        }
-      }
-    })
-
-    // Convert to array and sort by total amount (descending)
-    return Object.values(donorMap)
-      .sort((a, b) => b.totalAmount - a.totalAmount)
-      .map((donor) => ({
-        ...donor,
-        totalAmount: donor.totalAmount / 1000000, // Convert from mutez to tez
-      }))
-  }, [transactions, excludeAddresses])
-
-  const topDonors = useMemo(() => {
+  const displayedDonors = useMemo(() => {
     return allDonors.slice(0, displayLimit)
   }, [allDonors, displayLimit])
+
+  const handleLoadMore = () => {
+    setDisplayLimit((prev) => prev + initialLimit)
+  }
 
   if (isLoading) {
     return <div className={styles.loading}>Loading donations...</div>
@@ -76,12 +43,8 @@ export function TopDonors({
     return <div className={styles.error}>Error loading donations</div>
   }
 
-  if (!topDonors || topDonors.length === 0) {
+  if (!displayedDonors || displayedDonors.length === 0) {
     return <div className={styles.empty}>No donations found</div>
-  }
-
-  const handleLoadMore = () => {
-    setDisplayLimit((prev) => prev + initialLimit)
   }
 
   const hasMore = allDonors.length > displayLimit
@@ -90,7 +53,7 @@ export function TopDonors({
     <div className={styles.container}>
       <h3 className={styles.title}>Top Donors</h3>
       <div className={styles.list}>
-        {topDonors.map((donor, index) => (
+        {displayedDonors.map((donor, index) => (
           <div key={donor.address} className={styles.donor}>
             <div className={styles.rank}>{index + 1}</div>
             <div className={styles.info}>
@@ -106,7 +69,7 @@ export function TopDonors({
               </div>
               <div className={styles.address}>
                 <a
-                  href={`${TZKT_API_URL}/operations/transactions?target=${contractAddress}&sender=${donor.address}`}
+                  href={`${TZKT_API_URL}/operations/transactions?target=${DAO_TREASURY_CONTRACT}&sender=${donor.address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="View donation transactions (API data)"
@@ -128,11 +91,7 @@ export function TopDonors({
         ))}
       </div>
       {hasMore && (
-        <button
-          className={styles.loadMoreButton}
-          onClick={handleLoadMore}
-          disabled={isLoading}
-        >
+        <button className={styles.loadMoreButton} onClick={handleLoadMore}>
           Load More
         </button>
       )}
