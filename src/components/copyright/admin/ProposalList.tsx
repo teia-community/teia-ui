@@ -5,13 +5,35 @@ import { fetchProposals, fetchAllVotes, fetchExpirationTime } from '@data/swr'
 import { useUserStore } from '@context/userStore'
 import { useProposalStore } from '@context/proposalStore'
 
+interface Proposal {
+  id: number
+  key: string
+  value: {
+    kind: { [key: string]: any }
+    issuer: string
+    positive_votes: number
+    minimum_votes: number
+    executed: boolean
+    timestamp: string
+  }
+}
+
+interface Vote {
+  id: number
+  key: {
+    nat: string
+    address: string
+  }
+  value: boolean
+}
+
 export default function ProposalList() {
   const address = useUserStore((state) => state.address)
   const voteOnProposal = useProposalStore((s) => s.voteOnProposal)
   const executeProposal = useProposalStore((s) => s.executeProposal)
 
-  const [proposals, setProposals] = useState([])
-  const [votes, setVotes] = useState([])
+  const [proposals, setProposals] = useState<Proposal[]>([])
+  const [votes, setVotes] = useState<Vote[]>([])
   const [loading, setLoading] = useState(true)
   const [expirationTime, setExpirationTime] = useState<number>(0)
 
@@ -25,9 +47,9 @@ export default function ProposalList() {
       .finally(() => setLoading(false))
   }, [address])
 
-  const getUserVote = (proposalId: number) => {
+  const getUserVote = (proposalId: string) => {
     const match = votes.find(
-      (v) => Number(v.key.nat) === Number(proposalId) && v.key.address === address
+      (v) => v.key.nat === proposalId && v.key.address === address
     )
     return match?.value ?? null
   }
@@ -65,15 +87,15 @@ export default function ProposalList() {
           const proposalId = entry.key
           const kind = Object.keys(entry.value.kind)[0]
           const userVote = getUserVote(proposalId)
-          const positiveVotes  = entry.value.positive_votes
+          const positiveVotes = entry.value.positive_votes
           const minVotes = entry.value.minimum_votes
           const isExecutable = positiveVotes >= minVotes && !entry.value.executed
           const yesVotes = votes.filter(
-            (v) => Number(v.key.nat) === Number(proposalId) && v.value === true
+            (v) => v.key.nat === proposalId && v.value === true
           ).length
 
           const noVotes = votes.filter(
-            (v) => Number(v.key.nat) === Number(proposalId) && v.value === false
+            (v) => v.key.nat === proposalId && v.value === false
           ).length
 
           return (
@@ -86,15 +108,15 @@ export default function ProposalList() {
               <p><strong>Status:</strong> {entry.value.executed ? '✅ Executed' : '⏳ Pending'}</p>
               <p><strong>Your Vote:</strong> {
                 userVote === true ? '✅ Yes' :
-                userVote === false ? '❌ No' :
-                '❓ Not Voted'
+                  userVote === false ? '❌ No' :
+                    '❓ Not Voted'
               }</p>
               <div className={styles.button_group}>
                 <Button
                   shadow_box
                   fit
                   disabled={!address}
-                  onClick={() => voteOnProposal(proposalId, true)}
+                  onClick={() => voteOnProposal(Number(proposalId), true)}
                   className={userVote === true ? styles.active : ''}
                 >
                   ✅ Vote Yes
@@ -103,7 +125,7 @@ export default function ProposalList() {
                   shadow_box
                   fit
                   disabled={!address}
-                  onClick={() => voteOnProposal(proposalId, false)}
+                  onClick={() => voteOnProposal(Number(proposalId), false)}
                   className={userVote === false ? styles.active : ''}
                 >
                   ❌ Vote No
@@ -113,7 +135,7 @@ export default function ProposalList() {
                 <Button
                   shadow_box
                   fit
-                  onClick={() => executeProposal(proposalId)}
+                  onClick={() => executeProposal(Number(proposalId))}
                 >
                   ✅ Execute Proposal
                 </Button>

@@ -361,8 +361,8 @@ export async function fetchProposals() {
   }
 }
 
-export async function fetchAllVotes() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
+export async function fetchAllVotes(address?: string) {
+  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true${address ? `&key.address=${address}` : ''}`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
