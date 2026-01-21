@@ -7,6 +7,7 @@ import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
 import { useCallback, useEffect, useState } from 'react'
+import { ArtistProfile } from '@types'
 
 
 async function reverseRecord(address: string) {
@@ -32,7 +33,7 @@ async function reverseRecord(address: string) {
   }
 }
 
-import { ArtistProfile } from '@types'
+
 
 export default function Profile({ user }: { user: ArtistProfile & { extras?: any; alias?: string; description?: string; subjkt?: string; identicon?: string; address: string } }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(
