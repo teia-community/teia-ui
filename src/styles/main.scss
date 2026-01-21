@@ -1,3 +1,6 @@
+@use 'variables.scss';
+@use 'typography.scss';
+@use 'mixins.scss';
 @use 'layout';
 
 :root {
@@ -121,7 +124,7 @@ button {
 }
 
 img.emoji {
-  width: $font-small-mobile;
+  width: variables.$font-small-mobile;
   pointer-events: none;
 }
 

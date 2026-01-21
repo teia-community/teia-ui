@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 // breakpoints
 $PHONE: 0px;
 $TABLET: 600px;
@@ -10,15 +12,16 @@ $breakpoints: (
 ) !default;
 
 @mixin respond-to($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   }
 }
+
 @mixin page-width($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @container page (min-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @container page (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   }
