@@ -184,7 +184,7 @@ interface TokenData {
 
 function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const { watch } = useFormContext()
-  const { license, minterName, address } = useOutletContext()
+  const { license, minterName, address } = useCopyrightStore.getState() as any
   const [clauses, setClauses] = useState(
     defaultValue?.clauses || initialClauses
   )
@@ -667,8 +667,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
       name = eventOrValue?.target?.name || ''
       value = eventOrValue?.target?.value || ''
     } else {
-      name = 'addendum' | ''
-      value = eventOrValue | ''
+      name = ('' as any) || ''
+      value = (eventOrValue as any) || ''
     }
 
     setClauses((prev) => ({
@@ -1111,13 +1111,13 @@ Any modification to this Agreement's terms requires explicit consent from both t
               }}
             >
               <img
-                src={HashToURL(currentToken.metadata.displayUri, 'IPFS')}
+                src={HashToURL(currentToken.metadata.displayUri || '', 'IPFS')}
                 alt={currentToken.metadata.name}
               />
               <div>
                 <h4>Title: {currentToken.metadata.name}</h4>
                 <h4>Creator(s): {currentToken.metadata.creators}</h4>
-                <h4>Mint Date: (?) {currentToken.metadata.mintDate}</h4>
+                <h4>Mint Date: (?) {(currentToken.metadata as any).mintDate}</h4>
                 <br />
                 <p>{currentToken.metadata.description}</p>
               </div>
@@ -1239,7 +1239,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 >
                   {token.contractAddress !== 'external' && (
                     <img
-                      src={HashToURL(token.metadata.displayUri, 'IPFS')}
+                      src={HashToURL(token.metadata.displayUri || '', 'IPFS')}
                       alt={token.metadata.name}
                       style={{
                         width: '100%',

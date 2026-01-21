@@ -29,7 +29,7 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   ) {
     holder = {
       user_address: addressOrSubjkt,
-    }
+    } as any
   }
 
   if (!holder?.user_address) {
@@ -40,7 +40,7 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
   const userMetadata = await GetUserMetadata(holder.user_address)
   console.log(userMetadata)
-  const user = userMetadata ? { ...userMetadata } : {}
+  const user = userMetadata ? { ...userMetadata } : ({} as any)
 
   user.address = holder.user_address
 
@@ -74,10 +74,7 @@ export default function Display() {
 
   const [searchParams] = useSearchParams()
 
-  const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings((st) => [
-    st.nsfwFriendly,
-    st.photosensitiveFriendly,
-  ])
+  const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings()
 
   useLayoutEffect(() => {
     if (searchParams.get('yolo') !== null) {
@@ -130,7 +127,7 @@ export default function Display() {
   ]
 
   return (
-    <Page feed title={user.alias}>
+    <Page feed title={(user as any).alias}>
       {overridePopup ? (
         <Warning
           onInteract={(e) => {
@@ -140,8 +137,8 @@ export default function Display() {
         />
       ) : (
         <>
-          <Profile user={user} />
-          {user.address && user.address.substr(0, 2) !== 'KT' && (
+          <Profile user={user as any} />
+          {(user as any).address && (user as any).address.substr(0, 2) !== 'KT' && (
             <div className={styles.menu}>
               <Tabs tabs={TABS} />
 

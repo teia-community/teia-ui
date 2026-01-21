@@ -36,7 +36,7 @@ export default function DaoParameters() {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity = representatives?.[userAddress]
+  const userCommunity = representatives?.[userAddress as any]
   const [userTokenBalance] = useDaoTokenBalance(userAddress)
   const [userVotes] = useDaoUserVotes(userAddress, daoStorage)
   const [userCommunityVotes] = useDaoCommunityVotes(userCommunity, daoStorage)
@@ -54,7 +54,7 @@ export default function DaoParameters() {
   }
 
   // Calculate the vote scaling depending on the vote method
-  const gp = governanceParameters[daoStorage.gp_counter - 1]
+  const gp = (governanceParameters as any)[daoStorage.gp_counter - 1]
   const voteScaling = gp.vote_method.linear
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
@@ -80,8 +80,8 @@ export default function DaoParameters() {
               </li>
               <li>
                 Submitted Proposals:{' '}
-                {Object.values(proposals).reduce(
-                  (acc, proposal) =>
+                {(Object.values(proposals) as any[]).reduce(
+                  (acc: any, proposal: any) =>
                     acc + (proposal.issuer === userAddress ? 1 : 0),
                   0
                 )}
@@ -137,35 +137,35 @@ export default function DaoParameters() {
           <li>
             Members:{' '}
             <TzktLink link={`${DAO_TOKEN_CONTRACT}/tokens/0/holders`}>
-              {daoMemberCount} (Click for List of Existing Members)
+              {(daoMemberCount as any)} (Click for List of Existing Members)
             </TzktLink>
           </li>
           <li>Total Number of Proposals: {Object.keys(proposals).length}</li>
           <li>
             Open Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.open ? 1 : 0),
+            {(Object.values(proposals) as any[]).reduce(
+              (acc: any, proposal: any) => acc + (proposal.status.open ? 1 : 0),
               0
             )}
           </li>
           <li>
             Executed Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.executed ? 1 : 0),
+            {(Object.values(proposals) as any[]).reduce(
+              (acc: any, proposal: any) => acc + (proposal.status.executed ? 1 : 0),
               0
             )}
           </li>
           <li>
             Rejected Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.rejected ? 1 : 0),
+            {(Object.values(proposals) as any[]).reduce(
+              (acc: any, proposal: any) => acc + (proposal.status.rejected ? 1 : 0),
               0
             )}
           </li>
           <li>
             Cancelled Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.cancelled ? 1 : 0),
+            {(Object.values(proposals) as any[]).reduce(
+              (acc: any, proposal: any) => acc + (proposal.status.cancelled ? 1 : 0),
               0
             )}
           </li>

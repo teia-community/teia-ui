@@ -29,7 +29,7 @@ export default function MintForm() {
     isTyped,
     typedinput,
     isMonoType,
-  } = useOutletContext()
+  } = useOutletContext() as any
   const navigate = useNavigate()
   const [needsCover, setNeedsCover] = useState(false)
   const [isTypedArt, setIsTypedArt] = useState(false)
@@ -78,9 +78,9 @@ export default function MintForm() {
 
   const generateCoverImagePreview = async (inputText) => {
     try {
-      const imageFile = await generateTypedArtCoverImage(inputText, isMonoType)
+      const imageFile = await generateTypedArtCoverImage(inputText, isMonoType as any)
       setPreview(imageFile)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating cover image preview:', error.message)
       setPreview(null)
     }
@@ -111,7 +111,7 @@ export default function MintForm() {
 
       useMintStore.setState({ ...data, isValid: true })
       navigate('preview')
-    } catch (error) {
+    } catch (error: any) {
       useModalStore.getState().show(error.message)
     }
   }
