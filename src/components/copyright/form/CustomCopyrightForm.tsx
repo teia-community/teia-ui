@@ -930,6 +930,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
             <h4>{clauseLabels.expirationDate}</h4>
             <Input
               type="date"
+              placeholder="YYYY-MM-DD"
               value={clauses?.expirationDate || initialClauses?.expirationDate}
               onChange={(e) => handleChange(e, 'expirationDate')}
               defaultValue={initialClauses?.expirationDate}
@@ -946,7 +947,6 @@ Any modification to this Agreement's terms requires explicit consent from both t
               value={clauses?.addendum || ''}
               onChange={handleInputChange}
               placeholder="Add additional notes, clauses, restrictions, scopes, etc."
-              defaultValue={defaultValue?.clauses?.addendum}
               className={styles.field}
             />
           </div>
@@ -1064,7 +1064,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 type="text"
                 value={contractAddress}
                 onChange={(e) =>
-                  setContractAddress(e?.target?.value || e || '')
+                  setContractAddress((e as any)?.target?.value || (e as string) || '')
                 }
                 placeholder="Enter contract address (e.g., KT1...)"
                 className={styles.field}
@@ -1073,7 +1073,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               <Input
                 type="text"
                 value={tokenId}
-                onChange={(e) => setTokenId(e?.target?.value || e || '')}
+                onChange={(e) => setTokenId((e as any)?.target?.value || (e as string) || '')}
                 placeholder="Enter token ID (e.g., 123456)"
                 className={styles.field}
               />

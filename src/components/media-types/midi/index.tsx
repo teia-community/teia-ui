@@ -59,7 +59,7 @@ export const MidiComponent = ({
   }, [previewUri, artifactUri, currentVolume])
 
   const updateVolume = useCallback((e: React.FormEvent<HTMLInputElement>) => {
-    setCurrentVolume(e.target.value)
+    setCurrentVolume(parseInt((e.target as HTMLInputElement).value, 10))
   }, [])
 
   useEffect(() => {
@@ -93,9 +93,9 @@ export const MidiComponent = ({
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="black"
-            class="w-6 h-6"
+            className="w-6 h-6"
           >
             <path
               stroke-linecap="round"

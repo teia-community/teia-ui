@@ -14,6 +14,7 @@ interface DropdownButtonProps {
   children: React.ReactNode
   onClick?: () => void
   className?: string
+  id?: string
 }
 
 interface ChildProps {

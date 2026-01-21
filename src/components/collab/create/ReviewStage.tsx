@@ -38,11 +38,11 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
     const allParticipants = validCollaborators.concat(validBeneficiaries)
 
     Object.values(allParticipants).forEach(
-      (participant) =>
-        (participantData[participant.address] = {
-          share: parseFloat(Math.floor(participant.shares * 1000)),
-          isCore: participant.role === 'collaborator',
-        })
+      (participant: any) =>
+      ((participantData as any)[participant.address] = {
+        share: Math.floor(participant.shares * 1000),
+        isCore: participant.role === 'collaborator',
+      })
     )
 
     // Call the core blockchain function to create the contract

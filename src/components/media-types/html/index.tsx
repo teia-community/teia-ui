@@ -34,15 +34,15 @@ export const HTMLComponent = (props: any) => {
   let _objectId_ = false
 
   if (nft.artist_address) {
-    _creator_ = nft.artist_address
+    _creator_ = nft.artist_address as any
   }
 
   if (address) {
-    _viewer_ = address
+    _viewer_ = address as any
   }
 
   if (nft.token_id) {
-    _objectId_ = String(nft.token_id)
+    _objectId_ = String(nft.token_id) as any
   }
 
   // preview
@@ -93,7 +93,7 @@ export const HTMLComponent = (props: any) => {
         return
       }
 
-      iframeRef.current.contentWindow.postMessage(
+      ; (iframeRef.current as any)?.contentWindow?.postMessage(
         {
           target: 'hicetnunc-html-preview',
           data: unpackedFiles.current,

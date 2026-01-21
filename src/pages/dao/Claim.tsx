@@ -13,7 +13,7 @@ export default function Claim() {
   const [acceptLegalDisclaimer, setAcceptLegalDisclaimer] = useState(false)
 
   return (
-    <Page title="Claim DAO tokens" large>
+    <Page title="Claim DAO tokens">
       <div className={styles.container}>
         <div className={styles.headline}>
           <h1>Welcome to the TEIA tokens claim page!</h1>
@@ -57,24 +57,24 @@ export default function Claim() {
           <h1 className={styles.section_title}>How to Claim your Tokens</h1>
 
           <ol>
-            <li counter="1">
+            <li>
               <b>Sync your wallet</b> with teia.art (top right corner). Please
               check the URL before syncing your wallet: The only official TEIA
               token claim page is at www.teia.art/claim
             </li>
 
-            <li counter="2">
+            <li>
               <b>Read the legal disclaimer below.</b> It outlines important
               information regarding the nature of TEIA tokens and your
               responsibilities as a token holder.
             </li>
 
-            <li counter="3">
+            <li>
               <b>Confirm you have read the disclaimer</b> by checking the box at
               the bottom of this page to get access to the claim button.
             </li>
 
-            <li counter="4">
+            <li>
               <b>Click on the "Claim TEIA tokens" button</b> at the bottom of
               this page to initiate the token claim process and confirm the
               operation with your wallet. Your tokens should arrive in your
@@ -101,7 +101,7 @@ export default function Claim() {
           </p>
 
           <ol>
-            <li counter="1">
+            <li>
               <b>Governance only:</b> The TEIA tokens are intended solely for
               governance purposes within the Teia DAO ecosystem. TEIA tokens do
               not represent any form of investment in the Teia DAO or any
@@ -112,7 +112,7 @@ export default function Claim() {
               Claiming TEIA tokens via this claim page is free.
             </li>
 
-            <li counter="2">
+            <li>
               <b>No investment advice:</b> The information provided on this
               claim page, as well as any other informational materials, blog
               articles, or announcements published by Teia DAO LLC, are strictly
@@ -127,7 +127,7 @@ export default function Claim() {
               such losses.
             </li>
 
-            <li counter="3">
+            <li>
               <b>DAO membership:</b> By claiming and/or holding TEIA tokens, you
               become a member of the Teia DAO LLC. Teia does not require you to
               provide any personal information, as long as you hold less than
@@ -142,7 +142,7 @@ export default function Claim() {
               .
             </li>
 
-            <li counter="4">
+            <li>
               <b>Regulatory compliance:</b> The distribution and use of TEIA
               tokens may be subject to various laws, regulations, and
               restrictions in different jurisdictions. It is your sole
@@ -152,7 +152,7 @@ export default function Claim() {
               advice.
             </li>
 
-            <li counter="5">
+            <li>
               <b>No liability:</b> To the maximum extent permitted by applicable
               law, the Teia DAO team, its contributors, affiliates, partners,
               and any other associated entities shall not be liable for any
@@ -161,7 +161,7 @@ export default function Claim() {
               participation in the TEIA token claim process.
             </li>
 
-            <li counter="6">
+            <li>
               <b>Risk acknowledgement:</b> By participating in the TEIA token
               claim process, you acknowledge and assume the risks associated
               with blockchain technology, cryptocurrencies, and the volatility
@@ -170,7 +170,7 @@ export default function Claim() {
               arising from your participation.
             </li>
 
-            <li counter="7">
+            <li>
               <b>Updates and amendments:</b> The Teia DAO team reserves the
               right to modify, update, or amend this disclaimer at any time
               without prior notice.
@@ -180,9 +180,8 @@ export default function Claim() {
           <br />
 
           <Checkbox
-            alt={`click to ${
-              acceptLegalDisclaimer ? 'decline' : 'accept'
-            } the legal disclaimer`}
+            alt={`click to ${acceptLegalDisclaimer ? 'decline' : 'accept'
+              } the legal disclaimer`}
             checked={acceptLegalDisclaimer}
             onCheck={setAcceptLegalDisclaimer}
             label={

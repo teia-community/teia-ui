@@ -118,7 +118,7 @@ export const Header = () => {
     }
 
     return useUserStore.subscribe(
-      (st) => [st.address, st.proxyAddress, st.proxyName, st.userInfo],
+      (st) => [st.address, st.proxyAddress, st.proxyName, st.userInfo] as [any, any, any, any],
       updateTitle
     )
   }, [])

@@ -30,10 +30,11 @@ export const ImageComponent = ({
     console.error(error)
   }
 
-  const onLoad = ({ target: img }: { target: HTMLImageElement }) => {
-    // Do whatever you want here
+  const onLoad = (event: any) => {
+    const img = event.target as HTMLImageElement
     const w = img.naturalWidth
     const h = img.naturalHeight
+    // check for smol mode
     if (w + h < 256) {
       setSmol(true)
     }

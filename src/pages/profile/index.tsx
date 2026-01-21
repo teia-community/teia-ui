@@ -141,7 +141,7 @@ export default function Display() {
       ) : (
         <>
           <Profile user={user} />
-          {user.address.substr(0, 2) !== 'KT' && (
+          {user.address && user.address.substr(0, 2) !== 'KT' && (
             <div className={styles.menu}>
               <Tabs tabs={TABS} />
 
@@ -200,7 +200,7 @@ export default function Display() {
               showRestricted,
               overrideProtections,
               showFilters,
-              address: user.address,
+              address: (user as any).address,
             }}
           />
         </>
