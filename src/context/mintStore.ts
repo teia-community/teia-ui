@@ -187,7 +187,7 @@ export const useMintStore = create<MintState>()(
             MIMETYPE.ZIP2,
           ].includes(artifact.mimeType)
 
-          const formats = []
+          const formats: any[] = []
 
           const generated = await generateCoverAndThumbnail(cover || artifact)
 

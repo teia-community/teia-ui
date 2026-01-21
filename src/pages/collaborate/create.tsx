@@ -119,6 +119,7 @@ export const CreateCollaboration = () => {
         <CollaboratorTable
           collaborators={editCollaborators ? collaborators : validCollaborators}
           setCollaborators={setCollaborators}
+          availableShares={totalShares - groupShareTotal(beneficiaries)}
           minimalView={minimalView}
           onEdit={() => setEditCollaborators(true)}
         />
@@ -143,7 +144,6 @@ export const CreateCollaboration = () => {
       {showBeneficiariesUI && (
         <BeneficiariesUI
           totalParticipants={totalParticipants}
-          totalShares={totalShares}
           beneficiaries={beneficiaries}
           setBeneficiaries={setBeneficiaries}
           minimalView={showReview}

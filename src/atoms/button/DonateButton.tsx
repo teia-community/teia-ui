@@ -5,7 +5,11 @@ import { useState, ChangeEvent } from 'react'
 import styles from './index.module.scss' // Import the SCSS module
 
 // Donation input component with user-defined amount
-const DonateInput = () => {
+interface DonateInputProps {
+  destinationAddress?: string
+}
+
+const DonateInput = ({ destinationAddress }: DonateInputProps) => {
   const [amount, setAmount] = useState('')
   const [donate] = useUserStore((st) => [st.donate])
 
@@ -19,13 +23,13 @@ const DonateInput = () => {
       alert('Please enter a valid donation amount')
       return
     }
-    donate(amountAsNumber, DAO_TREASURY_CONTRACT)
+    donate(amountAsNumber, destinationAddress || DAO_TREASURY_CONTRACT)
   }
 
   return (
     <div className={styles.daoDonateButton}>
       <h4>Donate to DAO Treasury</h4>
-      <p>Address: {DAO_TREASURY_CONTRACT}</p>
+      <p>Address: {destinationAddress || DAO_TREASURY_CONTRACT}</p>
       <input
         type="number"
         value={amount}

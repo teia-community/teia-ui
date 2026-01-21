@@ -15,6 +15,7 @@ export const BeneficiariesUI = ({
   onSelectPercentage,
   totalParticipants,
   onComplete,
+  minimalView,
 }) => {
   // For when users paste multiline content
   const [multilineContent, setMultilineContent] = useState('')

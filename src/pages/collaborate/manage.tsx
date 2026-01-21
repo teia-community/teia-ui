@@ -25,7 +25,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
     shallow
   )
 
-  const [collabs, setCollabs] = useState([])
+  const [collabs, setCollabs] = useState<any[]>([])
   // const [managedCollabs, setManagedCollabs] = useState([])
   const [loadingCollabs, setLoadingCollabs] = useState(true)
 

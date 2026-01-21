@@ -125,4 +125,4 @@ function Input(
   )
 }
 
-export default memo(React.forwardRef(Input))
+export default memo(React.forwardRef<HTMLInputElement, InputProps>(Input))

@@ -70,7 +70,7 @@ export const Footer = ({ menu, pin }: FooterProps) => {
               alt="teia rotating logo"
               onClick={() => setLogoSeed(Math.random() * 100)}
             >
-              <RotatingLogo theme={theme} logos={logos} seed={logoSeed} />
+              <RotatingLogo seed={logoSeed} />
             </Button>
           </>
           )}

@@ -48,7 +48,7 @@ export default function DaoProposals() {
   }
 
   // Separate the proposal ids depending of their current status
-  const proposalIdsByStatus = Object.fromEntries(
+  const proposalIdsByStatus: Record<string, string[]> = Object.fromEntries(
     Object.keys(PROPOSAL_STATUS_OPTIONS).map((status) => [status, []])
   )
   const now = new Date()

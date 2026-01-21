@@ -332,7 +332,7 @@ export const prepareDirectory = async ({
   files: FileForm[]
   cover: FileForm
   thumbnail: FileForm
-  generateDisplayUri: string
+  generateDisplayUri: boolean
   rights: string
   rightsUri: string
   language: string

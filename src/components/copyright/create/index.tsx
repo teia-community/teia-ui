@@ -12,7 +12,11 @@ export function CopyrightCreate() {
   const { customLicenseData } = useCopyrightStore()
   // const address = useUserStore((st) => st.address)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submissionStatus, setSubmissionStatus] = useState(null)
+  const [submissionStatus, setSubmissionStatus] = useState<{
+    type: 'success' | 'error'
+    message: string
+    opHash?: string
+  } | null>(null)
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
