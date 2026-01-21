@@ -14,8 +14,8 @@ export const CreateCollaboration = () => {
 
   // Core collaborators and beneficiaries
   const [editCollaborators, setEditCollaborators] = useState(true)
-  const [collaborators, setCollaborators] = useState([])
-  const [beneficiaries, setBeneficiaries] = useState([])
+  const [collaborators, setCollaborators] = useState<any[]>([])
+  const [beneficiaries, setBeneficiaries] = useState<any[]>([])
 
   // For adding people not directly involved with the creation
   const [showBeneficiariesUI, setShowBeneficiariesUI] = useState(false)

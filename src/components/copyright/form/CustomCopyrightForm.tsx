@@ -129,7 +129,7 @@ export const ClausesDescriptions = ({ clauses }) => {
             return (
               <React.Fragment key={key}>
                 <li key={key}>
-                  {clauseLabels[key]}: {descriptions[key][value]}
+                  {clauseLabels[key as keyof typeof clauseLabels]}: {(descriptions as any)[key][value as any]}
                 </li>
                 <li key="expirationDate">
                   {clauseLabels.expirationDate}:{' '}
@@ -151,14 +151,14 @@ export const ClausesDescriptions = ({ clauses }) => {
           } else if (key === 'customUriEnabled') {
             return value ? (
               <li key={key}>
-                Custom URI Enabled: {descriptions?.customUriEnabled[true]}
+                Custom URI Enabled: {(descriptions as any).customUriEnabled['true']}
               </li>
             ) : null
           } else {
             const displayValue = descriptions[key]?.[value] || 'Unknown Status'
             return (
               <li key={key}>
-                {clauseLabels[key]}: {displayValue}
+                {clauseLabels[key as keyof typeof clauseLabels]}: {displayValue}
               </li>
             )
           }
@@ -175,6 +175,7 @@ interface TokenData {
   metadata: {
     name: string;
     thumbnailUri: string;
+    displayUri?: string;
     creators: any[];
     description: string;
   };
@@ -197,8 +198,8 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const [tokenId, setTokenId] = useState('')
   const [inputMode, setInputMode] = useState('url') // 'url' or 'contract'
   const { customLicenseData } = useCopyrightStore()
-  const [tokens, setTokens] = useState(customLicenseData?.tokens || [])
-  const [currentToken, setCurrentToken] = useState(null)
+  const [tokens, setTokens] = useState<TokenData[]>(customLicenseData?.tokens || [])
+  const [currentToken, setCurrentToken] = useState<TokenData | null>(null)
   const [currentExternalToken, setCurrentExternalToken] = useState<TokenData | null>(null)
   const [fetchingToken, setFetchingToken] = useState(false)
 
@@ -257,7 +258,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
     if (!token) {
       if (inputMode === 'url') {
-        const externalToken: ExternalToken = {
+        const externalToken: TokenData = {
           contractAddress: 'external',
           tokenId: null,
           metadata: {
@@ -316,6 +317,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
             tokenId: token.tokenId,
             metadata: {
               name: `Token ${token.tokenId}`,
+              thumbnailUri: '',
               displayUri: '',
               creators: [address],
               description: `Token ID: ${token.tokenId}, Contract: ${token.contractAddress} - Metadata could not be fetched but token will be included as Tezos verification.`,
@@ -335,11 +337,12 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
       if (inputMode === 'contract') {
         // For contract + token ID mode, always add the token even if fetch fails
-        const fallbackToken = {
+        const fallbackToken: TokenData = {
           contractAddress: token.contractAddress,
           tokenId: token.tokenId,
           metadata: {
             name: `Token ${token.tokenId}`,
+            thumbnailUri: '',
             displayUri: '',
             creators: [address],
             description: `Token ID: ${token.tokenId}, Contract: ${token.contractAddress} - Metadata could not be fetched but token will be included as Tezos verification.`,

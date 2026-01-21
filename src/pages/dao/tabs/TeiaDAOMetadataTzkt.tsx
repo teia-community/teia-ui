@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { getTzktData } from '@data/api'
 
 const TeiaTokenMetadata = () => {
-  const [tokenData, setTokenData] = useState(null)
+  const [tokenData, setTokenData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchTokenData = async () => {

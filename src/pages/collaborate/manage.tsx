@@ -30,7 +30,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const [loadingCollabs, setLoadingCollabs] = useState(true)
 
   const [checkInterval, setCheckInterval] = useState(30)
-  const [timerEndDate, setTimerEndDate] = useState()
+  const [timerEndDate, setTimerEndDate] = useState<Date>()
 
   // TODO - maybe allow manual input of a KT address
   // const [addAddressManually, setAddAddressManually] = useState(false)

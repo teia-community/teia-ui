@@ -33,7 +33,7 @@ export default function MintForm() {
   const navigate = useNavigate()
   const [needsCover, setNeedsCover] = useState(false)
   const [isTypedArt, setIsTypedArt] = useState(false)
-  const [preview, setPreview] = useState(null)
+  const [preview, setPreview] = useState<File | null | undefined>(null)
 
   // Get the current state from the mint store
   const mintStoreState = useMintStore((state) => state)
@@ -52,7 +52,7 @@ export default function MintForm() {
     if (artifact)
       setNeedsCover(
         !artifact?.mimeType?.startsWith('image') &&
-          !AUTO_GENERATE_COVER_MIMETYPES.includes(artifact?.mimeType)
+        !AUTO_GENERATE_COVER_MIMETYPES.includes(artifact?.mimeType)
       )
 
     /** Typed  */
@@ -129,9 +129,8 @@ export default function MintForm() {
       {balance > 0 && balance / 1e6 < 0.7 && (
         <div className={styles.fundsWarning}>
           <p>
-            {`⚠️ You seem to be low on funds (${
-              balance / 1e6
-            }ꜩ), mint will probably fail...`}
+            {`⚠️ You seem to be low on funds (${balance / 1e6
+              }ꜩ), mint will probably fail...`}
           </p>
         </div>
       )}

@@ -67,10 +67,10 @@ export const useDisplayStore = create(
 export default function Display() {
   const { address, name: subjkt } = useParams()
   const { walletBlockMap, underReviewMap } = useSettings()
-  const [overridePopup, setOverridePopup] = useState()
+  const [overridePopup, setOverridePopup] = useState<boolean>()
 
-  const [showRestricted, setShowRestricted] = useState()
-  const [overrideProtections, setOverrideProtections] = useState()
+  const [showRestricted, setShowRestricted] = useState<boolean>()
+  const [overrideProtections, setOverrideProtections] = useState<boolean>()
 
   const [searchParams] = useSearchParams()
 
