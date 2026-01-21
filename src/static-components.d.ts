@@ -13,8 +13,7 @@ declare module '*.svg' {
 }
 
 declare module '*.svg?react' {
-    import type { ComponentType, SVGProps } from 'react';
-    export const ReactComponent: ComponentType<SVGProps<SVGSVGElement>>;
-    const src: string;
-    export default src;
+    import type { FC, SVGProps } from 'react';
+    const SVG: FC<SVGProps<SVGSVGElement>>;
+    export default SVG;
 }
