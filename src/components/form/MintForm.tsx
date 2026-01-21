@@ -59,7 +59,7 @@ export default function MintForm() {
     setIsTypedArt(isTyped)
 
     /** Render correct fonts */
-    let typedTextArea = document.querySelector("textarea[name='typedinput']")
+    const typedTextArea = document.querySelector("textarea[name='typedinput']") as HTMLElement
 
     if (typedTextArea) {
       typedTextArea.style.fontFamily = isMonoType

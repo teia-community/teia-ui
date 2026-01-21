@@ -406,7 +406,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
   const generateDocumentText = useCallback(
     (customTokens = tokens) => {
-      let minterInfo = minterName
+      const minterInfo = minterName
         ? `[${minterName}, ${address}]`
         : `[${address}]`
       {

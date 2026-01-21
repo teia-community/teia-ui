@@ -12,7 +12,7 @@ export async function prepareFilesFromZIP(buffer: Uint8Array) {
   files['index_raw.html'] = new Blob([indexBlob], { type: indexBlob.type })
 
   // inject CSP meta tag in all html files
-  for (let k in files) {
+  for (const k in files) {
     if (k.endsWith('.html') || k.endsWith('.htm')) {
       const pageBuffer = await files[k].arrayBuffer()
       const safePageBuffer = injectCSPMetaTagIntoBuffer(pageBuffer)
@@ -272,7 +272,7 @@ export async function validateFiles(files: any) {
   }
 
   const pageBlob = files['index.html']
-  let htmlString = await pageBlob.text()
+  const htmlString = await pageBlob.text()
   const parser = new DOMParser()
   const doc = parser.parseFromString(htmlString, 'text/html')
 

@@ -50,7 +50,7 @@ export const TXT = ({
     }
 
     if (nft?.tags && nft?.tags?.length > 0) {
-      let transformedTags = nft.tags.map((tag) => tag.tag.toLowerCase())
+      const transformedTags = nft.tags.map((tag) => tag.tag.toLowerCase())
       if (
         transformedTags.includes('monospace') ||
         transformedTags.includes('mono')

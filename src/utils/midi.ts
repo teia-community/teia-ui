@@ -30,7 +30,7 @@ async function processMidiData(sourceUrl: string, volume: string | number) {
 
 export const processMidiCover = async (data: any) => {
   const midiDataFile = new Midi(data.artifact.buffer)
-  let cover = await generateMidiCover(data.title, midiDataFile)
+  const cover = await generateMidiCover(data.title, midiDataFile)
   data.cover = await convertFileToFileForm(cover)
 
   return data

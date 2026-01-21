@@ -14,7 +14,8 @@ interface RotatingLogoProps {
 }
 
 export const RotatingLogoRemote = ({ className, seed = 1, theme }: RotatingLogoProps) => {
-  theme = theme || useLocalSettings((state) => state.theme)
+  const localTheme = useLocalSettings((state) => state.theme)
+  theme = theme || localTheme
   const { logos } = useSettings()
 
   const logo = useMemo(

@@ -72,7 +72,7 @@ export default function Display() {
   const [showRestricted, setShowRestricted] = useState()
   const [overrideProtections, setOverrideProtections] = useState()
 
-  let [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const { nsfwFriendly, photosensitiveFriendly } = useLocalSettings((st) => [
     st.nsfwFriendly,
