@@ -1,6 +1,6 @@
 import { Container } from '@atoms/layout'
 import { useEffect, useState } from 'react'
-import '../style.css'
+
 import { HashToURL } from '@utils'
 import { Line } from '@atoms/line'
 import { useObjktDisplayContext } from '..'
