@@ -12,7 +12,19 @@ import { getMimeType } from '@utils/sanitise'
  * @param {boolean} uploadProps.allowedTypesLabel - A comma separated list of label of accepted types
  * @param {import("@types").UploadCallback} uploadProps.onChange - on file change.
  */
-export const Upload = forwardRef(
+interface UploadProps {
+  label: string
+  file?: any
+  placeHolder?: string
+  allowedTypes?: string[]
+  allowedTypesLabel?: string
+  children?: React.ReactNode
+  onChange?: (value: any) => void
+  name?: string
+  [key: string]: any
+}
+
+export const Upload = forwardRef<HTMLInputElement, UploadProps>(
   (
     {
       label,
@@ -43,19 +55,19 @@ export const Upload = forwardRef(
 
       // set reader for preview
       const reader = new FileReader()
-      reader.addEventListener('load', (e) => {
-        onChange({ title, mimeType, file, buffer, reader: e.target.result })
+      reader.addEventListener('load', () => {
+        onChange({ title, mimeType, file, buffer, reader: reader.result })
       })
       reader.readAsDataURL(file)
     }
 
-    const props = {
+    const inputProps: any = {
       type: 'file',
       name: extra.name || 'file',
     }
 
     if (allowedTypes) {
-      props.accept = allowedTypes.join(',')
+      inputProps.accept = allowedTypes.join(',')
     }
 
     return (
@@ -63,7 +75,7 @@ export const Upload = forwardRef(
         <strong>{label}</strong>
         <label>
           {title}
-          <input {...props} ref={ref} onChange={onFileChange} {...extra} />
+          <input {...inputProps} ref={ref} onChange={onFileChange} {...extra} />
         </label>
         <div className={styles.allowed}>
           {language.mint.supports}:&nbsp;{allowedTypesLabel}

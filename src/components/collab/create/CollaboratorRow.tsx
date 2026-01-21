@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button, Secondary } from '@atoms/button'
-import {} from '@components/media-types/'
+import { } from '@components/media-types/'
 import styles from '../index.module.scss'
 import inputStyles from '@atoms/input/index.module.scss'
 import { CloseIcon } from '@icons'
 import classNames from 'classnames'
-import { GetUserMetadata } from '@data/api'
+import { GetUserMetadata, TzktMetadata } from '@data/api'
 import { validAddress } from '@utils/collab'
+
+interface Collaborator {
+  address: string
+  shares: string | number
+  [key: string]: any
+}
+
+interface CollaboratorRowProps {
+  collaborator: Collaborator
+  onUpdate: (collaborator: Collaborator) => void
+  onAdd: (collaborator: Collaborator) => void
+  onRemove: () => void
+  onPasteMulti: (value: string) => void
+  minimalView: boolean
+  onEdit: () => void
+  availableShares: any
+}
 
 export const CollaboratorRow = ({
   collaborator,
@@ -16,15 +33,16 @@ export const CollaboratorRow = ({
   onPasteMulti,
   minimalView,
   onEdit,
-}) => {
-  const [meta, setMeta] = useState()
-  const [address, setAddress] = useState(collaborator.address)
+  availableShares,
+}: CollaboratorRowProps) => {
+  const [meta, setMeta] = useState<TzktMetadata | null>(null)
+  const [address, setAddress] = useState<string>(collaborator.address)
 
   // TODO: implement .tez address resolution
   // const [tezAddress, setTezAddress] = useState(collaborator.tezAddress)
 
   const [shares, setShares] = useState(collaborator.shares)
-  const sharesRef = useRef()
+  const sharesRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const { address, shares } = collaborator
@@ -44,11 +62,11 @@ export const CollaboratorRow = ({
       if (!meta || (meta && meta.tzprofile !== address)) {
         GetUserMetadata(address).then(({ data }) => {
           console.debug('Data from user meta query', data)
-          setMeta(data)
+          setMeta(data || null)
         })
       }
     } else {
-      setMeta()
+      setMeta(null)
     }
   }, [address, shares, meta])
 
@@ -121,7 +139,6 @@ export const CollaboratorRow = ({
               onChange={(event) => _update('shares', event.target.value)}
               onKeyDown={_onKeyDown}
               placeholder="(proportional)"
-              label="shares"
               value={shares || ''}
             />
           </label>

@@ -1,0 +1,499 @@
+build/assets/index-r-MRVt9f.js(9359,6435): error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
+src/components/collab/create/CollaboratorRow.tsx(39,25): error TS2339: Property 'focus' does not exist on type 'never'.
+src/components/collab/create/CollaboratorRow.tsx(44,34): error TS2339: Property 'tzprofile' does not exist on type 'never'.
+src/components/collab/create/CollaboratorRow.tsx(47,19): error TS2345: Argument of type 'TzktMetadata | undefined' is not assignable to parameter of type 'SetStateAction<undefined>'.
+  Type 'TzktMetadata' is not assignable to type 'SetStateAction<undefined>'.
+    Type 'TzktMetadata' provides no match for the signature '(prevState: undefined): undefined'.
+src/components/collab/create/CollaboratorRow.tsx(51,7): error TS2554: Expected 1 arguments, but got 0.
+src/components/collab/create/CollaboratorRow.tsx(81,40): error TS2339: Property 'alias' does not exist on type 'never'.
+src/components/collab/create/CollaboratorRow.tsx(119,15): error TS2322: Type 'MutableRefObject<undefined>' is not assignable to type 'LegacyRef<HTMLInputElement> | undefined'.
+  Type 'MutableRefObject<undefined>' is not assignable to type 'RefObject<HTMLInputElement>'.
+    Types of property 'current' are incompatible.
+      Type 'undefined' is not assignable to type 'HTMLInputElement | null'.
+src/components/collab/create/CollaboratorTable.tsx(108,17): error TS2322: Type '{ key: string; collaborator: any; availableShares: any; onUpdate: (collabData: any) => void; onRemove: () => void; onAdd: () => void; onEdit: any; onPasteMulti: Dispatch<SetStateAction<string>>; minimalView: any; }' is not assignable to type 'IntrinsicAttributes & { collaborator: any; onUpdate: any; onAdd: any; onRemove: any; onPasteMulti: any; minimalView: any; onEdit: any; }'.
+  Property 'availableShares' does not exist on type 'IntrinsicAttributes & { collaborator: any; onUpdate: any; onAdd: any; onRemove: any; onPasteMulti: any; minimalView: any; onEdit: any; }'.
+src/components/collab/create/ReviewStage.tsx(16,52): error TS2551: Property 'originateProxy' does not exist on type 'CollabState'. Did you mean 'originatedProxy'?
+src/components/collab/create/ReviewStage.tsx(42,26): error TS18046: 'participant' is of type 'unknown'.
+src/components/collab/create/ReviewStage.tsx(43,29): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+src/components/collab/create/ReviewStage.tsx(43,40): error TS18046: 'participant' is of type 'unknown'.
+src/components/collab/create/ReviewStage.tsx(44,19): error TS18046: 'participant' is of type 'unknown'.
+src/components/copyright/admin/SubmitProposal.tsx(79,15): error TS2322: Type '{ name: string; style: { border: string; }; placeholder: string; value: string; onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void; rows: number; }' is not assignable to type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'.
+src/components/copyright/admin/SubmitProposal.tsx(96,42): error TS2339: Property 'target' does not exist on type 'string | number | FormEvent<HTMLInputElement>'.
+  Property 'target' does not exist on type 'string'.
+src/components/copyright/admin/SubmitProposal.tsx(109,44): error TS2339: Property 'target' does not exist on type 'string | number | FormEvent<HTMLInputElement>'.
+  Property 'target' does not exist on type 'string'.
+src/components/copyright/admin/SubmitProposal.tsx(125,37): error TS2339: Property 'key' does not exist on type 'never'.
+src/components/copyright/admin/SubmitProposal.tsx(125,58): error TS2339: Property 'key' does not exist on type 'never'.
+src/components/copyright/admin/SubmitProposal.tsx(128,38): error TS2339: Property 'id' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(22,15): error TS2339: Property 'submitCopyrightAgreement' does not exist on type 'CopyrightStore'.
+src/components/copyright/create/index.tsx(27,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/components/copyright/create/index.tsx(33,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/components/copyright/create/index.tsx(40,9): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/components/copyright/create/index.tsx(41,28): error TS18046: 'error' is of type 'unknown'.
+src/components/copyright/create/index.tsx(65,69): error TS2339: Property 'type' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(66,32): error TS2339: Property 'message' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(67,29): error TS2339: Property 'opHash' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(72,81): error TS2339: Property 'opHash' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(76,37): error TS2339: Property 'opHash' does not exist on type 'never'.
+src/components/copyright/create/index.tsx(157,26): error TS2339: Property 'type' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(132,59): error TS2538: Type 'unknown' cannot be used as an index type.
+src/components/copyright/form/CustomCopyrightForm.tsx(154,69): error TS2538: Type 'true' cannot be used as an index type.
+src/components/copyright/form/CustomCopyrightForm.tsx(186,11): error TS2339: Property 'license' does not exist on type 'unknown'.
+src/components/copyright/form/CustomCopyrightForm.tsx(186,20): error TS2339: Property 'minterName' does not exist on type 'unknown'.
+src/components/copyright/form/CustomCopyrightForm.tsx(186,32): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/components/copyright/form/CustomCopyrightForm.tsx(260,30): error TS2304: Cannot find name 'ExternalToken'.
+src/components/copyright/form/CustomCopyrightForm.tsx(319,15): error TS2353: Object literal may only specify known properties, and 'displayUri' does not exist in type '{ name: string; thumbnailUri: string; creators: any[]; description: string; }'.
+src/components/copyright/form/CustomCopyrightForm.tsx(324,27): error TS2345: Argument of type 'TokenData' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'TokenData' provides no match for the signature '(prevState: null): null'.
+src/components/copyright/form/CustomCopyrightForm.tsx(348,25): error TS2345: Argument of type '{ contractAddress: any; tokenId: any; metadata: { name: string; displayUri: string; creators: any[]; description: string; }; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ contractAddress: any; tokenId: any; metadata: { name: string; displayUri: string; creators: any[]; description: string; }; }' provides no match for the signature '(prevState: null): null'.
+src/components/copyright/form/CustomCopyrightForm.tsx(667,14): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/copyright/form/CustomCopyrightForm.tsx(667,27): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/copyright/form/CustomCopyrightForm.tsx(668,30): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/copyright/form/CustomCopyrightForm.tsx(928,14): error TS2741: Property 'placeholder' is missing in type '{ type: "date"; value: any; onChange: (e: string | number | FormEvent<HTMLInputElement>) => void; defaultValue: string; className: any; }' but required in type 'Omit<InputProps & RefAttributes<HTMLInputElement>, "ref">'.
+src/components/copyright/form/CustomCopyrightForm.tsx(946,15): error TS2322: Type '{ type: string; name: string; value: any; onChange: (eventOrValue: any) => void; placeholder: string; defaultValue: any; className: any; }' is not assignable to type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'.
+  Property 'defaultValue' does not exist on type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1064,41): error TS2339: Property 'target' does not exist on type 'string | number | FormEvent<HTMLInputElement>'.
+  Property 'target' does not exist on type 'string'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1073,48): error TS2339: Property 'target' does not exist on type 'string | number | FormEvent<HTMLInputElement>'.
+  Property 'target' does not exist on type 'string'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1111,45): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1112,35): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1115,42): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1116,47): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1117,50): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/copyright/form/CustomCopyrightForm.tsx(1119,34): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/components/footer/index.tsx(73,43): error TS2322: Type '{ theme: Theme; logos: { name: string; themable: boolean; collection: string; }[]; seed: number; }' is not assignable to type 'IntrinsicAttributes & RotatingLogoProps'.
+  Property 'logos' does not exist on type 'IntrinsicAttributes & RotatingLogoProps'.
+src/components/form/FormFields.tsx(23,28): error TS2339: Property 'error' does not exist on type '{}'.
+src/components/form/FormFields.tsx(23,35): error TS2339: Property 'text' does not exist on type '{}'.
+src/components/form/FormFields.tsx(65,33): error TS2322: Type '{ text: true; error: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+  Property 'text' does not exist on type 'IntrinsicAttributes & object'.
+src/components/form/FormFields.tsx(78,33): error TS2322: Type '{ text: true; error: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+  Property 'text' does not exist on type 'IntrinsicAttributes & object'.
+src/components/form/FormFields.tsx(91,33): error TS2322: Type '{ text: true; error: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+  Property 'text' does not exist on type 'IntrinsicAttributes & object'.
+src/components/form/FormFields.tsx(145,14): error TS2322: Type '{ children: any; ref: RefCallBack; name: any; file: any; label: any; placeHolder: any; className: any; onChange: (...event: any[]) => void; allowedTypesLabel: string; }' is not assignable to type 'IntrinsicAttributes & RefAttributes<unknown>'.
+  Property 'children' does not exist on type 'IntrinsicAttributes & RefAttributes<unknown>'.
+src/components/form/FormFields.tsx(155,37): error TS2322: Type '{ error: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+  Property 'error' does not exist on type 'IntrinsicAttributes & object'.
+src/components/form/FormFields.tsx(180,30): error TS2345: Argument of type 'Blob' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'Blob' provides no match for the signature '(prevState: null): null'.
+src/components/form/FormFields.tsx(236,57): error TS2554: Expected 0 arguments, but got 1.
+src/components/form/FormFields.tsx(245,46): error TS2322: Type '{ position: string; width: string; maxWidth: string; aspectRatio: string; backgroundColor: string; overflow: string; }' is not assignable to type 'Properties<string | number, string & {}>'.
+  Types of property 'position' are incompatible.
+    Type 'string' is not assignable to type 'Position | undefined'.
+src/components/form/FormFields.tsx(246,28): error TS2322: Type '{ position: string; top: number; left: number; width: string; height: string; }' is not assignable to type 'Properties<string | number, string & {}>'.
+  Types of property 'position' are incompatible.
+    Type 'string' is not assignable to type 'Position | undefined'.
+src/components/form/FormFields.tsx(248,27): error TS2322: Type 'null' is not assignable to type 'Blob'.
+src/components/form/FormFields.tsx(285,18): error TS2322: Type '{ children: any; ref: RefCallBack; name: any; file: any; label: any; placeHolder: any; className: any; onChange: (...event: any[]) => void; allowedTypesLabel: string; }' is not assignable to type 'IntrinsicAttributes & RefAttributes<unknown>'.
+  Property 'children' does not exist on type 'IntrinsicAttributes & RefAttributes<unknown>'.
+src/components/form/FormFields.tsx(295,41): error TS2322: Type '{ error: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+  Property 'error' does not exist on type 'IntrinsicAttributes & object'.
+src/components/form/MintForm.tsx(24,5): error TS2339: Property 'artifact' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(25,5): error TS2339: Property 'license' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(26,5): error TS2339: Property 'minterName' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(27,5): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(28,5): error TS2339: Property 'balance' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(29,5): error TS2339: Property 'isTyped' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(30,5): error TS2339: Property 'typedinput' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(31,5): error TS2339: Property 'isMonoType' does not exist on type 'unknown'.
+src/components/form/MintForm.tsx(75,18): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'SetStateAction<null>'.
+src/components/form/MintForm.tsx(81,31): error TS2554: Expected 4 arguments, but got 2.
+src/components/form/MintForm.tsx(82,18): error TS2345: Argument of type 'File' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'File' provides no match for the signature '(prevState: null): null'.
+src/components/form/MintForm.tsx(84,62): error TS18046: 'error' is of type 'unknown'.
+src/components/form/MintForm.tsx(115,37): error TS18046: 'error' is of type 'unknown'.
+src/components/header/Header.tsx(121,15): error TS2322: Type 'any[]' is not assignable to type '[any, any, any, any]'.
+  Target requires 4 element(s) but source may have fewer.
+src/components/header/Header.tsx(175,15): error TS2322: Type '{ children: Element; alt: string; className: any; icon: Element; menuID: string; label: string; id: string; }' is not assignable to type 'IntrinsicAttributes & DropdownButtonProps'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & DropdownButtonProps'.
+src/components/item-info/ItemInfo.tsx(92,21): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.
+src/components/media-types/audio/visualiser.tsx(13,12): error TS18046: 'ref.current' is of type 'unknown'.
+src/components/media-types/audio/visualiser.tsx(17,28): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
+src/components/media-types/audio/visualiser.tsx(33,14): error TS2345: Argument of type 'HTMLAudioElement' is not assignable to parameter of type 'SetStateAction<undefined>'.
+  Type 'HTMLAudioElement' provides no match for the signature '(prevState: undefined): undefined'.
+src/components/media-types/audio/visualiser.tsx(37,17): error TS2345: Argument of type 'AnalyserNode' is not assignable to parameter of type 'SetStateAction<undefined>'.
+  Type 'AnalyserNode' provides no match for the signature '(prevState: undefined): undefined'.
+src/components/media-types/audio/visualiser.tsx(40,52): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'HTMLMediaElement'.
+src/components/media-types/audio/visualiser.tsx(41,20): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(destinationNode: AudioNode, output?: number | undefined, input?: number | undefined): AudioNode', gave the following error.
+    Argument of type 'undefined' is not assignable to parameter of type 'AudioNode'.
+  Overload 2 of 2, '(destinationParam: AudioParam, output?: number | undefined): void', gave the following error.
+    Argument of type 'undefined' is not assignable to parameter of type 'AudioParam'.
+src/components/media-types/audio/visualiser.tsx(44,13): error TS2345: Argument of type 'Float32Array<any>' is not assignable to parameter of type 'SetStateAction<undefined>'.
+  Type 'Float32Array<any>' provides no match for the signature '(prevState: undefined): undefined'.
+src/components/media-types/audio/visualiser.tsx(44,30): error TS18048: 'analyser' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(45,5): error TS18048: 'analyser' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(51,5): error TS18048: 'audio' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(52,12): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<undefined>'.
+src/components/media-types/audio/visualiser.tsx(56,5): error TS18048: 'audio' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(58,26): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
+src/components/media-types/audio/visualiser.tsx(61,7): error TS18048: 'audio' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(68,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(69,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(70,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(71,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(76,5): error TS18048: 'analyser' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(80,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(80,25): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(80,43): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(92,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(92,25): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(92,43): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(93,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(95,25): error TS18048: 'data' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(97,24): error TS18048: 'data' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(97,39): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(100,9): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(102,9): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(106,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(107,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(108,5): error TS18048: 'ctx' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(109,12): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<undefined>'.
+src/components/media-types/audio/visualiser.tsx(115,13): error TS18048: 'audio' is possibly 'undefined'.
+src/components/media-types/audio/visualiser.tsx(118,11): error TS2554: Expected 1 arguments, but got 0.
+src/components/media-types/audio/visualiser.tsx(121,7): error TS2322: Type 'RefObject<unknown>' is not assignable to type 'LegacyRef<HTMLCanvasElement> | undefined'.
+  Type 'RefObject<unknown>' is not assignable to type 'RefObject<HTMLCanvasElement>'.
+    Type 'unknown' is not assignable to type 'HTMLCanvasElement'.
+src/components/media-types/glb/index.tsx(36,7): error TS2353: Object literal may only specify known properties, and 'autoplay' does not exist in type '{ src: string; }'.
+src/components/media-types/glb/index.tsx(63,5): error TS2339: Property 'model-viewer' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/glb/index.tsx(67,5): error TS2339: Property 'model-viewer' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/glb/index.tsx(85,7): error TS2322: Type '{ token_id: string; }' is not assignable to type 'NFT'.
+  Type '{ token_id: string; }' is missing the following properties from type 'NFTBase': artifact_uri, display_uri, thumbnail_uri, metadata_uri, and 12 more.
+src/components/media-types/html/index.tsx(41,5): error TS2322: Type 'string' is not assignable to type 'boolean'.
+src/components/media-types/html/index.tsx(45,5): error TS2322: Type 'string' is not assignable to type 'boolean'.
+src/components/media-types/html/index.tsx(96,7): error TS18047: 'iframeRef.current' is possibly 'null'.
+src/components/media-types/image/index.tsx(50,9): error TS2322: Type '({ target: img }: { target: HTMLImageElement; }) => void' is not assignable to type 'ReactEventHandler<HTMLImageElement>'.
+  Types of parameters '__0' and 'event' are incompatible.
+    Type 'SyntheticEvent<HTMLImageElement, Event>' is not assignable to type '{ target: HTMLImageElement; }'.
+      Types of property 'target' are incompatible.
+        Type 'EventTarget' is missing the following properties from type 'HTMLImageElement': align, alt, border, complete, and 338 more.
+src/components/media-types/image/index.tsx(60,9): error TS2322: Type '({ target: img }: { target: HTMLImageElement; }) => void' is not assignable to type 'ReactEventHandler<HTMLImageElement>'.
+  Types of parameters '__0' and 'event' are incompatible.
+    Type 'SyntheticEvent<HTMLImageElement, Event>' is not assignable to type '{ target: HTMLImageElement; }'.
+      Types of property 'target' are incompatible.
+        Type 'EventTarget' is missing the following properties from type 'HTMLImageElement': align, alt, border, complete, and 338 more.
+src/components/media-types/index.tsx(102,13): error TS2322: Type '{ artifactUri: string; displayUri: string | undefined; displayView: boolean | undefined; previewUri: string | undefined; nft: NFT; }' is not assignable to type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
+  Property 'displayUri' does not exist on type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
+src/components/media-types/midi/index.tsx(62,31): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/media-types/midi/index.tsx(86,9): error TS2339: Property 'midi-player' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/midi/index.tsx(90,10): error TS2339: Property 'midi-player' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/midi/index.tsx(98,13): error TS2322: Type '{ children: Element; xmlns: string; fill: string; viewBox: string; "stroke-width": string; stroke: string; class: string; }' is not assignable to type 'SVGProps<SVGSVGElement>'.
+  Property 'class' does not exist on type 'SVGProps<SVGSVGElement>'. Did you mean 'className'?
+src/components/media-types/midi/index.tsx(141,9): error TS2339: Property 'midi-player' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/midi/index.tsx(145,10): error TS2339: Property 'midi-player' does not exist on type 'JSX.IntrinsicElements'.
+src/components/media-types/video/index.tsx(46,11): error TS18047: 'domElement.current' is possibly 'null'.
+src/components/media-types/video/index.tsx(58,11): error TS18047: 'domElement.current' is possibly 'null'.
+src/components/preview/index.tsx(106,11): error TS2322: Type '{ mime_type: string; is_mono_type: boolean; }' is not assignable to type 'NFT'.
+  Type '{ mime_type: string; is_mono_type: boolean; }' is missing the following properties from type 'NFTBase': artifact_uri, display_uri, thumbnail_uri, metadata_uri, and 12 more.
+src/components/preview/index.tsx(107,11): error TS2322: Type 'string | ArrayBuffer | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/components/preview/index.tsx(108,11): error TS2322: Type 'string | ArrayBuffer | null | undefined' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/components/preview/index.tsx(145,48): error TS2339: Property 'mint' does not exist on type 'MintState'.
+src/components/upload/IpfsUploader.tsx(30,13): error TS18047: 'e.target.files' is possibly 'null'.
+src/components/upload/IpfsUploader.tsx(37,37): error TS2345: Argument of type 'File | undefined' is not assignable to parameter of type 'File'.
+  Type 'undefined' is not assignable to type 'File'.
+src/components/upload/Upload.tsx(18,7): error TS2339: Property 'label' does not exist on type '{}'.
+src/components/upload/Upload.tsx(19,7): error TS2339: Property 'file' does not exist on type '{}'.
+src/components/upload/Upload.tsx(20,7): error TS2339: Property 'placeHolder' does not exist on type '{}'.
+src/components/upload/Upload.tsx(21,7): error TS2339: Property 'allowedTypes' does not exist on type '{}'.
+src/components/upload/Upload.tsx(22,7): error TS2339: Property 'allowedTypesLabel' does not exist on type '{}'.
+src/components/upload/Upload.tsx(23,7): error TS2339: Property 'children' does not exist on type '{}'.
+src/components/upload/Upload.tsx(24,7): error TS2339: Property 'onChange' does not exist on type '{}'.
+src/components/upload/Upload.tsx(47,59): error TS18047: 'e.target' is possibly 'null'.
+src/components/upload/Upload.tsx(54,19): error TS2339: Property 'name' does not exist on type '{}'.
+src/components/upload/Upload.tsx(58,13): error TS2339: Property 'accept' does not exist on type '{ type: string; name: any; }'.
+src/components/upload/Upload.tsx(66,29): error TS2322: Type 'ForwardedRef<unknown>' is not assignable to type 'LegacyRef<HTMLInputElement> | undefined'.
+  Type 'MutableRefObject<unknown>' is not assignable to type 'LegacyRef<HTMLInputElement> | undefined'.
+    Type 'MutableRefObject<unknown>' is not assignable to type 'RefObject<HTMLInputElement>'.
+      Types of property 'current' are incompatible.
+        Type 'unknown' is not assignable to type 'HTMLInputElement | null'.
+src/context/mintStore.ts(209,26): error TS2345: Argument of type 'Format' is not assignable to parameter of type 'never'.
+src/context/mintStore.ts(211,26): error TS2345: Argument of type '{ fileSize: number; fileName: string; mimeType: string; }' is not assignable to parameter of type 'never'.
+src/context/mintStore.ts(217,26): error TS2345: Argument of type '{ fileSize: number; fileName: string; mimeType: string; }' is not assignable to parameter of type 'never'.
+src/context/mintStore.ts(268,53): error TS2345: Argument of type 'ArrayBuffer' is not assignable to parameter of type 'Uint8Array<ArrayBufferLike>'.
+  Type 'ArrayBuffer' is missing the following properties from type 'Uint8Array<ArrayBufferLike>': BYTES_PER_ELEMENT, buffer, byteOffset, copyWithin, and 24 more.
+src/context/mintStore.ts(276,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
+  Type 'undefined' is not assignable to type 'FileForm'.
+src/context/mintStore.ts(277,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
+  Type 'undefined' is not assignable to type 'FileForm'.
+src/context/mintStore.ts(278,15): error TS2322: Type 'boolean' is not assignable to type 'string'.
+src/context/mintStore.ts(279,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(281,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(282,15): error TS2322: Type '{ hazards: string[]; } | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/context/mintStore.ts(283,15): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/context/mintStore.ts(289,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(290,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(291,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(294,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
+  Type 'undefined' is not assignable to type 'FileForm'.
+src/context/mintStore.ts(295,15): error TS2322: Type 'FileForm | undefined' is not assignable to type 'FileForm'.
+  Type 'undefined' is not assignable to type 'FileForm'.
+src/context/mintStore.ts(296,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(298,15): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/context/mintStore.ts(299,15): error TS2322: Type '{ hazards: string[]; } | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/context/mintStore.ts(300,15): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/context/userStore.ts(213,52): error TS2353: Object literal may only specify known properties, and 'network' does not exist in type 'RequestPermissionInput'.
+src/context/userStore.ts(448,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
+src/context/userStore.ts(451,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
+src/context/userStore.ts(454,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
+src/context/userStore.ts(457,15): error TS2322: Type 'ContractMethod<Wallet>' is not assignable to type 'undefined'.
+src/data/ipfs.ts(345,47): error TS2345: Argument of type 'FileForm[]' is not assignable to parameter of type 'FileMint[]'.
+  Type 'FileForm' is missing the following properties from type 'FileMint': path, blob
+src/data/ipfs.ts(411,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/data/ipfs.ts(412,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/data/ipfs.ts(413,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/data/swr.ts(10,6): error TS18048: 'bigmapData' is possibly 'undefined'.
+src/data/swr.ts(64,11): error TS2554: Expected 2-3 arguments, but got 1.
+src/data/swr.ts(80,11): error TS2554: Expected 2-3 arguments, but got 1.
+src/data/swr.ts(94,13): error TS18046: 'com1' is of type 'unknown'.
+src/data/swr.ts(94,20): error TS18046: 'com2' is of type 'unknown'.
+src/data/swr.ts(95,13): error TS18046: 'com1' is of type 'unknown'.
+src/data/swr.ts(95,20): error TS18046: 'com2' is of type 'unknown'.
+src/data/swr.ts(168,21): error TS18046: 'proposal' is of type 'unknown'.
+src/data/swr.ts(170,11): error TS18046: 'proposal' is of type 'unknown'.
+src/data/swr.ts(171,9): error TS18046: 'proposal' is of type 'unknown'.
+src/data/swr.ts(174,18): error TS18046: 'proposal' is of type 'unknown'.
+src/data/swr.ts(175,9): error TS18046: 'proposal' is of type 'unknown'.
+src/data/swr.ts(211,11): error TS2554: Expected 2-3 arguments, but got 1.
+src/data/swr.ts(240,21): error TS18046: 'poll' is of type 'unknown'.
+src/data/swr.ts(274,23): error TS2322: Type 'any' is not assignable to type 'never'.
+src/node_polyfill.ts(9,3): error TS2740: Type '{}' is missing the following properties from type 'Process': stdout, stderr, stdin, argv, and 64 more.
+src/node_polyfill.ts(14,3): error TS2741: Property 'bigint' is missing in type '(start: [number, number] | undefined) => [number, number]' but required in type 'HRTime'.
+src/pages/collaborate/create.tsx(32,16): error TS2339: Property 'shares' does not exist on type 'never'.
+src/pages/collaborate/create.tsx(32,41): error TS2339: Property 'address' does not exist on type 'never'.
+src/pages/collaborate/create.tsx(59,5): error TS2322: Type 'any' is not assignable to type 'never'.
+src/pages/collaborate/create.tsx(60,7): error TS2698: Spread types may only be created from object types.
+src/pages/collaborate/create.tsx(69,39): error TS2339: Property 'shares' does not exist on type 'never'.
+src/pages/collaborate/create.tsx(73,9): error TS2698: Spread types may only be created from object types.
+src/pages/collaborate/create.tsx(79,22): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+src/pages/collaborate/create.tsx(119,10): error TS2741: Property 'availableShares' is missing in type '{ collaborators: never[]; setCollaborators: Dispatch<SetStateAction<never[]>>; minimalView: boolean; onEdit: () => void; }' but required in type '{ collaborators: any; setCollaborators: any; availableShares: any; minimalView: any; onEdit: any; }'.
+src/pages/collaborate/create.tsx(146,11): error TS2322: Type '{ totalParticipants: number; totalShares: any; beneficiaries: never[]; setBeneficiaries: Dispatch<SetStateAction<never[]>>; minimalView: false; onComplete: () => void; onSelectPercentage: (index: any, percentage: any) => void; }' is not assignable to type 'IntrinsicAttributes & { beneficiaries: any; setBeneficiaries: any; onSelectPercentage: any; totalParticipants: any; onComplete: any; }'.
+  Property 'totalShares' does not exist on type 'IntrinsicAttributes & { beneficiaries: any; setBeneficiaries: any; onSelectPercentage: any; totalParticipants: any; onComplete: any; }'.
+src/pages/collaborate/manage.tsx(48,21): error TS2345: Argument of type 'Date' is not assignable to parameter of type 'SetStateAction<undefined>'.
+  Type 'Date' provides no match for the signature '(prevState: undefined): undefined'.
+src/pages/collaborate/manage.tsx(86,38): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/collaborate/manage.tsx(107,43): error TS2339: Property 'address' does not exist on type 'string'.
+src/pages/config/Settings.tsx(126,15): error TS2322: Type '(v: string) => void' is not assignable to type '(value: string | number | FormEvent<HTMLInputElement>) => void'.
+  Types of parameters 'v' and 'value' are incompatible.
+    Type 'string | number | FormEvent<HTMLInputElement>' is not assignable to type 'string'.
+      Type 'number' is not assignable to type 'string'.
+src/pages/dao/Claim.tsx(16,36): error TS2322: Type '{ children: Element; title: string; large: true; }' is not assignable to type 'IntrinsicAttributes & PageProps'.
+  Property 'large' does not exist on type 'IntrinsicAttributes & PageProps'.
+src/pages/dao/Claim.tsx(60,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(66,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(72,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(77,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(104,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(115,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(130,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(145,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(155,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(164,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Claim.tsx(173,17): error TS2322: Type '{ children: (string | Element)[]; counter: string; }' is not assignable to type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+  Property 'counter' does not exist on type 'DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>'.
+src/pages/dao/Proposal.tsx(48,43): error TS2538: Type 'undefined' cannot be used as an index type.
+src/pages/dao/Proposal.tsx(72,23): error TS2365: Operator '>' cannot be applied to types 'number | KeyedMutator<any>' and 'number'.
+src/pages/dao/Proposal.tsx(73,23): error TS2365: Operator '>=' cannot be applied to types 'number | KeyedMutator<any>' and 'number'.
+src/pages/dao/Proposal.tsx(118,15): error TS2365: Operator '>' cannot be applied to types 'number | KeyedMutator<any>' and 'number'.
+src/pages/dao/Proposal.tsx(150,13): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/dao/Proposal.tsx(150,13): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/dao/Proposal.tsx(151,13): error TS2349: This expression is not callable.
+  Not all constituents of type 'number | KeyedMutator<any>' are callable.
+    Type 'number' has no call signatures.
+src/pages/dao/Proposal.tsx(152,13): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/dao/Proposal.tsx(152,13): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/dao/Proposal.tsx(153,13): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/dao/Proposal.tsx(153,13): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/dao/Proposal.tsx(229,12): error TS2741: Property 'className' is missing in type '{ label: string; transfers: any; aliases: any; }' but required in type '{ label: any; transfers: any; aliases: any; className: any; }'.
+src/pages/dao/Proposal.tsx(286,10): error TS2741: Property 'className' is missing in type '{ label: string; code: string; }' but required in type '{ label: any; code: any; className: any; }'.
+src/pages/dao/tabs/Parameters.tsx(39,43): error TS2538: Type 'undefined' cannot be used as an index type.
+src/pages/dao/tabs/Parameters.tsx(79,48): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/dao/tabs/Parameters.tsx(83,17): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(85,21): error TS18046: 'acc' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(85,28): error TS18046: 'proposal' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(140,15): error TS2322: Type 'number | KeyedMutator<any>' is not assignable to type 'ReactNode'.
+  Type 'KeyedMutator<any>' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(146,13): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(147,34): error TS18046: 'acc' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(147,41): error TS18046: 'proposal' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(153,13): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(154,34): error TS18046: 'acc' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(154,41): error TS18046: 'proposal' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(160,13): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(161,34): error TS18046: 'acc' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(161,41): error TS18046: 'proposal' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(167,13): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dao/tabs/Parameters.tsx(168,34): error TS18046: 'acc' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(168,41): error TS18046: 'proposal' is of type 'unknown'.
+src/pages/dao/tabs/Parameters.tsx(173,69): error TS2345: Argument of type 'number | KeyedMutator<any>' is not assignable to parameter of type 'number'.
+  Type 'KeyedMutator<any>' is not assignable to type 'number'.
+src/pages/dao/tabs/Parameters.tsx(174,33): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/dao/tabs/Parameters.tsx(178,22): error TS2322: Type '{ destinationAddress: any; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'destinationAddress' does not exist on type 'IntrinsicAttributes'.
+src/pages/dao/tabs/Proposals.tsx(41,43): error TS2538: Type 'undefined' cannot be used as an index type.
+src/pages/dao/tabs/Proposals.tsx(72,45): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(75,43): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(77,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(80,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(84,44): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(86,43): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(89,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(91,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Proposals.tsx(93,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/pages/dao/tabs/Submit.tsx(55,11): error TS2365: Operator '<' cannot be applied to types 'number | KeyedMutator<any>' and 'number'.
+src/pages/dao/tabs/Submit.tsx(80,15): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/dao/tabs/Submit.tsx(80,15): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/dao/tabs/Submit.tsx(81,15): error TS2349: This expression is not callable.
+  Not all constituents of type 'number | KeyedMutator<any>' are callable.
+    Type 'number' has no call signatures.
+src/pages/dao/tabs/Submit.tsx(176,9): error TS2322: Type 'string' is not assignable to type 'number'.
+src/pages/dao/tabs/Submit.tsx(247,17): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/dao/tabs/Submit.tsx(270,11): error TS2322: Type 'Dispatch<SetStateAction<{ amount: string; destination: string; }[]>>' is not assignable to type '(transfers: Transfer[]) => void'.
+  Types of parameters 'value' and 'transfers' are incompatible.
+    Type 'Transfer[]' is not assignable to type 'SetStateAction<{ amount: string; destination: string; }[]>'.
+      Type 'Transfer[]' is not assignable to type '{ amount: string; destination: string; }[]'.
+        Type 'Transfer' is not assignable to type '{ amount: string; destination: string; }'.
+          Types of property 'amount' are incompatible.
+            Type 'string | number' is not assignable to type 'string'.
+              Type 'number' is not assignable to type 'string'.
+src/pages/dao/tabs/Submit.tsx(308,25): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/dao/tabs/Submit.tsx(330,11): error TS2322: Type 'string' is not assignable to type 'number'.
+src/pages/dao/tabs/Submit.tsx(357,11): error TS2322: Type 'Dispatch<SetStateAction<{ amount: string; destination: string; }[]>>' is not assignable to type '(transfers: Transfer[]) => void'.
+  Types of parameters 'value' and 'transfers' are incompatible.
+    Type 'Transfer[]' is not assignable to type 'SetStateAction<{ amount: string; destination: string; }[]>'.
+      Type 'Transfer[]' is not assignable to type '{ amount: string; destination: string; }[]'.
+        Type 'Transfer' is not assignable to type '{ amount: string; destination: string; }'.
+          Types of property 'amount' are incompatible.
+            Type 'string | number' is not assignable to type 'string'.
+              Type 'number' is not assignable to type 'string'.
+src/pages/dao/tabs/Submit.tsx(408,11): error TS2322: Type '{ children: Element; name: string; label: string; placeholder: string; maxLength: string; value: string; onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void; className: any; }' is not assignable to type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'.
+  Property 'maxLength' does not exist on type 'IntrinsicAttributes & Omit<TextareaProps & RefAttributes<HTMLTextAreaElement>, "ref"> & { ...; }'. Did you mean 'maxlength'?
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(18,20): error TS2345: Argument of type '"No token data found."' is not assignable to parameter of type 'SetStateAction<null>'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(21,18): error TS2345: Argument of type '"Failed to fetch token data."' is not assignable to parameter of type 'SetStateAction<null>'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(46,45): error TS2339: Property 'metadata' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(50,47): error TS2339: Property 'tokenId' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(53,53): error TS2339: Property 'standard' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(56,53): error TS2339: Property 'contract' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(59,55): error TS2339: Property 'contract' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(63,20): error TS2339: Property 'firstMinter' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(67,20): error TS2339: Property 'firstMinter' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(70,54): error TS2339: Property 'transfersCount' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(73,53): error TS2339: Property 'balancesCount' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(76,52): error TS2339: Property 'holdersCount' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(80,30): error TS2339: Property 'totalMinted' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(84,30): error TS2339: Property 'totalBurned' does not exist on type 'never'.
+src/pages/dao/tabs/TeiaDAOMetadataTzkt.tsx(88,30): error TS2339: Property 'totalSupply' does not exist on type 'never'.
+src/pages/objkt-display/tabs/Collectors.tsx(35,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/objkt-display/tabs/History.tsx(113,36): error TS2339: Property 'events' does not exist on type 'NFT'.
+src/pages/objkt-display/tabs/History.tsx(131,14): error TS2339: Property 'events' does not exist on type 'NFT'.
+src/pages/objkt-display/tabs/Info.tsx(54,18): error TS2339: Property 'language' does not exist on type 'NFT'.
+src/pages/objkt-display/tabs/Info.tsx(55,64): error TS2339: Property 'language' does not exist on type 'NFT'.
+src/pages/objkt-display/tabs/Swap.tsx(50,7): error TS18048: 'nft.artist_profile.split_contract' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(72,26): error TS2365: Operator '<' cannot be applied to types 'string' and 'number'.
+src/pages/objkt-display/tabs/Swap.tsx(81,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(89,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(97,9): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/objkt-display/tabs/Swap.tsx(99,10): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(133,17): error TS2322: Type 'Dispatch<SetStateAction<string>>' is not assignable to type '(value: string | number | FormEvent<HTMLInputElement>) => void'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'string | number | FormEvent<HTMLInputElement>' is not assignable to type 'SetStateAction<string>'.
+      Type 'number' is not assignable to type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(135,32): error TS18048: 'e' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(136,31): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(150,21): error TS2322: Type 'Dispatch<SetStateAction<string>>' is not assignable to type '(value: string | number | FormEvent<HTMLInputElement>) => void'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'string | number | FormEvent<HTMLInputElement>' is not assignable to type 'SetStateAction<string>'.
+      Type 'number' is not assignable to type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(152,46): error TS18048: 'e' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(154,34): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(156,34): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/polls/Poll.tsx(74,35): error TS2365: Operator '>' cannot be applied to types 'number | KeyedMutator<any>' and 'number'.
+src/pages/polls/Poll.tsx(76,11): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/polls/Poll.tsx(76,11): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/polls/Poll.tsx(77,11): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/polls/Poll.tsx(77,11): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/polls/Poll.tsx(128,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(146,58): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(165,41): error TS18046: 'optionVotes' is of type 'unknown'.
+src/pages/polls/Poll.tsx(167,35): error TS18046: 'optionVotes' is of type 'unknown'.
+src/pages/polls/Poll.tsx(167,78): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(174,50): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+src/pages/profile/collabs.tsx(12,28): error TS2339: Property 'showRestricted' does not exist on type 'unknown'.
+src/pages/profile/collabs.tsx(12,44): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/pages/profile/collabs.tsx(12,53): error TS2339: Property 'overrideProtections' does not exist on type 'unknown'.
+src/pages/profile/collabs.tsx(39,9): error TS2322: Type 'null' is not assignable to type 'number | undefined'.
+src/pages/profile/collections.tsx(15,11): error TS2339: Property 'showFilters' does not exist on type 'unknown'.
+src/pages/profile/collections.tsx(15,24): error TS2339: Property 'showRestricted' does not exist on type 'unknown'.
+src/pages/profile/collections.tsx(15,40): error TS2339: Property 'overrideProtections' does not exist on type 'unknown'.
+src/pages/profile/collections.tsx(15,61): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/pages/profile/collections.tsx(42,9): error TS2322: Type 'null' is not assignable to type 'number | undefined'.
+src/pages/profile/creations.tsx(18,11): error TS2339: Property 'showFilters' does not exist on type 'unknown'.
+src/pages/profile/creations.tsx(18,24): error TS2339: Property 'showRestricted' does not exist on type 'unknown'.
+src/pages/profile/creations.tsx(18,40): error TS2339: Property 'overrideProtections' does not exist on type 'unknown'.
+src/pages/profile/creations.tsx(18,61): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/pages/profile/curation.tsx(7,11): error TS2339: Property 'showRestricted' does not exist on type 'unknown'.
+src/pages/profile/curation.tsx(7,27): error TS2339: Property 'overrideProtections' does not exist on type 'unknown'.
+src/pages/profile/curation.tsx(7,48): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/pages/profile/index.tsx(45,8): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(48,10): error TS2339: Property 'description' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(52,10): error TS2339: Property 'identicon' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(56,10): error TS2339: Property 'subjkt' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(77,11): error TS2339: Property 'nsfwFriendly' does not exist on type 'boolean[]'.
+src/pages/profile/index.tsx(77,25): error TS2339: Property 'photosensitiveFriendly' does not exist on type 'boolean[]'.
+src/pages/profile/index.tsx(84,70): error TS2345: Argument of type 'true' is not assignable to parameter of type 'SetStateAction<undefined>'.
+src/pages/profile/index.tsx(86,23): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'SetStateAction<undefined>'.
+src/pages/profile/index.tsx(103,16): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(104,36): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(105,13): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(108,16): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(109,36): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(110,13): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(133,28): error TS2339: Property 'alias' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(138,30): error TS2345: Argument of type 'false' is not assignable to parameter of type 'SetStateAction<undefined>'.
+src/pages/profile/index.tsx(143,20): error TS2322: Type '{ data?: TzktMetadata; }' is not assignable to type 'ArtistProfile & { extras?: any; alias?: string | undefined; description?: string | undefined; subjkt?: string | undefined; identicon?: string | undefined; address: string; }'.
+  Property 'address' is missing in type '{ data?: TzktMetadata; }' but required in type '{ extras?: any; alias?: string | undefined; description?: string | undefined; subjkt?: string | undefined; identicon?: string | undefined; address: string; }'.
+src/pages/profile/index.tsx(144,17): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/index.tsx(203,29): error TS2339: Property 'address' does not exist on type '{ data?: TzktMetadata | undefined; }'.
+src/pages/profile/profile.tsx(47,52): error TS18046: 'st' is of type 'unknown'.
+src/stories/Feedback.stories.tsx(4,10): error TS2460: Module '"@storybook/blocks"' declares 'ArgsTable' locally, but it is exported as 'PureArgsTable'.
+src/stories/Select.stories.tsx(9,3): error TS2614: Module '"@storybook/addon-docs"' has no exported member 'ArgsTable'. Did you mean to use 'import ArgsTable from "@storybook/addon-docs"' instead?

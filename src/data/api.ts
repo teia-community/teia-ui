@@ -261,6 +261,7 @@ export async function fetchObjktDetails(id: string) {
 export interface TzktMetadata {
   twitter?: string
   alias?: string
+  tzprofile?: string
 }
 
 export interface TzktData {

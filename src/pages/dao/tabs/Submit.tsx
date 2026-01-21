@@ -6,6 +6,7 @@ import { Button } from '@atoms/button'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
 import { SimpleInput, TransferFields, Textarea } from '@atoms/input'
+import { Transfer } from '@atoms/input/TransferFields'
 import { IpfsUploader } from '@components/upload'
 import {
   useStorage,
@@ -173,7 +174,7 @@ function CommonProposalFields({
         type="text"
         label="Proposal title"
         placeholder="Write a meaningful title for your proposal here"
-        maxlength="500"
+        maxlength={500}
         value={title}
         onChange={setTitle}
         className={styles.proposal_form_field}
@@ -230,7 +231,7 @@ function TransferTezProposalForm({ callback }) {
   // Set the component state
   const [title, setTitle] = useState('')
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
-  const [transfers, setTransfers] = useState([{ amount: '', destination: '' }])
+  const [transfers, setTransfers] = useState<Transfer[]>([{ amount: '', destination: '' }])
 
   // Get the create proposal method from the DAO store
   const createTransferMutezProposal = useDaoStore(
@@ -244,7 +245,7 @@ function TransferTezProposalForm({ callback }) {
       title,
       descriptionIpfsCid,
       transfers.map((transfer) => ({
-        amount: transfer.amount * 1000000,
+        amount: Number(transfer.amount) * 1000000,
         destination: transfer.destination,
       })),
       callback
@@ -288,7 +289,7 @@ function TransferTokenProposalForm({ callback }) {
   const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
   const [tokenContract, setTokenContract] = useState('')
   const [tokenId, setTokenId] = useState('')
-  const [transfers, setTransfers] = useState([{ amount: '', destination: '' }])
+  const [transfers, setTransfers] = useState<Transfer[]>([{ amount: '', destination: '' }])
 
   // Get the create proposal method from the DAO store
   const createTransferTokenProposal = useDaoStore(
@@ -305,7 +306,7 @@ function TransferTokenProposalForm({ callback }) {
       tokenContract,
       tokenId,
       transfers.map((transfer) => ({
-        amount: token ? transfer.amount * token.decimals : transfer.amount,
+        amount: token ? Number(transfer.amount) * token.decimals : Number(transfer.amount),
         destination: transfer.destination,
       })),
       callback
@@ -326,8 +327,8 @@ function TransferTokenProposalForm({ callback }) {
           type="text"
           label="Token contract address"
           placeholder="KT..."
-          minlenght="36"
-          maxlength="36"
+          minlength={36}
+          maxlength={36}
           value={tokenContract}
           onChange={setTokenContract}
           className={styles.proposal_form_field}
@@ -405,7 +406,7 @@ function LambdaFunctionProposalForm({ callback }) {
           name="lambdaFunctionCode"
           label="Lambda function code in Micheline format"
           placeholder="Write here the lambda function code"
-          maxLength="1000"
+          maxlength={1000}
           value={michelineCode}
           onChange={(e) => setMichelineCode(e.target.value)}
           className={styles.proposal_form_field}

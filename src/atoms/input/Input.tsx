@@ -82,7 +82,6 @@ function Input(
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
-      onChange(e)
       const target = e.target as HTMLInputElement
       if (target) {
         const v =
@@ -90,14 +89,14 @@ function Input(
             ? !isNaN(target.valueAsNumber)
               ? target.valueAsNumber
               : target.value
-            : target.value;
+            : target.value
 
         setValue(v as any)
         onChange(v)
       }
     },
     [setValue, onChange, type]
-  );
+  )
 
   return (
     <div className={`${styles.container} ${className || ''}`}>

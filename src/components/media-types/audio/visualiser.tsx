@@ -1,20 +1,22 @@
-import { createRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
-export const Visualiser = ({ src }) => {
-  const ref = createRef()
-  const [ctx, setCtx] = useState()
+export const Visualiser = ({ src }: { src: string }) => {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [ratio, setRatio] = useState(1)
-  const [audio, setAudio] = useState()
-  const [raf, setRaf] = useState()
-  const [data, setData] = useState()
-  const [analyser, setAnalyser] = useState()
+  const [audio, setAudio] = useState<HTMLAudioElement>()
+  const [raf, setRaf] = useState<number>()
+  const [data, setData] = useState<Float32Array>()
+  const [analyser, setAnalyser] = useState<AnalyserNode>()
 
   useEffect(() => {
-    setCtx(ref.current.getContext('2d'))
-    setRatio(Math.max(1, Math.min(global.devicePixelRatio, 2)))
+    if (ref.current) {
+      setCtx(ref.current.getContext('2d'))
+    }
+    setRatio(Math.max(1, Math.min(window.devicePixelRatio, 2)))
 
     return () => {
-      cancelAnimationFrame(raf)
+      if (raf) cancelAnimationFrame(raf)
     }
   }, [ref, raf])
 
@@ -33,36 +35,39 @@ export const Visualiser = ({ src }) => {
     setAudio(_audio)
 
     let audioCtx = new AudioContext()
+    const _analyser = audioCtx.createAnalyser()
+    setAnalyser(_analyser)
 
-    setAnalyser(audioCtx.createAnalyser())
-    // analyser.fftSize = 2048
-
-    let source = audioCtx.createMediaElementSource(audio)
-    source.connect(analyser)
+    let source = audioCtx.createMediaElementSource(_audio)
+    source.connect(_analyser)
     source.connect(audioCtx.destination)
 
-    setData(new Float32Array(analyser.frequencyBinCount))
-    analyser.getFloatTimeDomainData(data)
-
-    //style = getComputedStyle(document.body)
-  }, [analyser, audio, src, data])
+    const _data = new Float32Array(_analyser.frequencyBinCount)
+    setData(_data)
+    _analyser.getFloatTimeDomainData(_data)
+  }, [src])
 
   const play = () => {
-    audio.play()
-    setRaf(requestAnimationFrame(update))
+    if (audio) {
+      audio.play()
+      setRaf(requestAnimationFrame(update))
+    }
   }
 
-  const pause = (reset) => {
-    audio.pause()
+  const pause = (reset?: boolean) => {
+    if (audio) {
+      audio.pause()
 
-    cancelAnimationFrame(raf)
+      if (raf) cancelAnimationFrame(raf)
 
-    if (reset) {
-      audio.currentTime = 0
+      if (reset) {
+        audio.currentTime = 0
+      }
     }
   }
 
   const resize = () => {
+    if (!ctx) return
     const width = 320
     const height = 320
     ctx.canvas.width = width * ratio
@@ -72,22 +77,13 @@ export const Visualiser = ({ src }) => {
   }
 
   const update = () => {
-    // analyser.getByteFrequencyData(data)
+    if (!ctx || !analyser || !data) return
+
     analyser.getFloatTimeDomainData(data)
 
     resize()
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-
-    // FIRST OPTION (traditional)
-    // let space = ctx.canvas.width / data.length
-    // data.forEach((value, i) => {
-    //   ctx.beginPath()
-    //   ctx.strokeStyle = 'red'
-    //   ctx.moveTo(space * i, ctx.canvas.height) //x,y
-    //   ctx.lineTo(space * i, ctx.canvas.height - value) //x,y
-    //   ctx.stroke()
-    // })
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     ctx.beginPath()
@@ -103,8 +99,8 @@ export const Visualiser = ({ src }) => {
       }
     }
 
-    ctx.strokeStyle = 'var(--text-color)' //style.getPropertyValue('--text-color')
-    ctx.lineWidth = 2 * global.devicePixelRatio
+    ctx.strokeStyle = 'var(--text-color)'
+    ctx.lineWidth = 2 * window.devicePixelRatio
     ctx.stroke()
     setRaf(requestAnimationFrame(update))
   }
@@ -112,7 +108,7 @@ export const Visualiser = ({ src }) => {
   return (
     <canvas
       onClick={() => {
-        if (audio.paused) {
+        if (audio?.paused) {
           play()
         } else {
           pause()

@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWR, { KeyedMutator } from 'swr'
 import { bytes2Char } from '@taquito/utils'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2 } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
@@ -15,7 +15,7 @@ function reorderBigmapData(data, subKey, decode = false) {
   return bigmapData
 }
 
-export function useBalance(address) {
+export function useBalance(address: string | undefined): [number, KeyedMutator<any>] {
   const { data, mutate } = useSWR(
     address ? `/v1/accounts/${address}/balance` : null,
     getTzktData
@@ -24,7 +24,7 @@ export function useBalance(address) {
   return [data ? data / 1000000 : 0, mutate]
 }
 
-export function useDaoTokenBalance(address) {
+export function useDaoTokenBalance(address: string | undefined): [number, KeyedMutator<any>] {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
     'token.tokenId': '0',
@@ -39,7 +39,7 @@ export function useDaoTokenBalance(address) {
   return [data?.[0] ? parseInt(data[0]) / DAO_TOKEN_DECIMALS : 0, mutate]
 }
 
-export function useStorage(contractAddress) {
+export function useStorage(contractAddress: string | undefined): [any, KeyedMutator<any>] {
   const { data, mutate } = useSWR(
     contractAddress ? `/v1/contracts/${contractAddress}/storage` : null,
     getTzktData
@@ -48,7 +48,7 @@ export function useStorage(contractAddress) {
   return [data, mutate]
 }
 
-export function useDaoGovernanceParameters(daoStorage) {
+export function useDaoGovernanceParameters(daoStorage: any): [any, KeyedMutator<any>] {
   const parameters = {
     limit: 10000,
     active: true,
@@ -61,10 +61,10 @@ export function useDaoGovernanceParameters(daoStorage) {
     getTzktData
   )
 
-  return [reorderBigmapData(data), mutate]
+  return [reorderBigmapData(data, undefined), mutate]
 }
 
-export function useDaoProposals(daoStorage) {
+export function useDaoProposals(daoStorage: any): [any, KeyedMutator<any>] {
   const parameters = {
     limit: 10000,
     active: true,
@@ -77,7 +77,7 @@ export function useDaoProposals(daoStorage) {
     getTzktData
   )
 
-  return [reorderBigmapData(data), mutate]
+  return [reorderBigmapData(data, undefined), mutate]
 }
 
 export function useDaoRepresentatives(daoStorage) {

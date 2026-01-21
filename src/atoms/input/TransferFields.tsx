@@ -2,7 +2,7 @@ import { IncrementButtons } from '@atoms/button'
 import SimpleInput from './SimpleInput'
 import { ReactNode, MouseEvent } from 'react'
 
-type Transfer = {
+export type Transfer = {
   amount: string | number
   destination: string
 }

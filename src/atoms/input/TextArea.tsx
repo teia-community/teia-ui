@@ -15,6 +15,8 @@ interface TextareaProps {
   disabled?: boolean
   value?: string | number
   className?: string
+  style?: React.CSSProperties
+  rows?: number
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -33,6 +35,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       disabled,
       value,
       className,
+      style,
+      rows,
     },
     ref
   ) => (
@@ -48,6 +52,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           onChange={onChange}
           onBlur={onBlur}
           disabled={disabled}
+          style={style}
+          rows={rows}
         />
       </label>
       {children}

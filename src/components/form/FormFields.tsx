@@ -2,7 +2,7 @@ import { Checkbox, Input, Textarea } from '@atoms/input'
 import { Line } from '@atoms/line'
 import Select from '@atoms/select/Base'
 import styles from '@style'
-import { memo, useState, useRef } from 'react'
+import { memo, useState, useRef, CSSProperties } from 'react'
 import { Upload } from '@components/upload/index'
 import { AudioVisualizer } from 'react-audio-visualize'
 import {
@@ -20,7 +20,7 @@ import MetadataOverlay, {
 import { useUserStore } from '@context/userStore'
 import { shallow } from 'zustand/shallow'
 
-const FieldError = memo(({ error, text }) => {
+const FieldError = memo(({ error, text }: { error: any; text?: boolean }) => {
   const classes = classNames({
     [styles.error]: true,
     [styles.text_field_error]: text,
@@ -39,7 +39,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
     shallow
   )
   const [showVisualizer, setShowVisualizer] = useState(false)
-  const [audioBlob, setAudioBlob] = useState(null)
+  const [audioBlob, setAudioBlob] = useState<Blob>()
   const visualizerRef = useRef(null)
   const getArtistText = (userInfo, address) => {
     if (userInfo?.name) {
@@ -182,7 +182,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               setShowVisualizer(true)
             }
 
-            const containerStyle = {
+            const containerStyle: CSSProperties = {
               position: 'relative',
               width: '100%',
               maxWidth: '618px',
@@ -191,7 +191,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
               overflow: 'hidden',
             }
 
-            const visualizerContainerStyle = {
+            const visualizerContainerStyle: CSSProperties = {
               position: 'absolute',
               top: 0,
               left: 0,
@@ -233,7 +233,7 @@ export const FormFields = ({ value, field, error, register, control }) => {
                 {isAudioMimeType && !showVisualizer && (
                   <Button
                     className={styles['visualizer-image-download-button']}
-                    onClick={() => handleShowVisualizer(true)}
+                    onClick={() => handleShowVisualizer()}
                   >
                     Generate Audio Visualization
                   </Button>
@@ -244,20 +244,22 @@ export const FormFields = ({ value, field, error, register, control }) => {
                     <p>Generated Image (Save and Upload Manually)</p>
                     <div ref={visualizerRef} style={containerStyle}>
                       <div style={visualizerContainerStyle}>
-                        <AudioVisualizer
-                          blob={audioBlob}
-                          width={618}
-                          height={382}
-                          backgroundColor="black"
-                          waveColor="white"
-                          style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                          }}
-                        />
+                        {audioBlob && (
+                          <AudioVisualizer
+                            blob={audioBlob}
+                            width={618}
+                            height={382}
+                            backgroundColor="black"
+                            barColor="white"
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                            }}
+                          />
+                        )}
                         <MetadataOverlay
                           title={watch('title') || 'Untitled'}
                           artist={getArtistText(userInfo, address)}

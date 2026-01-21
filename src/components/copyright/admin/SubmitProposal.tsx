@@ -20,7 +20,7 @@ export default function SubmitProposal() {
   const [kind, setKind] = useState('agreement_text')
   const [text, setText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [existingCopyrights, setExistingCopyrights] = useState([])
+  const [existingCopyrights, setExistingCopyrights] = useState<any[]>([])
   const submitProposal = useProposalStore((s) => s.submitProposal)
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function SubmitProposal() {
             <label className={styles.label} htmlFor="text">IPFS Hash or Text</label>
             <Textarea
               name="text"
-              style={{ border: '1px solid var(--text-color)'}}
+              style={{ border: '1px solid var(--text-color)' }}
               placeholder="e.g. ipfs://Qm... or full agreement body"
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -93,7 +93,7 @@ export default function SubmitProposal() {
               type="number"
               placeholder="e.g. 100000"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(v) => setText(typeof v === 'object' && 'target' in v ? (v.target as HTMLInputElement).value : String(v))}
             />
           </>
         )}
@@ -102,11 +102,11 @@ export default function SubmitProposal() {
           <>
             <label className={styles.label} htmlFor="text">Address</label>
             <Input
-                type="text"
-                name="text"
-                placeholder="e.g. tz1..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
+              type="text"
+              name="text"
+              placeholder="e.g. tz1..."
+              value={text}
+              onChange={(v) => setText(typeof v === 'object' && 'target' in v ? (v.target as HTMLInputElement).value : String(v))}
             />
           </>
         )}
