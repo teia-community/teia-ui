@@ -6,6 +6,7 @@ import {
   COPYRIGHT_CONTRACT,
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
+  TEIA_DONATION_API_URL,
 } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
@@ -481,6 +482,38 @@ export function useFountainDonations(contractAddress, limit = 10000) {
         return transactions
       } catch (err) {
         console.error('Failed to fetch contract donations:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useTopDonors(excludeAddresses = []) {
+  const { data, mutate, error } = useSWR(
+    [`/top-donators`, excludeAddresses.join(',')],
+    async () => {
+      // Fetch all donors (typically < 100 total)
+      const url = `${TEIA_DONATION_API_URL}/top-donators?limit=1000`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok)
+          throw new Error(`Top donators API error: ${res.statusText}`)
+        const result = await res.json()
+
+        // Filter out excluded addresses
+        const excludeSet = new Set(excludeAddresses)
+        return result.donators.filter(
+          (donor) => !excludeSet.has(donor.donator_address)
+        )
+      } catch (err) {
+        console.error('Failed to fetch top donators:', err)
         throw err
       }
     },
