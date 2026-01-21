@@ -1,10 +1,8 @@
-@import 'variables.scss';
-@import 'typography.scss';
-@import 'mixins.scss';
+@use 'layout';
 
 :root {
   --font-body: 13px;
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     --font-body: 16px;
   }
 }
@@ -85,7 +83,7 @@ p {
 h1 {
   font-size: 24px;
   line-height: 125%;
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     font-size: 32px;
   }
 }
@@ -93,7 +91,7 @@ h1 {
 h2 {
   font-size: 22px;
   line-height: 125%;
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     font-size: 26px;
   }
 }
@@ -101,7 +99,7 @@ h2 {
 h3 {
   font-size: 20px;
   line-height: 125%;
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     font-size: 23px;
   }
 }

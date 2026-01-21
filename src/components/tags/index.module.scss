@@ -1,3 +1,4 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
 @import '@styles/mixins.scss';
 
@@ -11,7 +12,7 @@
   a {
     margin: 0 15px 15px 0;
 
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       margin: 0 10px 10px 0;
     }
   }
@@ -31,7 +32,7 @@
     transition: background-color #{$theme-duration} ease-out,
       color #{$theme-duration} ease-out;
 
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       font-size: $font-small;
     }
 

@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .toolbar {
   max-width: var(--max-width-internal);
@@ -10,11 +10,11 @@
   gap: 0px 10px;
   grid-template-areas: 'Feeds View-Mode Sort Filter';
 
-  @include respond-to('phone') {
+  @include layout.respond-to('phone') {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     grid-template-columns: 2fr repeat(3, 1fr);
   }
 }
@@ -29,16 +29,18 @@
   flex: 1;
   container: filters / inline-size;
 
-  @include respond-to('phone') {
+  @include layout.respond-to('phone') {
     justify-content: center;
   }
 }
+
 .feeds_area {
   align-items: center;
   display: flex;
   justify-content: flex-start;
   grid-area: Feeds;
 }
+
 // .feeds_dropdown {
 // }
 
@@ -46,6 +48,7 @@
   grid-area: Filter;
   justify-self: flex-end;
 }
+
 .feeds_button {
   display: flex;
   flex-direction: column;
@@ -53,13 +56,16 @@
   margin-bottom: 20px;
   width: 100%;
   padding: 0 20px;
+
   & > * {
     margin-bottom: 8px;
   }
+
   & > button:hover {
     text-decoration: underline;
   }
-  @include respond-to('tablet') {
+
+  @include layout.respond-to('tablet') {
     width: 180px;
   }
 }
@@ -72,6 +78,7 @@
 .feeds_dropdown {
   width: 180px;
 }
+
 .view_mode_area {
   grid-area: View-Mode;
   display: flex;
@@ -115,17 +122,17 @@
   display: flex;
   flex-direction: row;
 
-  @include respond-to('phone') {
+  @include layout.respond-to('phone') {
     flex-direction: column;
     width: 100vw;
   }
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     flex-direction: row;
     width: 100vw;
   }
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     //width: 700px;
     width: 60vw;
   }

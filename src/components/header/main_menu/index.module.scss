@@ -1,9 +1,10 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .theme_selection {
   max-width: 165px;
 }
+
 .menu {
   position: fixed;
   display: flex;
@@ -44,7 +45,7 @@
     text-decoration: underline;
   }
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     font-size: 30px;
   }
 }
@@ -67,19 +68,22 @@
 .menu_right {
   padding-left: 15px;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     padding-left: 30px;
   }
+
   button {
     text-align: left;
   }
 }
+
 .menu_left {
   padding-right: 15px;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     padding-right: 30px;
   }
+
   a {
     text-align: right;
     align-self: flex-end;

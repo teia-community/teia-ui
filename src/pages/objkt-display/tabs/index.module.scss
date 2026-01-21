@@ -1,12 +1,14 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
+
 .objktview {
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  @include respond-to('tablet') {
+
+  @include layout.respond-to('tablet') {
     width: 60vh;
     height: 60vh;
     margin: 0 auto;
@@ -17,18 +19,22 @@
   white-space: pre-wrap;
   padding-top: 20px;
   width: fit-content;
+
   a {
     color: var(--gray-70);
   }
+
   border-top: 1px solid var(--border-color);
 }
 
 .info_attributes {
   margin-bottom: 10px;
 }
+
 .info_ipfs {
   margin-bottom: 100px;
 }
+
 .info_attributes,
 .info_ipfs {
   font-size: $font-small;
@@ -37,6 +43,7 @@
   white-space: pre-wrap;
   color: var(--gray-70);
   align-items: center;
+
   p {
     margin-left: 10px;
   }
@@ -44,10 +51,12 @@
 
 .info_attributes {
   color: var(--gray-70);
+
   p {
     color: var(--gray-70);
   }
 }
+
 .infos_attributes_container {
   margin-top: 20px;
 }
@@ -75,11 +84,13 @@
   margin-top: 18px;
   margin-bottom: 15px;
   border-bottom: 1px solid var(--border-color);
+
   a,
   .history__mint__op {
     min-width: 0px;
     font-size: $font-small-mobile;
-    @include respond-to('desktop') {
+
+    @include layout.respond-to('desktop') {
       font-size: $font-small;
       height: auto;
       width: 7%;
@@ -87,19 +98,23 @@
       flex-direction: row;
     }
   }
+
   svg {
     margin: auto 0;
     margin-right: 5px;
     fill: var(--text-color);
+
     line,
     path {
       stroke: var(--text-color);
     }
   }
+
   span {
     height: 20px;
   }
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     margin: 0;
     margin-bottom: 10px;
     font-size: $font-small;
@@ -114,7 +129,8 @@
   font-size: $font-small-mobile;
   margin-bottom: 8px;
   color: var(--gray-60);
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: flex;
     font-size: $font-small;
   }
@@ -125,7 +141,8 @@
   display: flex;
   height: 20px;
   width: fit-content;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     margin-bottom: 0;
     width: calc(7% + 35px);
   }
@@ -140,7 +157,8 @@
   margin-bottom: 7px;
   height: 20px;
   white-space: nowrap;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     margin-bottom: 0;
     overflow: hidden;
     text-overflow: clip;
@@ -152,21 +170,21 @@
 }
 
 .history__event {
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     width: calc(9.166666666%);
   }
 }
 
 .history__from,
 .history__to {
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     text-overflow: ellipsis;
     width: calc(20.833333333%);
   }
 }
 
 .history__ed {
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     text-align: center;
     width: calc(6.944444444%);
   }
@@ -174,7 +192,7 @@
 
 .history__price,
 .history__date {
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     text-align: right;
     width: calc(13.888888888%);
   }
@@ -182,7 +200,8 @@
 
 .history__royalties {
   font-size: $font-small-mobile;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     font-size: $font-small;
     margin-top: 20px;
     padding-top: 10px;
@@ -198,7 +217,8 @@
 
 .history__mobile {
   display: block;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: none;
   }
 }
@@ -212,7 +232,8 @@
 .history__price,
 .history__date {
   display: none;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: block;
   }
 }
@@ -221,19 +242,22 @@
   display: flex;
   flex-direction: column;
   text-align: right;
+
   .history__ed,
   .history__price,
   .history__date {
     display: block;
   }
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: none;
   }
 }
 
 .history__desktop {
   display: none;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: block;
   }
 }

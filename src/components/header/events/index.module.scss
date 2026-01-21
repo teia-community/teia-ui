@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .event_card {
   padding: 1rem;
@@ -7,16 +7,19 @@
   width: 100%;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--gray-20);
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     width: 600px;
   }
 }
+
 .event_card h1 > a {
   align-items: center;
   display: flex;
   font-weight: 600;
   font-size: 20px;
 }
+
 .event_content,
 .event_tag_line {
   font-size: $font-small;
@@ -28,9 +31,11 @@
   display: inline-flex;
   margin: 0rem 1rem;
 }
+
 .event_icon img {
   width: 25px;
 }
+
 .event_tag_line {
   color: var(--gray-50);
   padding-bottom: 10px;

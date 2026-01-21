@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .tag {
   font-family: --var(--text-font);
@@ -14,10 +14,12 @@
   font-size: var(--font-body);
   font-weight: bold;
   align-items: center;
+
   &:hover {
     text-decoration: underline;
     cursor: pointer;
   }
+
   img {
     margin-right: 0.5em;
   }
@@ -30,7 +32,7 @@
   margin-bottom: 1em;
   text-align: center;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     width: 50%;
   }
 }

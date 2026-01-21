@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .compact_container {
   display: flex;
@@ -20,16 +20,20 @@
     text-overflow: ellipsis;
   }
 }
+
 .hide {
   display: none;
 }
+
 .price_box {
   display: flex;
   align-items: center;
+
   svg {
     transform: translateY(2px);
   }
 }
+
 .container {
   display: flex;
   font-size: $font-small;
@@ -52,7 +56,7 @@
 
   width: 100%;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     flex-direction: row;
   }
 }
@@ -66,7 +70,7 @@
 
   width: 100%;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     width: initial;
     justify-content: left;
   }
@@ -90,11 +94,11 @@
 }
 
 .issuer {
-  @include respond-to('phone') {
+  @include layout.respond-to('phone') {
     display: none;
   }
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     display: block;
   }
 }
@@ -169,7 +173,7 @@ span[data-tooltip][data-position='top']:after {
 .objkt_label {
   margin-bottom: 7.5px;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     margin-bottom: 0;
     height: fit-content;
   }
@@ -178,6 +182,7 @@ span[data-tooltip][data-position='top']:after {
 .objkt_details_container {
   align-items: center;
 }
+
 .objkt_label_container {
   width: 100%;
 }
@@ -187,6 +192,7 @@ span[data-tooltip][data-position='top']:after {
   padding-top: 0.5em;
   padding-bottom: 0.8em;
 }
+
 .collab_verification_symbol {
   padding-right: 0.5em;
 }

@@ -1,3 +1,4 @@
+@use '@styles/layout' as layout;
 @import '@styles/mixins.scss';
 @import '@styles/variables.scss';
 
@@ -61,7 +62,7 @@
   margin-top: 1em;
   text-align: center;
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     justify-content: left;
   }
 }

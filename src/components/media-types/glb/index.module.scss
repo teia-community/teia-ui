@@ -1,4 +1,4 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 
 .viewer {
   width: 100%;
@@ -6,7 +6,7 @@
   margin: 0 auto;
   border: none;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     width: 50% !important;
   }
 }
@@ -26,6 +26,7 @@
     padding-bottom: 100%;
   }
 }
+
 model-viewer {
   width: 100%;
   min-height: 55vh;

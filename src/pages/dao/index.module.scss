@@ -1,4 +1,4 @@
-@import '@styles/mixins.scss';
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
 
 .container {
@@ -80,7 +80,7 @@
 }
 
 .proposal_information {
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -104,7 +104,7 @@
   gap: 0.5em;
   margin: 0.5em 0;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     margin-bottom: 1.5em;
   }
 }

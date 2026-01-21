@@ -1,8 +1,9 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 
 .container {
   display: flex;
   flex-direction: column !important;
+
   .field {
     p {
       white-space: pre-wrap;
@@ -13,16 +14,19 @@
   .info {
     width: 100%;
   }
+
   .info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
+
   .attributes {
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
   }
+
   .label {
     color: var(--gray-40);
     border: 1px solid var(--gray-30);
@@ -45,7 +49,7 @@
     min-width: 75px;
   }
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     flex-direction: initial;
 
     .media {
@@ -64,6 +68,7 @@
       .field {
         margin-bottom: 20px;
       }
+
       .title {
         font-weight: bold;
       }

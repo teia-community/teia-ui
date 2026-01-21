@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .container {
   width: 100%;
@@ -8,17 +8,17 @@
   word-break: break-word;
   position: relative;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
   }
 
   &.large {
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       width: 55%;
     }
   }
 
   &.xlarge {
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       width: 80%;
     }
   }

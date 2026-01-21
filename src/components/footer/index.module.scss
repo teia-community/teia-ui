@@ -1,5 +1,5 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
-@import '@styles/layout.scss';
 
 .container {
   width: 100%;
@@ -23,7 +23,7 @@
   position: relative;
   pointer-events: all;
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     text-align: right;
   }
 
@@ -41,7 +41,7 @@
   gap: 20px 10px;
   align-items: flex-start;
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     grid-template-rows: none;
     grid-template-areas: 'Logo Copyright Menu Tools';
   }
@@ -94,11 +94,11 @@
   align-items: center;
   grid-area: Logo;
 
-  @include respond-to('phone') {
+  @include layout.respond-to('phone') {
     display: none;
   }
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     display: flex;
   }
 }

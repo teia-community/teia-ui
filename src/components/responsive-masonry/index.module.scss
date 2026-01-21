@@ -1,10 +1,11 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 
 .grid {
   display: flex;
   margin-left: -16px;
   width: auto;
-  @include respond-to('tablet') {
+
+  @include layout.respond-to('tablet') {
     margin-left: -20px;
   }
 }
@@ -13,7 +14,7 @@
   padding-left: 16px;
   background-clip: padding-box;
 
-  @include respond-to('tablet') {
+  @include layout.respond-to('tablet') {
     padding-left: 20px;
   }
 

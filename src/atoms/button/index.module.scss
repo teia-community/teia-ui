@@ -1,3 +1,4 @@
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
 @import '@styles/mixins.scss';
 
@@ -44,7 +45,7 @@
     width: 100%;
     white-space: nowrap;
 
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       width: fit-content;
     }
   }
@@ -232,7 +233,7 @@ $border: 2px;
 }
 
 // Responsive adjustments
-@include respond-to('tablet') {
+@include layout.respond-to('tablet') {
   .daoDonateButton {
     max-width: 100%;
     padding: 15px;
@@ -252,7 +253,7 @@ $border: 2px;
   }
 }
 
-@include respond-to('mobile') {
+@include layout.respond-to('mobile') {
   .daoDonateButton {
     padding: 10px;
 

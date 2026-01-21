@@ -1,4 +1,4 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
 // .audio {
 //   margin: 0 auto;
@@ -6,7 +6,7 @@
 //   align-items: center;
 //   justify-content: space-between;
 //   object-fit: cover;
-//   @include respond-to('desktop') {
+//   @include layout.respond-to('desktop') {
 //     width: 50%;
 //   }
 // }
@@ -66,6 +66,7 @@
     width: 100%;
     object-fit: contain;
   }
+
   audio {
     width: 100%;
     min-height: 32px;
@@ -77,6 +78,7 @@
     max-height: calc($max-token-height - 20vh);
   }
 }
+
 .feed_container {
   .button {
     position: absolute;

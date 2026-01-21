@@ -1,3 +1,4 @@
+@use '@styles/layout' as layout;
 @import '@styles/mixins.scss';
 @import '@styles/variables.scss';
 
@@ -25,7 +26,7 @@
     justify-content: space-between;
     margin-bottom: 30px;
 
-    @include respond-to('desktop') {
+    @include layout.respond-to('desktop') {
       flex-direction: row;
     }
 
@@ -35,7 +36,7 @@
       justify-content: space-between;
       min-width: fit-content;
 
-      @include respond-to('desktop') {
+      @include layout.respond-to('desktop') {
         justify-content: initial;
       }
     }
@@ -45,19 +46,24 @@
       flex-wrap: wrap;
       align-items: center;
       width: 100%;
+
       & > * {
         margin-top: 1em;
-        @include respond-to('desktop') {
+
+        @include layout.respond-to('desktop') {
           margin-top: 0;
         }
       }
+
       & > *:not(.swapLabel) {
         flex-grow: 1;
-        @include respond-to('desktop') {
+
+        @include layout.respond-to('desktop') {
           flex-grow: 0;
         }
       }
-      @include respond-to('desktop') {
+
+      @include layout.respond-to('desktop') {
         justify-content: flex-end;
       }
     }
@@ -70,7 +76,7 @@
 
   padding-top: 1em;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     width: 45%;
   }
 }
@@ -78,7 +84,8 @@
 .nomobile {
   display: none;
   width: 50%;
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     display: block;
   }
 }

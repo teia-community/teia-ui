@@ -1,4 +1,4 @@
-@import '@styles/layout.scss';
+@use '@styles/layout' as layout;
 @import '@styles/variables.scss';
 
 .bottom_banner {
@@ -11,6 +11,7 @@
   left: 0;
   right: 0;
   z-index: 100;
+
   a {
     color: var(--text-color);
     font-weight: bold;
@@ -23,24 +24,30 @@
   z-index: 1400;
   top: 0;
   color: var(--background-color);
+
   a {
     font-size: $font-xsmall;
-    @include respond-to('desktop') {
+
+    @include layout.respond-to('desktop') {
       font-size: $font-small;
     }
   }
+
   h2 {
     font-size: $font-small;
-    @include respond-to('desktop') {
+
+    @include layout.respond-to('desktop') {
       font-size: $font-large;
     }
   }
 }
+
 .close {
   position: absolute;
   top: 13px;
   right: 20px;
 }
+
 .content {
   display: flex;
   justify-content: space-between;
@@ -49,11 +56,13 @@
   width: 100%;
   padding-right: 32px;
   max-width: 100%;
-  @include respond-to('phone') {
+
+  @include layout.respond-to('phone') {
     /*width: 50%;*/
     max-width: var(--max-width-internal);
   }
-  @include respond-to('desktop') {
+
+  @include layout.respond-to('desktop') {
     /*width: 50%;*/
     margin: 0 auto;
   }
@@ -62,6 +71,7 @@
     color: var(--background-color);
     text-decoration: underline;
     text-underline-offset: 0.3em;
+
     @media (min-width: 769px) {
       display: inline-block;
     }

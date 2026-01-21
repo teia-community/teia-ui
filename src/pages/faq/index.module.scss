@@ -1,3 +1,4 @@
+@use '@styles/layout' as layout;
 @import '@styles/mixins.scss';
 
 .faq__container li::before {
@@ -16,7 +17,7 @@
 
   margin-bottom: 20px;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     margin-bottom: 30px;
   }
 }
@@ -30,7 +31,7 @@
 .faq__container:last-of-type {
   margin-top: 20px;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     margin-top: 30px;
   }
 }
@@ -46,7 +47,7 @@
   padding-top: 2em;
   width: 100%;
 
-  @include respond-to('desktop') {
+  @include layout.respond-to('desktop') {
     margin: 0;
   }
 }
