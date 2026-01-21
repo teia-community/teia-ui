@@ -1,7 +1,7 @@
 import { Container } from '@atoms/layout'
 import { Tags } from '@components/tags'
 import styles from '@style'
-import '../style.css'
+
 import { HashToURL } from '@utils'
 import { HEN_CONTRACT_FA2, LANGUAGES, LICENSE_TYPES } from '@constants'
 import { getWordDate } from '@utils/time'
@@ -23,8 +23,7 @@ export const Info = () => {
   const { nft, viewer_address } = useObjktDisplayContext()
   const artifact_ipfs_url =
     HashToURL(nft.artifact_uri) +
-    `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${
-      nft.token_id
+    `/?creator=${nft.artist_address}&viewer=${viewer_address || ''}&objkt=${nft.token_id
     }`
   const artifact_anaverse_url = viewer_address
     ? `https://anaver.se/?gallery=1&loadsingle=1&singlecontract=${HEN_CONTRACT_FA2}&singletokenid=${nft.token_id}&wallet=${viewer_address}&partnerPlatform=teia.art`
