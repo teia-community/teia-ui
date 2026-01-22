@@ -175,26 +175,10 @@ export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 
+// Specific tz addresses to exclude from donation lists
 export const DONATION_EXCLUDED_ADDRESSES = [
-  'KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w', // Teia Community Marketplace
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
-  'KT19xhzicdFasdH6KbChjk4yLutonf5jGzAz', // Helio Santos Sanchez (fa2 contract)
-  'KT1PyckPktCsksurkLCMRbksWc6wyfvTgS1P', // Anna Malina (fa2 contract)
-  'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC', // objkt.com Marketplace v2
-  'KT1SwbTqhSKF6Pdokiu1K4Fpi17ahPPzmt1X', // objkt.com Marketplace
-  'KT1Xjap1TwmDR1d8yEd8ErkraAj2mbdMrPZY', // objkt.com Marketplace
   'tz1gnuBF9TbBcgHPV2mUE96tBrW7PxqRmx1h', // Baking Benjamins Payouts
-  'KT1MisG4GCfuZ77b5K3ztsvwMtLQ1tySPuyc', // rodicqart (fa2 contract)
-  'KT1BJC12dG17CVvPKJ1VYaNnaT5mzfnUTwXv', // FXHASH Generative Tokens v2
-  'KT1F7FPPCAN15v2CZgia6QadPwWtk7MB9iNq', // Malicious Sheep (fa2 contract)
-  'KT1SmvBMFq9GWB5odvvW1V9gMSPvygMPuwsP', // objkt.com Fee Sharing Helper v3
-  'KT1BXqvfYk7MZX2JFarbLYcaVkHXMQpWpYmC', // Salawaki 3000 (fa2 contract)
-  'KT1BrdB1uXarSxwfxBygZeUgY3dZS4c6sHzb', // ktorn (fa2 contract)
-  'KT1XdpgvBeRwqFQeEQLhZqwHjTcrbBi5fKta', // ruralidyll (fa2 contract)
-  'KT1CePTyk6fk4cFr6fasY5YXPGks6ttjSLp4', // objkt.com Marketplace v3
-  'KT1M1NyU9X4usEimt2f3kDaijZnDMNBu42Ja', // FXHASH Marketplace v3
-  'KT1Hv5tw25WZKZtqdSUvuexryf79DBwwYdUc', // joe_simon_2 (fa2 contract)
-  'KT1CoKoCTwQfDL5R8rp22fvTYyVCGStJeCym', // joe_simon_2 (fa2 contract)
 ]
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
