@@ -498,7 +498,7 @@ export function useTopDonors(excludeAddresses = []) {
   const { data, mutate, error } = useSWR(
     [`/top-donators`, excludeAddresses.join(',')],
     async () => {
-      // Fetch all donors (typically < 100 total)
+      // Fetch all donors
       const url = `${TEIA_DONATION_API_URL}/top-donators?limit=1000`
 
       try {
@@ -507,11 +507,14 @@ export function useTopDonors(excludeAddresses = []) {
           throw new Error(`Top donators API error: ${res.statusText}`)
         const result = await res.json()
 
-        // Filter out excluded addresses
+        // Filter out excluded addresses & KT1 addresses
         const excludeSet = new Set(excludeAddresses)
-        return result.donators.filter(
-          (donor) => !excludeSet.has(donor.donator_address)
-        )
+        return result.donators.filter((donor) => {
+          const address = donor.donator_address
+          if (address?.startsWith('KT1')) return false
+          if (excludeSet.has(address)) return false
+          return true
+        })
       } catch (err) {
         console.error('Failed to fetch top donators:', err)
         throw err
