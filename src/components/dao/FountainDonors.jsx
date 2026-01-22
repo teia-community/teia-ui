@@ -30,8 +30,8 @@ export function FountainDonors({
       const alias = tx.sender?.alias
       const amount = parseInt(tx.amount) || 0
 
-      // Skip excluded addresses
-      if (address && !excludeSet.has(address)) {
+      // Skip excluded addresses: all KT1 contracts + specific tz addresses
+      if (address && !address.startsWith('KT1') && !excludeSet.has(address)) {
         if (!donorMap[address]) {
           donorMap[address] = {
             address,
