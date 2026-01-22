@@ -15,6 +15,10 @@ const TABS = [
     title: 'Create',
     to: 'create',
   },
+  {
+    title: 'Discourse',
+    to: 'discourse',
+  },
 ]
 
 export default function TeiaPolls() {
