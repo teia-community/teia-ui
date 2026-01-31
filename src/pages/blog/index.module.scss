@@ -1,0 +1,20 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing);
+}
+
+.headline {
+  font-size: var(--font-size-bigger);
+  margin-bottom: var(--spacing);
+}
+
+.posts_list {
+  margin-top: var(--spacing);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-double);
+  color: var(--text-secondary);
+}
