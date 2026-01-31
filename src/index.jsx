@@ -8,6 +8,8 @@ import {
   Collaborate,
   CreateCollaboration,
 } from '@pages/collaborate'
+import Blog from '@pages/blog'
+import Community from '@pages/blog/Community'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
 import { DAO, Claim, ProposalDisplay } from '@pages/dao'
@@ -164,6 +166,9 @@ const router = createBrowserRouter(
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
+      </Route>
+      <Route path="blog/*" element={<Blog />}>
+        <Route index element={<Community />} />
       </Route>
       <Route path="objkt/:id/*" element={<ObjktDisplay />}>
         <Route index element={<Info />} />
