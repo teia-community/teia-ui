@@ -93,7 +93,7 @@ export const HTMLComponent = (props: any) => {
         return
       }
 
-      ; (iframeRef.current as any)?.contentWindow?.postMessage(
+      (iframeRef.current as any)?.contentWindow?.postMessage(
         {
           target: 'hicetnunc-html-preview',
           data: unpackedFiles.current,
