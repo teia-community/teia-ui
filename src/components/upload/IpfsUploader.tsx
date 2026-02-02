@@ -27,13 +27,16 @@ export default function IpfsUploader({
 
   // Define the on change handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files[0])
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0])
+    }
     onChange('')
   }
 
   // Define the on click handler
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
+    if (!file) return
     onChange(await uploadFileToIpfs(file, displayUploadInformation))
   }
 

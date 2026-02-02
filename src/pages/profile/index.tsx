@@ -58,6 +58,13 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
   return user
 }
+
+export type ProfileOutletContext = {
+  showRestricted: boolean | undefined
+  overrideProtections: boolean | undefined
+  showFilters: boolean
+  address: string
+}
 export const useDisplayStore = create(
   subscribeWithSelector((get, set) => ({
     coreParticipants: undefined,

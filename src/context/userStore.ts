@@ -210,7 +210,7 @@ export const useUserStore = create<UserState>()(
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
 
-          await wallet.client.requestPermissions({ network })
+          await wallet.client.requestPermissions({ network } as any)
           const info = await getUser(current)
           console.log('getting user info', info)
           set({
@@ -441,7 +441,7 @@ export const useUserStore = create<UserState>()(
           const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
 
-          let batch = undefined
+          let batch: ContractMethod<Wallet> | undefined = undefined
           try {
             if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)

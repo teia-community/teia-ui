@@ -3,7 +3,7 @@ import { bytes2Char } from '@taquito/utils'
 import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2 } from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
-function reorderBigmapData(data, subKey, decode = false) {
+function reorderBigmapData(data, subKey?: string, decode = false) {
   const bigmapData = data ? {} : undefined
   data?.forEach(
     (item) =>
@@ -164,7 +164,7 @@ export function useDaoUsersAliases(userAddress, representatives, proposals) {
   }
 
   if (proposals) {
-    Object.values(proposals).forEach((proposal) => {
+    Object.values(proposals).forEach((proposal: any) => {
       addresses.add(proposal.issuer)
 
       if (proposal.kind.transfer_mutez) {
@@ -236,7 +236,7 @@ export function usePollsUsersAliases(userAddress, polls) {
   }
 
   if (polls) {
-    Object.values(polls).forEach((poll) => {
+    Object.values(polls).forEach((poll: any) => {
       addresses.add(poll.issuer)
     })
   }
@@ -265,7 +265,7 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
 
       console.log('swr result ', tokenData)
       if (tokenData) {
-        let creators = []
+        let creators: string[] = []
         if (tokenData.artist_profile?.is_split && tokenData.artist_profile?.split_contract?.shareholders) {
           // For split contracts, include all shareholders as creators
           creators = tokenData.artist_profile.split_contract.shareholders.map(s => s.shareholder_address)

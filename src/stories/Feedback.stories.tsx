@@ -1,7 +1,7 @@
 import { Button } from '@atoms/button'
 import { FeedbackComponent } from '@components/feedback'
 import { useModalStore } from '@context/modalStore'
-import { ArgsTable, PRIMARY_STORY, Title } from '@storybook/blocks'
+import { Controls, Title } from '@storybook/blocks'
 // import { fetchObjktDetails } from '@data/api'
 import type { Meta, StoryObj } from '@storybook/react'
 
@@ -44,7 +44,7 @@ const meta: Meta<typeof FeedbackComponent> = {
           {/* <Subtitle /> */}
           {/* <Description /> */}
           {/* <Primary /> */}
-          <ArgsTable story={PRIMARY_STORY} />
+          <Controls />
           Check the other stories in the sidebar for examples
           {/* <Stories /> */}
         </>

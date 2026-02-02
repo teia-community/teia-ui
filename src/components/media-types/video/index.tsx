@@ -43,7 +43,7 @@ export const VideoComponent = ({
       // play
       if (isVideoAvailable(domElement.current)) {
         try {
-          domElement.current.play()
+          domElement.current?.play()
         } catch (err) {
           console.error(err)
         }
@@ -55,7 +55,7 @@ export const VideoComponent = ({
         isVideoPlaying(domElement.current)
       ) {
         try {
-          domElement.current.pause()
+          domElement.current?.pause()
         } catch (err) {
           console.error(err)
         }

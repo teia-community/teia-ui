@@ -26,7 +26,7 @@ export const GLBComponent: React.FC<GLBProps> = ({
   // const [width, setWidth] = useState('100px')
   // const [height, setHeight] = useState('100px')
 
-  let props = {
+  let props: any = {
     src: previewUri ? previewUri : artifactUri,
   }
 

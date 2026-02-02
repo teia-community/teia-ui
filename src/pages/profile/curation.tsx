@@ -3,8 +3,10 @@ import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { useOutletContext } from 'react-router'
 
+import { ProfileOutletContext } from './index'
+
 export default function Curation() {
-  const { showRestricted, overrideProtections, address } = useOutletContext()
+  const { showRestricted, overrideProtections, address } = useOutletContext<ProfileOutletContext>()
 
   return (
     <TokenCollection

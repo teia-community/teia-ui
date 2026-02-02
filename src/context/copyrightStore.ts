@@ -12,6 +12,7 @@ export interface CopyrightStore {
   customLicenseData?: any;
   setCustomLicenseData: (data: any) => void;
   reset: () => void;
+  submitCopyrightAgreement: () => Promise<string | undefined>;
 }
 
 export const useCopyrightStore = create<CopyrightStore>()(

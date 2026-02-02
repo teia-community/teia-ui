@@ -38,7 +38,7 @@ export function CopyrightCreate() {
           message: 'Failed to submit copyright agreement. Please try again.'
         })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Copyright submission error:', error)
       setSubmissionStatus({
         type: 'error',

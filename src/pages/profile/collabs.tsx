@@ -8,9 +8,11 @@ import { useOutletContext } from 'react-router'
 import Checkbox from '@atoms/input/Checkbox'
 import styles from '@style'
 
+import { ProfileOutletContext } from './index'
+
 export default function Collabs() {
   const { /*showFilters,*/ showRestricted, address, overrideProtections } =
-    useOutletContext()
+    useOutletContext<ProfileOutletContext>()
 
   const [hasUnverifiedTokens, setHasUnverifiedTokens] = useState(false)
   const [showUnverified, setShowUnverified] = useState(false)
@@ -36,7 +38,7 @@ export default function Collabs() {
         swrParams={[address]}
         variables={{ address }}
         emptyMessage="no collabs"
-        maxItems={null}
+        maxItems={undefined}
         extractTokensFromResponse={(data) => {
           const tokens = data.teia_shareholders
             .map((shareholder) => {

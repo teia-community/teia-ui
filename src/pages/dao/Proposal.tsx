@@ -45,14 +45,14 @@ export default function Proposal({ proposalId }) {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity = representatives?.[userAddress]
+  const userCommunity = userAddress ? representatives?.[userAddress] : undefined
   const [userTokenBalance, updateUserTokenBalance] =
     useDaoTokenBalance(userAddress)
-  const [userVotes, updateUserVotes] = useDaoUserVotes(userAddress, daoStorage)
+  const [userVotes, updateUserVotes] = useDaoUserVotes(userAddress, daoStorage) as [any, any]
   const [userCommunityVotes, updateUserCommunityVotes] = useDaoCommunityVotes(
     userCommunity,
     daoStorage
-  )
+  ) as [any, any]
 
   // Get all the relevant users aliases
   const [usersAliases] = useDaoUsersAliases(
@@ -147,10 +147,10 @@ export default function Proposal({ proposalId }) {
               daoStorage.guardians === userAddress)
           }
           callback={() => {
-            updateProposals()
-            updateUserTokenBalance()
-            updateUserVotes()
-            updateUserCommunityVotes()
+            updateProposals && updateProposals()
+            updateUserTokenBalance && updateUserTokenBalance()
+            updateUserVotes && updateUserVotes()
+            updateUserCommunityVotes && updateUserCommunityVotes()
           }}
         />
       </div>
@@ -230,6 +230,7 @@ function ProposalContent({ content, aliases }) {
             label="See transfer details"
             transfers={transfers}
             aliases={aliases}
+            className=""
           />
         </>
       )
@@ -286,6 +287,7 @@ function ProposalContent({ content, aliases }) {
         <CodeDetails
           label="See Micheline code"
           code={parseLambda(content.lambda_function)}
+          className=""
         />
       </>
     )

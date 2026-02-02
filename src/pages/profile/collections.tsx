@@ -11,9 +11,11 @@ const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
+import { ProfileOutletContext } from './index'
+
 export default function Collections() {
   const { showFilters, showRestricted, overrideProtections, address } =
-    useOutletContext()
+    useOutletContext<ProfileOutletContext>()
 
   const [filter, setFilter] = useState(FILTER_ALL)
 
@@ -39,7 +41,7 @@ export default function Collections() {
         swrParams={[address]}
         variables={{ address }}
         emptyMessage="no collections"
-        maxItems={null}
+        maxItems={undefined}
         postProcessTokens={(tokens) => {
           if (filter === FILTER_FOR_SALE) {
             return tokens.filter(

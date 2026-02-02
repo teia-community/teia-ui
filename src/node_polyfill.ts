@@ -6,12 +6,12 @@ globalThis.process = Process
 // Polyfills for midi player
 // Check if the global process variable exists; if not, create it.
 if (typeof process === 'undefined') {
-  globalThis.process = {}
+  globalThis.process = {} as any
 }
 
 // Check if hrtime is already defined; if not, define it.
 if (!process.hrtime) {
-  process.hrtime = function (start) {
+  (process as any).hrtime = function (start) {
     // performance.now() gives us time in milliseconds as a float
     const now = performance.now() * 1e-3 // Convert ms to seconds
     let sec = Math.floor(now) // Get the whole second part
