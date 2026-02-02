@@ -13,7 +13,7 @@ import { Container } from './container'
 import { MD } from './md'
 import { useMemo } from 'react'
 import { NFT } from '@types'
-import { MidiComponent }  from './midi'
+import { MidiComponent } from './midi'
 import { TXT } from './text'
 
 interface RenderMediaTypeProps {
@@ -99,7 +99,7 @@ export const RenderMediaType = ({
         return (
           <VectorComponent
             artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
+            // displayUri={parsedDisplayUri}
             displayView={displayView}
             previewUri={previewUri}
             nft={nft}

@@ -79,7 +79,7 @@ export const Visualiser = ({ src }: { src: string }) => {
   const update = () => {
     if (!ctx || !analyser || !data) return
 
-    analyser.getFloatTimeDomainData(data)
+    analyser.getFloatTimeDomainData(data as any)
 
     resize()
 

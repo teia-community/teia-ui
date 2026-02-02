@@ -2,7 +2,6 @@ import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { useOutletContext } from 'react-router'
-
 import { ProfileOutletContext } from './index'
 
 export default function Curation() {

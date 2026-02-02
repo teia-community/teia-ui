@@ -7,14 +7,14 @@ import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 
 import { useOutletContext } from 'react-router'
+import { ProfileOutletContext } from './index'
 import { orderBy } from 'lodash'
 
 const FILTER_ALL = 'ALL'
+
 const FILTER_PRIMARY = 'PRIMARY'
 const FILTER_SECONDARY = 'SECONDARY'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
-
-import { ProfileOutletContext } from './index'
 
 export default function Creations() {
   const { showFilters, showRestricted, overrideProtections, address } =

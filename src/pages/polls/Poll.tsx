@@ -22,7 +22,7 @@ import LoadingPollsMessage from './LoadingPollsMessage'
 export default function Poll({ pollId }) {
   // Get all the required teia polls information
   const [pollsStorage] = useStorage(POLLS_CONTRACT)
-  const [polls, updatePolls] = usePolls(pollsStorage)
+  const [polls, updatePolls] = usePolls(pollsStorage) as [any, any]
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
@@ -30,7 +30,7 @@ export default function Poll({ pollId }) {
   const [userVotes, updateUserVotes] = useUserPollVotes(
     userAddress,
     pollsStorage
-  )
+  ) as [any, any]
 
   // Get all the relevant users aliases
   const [usersAliases] = usePollsUsersAliases(userAddress, polls)
@@ -73,8 +73,8 @@ export default function Poll({ pollId }) {
         userVotedOption={userVotes?.[pollId]?.option}
         canVote={!voteFinished && userTokenBalance > 0}
         callback={() => {
-          updatePolls()
-          updateUserVotes()
+          updatePolls && updatePolls()
+          updateUserVotes && updateUserVotes()
         }}
       />
     </div>
@@ -125,7 +125,7 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
   const votePoll = usePollsStore((st) => st.votePoll)
 
   // Calculate the total and the maximum number of votes
-  const votes = Object.values(poll.votes_count).map((value) => parseInt(value))
+  const votes = Object.values(poll.votes_count).map((value) => parseInt(value as string))
   const totalVotes = votes.reduce((acc, value) => acc + value, 0)
   const maxVotes = Math.max(...votes)
 
@@ -143,9 +143,9 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
         {Object.entries(poll.votes_count).map(([option, optionVotes]) => (
           <li
             key={option}
-            className={`${styles.poll_option} ${parseInt(optionVotes) === maxVotes && maxVotes !== 0
-                ? styles.winner_option
-                : ''
+            className={`${styles.poll_option} ${parseInt(optionVotes as string) === maxVotes && maxVotes !== 0
+              ? styles.winner_option
+              : ''
               }`}
           >
             <button onClick={() => setShowPercents(!showPercents)}>
@@ -162,16 +162,16 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
                 {showPercents
                   ? `${totalVotes === 0
                     ? 0
-                    : Math.round((100 * optionVotes) / totalVotes)
+                    : Math.round((100 * (optionVotes as any)) / totalVotes)
                   }%`
-                  : `${Math.round(optionVotes / voteScaling)} vote${parseInt(optionVotes) !== voteScaling ? 's' : ''
+                  : `${Math.round((optionVotes as any) / voteScaling)} vote${parseInt(optionVotes as string) !== voteScaling ? 's' : ''
                   }`}
               </div>
             </button>
 
             {canVote && (
               <Button
-                onClick={() => votePoll(poll.id, option, null, callback)}
+                onClick={() => votePoll(poll.id, parseInt(option), null, callback)}
                 shadow_box
                 fit
               >

@@ -32,7 +32,7 @@ export const Collectors = () => {
           <Listings
             nft={nft}
             handleCollect={handleCollect}
-            proxyAdminAddress={proxyAdminAddress}
+            proxyAdminAddress={proxyAdminAddress || undefined}
           />
         </Container>
       )}

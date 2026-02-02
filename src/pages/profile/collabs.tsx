@@ -5,10 +5,9 @@ import orderBy from 'lodash/orderBy'
 import { BaseTokenFieldsFragment } from '@data/api'
 import TokenCollection from '@atoms/token-collection'
 import { useOutletContext } from 'react-router'
+import { ProfileOutletContext } from './index'
 import Checkbox from '@atoms/input/Checkbox'
 import styles from '@style'
-
-import { ProfileOutletContext } from './index'
 
 export default function Collabs() {
   const { /*showFilters,*/ showRestricted, address, overrideProtections } =

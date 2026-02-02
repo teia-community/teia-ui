@@ -89,7 +89,7 @@ const ItemInfo = ({ nft }: { nft: any }) => {
               )}
             </div>
           </div>
-          <Editions prefix="Editions:" nft={nft} />
+          <Editions prefix nft={nft} />
         </div>
       </div>
 

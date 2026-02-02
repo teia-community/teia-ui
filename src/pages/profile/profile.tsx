@@ -44,7 +44,7 @@ export default function Profile({ user }: { user: ArtistProfile & { extras?: any
   })
   const [daoTokenBalance] = useDaoTokenBalance(user.address) as [number, any]
 
-  const coreParticipants = useDisplayStore((st) => st.coreParticipants)
+  const coreParticipants = useDisplayStore((st: any) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
 
   const loadReverseDomain = useCallback(() => {

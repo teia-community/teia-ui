@@ -7,11 +7,11 @@ import { BaseTokenFieldsFragment } from '@data/api'
 
 import { useOutletContext } from 'react-router'
 
+import { ProfileOutletContext } from './index'
+
 const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
-
-import { ProfileOutletContext } from './index'
 
 export default function Collections() {
   const { showFilters, showRestricted, overrideProtections, address } =

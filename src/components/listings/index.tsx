@@ -147,7 +147,7 @@ export const Listings = ({
   // restricted,
   // reswap,
   {
-    proxyAdminAddress: string
+    proxyAdminAddress?: string
     nft: NFT
     handleCollect: (listing: Listing) => void
   }) => {

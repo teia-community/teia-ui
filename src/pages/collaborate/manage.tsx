@@ -83,7 +83,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   }, [address, originatedContract, showAdminOnly])
 
   const _onTimerComplete = () => {
-    findOriginatedContractFromOpHash(originationOpHash)
+    if (originationOpHash) findOriginatedContractFromOpHash(originationOpHash)
     setCheckInterval(10)
   }
 
@@ -104,7 +104,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
           <p>
             <strong>Collaborative contract created successfully!</strong>
           </p>
-          <p>Address: {originatedContract.address}</p>
+          <p>Address: {typeof originatedContract === 'string' ? originatedContract : (originatedContract as any).address}</p>
         </div>
       )}
 

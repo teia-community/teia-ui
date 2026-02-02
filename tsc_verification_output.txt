@@ -1,0 +1,43 @@
+build/assets/index-r-MRVt9f.js(9359,6435): error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
+src/components/item-info/ItemInfo.tsx(92,21): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.
+src/components/media-types/audio/visualiser.tsx(82,37): error TS2345: Argument of type 'Float32Array<ArrayBufferLike>' is not assignable to parameter of type 'Float32Array<ArrayBuffer>'.
+  Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+    Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+      Types of property '[Symbol.toStringTag]' are incompatible.
+        Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+src/components/media-types/index.tsx(102,13): error TS2322: Type '{ artifactUri: string; displayUri: string | undefined; displayView: boolean | undefined; previewUri: string | undefined; nft: NFT; }' is not assignable to type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
+  Property 'displayUri' does not exist on type 'IntrinsicAttributes & { artifactUri: string; previewUri?: string | undefined; displayView?: boolean | undefined; nft: any; }'.
+src/pages/collaborate/manage.tsx(86,38): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/collaborate/manage.tsx(107,43): error TS2339: Property 'address' does not exist on type 'string'.
+src/pages/config/Settings.tsx(123,14): error TS2741: Property 'type' is missing in type '{ name: string; value: string; onChange: (v: string | number | FormEvent<HTMLInputElement>) => void; placeholder: string; label: string; }' but required in type 'Omit<InputProps & RefAttributes<HTMLInputElement>, "ref">'.
+src/pages/dao/tabs/Proposals.tsx(41,43): error TS2538: Type 'undefined' cannot be used as an index type.
+src/pages/objkt-display/tabs/Collectors.tsx(35,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/objkt-display/tabs/Swap.tsx(50,7): error TS18048: 'nft.artist_profile.split_contract' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(72,26): error TS2365: Operator '<' cannot be applied to types 'string' and 'number'.
+src/pages/objkt-display/tabs/Swap.tsx(81,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(89,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(97,9): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/objkt-display/tabs/Swap.tsx(99,10): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/pages/objkt-display/tabs/Swap.tsx(135,32): error TS18048: 'e' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(136,31): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(145,21): error TS2322: Type '{ style: { width: string; }; type: "number"; placeholder: string; value: string; initial: number; onChange: (v: string | number | FormEvent<HTMLInputElement>) => void; onBlur: (e: FocusEvent<...> | undefined) => void; disabled: boolean; }' is not assignable to type 'IntrinsicAttributes & Omit<InputProps & RefAttributes<HTMLInputElement>, "ref"> & { ref?: ((instance: HTMLInputElement | null) => void) | RefObject<...> | null | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & Omit<InputProps & RefAttributes<HTMLInputElement>, "ref"> & { ref?: ((instance: HTMLInputElement | null) => void) | RefObject<...> | null | undefined; }'.
+src/pages/objkt-display/tabs/Swap.tsx(152,46): error TS18048: 'e' is possibly 'undefined'.
+src/pages/objkt-display/tabs/Swap.tsx(154,34): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/objkt-display/tabs/Swap.tsx(156,34): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+src/pages/polls/Poll.tsx(76,11): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/polls/Poll.tsx(76,11): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/polls/Poll.tsx(77,11): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+src/pages/polls/Poll.tsx(77,11): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/pages/polls/Poll.tsx(128,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(146,58): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(165,41): error TS18046: 'optionVotes' is of type 'unknown'.
+src/pages/polls/Poll.tsx(167,35): error TS18046: 'optionVotes' is of type 'unknown'.
+src/pages/polls/Poll.tsx(167,78): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/pages/polls/Poll.tsx(174,50): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+src/pages/profile/profile.tsx(47,52): error TS18046: 'st' is of type 'unknown'.

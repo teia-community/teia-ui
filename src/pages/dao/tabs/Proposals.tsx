@@ -38,7 +38,7 @@ export default function DaoProposals() {
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
-  const userCommunity = representatives?.[userAddress]
+  const userCommunity = userAddress ? representatives?.[userAddress] : undefined
   const [userVotes] = useDaoUserVotes(userAddress, daoStorage)
   const [userCommunityVotes] = useDaoCommunityVotes(userCommunity, daoStorage)
 

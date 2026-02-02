@@ -121,6 +121,7 @@ export const Settings = () => {
           />
           {rpcNode === 'custom' && (
             <Input
+              type="text"
               name="custom-rpc"
               value={customRpcNode}
               onChange={(v) => setCustomRpcNode(String(v))}

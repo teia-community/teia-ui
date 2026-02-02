@@ -47,7 +47,7 @@ export const Swap = () => {
   }
 
   const proxyAdminAddress = nft.artist_profile?.is_split
-    ? nft.artist_profile.split_contract.administrator_address
+    ? nft.artist_profile?.split_contract?.administrator_address
     : null
 
   const found = useMemo(
@@ -63,13 +63,14 @@ export const Swap = () => {
   const totalOwned = useMemo(() => found?.amount || 0, [found])
 
   const handleSubmit = async () => {
+    if (!id) return
     console.debug({ amount, price })
     if (!amount) {
       show(`Please enter an OBJKT quantity to swap (current value: ${amount})`)
       return
     }
 
-    if (price == null || price < 0) {
+    if (price == null || parseFloat(price) < 0) {
       show(`Please enter a price for the swap (current value: ${price})`)
       return
     }
@@ -78,7 +79,7 @@ export const Swap = () => {
     console.debug(
       address,
       nft.royalties_total,
-      (price * 1000000).toFixed(0),
+      (parseFloat(price) * 1000000).toFixed(0),
       id,
       nft.artist_address,
       parseFloat(amount)
@@ -86,17 +87,17 @@ export const Swap = () => {
     console.log([
       address,
       nft.royalties_total,
-      (price * 1e6).toFixed(0),
+      (parseFloat(price) * 1e6).toFixed(0),
       id,
       nft.artist_address,
       parseFloat(amount),
     ])
-    if (currency === 'tez') {
+    if (currency === 'tez' && address) {
       // when taquito returns a success/fail message
       await swap(
         address,
         nft.royalties_total / 1000,
-        (price * 1e6).toFixed(0),
+        parseInt((parseFloat(price) * 1e6).toFixed(0)),
         id,
         nft.artist_address,
         parseFloat(amount)
@@ -132,8 +133,8 @@ export const Swap = () => {
                 /* max={total_amount - sales} */
                 onChange={(v) => setAmount(String(v))}
                 onBlur={(e) => {
-                  if (parseInt(e.target.value) > totalOwned) {
-                    setAmount(totalOwned)
+                  if (e && parseInt(e.target.value) > totalOwned) {
+                    setAmount(String(totalOwned))
                   }
                 }}
                 disabled={progress}
@@ -142,18 +143,17 @@ export const Swap = () => {
                 <div style={{ width: '100%' }}>
                   <h4>Price</h4>
                   <Input
-                    style={style}
                     type="number"
                     placeholder="Price Per OBJKT (XTZ)"
                     value={price}
-                    initial={0}
                     onChange={(v) => setPrice(String(v))}
                     onBlur={(e) => {
+                      if (!e) return
                       const val = parseFloat(e.target.value)
                       if (val > 1e6) {
-                        setPrice(1e6)
+                        setPrice('1000000')
                       } else if (val < 0) {
-                        setPrice(0)
+                        setPrice('0')
                       }
                       checkPrice(val)
                     }}
