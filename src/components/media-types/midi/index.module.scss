@@ -1,5 +1,5 @@
-@import '@styles/layout.scss';
-@import '@styles/variables.scss';
+@use '@styles/layout' as layout;
+@use '@styles/config' as *;
 
 .feed_container,
 .container {

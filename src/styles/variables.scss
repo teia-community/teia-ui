@@ -1,15 +1,4 @@
-$font-large: 18px;
-$font-body: 16px;
-$font-small: 13px;
-$font-xsmall: 11px;
-
-$font-large-mobile: 16px;
-$font-small-mobile: 13px;
-
-$max-token-height: 60vh;
-
-$theme-duration: 0.333s;
-$letter-spacing: 0.015em;
+@use './config' as *;
 
 :root {
   // COMMON
@@ -121,6 +110,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #2196f3;
 
   --text-color: #111;
+
   * {
     color: #111;
 
@@ -130,17 +120,20 @@ $letter-spacing: 0.015em;
         stroke: #111;
       }
     }
+
     svg:hover {
       * {
         fill: #cccccc;
         stroke: #cccccc;
       }
     }
+
     &:hover {
       color: #cccccc;
     }
   }
 }
+
 :root[data-theme='aqua'] {
   --gray-0: #6aadff;
   --gray-5: #63a7fb;
@@ -193,6 +186,7 @@ $letter-spacing: 0.015em;
 
   --text-color: var(--gray-90);
 }
+
 :root[data-theme='midnight'] {
   --gray-0: #002633;
   --gray-5: #183d4b;

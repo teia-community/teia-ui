@@ -1,4 +1,4 @@
-@import '@styles/variables.scss';
+@use '@styles/config' as *;
 .debug {
   position: fixed;
   pointer-events: none;

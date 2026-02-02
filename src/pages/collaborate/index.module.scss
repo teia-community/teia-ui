@@ -1,5 +1,5 @@
-@import '@styles/layout.scss';
-@import '@styles/variables.scss';
+@use '@styles/layout' as layout;
+@use '@styles/config' as *;
 
 @for $i from 1 through 3 {
   .mb#{$i} {
