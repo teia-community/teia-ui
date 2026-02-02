@@ -1,14 +1,16 @@
-@use 'variables.scss';
+@use 'config' as *;
 @use 'typography.scss';
 @use 'mixins.scss';
 @use 'layout';
 
 :root {
-  --font-body: 13px;
+  --font-body: $font-small-mobile;
+
   @include layout.respond-to('desktop') {
-    --font-body: 16px;
+    --font-body: $font-small;
   }
 }
+
 html {
   margin: 0;
   padding: 0;
@@ -49,9 +51,11 @@ body {
 body::-webkit-scrollbar {
   width: 0.25em;
 }
+
 body::-webkit-scrollbar-track {
   background-color: var(--gray-25);
 }
+
 body::-webkit-scrollbar-thumb {
   background-color: var(--text-color);
 }
@@ -65,10 +69,12 @@ body::-webkit-scrollbar-thumb:hover {
   flex-direction: column;
   align-items: center;
   padding: 0 15px;
+
   @media screen and (min-width: 1215px) {
     padding: 0;
   }
 }
+
 h1,
 h2,
 h3,
@@ -79,13 +85,16 @@ strong {
   font-family: var(--text-font);
   font-weight: 700;
 }
+
 p {
   white-space: pre-line;
   line-height: 150%;
 }
+
 h1 {
   font-size: 24px;
   line-height: 125%;
+
   @include layout.respond-to('desktop') {
     font-size: 32px;
   }
@@ -94,6 +103,7 @@ h1 {
 h2 {
   font-size: 22px;
   line-height: 125%;
+
   @include layout.respond-to('desktop') {
     font-size: 26px;
   }
@@ -102,6 +112,7 @@ h2 {
 h3 {
   font-size: 20px;
   line-height: 125%;
+
   @include layout.respond-to('desktop') {
     font-size: 23px;
   }
@@ -124,7 +135,7 @@ button {
 }
 
 img.emoji {
-  width: variables.$font-small-mobile;
+  width: $font-small-mobile;
   pointer-events: none;
 }
 
@@ -132,10 +143,12 @@ img.emoji {
   p {
     margin: 1em 0;
   }
+
   h1 {
     font-size: 1.5em;
     margin: 1.5em 0 0.5em;
   }
+
   font-family: var(--text-font);
 }
 
@@ -144,7 +157,8 @@ img.emoji {
 body.overlay:after {
   content: '';
   display: block;
-  position: fixed; /* could also be absolute */
+  position: fixed;
+  /* could also be absolute */
   top: 0;
   left: 0;
   height: 100vh;

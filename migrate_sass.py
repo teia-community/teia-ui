@@ -9,18 +9,30 @@ def migrate_file(filepath):
 
     original = content
     
-    # Replace @import '@styles/variables.scss' with @use '@styles/config' as *
-    content = content.replace("@import '@styles/variables.scss';", "@use '@styles/config' as *;")
-    content = content.replace('@import "@styles/variables.scss";', '@use "@styles/config" as *;')
+    # Replacements
+    replacements = [
+        ("@import '@styles/variables.scss';", "@use '@styles/config' as *;"),
+        ('@import "@styles/variables.scss";', '@use "@styles/config" as *;'),
+        ("@import '@styles/layout.scss';", "@use '@styles/layout' as layout;"),
+        ('@import "@styles/layout.scss";', '@use "@styles/layout" as layout;'),
+        ("@import '@styles/mixins.scss';", "@use '@styles/mixins' as *;"),
+        ('@import "@styles/mixins.scss";', '@use "@styles/mixins" as *;'),
+    ]
     
-    # Replace @import '@styles/layout.scss' with @use '@styles/layout' as layout
-    # and update usages if any (though usually it's used as layout.respond-to already or just imported)
-    content = content.replace("@import '@styles/layout.scss';", "@use '@styles/layout' as layout;")
-    content = content.replace('@import "@styles/layout.scss";', '@use "@styles/layout" as layout;')
+    for old, new in replacements:
+        content = content.replace(old, new)
     
-    # Generic @import to @use replacement for internal styles if applicable
-    # (But let's be careful with aliases)
+    # Move @use to top
+    lines = content.splitlines()
+    use_lines = [l for l in lines if l.startswith('@use ')]
+    other_lines = [l for l in lines if not l.startswith('@use ')]
     
+    # Preserve leading comments if any? Actually Sass is strict about @use being first.
+    # We might need to keep comments that are headers.
+    
+    final_lines = use_lines + other_lines
+    content = "\n".join(final_lines) + ("\n" if content.endswith("\n") else "")
+
     if content != original:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)

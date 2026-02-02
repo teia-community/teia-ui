@@ -1,6 +1,6 @@
 @use '@styles/layout' as layout;
 @use '@styles/config' as *;
-@import '@styles/mixins.scss';
+@use '@styles/mixins' as *;
 
 .subjkt_editor {
   width: 100%;

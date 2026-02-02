@@ -1,4 +1,5 @@
 @use './config' as *;
+@forward './config';
 
 :root {
   // COMMON

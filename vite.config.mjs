@@ -175,6 +175,13 @@ export default defineConfig(({ mode }) => {
         BUILD_COMMIT: commitHash,
       }),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+        },
+      },
+    },
     define: {
       global: 'globalThis',
     },

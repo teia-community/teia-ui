@@ -1,6 +1,7 @@
+@use 'sass:color';
 @use '@styles/layout' as layout;
 @use '@styles/config' as *;
-@import '@styles/mixins.scss';
+@use '@styles/mixins' as *;
 
 .strong {
   font-weight: bold;
@@ -223,11 +224,11 @@ $border: 2px;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: darken(grey, 10%);
+      background-color: color.adjust(grey, $lightness: -10%);
     }
 
     &:active {
-      background-color: darken(black, 20%);
+      background-color: #000; // black cannot be darkened further
     }
   }
 }
