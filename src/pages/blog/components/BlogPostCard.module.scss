@@ -1,0 +1,48 @@
+.card {
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing) 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+
+  &:hover .title {
+    color: var(--primary);
+  }
+}
+
+.title {
+  font-size: var(--font-size-big);
+  margin: 0 0 var(--spacing-half) 0;
+  transition: color 0.2s;
+}
+
+.excerpt {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-half) 0;
+  line-height: 1.6;
+}
+
+.meta {
+  display: flex;
+  gap: var(--spacing);
+  font-size: var(--font-size-small);
+  color: var(--text-tertiary);
+}
+
+.author {
+  font-weight: 500;
+}
+
+.date {
+  &::before {
+    content: '·';
+    margin-right: var(--spacing-half);
+  }
+}
