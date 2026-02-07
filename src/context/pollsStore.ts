@@ -4,8 +4,8 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { MichelsonMap } from '@taquito/taquito'
-import { stringToBytes } from '@taquito/utils'
+import { MichelsonMap } from '@tezos-x/octez.js'
+import { stringToBytes } from '@tezos-x/octez.js-utils'
 import { POLLS_CONTRACT} from '@constants'
 import { Tezos, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'

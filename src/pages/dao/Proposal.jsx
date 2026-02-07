@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { stringToBytes } from '@taquito/utils'
+import { stringToBytes } from '@tezos-x/octez.js-utils'
 import {
   PATH,
   DAO_GOVERNANCE_CONTRACT,

@@ -91,31 +91,6 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
-      filterReplace(
-        [
-          {
-            filter: 'node_modules/@airgap/beacon-transport-matrix/node_modules/axios/lib/adapters/fetch.js',
-            replace: {
-              from: 'const globalFetchAPI = (({Request, Response}) => ({' +
-                '  Request, Response' +
-                '}))(utils.global);' +
-                '' +
-                'const {' +
-                '  ReadableStream, TextEncoder' +
-                '} = utils.global;,',
-              to: 'const globalObject = utils.global ?? (typeof globalThis !== \'undefined\' ? globalThis : {});' +
-                '  const globalFetchAPI = (({Request, Response} = {}) => ({' +
-                '    Request, Response' +
-                  '}))(globalObject);' +
-                  'const {ReadableStream, TextEncoder} = globalObject;',
-            },
-          }
-        ],
-        {
-          apply: 'build',
-          enforce: 'post',
-        }
-      ),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
@@ -138,7 +113,6 @@ export default defineConfig(({ mode }) => {
       port: 3000,
     },
     build: {
-      minify: false,
       commonjsOptions: {
         transformMixedEsModules: true
       },
@@ -150,12 +124,12 @@ export default defineConfig(({ mode }) => {
           // manualChunks: processChunks,
           manualChunks: {
             contracts: [
-              '@taquito/beacon-wallet',
-              '@taquito/michelson-encoder',
+              '@tezos-x/octez.js-dapp-wallet',
+              '@tezos-x/octez.js-michelson-encoder',
               '@stablelib/ed25519',
               '@stablelib/nacl',
               '@stablelib/x25519-session',
-              '@taquito/taquito',
+              '@tezos-x/octez.js',
             ],
             pdf: ['react-pdf', 'pdfjs-dist'],
             ui: [

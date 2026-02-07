@@ -1,5 +1,5 @@
-import { encodeAddress, encodeKeyHash } from '@taquito/utils'
-import { Parser, emitMicheline } from '@taquito/michel-codec'
+import { encodeAddress, encodeKeyHash } from '@tezos-x/octez.js-utils'
+import { Parser, emitMicheline } from '@tezos-x/octez.js-michel-codec'
 
 export function parseLambda(lambdaCode) {
   // Transform the lambda function Michelson JSON code to Micheline code

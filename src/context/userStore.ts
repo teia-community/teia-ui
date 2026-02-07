@@ -1,5 +1,5 @@
-import { BeaconWallet } from '@taquito/beacon-wallet'
-import { BeaconEvent } from '@airgap/beacon-dapp'
+import { BeaconWallet } from '@tezos-x/octez.js-dapp-wallet'
+import { BeaconEvent } from '@tezos-x/octez.connect-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -10,8 +10,8 @@ import {
   Wallet,
   WalletParamsWithKind,
   MichelsonMap,
-} from '@taquito/taquito'
-import { stringToBytes } from '@taquito/utils'
+} from '@tezos-x/octez.js'
+import { stringToBytes } from '@tezos-x/octez.js-utils'
 import { create } from 'zustand'
 import {
   persist,
@@ -19,7 +19,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
-import { NetworkType } from '@airgap/beacon-types'
+import { NetworkType } from '@tezos-x/octez.connect-types'
 import { getUser } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
@@ -138,10 +138,6 @@ let current: string
 wallet.client.subscribeToEvent(
   BeaconEvent.ACTIVE_ACCOUNT_SET,
   async (account) => {
-    console.log(
-      `${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `,
-      account?.address,
-    )
     if (!account) {
       return;
     }
@@ -212,16 +208,13 @@ export const useUserStore = create<UserState>()(
 
           await wallet.client.requestPermissions()
           const info = await getUser(current)
-          console.log('getting user info', info)
           set({
             address: current,
             userInfo: await getUser(current),
           })
-          // console.log(this.state)
           return current
         },
         unsync: async () => {
-          // console.log('disconnect wallet')
           // This will clear the active account and the next "syncTaquito" will trigger a new sync
           await wallet.client.clearActiveAccount()
           set({

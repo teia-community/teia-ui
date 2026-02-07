@@ -4,8 +4,8 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { Parser } from '@taquito/michel-codec'
-import { validateAddress, stringToBytes } from '@taquito/utils'
+import { Parser } from '@tezos-x/octez.js-michel-codec'
+import { validateAddress, stringToBytes } from '@tezos-x/octez.js-utils'
 import {
   DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CONTRACT,

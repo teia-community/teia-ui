@@ -13,7 +13,7 @@ import {
 
 import { useModalStore } from './modalStore'
 import { Tezos, useUserStore } from './userStore'
-import { MichelsonMap } from '@taquito/michelson-encoder'
+import { MichelsonMap } from '@tezos-x/octez.js-michelson-encoder'
 import { packData, Packer } from '@utils/swap'
 interface CollabState {
   originatedContract?: string
