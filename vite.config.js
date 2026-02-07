@@ -94,23 +94,22 @@ export default defineConfig(({ mode }) => {
       filterReplace(
         [
           {
-            filter: 'node_modules/@airgap/beacon-ui/dist/esm/utils/qr.js',
+            filter: 'node_modules/@airgap/beacon-transport-matrix/node_modules/axios/lib/adapters/fetch.js',
             replace: {
-              from: "import * as qrcode from 'qrcode-generator';",
-              to: "import qrcode from 'qrcode-generator';",
+              from: 'const globalFetchAPI = (({Request, Response}) => ({' +
+                '  Request, Response' +
+                '}))(utils.global);' +
+                '' +
+                'const {' +
+                '  ReadableStream, TextEncoder' +
+                '} = utils.global;,',
+              to: 'const globalObject = utils.global ?? (typeof globalThis !== \'undefined\' ? globalThis : {});' +
+                '  const globalFetchAPI = (({Request, Response} = {}) => ({' +
+                '    Request, Response' +
+                  '}))(globalObject);' +
+                  'const {ReadableStream, TextEncoder} = globalObject;',
             },
-          },
-          {
-            filter: [
-              'node_modules/@airgap/beacon-dapp/dist/walletbeacon.dapp.min.js',
-              'node_modules/@airgap/beacon-ui/dist/cjs/ui/alert/alert-templates.js',
-              'node_modules/@airgap/beacon-ui/dist/esm/ui/alert/alert-templates.js',
-            ],
-            replace: {
-              from: /\\n@media\s*\(min-height:\s*700px\).*translateY\(-50%\);\\n\s*\}\\n\}/g,
-              to: '',
-            },
-          },
+          }
         ],
         {
           apply: 'build',
@@ -139,6 +138,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
     },
     build: {
+      minify: false,
       commonjsOptions: {
         transformMixedEsModules: true
       },
@@ -149,7 +149,6 @@ export default defineConfig(({ mode }) => {
         output: {
           // manualChunks: processChunks,
           manualChunks: {
-            three: ['three'],
             contracts: [
               '@taquito/beacon-wallet',
               '@taquito/michelson-encoder',
