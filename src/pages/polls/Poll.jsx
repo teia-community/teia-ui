@@ -116,14 +116,6 @@ function PollDescription({ poll, aliases }) {
         Vote weight method:{' '}
         {Object.keys(poll.vote_weight_method)[0].toUpperCase()}
       </p>
-
-      {discourseUrl && (
-        <p>
-          <DefaultLink href={discourseUrl}>
-            Join the discussion on Discourse →
-          </DefaultLink>
-        </p>
-      )}
     </>
   )
 }

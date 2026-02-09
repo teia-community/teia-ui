@@ -50,11 +50,6 @@ export default function PollDisplay() {
               <Poll pollId={id} />
             </section>
 
-            <section className={styles.section}>
-              <h2 className={styles.section_title}>Discussion</h2>
-              <DiscourseEmbed topicUrl={embedUrl} />
-            </section>
-
             <PaginationButtons
               path={PATH.POLL}
               current={parseInt(id)}
