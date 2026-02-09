@@ -1,7 +1,9 @@
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing);
+  box-sizing: border-box;
 }
 
 .headline {
@@ -9,12 +11,142 @@
   margin-bottom: var(--spacing);
 }
 
+// Tab content area - fix content to page width
+.tab_content {
+  min-height: 60vh;
+  padding: var(--spacing) 0;
+}
+
 .posts_list {
-  margin-top: var(--spacing);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
 }
 
 .empty {
   text-align: center;
   padding: var(--spacing-double);
   color: var(--text-secondary);
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
+
+// NewPost form styles
+.newpost_form {
+  width: 100%;
+  padding: var(--spacing) 0;
+}
+
+.field {
+  margin-bottom: var(--spacing-large, 1.5rem);
+
+  label {
+    display: block;
+    margin-bottom: var(--spacing-half);
+    font-weight: 600;
+    font-size: var(--font-size);
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.field_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-large, 1.5rem);
+
+  .field {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+
+    .field {
+      margin-bottom: var(--spacing-large, 1.5rem);
+    }
+  }
+}
+
+.hint {
+  display: block;
+  margin-top: var(--spacing-quarter, 0.25rem);
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.select {
+  width: 100%;
+  padding: var(--spacing-half) var(--spacing);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: var(--font-size);
+  border-radius: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  height: 45px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  option {
+    background: var(--background-color);
+    color: var(--text-color);
+  }
+}
+
+.field :global(input) {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.actions {
+  margin-top: var(--spacing-double);
+  padding-top: var(--spacing);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing);
+}
+
+// Markdown editor
+.editor_wrapper {
+  margin-top: var(--spacing-half);
+
+  :global(.w-md-editor) {
+    background-color: var(--background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+  }
+
+  :global(.w-md-editor-toolbar) {
+    background-color: var(--background-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  :global(.w-md-editor-content) {
+    background-color: var(--background-color) !important;
+  }
+
+  :global(.w-md-editor-text-pre),
+  :global(.w-md-editor-text-input),
+  :global(.w-md-editor-text) {
+    font-family: 'Iosevka', monospace !important;
+    font-size: var(--font-size) !important;
+  }
+
+  :global(.wmde-markdown) {
+    background-color: var(--background-color) !important;
+    font-family: 'Source Sans Pro', sans-serif !important;
+  }
 }

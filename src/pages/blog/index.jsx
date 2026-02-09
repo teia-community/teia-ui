@@ -24,7 +24,9 @@ export default function Blog() {
             return tab
           }}
         />
-        <Outlet />
+        <div className={styles.tab_content}>
+          <Outlet />
+        </div>
       </div>
     </Page>
   )
