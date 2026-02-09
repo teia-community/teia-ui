@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import MDEditor from '@uiw/react-md-editor'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { useLocalSettings } from '@context/localSettingsStore'
@@ -20,6 +19,10 @@ import {
 } from '@utils/mint'
 import styles from './index.module.scss'
 
+const MDEditor = lazy(() => import('@uiw/react-md-editor'))
+
+const DRAFT_KEY = 'teia-blog-draft'
+
 export default function NewPost() {
   const navigate = useNavigate()
   const address = useUserStore((st) => st.address)
@@ -27,13 +30,48 @@ export default function NewPost() {
   const mint = useUserStore((st) => st.mint)
   const theme = useLocalSettings((st) => st.theme)
 
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [tags, setTags] = useState('')
+  // Restore draft from localStorage as initial state (parsed once)
+  const [initialDraft] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      return raw ? JSON.parse(raw) : {}
+    } catch (e) {
+      return {}
+    }
+  })
+
+  const [title, setTitle] = useState(initialDraft.title || '')
+  const [content, setContent] = useState(initialDraft.content || '')
+  const [tags, setTags] = useState(initialDraft.tags || '')
   const [editions, setEditions] = useState(1)
   const [royalties, setRoyalties] = useState(MIN_ROYALTIES)
   const [license, setLicense] = useState(LICENSE_TYPES_OPTIONS[0])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const draftSavedRef = useRef(null)
+
+  // Save draft on changes (debounced) — uses ref to avoid re-renders
+  useEffect(() => {
+    let hideTimer
+    const timer = setTimeout(() => {
+      if (title || content || tags) {
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ title, content, tags })
+        )
+        if (draftSavedRef.current) {
+          draftSavedRef.current.style.display = 'block'
+          hideTimer = setTimeout(() => {
+            if (draftSavedRef.current)
+              draftSavedRef.current.style.display = 'none'
+          }, 2000)
+        }
+      }
+    }, 1000)
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(hideTimer)
+    }
+  }, [title, content, tags])
 
   // Redirect to blog if not connected
   if (!address) {
@@ -145,6 +183,9 @@ export default function NewPost() {
 
       show('Success!', 'Blog post has been minted successfully.')
 
+      // Clear draft from localStorage
+      localStorage.removeItem(DRAFT_KEY)
+
       // Reset form and navigate to created posts
       setTitle('')
       setContent('')
@@ -190,17 +231,30 @@ export default function NewPost() {
           className={styles.editor_wrapper}
           data-color-mode={theme === 'dark' ? 'dark' : 'light'}
         >
-          <MDEditor
-            id="content"
-            value={content}
-            onChange={setContent}
-            preview="live"
-            height={400}
-            textareaProps={{
-              placeholder: 'Write your blog post in Markdown...',
-            }}
-          />
+          <Suspense
+            fallback={
+              <div className={styles.editor_loading}>Loading editor...</div>
+            }
+          >
+            <MDEditor
+              id="content"
+              value={content}
+              onChange={setContent}
+              preview="live"
+              height={400}
+              textareaProps={{
+                placeholder: 'Write your blog post in Markdown...',
+              }}
+            />
+          </Suspense>
         </div>
+        <small
+          ref={draftSavedRef}
+          className={styles.draft_saved}
+          style={{ display: 'none' }}
+        >
+          Draft saved
+        </small>
       </div>
 
       <div className={styles.field}>

@@ -119,6 +119,24 @@
   gap: var(--spacing);
 }
 
+.draft_saved {
+  display: block;
+  margin-top: var(--spacing-quarter, 0.25rem);
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  opacity: 0.7;
+}
+
+.editor_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--font-size);
+}
+
 // Markdown editor
 .editor_wrapper {
   margin-top: var(--spacing-half);
@@ -140,9 +158,13 @@
 
   :global(.w-md-editor-text-pre),
   :global(.w-md-editor-text-input),
-  :global(.w-md-editor-text) {
+  :global(.w-md-editor-text),
+  :global(.w-md-editor-text-pre) > :global(.w-md-editor-text-pre),
+  :global(.w-md-editor-text-pre) code {
     font-family: 'Iosevka', monospace !important;
     font-size: var(--font-size) !important;
+    line-height: 1.5 !important;
+    letter-spacing: normal !important;
   }
 
   :global(.wmde-markdown) {
