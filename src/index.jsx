@@ -10,6 +10,8 @@ import {
 } from '@pages/collaborate'
 import Blog from '@pages/blog'
 import Community from '@pages/blog/Community'
+import YourPosts from '@pages/blog/YourPosts'
+import NewPost from '@pages/blog/NewPost'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
 import { DAO, Claim, ProposalDisplay } from '@pages/dao'
@@ -169,6 +171,8 @@ const router = createBrowserRouter(
       </Route>
       <Route path="blog/*" element={<Blog />}>
         <Route index element={<Community />} />
+        <Route path="yourposts" element={<YourPosts />} />
+        <Route path="newpost" element={<NewPost />} />
       </Route>
       <Route path="objkt/:id/*" element={<ObjktDisplay />}>
         <Route index element={<Info />} />
