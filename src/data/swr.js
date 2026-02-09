@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import { gql, request } from 'graphql-request'
 import { bytes2Char } from '@taquito/utils'
 import {
   DAO_TOKEN_CONTRACT,
@@ -8,7 +9,12 @@ import {
   HEN_CONTRACT_FA2,
   TEIA_DONATION_API_URL,
 } from '@constants'
-import { getTzktData, fetchObjktDetails } from '@data/api'
+import {
+  getTzktData,
+  fetchObjktDetails,
+  BaseTokenFieldsFragment,
+} from '@data/api'
+import laggy from '@utils/swr-laggy-middleware'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -527,4 +533,42 @@ export function useTopDonors(excludeAddresses = []) {
   )
 
   return { data, mutate, error, isLoading: !data && !error }
+}
+
+const BLOG_POSTS_BY_ARTIST_QUERY = gql`
+  ${BaseTokenFieldsFragment}
+  query BlogPostsByArtist($address: String!) {
+    tokens(
+      where: {
+        artist_address: { _eq: $address }
+        _or: [
+          { mime_type: { _eq: "text/plain" } }
+          { mime_type: { _eq: "text/markdown" } }
+        ]
+        editions: { _gt: 0 }
+        metadata_status: { _eq: "processed" }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+      }
+      order_by: { minted_at: desc }
+    ) {
+      ...baseTokenFields
+    }
+  }
+`
+
+export function useBlogPostsByArtist(address) {
+  return useSWR(
+    address ? ['blog-posts-by-artist', address] : null,
+    () =>
+      request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        BLOG_POSTS_BY_ARTIST_QUERY,
+        { address }
+      ),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      use: [laggy],
+    }
+  )
 }
