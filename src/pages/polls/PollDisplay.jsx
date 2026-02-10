@@ -5,11 +5,6 @@ import { Page } from '@atoms/layout'
 import { RootErrorBoundary } from '@atoms/error'
 import { PaginationButtons } from '@atoms/button'
 import { useStorage, usePolls } from '@data/swr'
-import {
-  DiscourseEmbed,
-  extractDiscourseUrl,
-  getPollEmbedUrl,
-} from '@components/discourse'
 import LoadingPollsMessage from './LoadingPollsMessage'
 import Poll from './Poll'
 import styles from '@style'
