@@ -86,6 +86,8 @@ function PollDescription({ poll, aliases }) {
     poll.description !== '' ? bytes2Char(poll.description) : ''
   const cid = description.split('//')[1]
 
+  // We are replaying our discourse system.
+
   return (
     <>
       <p>

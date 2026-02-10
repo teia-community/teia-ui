@@ -38,7 +38,7 @@ Report Harassment or Scams via the [Report Form](https://docs.google.com/forms/d
 
 Report Bugs via a [Github issue](https://github.com/teia-community/teia-ui/issues)
 
-DAO Agora/Forum: [discourse.teia.art](https://discourse.teia.art/)
+DAO Agora/Forum: Discourse discussions are being revised; for updates, check on X.
 
 Code: [Teia Github](https://github.com/teia-community)
 

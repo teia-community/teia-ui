@@ -1,7 +1,19 @@
 .mainContainer {
-    margin: 10px;
     width: 100%;
-    padding-bottom: 10px;
+    max-width: var(--max-width-internal);
+    padding: 0 15px 10px;
+}
+
+@media (min-width: 600px) {
+    .mainContainer {
+        padding: 0 40px 10px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .mainContainer {
+        padding: 0 60px 10px;
+    }
 }
 
 .assetContainer {

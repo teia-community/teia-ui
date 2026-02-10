@@ -1,6 +1,12 @@
 import useSWR from 'swr'
 import { bytes2Char } from '@taquito/utils'
-import { DAO_TOKEN_CONTRACT, DAO_TOKEN_DECIMALS, COPYRIGHT_CONTRACT, DAO_TREASURY_CONTRACT, HEN_CONTRACT_FA2  } from '@constants'
+import {
+  DAO_TOKEN_CONTRACT,
+  DAO_TOKEN_DECIMALS,
+  COPYRIGHT_CONTRACT,
+  DAO_TREASURY_CONTRACT,
+  HEN_CONTRACT_FA2,
+} from '@constants'
 import { getTzktData, fetchObjktDetails } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
@@ -257,26 +263,34 @@ export function useObjkt(id) {
   return [data, mutate]
 }
 
-export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, tokenId) => {
-    // Use TEIA GraphQL API via fetchObjktDetails
+export const fetchTokenMetadataForCopyrightSearch = async (
+  contractAddress,
+  tokenId
+) => {
+  // Use TEIA GraphQL API via fetchObjktDetails
   if (contractAddress === HEN_CONTRACT_FA2) {
     try {
       const tokenData = await fetchObjktDetails(tokenId.toString())
-      
+
       console.log('swr result ', tokenData)
       if (tokenData) {
         let creators = []
-        if (tokenData.artist_profile?.is_split && tokenData.artist_profile?.split_contract?.shareholders) {
+        if (
+          tokenData.artist_profile?.is_split &&
+          tokenData.artist_profile?.split_contract?.shareholders
+        ) {
           // For split contracts, include all shareholders as creators
-          creators = tokenData.artist_profile.split_contract.shareholders.map(s => s.shareholder_address)
+          creators = tokenData.artist_profile.split_contract.shareholders.map(
+            (s) => s.shareholder_address
+          )
         } else {
           // Single creator
           creators = [tokenData.artist_address]
         }
-        
+
         return {
           contract: {
-            address: tokenData.fa2_address
+            address: tokenData.fa2_address,
           },
           tokenId: tokenData.token_id,
           metadata: {
@@ -287,25 +301,30 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
             artifactUri: tokenData.artifact_uri,
             mimeType: tokenData.mime_type,
             creators: creators,
-            decimals: "0",
+            decimals: '0',
             royalties: tokenData.royalties,
             editions: tokenData.editions,
             mintedAt: tokenData.minted_at,
-            tags: tokenData.tags?.map(t => t.tag) || [],
+            tags: tokenData.tags?.map((t) => t.tag) || [],
             artist_profile: tokenData.artist_profile,
             teia_meta: tokenData.teia_meta,
             rights: tokenData.rights,
-            right_uri: tokenData.right_uri
-          }
+            right_uri: tokenData.right_uri,
+          },
         }
       }
     } catch (error) {
-      console.log('Error fetching from TEIA GraphQL, falling back to TzKT:', error)
+      console.log(
+        'Error fetching from TEIA GraphQL, falling back to TzKT:',
+        error
+      )
     }
   }
-  
+
   // Default TzKT API for non-HEN tokens
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/tokens?contract=${contractAddress}&tokenId=${tokenId}`
   const response = await fetch(url)
   if (!response.ok) throw new Error('Failed to fetch metadata')
   const data = await response.json()
@@ -315,7 +334,9 @@ export const fetchTokenMetadataForCopyrightSearch = async (contractAddress, toke
 export async function fetchUserCopyrights(address) {
   if (!address) return []
 
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?key.address=${address}&limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -325,7 +346,6 @@ export async function fetchUserCopyrights(address) {
 
     const data = await res.json()
     return data
-    
   } catch (err) {
     console.error('Failed to fetch user copyrights:', err)
     return []
@@ -333,7 +353,9 @@ export async function fetchUserCopyrights(address) {
 }
 
 export async function fetchAllCopyrights() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -346,7 +368,9 @@ export async function fetchAllCopyrights() {
 }
 
 export async function fetchProposals() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/proposals/keys?limit=100&active=true`
 
   try {
     const res = await fetch(url)
@@ -362,7 +386,9 @@ export async function fetchProposals() {
 }
 
 export async function fetchAllVotes() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -374,7 +400,9 @@ export async function fetchAllVotes() {
 }
 
 export async function fetchExpirationTime() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=expiration_time`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -387,7 +415,9 @@ export async function fetchExpirationTime() {
 }
 
 export async function fetchAgreementText() {
-  const url = `${import.meta.env.VITE_TZKT_API}/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/storage?path=agreement_text`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
@@ -397,4 +427,105 @@ export async function fetchAgreementText() {
     console.error('Failed to fetch expiration_time:', err)
     return 0
   }
+}
+
+export function useDaoTokenHolders(limit = 10) {
+  const { data, mutate, error } = useSWR(
+    [`/dao/token-holders/${limit}`, limit],
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&sort.desc=balance&limit=${limit}`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const holders = await res.json()
+
+        return holders.map((holder) => ({
+          address: holder.account.address,
+          alias: holder.account.alias,
+          balance: parseInt(holder.balance) / DAO_TOKEN_DECIMALS,
+          transfersCount: holder.transfersCount,
+          firstTime: holder.firstTime,
+          lastTime: holder.lastTime,
+        }))
+      } catch (err) {
+        console.error('Failed to fetch token holders:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useFountainDonations(contractAddress, limit = 10000) {
+  const { data, mutate, error } = useSWR(
+    contractAddress
+      ? [`/contract-donations/${contractAddress}`, contractAddress, limit]
+      : null,
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/operations/transactions?target=${contractAddress}&select=sender,amount,timestamp&limit=${limit}&status=applied`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const transactions = await res.json()
+        return transactions
+      } catch (err) {
+        console.error('Failed to fetch contract donations:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useTopDonors(excludeAddresses = []) {
+  const { data, mutate, error } = useSWR(
+    [`/top-donators`, excludeAddresses.join(',')],
+    async () => {
+      // Fetch all donors
+      const url = `${
+        import.meta.env.VITE_TEIA_DONATION_API
+      }/top-donators?limit=1000`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok)
+          throw new Error(`Top donators API error: ${res.statusText}`)
+        const result = await res.json()
+
+        // Filter out excluded addresses & KT1 addresses
+        const excludeSet = new Set(excludeAddresses)
+        return result.donators.filter((donor) => {
+          const address = donor.donator_address
+          if (address?.startsWith('KT1')) return false
+          if (excludeSet.has(address)) return false
+          return true
+        })
+      } catch (err) {
+        console.error('Failed to fetch top donators:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
 }
