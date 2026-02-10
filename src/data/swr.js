@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { stringToBytes } from '@tezos-x/octez.js-utils'
+import { bytesToString } from '@tezos-x/octez.js-utils'
 import {
   DAO_TOKEN_CONTRACT,
   DAO_TOKEN_DECIMALS,
@@ -14,7 +14,7 @@ function reorderBigmapData(data, subKey, decode = false) {
   data?.forEach(
     (item) =>
       (bigmapData[subKey ? item.key[subKey] : item.key] = decode
-        ? stringToBytes(item.value)
+        ? bytesToString(item.value)
         : item.value)
   )
 

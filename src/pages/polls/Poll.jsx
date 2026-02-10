@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { stringToBytes } from '@tezos-x/octez.js-utils'
+import { bytesToString } from '@tezos-x/octez.js-utils'
 import { PATH, POLLS_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { usePollsStore } from '@context/pollsStore'
@@ -62,7 +62,7 @@ export default function Poll({ pollId }) {
         >
           #{pollId}
         </Link>
-        {stringToBytes(poll.question)}
+        {bytesToString(poll.question)}
       </h3>
 
       <PollDescription poll={poll} aliases={usersAliases} />
@@ -83,7 +83,7 @@ export default function Poll({ pollId }) {
 function PollDescription({ poll, aliases }) {
   // Try to extract an ipfs cid from the poll description
   const description =
-    poll.description !== '' ? stringToBytes(poll.description) : ''
+    poll.description !== '' ? bytesToString(poll.description) : ''
   const cid = description.split('//')[1]
 
   // We are replaying our discourse system.
@@ -154,11 +154,11 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
               {userVotedOption === option ? (
                 <div className={styles.poll_option_container}>
                   <span className={styles.user_vote}></span>
-                  <PollOption option={stringToBytes(poll.options[option])} />
+                  <PollOption option={bytesToString(poll.options[option])} />
                   <span className={styles.user_vote}>{'\u2714'}</span>
                 </div>
               ) : (
-                <PollOption option={stringToBytes(poll.options[option])} />
+                <PollOption option={bytesToString(poll.options[option])} />
               )}
               <div>
                 {showPercents
