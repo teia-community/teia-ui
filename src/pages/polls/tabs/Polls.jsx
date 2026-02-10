@@ -69,13 +69,8 @@ export default function Polls() {
         poll creation.
       </p>
       <p>
-        To discuss the details of polls or proposals, you can use{' '}
-        <a href="https://discourse.teia.art/" target="_blank" rel="noreferrer">
-          this forum
-        </a>{' '}
-        to start a new thread with the poll number and title as the reference.
-        (Note that this is a third-party service and will not get recorded
-        "officially" on-chain.)
+        We are replacing the discussion forum with our own system. More info
+        soon.
       </p>
       <p>
         <a
