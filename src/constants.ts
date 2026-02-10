@@ -1,7 +1,6 @@
 import { flipObject } from './utils'
 
 export const BANNER_URL = 'https://lists.teia.art/teia-status'
-export const TZKT_API_URL = 'https://api.tzkt.io/v1'
 export const TEIA_DONATION_API_URL =
   'https://teia-donation-express-app-production.up.railway.app'
 
