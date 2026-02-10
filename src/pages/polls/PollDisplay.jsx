@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { bytes2Char } from '@taquito/utils'
 import { PATH, POLLS_CONTRACT } from '@constants'
 import { Page } from '@atoms/layout'
 import { RootErrorBoundary } from '@atoms/error'
@@ -25,6 +26,8 @@ export default function PollDisplay() {
       />
     )
   }
+
+  // We are replaying our discourse system.
 
   return (
     <Page title={`Teia poll #${id}`}>

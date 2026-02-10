@@ -428,3 +428,104 @@ export async function fetchAgreementText() {
     return 0
   }
 }
+
+export function useDaoTokenHolders(limit = 10) {
+  const { data, mutate, error } = useSWR(
+    [`/dao/token-holders/${limit}`, limit],
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&sort.desc=balance&limit=${limit}`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const holders = await res.json()
+
+        return holders.map((holder) => ({
+          address: holder.account.address,
+          alias: holder.account.alias,
+          balance: parseInt(holder.balance) / DAO_TOKEN_DECIMALS,
+          transfersCount: holder.transfersCount,
+          firstTime: holder.firstTime,
+          lastTime: holder.lastTime,
+        }))
+      } catch (err) {
+        console.error('Failed to fetch token holders:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useFountainDonations(contractAddress, limit = 10000) {
+  const { data, mutate, error } = useSWR(
+    contractAddress
+      ? [`/contract-donations/${contractAddress}`, contractAddress, limit]
+      : null,
+    async () => {
+      const url = `${
+        import.meta.env.VITE_TZKT_API
+      }/v1/operations/transactions?target=${contractAddress}&select=sender,amount,timestamp&limit=${limit}&status=applied`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+        const transactions = await res.json()
+        return transactions
+      } catch (err) {
+        console.error('Failed to fetch contract donations:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}
+
+export function useTopDonors(excludeAddresses = []) {
+  const { data, mutate, error } = useSWR(
+    [`/top-donators`, excludeAddresses.join(',')],
+    async () => {
+      // Fetch all donors
+      const url = `${
+        import.meta.env.VITE_TEIA_DONATION_API
+      }/top-donators?limit=1000`
+
+      try {
+        const res = await fetch(url)
+        if (!res.ok)
+          throw new Error(`Top donators API error: ${res.statusText}`)
+        const result = await res.json()
+
+        // Filter out excluded addresses & KT1 addresses
+        const excludeSet = new Set(excludeAddresses)
+        return result.donators.filter((donor) => {
+          const address = donor.donator_address
+          if (address?.startsWith('KT1')) return false
+          if (excludeSet.has(address)) return false
+          return true
+        })
+      } catch (err) {
+        console.error('Failed to fetch top donators:', err)
+        throw err
+      }
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  )
+
+  return { data, mutate, error, isLoading: !data && !error }
+}

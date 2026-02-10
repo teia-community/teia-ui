@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_TEIA_GRAPHQL_API: string
   /** the base url of the tzkt API */
   readonly VITE_TZKT_API: string
+  /** the base url of the Teia donation API */
+  readonly VITE_TEIA_DONATION_API: string
   readonly VITE_TZPROFILES_GRAPHQL_API: string
   readonly VITE_IMGPROXY: string
   readonly VITE_IPFS_UPLOAD_PROXY: string
