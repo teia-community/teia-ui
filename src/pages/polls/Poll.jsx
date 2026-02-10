@@ -7,7 +7,6 @@ import { usePollsStore } from '@context/pollsStore'
 import { Button } from '@atoms/button'
 import { TeiaUserLink, IpfsLink, DefaultLink } from '@atoms/link'
 import { RenderMediaType } from '@components/media-types'
-import { extractDiscourseUrl } from '@components/discourse'
 import {
   useStorage,
   usePolls,
@@ -87,8 +86,7 @@ function PollDescription({ poll, aliases }) {
     poll.description !== '' ? bytes2Char(poll.description) : ''
   const cid = description.split('//')[1]
 
-  // Extract the Discourse URL from the description
-  const discourseUrl = extractDiscourseUrl(description)
+  // We are replaying our discourse system.
 
   return (
     <>

@@ -32,11 +32,7 @@ export default function PollDisplay() {
     )
   }
 
-  // Get the embed URL: prefer Discourse URL from description, fallback to poll page URL // Need to be tested and clarified
-  const poll = polls?.[id]
-  const description = poll?.description ? bytes2Char(poll.description) : ''
-  const discourseUrl = extractDiscourseUrl(description)
-  const embedUrl = discourseUrl || getPollEmbedUrl(id)
+  // We are replaying our discourse system.
 
   return (
     <Page title={`Teia poll #${id}`}>
