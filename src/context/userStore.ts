@@ -1,5 +1,5 @@
-import { BeaconWallet } from '@taquito/beacon-wallet'
-import { BeaconEvent } from '@airgap/beacon-dapp'
+import { BeaconWallet } from '@tezos-x/octez.js-dapp-wallet'
+import { BeaconEvent } from '@tezos-x/octez.connect-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -10,7 +10,8 @@ import {
   Wallet,
   WalletParamsWithKind,
   MichelsonMap,
-} from '@taquito/taquito'
+} from '@tezos-x/octez.js'
+import { stringToBytes } from '@tezos-x/octez.js-utils'
 import { create } from 'zustand'
 import {
   persist,
@@ -18,7 +19,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
-import { NetworkType } from '@airgap/beacon-types'
+import { NetworkType } from '@tezos-x/octez.connect-types'
 import { getUser } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
@@ -129,7 +130,6 @@ const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
-  preferredNetwork: NetworkType.MAINNET,
 })
 
 Tezos.setWalletProvider(wallet)
@@ -138,10 +138,6 @@ let current: string
 wallet.client.subscribeToEvent(
   BeaconEvent.ACTIVE_ACCOUNT_SET,
   async (account) => {
-    console.log(
-      `${BeaconEvent.ACTIVE_ACCOUNT_SET} triggered: `,
-      account?.address,
-    )
     if (!account) {
       return;
     }
@@ -210,18 +206,15 @@ export const useUserStore = create<UserState>()(
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
 
-          await wallet.client.requestPermissions({ network })
+          await wallet.client.requestPermissions()
           const info = await getUser(current)
-          console.log('getting user info', info)
           set({
             address: current,
             userInfo: await getUser(current),
           })
-          // console.log(this.state)
           return current
         },
         unsync: async () => {
-          // console.log('disconnect wallet')
           // This will clear the active account and the next "syncTaquito" will trigger a new sync
           await wallet.client.clearActiveAccount()
           set({
@@ -266,22 +259,10 @@ export const useUserStore = create<UserState>()(
           const subjktAddressOrProxy = get().proxyAddress || SUBJKT_CONTRACT
 
           const contract = await Tezos.wallet.at(subjktAddressOrProxy)
-          const op = contract.methods.registry(
-            `ipfs://${metadata_cid}`
-              .split('')
-              .reduce(
-                (hex, c) =>
-                  (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
-                ''
-              ),
-            alias
-              .split('')
-              .reduce(
-                (hex: string, c: string) =>
-                  (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
-                ''
-              )
-          )
+          const op = contract.methodsObject.registry({
+            metadata: stringToBytes(`ipfs://${metadata_cid}`),
+            subjkt:  stringToBytes(alias)
+          })
           return await handleOp(op, 'Editing Profile', { amount: 0 })
         },
         swap: async (
@@ -340,6 +321,7 @@ export const useUserStore = create<UserState>()(
             Tezos.wallet.at(objktsAddress),
             Tezos.wallet.at(MAIN_MARKETPLACE_CONTRACT),
           ])
+          try {
 
           const operations = createSwapCalls(
             objktsContract,
@@ -354,7 +336,6 @@ export const useUserStore = create<UserState>()(
             creator,
             MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE
           )
-          try {
             const batch = Tezos.wallet.batch(operations)
 
             return await handleOp(batch, 'Swap')
@@ -374,7 +355,7 @@ export const useUserStore = create<UserState>()(
           console.debug('Using', objktsOrProxy, 'for burn')
 
           const contract = await Tezos.wallet.at(objktsOrProxy)
-          const batch = contract.methods.transfer([
+          const batch = contract.methodsObject.transfer([
             {
               from_: addressFrom,
               txs: [
@@ -402,7 +383,7 @@ export const useUserStore = create<UserState>()(
           try {
             const connect = await Tezos.wallet.at(contract)
 
-            const batch = connect.methods.transfer([
+            const batch = connect.methodsObject.transfer([
               {
                 from_: proxyAddress || address,
                 txs,
@@ -445,16 +426,16 @@ export const useUserStore = create<UserState>()(
           try {
             if (['HEN_SWAP_V2', 'TEIA_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methods.collect(parseInt(listing.swap_id))
+              batch = contract.methodsObject.collect(parseInt(listing.swap_id))
             } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methods.fulfill_ask(listing.ask_id)
+              batch = contract.methodsObject.fulfill_ask(listing.ask_id)
             } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE', 'OBJKT_ASK_V3_2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methods.fulfill_ask(listing.ask_id, 1, null, null, MichelsonMap.fromLiteral({}))
+              batch = contract.methodsObject.fulfill_ask([listing.ask_id, 1, null, null, MichelsonMap.fromLiteral({})])
             } else if (['VERSUM_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methods.collect_swap('1', listing.swap_id)
+              batch = contract.methodsObject.collect_swap(['1', listing.swap_id])
             }
             if (batch) {
               return await handleOp(batch, 'Collect', {
@@ -495,7 +476,7 @@ export const useUserStore = create<UserState>()(
             const preparedCancel = packData(data, teiaCancelSwapSchema)
             const { packed } = await Packer.packData(preparedCancel)
             const contract = await Tezos.wallet.at(proxyAddress)
-            const batch = contract.methods.execute(teiaCancelSwapLambda, packed)
+            const batch = contract.methodsObject.execute(teiaCancelSwapLambda, packed)
 
             return handleOp(batch, 'Cancel Swap', {
               amount: 0,
@@ -508,7 +489,7 @@ export const useUserStore = create<UserState>()(
             proxyAddress || contract_address
           )
 
-          const batch = contract.methods.cancel_swap(swap_id)
+          const batch = contract.methodsObject.cancel_swap(swap_id)
 
           return handleOp(batch, 'Cancel Swap', {
             amount: 0,
@@ -553,7 +534,7 @@ export const useUserStore = create<UserState>()(
             // cancel current swap
             {
               kind: OpKind.TRANSACTION,
-              ...current_contract.methods
+              ...current_contract.methodsObject
                 .cancel_swap(swap.swap_id)
                 .toTransferParams({
                   amount: 0,
@@ -595,17 +576,17 @@ export const useUserStore = create<UserState>()(
           const contract = await Tezos.wallet.at(
             proxyAddress || MARKETPLACE_CONTRACT_V1
           )
-          const mint_batch = contract.methods.mint_OBJKT(
-            tz,
-            amount,
-            `ipfs://${cid}`
+          const mint_batch = contract.methodsObject.mint_OBJKT({
+            address: tz,
+            amount: amount,
+            metadata: `ipfs://${cid}`
               .split('')
               .reduce(
                 (hex, c) =>
                   (hex += c.charCodeAt(0).toString(16).padStart(2, '0')),
                 ''
               ),
-            royalties * 10
+            royalties: royalties * 10}
           )
 
           return await handleOp(mint_batch, 'Mint', {

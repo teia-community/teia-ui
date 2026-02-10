@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { bytes2Char } from '@taquito/utils'
+import { bytesToString } from '@tezos-x/octez.js-utils'
 import {
   PATH,
   DAO_GOVERNANCE_CONTRACT,
@@ -102,7 +102,7 @@ export default function Proposal({ proposalId }) {
         >
           #{proposalId}
         </Link>
-        {bytes2Char(proposal.title)}
+        {bytesToString(proposal.title)}
       </h3>
 
       <div className={styles.proposal_information}>
@@ -160,7 +160,7 @@ export default function Proposal({ proposalId }) {
 
 function ProposalDescription({ proposal, aliases }) {
   // Try to extract an ipfs cid from the proposal description
-  const description = bytes2Char(proposal.description)
+  const description = bytesToString(proposal.description)
   const cid = description.split('//')[1]
 
   return (

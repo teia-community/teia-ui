@@ -3,7 +3,7 @@ import styles from '../../collab/index.module.scss'
 import { Button } from '@atoms/button'
 import { CloseIcon } from '@icons'
 import { KeyboardEvent, useState } from 'react'
-import { validateAddress } from '@taquito/utils'
+import { validateAddress } from '@tezos-x/octez.js-utils'
 import { useModalStore } from '@context/modalStore'
 import type { TxWithIndex } from '@types'
 

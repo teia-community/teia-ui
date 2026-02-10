@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@magenta/music": "^1.23.1",
-    "@taquito/beacon-wallet": "^22.0.0",
-    "@taquito/michelson-encoder": "^23.0.1",
-    "@taquito/taquito": "^23.0.1",
+    "@tezos-x/octez.js-dapp-wallet": "^0.9.0",
+    "@tezos-x/octez.js-michelson-encoder": "^0.9.0",
+    "@tezos-x/octez.js": "^0.9.0",
     "@tonejs/midi": "^2.0.28",
     "axios": "^0.27.2",
     "base-x": "^4.0.0",
@@ -73,7 +73,7 @@
     ]
   },
   "devDependencies": {
-    "@airgap/beacon-types": "^4.5.1",
+    "@tezos-x/octez.connect-types": "^0.9.0",
     "@babel/preset-react": "^7.18.6",
     "@google/model-viewer": "^3.0.1",
     "@hookform/devtools": "^4.3.0",

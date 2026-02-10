@@ -13,7 +13,7 @@ import {
 
 import { useModalStore } from './modalStore'
 import { Tezos, useUserStore } from './userStore'
-import { MichelsonMap } from '@taquito/michelson-encoder'
+import { MichelsonMap } from '@tezos-x/octez.js-michelson-encoder'
 import { packData, Packer } from '@utils/swap'
 interface CollabState {
   originatedContract?: string
@@ -90,7 +90,7 @@ export const useCollabStore = create<CollabState>()(
           step('Signing OBJKT', 'Waiting for wallet', true)
           const contract = await Tezos.wallet.at(SIGNING_CONTRACT)
 
-          const op = contract.methods.sign(objkt_id)
+          const op = contract.methodsObject.sign(objkt_id)
 
           return await handleOp(op, 'Signing OBJKT', {
             amount: 0,
@@ -120,7 +120,7 @@ export const useCollabStore = create<CollabState>()(
 
           // Blockchain ops
           const contract = await Tezos.wallet.at(PROXY_FACTORY_CONTRACT)
-          const op = contract.methods.create_proxy(packed, 'hic_proxy')
+          const op = contract.methodsObject.create_proxy(packed, 'hic_proxy')
 
           const opHash = await handleOp(op, 'Originate', { amount: 0 })
           set({

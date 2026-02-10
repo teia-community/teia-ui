@@ -91,32 +91,6 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
-      filterReplace(
-        [
-          {
-            filter: 'node_modules/@airgap/beacon-ui/dist/esm/utils/qr.js',
-            replace: {
-              from: "import * as qrcode from 'qrcode-generator';",
-              to: "import qrcode from 'qrcode-generator';",
-            },
-          },
-          {
-            filter: [
-              'node_modules/@airgap/beacon-dapp/dist/walletbeacon.dapp.min.js',
-              'node_modules/@airgap/beacon-ui/dist/cjs/ui/alert/alert-templates.js',
-              'node_modules/@airgap/beacon-ui/dist/esm/ui/alert/alert-templates.js',
-            ],
-            replace: {
-              from: /\\n@media\s*\(min-height:\s*700px\).*translateY\(-50%\);\\n\s*\}\\n\}/g,
-              to: '',
-            },
-          },
-        ],
-        {
-          apply: 'build',
-          enforce: 'post',
-        }
-      ),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
@@ -149,14 +123,13 @@ export default defineConfig(({ mode }) => {
         output: {
           // manualChunks: processChunks,
           manualChunks: {
-            three: ['three'],
             contracts: [
-              '@taquito/beacon-wallet',
-              '@taquito/michelson-encoder',
+              '@tezos-x/octez.js-dapp-wallet',
+              '@tezos-x/octez.js-michelson-encoder',
               '@stablelib/ed25519',
               '@stablelib/nacl',
               '@stablelib/x25519-session',
-              '@taquito/taquito',
+              '@tezos-x/octez.js',
             ],
             pdf: ['react-pdf', 'pdfjs-dist'],
             ui: [

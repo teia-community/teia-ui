@@ -4,8 +4,8 @@ import {
   createJSONStorage,
   subscribeWithSelector,
 } from 'zustand/middleware'
-import { Parser } from '@taquito/michel-codec'
-import { validateAddress, char2Bytes } from '@taquito/utils'
+import { Parser } from '@tezos-x/octez.js-michel-codec'
+import { validateAddress, stringToBytes } from '@tezos-x/octez.js-utils'
 import {
   DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CONTRACT,
@@ -112,7 +112,7 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
-            const batch = contract.methods.cancel_proposal(proposalId, returnEscrow)
+            const batch = contract.methodsObject.cancel_proposal(proposalId, returnEscrow)
             const opHash = await handleOp(batch, modalTitle)
             
             callback?.()
@@ -133,7 +133,7 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
-            const batch = contract.methods.evaluate_voting_result(proposalId)
+            const batch = contract.methodsObject.evaluate_voting_result(proposalId)
             const opHash = await handleOp(batch, modalTitle)
             
             callback?.()
@@ -154,7 +154,7 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
-            const batch = contract.methods.execute_proposal(proposalId)
+            const batch = contract.methodsObject.execute_proposal(proposalId)
             const opHash = await handleOp(batch, modalTitle)
             
             callback?.()
@@ -201,8 +201,8 @@ export const useDaoStore = create<DaoState>()(
               token_id: 0,
             }
             const parameters = {
-              title: char2Bytes(title),
-              description: char2Bytes(`ipfs://${descriptionIpfsPath}`),
+              title: stringToBytes(title),
+              description: stringToBytes(`ipfs://${descriptionIpfsPath}`),
               kind: kind,
             }
             let batch = Tezos.wallet.batch()
@@ -365,7 +365,7 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_TOKEN_CLAIM_CONTRACT)
 
-            const batch = contract.methods.claim(
+            const batch = contract.methodsObject.claim(
               userMerkleData.proof,
               userMerkleData.leafDataPacked
             )
