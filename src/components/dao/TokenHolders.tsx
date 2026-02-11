@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDaoTokenHolders } from '@data/swr'
-import { DAO_TOKEN_CONTRACT, TZKT_API_URL } from '@constants'
+import { DAO_TOKEN_CONTRACT } from '@constants'
 import styles from './TokenHolders.module.css'
 
 interface TokenHoldersProps {
@@ -105,7 +105,7 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
                 </div>
                 <div className={styles.transfers}>
                   <a
-                    href={`${TZKT_API_URL}/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
+                    href={`${import.meta.env.VITE_TZKT_API}/v1/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
                     target="_blank"
                     rel="noopener noreferrer"
                     title="View token transfer transactions (API data)"

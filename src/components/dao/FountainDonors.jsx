@@ -1,10 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useFountainDonations } from '@data/swr'
-import {
-  TEIA_FOUNTAIN_CONTRACT,
-  DONATION_EXCLUDED_ADDRESSES,
-  TZKT_API_URL,
-} from '@constants'
+import { TEIA_FOUNTAIN_CONTRACT, DONATION_EXCLUDED_ADDRESSES } from '@constants'
 import styles from './TopDonors.module.scss'
 
 export function FountainDonors({
@@ -109,7 +105,11 @@ export function FountainDonors({
               </div>
               <div className={styles.address}>
                 <a
-                  href={`${TZKT_API_URL}/operations/transactions?target=${TEIA_FOUNTAIN_CONTRACT}&sender=${donor.address}`}
+                  href={`${
+                    import.meta.env.VITE_TZKT_API
+                  }/v1/operations/transactions?target=${TEIA_FOUNTAIN_CONTRACT}&sender=${
+                    donor.address
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="View donation transactions (API data)"

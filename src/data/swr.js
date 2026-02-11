@@ -7,7 +7,6 @@ import {
   COPYRIGHT_CONTRACT,
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
-  TEIA_DONATION_API_URL,
 } from '@constants'
 import {
   getTzktData,
@@ -505,7 +504,9 @@ export function useTopDonors(excludeAddresses = []) {
     [`/top-donators`, excludeAddresses.join(',')],
     async () => {
       // Fetch all donors
-      const url = `${TEIA_DONATION_API_URL}/top-donators?limit=1000`
+      const url = `${
+        import.meta.env.VITE_TEIA_DONATION_API
+      }/top-donators?limit=1000`
 
       try {
         const res = await fetch(url)

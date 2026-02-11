@@ -1,10 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useTopDonors } from '@data/swr'
-import {
-  DONATION_EXCLUDED_ADDRESSES,
-  TZKT_API_URL,
-  DAO_TREASURY_CONTRACT,
-} from '@constants'
+import { DONATION_EXCLUDED_ADDRESSES, DAO_TREASURY_CONTRACT } from '@constants'
 import styles from './TopDonors.module.scss'
 
 export function TopDonors({
@@ -69,7 +65,11 @@ export function TopDonors({
               </div>
               <div className={styles.address}>
                 <a
-                  href={`${TZKT_API_URL}/operations/transactions?target=${DAO_TREASURY_CONTRACT}&sender=${donor.address}`}
+                  href={`${
+                    import.meta.env.VITE_TZKT_API
+                  }/v1/operations/transactions?target=${DAO_TREASURY_CONTRACT}&sender=${
+                    donor.address
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="View donation transactions (API data)"

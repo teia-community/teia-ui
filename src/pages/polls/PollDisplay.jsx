@@ -5,11 +5,6 @@ import { Page } from '@atoms/layout'
 import { RootErrorBoundary } from '@atoms/error'
 import { PaginationButtons } from '@atoms/button'
 import { useStorage, usePolls } from '@data/swr'
-import {
-  DiscourseEmbed,
-  extractDiscourseUrl,
-  getPollEmbedUrl,
-} from '@components/discourse'
 import LoadingPollsMessage from './LoadingPollsMessage'
 import Poll from './Poll'
 import styles from '@style'
@@ -32,11 +27,7 @@ export default function PollDisplay() {
     )
   }
 
-  // Get the embed URL: prefer Discourse URL from description, fallback to poll page URL // Need to be tested and clarified
-  const poll = polls?.[id]
-  const description = poll?.description ? bytes2Char(poll.description) : ''
-  const discourseUrl = extractDiscourseUrl(description)
-  const embedUrl = discourseUrl || getPollEmbedUrl(id)
+  // We are replaying our discourse system.
 
   return (
     <Page title={`Teia poll #${id}`}>
@@ -48,11 +39,6 @@ export default function PollDisplay() {
           <>
             <section className={styles.section}>
               <Poll pollId={id} />
-            </section>
-
-            <section className={styles.section}>
-              <h2 className={styles.section_title}>Discussion</h2>
-              <DiscourseEmbed topicUrl={embedUrl} />
             </section>
 
             <PaginationButtons
