@@ -535,6 +535,42 @@ export function useTopDonors(excludeAddresses = []) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
+const BLOG_POSTS_QUERY = gql`
+  ${BaseTokenFieldsFragment}
+  query BlogPosts($limit: Int!) {
+    tokens(
+      where: {
+        _or: [
+          { mime_type: { _eq: "text/plain" } }
+          { mime_type: { _eq: "text/markdown" } }
+        ]
+        editions: { _gt: 0 }
+        metadata_status: { _eq: "processed" }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+      }
+      order_by: { minted_at: desc }
+      limit: $limit
+    ) {
+      ...baseTokenFields
+    }
+  }
+`
+
+export function useBlogPosts(limit = 100) {
+  return useSWR(
+    ['blog-community'],
+    () =>
+      request(import.meta.env.VITE_TEIA_GRAPHQL_API, BLOG_POSTS_QUERY, {
+        limit,
+      }),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      use: [laggy],
+    }
+  )
+}
+
 const BLOG_POSTS_BY_ARTIST_QUERY = gql`
   ${BaseTokenFieldsFragment}
   query BlogPostsByArtist($address: String!) {
