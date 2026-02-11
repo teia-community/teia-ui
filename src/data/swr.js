@@ -588,6 +588,13 @@ const BLOG_POSTS_BY_ARTIST_QUERY = gql`
       order_by: { minted_at: desc }
     ) {
       ...baseTokenFields
+      listings(where: { status: { _eq: "active" } }, order_by: { price: asc }) {
+        seller_address
+      }
+      holdings(where: { amount: { _gt: "0" } }) {
+        holder_address
+        amount
+      }
     }
   }
 `

@@ -74,6 +74,19 @@
   }
 }
 
+// Token info row (editions, wallet, sale status)
+.token_info {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.on_sale {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
 // Burn action styles
 .actions {
   display: flex;
@@ -83,7 +96,7 @@
 .burn_btn {
   background: transparent;
   border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  color: var(--secondary-color);
   padding: 4px 16px;
   font-size: 13px;
   cursor: pointer;
@@ -100,21 +113,55 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  margin-left: auto;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
+  font-size: 13px;
+  width: fit-content;
 }
 
-.confirm_text {
+.warning {
+  width: 100%;
   font-size: 13px;
+  color: #e74c3c;
+  line-height: 1.4;
+}
+
+.burn_label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--text-color);
-  flex: 1;
+}
+
+.burn_input {
+  width: 48px;
+  padding: 2px 4px;
+  font-size: 13px;
+  font-family: var(--text-font);
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.burn_max {
+  color: var(--secondary-color);
 }
 
 .confirm_actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .confirm_yes {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PATH } from '@constants'
+import { PATH, MARKETPLACE_CONTRACT_TEIA } from '@constants'
 import { HashToURL } from '@utils'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
@@ -26,7 +26,9 @@ function getExcerpt(text, maxLength = 200) {
 export function BlogPostCard({ nft, showBurn = false }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [isBurning, setIsBurning] = useState(false)
+  const [burnAmount, setBurnAmount] = useState(1)
   const burn = useUserStore((st) => st.burn)
+  const address = useUserStore((st) => st.address)
 
   const {
     token_id,
@@ -37,13 +39,41 @@ export function BlogPostCard({ nft, showBurn = false }) {
     artist_profile,
     artist_address,
     editions,
+    listings,
+    holdings,
   } = nft
   const authorName = artist_profile?.name || artist_address?.slice(0, 8) + '...'
   const coverUrl = display_uri ? HashToURL(display_uri) : null
 
+  // Get editions hold
+  const userHolding = holdings?.find((h) => h.holder_address === address)
+  const userAmount = userHolding ? parseInt(userHolding.amount) : 0
+
+  // Active Teia listings
+  const teiaListings = listings?.filter(
+    (l) =>
+      l.status === 'active' &&
+      l.contract_address === MARKETPLACE_CONTRACT_TEIA &&
+      l.seller_address === address
+  )
+  const teiaListedAmount =
+    teiaListings?.reduce((sum, l) => sum + (parseInt(l.amount_left) || 0), 0) ||
+    0
+
+  // Any active listings
+  const allUserListings = listings?.filter(
+    (l) => l.status === 'active' && l.seller_address === address
+  )
+  const totalListedAmount =
+    allUserListings?.reduce(
+      (sum, l) => sum + (parseInt(l.amount_left) || 0),
+      0
+    ) || 0
+
   const handleBurnClick = (e) => {
     e.preventDefault()
     e.stopPropagation()
+    setBurnAmount(userAmount)
     setShowConfirm(true)
   }
 
@@ -53,10 +83,15 @@ export function BlogPostCard({ nft, showBurn = false }) {
     setIsBurning(true)
 
     try {
-      await burn(token_id.toString(), editions || 1)
+      await burn(token_id.toString(), burnAmount)
       useModalStore
         .getState()
-        .show('Burned', `Post #${token_id} has been burned.`)
+        .show(
+          'Burned',
+          `Burned ${burnAmount} edition${
+            burnAmount !== 1 ? 's' : ''
+          } of post #${token_id}.`
+        )
       setShowConfirm(false)
     } catch (error) {
       console.error('Burn error:', error)
@@ -97,12 +132,25 @@ export function BlogPostCard({ nft, showBurn = false }) {
           </div>
         </Link>
 
-        {showBurn && !showConfirm && (
+        {showBurn && (
+          <div className={styles.token_info}>
+            <span>
+              {editions} minted / {userAmount} in your wallet
+            </span>
+            {totalListedAmount > 0 && (
+              <span className={styles.on_sale}>
+                {totalListedAmount} on sale
+              </span>
+            )}
+          </div>
+        )}
+
+        {showBurn && !showConfirm && userAmount > 0 && (
           <div className={styles.actions}>
             <button
               className={styles.burn_btn}
               onClick={handleBurnClick}
-              title="Burn this post"
+              title="Burn editions of this post"
             >
               Burn
             </button>
@@ -111,16 +159,41 @@ export function BlogPostCard({ nft, showBurn = false }) {
 
         {showBurn && showConfirm && (
           <div className={styles.confirm}>
-            <span className={styles.confirm_text}>
-              Burn this post permanently?
-            </span>
+            {teiaListedAmount > 0 && (
+              <div className={styles.warning}>
+                Note: {teiaListedAmount} edition
+                {teiaListedAmount !== 1 ? 's are' : ' is'} currently listed on
+                Teia. Burning does not cancel active listings.
+              </div>
+            )}
+            <label className={styles.burn_label}>
+              Burn
+              <input
+                type="number"
+                min={1}
+                max={userAmount}
+                value={burnAmount}
+                onChange={(e) => {
+                  const val = Math.max(
+                    1,
+                    Math.min(userAmount, parseInt(e.target.value) || 1)
+                  )
+                  setBurnAmount(val)
+                }}
+                className={styles.burn_input}
+                disabled={isBurning}
+              />
+              <span className={styles.burn_max}>/ {userAmount}</span>
+            </label>
             <div className={styles.confirm_actions}>
               <button
                 className={styles.confirm_yes}
                 onClick={handleConfirmBurn}
                 disabled={isBurning}
               >
-                {isBurning ? 'Burning...' : 'Yes, burn it'}
+                {isBurning
+                  ? 'Burning...'
+                  : `Burn ${burnAmount} edition${burnAmount !== 1 ? 's' : ''}`}
               </button>
               <button
                 className={styles.confirm_no}
