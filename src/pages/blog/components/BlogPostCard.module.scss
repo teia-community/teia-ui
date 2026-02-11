@@ -1,6 +1,6 @@
 .card {
   border-bottom: 1px solid var(--border-color);
-  padding: var(--spacing) 0;
+  padding: 20px 0;
 
   &:last-child {
     border-bottom: none;
@@ -10,36 +10,57 @@
 .card_content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
+  gap: 12px;
 }
 
 .link {
   text-decoration: none;
   color: inherit;
-  display: block;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 
   &:hover .title {
-    color: var(--primary);
+    color: var(--text-color);
   }
 }
 
+.cover {
+  flex-shrink: 0;
+  width: 160px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-color);
+  }
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
 .title {
-  font-size: var(--font-size-big);
-  margin: 0 0 var(--spacing-half) 0;
+  font-size: 20px;
+  margin: 0 0 8px 0;
   transition: color 0.2s;
 }
 
 .excerpt {
-  color: var(--text-secondary);
-  margin: 0 0 var(--spacing-half) 0;
+  color: var(--secondary-color);
+  margin: 0 0 8px 0;
   line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .meta {
   display: flex;
-  gap: var(--spacing);
-  font-size: var(--font-size-small);
-  color: var(--text-tertiary);
+  gap: 16px;
+  font-size: 13px;
+  color: var(--secondary-color);
 }
 
 .author {
@@ -49,7 +70,7 @@
 .date {
   &::before {
     content: '·';
-    margin-right: var(--spacing-half);
+    margin-right: 8px;
   }
 }
 
@@ -63,14 +84,14 @@
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: var(--spacing-quarter) var(--spacing);
-  font-size: var(--font-size-small);
+  padding: 4px 16px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: var(--error-color, #e74c3c);
-    color: var(--error-color, #e74c3c);
+    border-color: #e74c3c;
+    color: #e74c3c;
   }
 }
 
@@ -79,29 +100,29 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing);
-  padding: var(--spacing-half);
-  background: var(--background-secondary, rgba(0, 0, 0, 0.05));
+  gap: 16px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
 }
 
 .confirm_text {
-  font-size: var(--font-size-small);
+  font-size: 13px;
   color: var(--text-color);
   flex: 1;
 }
 
 .confirm_actions {
   display: flex;
-  gap: var(--spacing-half);
+  gap: 8px;
 }
 
 .confirm_yes {
-  background: var(--error-color, #e74c3c);
+  background: #e74c3c;
   border: none;
   color: white;
-  padding: var(--spacing-quarter) var(--spacing);
-  font-size: var(--font-size-small);
+  padding: 4px 16px;
+  font-size: 13px;
   cursor: pointer;
   transition: opacity 0.2s;
 
@@ -119,8 +140,8 @@
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-color);
-  padding: var(--spacing-quarter) var(--spacing);
-  font-size: var(--font-size-small);
+  padding: 4px 16px;
+  font-size: 13px;
   cursor: pointer;
   transition: border-color 0.2s;
 

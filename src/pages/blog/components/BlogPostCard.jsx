@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PATH } from '@constants'
+import { HashToURL } from '@utils'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import styles from './BlogPostCard.module.scss'
@@ -31,12 +32,14 @@ export function BlogPostCard({ nft, showBurn = false }) {
     token_id,
     name,
     description,
+    display_uri,
     minted_at,
     artist_profile,
     artist_address,
     editions,
   } = nft
   const authorName = artist_profile?.name || artist_address?.slice(0, 8) + '...'
+  const coverUrl = display_uri ? HashToURL(display_uri) : null
 
   const handleBurnClick = (e) => {
     e.preventDefault()
@@ -75,11 +78,22 @@ export function BlogPostCard({ nft, showBurn = false }) {
     <article className={styles.card}>
       <div className={styles.card_content}>
         <Link to={`${PATH.OBJKT}/${token_id}`} className={styles.link}>
-          <h2 className={styles.title}>{name || `Untitled #${token_id}`}</h2>
-          <p className={styles.excerpt}>{getExcerpt(description)}</p>
-          <div className={styles.meta}>
-            <span className={styles.author}>{authorName}</span>
-            <span className={styles.date}>{formatDate(minted_at)}</span>
+          {coverUrl && (
+            <div className={styles.cover}>
+              <img
+                src={coverUrl}
+                alt={name || `Post #${token_id}`}
+                loading="lazy"
+              />
+            </div>
+          )}
+          <div className={styles.text}>
+            <h2 className={styles.title}>{name || `Untitled #${token_id}`}</h2>
+            <p className={styles.excerpt}>{getExcerpt(description)}</p>
+            <div className={styles.meta}>
+              <span className={styles.author}>{authorName}</span>
+              <span className={styles.date}>{formatDate(minted_at)}</span>
+            </div>
           </div>
         </Link>
 

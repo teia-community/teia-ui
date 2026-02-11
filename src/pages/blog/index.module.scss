@@ -2,31 +2,31 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--spacing);
+  padding: 0 16px;
   box-sizing: border-box;
 }
 
 .headline {
-  font-size: var(--font-size-bigger);
-  margin-bottom: var(--spacing);
+  font-size: 24px;
+  margin-bottom: 16px;
 }
 
 // Tab content area - fix content to page width
 .tab_content {
   min-height: 60vh;
-  padding: var(--spacing) 0;
+  padding: 16px 0;
 }
 
 .posts_list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
+  gap: 0;
 }
 
 .empty {
   text-align: center;
-  padding: var(--spacing-double);
-  color: var(--text-secondary);
+  padding: 32px;
+  color: var(--secondary-color);
 
   a {
     color: var(--text-color);
