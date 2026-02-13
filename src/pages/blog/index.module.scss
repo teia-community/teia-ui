@@ -171,4 +171,10 @@
     background-color: var(--background-color) !important;
     font-family: 'Source Sans Pro', sans-serif !important;
   }
+
+  // Anchor the token embed dropdown to the right so it doesn't overflow
+  :global(.w-md-editor-toolbar-child) {
+    right: 0;
+    left: auto !important;
+  }
 }
