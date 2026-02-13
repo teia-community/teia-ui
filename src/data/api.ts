@@ -308,6 +308,13 @@ export async function searchTokensForEmbed(query: string) {
   const trimmed = query.trim()
   if (!trimmed) return { tokens: [], artists: [] }
 
+  // Teia URL lookup, extract token ID from teia URLs
+  const urlMatch = trimmed.match(/(?:teia\.art|hicetnunc\.art)\/objkt\/(\d+)/)
+  if (urlMatch) {
+    const token = await fetchObjktDetails(urlMatch[1])
+    return { tokens: token ? [token] : [], artists: [] }
+  }
+
   // Token ID lookup
   if (/^\d+$/.test(trimmed)) {
     const token = await fetchObjktDetails(trimmed)
