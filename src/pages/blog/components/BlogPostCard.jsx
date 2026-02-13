@@ -112,25 +112,38 @@ export function BlogPostCard({ nft, showBurn = false }) {
   return (
     <article className={styles.card}>
       <div className={styles.card_content}>
-        <Link to={`${PATH.OBJKT}/${token_id}`} className={styles.link}>
+        <div className={styles.link}>
           {coverUrl && (
-            <div className={styles.cover}>
+            <Link to={`${PATH.OBJKT}/${token_id}`} className={styles.cover}>
               <img
                 src={coverUrl}
                 alt={name || `Post #${token_id}`}
                 loading="lazy"
               />
-            </div>
+            </Link>
           )}
           <div className={styles.text}>
-            <h2 className={styles.title}>{name || `Untitled #${token_id}`}</h2>
-            <p className={styles.excerpt}>{getExcerpt(description)}</p>
+            <Link to={`${PATH.OBJKT}/${token_id}`} className={styles.post_link}>
+              <h2 className={styles.title}>
+                {name || `Untitled #${token_id}`}
+              </h2>
+              <p className={styles.excerpt}>{getExcerpt(description)}</p>
+            </Link>
             <div className={styles.meta}>
-              <span className={styles.author}>{authorName}</span>
+              <Link
+                to={
+                  artist_profile?.name
+                    ? `/${artist_profile.name}`
+                    : `${PATH.ISSUER}/${artist_address}`
+                }
+                className={styles.author_link}
+              >
+                {authorName}
+              </Link>
               <span className={styles.date}>{formatDate(minted_at)}</span>
             </div>
           </div>
-        </Link>
+        </div>
 
         {showBurn && (
           <div className={styles.token_info}>

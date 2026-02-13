@@ -14,11 +14,15 @@
 }
 
 .link {
-  text-decoration: none;
-  color: inherit;
   display: flex;
   gap: 20px;
   align-items: flex-start;
+}
+
+.post_link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 
   &:hover .title {
     color: var(--text-color);
@@ -28,6 +32,7 @@
 .cover {
   flex-shrink: 0;
   width: 160px;
+  text-decoration: none;
 
   img {
     display: block;
@@ -63,8 +68,15 @@
   color: var(--secondary-color);
 }
 
-.author {
+.author_link {
   font-weight: 500;
+  color: var(--secondary-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
 }
 
 .date {
