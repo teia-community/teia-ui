@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
@@ -17,9 +17,25 @@ import {
   generateTypedArtCoverImage,
   generateCoverAndThumbnail,
 } from '@utils/mint'
+import { tokenSearchCommand } from './components/TokenSearchCommand'
 import styles from './index.module.scss'
 
 const MDEditor = lazy(() => import('@uiw/react-md-editor'))
+
+/** Parse teia-token HTML comments from markdown content */
+function parseEmbeddedTokens(content) {
+  const regex = /<!-- teia-token:(\{.*?\}) -->/g
+  const tokens = []
+  let match
+  while ((match = regex.exec(content)) !== null) {
+    try {
+      tokens.push(JSON.parse(match[1]))
+    } catch {
+      // skip malformed comments
+    }
+  }
+  return tokens
+}
 
 const DRAFT_KEY = 'teia-blog-draft'
 
@@ -48,6 +64,9 @@ export default function NewPost() {
   const [license, setLicense] = useState(LICENSE_TYPES_OPTIONS[0])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const draftSavedRef = useRef(null)
+
+  // Parse embedded tokens from markdown content
+  const embeddedTokens = useMemo(() => parseEmbeddedTokens(content), [content])
 
   // Save draft on changes (debounced) — uses ref to avoid re-renders
   useEffect(() => {
@@ -149,6 +168,19 @@ export default function NewPost() {
 
       const minterAddress = proxyAddress || address
 
+      // Build embedded tokens metadata (if any tokens were embedded)
+      const teiaEmbeddedTokens =
+        embeddedTokens.length > 0
+          ? embeddedTokens.map((t) => ({
+              token_id: t.token_id,
+              artist_address: t.artist_address,
+              royalties: t.royalties || {
+                decimals: 4,
+                shares: { [t.artist_address]: 1500 },
+              },
+            }))
+          : undefined
+
       // Upload to IPFS
       const cid = await prepareFile({
         name: title || 'Untitled Post',
@@ -170,6 +202,7 @@ export default function NewPost() {
             fileName: file.name,
           },
         ],
+        teiaEmbeddedTokens,
       })
 
       if (!cid) {
@@ -181,7 +214,10 @@ export default function NewPost() {
       // Mint
       await mint(minterAddress, editions, cid, royalties)
 
-      show('Success!', 'Blog post has been minted successfully.')
+      show(
+        'Success!',
+        'Blog post has been minted successfully. It may take a few minutes for the indexer to update before your post appears.'
+      )
 
       // Clear draft from localStorage
       localStorage.removeItem(DRAFT_KEY)
@@ -245,6 +281,7 @@ export default function NewPost() {
               textareaProps={{
                 placeholder: 'Write your blog post in Markdown...',
               }}
+              extraCommands={[tokenSearchCommand]}
             />
           </Suspense>
         </div>
@@ -255,6 +292,18 @@ export default function NewPost() {
         >
           Draft saved
         </small>
+        {embeddedTokens.length > 0 && (
+          <small className={styles.hint}>
+            {embeddedTokens.length} embedded token
+            {embeddedTokens.length !== 1 ? 's' : ''}
+            {' \u2014 '}
+            {[
+              ...new Set(
+                embeddedTokens.map((t) => t.artist_name || t.artist_address)
+              ),
+            ].join(', ')}
+          </small>
+        )}
       </div>
 
       <div className={styles.field}>
