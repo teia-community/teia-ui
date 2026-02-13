@@ -301,6 +301,76 @@ export async function getTzktData(
 }
 
 /**
+ * Search tokens for embedding in blog posts.
+ * Auto-detects query type: token ID, tezos address, or text search.
+ */
+export async function searchTokensForEmbed(query: string) {
+  const trimmed = query.trim()
+  if (!trimmed) return { tokens: [], artists: [] }
+
+  // Token ID lookup
+  if (/^\d+$/.test(trimmed)) {
+    const token = await fetchObjktDetails(trimmed)
+    return { tokens: token ? [token] : [], artists: [] }
+  }
+
+  // Address lookup
+  if (/^(tz[123]|KT1)/.test(trimmed)) {
+    const { data } = await fetchGraphQL(
+      `${BaseTokenFieldsFragment}
+      query SearchByAddress($address: String!) {
+        tokens(
+          where: {
+            artist_address: { _eq: $address },
+            fa2_address: { _eq: "${HEN_CONTRACT_FA2}" },
+            editions: { _gt: "0" }
+          },
+          order_by: { minted_at: desc },
+          limit: 20
+        ) {
+          ...baseTokenFields
+        }
+      }`,
+      'SearchByAddress',
+      { address: trimmed }
+    )
+    return { tokens: data?.tokens || [], artists: [] }
+  }
+
+  // Text search: tokens by name + users by name
+  const { data } = await fetchGraphQL(
+    `${BaseTokenFieldsFragment}
+    query SearchTokensAndArtists($query: String!) {
+      tokens(
+        where: {
+          name: { _ilike: $query },
+          fa2_address: { _eq: "${HEN_CONTRACT_FA2}" },
+          editions: { _gt: "0" }
+        },
+        order_by: { minted_at: desc },
+        limit: 10
+      ) {
+        ...baseTokenFields
+      }
+      teia_users(
+        where: { name: { _ilike: $query } },
+        limit: 5
+      ) {
+        user_address
+        name
+      }
+    }`,
+    'SearchTokensAndArtists',
+    { query: `%${trimmed}%` }
+  )
+
+  return {
+    tokens: data?.tokens || [],
+    artists: data?.teia_users || [],
+  }
+}
+
+/**
  * Get user claimed tokens
  */
 export async function getClaimedDaoTokens(walletAddr: string) {
