@@ -30,10 +30,16 @@ export default function OfficialPosts() {
   }
 
   return (
-    <div className={styles.posts_list}>
-      {posts.map((nft) => (
-        <BlogPostCard key={nft.token_id} nft={nft} />
-      ))}
-    </div>
+    <>
+      <p className={styles.description}>
+        Official updates from TEIA's core members on community events and
+        developments.
+      </p>
+      <div className={styles.posts_list}>
+        {posts.map((nft) => (
+          <BlogPostCard key={nft.token_id} nft={nft} />
+        ))}
+      </div>
+    </>
   )
 }

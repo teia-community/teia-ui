@@ -17,6 +17,13 @@
   padding: 16px 0;
 }
 
+.description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
 .posts_list {
   display: flex;
   flex-direction: column;
