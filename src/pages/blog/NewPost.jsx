@@ -260,7 +260,7 @@ export default function NewPost() {
       {isMultisig && (
         <div className={styles.field}>
           <Checkbox
-            label="Official Teia Blog Post"
+            label="Bulletin Teia Blog Post"
             checked={isOfficialPost}
             onCheck={setIsOfficialPost}
           />
