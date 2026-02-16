@@ -6,7 +6,7 @@ import styles from '@style'
 
 const TABS = [
   { title: 'Community', to: '' },
-  { title: 'Bulletin', to: 'official' },
+  { title: 'Bulletin', to: 'bulletin' },
   { title: 'Your Posts', to: 'yourposts', private: true },
   { title: 'New Post', to: 'newpost', private: true },
 ]

@@ -174,7 +174,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="blog/*" element={<Blog />}>
         <Route index element={<Community />} />
-        <Route path="official" element={<OfficialPosts />} />
+        <Route path="bulletin" element={<OfficialPosts />} />
         <Route path="yourposts" element={<YourPosts />} />
         <Route path="newpost" element={<NewPost />} />
       </Route>
