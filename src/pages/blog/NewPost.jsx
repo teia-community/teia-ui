@@ -4,13 +4,15 @@ import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { Button } from '@atoms/button'
-import { Input } from '@atoms/input'
+import { Checkbox, Input } from '@atoms/input'
 import {
   LICENSE_TYPES_OPTIONS,
   MIN_ROYALTIES,
   MAX_ROYALTIES,
   MAX_EDITIONS,
+  TEIA_MULTISIG_BLOG_TAG,
 } from '@constants'
+import { useMultisigAddresses } from '@data/swr'
 import { prepareFile } from '@data/ipfs'
 import {
   convertFileToFileForm,
@@ -62,8 +64,13 @@ export default function NewPost() {
   const [editions, setEditions] = useState(1)
   const [royalties, setRoyalties] = useState(MIN_ROYALTIES)
   const [license, setLicense] = useState(LICENSE_TYPES_OPTIONS[0])
+  const [isOfficialPost, setIsOfficialPost] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const draftSavedRef = useRef(null)
+
+  const minterAddress = proxyAddress || address
+  const multisigAddresses = useMultisigAddresses()
+  const isMultisig = multisigAddresses.includes(minterAddress)
 
   // Parse embedded tokens from markdown content
   const embeddedTokens = useMemo(() => parseEmbeddedTokens(content), [content])
@@ -161,12 +168,13 @@ export default function NewPost() {
       if (!tagList.includes('blog')) {
         tagList.push('blog')
       }
+      if (isOfficialPost && !tagList.includes(TEIA_MULTISIG_BLOG_TAG)) {
+        tagList.push(TEIA_MULTISIG_BLOG_TAG)
+      }
       const finalTags = tagList.join(',')
 
       // Show the first 500 chars of content
       const description = content.slice(0, 500).replace(/\n+/g, ' ').trim()
-
-      const minterAddress = proxyAddress || address
 
       // Build embedded tokens metadata (if any tokens were embedded)
       const teiaEmbeddedTokens =
@@ -249,6 +257,16 @@ export default function NewPost() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.newpost_form}>
+      {isMultisig && (
+        <div className={styles.field}>
+          <Checkbox
+            label="Official Teia Blog Post"
+            checked={isOfficialPost}
+            onCheck={setIsOfficialPost}
+          />
+        </div>
+      )}
+
       <div className={styles.field}>
         <label htmlFor="title">Title</label>
         <Input
