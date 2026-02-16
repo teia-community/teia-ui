@@ -10,6 +10,7 @@ import {
 } from '@pages/collaborate'
 import Blog from '@pages/blog'
 import Community from '@pages/blog/Community'
+import OfficialPosts from '@pages/blog/OfficialPosts'
 import YourPosts from '@pages/blog/YourPosts'
 import NewPost from '@pages/blog/NewPost'
 import { Settings } from '@pages/config/Settings'
@@ -173,6 +174,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="blog/*" element={<Blog />}>
         <Route index element={<Community />} />
+        <Route path="official" element={<OfficialPosts />} />
         <Route path="yourposts" element={<YourPosts />} />
         <Route path="newpost" element={<NewPost />} />
       </Route>
