@@ -80,9 +80,14 @@ function TokenSearchDropdown({ close, textApi }) {
         ? `[![${tokenName} by ${artistName}](${previewUrl})](https://teia.art/objkt/${token.token_id})`
         : `[${tokenName}](https://teia.art/objkt/${token.token_id})`
 
+      const audioLine =
+        token.mime_type?.startsWith('audio/') && token.artifact_uri
+          ? `\n![Audio](${HashToURL(token.artifact_uri)})`
+          : ''
+
       const attribution = `*[${tokenName}](https://teia.art/objkt/${token.token_id}) by [${artistName}](https://teia.art/${artistAddr})*`
 
-      const markdown = `\n${comment}\n${imageLink}\n${attribution}\n`
+      const markdown = `\n${comment}\n${imageLink}${audioLine}\n${attribution}\n`
 
       textApi.replaceSelection(markdown)
       close()
