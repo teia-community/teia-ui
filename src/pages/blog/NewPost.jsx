@@ -18,6 +18,9 @@ import {
   convertFileToFileForm,
   generateTypedArtCoverImage,
   generateCoverAndThumbnail,
+  getImageDimensions,
+  removeExtension,
+  extensionFromMimetype,
 } from '@utils/mint'
 import { tokenSearchCommand } from './components/TokenSearchCommand'
 import styles from './index.module.scss'
@@ -37,6 +40,25 @@ function parseEmbeddedTokens(content) {
     }
   }
   return tokens
+}
+
+// Markdown Audio Preview - Might be moved to a shared function later
+
+const AUDIO_EXTENSIONS = /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)(\?|$)/i
+
+const previewComponents = {
+  img: ({ alt, src, ...props }) => {
+    if (alt === 'Audio' || AUDIO_EXTENSIONS.test(src)) {
+      return (
+        <audio
+          controls
+          src={src}
+          style={{ width: '100%', display: 'block', minHeight: '54px' }}
+        />
+      )
+    }
+    return <img alt={alt} src={src} {...props} />
+  },
 }
 
 const DRAFT_KEY = 'teia-blog-draft'
@@ -152,12 +174,43 @@ export default function NewPost() {
 
       step('Preparing Blog Post', 'Generating cover image...')
 
+      // We may process this via mintStore in the future
+
       // Generate cover image from content
       const coverFile = await generateTypedArtCoverImage(content, false)
       const cover = await convertFileToFileForm(coverFile)
 
       // Generate thumbnail
       const { thumbnail } = await generateCoverAndThumbnail(cover)
+
+      // Set cover format
+      const cleanName = `${removeExtension(
+        artifact.file.name
+      )}.${extensionFromMimetype(cover.mimeType)}`
+      const coverDims = await getImageDimensions(cover)
+      cover.format = {
+        mimeType: cover.mimeType,
+        fileSize: cover.buffer.byteLength,
+        fileName: cleanName,
+        dimensions: {
+          value: `${coverDims.imageWidth}x${coverDims.imageHeight}`,
+          unit: 'px',
+        },
+      }
+
+      // Set thumbnail format
+      if (thumbnail) {
+        const thumbDims = await getImageDimensions(thumbnail)
+        thumbnail.format = {
+          mimeType: thumbnail.mimeType,
+          fileSize: thumbnail.buffer.byteLength,
+          fileName: cleanName,
+          dimensions: {
+            value: `${thumbDims.imageWidth}x${thumbDims.imageHeight}`,
+            unit: 'px',
+          },
+        }
+      }
 
       step('Preparing Blog Post', 'Uploading to IPFS...')
 
@@ -173,8 +226,8 @@ export default function NewPost() {
       }
       const finalTags = tagList.join(',')
 
-      // Show the first 500 chars of content
-      const description = content.slice(0, 500).replace(/\n+/g, ' ').trim()
+      //const description = content.slice(0, 55).replace(/\n+/g, ' ').trim()
+      const description = ''
 
       // Build embedded tokens metadata (if any tokens were embedded)
       const teiaEmbeddedTokens =
@@ -299,6 +352,7 @@ export default function NewPost() {
               textareaProps={{
                 placeholder: 'Write your blog post in Markdown...',
               }}
+              previewOptions={{ components: previewComponents }}
               extraCommands={[tokenSearchCommand]}
             />
           </Suspense>
