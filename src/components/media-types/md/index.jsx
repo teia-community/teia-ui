@@ -1,7 +1,6 @@
 import React from 'react'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@components/markdown'
 import { Container } from '@atoms/layout'
-import { Button } from '@atoms/button'
 import styles from '@style'
 
 import axios from 'axios'
@@ -9,14 +8,7 @@ import axios from 'axios'
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
-export const MD = ({
-  displayView,
-  displayUri,
-  artifactUri,
-  previewUri,
-  preview,
-  objktID,
-}) => {
+export const MD = ({ displayView, artifactUri, previewUri, preview }) => {
   const [content, setContent] = React.useState('')
 
   React.useEffect(() => {
@@ -38,16 +30,11 @@ export const MD = ({
         console.error('previewUri is not a base64 encoded markdown', previewUri)
       }
     }
-  }, [artifactUri, previewUri, displayView, displayUri, preview])
+  }, [artifactUri, previewUri, preview])
 
   return displayView ? (
     <div className={styles.container}>
-      <div className={styles.preview}>
-        <img src={displayUri} alt={`cover for markdown object ${objktID}`} />
-        <div className={styles.button}>
-          <Button alt="View Markdown Token" />
-        </div>
-      </div>
+      <Markdown>{content}</Markdown>
     </div>
   ) : (
     <div>
