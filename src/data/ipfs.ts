@@ -142,6 +142,17 @@ const isDoubleMint = async (uri: string) => {
   return false
 }
 
+interface EmbeddedTokenRoyalties {
+  decimals: number
+  shares: { [address: string]: number }
+}
+
+interface EmbeddedToken {
+  token_id: string
+  artist_address: string
+  royalties: EmbeddedTokenRoyalties
+}
+
 interface PrepareProps {
   name: string
   description: string
@@ -156,6 +167,7 @@ interface PrepareProps {
   accessibility: string
   contentRating: string
   formats: any
+  teiaEmbeddedTokens?: EmbeddedToken[]
 }
 
 export const prepareFile = async ({
@@ -172,6 +184,7 @@ export const prepareFile = async ({
   accessibility,
   contentRating,
   formats,
+  teiaEmbeddedTokens,
 }: PrepareProps) => {
   //TODO: clean
   const step = useModalStore.getState().step
@@ -271,6 +284,7 @@ export const prepareFile = async ({
     accessibility,
     contentRating,
     formats,
+    teiaEmbeddedTokens,
   })
   step('Preparing OBJKT', 'Uploading metadata file')
   console.debug('Uploading metadata file:', JSON.parse(metadata))
@@ -461,6 +475,7 @@ async function buildMetadataFile({
   accessibility,
   contentRating,
   formats,
+  teiaEmbeddedTokens,
 }: {
   name: string
   description: string
@@ -475,6 +490,7 @@ async function buildMetadataFile({
   accessibility: string
   contentRating: string
   formats: MintFormat[]
+  teiaEmbeddedTokens?: EmbeddedToken[]
 }) {
   const metadata: TeiaMetadata = {
     name,
@@ -503,6 +519,8 @@ async function buildMetadataFile({
     metadata.rightsUri = `ipfs://${rightsCid}`
   }
   if (language != null) metadata.language = language
+  if (teiaEmbeddedTokens?.length)
+    metadata.teia_embedded_tokens = teiaEmbeddedTokens
 
   return JSON.stringify(metadata)
 }
@@ -528,4 +546,5 @@ interface TeiaMetadata {
   contentRating?: string
   rightsUri?: string
   language?: string
+  teia_embedded_tokens?: EmbeddedToken[]
 }
