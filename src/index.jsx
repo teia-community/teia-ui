@@ -86,6 +86,7 @@ import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
 import AdminCopyrightPage from '@pages/admincopyright'
+import CopyrightMarketplace from '@pages/copyrightmarketplace'
 
 const display_routes = (
   <>
@@ -160,7 +161,7 @@ const router = createBrowserRouter(
         <Route path="copyrightpreview" element={<CopyrightPreview />} />
         <Route path="copyrightcreate" element={<CopyrightCreate />} />
       </Route>
-      <Route path="copyrightdisplay" element={<CopyrightDisplay />} />
+      <Route path="copyrightmarketplace" element={<CopyrightMarketplace />} />
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
