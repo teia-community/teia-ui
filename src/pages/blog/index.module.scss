@@ -1,0 +1,187 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.headline {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+// Tab content area - fix content to page width
+.tab_content {
+  min-height: 60vh;
+  padding: 16px 0;
+}
+
+.description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.posts_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--secondary-color);
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
+
+// NewPost form styles
+.newpost_form {
+  width: 100%;
+  padding: var(--spacing) 0;
+}
+
+.field {
+  margin-bottom: var(--spacing-large, 1.5rem);
+
+  label {
+    display: block;
+    margin-bottom: var(--spacing-half);
+    font-weight: 600;
+    font-size: var(--font-size);
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.field_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-large, 1.5rem);
+
+  .field {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+
+    .field {
+      margin-bottom: var(--spacing-large, 1.5rem);
+    }
+  }
+}
+
+.hint {
+  display: block;
+  margin-top: var(--spacing-quarter, 0.25rem);
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.select {
+  width: 100%;
+  padding: var(--spacing-half) var(--spacing);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: var(--font-size);
+  border-radius: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  height: 45px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  option {
+    background: var(--background-color);
+    color: var(--text-color);
+  }
+}
+
+.field :global(input) {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.actions {
+  margin-top: var(--spacing-double);
+  padding-top: var(--spacing);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing);
+}
+
+.draft_saved {
+  display: block;
+  margin-top: var(--spacing-quarter, 0.25rem);
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  opacity: 0.7;
+}
+
+.editor_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--font-size);
+}
+
+// Markdown editor
+.editor_wrapper {
+  margin-top: var(--spacing-half);
+
+  :global(.w-md-editor) {
+    background-color: var(--background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+  }
+
+  :global(.w-md-editor-toolbar) {
+    background-color: var(--background-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  :global(.w-md-editor-content) {
+    background-color: var(--background-color) !important;
+  }
+
+  :global(.w-md-editor-text-pre),
+  :global(.w-md-editor-text-input),
+  :global(.w-md-editor-text),
+  :global(.w-md-editor-text-pre) > :global(.w-md-editor-text-pre),
+  :global(.w-md-editor-text-pre) code {
+    font-family: 'Iosevka', monospace !important;
+    font-size: var(--font-size) !important;
+    line-height: 1.5 !important;
+    letter-spacing: normal !important;
+  }
+
+  :global(.wmde-markdown) {
+    background-color: var(--background-color) !important;
+    font-family: 'Source Sans Pro', sans-serif !important;
+  }
+
+  // Anchor the token embed dropdown to the right so it doesn't overflow
+  :global(.w-md-editor-toolbar-child) {
+    right: 0;
+    left: auto !important;
+  }
+}

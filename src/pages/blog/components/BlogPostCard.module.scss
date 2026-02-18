@@ -1,0 +1,215 @@
+.card {
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.card_content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.post_link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+
+  &:hover .title {
+    color: var(--text-color);
+  }
+}
+
+.cover {
+  flex-shrink: 0;
+  width: 160px;
+  text-decoration: none;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-color);
+  }
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+  transition: color 0.2s;
+}
+
+.excerpt {
+  color: var(--secondary-color);
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.author_link {
+  font-weight: 500;
+  color: var(--secondary-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
+
+.date {
+  &::before {
+    content: '·';
+    margin-right: 8px;
+  }
+}
+
+// Token info row (editions, wallet, sale status)
+.token_info {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.on_sale {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+// Burn action styles
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.burn_btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--secondary-color);
+  padding: 4px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+  }
+}
+
+// Confirmation dialog
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  width: fit-content;
+}
+
+.warning {
+  width: 100%;
+  font-size: 13px;
+  color: #e74c3c;
+  line-height: 1.4;
+}
+
+.burn_label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-color);
+}
+
+.burn_input {
+  width: 48px;
+  padding: 2px 4px;
+  font-size: 13px;
+  font-family: var(--text-font);
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.burn_max {
+  color: var(--secondary-color);
+}
+
+.confirm_actions {
+  display: flex;
+  gap: 6px;
+}
+
+.confirm_yes {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  padding: 4px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.confirm_no {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 4px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
