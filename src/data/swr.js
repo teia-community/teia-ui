@@ -7,7 +7,7 @@ import {
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
 } from '@constants'
-import { getTzktData, fetchObjktDetails } from '@data/api'
+import { getTzktData, fetchObjktDetails, fetchGraphQL } from '@data/api'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -272,7 +272,6 @@ export const fetchTokenMetadataForCopyrightSearch = async (
     try {
       const tokenData = await fetchObjktDetails(tokenId.toString())
 
-      console.log('swr result ', tokenData)
       if (tokenData) {
         let creators = []
         if (
@@ -314,7 +313,7 @@ export const fetchTokenMetadataForCopyrightSearch = async (
         }
       }
     } catch (error) {
-      console.log(
+      console.error(
         'Error fetching from TEIA GraphQL, falling back to TzKT:',
         error
       )
@@ -352,6 +351,109 @@ export async function fetchUserCopyrights(address) {
   }
 }
 
+const clauseFilterMap = {
+  reproduce: 'value.clauses.reproduce',
+  broadcast: 'value.clauses.broadcast',
+  publicDisplay: 'value.clauses.publicDisplay',
+  createDerivativeWorks: 'value.clauses.createDerivativeWorks',
+  requireAttribution: 'value.clauses.requireAttribution',
+  rightsAreTransferable: 'value.clauses.rightsAreTransferable',
+  releasePublicDomain: 'value.clauses.releasePublicDomain',
+  expirationDate: 'value.clauses.expirationDateExists',
+}
+
+function applyCopyrightFilters(params, filters) {
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === 'allowed' || value === 'denied') {
+      const param = clauseFilterMap[key]
+      if (param) {
+        params.set(param, value === 'allowed' ? 'true' : 'false')
+      }
+    }
+    if (
+      key === 'exclusiveRights' &&
+      (value === 'allowed' || value === 'denied')
+    ) {
+      params.set(
+        'value.clauses.exclusiveRights',
+        value === 'allowed' ? 'creator' : 'owner'
+      )
+    }
+  }
+}
+
+export async function fetchCopyrightsPaginated({
+  offset = 0,
+  limit = 20,
+  filters = {},
+} = {}) {
+  const params = new URLSearchParams()
+  params.set('limit', String(limit))
+  params.set('offset', String(offset))
+  params.set('sort.desc', 'id')
+  params.set('active', 'true')
+  applyCopyrightFilters(params, filters)
+
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?${params.toString()}`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
+  } catch (err) {
+    console.error('Failed to fetch paginated copyrights:', err)
+    return []
+  }
+}
+
+export async function fetchCopyrightsCount(filters = {}) {
+  const params = new URLSearchParams()
+  params.set('active', 'true')
+  applyCopyrightFilters(params, filters)
+
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys/count?${params.toString()}`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    return await res.json()
+  } catch (err) {
+    console.error('Failed to fetch copyrights count:', err)
+    return 0
+  }
+}
+
+export async function fetchCreatorAliases(addresses) {
+  if (!addresses || addresses.length === 0) return new Map()
+
+  const query = `
+    query GetAliases($addresses: [String!]!) {
+      teia_users(where: { user_address: { _in: $addresses } }) {
+        user_address
+        name
+      }
+    }
+  `
+
+  try {
+    const result = await fetchGraphQL(query, 'GetAliases', { addresses })
+    const map = new Map()
+    result?.data?.teia_users?.forEach((user) => {
+      if (user.name) {
+        map.set(user.user_address, user.name)
+      }
+    })
+    return map
+  } catch (err) {
+    console.error('Failed to fetch creator aliases:', err)
+    return new Map()
+  }
+}
+
 export async function fetchAllCopyrights() {
   const url = `${
     import.meta.env.VITE_TZKT_API
@@ -385,10 +487,11 @@ export async function fetchProposals() {
   }
 }
 
-export async function fetchAllVotes() {
+export async function fetchAllVotes(address) {
+  const addressFilter = address ? `&key.address=${address}` : ''
   const url = `${
     import.meta.env.VITE_TZKT_API
-  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true`
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/votes/keys?limit=500&active=true${addressFilter}`
   try {
     const res = await fetch(url)
     if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
