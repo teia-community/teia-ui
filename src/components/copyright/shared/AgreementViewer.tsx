@@ -1,38 +1,53 @@
-import { useEffect, useState } from 'react';
-import Button from '@atoms/button/Button';
-import styles from './index.module.css';
-import { fetchAgreementText } from '@data/swr';
-import { HashToURL } from '@utils';
-import { useOutletContext } from 'react-router';
+import { useEffect, useState } from 'react'
+import Button from '@atoms/button/Button'
+import styles from './index.module.scss'
+import { fetchAgreementText } from '@data/swr'
+import { HashToURL } from '@utils'
+import { useOutletContext } from 'react-router'
+
+// Module-level cache: fetched once, shared across all AgreementViewer instances
+let cachedAgreementText: Promise<string> | null = null
+function getAgreementText(): Promise<string> {
+  if (!cachedAgreementText) {
+    cachedAgreementText = (async () => {
+      const ipfsUri = await fetchAgreementText()
+      if (!ipfsUri) return '[No agreement URI found]'
+      const url = HashToURL(ipfsUri, 'IPFS')
+      const res = await fetch(url)
+      if (!res.ok) throw new Error('Failed to fetch from IPFS')
+      const json = await res.json()
+      return json.document_text || '[No document_text found]'
+    })()
+  }
+  return cachedAgreementText
+}
 
 interface AgreementProps {
   firstParagraph: string
 }
 
 export default function AgreementViewer(props: AgreementProps) {
-  const [ipfsHash, setIpfsHash] = useState('');
-  const [agreementText, setAgreementText] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [agreementText, setAgreementText] = useState('')
+  const [loading, setLoading] = useState(true)
 
-  const { address } = useOutletContext() as { address?: string } // currently sync'd wallet
+  const { address } = useOutletContext() as { address?: string }
 
   const handlePrint = () => {
-    const printContent = document.getElementById('printable-agreement');
-    if (!printContent) return;
+    const printContent = document.getElementById('printable-agreement')
+    if (!printContent) return
 
-    // Get current date and time
-    const now = new Date();
+    const now = new Date()
     const formattedDate = now.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
+    })
     const formattedTime = now.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-    });
+    })
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open('', '_blank')
     printWindow?.document.write(`
       <html>
         <head>
@@ -41,7 +56,7 @@ export default function AgreementViewer(props: AgreementProps) {
             body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
             h1 { font-size: 1.5rem; margin-bottom: 1rem; }
             pre { white-space: pre-wrap; font-family: inherit; }
-            .timestamp { 
+            .timestamp {
               margin-bottom: 1rem;
               color: #666;
               font-size: 0.9rem;
@@ -59,41 +74,23 @@ export default function AgreementViewer(props: AgreementProps) {
           <pre>${printContent.innerText}</pre>
         </body>
       </html>
-    `);
-    printWindow?.document.close();
-    printWindow?.focus();
+    `)
+    printWindow?.document.close()
+    printWindow?.focus()
     setTimeout(() => {
-      printWindow?.print();
-      printWindow?.close();
-    }, 500);
-  };
+      printWindow?.print()
+      printWindow?.close()
+    }, 500)
+  }
 
   useEffect(() => {
-    const loadAgreement = async () => {
-      try {
-        const ipfsUri = await fetchAgreementText();
-        if (!ipfsUri) return;
+    getAgreementText()
+      .then(setAgreementText)
+      .catch(() => setAgreementText('[Error loading agreement text]'))
+      .finally(() => setLoading(false))
+  }, [])
 
-        setIpfsHash(ipfsUri);
-
-        const url = HashToURL(ipfsUri, 'IPFS');
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to fetch from IPFS');
-
-        const json = await res.json();
-        setAgreementText(json.document_text || '[No document_text found]');
-      } catch (err) {
-        console.error('Error loading agreement:', err);
-        setAgreementText('[Error loading agreement text]');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadAgreement();
-  }, []);
-
-  if (loading) return <p className={styles.loading}>Loading agreement...</p>;
+  if (loading) return <p className={styles.loading}>Loading agreement...</p>
 
   return (
     <div className={styles.agreement_box}>
@@ -106,7 +103,7 @@ export default function AgreementViewer(props: AgreementProps) {
             fit
             className={styles.print_button}
           >
-            🖨️Print
+            Print
           </Button>
         </div>
       </div>
@@ -115,5 +112,5 @@ export default function AgreementViewer(props: AgreementProps) {
         {agreementText}
       </div>
     </div>
-  );
+  )
 }

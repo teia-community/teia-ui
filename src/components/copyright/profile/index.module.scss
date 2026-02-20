@@ -1,0 +1,185 @@
+@use '@styles/layout' as *;
+
+// Profile tab - bento grid
+.container {
+  width: 100%;
+  padding: 1.25rem 20px 0;
+
+  @include respond-to('tablet') {
+    padding: 1.25rem 50px 0;
+  }
+
+  @include respond-to('desktop') {
+    padding: 1.25rem 75px 0;
+  }
+}
+
+.bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  @include respond-to('tablet') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('desktop') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.bentoTile {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--gray-0);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+.bentoExpanded {
+  grid-column: 1 / -1;
+}
+
+.bentoWide {
+  @include respond-to('tablet') {
+    grid-column: span 2;
+  }
+}
+
+.bentoLarge {
+  @include respond-to('tablet') {
+    grid-column: span 2;
+  }
+
+  @include respond-to('desktop') {
+    grid-column: span 2;
+  }
+}
+
+.bentoButton {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+  gap: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+}
+
+// Header row
+.bentoHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.bentoTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-100);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inactiveLabel {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--secondary-color);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Info line
+.bentoInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 12px;
+  color: var(--secondary-color);
+}
+
+.infoDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--secondary-color);
+  flex-shrink: 0;
+}
+
+// Thumbnail preview strip
+.thumbStrip {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.thumbImg {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background-color: var(--gray-0);
+}
+
+.thumbPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background-color: var(--gray-0);
+  border: 1px solid var(--border-color);
+}
+
+// Bottom row: badges + expand icon
+.bentoBottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.expandIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-color);
+  transition: transform 0.2s ease;
+}
+
+.expandIconOpen {
+  transform: rotate(45deg);
+}
+
+// Expanded card details
+.expandedDetails {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}

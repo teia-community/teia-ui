@@ -10,22 +10,19 @@
   background-color: rgba(0, 0, 0, 0.382);
   display: flex;
   justify-content: center;
+  align-items: center;
   z-index: 99;
   overflow-y: auto;
 }
 
 .modalContent {
-  position: absolute;
-  top: 0;
   background-color: var(--background-color);
   padding: 20px;
   box-shadow: 1px 1px var(--text-color);
   width: 80%;
   max-width: 61.8%;
-  height: auto;
   max-height: 61.8vh;
   overflow: auto;
-  margin-top: 0 auto;
 }
 
 .modalContent div {

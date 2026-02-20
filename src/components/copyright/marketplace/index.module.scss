@@ -1,0 +1,135 @@
+@use '@styles/layout' as *;
+
+// Marketplace list item
+.listItem {
+  border: 1px solid var(--border-color);
+  margin-bottom: 0.5rem;
+}
+
+.listItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-color);
+  border: none;
+  font-family: inherit;
+
+  &:hover {
+    background-color: var(--gray-0);
+  }
+}
+
+.listItemId {
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.listItemCreators {
+  font-size: 12px;
+  color: var(--secondary-color);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listItemBadges {
+  flex-shrink: 0;
+}
+
+.listItemToggle {
+  font-size: 10px;
+  color: var(--secondary-color);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.listItemToggleOpen {
+  transform: rotate(90deg);
+}
+
+.listItemBody {
+  padding: 0 0.75rem 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.creatorsSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  font-size: 13px;
+  margin-bottom: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.creatorLink {
+  color: var(--text-color);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--secondary-color);
+  }
+}
+
+// Filters
+.filtersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filterLabel {
+  font-size: 11px;
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterSelect {
+  padding: 0.4rem 0.5rem;
+  font-size: 13px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+.filterActions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.clearButton {
+  padding: 0.4rem 0.75rem;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}

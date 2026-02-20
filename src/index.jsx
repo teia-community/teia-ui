@@ -77,15 +77,16 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
-import CopyrightForm from '@components/copyright/form/CopyrightForm'
+import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
-import { CopyrightPreview } from '@components/copyright/preview'
-import { CopyrightCreate } from '@components/copyright/create'
-import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
+import { CopyrightPreview } from '@components/copyright/wizard/preview'
+import { CopyrightCreate } from '@components/copyright/wizard/create'
+import CopyrightDisplay from '@components/copyright/profile/CopyrightDisplay'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
 import AdminCopyrightPage from '@pages/admincopyright'
+import CopyrightMarketplace from '@pages/copyrightmarketplace'
 
 const display_routes = (
   <>
@@ -157,10 +158,10 @@ const router = createBrowserRouter(
       </Route>
       <Route exact path="copyright/*" element={<CopyrightPage />}>
         <Route index element={<CopyrightForm />} />
-        <Route path="copyrightpreview" element={<CopyrightPreview />} />
-        <Route path="copyrightcreate" element={<CopyrightCreate />} />
+        <Route path="preview" element={<CopyrightPreview />} />
+        <Route path="create" element={<CopyrightCreate />} />
       </Route>
-      <Route path="copyrightdisplay" element={<CopyrightDisplay />} />
+      <Route path="copyrightmarketplace" element={<CopyrightMarketplace />} />
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />

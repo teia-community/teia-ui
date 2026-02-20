@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Checkbox, Input, Textarea } from '@atoms/input'
 import ReactSelect from 'react-select'
 import styles from '@style'
-import { style as select_style, theme } from '../../../atoms/select/styles'
+import { style as select_style, theme } from '../../../../atoms/select/styles'
 import { useOutletContext } from 'react-router'
 import { copyrightModalText } from './copyrightmodaltext'
 import { InfoModal } from '@atoms/modal'
@@ -416,7 +416,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
 
       let clauseNumber = 1
 
-      const nonTeiaTokens = tokens.filter(
+      const nonTeiaTokens = customTokens.filter(
         (token) => token.contractAddress !== HEN_CONTRACT_FA2
       )
 
@@ -653,8 +653,8 @@ Any modification to this Agreement's terms requires explicit consent from both t
       name = eventOrValue?.target?.name || ''
       value = eventOrValue?.target?.value || ''
     } else {
-      name = 'addendum' | ''
-      value = eventOrValue | ''
+      name = 'addendum' || ''
+      value = eventOrValue || ''
     }
 
     setClauses((prev) => ({
@@ -834,9 +834,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               tabIndex={0}
               className={styles.modalInfoIcon}
               onClick={() => handleModalOpen(clauseName)}
-              onKeyPress={(event) =>
-                handleKeyPress(event, clauseLabels[clauseName])
-              }
+              onKeyPress={(event) => handleKeyPress(event, clauseName)}
             >
               (?)
             </span>
@@ -850,9 +848,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               tabIndex={0}
               className={styles.modalInfoIcon}
               onClick={() => handleModalOpen('exclusiveRights')}
-              onKeyPress={(event) =>
-                handleKeyPress(event, clauseLabels['exclusiveRights'])
-              }
+              onKeyPress={(event) => handleKeyPress(event, 'exclusiveRights')}
             >
               (?)
             </span>
@@ -903,9 +899,9 @@ Any modification to this Agreement's terms requires explicit consent from both t
             role="button"
             tabIndex={0}
             className={styles.modalInfoIcon}
-            onClick={() => handleModalOpen('exclusiveRights')}
+            onClick={() => handleModalOpen('expirationDateExists')}
             onKeyPress={(event) =>
-              handleKeyPress(event, clauseLabels['exclusiveRights'])
+              handleKeyPress(event, 'expirationDateExists')
             }
           >
             (?)
@@ -952,7 +948,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
               className={styles.modalInfoIcon}
               onClick={() => handleModalOpen('customUri')}
               onKeyPress={(event) =>
-                handleKeyPress(event, clauseLabels['customUriEnabled'])
+                handleKeyPress(event, 'customUri')
               }
             >
               (?)
@@ -993,11 +989,14 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 setTokenId('')
               }}
               style={{
-                border: '1px solid #ccc',
+                border: '1px solid var(--border-color)',
                 padding: '10px 15px',
                 backgroundColor:
-                  inputMode === 'url' ? '#FFFFFF' : 'transparent',
-                color: inputMode === 'contract' ? 'white' : 'black',
+                  inputMode === 'url'
+                    ? 'var(--background-color)'
+                    : 'transparent',
+                color:
+                  inputMode === 'url' ? 'var(--text-color)' : 'var(--gray-50)',
                 cursor: 'pointer',
               }}
             >
@@ -1013,11 +1012,16 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 setTokenId('')
               }}
               style={{
-                border: '1px solid #ccc',
+                border: '1px solid var(--border-color)',
                 padding: '10px 15px',
                 backgroundColor:
-                  inputMode === 'contract' ? '#FFFFFF' : 'transparent',
-                color: inputMode === 'contract' ? 'black' : 'white',
+                  inputMode === 'contract'
+                    ? 'var(--background-color)'
+                    : 'transparent',
+                color:
+                  inputMode === 'contract'
+                    ? 'var(--text-color)'
+                    : 'var(--gray-50)',
                 cursor: 'pointer',
               }}
             >
@@ -1036,7 +1040,7 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 className={styles.field}
               />
               {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
-                <p style={{ color: 'yellow', marginTop: '5px' }}>
+                <p style={{ color: 'var(--warning-color)', marginTop: '5px' }}>
                   ⚠️ Warning: The above input does not follow a standard URL/URI
                   scheme. (Non-standard inputs are still allowed, this is just a
                   reminder.)
@@ -1151,11 +1155,16 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 marginTop: '15px',
               }}
             >
-              <div style={{ border: '1px solid #ddd', padding: '15px' }}>
+              <div
+                style={{
+                  border: '1px solid var(--border-color)',
+                  padding: '15px',
+                }}
+              >
                 <h4>Title/Link:</h4>
                 <p>{currentExternalToken.metadata.name}</p>
                 <br />
-                <p style={{ color: 'yellow' }}>
+                <p style={{ color: 'var(--warning-color)' }}>
                   {currentExternalToken.metadata.description}
                 </p>
                 <br />
