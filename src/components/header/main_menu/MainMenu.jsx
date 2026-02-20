@@ -39,6 +39,11 @@ export const MainMenu = () => {
             label="Getting Started"
             route="faq"
           />
+          <MenuItem
+            className={styles.menu_label}
+            label="Copyright Marketplace"
+            route="copyrightmarketplace"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
