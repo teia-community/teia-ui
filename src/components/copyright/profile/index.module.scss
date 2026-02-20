@@ -3,14 +3,14 @@
 // Profile tab - bento grid
 .container {
   width: 100%;
-  padding: 1.25rem 15px 0;
+  padding: 1.25rem 20px 0;
 
   @include respond-to('tablet') {
-    padding: 1.25rem 24px 0;
+    padding: 1.25rem 50px 0;
   }
 
   @include respond-to('desktop') {
-    padding: 1.25rem 40px 0;
+    padding: 1.25rem 75px 0;
   }
 }
 
