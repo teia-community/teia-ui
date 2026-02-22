@@ -9,7 +9,7 @@ import { useParams } from 'react-router'
 import { useLocalSettings } from '@context/localSettingsStore'
 
 const Price = ({ price }) => (
-  <div className={styles.price_box}>
+  <div className={styles.price_box} aria-label={`Price: ${price} Tezos`}>
     {price}
     <TezosIcon size={16} />
   </div>
@@ -42,7 +42,8 @@ const ItemInfoCompact = ({ nft }) => {
       <Button
         className={styles.artist}
         activeClass={styles.hide}
-        alt={`Go to artist page of token #${nft.token_id}`}
+        // alt={`Go to artist page of token #${nft.token_id}`}
+        alt={`Go to artist page of ${nft.artist_profile?.name}`}
         to={
           nft.artist_profile?.name
             ? encodeURI(`/${nft.artist_profile.name}`)
