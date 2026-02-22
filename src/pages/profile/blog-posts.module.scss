@@ -1,0 +1,16 @@
+.posts_list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-double);
+  color: var(--text-secondary);
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
