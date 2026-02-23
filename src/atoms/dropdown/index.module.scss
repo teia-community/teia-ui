@@ -41,6 +41,12 @@
   word-break: keep-all;
   cursor: pointer;
   transition: var(--body-transition) filter 300ms;
+  // Add visible focus indicator for keyboard navigation
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .menu_left {

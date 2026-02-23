@@ -9,7 +9,7 @@
   cursor: pointer;
   font-size: var(--font-body);
 
-  &:focus {
+  &:focus:not(:focus-visible) {
     outline: 0;
   }
 }
