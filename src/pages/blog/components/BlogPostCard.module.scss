@@ -63,7 +63,8 @@
 
 .meta {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 4px 16px;
   font-size: 13px;
   color: var(--secondary-color);
 }
