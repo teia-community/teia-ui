@@ -4,6 +4,7 @@ import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { Button } from '@atoms/button'
+import { BlogDisclaimer } from '@atoms/blog-disclaimer'
 import { Checkbox, Input } from '@atoms/input'
 import {
   LICENSE_TYPES_OPTIONS,
@@ -440,6 +441,8 @@ export default function NewPost() {
           ))}
         </select>
       </div>
+
+      <BlogDisclaimer />
 
       <div className={styles.actions}>
         <Button
