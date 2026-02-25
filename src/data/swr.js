@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { bytesToString } from '@tezos-x/octez.js-utils'
+import { bytesToString } from '@taquito/utils'
 import {
   DAO_TOKEN_CONTRACT,
   DAO_TOKEN_DECIMALS,

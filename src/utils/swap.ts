@@ -10,14 +10,14 @@ import {
   OpKind,
   Wallet,
   WalletParamsWithKind,
-} from '@tezos-x/octez.js'
+} from '@taquito/taquito'
 import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
-import { Parser } from '@tezos-x/octez.js-michel-codec'
+import { Parser } from '@taquito/michel-codec'
 import {
   MichelsonMap,
   MichelsonMapKey,
   Schema,
-} from '@tezos-x/octez.js-michelson-encoder'
+} from '@taquito/michelson-encoder'
 
 export const Packer = new MichelCodecPacker()
 

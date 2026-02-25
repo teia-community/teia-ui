@@ -1,4 +1,4 @@
-import { ParametersInvalidBeaconError } from '@tezos-x/octez.connect-core'
+import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 

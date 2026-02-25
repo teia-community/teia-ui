@@ -124,12 +124,12 @@ export default defineConfig(({ mode }) => {
           // manualChunks: processChunks,
           manualChunks: {
             contracts: [
-              '@tezos-x/octez.js-dapp-wallet',
-              '@tezos-x/octez.js-michelson-encoder',
+              '@taquito/beacon-wallet',
+              '@taquito/michelson-encoder',
               '@stablelib/ed25519',
               '@stablelib/nacl',
               '@stablelib/x25519-session',
-              '@tezos-x/octez.js',
+              '@taquito/taquito',
             ],
             pdf: ['react-pdf', 'pdfjs-dist'],
             ui: [
