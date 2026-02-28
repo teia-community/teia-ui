@@ -1,4 +1,4 @@
-import { encodePubKey, encodeKeyHash } from '@taquito/utils'
+import { encodeAddress, encodeKeyHash } from '@taquito/utils'
 import { Parser, emitMicheline } from '@taquito/michel-codec'
 
 export function parseLambda(lambdaCode) {
@@ -14,7 +14,7 @@ export function parseLambda(lambdaCode) {
   const encodedMichelineCode = michelineCode
     .replace(
       /0x0[0123]{1}[\w\d]{42}/g,
-      (match) => `"${encodePubKey(match.slice(2))}"`
+      (match) => `"${encodeAddress(match.slice(2))}"`
     )
     .replace(
       /0x0[0123]{1}[\w\d]{40}/g,

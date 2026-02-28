@@ -74,33 +74,21 @@ export const Swap = () => {
       return
     }
 
-    // swap is valid call API
-    console.debug(
-      address,
-      nft.royalties_total,
-      (price * 1000000).toFixed(0),
-      id,
-      nft.artist_address,
-      parseFloat(amount)
-    )
-    console.log([
-      address,
-      nft.royalties_total,
-      (price * 1e6).toFixed(0),
-      id,
-      nft.artist_address,
-      parseFloat(amount),
-    ])
     if (currency === 'tez') {
       // when taquito returns a success/fail message
-      await swap(
-        address,
-        nft.royalties_total / 1000,
-        (price * 1e6).toFixed(0),
-        id,
-        nft.artist_address,
-        parseFloat(amount)
-      )
+      try {
+        await swap(
+          address,
+          nft.royalties_total / 1000,
+          (price * 1e6).toFixed(0),
+          id,
+          nft.artist_address,
+          parseFloat(amount)
+        )
+      } catch (err) {
+        show(`encountered an error: ${err})`)
+        return
+      }
     }
   }
 
