@@ -1,5 +1,5 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
-import { BeaconEvent } from '@airgap/beacon-dapp'
+import { BeaconEvent } from '@tezos-x/octez.connect-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -19,7 +19,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
-import { NetworkType } from '@airgap/beacon-types'
+import { NetworkType } from '@tezos-x/octez.connect-types'
 import { getUser } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
