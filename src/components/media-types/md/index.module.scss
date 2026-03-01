@@ -11,7 +11,7 @@
   overflow: auto;
 }
 
-:global([data-view-mode='masonry']) .feed {
+.feed {
   max-height: 300px;
   overflow: hidden;
   position: relative;
