@@ -37,7 +37,7 @@ export const MD = ({ displayView, artifactUri, previewUri, preview }) => {
       <Markdown>{content}</Markdown>
     </div>
   ) : (
-    <div>
+    <div className={styles.feed}>
       <Container>
         <Markdown>{content}</Markdown>
       </Container>

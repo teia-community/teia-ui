@@ -10,3 +10,20 @@
   margin: 0 auto;
   overflow: auto;
 }
+
+:global([data-view-mode='masonry']) .feed {
+  max-height: 300px;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, var(--background-color));
+    pointer-events: none;
+  }
+}
