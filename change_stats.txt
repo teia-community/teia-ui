@@ -1,0 +1,313 @@
+ .npmrc                                             |     2 +-
+ MEGAREFACTOR.md                                    |   128 +
+ README.md                                          |     2 +-
+ STYLE_GUIDE.md                                     |    56 +
+ index.html                                         |   104 +-
+ migrate_sass.py                                    |    44 +
+ package-lock.json                                  | 25122 +++++++++----------
+ package.json                                       |    80 +-
+ src/App.test.tsx                                   |     7 +
+ src/{App.jsx => App.tsx}                           |     0
+ src/atoms/button/Button.tsx                        |     2 +-
+ .../button/{DonateButton.jsx => DonateButton.tsx}  |    14 +-
+ .../{IncrementButtons.jsx => IncrementButtons.tsx} |     7 +-
+ ...PaginationButtons.jsx => PaginationButtons.tsx} |     9 +-
+ src/atoms/button/{Secondary.jsx => Secondary.tsx}  |    10 +-
+ src/atoms/button/index.module.scss                 |    16 +-
+ .../debug/{DebugCenter.jsx => DebugCenter.tsx}     |    21 +-
+ src/atoms/debug/index.module.scss                  |     2 +-
+ src/atoms/debug/{index.jsx => index.tsx}           |     5 +-
+ src/atoms/dropdown/Dropdown.tsx                    |     4 +-
+ src/atoms/dropdown/DropdownButton.tsx              |    14 +-
+ src/atoms/dropdown/index.module.scss               |    11 +-
+ src/atoms/error/RootErrorBoundary.tsx              |     4 +-
+ src/atoms/error/index.module.scss                  |     2 +-
+ src/atoms/identicons/index.module.scss             |     2 +-
+ src/atoms/identicons/index.tsx                     |     7 +-
+ src/atoms/{index.js => index.ts}                   |     0
+ src/atoms/input/{Checkbox.jsx => Checkbox.tsx}     |    36 +-
+ src/atoms/input/Input.tsx                          |    17 +-
+ .../input/{SimpleInput.jsx => SimpleInput.tsx}     |    21 +-
+ src/atoms/input/{TextArea.jsx => TextArea.tsx}     |    29 +-
+ .../{TransferFields.jsx => TransferFields.tsx}     |    26 +-
+ src/atoms/input/index.module.scss                  |     2 +-
+ src/atoms/input/{index.js => index.ts}             |     0
+ src/atoms/layout/container/index.module.scss       |    10 +-
+ .../layout/container/{index.jsx => index.tsx}      |    10 +-
+ src/atoms/layout/{index.jsx => index.ts}           |     0
+ src/atoms/layout/page/index.module.scss            |     4 +-
+ src/atoms/layout/page/index.tsx                    |     2 +-
+ src/atoms/line/index.module.scss                   |     4 +-
+ src/atoms/link/{index.jsx => index.tsx}            |    44 +-
+ src/atoms/loading/index.module.scss                |     2 +-
+ src/atoms/loading/{index.jsx => index.tsx}         |     6 +-
+ src/atoms/logo/index.module.scss                   |     4 +-
+ src/atoms/logo/{index.jsx => index.tsx}            |    22 +-
+ src/atoms/marketplace-labels/index.module.scss     |     2 +-
+ .../marketplace-labels/{index.jsx => index.tsx}    |    21 +-
+ src/atoms/modal/index.module.scss                  |     4 +-
+ src/atoms/select/{Base.jsx => Base.tsx}            |    26 +-
+ .../{ThemeSelection.jsx => ThemeSelection.tsx}     |     9 +-
+ src/atoms/select/index.module.scss                 |     2 +-
+ src/atoms/select/{index.js => index.ts}            |     0
+ src/atoms/select/styles.ts                         |    24 +-
+ src/atoms/tab/index.module.scss                    |     9 +-
+ src/atoms/toggles/Toggle.tsx                       |     2 +-
+ src/atoms/toggles/index.module.scss                |     4 +-
+ src/atoms/token-collection/index.module.scss       |    10 +-
+ .../token-collection/{index.jsx => index.tsx}      |   108 +-
+ .../banners/{BottomBanner.jsx => BottomBanner.tsx} |     0
+ .../banners/{EventBanner.jsx => EventBanner.tsx}   |     4 +-
+ .../banners/{TopBanner.jsx => TopBanner.tsx}       |     2 +-
+ src/components/banners/index.module.scss           |    22 +-
+ src/components/banners/{index.js => index.ts}      |     0
+ .../collab/{CollabSwitch.jsx => CollabSwitch.tsx}  |     4 +-
+ ...ratorsButton.jsx => AddCollaboratorsButton.tsx} |     4 +-
+ .../{BeneficiariesUI.jsx => BeneficiariesUI.tsx}   |    21 +-
+ .../{BeneficiaryRow.jsx => BeneficiaryRow.tsx}     |    10 +-
+ .../{CollaboratorRow.jsx => CollaboratorRow.tsx}   |    35 +-
+ ...CollaboratorTable.jsx => CollaboratorTable.tsx} |     0
+ .../create/{ProjectList.jsx => ProjectList.tsx}    |    12 +-
+ .../create/{ReviewStage.jsx => ReviewStage.tsx}    |    10 +-
+ ...ocationNotice.jsx => ShareAllocationNotice.tsx} |     8 +-
+ .../collab/create/{TipJar.jsx => TipJar.tsx}       |    17 +-
+ .../create/{TipSelector.jsx => TipSelector.tsx}    |     2 +-
+ src/components/collab/index.module.scss            |     4 +-
+ src/components/collab/{index.js => index.ts}       |     0
+ .../manage/{CollabList.jsx => CollabList.tsx}      |     4 +-
+ ...rticipantInfo.jsx => CollabParticipantInfo.tsx} |     6 +-
+ .../{CountdownTimer.jsx => CountdownTimer.tsx}     |     4 +-
+ .../{ParticipantList.jsx => ParticipantList.tsx}   |     4 +-
+ src/components/collab/show/CollabIssuerInfo.tsx    |     4 +-
+ src/components/collab/show/CollabParticipant.tsx   |     2 +-
+ .../collab/sign/{SigningUI.jsx => SigningUI.tsx}   |     4 +-
+ src/components/copyright/admin/ProposalList.tsx    |    46 +-
+ src/components/copyright/admin/SubmitProposal.tsx  |    16 +-
+ .../copyright/create/{index.jsx => index.tsx}      |    32 +-
+ .../form/{CopyrightForm.jsx => CopyrightForm.tsx}  |    14 +-
+ ...rightFormFields.jsx => CopyrightFormFields.tsx} |     2 +-
+ ...CopyrightMainForm.jsx => CopyrightMainForm.tsx} |     4 +-
+ ...omCopyrightForm.jsx => CustomCopyrightForm.tsx} |    74 +-
+ src/components/copyright/preview/index.module.scss |    34 +-
+ .../copyright/preview/{index.jsx => index.tsx}     |     8 +-
+ src/components/feed-item/index.module.scss         |     4 +-
+ src/components/feedback/{index.jsx => index.tsx}   |     2 +-
+ src/components/footer/index.module.scss            |    12 +-
+ src/components/footer/index.tsx                    |     3 +-
+ src/components/form/{Form.jsx => Form.tsx}         |     4 +-
+ .../form/{FormFields.jsx => FormFields.tsx}        |    44 +-
+ src/components/form/{MintForm.jsx => MintForm.tsx} |    19 +-
+ src/components/header/{Header.jsx => Header.tsx}   |    21 +-
+ .../header/events/{EventCard.jsx => EventCard.tsx} |     2 +-
+ src/components/header/events/index.module.scss     |    11 +-
+ .../{FeedToolbar.jsx => FeedToolbar.tsx}           |     4 +-
+ .../header/feed_toolbar/index.module.scss          |    25 +-
+ src/components/header/index.module.scss            |    14 +-
+ src/components/header/{index.js => index.ts}       |     0
+ .../main_menu/{MainMenu.jsx => MainMenu.tsx}       |     3 +-
+ src/components/header/main_menu/index.module.scss  |    14 +-
+ .../header/{sample_events.js => sample_events.ts}  |     0
+ src/components/icons/index.module.scss             |     2 +-
+ src/components/icons/{index.jsx => index.tsx}      |     2 +-
+ .../{CheapestButton.jsx => CheapestButton.tsx}     |     2 +-
+ .../item-info/{Editions.jsx => Editions.tsx}       |     6 +-
+ .../item-info/{ItemInfo.jsx => ItemInfo.tsx}       |    20 +-
+ .../{ItemInfoCompact.jsx => ItemInfoCompact.tsx}   |     4 +-
+ src/components/item-info/index.module.scss         |    20 +-
+ src/components/item-info/{index.js => index.ts}    |     0
+ src/components/listings/index.module.scss          |    25 +-
+ src/components/listings/index.tsx                  |    34 +-
+ src/components/markdown/index.module.scss          |     4 +-
+ src/components/markdown/{index.jsx => index.tsx}   |     4 +-
+ src/components/media-types/audio/index.module.scss |     8 +-
+ .../media-types/audio/{index.jsx => index.tsx}     |     8 +-
+ src/components/media-types/audio/visualiser.jsx    |   124 -
+ src/components/media-types/audio/visualiser.tsx    |   120 +
+ src/components/media-types/container.tsx           |     4 +-
+ src/components/media-types/glb/index.module.scss   |     5 +-
+ .../media-types/glb/{index.jsx => index.tsx}       |    18 +-
+ src/components/media-types/html/index.module.scss  |     4 +-
+ .../media-types/html/{index.jsx => index.tsx}      |    18 +-
+ .../media-types/html/{warning.jsx => warning.tsx}  |     0
+ src/components/media-types/image/index.module.scss |     4 +-
+ src/components/media-types/image/index.tsx         |    22 +-
+ src/components/media-types/index.module.scss       |    11 +-
+ src/components/media-types/index.tsx               |     4 +-
+ src/components/media-types/md/index.module.scss    |     4 +-
+ .../media-types/md/{index.jsx => index.tsx}        |    17 +-
+ src/components/media-types/midi/index.module.scss  |     4 +-
+ .../media-types/midi/{index.jsx => index.tsx}      |    18 +-
+ src/components/media-types/pdf/index.module.scss   |     4 +-
+ src/components/media-types/pdf/index.tsx           |    22 +-
+ src/components/media-types/text/index.module.scss  |     4 +-
+ .../media-types/text/{index.jsx => index.tsx}      |    22 +-
+ .../media-types/unknown/index.module.scss          |     4 +-
+ .../media-types/unknown/{index.jsx => index.tsx}   |     2 +-
+ .../media-types/vector/index.module.scss           |     4 +-
+ .../media-types/vector/{index.jsx => index.tsx}    |    23 +-
+ src/components/media-types/video/index.module.scss |     4 +-
+ .../media-types/video/{index.jsx => index.tsx}     |    19 +-
+ src/components/owner-list/index.module.scss        |     2 +-
+ src/components/owner-list/{index.jsx => index.tsx} |     6 +-
+ src/components/preview/index.module.scss           |     9 +-
+ src/components/preview/{index.jsx => index.tsx}    |    20 +-
+ src/components/proposal-details/index.module.scss  |     2 +-
+ .../proposal-details/{index.jsx => index.tsx}      |     2 +-
+ .../responsive-masonry/index.module.scss           |     7 +-
+ .../responsive-masonry/{index.jsx => index.tsx}    |     2 +-
+ .../scroll-to-top/{index.jsx => index.tsx}         |     0
+ src/components/tags/index.module.scss              |     9 +-
+ src/components/tags/{index.jsx => index.tsx}       |     4 +-
+ .../upload/{IpfsUploader.jsx => IpfsUploader.tsx}  |    23 +-
+ src/components/upload/{Upload.jsx => Upload.tsx}   |    24 +-
+ src/components/upload/{index.jsx => index.tsx}     |     0
+ src/components/votes/index.module.scss             |     7 +-
+ src/components/votes/{index.jsx => index.tsx}      |    10 +-
+ src/constants.ts                                   |     7 +-
+ src/context/collabStore.ts                         |    98 +-
+ src/context/copyrightStore.ts                      |    33 +-
+ src/context/daoStore.ts                            |    16 +-
+ src/context/localSettingsStore.ts                  |     3 +-
+ src/context/mintStore.ts                           |    52 +-
+ src/context/proposalStore.ts                       |    12 +-
+ src/context/userStore.ts                           |     6 +-
+ src/data/api.ts                                    |    47 +-
+ src/data/ipfs.ts                                   |   175 +-
+ src/data/{swr.js => swr.ts}                        |    58 +-
+ src/declaration.d.ts                               |     7 +
+ src/hooks/{use-body-class.js => use-body-class.ts} |     6 +-
+ .../{use-click-outside.js => use-click-outside.ts} |     8 +-
+ src/hooks/{use-controlled.js => use-controlled.ts} |     6 +-
+ src/hooks/{use-fool.js => use-fool.ts}             |     0
+ src/hooks/{use-keyboard.js => use-keyboard.ts}     |    16 +-
+ src/hooks/{use-language.js => use-language.ts}     |     0
+ src/hooks/{use-settings.js => use-settings.ts}     |    99 +-
+ src/hooks/{use-title.js => use-title.ts}           |     2 +-
+ src/hooks/{use-twemoji.js => use-twemoji.ts}       |     0
+ src/icons/index.js                                 |   218 -
+ src/icons/index.ts                                 |   218 +
+ src/icons/{indexer_status.js => indexer_status.ts} |     0
+ src/icons/{refs.js => refs.ts}                     |     0
+ src/{index.jsx => index.tsx}                       |    43 +-
+ src/{node_polyfill.js => node_polyfill.ts}         |    10 +-
+ src/pages/about/index.module.scss                  |     4 +-
+ src/pages/about/{index.jsx => index.tsx}           |     0
+ src/pages/admincopyright/index.module.scss         |     4 +-
+ src/pages/codeofconduct/index.module.scss          |     4 +-
+ src/pages/codeofconduct/{index.jsx => index.tsx}   |     0
+ src/pages/collaborate/{create.jsx => create.tsx}   |     6 +-
+ src/pages/collaborate/index.module.scss            |     4 +-
+ src/pages/collaborate/{index.jsx => index.tsx}     |     0
+ src/pages/collaborate/{manage.jsx => manage.tsx}   |     8 +-
+ src/pages/config/{Settings.jsx => Settings.tsx}    |    45 +-
+ src/pages/config/Subjkt.tsx                        |   112 +-
+ src/pages/config/index.module.scss                 |    18 +-
+ src/pages/config/{index.jsx => index.tsx}          |     0
+ src/pages/copyright/{fields.js => fields.ts}       |     0
+ src/pages/copyright/index.module.scss              |     4 +-
+ src/pages/corevalues/index.module.scss             |     4 +-
+ src/pages/corevalues/{index.jsx => index.tsx}      |     0
+ src/pages/dao/{Claim.jsx => Claim.tsx}             |    29 +-
+ src/pages/dao/{Dao.jsx => Dao.tsx}                 |     2 +-
+ ...LoadingDaoMessage.jsx => LoadingDaoMessage.tsx} |     2 +-
+ src/pages/dao/{Proposal.jsx => Proposal.tsx}       |    40 +-
+ .../{ProposalDisplay.jsx => ProposalDisplay.tsx}   |    10 +-
+ src/pages/dao/index.module.scss                    |     8 +-
+ src/pages/dao/{index.jsx => index.tsx}             |     0
+ .../dao/tabs/{Parameters.jsx => Parameters.tsx}    |    26 +-
+ .../dao/tabs/{Proposals.jsx => Proposals.tsx}      |     4 +-
+ src/pages/dao/tabs/{Submit.jsx => Submit.tsx}      |    17 +-
+ ...DAOMetadataTzkt.jsx => TeiaDAOMetadataTzkt.tsx} |     4 +-
+ src/pages/dao/tabs/{index.js => index.ts}          |     0
+ src/pages/faq/index.module.scss                    |     9 +-
+ src/pages/faq/{index.jsx => index.tsx}             |     2 +-
+ .../feeds/{friends-feed.jsx => friends-feed.tsx}   |     0
+ .../home/feeds/{fund-feed.jsx => fund-feed.tsx}    |    11 +-
+ .../home/feeds/{fund-feeds.jsx => fund-feeds.tsx}  |     0
+ src/pages/home/feeds/index.module.scss             |     8 +-
+ src/pages/home/feeds/{index.js => index.ts}        |     0
+ .../home/feeds/{lists-feed.jsx => lists-feed.tsx}  |    16 +-
+ .../{mime-type-feed.jsx => mime-type-feed.tsx}     |     0
+ .../{new-objkts-feed.jsx => new-objkts-feed.tsx}   |     0
+ .../feeds/{random-feed.jsx => random-feed.tsx}     |     2 +-
+ ...recent-sales-feed.jsx => recent-sales-feed.tsx} |     0
+ .../feeds/{search-feed.jsx => search-feed.tsx}     |     0
+ .../home/feeds/{tag-feed.jsx => tag-feed.tsx}      |     0
+ src/pages/home/index.module.scss                   |     2 +-
+ src/pages/home/subjkts-search-results.jsx          |    83 -
+ src/pages/home/subjkts-search-results.tsx          |    90 +
+ src/pages/mint/{fields.js => fields.ts}            |     0
+ src/pages/mint/index.module.scss                   |     4 +-
+ src/pages/objkt-display/index.module.scss          |    93 +-
+ src/pages/objkt-display/index.tsx                  |     7 +-
+ src/pages/objkt-display/style.css                  |    42 -
+ .../objkt-display/tabs/{Burn.jsx => Burn.tsx}      |    17 +-
+ .../tabs/{Collectors.jsx => Collectors.tsx}        |     2 +-
+ .../tabs/{Copyright.jsx => Copyright.tsx}          |   116 +-
+ src/pages/objkt-display/tabs/History.jsx           |   266 -
+ src/pages/objkt-display/tabs/History.tsx           |   287 +
+ .../objkt-display/tabs/{Info.jsx => Info.tsx}      |    14 +-
+ .../objkt-display/tabs/{Swap.jsx => Swap.tsx}      |    28 +-
+ src/pages/objkt-display/tabs/index.module.scss     |    58 +-
+ .../objkt-display/tabs/{index.js => index.ts}      |     0
+ ...ingPollsMessage.jsx => LoadingPollsMessage.tsx} |     2 +-
+ src/pages/polls/{Poll.jsx => Poll.tsx}             |    42 +-
+ .../polls/{PollDisplay.jsx => PollDisplay.tsx}     |    11 +-
+ src/pages/polls/{TeiaPolls.jsx => TeiaPolls.tsx}   |     0
+ src/pages/polls/index.module.scss                  |     7 +-
+ src/pages/polls/{index.jsx => index.tsx}           |     0
+ src/pages/polls/tabs/{Create.jsx => Create.tsx}    |     6 +-
+ src/pages/polls/tabs/{Polls.jsx => Polls.tsx}      |     8 +-
+ src/pages/polls/tabs/{index.js => index.ts}        |     0
+ src/pages/privacypolicy/index.module.scss          |     4 +-
+ src/pages/privacypolicy/{index.jsx => index.tsx}   |     0
+ src/pages/profile/{collabs.jsx => collabs.tsx}     |     5 +-
+ .../profile/{collections.jsx => collections.tsx}   |     6 +-
+ src/pages/profile/{creations.jsx => creations.tsx} |     5 +-
+ src/pages/profile/{curation.jsx => curation.tsx}   |     4 +-
+ src/pages/profile/{filters.jsx => filters.tsx}     |     8 +-
+ src/pages/profile/index.module.scss                |    31 +-
+ src/pages/profile/{index.jsx => index.tsx}         |    32 +-
+ src/pages/profile/{profile.jsx => profile.tsx}     |    46 +-
+ src/pages/profile/{warning.jsx => warning.tsx}     |     2 +-
+ src/pages/{sync.jsx => sync.tsx}                   |     2 +-
+ src/pages/tags/index.module.scss                   |     4 +-
+ src/pages/tags/{index.jsx => index.tsx}            |     0
+ src/pages/terms/index.module.scss                  |     4 +-
+ src/pages/terms/{index.jsx => index.tsx}           |     0
+ src/react-pdf-vite.d.ts                            |     3 +
+ src/{serviceWorker.js => serviceWorker.ts}         |    17 +-
+ src/static-components.d.ts                         |    19 +
+ src/stories/Feedback.stories.tsx                   |     4 +-
+ src/stories/Select.stories.tsx                     |     3 -
+ src/stories/shared.tsx                             |     3 +-
+ src/styles/_config.scss                            |    12 +
+ src/styles/index.scss                              |     4 +-
+ src/styles/layout.scss                             |    11 +-
+ src/styles/main.scss                               |    35 +-
+ src/styles/mixins.scss                             |     6 +-
+ src/styles/variables.scss                          |    19 +-
+ src/types.d.ts                                     |    21 +-
+ src/utils/{collab.js => collab.ts}                 |    16 +-
+ src/utils/{html.js => html.ts}                     |    44 +-
+ src/utils/{ipfs.js => ipfs.ts}                     |    18 +-
+ src/utils/{lambda.js => lambda.ts}                 |     2 +-
+ src/utils/{media.js => media.ts}                   |    36 +-
+ src/utils/{midi.js => midi.ts}                     |    14 +-
+ src/utils/mint.ts                                  |    28 +-
+ src/utils/{motion.js => motion.ts}                 |     0
+ src/utils/{os.js => os.ts}                         |     0
+ src/utils/{sanitise.js => sanitise.ts}             |    22 +-
+ src/utils/storage.js                               |    19 -
+ src/utils/storage.ts                               |    20 +
+ src/utils/{string.js => string.ts}                 |     4 +-
+ ...laggy-middleware.js => swr-laggy-middleware.ts} |     4 +-
+ src/utils/{time.js => time.ts}                     |    18 +-
+ src/utils/typed-art.ts                             |     8 +-
+ src/utils/{verify.js => verify.ts}                 |    16 +-
+ src/utils/with-icon.tsx                            |     4 +-
+ tsc_output.txt                                     |    93 +
+ tsc_verification_output.txt                        |    43 +
+ tsconfig.json                                      |   101 +-
+ vite.config.js => vite.config.mjs                  |    86 +-
+ 312 files changed, 15482 insertions(+), 15633 deletions(-)
