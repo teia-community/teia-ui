@@ -2,18 +2,18 @@ import { Link, Navigate } from 'react-router-dom'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
-import { useBlogPostsByArtist } from '@data/swr'
-import { BlogPostCard } from './components/BlogPostCard'
+import { useTextPostsByArtist } from '@data/swr'
+import { TextPostCard } from './components/TextPostCard'
 import styles from '@style'
 
 export default function YourPosts() {
   const address = useUserStore((st) => st.address)
 
-  const { data, error, isLoading } = useBlogPostsByArtist(address)
+  const { data, error, isLoading } = useTextPostsByArtist(address)
 
-  // Redirect to blog if not connected
+  // Redirect to text if not connected
   if (!address) {
-    return <Navigate to="/blog" replace />
+    return <Navigate to="/text" replace />
   }
 
   if (error) {
@@ -34,8 +34,8 @@ export default function YourPosts() {
     return (
       <div className={styles.empty}>
         <p>
-          You haven't written any blog posts yet.{' '}
-          <Link to="/blog/newpost">Write your first post!</Link>
+          You haven't written any text posts yet.{' '}
+          <Link to="/text/newpost">Write your first post!</Link>
         </p>
       </div>
     )
@@ -44,7 +44,7 @@ export default function YourPosts() {
   return (
     <div className={styles.posts_list}>
       {posts.map((nft) => (
-        <BlogPostCard key={nft.token_id} nft={nft} showBurn />
+        <TextPostCard key={nft.token_id} nft={nft} showBurn />
       ))}
     </div>
   )

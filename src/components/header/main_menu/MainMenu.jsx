@@ -91,7 +91,7 @@ export const MainMenu = () => {
         <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
-          <MenuItem className={styles.menu_label} route="blog" />
+          <MenuItem className={styles.menu_label} route="text" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem
             className={styles.menu_label}

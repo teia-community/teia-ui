@@ -11,13 +11,13 @@ const TABS = [
   { title: 'New Post', to: 'newpost', private: true },
 ]
 
-export default function Blog() {
+export default function Text() {
   const address = useUserStore((st) => st.address)
 
   return (
-    <Page title="Teia Blog">
+    <Page title="Teia Text">
       <div className={styles.container}>
-        <h1 className={styles.headline}>Blog</h1>
+        <h1 className={styles.headline}>Text</h1>
         <Tabs
           tabs={TABS}
           filter={(tab) => {

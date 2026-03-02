@@ -8,11 +8,11 @@ import {
   Collaborate,
   CreateCollaboration,
 } from '@pages/collaborate'
-import Blog from '@pages/blog'
-import Community from '@pages/blog/Community'
-import OfficialPosts from '@pages/blog/OfficialPosts'
-import YourPosts from '@pages/blog/YourPosts'
-import NewPost from '@pages/blog/NewPost'
+import Text from '@pages/text'
+import Community from '@pages/text/Community'
+import OfficialPosts from '@pages/text/OfficialPosts'
+import YourPosts from '@pages/text/YourPosts'
+import NewPost from '@pages/text/NewPost'
 import { Settings } from '@pages/config/Settings'
 import { Subjkt } from '@pages/config/Subjkt'
 import { DAO, Claim, ProposalDisplay } from '@pages/dao'
@@ -64,7 +64,7 @@ import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
-import BlogPosts from '@pages/profile/blog-posts'
+import TextPosts from '@pages/profile/text-posts'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -99,7 +99,7 @@ const display_routes = (
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
-    <Route exact path="blog" element={<BlogPosts />} />
+    <Route exact path="text" element={<TextPosts />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
@@ -172,7 +172,7 @@ const router = createBrowserRouter(
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
       </Route>
-      <Route path="blog/*" element={<Blog />}>
+      <Route path="text/*" element={<Text />}>
         <Route index element={<Community />} />
         <Route path="bulletin" element={<OfficialPosts />} />
         <Route path="yourposts" element={<YourPosts />} />

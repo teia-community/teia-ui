@@ -1,14 +1,14 @@
 import styles from './index.module.scss'
 
-export function BlogDisclaimer() {
+export function TextDisclaimer() {
   return (
     <div className={styles.disclaimer}>
       <p>
-        Welcome to TEIA's on-chain blogging platform — where every post is
+        Welcome to TEIA's on-chain text post platform — where every post is
         published directly to the Tezos blockchain via TEIA's minting contract.
       </p>
       <p>
-        Each post is treated as an NFT, much like the artworks on TEIA. Blog
+        Each post is treated as an NFT, much like the artworks on TEIA. Text
         content is stored with the MIME type "Markdown," and posts can be
         bought, sold, or collected just like any other token on the platform.
       </p>

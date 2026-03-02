@@ -4,7 +4,7 @@ import { PATH, MARKETPLACE_CONTRACT_TEIA } from '@constants'
 import { HashToURL } from '@utils'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
-import styles from './BlogPostCard.module.scss'
+import styles from './TextPostCard.module.scss'
 
 // Format date to readable string
 // Question: Is there a function to reuse?
@@ -25,7 +25,7 @@ function getExcerpt(text, maxLength = 200) {
   return cleaned.slice(0, maxLength).trim() + '...'
 }
 
-export function BlogPostCard({ nft, showBurn = false }) {
+export function TextPostCard({ nft, showBurn = false }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [isBurning, setIsBurning] = useState(false)
   const [burnAmount, setBurnAmount] = useState(1)

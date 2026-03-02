@@ -537,9 +537,9 @@ export function useTopDonors(excludeAddresses = []) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
-const BLOG_POSTS_QUERY = gql`
+const TEXT_POSTS_QUERY = gql`
   ${BaseTokenFieldsFragment}
-  query BlogPosts($limit: Int!) {
+  query TextPosts($limit: Int!) {
     tokens(
       where: {
         _or: [
@@ -558,11 +558,11 @@ const BLOG_POSTS_QUERY = gql`
   }
 `
 
-export function useBlogPosts(limit = 100) {
+export function useTextPosts(limit = 100) {
   return useSWR(
-    ['blog-community'],
+    ['text-community'],
     () =>
-      request(import.meta.env.VITE_TEIA_GRAPHQL_API, BLOG_POSTS_QUERY, {
+      request(import.meta.env.VITE_TEIA_GRAPHQL_API, TEXT_POSTS_QUERY, {
         limit,
       }),
     {
@@ -573,9 +573,9 @@ export function useBlogPosts(limit = 100) {
   )
 }
 
-const BLOG_POSTS_BY_ARTIST_QUERY = gql`
+const TEXT_POSTS_BY_ARTIST_QUERY = gql`
   ${BaseTokenFieldsFragment}
-  query BlogPostsByArtist($address: String!) {
+  query TextPostsByArtist($address: String!) {
     tokens(
       where: {
         artist_address: { _eq: $address }
@@ -601,13 +601,13 @@ const BLOG_POSTS_BY_ARTIST_QUERY = gql`
   }
 `
 
-export function useBlogPostsByArtist(address) {
+export function useTextPostsByArtist(address) {
   return useSWR(
-    address ? ['blog-posts-by-artist', address] : null,
+    address ? ['text-posts-by-artist', address] : null,
     () =>
       request(
         import.meta.env.VITE_TEIA_GRAPHQL_API,
-        BLOG_POSTS_BY_ARTIST_QUERY,
+        TEXT_POSTS_BY_ARTIST_QUERY,
         { address }
       ),
     {
@@ -618,9 +618,9 @@ export function useBlogPostsByArtist(address) {
   )
 }
 
-const OFFICIAL_BLOG_POSTS_QUERY = gql`
+const OFFICIAL_TEXT_POSTS_QUERY = gql`
   ${BaseTokenFieldsFragment}
-  query OfficialBlogPosts($addresses: [String!], $tag: String!, $limit: Int!) {
+  query OfficialTextPosts($addresses: [String!], $tag: String!, $limit: Int!) {
     tokens(
       where: {
         artist_address: { _in: $addresses }
@@ -650,14 +650,14 @@ export function useMultisigAddresses() {
   return data || []
 }
 
-export function useOfficialBlogPosts(limit = 100) {
+export function useOfficialTextPosts(limit = 100) {
   const multisigAddresses = useMultisigAddresses()
   return useSWR(
-    multisigAddresses.length > 0 ? ['blog-official', multisigAddresses] : null,
+    multisigAddresses.length > 0 ? ['text-official', multisigAddresses] : null,
     () =>
       request(
         import.meta.env.VITE_TEIA_GRAPHQL_API,
-        OFFICIAL_BLOG_POSTS_QUERY,
+        OFFICIAL_TEXT_POSTS_QUERY,
         {
           addresses: multisigAddresses,
           tag: TEIA_MULTISIG_BLOG_TAG,

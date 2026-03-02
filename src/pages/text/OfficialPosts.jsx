@@ -1,11 +1,11 @@
-import { useOfficialBlogPosts } from '@data/swr'
+import { useOfficialTextPosts } from '@data/swr'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { BlogPostCard } from './components/BlogPostCard'
+import { TextPostCard } from './components/TextPostCard'
 import styles from '@style'
 
 export default function OfficialPosts() {
-  const { data, error, isLoading } = useOfficialBlogPosts(100)
+  const { data, error, isLoading } = useOfficialTextPosts(100)
 
   if (error) {
     return (
@@ -24,7 +24,7 @@ export default function OfficialPosts() {
   if (posts.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>No official blog posts yet.</p>
+        <p>No official text posts yet.</p>
       </div>
     )
   }
@@ -37,7 +37,7 @@ export default function OfficialPosts() {
       </p>
       <div className={styles.posts_list}>
         {posts.map((nft) => (
-          <BlogPostCard key={nft.token_id} nft={nft} />
+          <TextPostCard key={nft.token_id} nft={nft} />
         ))}
       </div>
     </>

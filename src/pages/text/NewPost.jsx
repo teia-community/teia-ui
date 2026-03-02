@@ -4,7 +4,7 @@ import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { Button } from '@atoms/button'
-import { BlogDisclaimer } from '@atoms/blog-disclaimer'
+import { TextDisclaimer } from '@atoms/text-disclaimer'
 import { Checkbox, Input } from '@atoms/input'
 import {
   LICENSE_TYPES_OPTIONS,
@@ -62,7 +62,7 @@ const previewComponents = {
   },
 }
 
-const DRAFT_KEY = 'teia-blog-draft'
+const DRAFT_KEY = 'teia-text-draft'
 
 export default function NewPost() {
   const navigate = useNavigate()
@@ -122,9 +122,9 @@ export default function NewPost() {
     }
   }, [title, content, tags])
 
-  // Redirect to blog if not connected
+  // Redirect to text if not connected
   if (!address) {
-    return <Navigate to="/blog" replace />
+    return <Navigate to="/text" replace />
   }
 
   const handleSubmit = async (e) => {
@@ -160,7 +160,7 @@ export default function NewPost() {
       const step = useModalStore.getState().step
       const show = useModalStore.getState().show
 
-      step('Preparing Blog Post', 'Creating markdown file...')
+      step('Preparing Text Post', 'Creating markdown file...')
 
       // Create markdown file
       const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
@@ -173,7 +173,7 @@ export default function NewPost() {
       const artifact = await convertFileToFileForm(file)
       artifact.reader = URL.createObjectURL(blob)
 
-      step('Preparing Blog Post', 'Generating cover image...')
+      step('Preparing Text Post', 'Generating cover image...')
 
       // We may process this via mintStore in the future
 
@@ -213,14 +213,14 @@ export default function NewPost() {
         }
       }
 
-      step('Preparing Blog Post', 'Uploading to IPFS...')
+      step('Preparing Text Post', 'Uploading to IPFS...')
 
       const tagList = tags
         .split(',')
         .map((t) => t.trim())
         .filter((t) => t)
-      if (!tagList.includes('blog')) {
-        tagList.push('blog')
+      if (!tagList.includes('text')) {
+        tagList.push('text')
       }
       if (isOfficialPost && !tagList.includes(TEIA_MULTISIG_BLOG_TAG)) {
         tagList.push(TEIA_MULTISIG_BLOG_TAG)
@@ -271,14 +271,14 @@ export default function NewPost() {
         throw new Error('Failed to upload to IPFS')
       }
 
-      step('Minting Blog Post', 'Please confirm the transaction...')
+      step('Minting Text Post', 'Please confirm the transaction...')
 
       // Mint
       await mint(minterAddress, editions, cid, royalties)
 
       show(
         'Success!',
-        'Blog post has been minted successfully. It may take a few minutes for the indexer to update before your post appears.'
+        'Text post has been minted successfully. It may take a few minutes for the indexer to update before your post appears.'
       )
 
       // Clear draft from localStorage
@@ -294,7 +294,7 @@ export default function NewPost() {
       // Navigate to posts. delay added
       setTimeout(() => {
         useModalStore.getState().close()
-        navigate('/blog/yourposts')
+        navigate('/text/yourposts')
       }, 2000)
     } catch (error) {
       console.error('Mint error:', error)
@@ -314,7 +314,7 @@ export default function NewPost() {
       {isMultisig && (
         <div className={styles.field}>
           <Checkbox
-            label="Bulletin Teia Blog Post (Multisig Members Only)"
+            label="Bulletin Teia Text Post (Multisig Members Only)"
             checked={isOfficialPost}
             onCheck={setIsOfficialPost}
           />
@@ -351,7 +351,7 @@ export default function NewPost() {
               preview="live"
               height={400}
               textareaProps={{
-                placeholder: 'Write your blog post in Markdown...',
+                placeholder: 'Write your text post in Markdown...',
               }}
               previewOptions={{ components: previewComponents }}
               extraCommands={[tokenSearchCommand]}
@@ -389,7 +389,7 @@ export default function NewPost() {
           onChange={(e) => setTags(e.target.value)}
         />
         <small className={styles.hint}>
-          The "blog" tag will be added automatically
+          The "text" tag will be added automatically
         </small>
       </div>
 
@@ -442,7 +442,7 @@ export default function NewPost() {
         </select>
       </div>
 
-      <BlogDisclaimer />
+      <TextDisclaimer />
 
       <div className={styles.actions}>
         <Button
