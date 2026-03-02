@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { gql, request } from 'graphql-request'
-import { bytes2Char } from '@taquito/utils'
+import { bytesToString } from '@taquito/utils'
 import {
   DAO_TOKEN_CONTRACT,
   DAO_TOKEN_DECIMALS,
@@ -21,7 +21,7 @@ function reorderBigmapData(data, subKey, decode = false) {
   data?.forEach(
     (item) =>
       (bigmapData[subKey ? item.key[subKey] : item.key] = decode
-        ? bytes2Char(item.value)
+        ? bytesToString(item.value)
         : item.value)
   )
 
