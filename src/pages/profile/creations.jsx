@@ -58,6 +58,7 @@ export default function Creations() {
 
           return orderBy([...tokens, ...collab_tokens], ['minted_at'])
             .reverse()
+            .filter((token) => token.mime_type !== 'text/markdown')
             .map((token) => ({ ...token, key: token.token_id }))
         }}
         postProcessTokens={(tokens) => {
