@@ -432,7 +432,15 @@ export const useUserStore = create<UserState>()(
               batch = contract.methodsObject.fulfill_ask(listing.ask_id)
             } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE', 'OBJKT_ASK_V3_2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methodsObject.fulfill_ask([listing.ask_id, 1, null, null, MichelsonMap.fromLiteral({})])
+              batch = contract.methodsObject.fulfill_ask(
+                {
+                  ask_id: listing.ask_id,
+                  amount: 1,
+                  proxy_for: null,
+                  condition_extra: null,
+                  referrers: MichelsonMap.fromLiteral({})
+                }
+              )
             } else if (['VERSUM_SWAP'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methodsObject.collect_swap(['1', listing.swap_id])
