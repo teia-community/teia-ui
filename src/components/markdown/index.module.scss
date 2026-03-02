@@ -2,10 +2,155 @@
 @import '@styles/layout.scss';
 
 .content {
+  // Override global white-space: pre-line what breaks markdown rendering
+  white-space: normal;
+  word-wrap: break-word;
+
   a {
     font-weight: 700;
   }
+
   p {
     margin: 1em 0;
+    white-space: pre-line;
   }
+
+  // Inline text styles (reset.scss `all: unset` strips these)
+  em,
+  i {
+    font-style: italic;
+  }
+
+  strong,
+  b {
+    font-weight: 700;
+  }
+
+  del,
+  s {
+    text-decoration: line-through;
+  }
+
+  // Lists
+  ul {
+    list-style-type: disc;
+    padding-left: 2em;
+    margin: 1em 0;
+
+    ul {
+      list-style-type: circle;
+
+      ul {
+        list-style-type: square;
+      }
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+    padding-left: 2em;
+    margin: 1em 0;
+
+    ol {
+      list-style-type: lower-alpha;
+
+      ol {
+        list-style-type: lower-roman;
+      }
+    }
+  }
+
+  li {
+    display: list-item;
+    margin: 0.25em 0;
+    line-height: 150%;
+
+    // reset.scss sets ::marker { content: '' } which hides all list markers
+    &::marker {
+      content: revert;
+    }
+  }
+
+  // Blockquotes
+  blockquote {
+    border-left: 3px solid var(--border-color);
+    padding-left: 1em;
+    margin: 1em 0;
+    color: var(--secondary-color);
+
+    p {
+      margin: 0.5em 0;
+    }
+  }
+
+  // Inline code
+  code {
+    font-family: 'Iosevka', monospace;
+    background: var(--border-color);
+    padding: 0.15em 0.4em;
+    font-size: 0.9em;
+  }
+
+  // Code blocks
+  pre {
+    background: var(--border-color);
+    padding: 1em;
+    margin: 1em 0;
+    overflow-x: auto;
+    white-space: pre;
+
+    code {
+      background: none;
+      padding: 0;
+      font-size: 0.9em;
+    }
+  }
+
+  // Headings
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 1.5em 0 0.5em;
+  }
+
+  // Horizontal rule
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 2em 0;
+  }
+
+  // Tables
+  table {
+    width: 100%;
+    margin: 1em 0;
+    border: 1px solid var(--border-color);
+  }
+
+  th,
+  td {
+    border: 1px solid var(--border-color);
+    padding: 0.5em 0.75em;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 700;
+  }
+
+  // Images
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 1em 0;
+  }
+}
+
+.spacer {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 2em 0;
 }

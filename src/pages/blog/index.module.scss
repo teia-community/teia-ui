@@ -174,9 +174,34 @@
     letter-spacing: normal !important;
   }
 
+  // See global `.wmde-markdown` block in main.scss
   :global(.wmde-markdown) {
     background-color: var(--background-color) !important;
     font-family: 'Source Sans Pro', sans-serif !important;
+
+    blockquote {
+      border-left: 3px solid var(--border-color);
+      color: var(--secondary-color);
+    }
+
+    code {
+      font-family: 'Iosevka', monospace;
+      background: var(--border-color);
+    }
+
+    pre {
+      background: var(--border-color);
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid var(--border-color);
+    }
+
+    hr {
+      border-top: 1px solid var(--border-color);
+    }
   }
 
   // Anchor the token embed dropdown to the right so it doesn't overflow

@@ -138,6 +138,58 @@ img.emoji {
   font-family: var(--text-font);
 }
 
+// Targeted overrides for reset.scss inside the MDEditor preview.
+// This might be updated by using https://www.npmjs.com/package/@uiw/react-md-editor
+.wmde-markdown {
+  em,
+  i {
+    font-style: italic;
+  }
+  strong,
+  b {
+    font-weight: 700;
+  }
+  del,
+  s {
+    text-decoration: line-through;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  li {
+    display: list-item;
+  }
+  ul ul {
+    list-style-type: circle;
+  }
+  ul ul ul {
+    list-style-type: square;
+  }
+  ol ol {
+    list-style-type: lower-roman;
+  }
+
+  // Revert all reset.scss marker
+  *::marker {
+    content: revert;
+  }
+
+  // Restore native checkbox appearance :where(input) { all: unset }
+  input[type='checkbox'] {
+    -webkit-appearance: checkbox !important;
+    appearance: checkbox !important;
+    display: inline-block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 0.35em 0 0 !important;
+    vertical-align: middle !important;
+  }
+}
+
 // used for modals and the events menu
 // in conjunction of the useBodyClass("overlay") hook.
 body.overlay:after {
