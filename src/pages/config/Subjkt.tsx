@@ -212,7 +212,7 @@ export const Subjkt = () => {
 
    const bytes =
          '05' +
-         char2Bytes(
+         stringToBytes(
            JSON.stringify({
              alias: this.state.alias,
              description: this.state.description,
@@ -231,7 +231,7 @@ export const Subjkt = () => {
 
   // const sign = () => {
   //   context.signStr({
-  //     /*       payload : "05" + char2Bytes(this.state.str) */
+  //     /*       payload : "05" + stringToBytes(this.state.str) */
   //     payload: str
   //       .split('')
   //       .reduce(

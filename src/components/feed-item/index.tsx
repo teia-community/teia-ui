@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { Link } from 'react-router-dom'
 import { shallow } from 'zustand/shallow'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { motion } from 'framer-motion'
 import { NFT } from '@types'
@@ -33,9 +33,19 @@ const TokenHover = ({ nft, visible }: { nft: NFT; visible: boolean }) => {
     <AnimatePresence>
       {visible && (
         <motion.div {...info_variants} className={styles.hover_details}>
-          <h3>#{nft.token_id}</h3>
+          <h3
+            aria-label={`OBJKT number ${nft.token_id}`}
+            className={styles.hover_token_id}
+          >
+            #{nft.token_id}
+          </h3>
           <h4>{nft.name}</h4>
-          <p>{nft.description}</p>
+          <p
+            aria-label={`Description: ${nft.description}`}
+            className={styles.hover_description}
+          >
+            {nft.description}
+          </p>
         </motion.div>
       )}
     </AnimatePresence>
@@ -49,8 +59,15 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
   )
   const zen = useLocalSettings((st) => st.zen)
   const viewMode = useLocalSettings((st) => st.viewMode)
-  // const element = (hovered) => <div>Hover me! {hovered && 'Thanks!'}</div>
   const [hover, setHover] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const handleBlur = (e: React.FocusEvent) => {
+    // Only hide hover if focus is leaving the container entirely
+    if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+      setHover(false)
+    }
+  }
 
   const containerClasses = classnames({
     [styles.container]: true,
@@ -61,12 +78,12 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
 
   return (
     <div
+      ref={containerRef}
+      aria-label={`OBJKT ${nft.token_id}: ${nft.name}`}
       onMouseOver={() => setHover(true)}
-      onFocus={() => setHover(true)}
       onMouseOut={() => setHover(false)}
-      onBlur={() => setHover(false)}
-      // onMouseEnter={() => setHover(true)}
-      // onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={handleBlur}
       className={containerClasses}
     >
 
@@ -77,8 +94,9 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
         />
       ) : (
         <Link
-          aria-label={`OBJKT ${nft.token_id}`}
+          aria-label={`View OBJKT ${nft.token_id}: ${nft.name}`}
           to={`${PATH.OBJKT}/${nft.token_id}`}
+          onFocus={() => setHover(true)}
         >
           <RenderMediaType
             details={<TokenHover nft={nft} visible={hover && !zen} />}

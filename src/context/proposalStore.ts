@@ -95,7 +95,7 @@ export const useProposalStore = create<ProposalStore>(() => ({
       const contract = await Tezos.wallet.at(COPYRIGHT_CONTRACT)
 
       const opHash = await handleOp(
-        contract.methods.execute_proposal(proposalId),
+        contract.methodsObject.execute_proposal(proposalId),
         modalTitle
       )
 
