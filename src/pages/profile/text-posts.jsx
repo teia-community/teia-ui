@@ -3,7 +3,7 @@ import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
 import { useTextPostsByArtist } from '@data/swr'
-import { TextPostCard } from '@pages/text/components/TextPostCard'
+import { TextPostCard } from '@components/text/TextPostCard'
 import styles from './text-posts.module.scss'
 
 export default function TextPosts() {

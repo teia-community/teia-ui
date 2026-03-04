@@ -23,7 +23,7 @@ import {
   removeExtension,
   extensionFromMimetype,
 } from '@utils/mint'
-import { tokenSearchCommand } from './components/TokenSearchCommand'
+import { tokenSearchCommand } from '../../components/text/TokenSearchCommand'
 import styles from './index.module.scss'
 
 const MDEditor = lazy(() => import('@uiw/react-md-editor'))

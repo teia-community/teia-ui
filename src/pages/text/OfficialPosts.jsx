@@ -1,7 +1,7 @@
 import { useOfficialTextPosts } from '@data/swr'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { TextPostCard } from './components/TextPostCard'
+import { TextPostCard } from '../../components/text/TextPostCard'
 import styles from '@style'
 
 export default function OfficialPosts() {
