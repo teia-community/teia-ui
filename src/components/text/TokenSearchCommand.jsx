@@ -72,8 +72,7 @@ function TokenSearchDropdown({ close, textApi }) {
         token_id: String(token.token_id),
         artist_address: artistAddr,
         artist_name: artistName,
-        mime_type: token.mime_type || '',
-        royalties: { decimals: 4, shares: { [artistAddr]: 500 } },
+        mime_type: token.mime_type,
       })} -->`
 
       const imageLink = previewUrl

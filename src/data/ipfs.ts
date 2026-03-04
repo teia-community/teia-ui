@@ -142,15 +142,9 @@ const isDoubleMint = async (uri: string) => {
   return false
 }
 
-interface EmbeddedTokenRoyalties {
-  decimals: number
-  shares: { [address: string]: number }
-}
-
 interface EmbeddedToken {
   token_id: string
   artist_address: string
-  royalties: EmbeddedTokenRoyalties
 }
 
 interface PrepareProps {

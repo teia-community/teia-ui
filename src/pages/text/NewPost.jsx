@@ -236,10 +236,6 @@ export default function NewPost() {
           ? embeddedTokens.map((t) => ({
               token_id: t.token_id,
               artist_address: t.artist_address,
-              royalties: t.royalties || {
-                decimals: 4,
-                shares: { [t.artist_address]: 500 },
-              },
             }))
           : undefined
 
