@@ -73,7 +73,7 @@ function TokenSearchDropdown({ close, textApi }) {
         artist_address: artistAddr,
         artist_name: artistName,
         mime_type: token.mime_type || '',
-        royalties: { decimals: 4, shares: { [artistAddr]: 1500 } },
+        royalties: { decimals: 4, shares: { [artistAddr]: 500 } },
       })} -->`
 
       const imageLink = previewUrl

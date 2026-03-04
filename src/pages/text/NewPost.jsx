@@ -238,14 +238,14 @@ export default function NewPost() {
               artist_address: t.artist_address,
               royalties: t.royalties || {
                 decimals: 4,
-                shares: { [t.artist_address]: 1500 },
+                shares: { [t.artist_address]: 500 },
               },
             }))
           : undefined
 
       // Upload to IPFS
       const cid = await prepareFile({
-        name: title || 'Untitled Post',
+        name: title,
         description,
         tags: finalTags,
         address: minterAddress,
