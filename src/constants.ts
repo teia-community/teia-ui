@@ -233,6 +233,8 @@ export const SWAP_TYPE_HEN = 'HEN'
 export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one that is used for swapping
 export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
+export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
+
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 
 export const COVER_COMPRESSOR_OPTIONS = {
