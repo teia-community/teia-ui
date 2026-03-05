@@ -13,6 +13,7 @@ import {
   getTzktData,
   fetchObjktDetails,
   BaseTokenFieldsFragment,
+  fetchGraphQL,
 } from '@data/api'
 import laggy from '@utils/swr-laggy-middleware'
 
