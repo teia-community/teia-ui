@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import { gql, request } from 'graphql-request'
 import { bytesToString } from '@taquito/utils'
 import {
   DAO_TOKEN_CONTRACT,
@@ -6,8 +7,14 @@ import {
   COPYRIGHT_CONTRACT,
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
+  TEIA_MULTISIG_BLOG_TAG,
 } from '@constants'
-import { getTzktData, fetchObjktDetails, fetchGraphQL } from '@data/api'
+import {
+  getTzktData,
+  fetchObjktDetails,
+  BaseTokenFieldsFragment,
+} from '@data/api'
+import laggy from '@utils/swr-laggy-middleware'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -631,4 +638,139 @@ export function useTopDonors(excludeAddresses = []) {
   )
 
   return { data, mutate, error, isLoading: !data && !error }
+}
+
+const TEXT_POSTS_QUERY = gql`
+  ${BaseTokenFieldsFragment}
+  query TextPosts($limit: Int!) {
+    tokens(
+      where: {
+        _or: [
+          { mime_type: { _eq: "text/plain" } }
+          { mime_type: { _eq: "text/markdown" } }
+        ]
+        editions: { _gt: 0 }
+        metadata_status: { _eq: "processed" }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+      }
+      order_by: { minted_at: desc }
+      limit: $limit
+    ) {
+      ...baseTokenFields
+    }
+  }
+`
+
+export function useTextPosts(limit = 100) {
+  return useSWR(
+    ['text-community'],
+    () =>
+      request(import.meta.env.VITE_TEIA_GRAPHQL_API, TEXT_POSTS_QUERY, {
+        limit,
+      }),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      use: [laggy],
+    }
+  )
+}
+
+const TEXT_POSTS_BY_ARTIST_QUERY = gql`
+  ${BaseTokenFieldsFragment}
+  query TextPostsByArtist($address: String!) {
+    tokens(
+      where: {
+        artist_address: { _eq: $address }
+        _or: [
+          { mime_type: { _eq: "text/plain" } }
+          { mime_type: { _eq: "text/markdown" } }
+        ]
+        editions: { _gt: 0 }
+        metadata_status: { _eq: "processed" }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+      }
+      order_by: { minted_at: desc }
+    ) {
+      ...baseTokenFields
+      listings(where: { status: { _eq: "active" } }, order_by: { price: asc }) {
+        seller_address
+      }
+      holdings(where: { amount: { _gt: "0" } }) {
+        holder_address
+        amount
+      }
+    }
+  }
+`
+
+export function useTextPostsByArtist(address) {
+  return useSWR(
+    address ? ['text-posts-by-artist', address] : null,
+    () =>
+      request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        TEXT_POSTS_BY_ARTIST_QUERY,
+        { address }
+      ),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      use: [laggy],
+    }
+  )
+}
+
+const OFFICIAL_TEXT_POSTS_QUERY = gql`
+  ${BaseTokenFieldsFragment}
+  query OfficialTextPosts($addresses: [String!], $tag: String!, $limit: Int!) {
+    tokens(
+      where: {
+        artist_address: { _in: $addresses }
+        tags: { tag: { _eq: $tag } }
+        _or: [
+          { mime_type: { _eq: "text/plain" } }
+          { mime_type: { _eq: "text/markdown" } }
+        ]
+        editions: { _gt: 0 }
+        metadata_status: { _eq: "processed" }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+      }
+      order_by: { minted_at: desc }
+      limit: $limit
+    ) {
+      ...baseTokenFields
+    }
+  }
+`
+
+export function useMultisigAddresses() {
+  const { data } = useSWR(
+    `/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=users`,
+    getTzktData,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  )
+  return data || []
+}
+
+export function useOfficialTextPosts(limit = 100) {
+  const multisigAddresses = useMultisigAddresses()
+  return useSWR(
+    multisigAddresses.length > 0 ? ['text-official', multisigAddresses] : null,
+    () =>
+      request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        OFFICIAL_TEXT_POSTS_QUERY,
+        {
+          addresses: multisigAddresses,
+          tag: TEIA_MULTISIG_BLOG_TAG,
+          limit,
+        }
+      ),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      use: [laggy],
+    }
+  )
 }

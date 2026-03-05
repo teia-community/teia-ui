@@ -80,6 +80,7 @@ export const FeedItem = ({ nft }: { nft: NFT }) => {
     <div
       ref={containerRef}
       aria-label={`OBJKT ${nft.token_id}: ${nft.name}`}
+      data-view-mode={viewMode}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}
       onFocus={() => setHover(true)}

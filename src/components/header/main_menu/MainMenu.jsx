@@ -91,6 +91,7 @@ export const MainMenu = () => {
         <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
+          <MenuItem className={styles.menu_label} route="text" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem
             className={styles.menu_label}
@@ -114,7 +115,7 @@ export const MainMenu = () => {
           />
           <MenuItem
             className={styles.menu_label}
-            label="Assets"
+            label="Profile"
             route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
           />
@@ -126,7 +127,7 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="Profile"
+            label="Settings"
             route="subjkt"
             need_sync
           />
@@ -145,7 +146,7 @@ export const MainMenu = () => {
 
           <MenuItem
             className={styles.menu_label}
-            label="Copyright"
+            label="Copyright Register"
             route="copyright"
           />
 
