@@ -107,7 +107,7 @@ export default function CopyrightMarketplace() {
     <Page title="Copyright Registry">
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.title}>Copyright Registry</h1>
+          <h1 className={styles.title}>Copyright Marketplace</h1>
           <p className={styles.description}>
             Browse copyright registrations on the Teia Copyright smart contract.
             Artists can register their works, define licensing clauses, and
@@ -118,7 +118,7 @@ export default function CopyrightMarketplace() {
               Register Your Work
             </Button>
             <span className={styles.stats}>
-              {totalCount} copyright{totalCount !== 1 ? 's' : ''} registered
+              you have {totalCount} copyright{totalCount !== 1 ? 's' : ''} registered
               {Object.values(filters).some((v) => v !== 'all') &&
                 ` (${entries.length} shown)`}
             </span>
