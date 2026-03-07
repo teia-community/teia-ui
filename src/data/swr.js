@@ -148,6 +148,40 @@ export function useDaoCommunityVotes(community, daoStorage) {
   return [reorderBigmapData(data, 'nat'), mutate]
 }
 
+export function useUserProfiles(addresses) {
+  const key = addresses?.length > 0 ? ['user-profiles', ...addresses] : null
+  const { data, mutate } = useSWR(
+    key,
+    async () => {
+      const result = await request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        gql`
+          query UserProfiles($addresses: [String!]) {
+            teia_users(where: { user_address: { _in: $addresses } }) {
+              user_address
+              name
+              metadata {
+                data
+              }
+            }
+          }
+        `,
+        { addresses }
+      )
+      const map = {}
+      result.teia_users?.forEach((u) => {
+        map[u.user_address] = {
+          name: u.name,
+          identicon: u.metadata?.data?.identicon,
+        }
+      })
+      return map
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  )
+  return [data, mutate]
+}
+
 export function useAliases(addresses) {
   if (addresses?.length === 1) addresses.push(addresses[0])
 
