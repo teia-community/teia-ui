@@ -208,7 +208,7 @@ export default function CopyrightDisplay() {
                   >
                     {showFullText[entry.id] ? 'Hide Full Text' : 'Generate Full Text'}
                   </button>
-                  {showFullText[entry.id] && <AgreementViewer firstParagraph={clauses.firstParagraph} />}
+                  {showFullText[entry.id] && <AgreementViewer firstParagraph={clauses.firstParagraph} address={address} />}
                 </div>
               )}
             </div>

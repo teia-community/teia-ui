@@ -3,8 +3,6 @@ import Button from '@atoms/button/Button'
 import styles from './index.module.scss'
 import { fetchAgreementText } from '@data/swr'
 import { HashToURL } from '@utils'
-import { useOutletContext } from 'react-router'
-
 // Module-level cache: fetched once, shared across all AgreementViewer instances
 let cachedAgreementText: Promise<string> | null = null
 function getAgreementText(): Promise<string> {
@@ -24,13 +22,12 @@ function getAgreementText(): Promise<string> {
 
 interface AgreementProps {
   firstParagraph: string
+  address?: string
 }
 
 export default function AgreementViewer(props: AgreementProps) {
   const [agreementText, setAgreementText] = useState('')
   const [loading, setLoading] = useState(true)
-
-  const { address } = useOutletContext() as { address?: string }
 
   const handlePrint = () => {
     const printContent = document.getElementById('printable-agreement')
@@ -69,7 +66,7 @@ export default function AgreementViewer(props: AgreementProps) {
           <h1>Active Copyright Agreement</h1>
           <div class="timestamp">
             Print Date: ${formattedDate} at ${formattedTime}
-            ${address ? `<br />Printed By: ${address}` : ''}
+            ${props.address ? `<br />Printed By: ${props.address}` : ''}
           </div>
           <pre>${printContent.innerText}</pre>
         </body>
