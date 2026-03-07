@@ -1,0 +1,21 @@
+.disclaimer {
+  margin: var(--spacing-double, 2rem) 0;
+  padding: var(--spacing-large, 1.5rem);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+  line-height: 1.8;
+
+  p {
+    margin: 0 0 1em 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}

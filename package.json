@@ -8,6 +8,7 @@
     "@taquito/michelson-encoder": "^24.1.0",
     "@taquito/taquito": "^24.1.0",
     "@tonejs/midi": "^2.0.28",
+    "@uiw/react-md-editor": "^4.0.11",
     "axios": "^0.27.2",
     "base-x": "^4.0.0",
     "bs58check": "^2.1.2",
