@@ -95,6 +95,12 @@ export const MainMenu = () => {
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem
             className={styles.menu_label}
+            label="Messages"
+            route="messages"
+            need_sync
+          />
+          <MenuItem
+            className={styles.menu_label}
             label="Getting Started"
             route="faq"
           />
