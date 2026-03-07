@@ -4,14 +4,14 @@ import styles from '@style'
 
 export const ResponsiveMasonry = ({ children }) => {
   const getColumns = () => {
-    if (global.innerWidth > 1170) {
+    if (window.innerWidth > 1170) {
       return 4
     }
 
-    if (global.innerWidth > 744) {
+    if (window.innerWidth > 744) {
       return 3
     }
-    if (global.innerWidth > 320) {
+    if (window.innerWidth > 320) {
       return 2
     }
 
@@ -23,9 +23,9 @@ export const ResponsiveMasonry = ({ children }) => {
     const resize = () => {
       setColumns(getColumns())
     }
-    global.addEventListener('resize', resize)
+    window.addEventListener('resize', resize)
 
-    return () => global.removeEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
   }, [])
 
   return (

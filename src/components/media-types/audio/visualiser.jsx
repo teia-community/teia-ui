@@ -11,7 +11,7 @@ export const Visualiser = ({ src }) => {
 
   useEffect(() => {
     setCtx(ref.current.getContext('2d'))
-    setRatio(Math.max(1, Math.min(global.devicePixelRatio, 2)))
+    setRatio(Math.max(1, Math.min(window.devicePixelRatio || 1, 2)))
 
     return () => {
       cancelAnimationFrame(raf)
@@ -104,7 +104,7 @@ export const Visualiser = ({ src }) => {
     }
 
     ctx.strokeStyle = 'var(--text-color)' //style.getPropertyValue('--text-color')
-    ctx.lineWidth = 2 * global.devicePixelRatio
+    ctx.lineWidth = 2 * (window.devicePixelRatio || 1)
     ctx.stroke()
     setRaf(requestAnimationFrame(update))
   }

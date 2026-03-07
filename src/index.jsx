@@ -1,4 +1,5 @@
 import { RootErrorBoundary } from '@atoms/error/RootErrorBoundary'
+import './utils/hrtime_polyfill'
 import { Tags } from '@pages/tags/index'
 import { About } from '@pages/about'
 import { Donate } from '@pages/donate'

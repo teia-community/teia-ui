@@ -1,12 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
 import eslintPlugin from 'vite-plugin-eslint'
-import { splitVendorChunkPlugin } from 'vite'
 import { copySync } from 'fs-extra'
-import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
@@ -91,6 +90,13 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
+      nodePolyfills({
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+      }),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
@@ -105,9 +111,6 @@ export default defineConfig(({ mode }) => {
         BUILD_COMMIT: commitHash,
       }),
     ],
-    define: {
-      global: 'globalThis',
-    },
     server: {
       host: true,
       port: 3000,
@@ -119,7 +122,6 @@ export default defineConfig(({ mode }) => {
       outDir: 'build',
       sourcemap: !prod,
       rollupOptions: {
-        plugins: [rollupNodePolyFill()],
         output: {
           // manualChunks: processChunks,
           manualChunks: {
