@@ -176,7 +176,7 @@ export function useThreadParticipants(threadId, storage) {
   const params = {
     'key.thread_id': threadId,
     active: true,
-    select: 'key',
+    select: 'key,value',
     limit: 100,
   }
   const { data, mutate } = useSWR(
@@ -195,7 +195,7 @@ export function useReadStatus(address, messageIds, storage) {
     'key.reader': address,
     'key.message_id.in': ids,
     active: true,
-    select: 'key',
+    select: 'key,value',
     limit: 500,
   }
   const { data, mutate } = useSWR(
@@ -216,13 +216,13 @@ export function useUnreadCount(address, storage) {
   const recipientParams = {
     'key.recipient': address,
     active: true,
-    select: 'key',
+    select: 'key,value',
     limit: 10000,
   }
   const readParams = {
     'key.reader': address,
     active: true,
-    select: 'key',
+    select: 'key,value',
     limit: 10000,
   }
 
