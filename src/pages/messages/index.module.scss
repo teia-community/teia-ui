@@ -29,6 +29,12 @@
   margin-top: 20px;
 }
 
+.inbox_header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0;
+}
+
 /* Compose page */
 .compose_form {
   max-width: 600px;
@@ -78,6 +84,12 @@
   align-items: center;
   gap: 12px;
   font-size: $font-small;
+}
+
+.compose_mode_hint {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  margin: 4px 0 0;
 }
 
 .compose_actions {

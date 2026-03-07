@@ -43,13 +43,13 @@ export const ChatHeader = ({
       </div>
       <div className={styles.chat_header_actions}>
         {onAddClick && (
-          <Button small onClick={onAddClick}>
-            +
+          <Button shadow_box onClick={onAddClick}>
+            Add
           </Button>
         )}
         {onInfoClick && (
-          <Button small onClick={onInfoClick}>
-            i
+          <Button shadow_box onClick={onInfoClick}>
+            Info
           </Button>
         )}
       </div>

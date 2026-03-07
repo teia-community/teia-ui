@@ -66,6 +66,12 @@ export default function Inbox() {
 
   return (
     <div>
+      <div className={styles.inbox_header}>
+        <Link to="/messages/compose">
+          <Button shadow_box>New Message</Button>
+        </Link>
+      </div>
+
       {unreadCount > 0 && (
         <p style={{ textAlign: 'center', marginTop: 12 }}>
           {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
