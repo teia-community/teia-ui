@@ -75,6 +75,10 @@ export const copyrightModalText = {
         <p>If rights are *not* transferable, the original Owner (usually the Creator) retains exclusive control over the use of the Work, and any attempt to transfer these rights without explicit approval from the Creator is void. This setup ensures that the Creator can maintain a closer relationship with the usage of their Work, limiting the potential for unauthorized uses or dilution of the Work’s value in contexts they did not consent to.</p>
         <p>In either case, Creators and Owners should clearly understand the terms of transferability and its implications since it potentially has long-term ramifications, especially when there is no expiration date attached to each clause.</p>
         `,
+    expirationDateExists: `
+        <p>This is the date where all rights given to Owner(s) upon the ownership of each edition/license expires, effectively returning the privledges and rights granted through the Work back to the Creator.</p>
+        <p>In professional contexts, expiration dates are typically set on a case-to-case basis (when an artist signs a "deal" with a label or company these details come into play), but if the Creator wants to create a blanket policy for their rights to be effective only during a limited time period, this option can be used to set a standard for all editions that apply to all Owners at once.</p>
+    `,
     expirationDate: `
         <p>This is the date where all rights given to Owner(s) upon the ownership of each edition/license expires, effectively returning the privledges and rights granted through the Work back to the Creator.</p>
         <p>In professional contexts, expiration dates are typically set on a case-to-case basis (when an artist signs a "deal" with a label or company these details come into play), but if the Creator wants to create a blanket policy for their rights to be effective only during a limited time period, this option can be used to set a standard for all editions that apply to all Owners at once.</p>

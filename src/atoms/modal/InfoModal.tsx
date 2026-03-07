@@ -1,5 +1,6 @@
 // InfoModal.tsx
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from '@style'
 
 interface InfoModalProps {
@@ -23,13 +24,14 @@ export const InfoModal: React.FC<InfoModalProps> = ({ isOpen, title, content, on
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div id="modal-overlay" className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <h2>{title}</h2>
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

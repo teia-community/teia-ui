@@ -10,8 +10,10 @@ import { COPYRIGHT_CONTRACT } from '../constants';
 
 export interface CopyrightStore {
   customLicenseData?: any;
+  isValid?: boolean;
   setCustomLicenseData: (data: any) => void;
   reset: () => void;
+  submitCopyrightAgreement: () => Promise<string | undefined>;
 }
 
 export const useCopyrightStore = create<CopyrightStore>()(
@@ -51,7 +53,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
               ? customLicenseData.documentText.split('This Agreement outlines the')[0].trim()
               : customLicenseData.documentText.slice(0, 530).trim()
             
-              console.log('firstParagraph', firstParagraph)
+              //console.log('firstParagraph', firstParagraph)
               const handleOp = useUserStore.getState().handleOp
               const opHash = await handleOp(
                 contract.methodsObject.create_copyright({
@@ -87,7 +89,7 @@ export const useCopyrightStore = create<CopyrightStore>()(
                 { amount: 0.1 }
               )
 
-              console.log('[DEBUG] Operation sent:', opHash)
+              //console.log('[DEBUG] Operation sent:', opHash)
               show(modalTitle, `Copyright submitted https://tzkt.io/${opHash}`, true)
               return opHash
             } catch (err) {
