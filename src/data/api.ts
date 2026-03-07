@@ -206,6 +206,27 @@ export async function getUser(addressOrName: string, type = 'user_address') {
   return data?.teia_users?.length ? data.teia_users[0] : null
 }
 
+export async function searchUsersByName(query: string) {
+  const trimmed = query.trim()
+  if (!trimmed) return []
+  const { data } = await fetchGraphQL(
+    `
+    query searchUsers($query: String!) {
+      teia_users(where: { name: { _ilike: $query } }) {
+        user_address
+        name
+        metadata {
+          data
+        }
+      }
+    }
+    `,
+    'searchUsers',
+    { query: `%${trimmed}%` }
+  )
+  return data?.teia_users || []
+}
+
 export async function fetchCollabCreations(
   addressOrSubjkt: string,
   type = 'address'

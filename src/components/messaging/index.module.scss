@@ -316,3 +316,91 @@
   font-size: $font-xsmall;
   margin-top: 4px;
 }
+
+/* RecipientInput */
+.recipient_container {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.recipient_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recipient_input {
+  flex: 1;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.recipient_input:focus {
+  outline: none;
+  border-color: var(--text-color);
+}
+
+.recipient_resolved {
+  font-size: $font-small;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.recipient_remove {
+  @include resetButton;
+  font-size: 18px;
+  color: var(--text-color);
+  flex-shrink: 0;
+}
+
+.recipient_error {
+  color: var(--no-vote-color);
+  font-size: $font-xsmall;
+  margin: 0 0 6px;
+}
+
+.recipient_dropdown {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.recipient_option {
+  @include resetButton;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: $font-small;
+  text-align: left;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.recipient_option_avatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.recipient_option_name {
+  font-weight: 600;
+}
+
+.recipient_option_addr {
+  opacity: 0.5;
+  flex-shrink: 0;
+  margin-left: auto;
+}
