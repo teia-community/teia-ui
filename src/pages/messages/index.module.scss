@@ -1,0 +1,108 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
+.container {
+  padding-bottom: 60px;
+  width: 100%;
+}
+
+.headline {
+  text-align: center;
+}
+
+.loading {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.6;
+}
+
+.load_more {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Compose page */
+.compose_form {
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.compose_section {
+  margin-bottom: 16px;
+}
+
+.compose_label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: $font-small;
+}
+
+.compose_textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  line-height: 1.4;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.compose_textarea:focus {
+  outline: none;
+  border-color: var(--text-color);
+}
+
+.compose_meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.compose_mode_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: $font-small;
+}
+
+.compose_actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.compose_fee {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+/* ThreadView page */
+.thread_container {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.thread_messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
