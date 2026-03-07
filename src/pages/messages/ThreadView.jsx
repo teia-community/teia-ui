@@ -64,8 +64,9 @@ export default function ThreadView() {
   ]
 
   const handleReply = async (content) => {
-    const newRecipients = addedRecipients.length > 0 ? addedRecipients : []
-    await reply(threadId, content, newRecipients, fee)
+    const others = allParticipants.filter((p) => p !== address)
+    const replyRecipients = [...new Set([...others, ...addedRecipients])]
+    await reply(threadId, content, replyRecipients, fee)
     mutateMessages()
   }
 
