@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, useOutletContext } from 'react-router-dom'
+import { useState } from 'react'
+import { useParams, useOutletContext, Link } from 'react-router-dom'
 import { ChatHeader } from '@components/messaging/ChatHeader'
 import { ChatInfoDialog } from '@components/messaging/ChatInfoDialog'
 import { AddRecipientDialog } from '@components/messaging/AddRecipientDialog'
@@ -9,7 +9,6 @@ import {
   useThreadMessages,
   useThreadInfo,
   useThreadParticipants,
-  useReadStatus,
   useMessageFee,
 } from '@data/messaging'
 import { useUserProfiles } from '@data/swr'
@@ -23,10 +22,7 @@ export default function ThreadView() {
 
   const [messages, mutateMessages] = useThreadMessages(threadId, storage)
   const [threadInfo] = useThreadInfo(threadId, storage)
-  const [participants, mutateParticipants] = useThreadParticipants(
-    threadId,
-    storage
-  )
+  const [participants] = useThreadParticipants(threadId, storage)
 
   const [showInfo, setShowInfo] = useState(false)
   const [showAddRecipient, setShowAddRecipient] = useState(false)
@@ -40,24 +36,8 @@ export default function ThreadView() {
     senderAddrs?.length > 0 ? senderAddrs : undefined
   )
 
-  // Message IDs from others for read tracking
-  const otherMessageIds = messages
-    ?.filter((m) => m.sender !== address)
-    .map((m) => m.id)
-  const [readSet] = useReadStatus(address, otherMessageIds, storage)
-
   const reply = useMessagingStore((st) => st.reply)
-  const markAsRead = useMessagingStore((st) => st.markAsRead)
   const deleteMessage = useMessagingStore((st) => st.deleteMessage)
-
-  // Auto mark-as-read for other's messages
-  useEffect(() => {
-    if (!otherMessageIds?.length || !readSet) return
-    const unread = otherMessageIds.filter((id) => !readSet.has(id))
-    if (unread.length > 0) {
-      markAsRead(unread)
-    }
-  }, [otherMessageIds?.join(','), readSet?.size]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const allParticipants = [
     ...new Set([...(participants || []), ...addedRecipients]),
@@ -79,10 +59,31 @@ export default function ThreadView() {
     setAddedRecipients([...addedRecipients, addr])
   }
 
-  if (!storage || !address) {
+  if (!address) {
+    return (
+      <div className={styles.empty}>
+        <p>
+          <Link to="/sync">Sync your wallet</Link> to view messages.
+        </p>
+      </div>
+    )
+  }
+
+  if (!storage || !participants) {
     return (
       <div className={styles.loading}>
         <p>Loading...</p>
+      </div>
+    )
+  }
+
+  if (participants.length > 0 && !participants.includes(address)) {
+    return (
+      <div className={styles.empty}>
+        <p>Shhhh postal privacy.</p>
+        <p>
+          <Link to="/messages">Back to inbox</Link>
+        </p>
       </div>
     )
   }
