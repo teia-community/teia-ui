@@ -9,10 +9,12 @@ import {
   useThreadMessages,
   useThreadInfo,
   useThreadParticipants,
+  useReadStatus,
   useMessageFee,
 } from '@data/messaging'
 import { useUserProfiles } from '@data/swr'
 import { useMessagingStore } from '@context/messagingStore'
+import { Button } from '@atoms/button'
 import styles from '@style'
 
 export default function ThreadView() {
@@ -36,8 +38,27 @@ export default function ThreadView() {
     senderAddrs?.length > 0 ? senderAddrs : undefined
   )
 
+  // Read status tracking
+  const otherMessageIds = messages
+    ?.filter((m) => m.sender !== address)
+    .map((m) => m.id)
+  const [readSet, mutateReadSet] = useReadStatus(
+    address,
+    otherMessageIds?.length > 0 ? otherMessageIds : undefined,
+    storage
+  )
+  const unreadIds =
+    otherMessageIds?.filter((id) => readSet && !readSet.has(id)) || []
+
   const reply = useMessagingStore((st) => st.reply)
+  const markAsRead = useMessagingStore((st) => st.markAsRead)
   const deleteMessage = useMessagingStore((st) => st.deleteMessage)
+
+  const handleMarkAsRead = async () => {
+    if (unreadIds.length === 0) return
+    await markAsRead(unreadIds)
+    mutateReadSet()
+  }
 
   const allParticipants = [
     ...new Set([...(participants || []), ...addedRecipients]),
@@ -109,6 +130,15 @@ export default function ThreadView() {
           />
         ))}
       </div>
+
+      {unreadIds.length > 0 && (
+        <div className={styles.mark_read_bar}>
+          <Button small onClick={handleMarkAsRead}>
+            Mark {unreadIds.length} message{unreadIds.length !== 1 ? 's' : ''}{' '}
+            as read
+          </Button>
+        </div>
+      )}
 
       <ReplyForm onSubmit={handleReply} disabled={!address} />
 

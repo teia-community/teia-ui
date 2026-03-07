@@ -9,6 +9,7 @@ interface MenuItemProps {
   route: string
   need_sync?: boolean
   className?: string
+  badge?: number
 }
 
 export const MenuItem = ({
@@ -16,6 +17,7 @@ export const MenuItem = ({
   route,
   need_sync,
   className,
+  badge,
 }: MenuItemProps) => {
   label = label ? label : capitalizeFirstLetter(route)
 
@@ -32,6 +34,9 @@ export const MenuItem = ({
       onTo={() => setCollapsed(true)}
     >
       {label}
+      {badge != null && badge > 0 && (
+        <span className={styles.menu_badge}>{badge}</span>
+      )}
     </Button>
   )
 }

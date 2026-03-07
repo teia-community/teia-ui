@@ -8,6 +8,7 @@ import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 
 import { MenuItem } from './MenuItem'
+import { useGlobalUnreadCount } from '@data/messaging'
 import { Toggle } from '@atoms/toggles'
 import { Line } from '@atoms/line'
 import { ThemeSelection } from '@atoms/select'
@@ -27,6 +28,7 @@ export const MainMenu = () => {
     shallow
   )
   const [zen, setZen] = useLocalSettings((st) => [st.zen, st.setZen])
+  const [unreadCount] = useGlobalUnreadCount()
   const setCollapsed = useModalStore((st) => st.setCollapsed)
 
   const menuRef = useRef(null)
@@ -98,6 +100,7 @@ export const MainMenu = () => {
             label="Messages"
             route="messages"
             need_sync
+            badge={unreadCount}
           />
           <MenuItem
             className={styles.menu_label}

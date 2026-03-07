@@ -3,6 +3,7 @@ import { bytesToString } from '@taquito/utils'
 import { TMNT_MESSAGING_CONTRACT } from '@constants'
 import { getTzktData } from '@data/api'
 import { useStorage } from '@data/swr'
+import { useUserStore } from '@context/userStore'
 
 export function useMessagingStorage() {
   return useStorage(TMNT_MESSAGING_CONTRACT)
@@ -253,6 +254,12 @@ export function useUnreadCount(address, storage) {
   })
 
   return [count]
+}
+
+export function useGlobalUnreadCount() {
+  const address = useUserStore((st) => st.address)
+  const [storage] = useMessagingStorage()
+  return useUnreadCount(address, storage)
 }
 
 export function useMessageFee(storage) {
