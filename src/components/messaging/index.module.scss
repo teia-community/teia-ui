@@ -1,0 +1,318 @@
+@import '@styles/variables.scss';
+@import '@styles/mixins.scss';
+
+/* ThreadListItem */
+.thread_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.thread_item_content {
+  flex: 1;
+  min-width: 0;
+}
+
+.thread_item_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.thread_item_sender {
+  font-size: $font-small;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread_item_time {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.thread_item_preview {
+  font-size: $font-small;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.thread_item_meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.reply_mode_badge {
+  font-size: $font-xsmall;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background-color: var(--border-color);
+}
+
+.unread_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  flex-shrink: 0;
+}
+
+.stacked_avatars {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.stacked_avatars > * {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+}
+
+.stacked_avatars > *:not(:first-child) {
+  margin-left: -8px;
+}
+
+/* ChatHeader */
+.chat_header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chat_header_info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat_header_names {
+  font-size: $font-small;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat_header_actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* MessageBubble */
+.bubble_row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-end;
+}
+
+.bubble_row_own {
+  flex-direction: row-reverse;
+}
+
+.bubble_avatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.bubble {
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: $font-small;
+  line-height: 1.4;
+  word-break: break-word;
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.bubble_other {
+  background-color: var(--border-color);
+  color: var(--text-color);
+  border-bottom-left-radius: 2px;
+}
+
+.bubble_own {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-bottom-right-radius: 2px;
+}
+
+.bubble_meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.bubble_sender {
+  font-weight: 600;
+  font-size: $font-xsmall;
+  margin-bottom: 2px;
+}
+
+.bubble_delete {
+  @include resetButton;
+  font-size: $font-xsmall;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--no-vote-color);
+}
+
+.bubble_row:hover .bubble_delete {
+  opacity: 1;
+}
+
+/* ReplyForm */
+.reply_form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.reply_textarea {
+  flex: 1;
+  resize: none;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  line-height: 1.4;
+  min-height: 38px;
+  max-height: 120px;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow-y: auto;
+}
+
+.reply_textarea:focus {
+  outline: none;
+  border-color: var(--text-color);
+}
+
+.reply_actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Dialogs */
+.dialog_backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 24px;
+  max-width: 440px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dialog_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog_header h3 {
+  margin: 0;
+  font-size: $font-large;
+}
+
+.dialog_close {
+  @include resetButton;
+  font-size: 20px;
+  color: var(--text-color);
+}
+
+.dialog_participant {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: $font-small;
+}
+
+.dialog_avatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.dialog_you_badge {
+  font-size: $font-xsmall;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.dialog_input_row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dialog_input_row input {
+  flex: 1;
+  padding: 8px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.dialog_error {
+  color: var(--no-vote-color);
+  font-size: $font-xsmall;
+  margin-top: 4px;
+}
