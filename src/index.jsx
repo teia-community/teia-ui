@@ -88,6 +88,9 @@ import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/preview'
 import { CopyrightCreate } from '@components/copyright/create'
 import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
+import Messages from '@pages/messages'
+import Inbox from '@pages/messages/Inbox'
+import ThreadView from '@pages/messages/ThreadView'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
@@ -190,6 +193,10 @@ const router = createBrowserRouter(
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />
+      <Route path="messages/*" element={<Messages />}>
+        <Route index element={<Inbox />} />
+        <Route path="thread/:threadId" element={<ThreadView />} />
+      </Route>
       <Route path="dao/*" element={<DAO />}>
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
