@@ -44,10 +44,11 @@ export const useMessagingStore = create<MessagingState>()(
           try {
             const contract = await Tezos.wallet.at(TMNT_MESSAGING_CONTRACT)
 
+            const modeKey = replyMode === 'sender_only' ? 'private' : 'public'
             const parameters = {
               content: stringToBytes(content),
               recipients,
-              reply_mode: { [replyMode]: UnitValue },
+              reply_mode: { [modeKey]: UnitValue },
             }
             const batch = contract.methodsObject.send_message(parameters)
             return await handleOp(batch, modalTitle, {
