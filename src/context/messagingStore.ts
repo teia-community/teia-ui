@@ -54,7 +54,7 @@ export const useMessagingStore = create<MessagingState>()(
             return await handleOp(batch, modalTitle, {
               amount: fee,
               mutez: true,
-              storageLimit: 400,
+              storageLimit: 800,
             })
           } catch (e) {
             showError(modalTitle, e)
