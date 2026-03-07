@@ -91,6 +91,7 @@ import CopyrightDisplay from '@components/copyright/display/CopyrightDisplay'
 import Messages from '@pages/messages'
 import Inbox from '@pages/messages/Inbox'
 import ThreadView from '@pages/messages/ThreadView'
+import Compose from '@pages/messages/Compose'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
@@ -196,6 +197,8 @@ const router = createBrowserRouter(
       <Route path="messages/*" element={<Messages />}>
         <Route index element={<Inbox />} />
         <Route path="thread/:threadId" element={<ThreadView />} />
+        <Route path="compose" element={<Compose />} />
+        <Route path="compose/:prefillAddress" element={<Compose />} />
       </Route>
       <Route path="dao/*" element={<DAO />}>
         <Route index element={<DaoParameters />} />
