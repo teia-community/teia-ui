@@ -246,7 +246,10 @@ export function useUnreadCount(address, storage) {
 export function useGlobalUnreadCount() {
   const address = useUserStore((st) => st.address)
   const [storage] = useMessagingStorage()
-  return useUnreadCount(address, storage)
+  const notifications = useLocalSettings((s) => s.messageNotifications)
+
+  const result = useUnreadCount(address, notifications ? storage : undefined)
+  return notifications ? result : [0]
 }
 
 export function useMessageFee(storage) {

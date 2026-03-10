@@ -44,6 +44,8 @@ export const Settings = () => {
     setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
+    messageNotifications,
+    setMessageNotifications,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -61,6 +63,8 @@ export const Settings = () => {
     st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
+    st.messageNotifications,
+    st.setMessageNotifications,
   ])
 
   return (
@@ -157,6 +161,19 @@ export const Settings = () => {
             initial={true}
             label={'Use thumbnails to increase performance'}
           />
+          <Line />
+          <p>
+            <strong>Messages</strong>
+          </p>
+          <Checkbox
+            alt={`click to ${
+              messageNotifications ? 'disable' : 'enable'
+            } message notifications in the menu`}
+            checked={messageNotifications}
+            onCheck={setMessageNotifications}
+            label={'Enable message notifications'}
+          />
+
           {bannerEnabled && (
             <Checkbox
               alt={`click to ${

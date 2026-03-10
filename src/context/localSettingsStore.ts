@@ -37,7 +37,9 @@ interface LocalSettingsState {
   getRpcNode: () => RPC_NODES | string
   customRpcNode: string
   readMessageIds: string[]
+  messageNotifications: boolean
   setCustomRpcNode: (v: string) => void
+  setMessageNotifications: (v: boolean) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setStartFeed: (v: FeedType | undefined) => void
@@ -76,6 +78,7 @@ const defaultValues = {
   imgproxy: true,
   has_seen_banner: false,
   readMessageIds: [] as string[],
+  messageNotifications: true,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -84,6 +87,8 @@ export const useLocalSettings = create<LocalSettingsState>()(
       (set, get) => ({
         ...defaultValues,
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
+        setMessageNotifications: (messageNotifications) =>
+          set({ messageNotifications }),
         markMessagesRead: (ids) =>
           set((state) => ({
             readMessageIds: [
