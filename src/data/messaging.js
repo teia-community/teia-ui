@@ -4,6 +4,7 @@ import { TMNT_MESSAGING_CONTRACT } from '@constants'
 import { getTzktData } from '@data/api'
 import { useStorage } from '@data/swr'
 import { useUserStore } from '@context/userStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 
 export function useMessagingStorage() {
   return useStorage(TMNT_MESSAGING_CONTRACT)
@@ -212,16 +213,11 @@ export function useReadStatus(address, messageIds, storage) {
 
 export function useUnreadCount(address, storage) {
   const recipientsBigmap = storage?.recipients
-  const readStatusBigmap = storage?.read_status
+  const readMessageIds = useLocalSettings((s) => s.readMessageIds)
+  const localReadSet = new Set(readMessageIds)
 
   const recipientParams = {
     'key.recipient': address,
-    active: true,
-    select: 'key,value',
-    limit: 10000,
-  }
-  const readParams = {
-    'key.reader': address,
     active: true,
     select: 'key,value',
     limit: 10000,
@@ -235,22 +231,13 @@ export function useUnreadCount(address, storage) {
     { refreshInterval: 30000 }
   )
 
-  const { data: readData } = useSWR(
-    address && readStatusBigmap
-      ? [`/v1/bigmaps/${readStatusBigmap}/keys`, readParams]
-      : null,
-    getTzktData,
-    { refreshInterval: 30000 }
-  )
-
   if (!recipientData) return [0]
 
   const receivedIds = new Set(recipientData.map((item) => item.key.message_id))
-  const readIds = new Set((readData || []).map((item) => item.key.message_id))
 
   let count = 0
   receivedIds.forEach((id) => {
-    if (!readIds.has(id)) count++
+    if (!localReadSet.has(id)) count++
   })
 
   return [count]
