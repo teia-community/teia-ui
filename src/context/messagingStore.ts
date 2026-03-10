@@ -7,23 +7,27 @@ import {
 import { UnitValue } from '@taquito/taquito'
 import { stringToBytes } from '@taquito/utils'
 import { TMNT_MESSAGING_CONTRACT } from '@constants'
+import { uploadMessageToIPFS } from '@data/ipfs'
 import { Tezos, useUserStore } from './userStore'
 import { useModalStore } from './modalStore'
 
 type OperationReturn = Promise<string | undefined>
+type StorageMode = 'onchain' | 'ipfs'
 
 interface MessagingState {
   sendMessage: (
     content: string,
     recipients: string[],
     replyMode: string,
-    fee: number
+    fee: number,
+    storageMode?: StorageMode
   ) => OperationReturn
   reply: (
     threadId: string,
     content: string,
     recipients: string[],
-    fee: number
+    fee: number,
+    storageMode?: StorageMode
   ) => OperationReturn
   markAsRead: (messageIds: string[]) => OperationReturn
   deleteMessage: (messageId: string) => OperationReturn
@@ -33,7 +37,7 @@ export const useMessagingStore = create<MessagingState>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
-        sendMessage: async (content, recipients, replyMode, fee) => {
+        sendMessage: async (content, recipients, replyMode, fee, storageMode = 'onchain') => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -42,11 +46,22 @@ export const useMessagingStore = create<MessagingState>()(
           step(modalTitle, 'Waiting for confirmation', true)
 
           try {
+            let onChainContent = content
+            if (storageMode === 'ipfs') {
+              const address = useUserStore.getState().address
+              step(modalTitle, 'Uploading message to IPFS...')
+              onChainContent = await uploadMessageToIPFS({
+                content,
+                author: address,
+                recipients,
+              })
+            }
+
             const contract = await Tezos.wallet.at(TMNT_MESSAGING_CONTRACT)
 
             const modeKey = replyMode === 'sender_only' ? 'private' : 'public'
             const parameters = {
-              content: stringToBytes(content),
+              content: stringToBytes(onChainContent),
               recipients,
               reply_mode: { [modeKey]: UnitValue },
             }
@@ -54,14 +69,13 @@ export const useMessagingStore = create<MessagingState>()(
             return await handleOp(batch, modalTitle, {
               amount: fee,
               mutez: true,
-              storageLimit: 800,
             })
           } catch (e) {
             showError(modalTitle, e)
           }
         },
 
-        reply: async (threadId, content, recipients, fee) => {
+        reply: async (threadId, content, recipients, fee, storageMode = 'onchain') => {
           const handleOp = useUserStore.getState().handleOp
           const showError = useModalStore.getState().showError
           const step = useModalStore.getState().step
@@ -70,18 +84,29 @@ export const useMessagingStore = create<MessagingState>()(
           step(modalTitle, 'Waiting for confirmation', true)
 
           try {
+            let onChainContent = content
+            if (storageMode === 'ipfs') {
+              const address = useUserStore.getState().address
+              step(modalTitle, 'Uploading reply to IPFS...')
+              onChainContent = await uploadMessageToIPFS({
+                content,
+                author: address,
+                recipients,
+                threadId,
+              })
+            }
+
             const contract = await Tezos.wallet.at(TMNT_MESSAGING_CONTRACT)
 
             const parameters = {
               thread_id: parseInt(threadId),
-              content: stringToBytes(content),
+              content: stringToBytes(onChainContent),
               recipients,
             }
             const batch = contract.methodsObject.reply(parameters)
             return await handleOp(batch, modalTitle, {
               amount: fee,
               mutez: true,
-              storageLimit: 400,
             })
           } catch (e) {
             showError(modalTitle, e)

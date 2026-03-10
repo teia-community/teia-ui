@@ -252,6 +252,27 @@ export function useGlobalUnreadCount() {
   return notifications ? result : [0]
 }
 
+export function useResolveMessageContent(rawContent) {
+  const isIPFS = rawContent?.startsWith('ipfs://')
+  const { data, error } = useSWR(
+    isIPFS ? `ipfs-msg-${rawContent}` : null,
+    async () => {
+      const cid = rawContent.replace('ipfs://', '')
+      const gateway = import.meta.env.VITE_IPFS_GATEWAY || 'https://ipfs.io'
+      const res = await fetch(`${gateway}/ipfs/${cid}`)
+      const json = await res.json()
+      return json.content
+    }
+  )
+
+  if (!isIPFS) return { content: rawContent, loading: false, isIPFS: false }
+  return {
+    content: data || null,
+    loading: !data && !error,
+    isIPFS: true,
+  }
+}
+
 export function useMessageFee(storage) {
   return storage?.message_fee ? parseInt(storage.message_fee) : 0
 }

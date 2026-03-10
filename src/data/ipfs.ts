@@ -14,6 +14,47 @@ import { gql } from 'graphql-request'
  */
 
 /**
+ * Upload a message to IPFS and return the CID prefixed with ipfs://
+ */
+interface MessageIPFSPayload {
+  content: string
+  author: string
+  recipients: string[]
+  threadId?: string
+}
+
+export async function uploadMessageToIPFS({
+  content,
+  author,
+  recipients,
+  threadId,
+}: MessageIPFSPayload): Promise<string> {
+  const payload: Record<string, unknown> = {
+    type: 'teia-message',
+    version: 1,
+    content,
+    author,
+    recipients,
+    timestamp: new Date().toISOString(),
+  }
+  if (threadId) {
+    payload.threadId = threadId
+  }
+  const blob = new Blob([JSON.stringify(payload)], {
+    type: 'application/json',
+  })
+  const form = new FormData()
+  form.append('asset', new File([blob], 'message.json', { type: 'application/json' }))
+
+  const res = await axios.post(
+    `${import.meta.env.VITE_IPFS_UPLOAD_PROXY}/single`,
+    form,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+  return `ipfs://${res.data.cid}`
+}
+
+/**
  * Upload a single file through the IPFS proxy.
  */
 export async function uploadFileToIPFSProxy(
