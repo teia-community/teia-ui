@@ -15,22 +15,22 @@ export default function CopyrightForm() {
   const handleCopyrightCreation = async (data) => {
     try {
       const { customLicenseData } = useCopyrightStore.getState()
-  
+
       useCopyrightStore.setState({
         ...data,
-        customLicenseData: { 
-          ...data.customLicenseData, 
+        customLicenseData: {
+          ...data.customLicenseData,
           tokens: customLicenseData?.tokens || [],
         },
         isValid: true,
       })
-  
-      navigate('copyrightpreview')
+
+      navigate('preview')
     } catch (error) {
       console.error('Copyright creation failed:', error.message)
     }
-  };
-  
+  }
+
   return (
     <motion.div
       style={{ width: '100%' }}
@@ -42,7 +42,9 @@ export default function CopyrightForm() {
       <CopyrightMainForm
         defaultValues={{ ...defaultValues, customLicenseData }}
         onSubmit={handleCopyrightCreation}
-        fields={[{ name: 'customLicenseData', defaultValue: customLicenseData || {} }]}
+        fields={[
+          { name: 'customLicenseData', defaultValue: customLicenseData || {} },
+        ]}
       />
     </motion.div>
   )

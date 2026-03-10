@@ -44,6 +44,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #68b7e0;
 
   --text-color: var(--gray-80);
+  --warning-color: #b8860b;
 }
 
 :root[data-theme='dark'] {
@@ -71,6 +72,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #645ad0;
 
   --text-color: #dedede;
+  --warning-color: #f0c040;
 }
 
 :root[data-theme='grass'] {
@@ -98,6 +100,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #00ffff;
 
   --text-color: #00ff00;
+  --warning-color: #f0c040;
 }
 
 :root[data-theme='noui'] {
@@ -165,6 +168,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: var(--gray-60);
 
   --text-color: var(--gray-80);
+  --warning-color: #b8860b;
 }
 
 :root[data-theme='kawaii'] {
@@ -192,6 +196,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: var(--gray-60);
 
   --text-color: var(--gray-90);
+  --warning-color: #b8860b;
 }
 :root[data-theme='midnight'] {
   --gray-0: #002633;
@@ -218,6 +223,7 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #84829b;
 
   --text-color: var(--gray-90);
+  --warning-color: #f0c040;
 }
 
 :root[data-theme='coffee'] {
@@ -245,4 +251,5 @@ $letter-spacing: 0.015em;
   --abstain-vote-color: #495c6a;
 
   --text-color: var(--gray-90);
+  --warning-color: #f0c040;
 }
