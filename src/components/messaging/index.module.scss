@@ -180,6 +180,18 @@
   margin-bottom: 2px;
 }
 
+.bubble_ipfs_badge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 1;
+  color: var(--text-color);
+  background: var(--border-color);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 .bubble_delete {
   @include resetButton;
   font-size: $font-xsmall;
@@ -227,8 +239,15 @@
 
 .reply_actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
+  align-items: flex-end;
+
+  button {
+    width: auto;
+    padding: 6px 12px;
+    font-size: $font-small;
+  }
 }
 
 /* Dialogs */

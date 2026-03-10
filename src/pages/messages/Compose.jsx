@@ -18,6 +18,7 @@ export default function Compose() {
   )
   const [content, setContent] = useState('')
   const [replyMode, setReplyMode] = useState('open')
+  const [storageMode, setStorageMode] = useState('ipfs')
 
   const sendMessage = useMessagingStore((st) => st.sendMessage)
 
@@ -49,7 +50,13 @@ export default function Compose() {
 
   const handleSend = async () => {
     if (!content.trim() || validRecipients.length === 0) return
-    await sendMessage(content.trim(), validRecipients, replyMode, fee)
+    await sendMessage(
+      content.trim(),
+      validRecipients,
+      replyMode,
+      fee,
+      storageMode
+    )
   }
 
   return (
@@ -110,6 +117,31 @@ export default function Compose() {
           {replyMode === 'sender_only'
             ? 'Only you can reply to this thread.'
             : 'All participants can reply to this thread.'}
+        </p>
+      </div>
+
+      <div className={styles.compose_section}>
+        <p className={styles.compose_label}>Storage</p>
+        <div className={styles.compose_mode_row}>
+          <Button
+            shadow_box
+            selected={storageMode === 'onchain'}
+            onClick={() => setStorageMode('onchain')}
+          >
+            On-chain
+          </Button>
+          <Button
+            shadow_box
+            selected={storageMode === 'ipfs'}
+            onClick={() => setStorageMode('ipfs')}
+          >
+            IPFS
+          </Button>
+        </div>
+        <p className={styles.compose_mode_hint}>
+          {storageMode === 'ipfs'
+            ? 'Message content stored on IPFS. Lower on-chain storage cost.'
+            : 'Message content stored fully on-chain.'}
         </p>
       </div>
 

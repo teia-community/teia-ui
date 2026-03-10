@@ -151,6 +151,13 @@ $border: 2px;
   }
 }
 
+.selected .shadow_box {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-bottom: $border solid var(--text-color);
+  padding-bottom: 0px;
+}
+
 .left {
   text-align: left;
 }

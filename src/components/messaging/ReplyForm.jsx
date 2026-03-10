@@ -4,6 +4,7 @@ import styles from '@style'
 
 export const ReplyForm = ({ onSubmit, disabled }) => {
   const [text, setText] = useState('')
+  const [storageMode, setStorageMode] = useState('ipfs')
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -17,7 +18,7 @@ export const ReplyForm = ({ onSubmit, disabled }) => {
   const handleSubmit = () => {
     const trimmed = text.trim()
     if (!trimmed) return
-    onSubmit(trimmed)
+    onSubmit(trimmed, storageMode)
     setText('')
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
@@ -48,7 +49,21 @@ export const ReplyForm = ({ onSubmit, disabled }) => {
       />
       <div className={styles.reply_actions}>
         <Button
-          small
+          shadow_box
+          selected={storageMode === 'ipfs'}
+          onClick={() =>
+            setStorageMode(storageMode === 'onchain' ? 'ipfs' : 'onchain')
+          }
+          title={
+            storageMode === 'ipfs'
+              ? 'Using IPFS storage (lower cost)'
+              : 'Using on-chain storage'
+          }
+        >
+          {storageMode === 'ipfs' ? 'IPFS' : 'On-chain'}
+        </Button>
+        <Button
+          shadow_box
           onClick={handleSubmit}
           disabled={disabled || !text.trim()}
         >
