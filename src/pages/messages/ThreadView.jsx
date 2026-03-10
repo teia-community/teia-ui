@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useOutletContext, Link } from 'react-router-dom'
 import { ChatHeader } from '@components/messaging/ChatHeader'
 import { ChatInfoDialog } from '@components/messaging/ChatInfoDialog'
@@ -9,12 +9,11 @@ import {
   useThreadMessages,
   useThreadInfo,
   useThreadParticipants,
-  useReadStatus,
   useMessageFee,
 } from '@data/messaging'
 import { useUserProfiles } from '@data/swr'
 import { useMessagingStore } from '@context/messagingStore'
-import { Button } from '@atoms/button'
+import { useLocalSettings } from '@context/localSettingsStore'
 import styles from '@style'
 
 export default function ThreadView() {
@@ -38,27 +37,22 @@ export default function ThreadView() {
     senderAddrs?.length > 0 ? senderAddrs : undefined
   )
 
-  // Read status tracking
-  const otherMessageIds = messages
-    ?.filter((m) => m.sender !== address)
-    .map((m) => m.id)
-  const [readSet, mutateReadSet] = useReadStatus(
-    address,
-    otherMessageIds?.length > 0 ? otherMessageIds : undefined,
-    storage
-  )
-  const unreadIds =
-    otherMessageIds?.filter((id) => readSet && !readSet.has(id)) || []
+  // Auto-mark messages as read in local storage
+  const markMessagesRead = useLocalSettings((s) => s.markMessagesRead)
+
+  useEffect(() => {
+    if (messages?.length) {
+      const ids = messages
+        .filter((m) => m.sender !== address)
+        .map((m) => String(m.id))
+      if (ids.length > 0) {
+        markMessagesRead(ids)
+      }
+    }
+  }, [messages, address, markMessagesRead])
 
   const reply = useMessagingStore((st) => st.reply)
-  const markAsRead = useMessagingStore((st) => st.markAsRead)
   const deleteMessage = useMessagingStore((st) => st.deleteMessage)
-
-  const handleMarkAsRead = async () => {
-    if (unreadIds.length === 0) return
-    await markAsRead(unreadIds)
-    mutateReadSet()
-  }
 
   const allParticipants = [
     ...new Set([...(participants || []), ...addedRecipients]),
@@ -130,15 +124,6 @@ export default function ThreadView() {
           />
         ))}
       </div>
-
-      {unreadIds.length > 0 && (
-        <div className={styles.mark_read_bar}>
-          <Button small onClick={handleMarkAsRead}>
-            Mark {unreadIds.length} message{unreadIds.length !== 1 ? 's' : ''}{' '}
-            as read
-          </Button>
-        </div>
-      )}
 
       <ReplyForm onSubmit={handleReply} disabled={!address} />
 

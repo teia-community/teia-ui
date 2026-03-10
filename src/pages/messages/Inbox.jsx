@@ -7,6 +7,7 @@ import {
   useThreadDetails,
   useUnreadCount,
 } from '@data/messaging'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useUserProfiles } from '@data/swr'
 import styles from '@style'
 
@@ -23,6 +24,8 @@ export default function Inbox() {
   )
   const [details] = useThreadDetails(threadIds, storage)
   const [unreadCount] = useUnreadCount(address, storage)
+  const readMessageIds = useLocalSettings((s) => s.readMessageIds)
+  const localReadSet = new Set(readMessageIds)
 
   // Collect unique addresses (senders + participants) for alias resolution
   const allAddrs = details
@@ -89,7 +92,11 @@ export default function Inbox() {
             participants={detail?.participants}
             userAddress={address}
             profiles={profiles}
-            isUnread={false}
+            isUnread={
+              detail?.rootMessage?.id
+                ? !localReadSet.has(String(detail.rootMessage.id))
+                : false
+            }
           />
         )
       })}
