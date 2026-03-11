@@ -29,6 +29,7 @@ export const Markdown = ({ children, className }) => {
     <MarkdownToJSX
       options={{
         forceBlock: true,
+        disableParsingRawHTML: true,
         overrides: {
           a: {
             component: LinkRenderer,
