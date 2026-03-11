@@ -131,6 +131,7 @@ export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif'
 export const MAX_EDITIONS = 10000 // Limited by contract
 export const MIN_ROYALTIES = 10
 export const MAX_ROYALTIES = 25
+export const MAX_MESSAGE_RECIPIENTS = 12
 
 export const IPFS_DEFAULT_THUMBNAIL_URI =
   'ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc'

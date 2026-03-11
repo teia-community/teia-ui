@@ -14,6 +14,7 @@ import {
 import { useUserProfiles } from '@data/swr'
 import { useMessagingStore } from '@context/messagingStore'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { MAX_MESSAGE_RECIPIENTS } from '@constants'
 import styles from '@style'
 
 export default function ThreadView() {
@@ -109,7 +110,11 @@ export default function ThreadView() {
         participants={allParticipants}
         userAddress={address}
         onInfoClick={() => setShowInfo(true)}
-        onAddClick={() => setShowAddRecipient(true)}
+        onAddClick={
+          allParticipants.length < MAX_MESSAGE_RECIPIENTS
+            ? () => setShowAddRecipient(true)
+            : undefined
+        }
       />
 
       <div className={styles.thread_messages}>

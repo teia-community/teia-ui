@@ -4,6 +4,7 @@ import { Button } from '@atoms/button'
 import { RecipientInput } from '@components/messaging/RecipientInput'
 import { useMessagingStore } from '@context/messagingStore'
 import { useMessageFee } from '@data/messaging'
+import { MAX_MESSAGE_RECIPIENTS } from '@constants'
 import styles from '@style'
 
 const MAX_CHARS = 16000
@@ -72,9 +73,11 @@ export default function Compose() {
             showRemove={recipients.length > 1}
           />
         ))}
-        <Button small onClick={addRecipient}>
-          + Add recipient
-        </Button>
+        {recipients.length < MAX_MESSAGE_RECIPIENTS && (
+          <Button small onClick={addRecipient}>
+            + Add recipient
+          </Button>
+        )}
       </div>
 
       <div className={styles.compose_section}>
