@@ -72,6 +72,11 @@ export default function Profile({ user }) {
             <Button className={styles.square} onClick={setAddressCopied} />
             {isAddressCopied && 'Copied!'}
           </div>
+          <div style={{ marginTop: '0.75em' }}>
+            <Button full shadow_box to={`/messages/compose/${user.address}`}>
+              Message
+            </Button>
+          </div>
 
           {daoTokenBalance >= 0 && (
             <p>

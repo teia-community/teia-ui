@@ -126,6 +126,18 @@ const ItemInfo = ({ nft }) => {
           <CheapestButton listing={cheapestListing} />
         </div>
       )}
+
+      {!isCollab && (
+        <div className={styles.main_swap} style={{ marginTop: '0.75em' }}>
+          <Button
+            full
+            shadow_box
+            to={`/messages/compose/${nft.artist_address}`}
+          >
+            Message Artist
+          </Button>
+        </div>
+      )}
     </>
   )
 }
