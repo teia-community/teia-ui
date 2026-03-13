@@ -2,7 +2,7 @@
  * SWR hooks for fetching channel data from the Shadownet contract via TzKT.
  */
 import useSWR from 'swr'
-import { bytes2Char } from '@taquito/utils'
+import { bytesToString } from '@taquito/utils'
 import { SHADOWNET_CHANNEL_CONTRACT } from '@constants'
 import { CIDToURL } from '@utils/index'
 import {
@@ -79,7 +79,7 @@ export function useChannelList() {
       return Promise.all(
         entries.map(async (entry) => {
           const metadataUri = entry.value.metadata_uri
-            ? bytes2Char(entry.value.metadata_uri)
+            ? bytesToString(entry.value.metadata_uri)
             : ''
           let metadata: ChannelMetadata = {
             name: `Channel #${entry.key}`,
@@ -130,7 +130,7 @@ export function useChannel(channelId: number | undefined) {
       if (!raw) return null
 
       const metadataUri = raw.metadata_uri
-        ? bytes2Char(raw.metadata_uri)
+        ? bytesToString(raw.metadata_uri)
         : ''
       let metadata: ChannelMetadata = {
         name: `Channel #${channelId}`,
@@ -146,7 +146,7 @@ export function useChannel(channelId: number | undefined) {
 
       // Resolve allowlist addresses from IPFS
       const merkleUriDecoded = raw.merkle_uri
-        ? bytes2Char(raw.merkle_uri)
+        ? bytesToString(raw.merkle_uri)
         : ''
       let allowlist: string[] | undefined
       if (merkleUriDecoded.startsWith('ipfs://')) {
@@ -196,7 +196,7 @@ export function useChannelMessages(channelId: number | undefined) {
       })
 
       return Promise.all(entries.map(async (entry) => {
-        const raw = entry.value.content ? bytes2Char(entry.value.content) : ''
+        const raw = entry.value.content ? bytesToString(entry.value.content) : ''
         let parsed: ChannelMessagePayload | null = null
         const isIpfs = raw.startsWith('ipfs://')
 
