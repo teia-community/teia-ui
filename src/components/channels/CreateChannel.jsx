@@ -209,10 +209,14 @@ export default function CreateChannel() {
         )}
 
         <div className={styles.actions}>
-          <Button onClick={handleSubmit} disabled={submitting || !name.trim()}>
+          <Button
+            shadow_box
+            onClick={handleSubmit}
+            disabled={submitting || !name.trim()}
+          >
             {submitting ? 'Creating...' : 'Create Channel'}
           </Button>
-          <Button secondary to="/testnet/channels">
+          <Button shadow_box secondary to="/testnet/channels">
             Cancel
           </Button>
         </div>

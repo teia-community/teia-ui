@@ -22,6 +22,17 @@
   margin: 0;
 }
 
+.channelTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+
+  button {
+    padding: 6px 12px;
+    font-size: $font-small;
+  }
+}
+
 .list {
   display: flex;
   flex-direction: column;

@@ -90,11 +90,14 @@ export default function Testnet() {
         </div>
 
         <div className={styles.actions}>
-          <Button to="/testnet/channels">Channels</Button>
-          <p>
-            Use the Shadownet faucet to get test tez, then deploy and interact
-            with contracts here.
-          </p>
+          <Button shadow_box to="/testnet/channels">
+            Channels
+          </Button>
+        </div>
+        <div className={styles.actions}>
+          <Button shadow_box deactivated to="/testnet/channels">
+            Token Conversation
+          </Button>
         </div>
       </div>
     </Page>

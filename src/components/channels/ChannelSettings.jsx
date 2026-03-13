@@ -172,7 +172,7 @@ export default function ChannelSettings() {
             </div>
           )}
 
-          <Button onClick={handleConfigure} disabled={busy}>
+          <Button shadow_box onClick={handleConfigure} disabled={busy}>
             {busy ? 'Saving...' : 'Save Access Config'}
           </Button>
         </div>
