@@ -147,14 +147,36 @@ function MessageBubble({
   senderAlias,
   senderLogo,
   onDelete,
+  onReply,
   isIpfs,
+  parentMsg,
+  parentAlias,
 }) {
   const displayTime = msg.payload?.timestamp
     ? getTimeAgo(msg.payload.timestamp)
     : getTimeAgo(msg.timestamp)
 
+  const scrollToParent = () => {
+    if (!msg.parent_id) return
+    const el = document.getElementById(`msg-${msg.parent_id}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add(styles.bubbleHighlight)
+      setTimeout(() => el.classList.remove(styles.bubbleHighlight), 1500)
+    }
+  }
+
+  const parentPreview = parentMsg
+    ? parentMsg.content.length > 60
+      ? parentMsg.content.slice(0, 60) + '...'
+      : parentMsg.content
+    : null
+
   return (
-    <div className={`${styles.bubbleRow} ${isOwn ? styles.bubbleRowOwn : ''}`}>
+    <div
+      id={`msg-${msg.id}`}
+      className={`${styles.bubbleRow} ${isOwn ? styles.bubbleRowOwn : ''}`}
+    >
       {!isOwn && (
         <Identicon
           address={msg.sender}
@@ -169,9 +191,13 @@ function MessageBubble({
           </div>
         )}
         {msg.parent_id && (
-          <div className={styles.replyIndicator}>
-            replying to #{msg.parent_id}
-          </div>
+          <button className={styles.replyIndicator} onClick={scrollToParent}>
+            {parentMsg
+              ? `↩ ${
+                  parentAlias || walletPreview(parentMsg.sender)
+                }: "${parentPreview}"`
+              : `↩ replying to #${msg.parent_id}`}
+          </button>
         )}
         <div
           className={`${styles.bubble} ${
@@ -183,7 +209,12 @@ function MessageBubble({
         <div className={styles.bubbleMeta}>
           {isIpfs && <span className={styles.bubbleIpfsBadge}>IPFS</span>}
           <span>{displayTime}</span>
-          {isOwn && onDelete && (
+          {onReply && (
+            <button className={styles.bubbleReply} onClick={() => onReply(msg)}>
+              reply
+            </button>
+          )}
+          {onDelete && (
             <button
               className={styles.bubbleDelete}
               onClick={() => onDelete(msg.id)}
@@ -197,7 +228,7 @@ function MessageBubble({
   )
 }
 
-function PostForm({ channelId, channel, onPosted }) {
+function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   const address = useShadownetStore((st) => st.address)
   const { messageFee } = useChannelFees()
   const [text, setText] = useState('')
@@ -245,11 +276,13 @@ function PostForm({ channelId, channel, onPosted }) {
         messageFee,
         proof,
         storageMode,
+        parentId: replyTo?.id,
       })
       setText('')
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
+      if (onCancelReply) onCancelReply()
       if (onPosted) onPosted()
     } catch (e) {
       console.error('Post failed:', e)
@@ -264,6 +297,8 @@ function PostForm({ channelId, channel, onPosted }) {
     address,
     messageFee,
     storageMode,
+    replyTo,
+    onCancelReply,
     onPosted,
   ])
 
@@ -285,6 +320,20 @@ function PostForm({ channelId, channel, onPosted }) {
   return (
     <div className={styles.postForm}>
       {proofError && <div className={styles.notAllowed}>{proofError}</div>}
+      {replyTo && (
+        <div className={styles.replyBanner}>
+          <span>
+            Replying to <strong>{walletPreview(replyTo.sender)}</strong>
+            {': '}
+            {replyTo.content.length > 80
+              ? replyTo.content.slice(0, 80) + '...'
+              : replyTo.content}
+          </span>
+          <button className={styles.replyBannerClose} onClick={onCancelReply}>
+            &times;
+          </button>
+        </div>
+      )}
       <textarea
         ref={textareaRef}
         className={styles.postTextarea}
@@ -329,6 +378,7 @@ export default function ChannelView() {
   const { id } = useParams()
   const channelId = id ? parseInt(id) : undefined
   const [showInfo, setShowInfo] = useState(false)
+  const [replyTo, setReplyTo] = useState(null)
   const { data: channel, isLoading: loadingChannel } = useChannel(channelId)
   const {
     data: messages,
@@ -347,6 +397,12 @@ export default function ChannelView() {
   const uniqueAddrs =
     profileAddrs.length > 0 ? [...new Set(profileAddrs)] : undefined
   const [profiles] = useUserProfiles(uniqueAddrs)
+
+  // Build a lookup map for parent message resolution
+  const msgById = {}
+  if (messages) {
+    for (const m of messages) msgById[m.id] = m
+  }
 
   const handleDelete = useCallback(
     async (messageId) => {
@@ -466,30 +522,40 @@ export default function ChannelView() {
               No messages yet. Start the conversation.
             </div>
           )}
-          {messages?.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              msg={msg}
-              isOwn={address && msg.sender === address}
-              senderAlias={profiles?.[msg.sender]?.name}
-              senderLogo={profiles?.[msg.sender]?.identicon}
-              isIpfs={msg.isIpfs}
-              onDelete={
-                address &&
-                (msg.sender === address ||
-                  channel.creator === address ||
-                  isAdmin)
-                  ? handleDelete
-                  : undefined
-              }
-            />
-          ))}
+          {messages?.map((msg) => {
+            const parent = msg.parent_id ? msgById[msg.parent_id] : null
+            return (
+              <MessageBubble
+                key={msg.id}
+                msg={msg}
+                isOwn={address && msg.sender === address}
+                senderAlias={profiles?.[msg.sender]?.name}
+                senderLogo={profiles?.[msg.sender]?.identicon}
+                isIpfs={msg.isIpfs}
+                onReply={address ? setReplyTo : undefined}
+                onDelete={
+                  address &&
+                  (msg.sender === address ||
+                    channel.creator === address ||
+                    isAdmin)
+                    ? handleDelete
+                    : undefined
+                }
+                parentMsg={parent}
+                parentAlias={
+                  parent ? profiles?.[parent.sender]?.name : undefined
+                }
+              />
+            )
+          })}
         </div>
 
         <PostForm
           channelId={channelId}
           channel={channel}
           onPosted={refreshMessages}
+          replyTo={replyTo}
+          onCancelReply={() => setReplyTo(null)}
         />
 
         {showInfo && (
