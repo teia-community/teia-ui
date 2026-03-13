@@ -30,16 +30,23 @@ export function parseAccessMode(
   return 'unrestricted'
 }
 
-/** Fetch from our Gateway of course... */
+/** Channel content not pinned...need to ask Zir0h */
 export function ipfsToUrl(uri: string): string {
   const cid = uri.replace('ipfs://', '')
-  return CIDToURL(cid, import.meta.env.VITE_IPFS_DEFAULT_GATEWAY, { size: 'raw' })
+  return CIDToURL(cid, 'IPFS', { size: 'raw' })
 }
 
 async function fetchIpfsJson<T>(uri: string): Promise<T> {
-  const res = await fetch(ipfsToUrl(uri))
-  if (!res.ok) throw new Error(`IPFS fetch failed: ${res.status}`)
-  return res.json()
+  const cid = uri.replace('ipfs://', '')
+  try {
+    const res = await fetch(ipfsToUrl(uri))
+    if (res.ok) return res.json()
+  } catch {
+    // gateway error or CORS block — fall through to fallback
+  }
+  const fallback = await fetch(`https://ipfs.io/ipfs/${cid}`)
+  if (!fallback.ok) throw new Error(`IPFS fetch failed: ${fallback.status}`)
+  return fallback.json()
 }
 
 // ---------------------------------------------------------------------------
@@ -283,6 +290,55 @@ export function useIsBlocked(
   return useSWR(
     bigmapId && channelId !== undefined && address
       ? `shadownet:channel-blocked:${bigmapId}:${channelId}:${address}`
+      : null,
+    async () => {
+      if (!bigmapId || channelId === undefined || !address) return false
+      const entries = await fetchBigMapKeys(bigmapId, {
+        'key.channel_id': String(channelId),
+        'key.address': address,
+        limit: '1',
+      })
+      return entries.length > 0
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Admin checks
+// ---------------------------------------------------------------------------
+
+/** Fetch admin addresses for a channel. */
+export function useChannelAdmins(channelId: number | undefined) {
+  const { data: storage } = useChannelStorage()
+  const bigmapId = storage?.channel_admins
+
+  return useSWR(
+    bigmapId && channelId !== undefined
+      ? `shadownet:channel-admins:${bigmapId}:${channelId}`
+      : null,
+    async () => {
+      if (!bigmapId || channelId === undefined) return []
+      const entries = await fetchBigMapKeys(bigmapId, {
+        'key.channel_id': String(channelId),
+      })
+      return entries.map((e: { key: { address: string } }) => e.key.address)
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
+/** Check if an address is a channel admin. */
+export function useIsChannelAdmin(
+  channelId: number | undefined,
+  address: string | undefined
+) {
+  const { data: storage } = useChannelStorage()
+  const bigmapId = storage?.channel_admins
+
+  return useSWR(
+    bigmapId && channelId !== undefined && address
+      ? `shadownet:channel-admin:${bigmapId}:${channelId}:${address}`
       : null,
     async () => {
       if (!bigmapId || channelId === undefined || !address) return false
