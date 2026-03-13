@@ -5,7 +5,7 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useChannelList, ipfsToUrl } from '@data/channels'
+import { useChannelList, useChannelAllowlists, ipfsToUrl } from '@data/channels'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
 import AccessBadge from './AccessBadge'
@@ -60,12 +60,17 @@ export default function ChannelList() {
     creatorAddrs?.length > 0 ? creatorAddrs : undefined
   )
 
+  // Fetch allowlists on "My Channels" click
+  const { data: allowlists } = useChannelAllowlists(
+    tab === 'my' ? channels : undefined
+  )
+
   const createdChannels = channels?.filter((ch) => ch.creator === address)
   const memberChannels = channels?.filter(
-    (ch) => ch.creator !== address && ch.allowlist?.includes(address)
+    (ch) => ch.creator !== address && allowlists?.[ch.id]?.includes(address)
   )
   const myChannels = channels?.filter(
-    (ch) => ch.creator === address || ch.allowlist?.includes(address)
+    (ch) => ch.creator === address || allowlists?.[ch.id]?.includes(address)
   )
   const unrestrictedChannels = channels?.filter(
     (ch) => ch.accessMode === 'unrestricted'
