@@ -25,6 +25,11 @@ function getOrCreateWallet(): BeaconWallet {
       appUrl: 'https://teia.art',
       iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
       preferredNetwork: 'shadownet' as NetworkType,
+      network: {
+        type: 'shadownet' as NetworkType,
+        name: 'shadownet',
+        rpcUrl: SHADOWNET_RPC,
+      },
     })
     ShadownetTezos.setWalletProvider(shadownetWallet)
   }
@@ -62,13 +67,7 @@ export const useShadownetStore = create<ShadownetState>()(
 
         const wallet = getOrCreateWallet()
 
-        await wallet.requestPermissions({
-          network: {
-            type: 'shadownet' as NetworkType,
-            name: 'shadownet',
-            rpcUrl: SHADOWNET_RPC,
-          },
-        })
+        await wallet.requestPermissions()
 
         const account = await wallet.client.getActiveAccount()
         if (account?.address) {
