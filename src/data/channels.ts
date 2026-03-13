@@ -88,16 +88,33 @@ export function useChannelList() {
           if (metadataUri.startsWith('ipfs://')) {
             try {
               metadata = await fetchIpfsJson<ChannelMetadata>(metadataUri)
-            } catch {
-              // fallback to default
+            } catch (e) {
+              console.warn(`Failed to fetch metadata for channel #${entry.key}:`, e)
             }
           }
+
+          const accessMode = parseAccessMode(entry.value.access_mode)
+
+          // Resolve allowlist from IPFS for allowlist channels
+          let allowlist: string[] | undefined
+          if (accessMode === 'allowlist' && entry.value.merkle_uri) {
+            const merkleUriDecoded = bytesToString(entry.value.merkle_uri)
+            if (merkleUriDecoded.startsWith('ipfs://')) {
+              try {
+                allowlist = await fetchIpfsJson<string[]>(merkleUriDecoded)
+              } catch (e) {
+                console.warn(`Failed to fetch allowlist for channel #${entry.key}:`, e)
+              }
+            }
+          }
+
           return {
             ...entry.value,
             id: parseInt(entry.key),
             metadataUri,
             metadata,
-            accessMode: parseAccessMode(entry.value.access_mode),
+            accessMode,
+            allowlist,
           }
         })
       )
@@ -139,8 +156,8 @@ export function useChannel(channelId: number | undefined) {
       if (metadataUri.startsWith('ipfs://')) {
         try {
           metadata = await fetchIpfsJson<ChannelMetadata>(metadataUri)
-        } catch {
-          // fallback
+        } catch (e) {
+          console.warn(`Failed to fetch metadata for channel #${channelId}:`, e)
         }
       }
 
@@ -152,8 +169,8 @@ export function useChannel(channelId: number | undefined) {
       if (merkleUriDecoded.startsWith('ipfs://')) {
         try {
           allowlist = await fetchIpfsJson<string[]>(merkleUriDecoded)
-        } catch {
-          // fallback
+        } catch (e) {
+          console.warn(`Failed to fetch allowlist for channel #${channelId}:`, e)
         }
       }
 
@@ -225,7 +242,6 @@ export function useChannelMessages(channelId: number | undefined) {
         }
       }))
     },
-    { revalidateOnFocus: false, dedupingInterval: 15_000 }
   )
 }
 
