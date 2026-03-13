@@ -30,12 +30,10 @@ export function parseAccessMode(
   return 'unrestricted'
 }
 
-/** Convert an ipfs:// URI to a gateway URL for display.
- *  Shadownet content isn't on the teia CDN cache, so fall back to ipfs.io. */
+/** Fetch from our Gateway of course... */
 export function ipfsToUrl(uri: string): string {
   const cid = uri.replace('ipfs://', '')
-  const gw = import.meta.env.VITE_IPFS_DEFAULT_GATEWAY
-  return CIDToURL(cid, gw === 'CDN' ? 'IPFS' : gw, { size: 'raw' })
+  return CIDToURL(cid, import.meta.env.VITE_IPFS_DEFAULT_GATEWAY, { size: 'raw' })
 }
 
 async function fetchIpfsJson<T>(uri: string): Promise<T> {
