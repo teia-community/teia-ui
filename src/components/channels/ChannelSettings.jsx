@@ -281,6 +281,7 @@ export default function ChannelSettings() {
                   <Identicon
                     address={addr}
                     logo={adminProfiles?.[addr]?.identicon}
+                    className={styles.dialogAvatar}
                   />
                   <span style={{ flex: 1, fontSize: '13px' }}>
                     {adminProfiles?.[addr]?.name || walletPreview(addr)}
