@@ -1,0 +1,567 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+// Channel list
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.headline {
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.channelImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelImagePlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xsmall;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.channelName {
+  font-size: $font-small;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardTime {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.channelDesc {
+  font-size: $font-small;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.cardMeta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.badge {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.badgeUnrestricted {
+  composes: badge;
+  background: #2d7d46;
+  color: #fff;
+}
+
+.badgeAllowlist {
+  composes: badge;
+  background: #2563eb;
+  color: #fff;
+}
+
+.badgeBlocklist {
+  composes: badge;
+  background: #c026d3;
+  color: #fff;
+}
+
+.msgCount {
+  font-size: $font-xsmall;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background-color: var(--border-color);
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.6;
+}
+
+// Channel view (thread layout)
+.channelView {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.channelHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.channelHeaderInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.channelHeaderImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelHeaderNames {
+  font-size: $font-large;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channelHeaderSub {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.channelParticipants {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.stackedAvatars {
+  display: flex;
+  flex-shrink: 0;
+
+  > * {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+  }
+
+  > *:not(:first-child) {
+    margin-left: -6px;
+  }
+}
+
+.participantNames {
+  font-size: $font-xsmall;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channelHeaderActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// Message bubbles
+.messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.bubbleRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-end;
+}
+
+.bubbleRowOwn {
+  flex-direction: row-reverse;
+}
+
+.bubbleAvatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.bubble {
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: $font-small;
+  line-height: 1.4;
+  word-break: break-word;
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.bubbleOther {
+  background-color: var(--border-color);
+  color: var(--text-color);
+  border-bottom-left-radius: 2px;
+}
+
+.bubbleOwn {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-bottom-right-radius: 2px;
+}
+
+.bubbleSender {
+  font-weight: 600;
+  font-size: $font-xsmall;
+  margin-bottom: 2px;
+}
+
+.bubbleMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.bubbleDelete {
+  @include resetButton;
+  font-size: $font-xsmall;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--no-vote-color);
+}
+
+.bubbleRow:hover .bubbleDelete {
+  opacity: 1;
+}
+
+.bubbleIpfsBadge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 1;
+  color: var(--text-color);
+  background: var(--border-color);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.replyIndicator {
+  font-size: $font-xsmall;
+  opacity: 0.5;
+  font-style: italic;
+  margin-bottom: 2px;
+}
+
+// Reply / post form (sticky bottom like messaging)
+.postForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.postTextarea {
+  flex: 1;
+  resize: none;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  line-height: 1.4;
+  min-height: 38px;
+  max-height: 120px;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow-y: auto;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+.postActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  align-items: flex-end;
+
+  button {
+    width: auto;
+    padding: 6px 12px;
+    font-size: $font-small;
+  }
+}
+
+.notAllowed {
+  text-align: center;
+  padding: 12px;
+  font-size: $font-small;
+  opacity: 0.6;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+}
+
+.help {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+// Create form
+.createForm {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: $font-small;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  color: var(--text-color);
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+.textarea {
+  composes: input;
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.select {
+  composes: input;
+  cursor: pointer;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+// Image upload
+.imagePreviewWrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.imagePreview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+}
+
+.removeImageBtn {
+  @include resetButton;
+  font-size: $font-xsmall;
+  color: var(--text-color);
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    color: var(--no-vote-color);
+  }
+}
+
+// Dialog (channel info)
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 24px;
+  max-width: 440px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    font-size: $font-large;
+  }
+}
+
+.dialogClose {
+  @include resetButton;
+  font-size: 20px;
+  color: var(--text-color);
+}
+
+.dialogRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: $font-small;
+}
+
+.dialogAvatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.dialogLabel {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+.dialogImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  object-fit: cover;
+  margin-bottom: 12px;
+}
+
+// Settings
+.settingsSection {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  font-size: $font-small;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.dangerBtn {
+  @include resetButton;
+  font-size: $font-small;
+  color: var(--no-vote-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
