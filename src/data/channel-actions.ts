@@ -332,6 +332,43 @@ export async function updateBlocklist({
 }
 
 /**
+ * Add/remove channel admins. Creator only.
+ */
+export async function updateChannelAdmins({
+  channelId,
+  toAdd,
+  toRemove,
+}: {
+  channelId: number
+  toAdd: string[]
+  toRemove: string[]
+}) {
+  const step = useModalStore.getState().step
+  const show = useModalStore.getState().show
+  const showError = useModalStore.getState().showError
+
+  step('Update Admins', 'Waiting for wallet', true)
+
+  try {
+    const contract = await ShadownetTezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject
+      .update_channel_admins({
+        channel_id: channelId,
+        to_add: toAdd,
+        to_remove: toRemove,
+      })
+      .send()
+
+    await op.confirmation()
+    show('Update Admins', 'Admins updated')
+    return op.opHash
+  } catch (e) {
+    showError('Update Admins', e)
+    throw e
+  }
+}
+
+/**
  * Update channel metadata.
  */
 export async function updateChannel({

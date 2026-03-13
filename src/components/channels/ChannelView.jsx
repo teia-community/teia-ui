@@ -11,6 +11,7 @@ import {
   useChannel,
   useChannelMessages,
   useChannelFees,
+  useIsChannelAdmin,
   ipfsToUrl,
 } from '@data/channels'
 import { useUserProfiles } from '@data/swr'
@@ -335,6 +336,7 @@ export default function ChannelView() {
     mutate: refreshMessages,
   } = useChannelMessages(channelId)
   const address = useShadownetStore((st) => st.address)
+  const { data: isAdmin } = useIsChannelAdmin(channelId, address)
 
   // Resolve sender + creator + allowlist aliases and identicons
   const profileAddrs = [
@@ -449,7 +451,7 @@ export default function ChannelView() {
             <Button shadow_box onClick={() => setShowInfo(true)}>
               Info
             </Button>
-            {isCreator && (
+            {(isCreator || isAdmin) && (
               <Button shadow_box to={`/testnet/channels/${channelId}/settings`}>
                 Settings
               </Button>
@@ -474,7 +476,9 @@ export default function ChannelView() {
               isIpfs={msg.isIpfs}
               onDelete={
                 address &&
-                (msg.sender === address || channel.creator === address)
+                (msg.sender === address ||
+                  channel.creator === address ||
+                  isAdmin)
                   ? handleDelete
                   : undefined
               }

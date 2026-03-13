@@ -1,6 +1,6 @@
 /**
  * Types matching the channel_v1.py contract.
- * Deployed at KT1TyjkL2NREzw6vKhyLYnmDQXh92oFin6Ci on Shadownet.
+ * Deployed at KT1Aw9GtHwErjJrHRf9fNKbgJdeZuf2UwbjG on Shadownet.
  */
 
 export type AccessMode = 'unrestricted' | 'allowlist' | 'blocklist'
@@ -51,6 +51,7 @@ export interface ChannelContractStorage {
   channels: number
   messages: number
   blocked: number
+  channel_admins: number
   channel_id_counter: string
   message_id_counter: string
   message_fee: string

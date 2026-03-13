@@ -3,15 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { useChannel } from '@data/channels'
+import { useChannel, useIsChannelAdmin, useChannelAdmins } from '@data/channels'
+import { useUserProfiles } from '@data/swr'
 import {
   configureChannel,
   updateBlocklist,
+  updateChannelAdmins,
   updateChannel,
   hideChannel,
   deleteChannel,
 } from '@data/channel-actions'
 import { useShadownetStore } from '@context/shadownetStore'
+import { Identicon } from '@atoms/identicons'
+import { walletPreview } from '@utils/string'
 import { computeMerkleRoot } from '@utils/merkle'
 import styles from '@style'
 
@@ -26,7 +30,17 @@ export default function ChannelSettings() {
   const [allowlistAddresses, setAllowlistAddresses] = useState('')
   const [blockAddresses, setBlockAddresses] = useState('')
   const [unblockAddresses, setUnblockAddresses] = useState('')
+  const [adminAddresses, setAdminAddresses] = useState('')
   const [busy, setBusy] = useState(false)
+
+  const { data: isAdmin } = useIsChannelAdmin(channelId, address)
+  const isCreator = address && channel && address === channel.creator
+  const canAccessSettings = isCreator || isAdmin
+
+  const { data: admins, mutate: refreshAdmins } = useChannelAdmins(channelId)
+  const [adminProfiles] = useUserProfiles(
+    admins?.length > 0 ? admins : undefined
+  )
 
   if (channel && !accessMode) {
     setAccessMode(channel.accessMode)
@@ -43,11 +57,19 @@ export default function ChannelSettings() {
     )
   }
 
-  if (!channel || !address || address !== channel.creator) {
+  if (!channel || !address || (isAdmin === undefined && !isCreator)) {
+    return (
+      <Page title="Channel Settings">
+        <Loading message="Loading..." />
+      </Page>
+    )
+  }
+
+  if (!canAccessSettings) {
     return (
       <Page title="Channel Settings">
         <div className={styles.createForm}>
-          <p>Channel not found or you are not the creator.</p>
+          <p>Channel not found or you do not have access.</p>
           <Button to="/testnet/channels">Back to channels</Button>
         </div>
       </Page>
@@ -103,6 +125,38 @@ export default function ChannelSettings() {
       setBlockAddresses('')
       setUnblockAddresses('')
       refresh()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleAddAdmins = async () => {
+    if (busy) return
+    const toAdd = adminAddresses
+      .split(/[,\n]/)
+      .map((a) => a.trim())
+      .filter(Boolean)
+    if (toAdd.length === 0) return
+    setBusy(true)
+    try {
+      await updateChannelAdmins({ channelId, toAdd, toRemove: [] })
+      setAdminAddresses('')
+      refreshAdmins()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleRemoveAdmin = async (addr) => {
+    if (busy) return
+    setBusy(true)
+    try {
+      await updateChannelAdmins({ channelId, toAdd: [], toRemove: [addr] })
+      refreshAdmins()
     } catch (e) {
       console.error(e)
     } finally {
@@ -209,29 +263,82 @@ export default function ChannelSettings() {
           </div>
         )}
 
-        {/* Danger Zone */}
-        <div className={styles.settingsSection}>
-          <div className={styles.sectionTitle}>Danger Zone</div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              className={styles.dangerBtn}
-              onClick={handleHide}
-              disabled={busy}
-            >
-              Hide Channel
-            </button>
-            <button
-              className={styles.dangerBtn}
-              onClick={handleDelete}
-              disabled={busy}
-            >
-              Delete Channel
-            </button>
+        {/* Admin Management — creator only */}
+        {isCreator && (
+          <div className={styles.settingsSection}>
+            <div className={styles.sectionTitle}>Manage Admins</div>
+            {admins && admins.length > 0 ? (
+              admins.map((addr) => (
+                <div
+                  key={addr}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  <Identicon
+                    address={addr}
+                    logo={adminProfiles?.[addr]?.identicon}
+                  />
+                  <span style={{ flex: 1, fontSize: '13px' }}>
+                    {adminProfiles?.[addr]?.name || walletPreview(addr)}
+                  </span>
+                  <button
+                    className={styles.dangerBtn}
+                    onClick={() => handleRemoveAdmin(addr)}
+                    disabled={busy}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: '13px', opacity: 0.7 }}>No admins yet.</p>
+            )}
+            <div className={styles.field}>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label className={styles.label}>Add Admins</label>
+              <textarea
+                className={styles.textarea}
+                value={adminAddresses}
+                onChange={(e) => setAdminAddresses(e.target.value)}
+                placeholder="tz1abc..., tz1def..."
+                rows={2}
+              />
+            </div>
+            <Button onClick={handleAddAdmins} disabled={busy}>
+              Add Admins
+            </Button>
           </div>
-          <div className={styles.help} style={{ marginTop: '0.5rem' }}>
-            Hide = soft delete (can be undone). Delete = permanent.
+        )}
+
+        {/* Danger Zone — creator only */}
+        {isCreator && (
+          <div className={styles.settingsSection}>
+            <div className={styles.sectionTitle}>Danger Zone</div>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                className={styles.dangerBtn}
+                onClick={handleHide}
+                disabled={busy}
+              >
+                Hide Channel
+              </button>
+              <button
+                className={styles.dangerBtn}
+                onClick={handleDelete}
+                disabled={busy}
+              >
+                Delete Channel
+              </button>
+            </div>
+            <div className={styles.help} style={{ marginTop: '0.5rem' }}>
+              Hide = soft delete (can be undone). Delete = permanent.
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={styles.actions}>
           <Button secondary to={`/testnet/channels/${channelId}`}>
