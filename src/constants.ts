@@ -176,6 +176,9 @@ export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 
 export const TMNT_MESSAGING_CONTRACT = 'KT1U4TrFcfo1Q3EAthV9qApCG4tt7nNVoepW'
 
+// Shadownet channel contracts
+export const SHADOWNET_CHANNEL_CONTRACT = 'KT1TyjkL2NREzw6vKhyLYnmDQXh92oFin6Ci'
+
 // Specific tz addresses to exclude from donation lists
 export const DONATION_EXCLUDED_ADDRESSES = [
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
