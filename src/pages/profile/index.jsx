@@ -16,6 +16,7 @@ import { Warning } from './warning'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
+import { useUserStore } from '@context/userStore'
 
 async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
   let holder = await getUser(addressOrSubjkt, type)
@@ -65,6 +66,7 @@ export const useDisplayStore = create(
 )
 
 export default function Display() {
+  const connectedAddress = useUserStore((st) => st.address)
   const { address, name: subjkt } = useParams()
   const { walletBlockMap, underReviewMap } = useSettings()
   const [overridePopup, setOverridePopup] = useState()
@@ -141,7 +143,7 @@ export default function Display() {
         />
       ) : (
         <>
-          <Profile user={user} />
+          <Profile user={user} isOwner={connectedAddress === user.address} />
           {user.address.substr(0, 2) !== 'KT' && (
             <div className={styles.menu}>
               <Tabs tabs={TABS} />

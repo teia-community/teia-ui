@@ -25,7 +25,7 @@ async function reverseRecord(address) {
   return result?.data?.data?.reverseRecord?.domain?.name || ''
 }
 
-export default function Profile({ user }) {
+export default function Profile({ user, isOwner }) {
   const [isDiscordCopied, setDiscordCopied] = useClipboard(
     user.extras?.profile?.discord
   )
@@ -77,6 +77,13 @@ export default function Profile({ user }) {
               Message
             </Button>
           </div>
+          {isOwner && (
+            <div style={{ marginTop: '0.75em' }}>
+              <Button full shadow_box to="/subjkt">
+                Edit Profile
+              </Button>
+            </div>
+          )}
 
           {daoTokenBalance >= 0 && (
             <p>

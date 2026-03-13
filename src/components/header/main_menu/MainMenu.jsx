@@ -137,7 +137,7 @@ export const MainMenu = () => {
           <MenuItem
             className={styles.menu_label}
             label="Settings"
-            route="subjkt"
+            route="settings"
             need_sync
           />
 
