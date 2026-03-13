@@ -92,6 +92,11 @@ import Messages from '@pages/messages'
 import Inbox from '@pages/messages/Inbox'
 import ThreadView from '@pages/messages/ThreadView'
 import Compose from '@pages/messages/Compose'
+import Testnet from '@pages/testnet'
+import ChannelList from '@pages/testnet/channels/ChannelList'
+import ChannelView from '@pages/testnet/channels/ChannelView'
+import CreateChannel from '@pages/testnet/channels/CreateChannel'
+import ChannelSettings from '@pages/testnet/channels/ChannelSettings'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
@@ -215,6 +220,14 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      <Route path="testnet" element={<Testnet />} />
+      <Route path="testnet/channels" element={<ChannelList />} />
+      <Route path="testnet/channels/create" element={<CreateChannel />} />
+      <Route path="testnet/channels/:id" element={<ChannelView />} />
+      <Route
+        path="testnet/channels/:id/settings"
+        element={<ChannelSettings />}
+      />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
