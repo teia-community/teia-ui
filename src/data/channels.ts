@@ -93,28 +93,12 @@ export function useChannelList() {
             }
           }
 
-          const accessMode = parseAccessMode(entry.value.access_mode)
-
-          // Resolve allowlist from IPFS for allowlist channels
-          let allowlist: string[] | undefined
-          if (accessMode === 'allowlist' && entry.value.merkle_uri) {
-            const merkleUriDecoded = bytesToString(entry.value.merkle_uri)
-            if (merkleUriDecoded.startsWith('ipfs://')) {
-              try {
-                allowlist = await fetchIpfsJson<string[]>(merkleUriDecoded)
-              } catch (e) {
-                console.warn(`Failed to fetch allowlist for channel #${entry.key}:`, e)
-              }
-            }
-          }
-
           return {
             ...entry.value,
             id: parseInt(entry.key),
             metadataUri,
             metadata,
-            accessMode,
-            allowlist,
+            accessMode: parseAccessMode(entry.value.access_mode),
           }
         })
       )
@@ -126,6 +110,43 @@ export function useChannelList() {
 export type ChannelListItem = NonNullable<
   ReturnType<typeof useChannelList>['data']
 >[number]
+
+/** 
+ * Resolve allowlists from IPFS for allowlist channels.
+ */
+export function useChannelAllowlists(
+  channels: ChannelListItem[] | undefined
+) {
+  const allowlistChannels = channels?.filter(
+    (ch) => ch.accessMode === 'allowlist' && ch.merkle_uri
+  )
+  const key =
+    allowlistChannels && allowlistChannels.length > 0
+      ? `shadownet:channel-allowlists:${allowlistChannels.map((ch) => ch.id).join(',')}`
+      : null
+
+  return useSWR(
+    key,
+    async () => {
+      if (!allowlistChannels) return {}
+      const results: Record<number, string[]> = {}
+      await Promise.all(
+        allowlistChannels.map(async (ch) => {
+          const decoded = bytesToString(ch.merkle_uri)
+          if (decoded.startsWith('ipfs://')) {
+            try {
+              results[ch.id] = await fetchIpfsJson<string[]>(decoded)
+            } catch (e) {
+              console.warn(`Failed to fetch allowlist for channel #${ch.id}:`, e)
+            }
+          }
+        })
+      )
+      return results
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+}
 
 // ---------------------------------------------------------------------------
 // Single channel
