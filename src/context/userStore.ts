@@ -126,24 +126,34 @@ export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
 
 const Packer = new MichelCodecPacker()
 
-const wallet = new BeaconWallet({
-  name: 'teia.art',
-  appUrl: 'https://teia.art',
-  iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
-})
-
-Tezos.setWalletProvider(wallet)
-
+// Lazy BeaconWallet initialization — prevents Beacon from claiming
+// the peer connection at module load time, which would block
+// the Shadownet wallet from connecting on /testnet routes.
+let wallet: BeaconWallet | null = null
 let current: string
-wallet.client.subscribeToEvent(
-  BeaconEvent.ACTIVE_ACCOUNT_SET,
-  async (account) => {
-    if (!account) {
-      return;
-    }
-    current = account.address
-  },
-);
+
+function getMainnetWallet(): BeaconWallet {
+  if (!wallet) {
+    wallet = new BeaconWallet({
+      name: 'teia.art',
+      appUrl: 'https://teia.art',
+      iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
+    })
+
+    Tezos.setWalletProvider(wallet)
+
+    wallet.client.subscribeToEvent(
+      BeaconEvent.ACTIVE_ACCOUNT_SET,
+      async (account) => {
+        if (!account) {
+          return;
+        }
+        current = account.address
+      },
+    );
+  }
+  return wallet
+}
 
 
 export const useUserStore = create<UserState>()(
@@ -206,7 +216,7 @@ export const useUserStore = create<UserState>()(
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
 
-          await wallet.client.requestPermissions()
+          await getMainnetWallet().client.requestPermissions()
           const info = await getUser(current)
           set({
             address: current,
@@ -216,7 +226,9 @@ export const useUserStore = create<UserState>()(
         },
         unsync: async () => {
           // This will clear the active account and the next "syncTaquito" will trigger a new sync
-          await wallet.client.clearActiveAccount()
+          if (wallet) {
+            await wallet.client.clearActiveAccount()
+          }
           set({
             address: undefined,
             userInfo: undefined,
@@ -225,9 +237,13 @@ export const useUserStore = create<UserState>()(
           })
         },
         setAccount: async () => {
+          // Skip wallet initialization on testnet routes to avoid
+          // Beacon peer connection conflicts with the Shadownet wallet.
+          if (window.location.pathname.startsWith('/testnet')) return
+
           const current =
             Tezos !== undefined
-              ? await wallet.client.getActiveAccount()
+              ? await getMainnetWallet().client.getActiveAccount()
               : undefined
           if (current?.address) {
             set({
@@ -348,7 +364,7 @@ export const useUserStore = create<UserState>()(
           const step = useModalStore.getState().step
           step('Burn', `Burning ${amount} edition of OBJKT #${objkt_id}`, true)
 
-          const tz = await wallet.client.getActiveAccount()
+          const tz = await getMainnetWallet().client.getActiveAccount()
           const objktsOrProxy = proxyAddress || HEN_CONTRACT_FA2
           const addressFrom = proxyAddress || tz?.address
 
