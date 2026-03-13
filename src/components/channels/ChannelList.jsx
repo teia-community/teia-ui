@@ -104,7 +104,7 @@ export default function ChannelList() {
             selected={tab === 'all'}
             onClick={() => setTab('all')}
           >
-            All Channels
+            All Open Channels
           </Button>
           {address && (
             <Button
