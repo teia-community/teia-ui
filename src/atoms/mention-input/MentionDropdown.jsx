@@ -18,12 +18,16 @@ export default function MentionDropdown({ query, onSelect, onClose }) {
     let cancelled = false
     setLoading(true)
 
-    searchUsersByName(query).then((users) => {
-      if (!cancelled) {
-        setResults(users.slice(0, 8))
-        setLoading(false)
-      }
-    })
+    searchUsersByName(query)
+      .then((users) => {
+        if (!cancelled) {
+          setResults(users.slice(0, 8))
+          setLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false)
+      })
 
     return () => {
       cancelled = true

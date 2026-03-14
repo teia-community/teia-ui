@@ -171,6 +171,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      if (mentionQuery) return
       e.preventDefault()
       handleSubmit()
     }

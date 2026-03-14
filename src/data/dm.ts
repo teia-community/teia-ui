@@ -31,16 +31,16 @@ const CONTRACT = SHADOWNET_DM_CONTRACT
 
 function ipfsToUrl(uri: string): string {
   const cid = uri.replace('ipfs://', '')
-  return CIDToURL(cid, 'IPFS', { size: 'raw' })
+  return CIDToURL(cid, undefined, { size: 'raw' })
 }
 
 async function fetchIpfsJson<T>(uri: string): Promise<T> {
   const cid = uri.replace('ipfs://', '')
   try {
-    const res = await fetch(ipfsToUrl(uri))
+    const res = await fetch(CIDToURL(cid, undefined, { size: 'raw' }))
     if (res.ok) return res.json()
   } catch (e) {
-    console.error(`IPFS gateway failed for ${uri}:`, e)
+    console.error(`IPFS CDN failed for ${uri}:`, e)
   }
   const fallback = await fetch(`https://ipfs.io/ipfs/${cid}`)
   if (!fallback.ok) throw new Error(`IPFS fetch failed: ${fallback.status}`)
@@ -240,7 +240,8 @@ export function useDmMessages(conversationId: number | undefined) {
           }
         })
       )
-    }
+    },
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
   )
 }
 

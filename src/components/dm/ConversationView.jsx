@@ -260,6 +260,7 @@ function PostForm({ conversationId, onPosted, replyTo, onCancelReply }) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      if (mentionQuery) return
       e.preventDefault()
       handleSubmit()
     }
