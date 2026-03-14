@@ -6,6 +6,7 @@ import { useDaoTokenBalance } from '@data/swr'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
+import { useShadownetStore } from '@context/shadownetStore'
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 
@@ -35,6 +36,7 @@ export default function Profile({ user, isOwner }) {
   const [daoTokenBalance] = useDaoTokenBalance(user.address)
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
+  const shadownetAddress = useShadownetStore((st) => st.address)
   const [reverseDomain, setReverseDomain] = useState('')
 
   const loadReverseDomain = useCallback(() => {
@@ -77,6 +79,13 @@ export default function Profile({ user, isOwner }) {
               Message
             </Button>
           </div>
+          {shadownetAddress && (
+            <div style={{ marginTop: '0.75em' }}>
+              <Button full shadow_box to={`/testnet/dm/create/${user.address}`}>
+                Contact (Testnet)
+              </Button>
+            </div>
+          )}
           {isOwner && (
             <div style={{ marginTop: '0.75em' }}>
               <Button full shadow_box to="/subjkt">
