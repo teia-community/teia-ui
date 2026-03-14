@@ -178,7 +178,7 @@ export const TMNT_MESSAGING_CONTRACT = 'KT1U4TrFcfo1Q3EAthV9qApCG4tt7nNVoepW'
 
 // Shadownet messaging contracts
 export const SHADOWNET_CHANNEL_CONTRACT = 'KT1XKBVDayib1Ny36DXtbgnmrTdqJS3tAj2o'
-export const SHADOWNET_DM_CONTRACT = 'KT1XRvc2PSxjkrSW7iXwHxPDdCf6kKnC8WZz'
+export const SHADOWNET_DM_CONTRACT = 'KT1SaGAqXXQ4MVwhHEHy562vkoSYs2Ad6HWQ'
 export const SHADOWNET_TOKEN_GATE_CONTRACT = 'KT1AMEYYX9FPwFjZDACTnxvivBmWbtedqDbm'
 
 // Specific tz addresses to exclude from donation lists
