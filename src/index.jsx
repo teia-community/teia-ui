@@ -101,6 +101,8 @@ import ConversationList from '@components/dm/ConversationList'
 import ConversationView from '@components/dm/ConversationView'
 import CreateConversation from '@components/dm/CreateConversation'
 import ConversationSettings from '@components/dm/ConversationSettings'
+import TokenRoomBrowser from '@components/token-gate/TokenRoomBrowser'
+import TokenRoom from '@components/token-gate/TokenRoom'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
@@ -242,6 +244,11 @@ const router = createBrowserRouter(
       <Route
         path="testnet/dm/:id/settings"
         element={<ConversationSettings />}
+      />
+      <Route path="testnet/token-chat" element={<TokenRoomBrowser />} />
+      <Route
+        path="testnet/token-chat/:fa2Address/:tokenId"
+        element={<TokenRoom />}
       />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
