@@ -89,6 +89,16 @@ export default function ChannelList() {
   return (
     <Page title="Channels">
       <div className={styles.container}>
+        <Link
+          to="/testnet"
+          style={{
+            fontSize: '13px',
+            display: 'inline-block',
+            marginBottom: 12,
+          }}
+        >
+          &larr; Back to Testnet
+        </Link>
         <div className={styles.header}>
           <h1 className={styles.headline}>Channels</h1>
           {address && (
