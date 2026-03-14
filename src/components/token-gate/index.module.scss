@@ -1,0 +1,352 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.container {
+  padding-bottom: 60px;
+  width: 100%;
+}
+
+.headline {
+  text-align: center;
+}
+
+.tokenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tokenCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--text-color);
+  overflow: hidden;
+  transition: border-color 0.15s;
+
+  @include hover {
+    border-color: var(--text-color);
+  }
+}
+
+.tokenImage {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--border-color);
+}
+
+.tokenImagePlaceholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-large;
+  opacity: 0.4;
+}
+
+.tokenInfo {
+  padding: 10px 12px;
+}
+
+.tokenName {
+  font-size: $font-small;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tokenMeta {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.6;
+}
+
+.roomView {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.roomHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.roomHeaderImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.roomHeaderImagePlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-small;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.roomHeaderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.roomHeaderName {
+  font-size: $font-large;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roomHeaderSub {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.bubbleRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-end;
+}
+
+.bubbleRowOwn {
+  flex-direction: row-reverse;
+}
+
+.bubbleAvatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.bubble {
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: $font-small;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.bubbleOther {
+  background-color: var(--border-color);
+  color: var(--text-color);
+  border-bottom-left-radius: 2px;
+}
+
+.bubbleOwn {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-bottom-right-radius: 2px;
+}
+
+.bubbleSender {
+  font-weight: 600;
+  font-size: $font-xsmall;
+  margin-bottom: 2px;
+}
+
+.bubbleMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.bubbleDelete {
+  @include resetButton;
+  font-size: $font-xsmall;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--no-vote-color);
+}
+
+.bubbleRow:hover .bubbleDelete {
+  opacity: 1;
+}
+
+.bubbleReply {
+  @include resetButton;
+  font-size: $font-xsmall;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--text-color);
+}
+
+.bubbleRow:hover .bubbleReply {
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.bubbleIpfsBadge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-color);
+  background: var(--border-color);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.replyIndicator {
+  @include resetButton;
+  display: block;
+  font-size: $font-xsmall;
+  opacity: 0.5;
+  font-style: italic;
+  margin-bottom: 2px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-color);
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.bubbleHighlight {
+  animation: highlightFade 1.5s ease;
+}
+
+@keyframes highlightFade {
+  0%,
+  30% {
+    background-color: var(--border-color);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.replyBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: $font-xsmall;
+  background: var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.replyBannerClose {
+  @include resetButton;
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--text-color);
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.postForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.postTextarea {
+  flex: 1;
+  resize: none;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  line-height: 1.4;
+  min-height: 38px;
+  max-height: 120px;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow-y: auto;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+.postActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  align-items: flex-end;
+
+  button {
+    width: auto;
+    padding: 6px 12px;
+    font-size: $font-small;
+  }
+}
+
+.notAllowed {
+  text-align: center;
+  padding: 12px;
+  font-size: $font-small;
+  opacity: 0.6;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+}
