@@ -304,12 +304,20 @@
   padding: 12px 0;
   position: sticky;
   bottom: 0;
+  z-index: 3;
   background-color: var(--background-color);
   border-top: 1px solid var(--border-color);
 }
 
+.postInputWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
 .postTextarea {
   flex: 1;
+  width: 100%;
   resize: none;
   padding: 8px 12px;
   font-family: var(--text-font);
