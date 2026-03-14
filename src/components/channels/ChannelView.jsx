@@ -18,6 +18,10 @@ import { useUserProfiles } from '@data/swr'
 import { postMessage, deleteMessage } from '@data/channel-actions'
 import { useShadownetStore } from '@context/shadownetStore'
 import { computeProofForAddress } from '@utils/merkle'
+import EmojiButton from '@atoms/emoji-picker/EmojiButton'
+import MentionText from '@atoms/mention-text/MentionText'
+import MentionDropdown from '@atoms/mention-input/MentionDropdown'
+import { extractMentionAddresses, getMentionQuery } from '@utils/mentions'
 import AccessBadge from './AccessBadge'
 import styles from '@style'
 
@@ -151,6 +155,7 @@ function MessageBubble({
   isIpfs,
   parentMsg,
   parentAlias,
+  profiles,
 }) {
   const displayTime = msg.payload?.timestamp
     ? getTimeAgo(msg.payload.timestamp)
@@ -204,7 +209,7 @@ function MessageBubble({
             isOwn ? styles.bubbleOwn : styles.bubbleOther
           }`}
         >
-          {msg.content}
+          <MentionText content={msg.content} profiles={profiles} />
         </div>
         <div className={styles.bubbleMeta}>
           {isIpfs && <span className={styles.bubbleIpfsBadge}>IPFS</span>}
@@ -235,6 +240,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   const [storageMode, setStorageMode] = useState('ipfs')
   const [sending, setSending] = useState(false)
   const [proofError, setProofError] = useState(null)
+  const [mentionQuery, setMentionQuery] = useState(null)
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -334,20 +340,46 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
           </button>
         </div>
       )}
-      <textarea
-        ref={textareaRef}
-        className={styles.postTextarea}
-        placeholder="Type a message..."
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value)
-          adjustHeight()
-        }}
-        onKeyDown={handleKeyDown}
-        rows={1}
-        disabled={sending}
-      />
+      <div className={styles.postInputWrapper}>
+        {mentionQuery && (
+          <MentionDropdown
+            query={mentionQuery.query}
+            onSelect={(addr) => {
+              const before = text.slice(0, mentionQuery.start)
+              const after = text.slice(
+                mentionQuery.start + 1 + mentionQuery.query.length
+              )
+              const newText = `${before}@${addr} ${after}`
+              setText(newText)
+              setMentionQuery(null)
+              textareaRef.current?.focus()
+            }}
+            onClose={() => setMentionQuery(null)}
+          />
+        )}
+        <textarea
+          ref={textareaRef}
+          className={styles.postTextarea}
+          placeholder="Type a message..."
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value)
+            adjustHeight()
+            const mq = getMentionQuery(e.target.value, e.target.selectionStart)
+            setMentionQuery(mq)
+          }}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          disabled={sending}
+        />
+      </div>
       <div className={styles.postActions}>
+        <EmojiButton
+          onSelect={(emoji) => {
+            setText((prev) => prev + emoji)
+            adjustHeight()
+          }}
+        />
         <Button
           shadow_box
           selected={storageMode === 'ipfs'}
@@ -388,11 +420,15 @@ export default function ChannelView() {
   const address = useShadownetStore((st) => st.address)
   const { data: isAdmin } = useIsChannelAdmin(channelId, address)
 
-  // Resolve sender + creator + allowlist aliases and identicons
+  // Resolve sender + creator + allowlist + mention aliases and identicons
+  const mentionAddrs = messages
+    ? messages.flatMap((m) => extractMentionAddresses(m.content))
+    : []
   const profileAddrs = [
     ...(messages ? messages.map((m) => m.sender) : []),
     ...(channel?.creator ? [channel.creator] : []),
     ...(channel?.allowlist || []),
+    ...mentionAddrs,
   ]
   const uniqueAddrs =
     profileAddrs.length > 0 ? [...new Set(profileAddrs)] : undefined
@@ -545,6 +581,7 @@ export default function ChannelView() {
                 parentAlias={
                   parent ? profiles?.[parent.sender]?.name : undefined
                 }
+                profiles={profiles}
               />
             )
           })}

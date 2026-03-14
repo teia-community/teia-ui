@@ -18,6 +18,10 @@ import {
 } from '@data/token-gate-actions'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
+import EmojiButton from '@atoms/emoji-picker/EmojiButton'
+import MentionText from '@atoms/mention-text/MentionText'
+import MentionDropdown from '@atoms/mention-input/MentionDropdown'
+import { extractMentionAddresses, getMentionQuery } from '@utils/mentions'
 import styles from './index.module.scss'
 
 function ipfsToUrl(uri) {
@@ -36,6 +40,7 @@ function MessageBubble({
   isIpfs,
   parentMsg,
   parentAlias,
+  profiles,
 }) {
   const displayTime = msg.payload?.timestamp
     ? getTimeAgo(msg.payload.timestamp)
@@ -89,7 +94,7 @@ function MessageBubble({
             isOwn ? styles.bubbleOwn : styles.bubbleOther
           }`}
         >
-          {msg.content}
+          <MentionText content={msg.content} profiles={profiles} />
         </div>
         <div className={styles.bubbleMeta}>
           {isIpfs && <span className={styles.bubbleIpfsBadge}>IPFS</span>}
@@ -119,6 +124,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
   const [text, setText] = useState('')
   const [storageMode, setStorageMode] = useState('onchain')
   const [sending, setSending] = useState(false)
+  const [mentionQuery, setMentionQuery] = useState(null)
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -194,20 +200,46 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
           </button>
         </div>
       )}
-      <textarea
-        ref={textareaRef}
-        className={styles.postTextarea}
-        placeholder="Type a message..."
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value)
-          adjustHeight()
-        }}
-        onKeyDown={handleKeyDown}
-        rows={1}
-        disabled={sending}
-      />
+      <div className={styles.postInputWrapper}>
+        {mentionQuery && (
+          <MentionDropdown
+            query={mentionQuery.query}
+            onSelect={(addr) => {
+              const before = text.slice(0, mentionQuery.start)
+              const after = text.slice(
+                mentionQuery.start + 1 + mentionQuery.query.length
+              )
+              const newText = `${before}@${addr} ${after}`
+              setText(newText)
+              setMentionQuery(null)
+              textareaRef.current?.focus()
+            }}
+            onClose={() => setMentionQuery(null)}
+          />
+        )}
+        <textarea
+          ref={textareaRef}
+          className={styles.postTextarea}
+          placeholder="Type a message..."
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value)
+            adjustHeight()
+            const mq = getMentionQuery(e.target.value, e.target.selectionStart)
+            setMentionQuery(mq)
+          }}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          disabled={sending}
+        />
+      </div>
       <div className={styles.postActions}>
+        <EmojiButton
+          onSelect={(emoji) => {
+            setText((prev) => prev + emoji)
+            adjustHeight()
+          }}
+        />
         <Button
           shadow_box
           selected={storageMode === 'ipfs'}
@@ -255,12 +287,16 @@ export default function TokenRoom() {
       token?.metadata?.artifactUri
   )
 
-  // Resolve profiles for message senders
+  // Resolve profiles for message senders + mentioned addresses
   const senderAddrs = messages
     ? [...new Set(messages.map((m) => m.sender))]
     : []
+  const mentionAddrs = messages
+    ? messages.flatMap((m) => extractMentionAddresses(m.content))
+    : []
+  const allProfileAddrs = [...new Set([...senderAddrs, ...mentionAddrs])]
   const [profiles] = useUserProfiles(
-    senderAddrs.length > 0 ? senderAddrs : undefined
+    allProfileAddrs.length > 0 ? allProfileAddrs : undefined
   )
 
   const msgById = {}
@@ -337,6 +373,7 @@ export default function TokenRoom() {
                 parentAlias={
                   parent ? profiles?.[parent.sender]?.name : undefined
                 }
+                profiles={profiles}
               />
             )
           })}
