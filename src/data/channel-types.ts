@@ -1,6 +1,6 @@
 /**
  * Types matching the channel_v1.py contract.
- * Deployed at KT1Aw9GtHwErjJrHRf9fNKbgJdeZuf2UwbjG on Shadownet.
+ * Deployed at KT1XKBVDayib1Ny36DXtbgnmrTdqJS3tAj2o on Shadownet.
  */
 
 export type AccessMode = 'unrestricted' | 'allowlist' | 'blocklist'
@@ -63,4 +63,51 @@ export interface ChannelContractStorage {
   proposals: number
   votes: number
   counter: string
+}
+
+// ---------------------------------------------------------------------------
+// Event payload types (from TzKT /v1/contracts/events)
+// ---------------------------------------------------------------------------
+
+export interface ChannelCreatedEvent {
+  channel_id: string
+  creator: string
+  metadata_uri: string
+  timestamp: string
+}
+
+export interface ChannelHiddenEvent {
+  channel_id: string
+  hidden_by: string
+}
+
+export interface ChannelDeletedEvent {
+  channel_id: string
+  deleted_by: string
+}
+
+export interface MessagePostedEvent {
+  channel_id: string
+  message_id: string
+  sender: string
+  content: string
+  parent_id: string | null
+  timestamp: string
+}
+
+export interface ChannelConfiguredEvent {
+  channel_id: string
+  access_mode:
+    | { unrestricted: string }
+    | { allowlist: string }
+    | { blocklist: string }
+  merkle_root: string | null
+  merkle_uri: string | null
+  configured_by: string
+}
+
+export interface MessageDeletedEvent {
+  channel_id: string
+  message_id: string
+  deleted_by: string
 }
