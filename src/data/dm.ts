@@ -39,8 +39,8 @@ async function fetchIpfsJson<T>(uri: string): Promise<T> {
   try {
     const res = await fetch(ipfsToUrl(uri))
     if (res.ok) return res.json()
-  } catch {
-    // fall through to fallback
+  } catch (e) {
+    console.error(`IPFS gateway failed for ${uri}:`, e)
   }
   const fallback = await fetch(`https://ipfs.io/ipfs/${cid}`)
   if (!fallback.ok) throw new Error(`IPFS fetch failed: ${fallback.status}`)
@@ -147,7 +147,8 @@ export function useConversationList(address: string | undefined) {
               const raw = bytesToString(lastMsg.content)
               const json = JSON.parse(raw)
               lastMessagePreview = json.content || raw
-            } catch {
+            } catch (e) {
+              console.error(`Failed to parse last message preview:`, e)
               lastMessagePreview = bytesToString(lastMsg.content)
             }
           }

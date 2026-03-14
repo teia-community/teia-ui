@@ -53,8 +53,8 @@ async function fetchIpfsJson<T>(uri: string): Promise<T> {
   try {
     const res = await fetch(ipfsToUrl(uri))
     if (res.ok) return res.json()
-  } catch {
-    // gateway error or CORS block — fall through to fallback
+  } catch (e) {
+    console.error(`IPFS gateway failed for ${uri}:`, e)
   }
   const fallback = await fetch(`https://ipfs.io/ipfs/${cid}`)
   if (!fallback.ok) throw new Error(`IPFS fetch failed: ${fallback.status}`)
@@ -311,15 +311,15 @@ export function useChannelMessages(channelId: number | undefined) {
           try {
             const json = await fetchIpfsJson<ChannelMessagePayload>(raw)
             if (json.type === 'teia-channel-message') parsed = json
-          } catch {
-            // IPFS fetch failed — show raw URI
+          } catch (e) {
+            console.error(`IPFS fetch failed for message #${p.message_id}:`, e)
           }
         } else {
           try {
             const json = JSON.parse(raw)
             if (json.type === 'teia-channel-message') parsed = json
-          } catch {
-            // legacy plain-text message
+          } catch (e) {
+            console.error(`Failed to parse message #${p.message_id}:`, e)
           }
         }
 
