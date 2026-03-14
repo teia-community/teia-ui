@@ -1,5 +1,11 @@
 /**
  * SWR hooks for fetching channel data from the Shadownet contract via TzKT.
+ *
+ * Update:
+ * Channel list & Messages use TzKT events
+ * Access checks (blocked, admin) use bigmap queries.
+ * 
+ * Might be changed during contract update
  */
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'
@@ -7,16 +13,22 @@ import { SHADOWNET_CHANNEL_CONTRACT } from '@constants'
 import { CIDToURL } from '@utils/index'
 import {
   fetchContractStorage,
+  fetchContractEvents,
   fetchBigMapKeys,
   fetchBigMapValue,
 } from './shadownet-tzkt'
 import type {
   AccessMode,
   Channel,
-  ChannelMessage,
   ChannelMessagePayload,
   ChannelMetadata,
   ChannelContractStorage,
+  ChannelCreatedEvent,
+  ChannelConfiguredEvent,
+  ChannelHiddenEvent,
+  ChannelDeletedEvent,
+  MessagePostedEvent,
+  MessageDeletedEvent,
 } from './channel-types'
 
 const CONTRACT = SHADOWNET_CHANNEL_CONTRACT
@@ -66,44 +78,86 @@ export function useChannelStorage() {
 // Channel list
 // ---------------------------------------------------------------------------
 
-/** List all non-hidden channels with resolved IPFS metadata. */
+/** List all non-hidden channels with resolved IPFS metadata (event-based). */
 export function useChannelList() {
-  const { data: storage } = useChannelStorage()
-  const bigmapId = storage?.channels
-
   return useSWR(
-    bigmapId ? `shadownet:channel-list:${bigmapId}` : null,
+    `shadownet:channel-list:${CONTRACT}`,
     async () => {
-      if (!bigmapId) return []
-      const entries = await fetchBigMapKeys<Channel>(bigmapId, {
-        'value.hidden': 'false',
-        'sort.desc': 'id',
-        limit: '100',
-      })
+      // Fetch all event types in parallel
+      const [created, configured, hidden, deleted, posted, msgDeleted] = await Promise.all([
+        fetchContractEvents<ChannelCreatedEvent>(CONTRACT, 'channel_created'),
+        fetchContractEvents<ChannelConfiguredEvent>(CONTRACT, 'channel_configured'),
+        fetchContractEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden'),
+        fetchContractEvents<ChannelDeletedEvent>(CONTRACT, 'channel_deleted'),
+        fetchContractEvents<MessagePostedEvent>(CONTRACT, 'message_posted'),
+        fetchContractEvents<MessageDeletedEvent>(CONTRACT, 'message_deleted'),
+      ])
+
+      const hiddenIds = new Set(hidden.map((e) => e.payload.channel_id))
+      const deletedIds = new Set(deleted.map((e) => e.payload.channel_id))
+      const deletedMsgIds = new Set(msgDeleted.map((e) => e.payload.message_id))
+
+      // Count messages per channel (excluding deleted)
+      const msgCounts: Record<string, number> = {}
+      for (const e of posted) {
+        if (!deletedMsgIds.has(e.payload.message_id)) {
+          const chId = e.payload.channel_id
+          msgCounts[chId] = (msgCounts[chId] || 0) + 1
+        }
+      }
+
+      // Build latest access mode per channel from configure events
+      const latestConfig: Record<string, ChannelConfiguredEvent> = {}
+      for (const e of configured) {
+        latestConfig[e.payload.channel_id] = e.payload
+      }
+
+      // Filter out hidden/deleted, then resolve IPFS metadata
+      const visible = created.filter(
+        (e) =>
+          !hiddenIds.has(e.payload.channel_id) &&
+          !deletedIds.has(e.payload.channel_id)
+      )
 
       return Promise.all(
-        entries.map(async (entry) => {
-          const metadataUri = entry.value.metadata_uri
-            ? bytesToString(entry.value.metadata_uri)
+        visible.reverse().map(async (event) => {
+          const p = event.payload
+          const config = latestConfig[p.channel_id]
+          const accessMode = config
+            ? parseAccessMode(config.access_mode)
+            : 'unrestricted'
+
+          const metadataUri = p.metadata_uri
+            ? bytesToString(p.metadata_uri)
             : ''
           let metadata: ChannelMetadata = {
-            name: `Channel #${entry.key}`,
+            name: `Channel #${p.channel_id}`,
             description: '',
           }
           if (metadataUri.startsWith('ipfs://')) {
             try {
               metadata = await fetchIpfsJson<ChannelMetadata>(metadataUri)
             } catch (e) {
-              console.warn(`Failed to fetch metadata for channel #${entry.key}:`, e)
+              console.warn(
+                `Failed to fetch metadata for channel #${p.channel_id}:`,
+                e
+              )
             }
           }
 
           return {
-            ...entry.value,
-            id: parseInt(entry.key),
+            id: parseInt(p.channel_id),
+            creator: p.creator,
+            metadata_uri: p.metadata_uri,
             metadataUri,
             metadata,
-            accessMode: parseAccessMode(entry.value.access_mode),
+            timestamp: p.timestamp,
+            accessMode,
+            message_count: String(msgCounts[p.channel_id] || 0),
+            hidden: false,
+            access_mode: (config?.access_mode || { unrestricted: '' }) as Channel['access_mode'],
+            merkle_root: config?.merkle_root ?? null,
+            merkle_uri: config?.merkle_uri ?? null,
           }
         })
       )
@@ -137,6 +191,7 @@ export function useChannelAllowlists(
       const results: Record<number, string[]> = {}
       await Promise.all(
         allowlistChannels.map(async (ch) => {
+          if (!ch.merkle_uri) return
           const decoded = bytesToString(ch.merkle_uri)
           if (decoded.startsWith('ipfs://')) {
             try {
@@ -221,25 +276,34 @@ export type ChannelDetail = NonNullable<
 // Messages
 // ---------------------------------------------------------------------------
 
-/** Fetch messages for a channel, with content decoded from bytes. */
+/** Fetch messages for a channel via events, with content decoded from bytes. */
 export function useChannelMessages(channelId: number | undefined) {
-  const { data: storage } = useChannelStorage()
-  const bigmapId = storage?.messages
-
   return useSWR(
-    bigmapId && channelId !== undefined
-      ? `shadownet:channel-messages:${bigmapId}:${channelId}`
+    channelId !== undefined
+      ? `shadownet:channel-messages:${CONTRACT}:${channelId}`
       : null,
     async () => {
-      if (!bigmapId || channelId === undefined) return []
-      const entries = await fetchBigMapKeys<ChannelMessage>(bigmapId, {
-        'value.channel_id': String(channelId),
-        'sort.asc': 'id',
-        limit: '200',
-      })
+      if (channelId === undefined) return []
 
-      return Promise.all(entries.map(async (entry) => {
-        const raw = entry.value.content ? bytesToString(entry.value.content) : ''
+      // Fetch posted and deleted events in parallel
+      const [posted, deleted] = await Promise.all([
+        fetchContractEvents<MessagePostedEvent>(CONTRACT, 'message_posted', {
+          'payload.channel_id': String(channelId),
+        }),
+        fetchContractEvents<MessageDeletedEvent>(CONTRACT, 'message_deleted', {
+          'payload.channel_id': String(channelId),
+        }),
+      ])
+
+      const deletedIds = new Set(deleted.map((e) => e.payload.message_id))
+
+      const visible = posted.filter(
+        (e) => !deletedIds.has(e.payload.message_id)
+      )
+
+      return Promise.all(visible.map(async (event) => {
+        const p = event.payload
+        const raw = p.content ? bytesToString(p.content) : ''
         let parsed: ChannelMessagePayload | null = null
         const isIpfs = raw.startsWith('ipfs://')
 
@@ -260,8 +324,11 @@ export function useChannelMessages(channelId: number | undefined) {
         }
 
         return {
-          ...entry.value,
-          id: parseInt(entry.key),
+          id: parseInt(p.message_id),
+          channel_id: p.channel_id,
+          sender: p.sender,
+          parent_id: p.parent_id,
+          timestamp: p.timestamp,
           content: parsed ? parsed.content : raw,
           payload: parsed,
           isIpfs,
@@ -319,10 +386,10 @@ export function useChannelAdmins(channelId: number | undefined) {
       : null,
     async () => {
       if (!bigmapId || channelId === undefined) return []
-      const entries = await fetchBigMapKeys(bigmapId, {
+      const entries = await fetchBigMapKeys<unknown, { channel_id: string; address: string }>(bigmapId, {
         'key.channel_id': String(channelId),
       })
-      return entries.map((e: { key: { address: string } }) => e.key.address)
+      return entries.map((e) => e.key.address)
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
