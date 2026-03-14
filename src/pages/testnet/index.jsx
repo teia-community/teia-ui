@@ -95,6 +95,11 @@ export default function Testnet() {
           </Button>
         </div>
         <div className={styles.actions}>
+          <Button shadow_box to="/testnet/dm">
+            Direct Messages
+          </Button>
+        </div>
+        <div className={styles.actions}>
           <Button shadow_box deactivated to="/testnet/channels">
             Token Conversation
           </Button>

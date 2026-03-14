@@ -97,6 +97,10 @@ import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
 import ChannelSettings from '@components/channels/ChannelSettings'
+import ConversationList from '@components/dm/ConversationList'
+import ConversationView from '@components/dm/ConversationView'
+import CreateConversation from '@components/dm/CreateConversation'
+import ConversationSettings from '@components/dm/ConversationSettings'
 import { CodeOfConduct } from '@pages/codeofconduct'
 import { CoreValues } from '@pages/corevalues'
 import { PrivacyPolicy } from '@pages/privacypolicy'
@@ -227,6 +231,17 @@ const router = createBrowserRouter(
       <Route
         path="testnet/channels/:id/settings"
         element={<ChannelSettings />}
+      />
+      <Route path="testnet/dm" element={<ConversationList />} />
+      <Route path="testnet/dm/create" element={<CreateConversation />} />
+      <Route
+        path="testnet/dm/create/:prefillAddress"
+        element={<CreateConversation />}
+      />
+      <Route path="testnet/dm/:id" element={<ConversationView />} />
+      <Route
+        path="testnet/dm/:id/settings"
+        element={<ConversationSettings />}
       />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
