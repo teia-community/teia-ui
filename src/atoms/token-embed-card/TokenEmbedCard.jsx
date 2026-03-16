@@ -17,7 +17,7 @@ function getPreviewUri(embed) {
   return embed.displayUri || embed.thumbnailUri || embed.artifactUri
 }
 
-export default function TokenEmbedCard({ embed }) {
+export default function TokenEmbedCard({ embed, onRemove }) {
   if (!embed || embed.type !== 'token') return null
 
   const mime = embed.mimeType || ''
@@ -53,17 +53,29 @@ export default function TokenEmbedCard({ embed }) {
   }
 
   return (
-    <Link to={href} className={styles.card}>
-      {media}
-      <div className={styles.info}>
-        <div className={styles.name}>{embed.name}</div>
-        <div className={styles.sub}>
-          #{embed.tokenId}
-          {embed.artist
-            ? ` · ${embed.artistName || walletPreview(embed.artist)}`
-            : ''}
+    <div className={styles.card}>
+      <Link to={href} style={{ display: 'contents' }}>
+        {media}
+        <div className={styles.info}>
+          <div className={styles.name}>{embed.name}</div>
+          <div className={styles.sub}>
+            #{embed.tokenId}
+            {embed.artist
+              ? ` · ${embed.artistName || walletPreview(embed.artist)}`
+              : ''}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      {onRemove && (
+        <button
+          type="button"
+          className={styles.remove}
+          onClick={onRemove}
+          title="Remove"
+        >
+          &times;
+        </button>
+      )}
+    </div>
   )
 }

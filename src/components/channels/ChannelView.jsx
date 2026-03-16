@@ -246,7 +246,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   const [sending, setSending] = useState(false)
   const [proofError, setProofError] = useState(null)
   const [mentionQuery, setMentionQuery] = useState(null)
-  const [pendingEmbed, setPendingEmbed] = useState(null)
+  const [pendingEmbeds, setPendingEmbeds] = useState([])
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -258,7 +258,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    if ((!text.trim() && !pendingEmbed) || sending) return
+    if ((!text.trim() && pendingEmbeds.length === 0) || sending) return
     setSending(true)
     setProofError(null)
 
@@ -289,10 +289,10 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
         proof,
         storageMode,
         parentId: replyTo?.id,
-        embeds: pendingEmbed ? [pendingEmbed] : undefined,
+        embeds: pendingEmbeds.length > 0 ? pendingEmbeds : undefined,
       })
       setText('')
-      setPendingEmbed(null)
+      setPendingEmbeds([])
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
@@ -314,7 +314,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
     replyTo,
     onCancelReply,
     onPosted,
-    pendingEmbed,
+    pendingEmbeds,
   ])
 
   const handleKeyDown = (e) => {
@@ -350,15 +350,19 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
           </button>
         </div>
       )}
-      {pendingEmbed && (
-        <div className={styles.replyBanner}>
-          <TokenEmbedCard embed={pendingEmbed} />
-          <button
-            className={styles.replyBannerClose}
-            onClick={() => setPendingEmbed(null)}
-          >
-            &times;
-          </button>
+      {pendingEmbeds.length > 0 && (
+        <div
+          style={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: 6 }}
+        >
+          {pendingEmbeds.map((embed, i) => (
+            <TokenEmbedCard
+              key={embed.tokenId}
+              embed={embed}
+              onRemove={() =>
+                setPendingEmbeds((prev) => prev.filter((_, j) => j !== i))
+              }
+            />
+          ))}
         </div>
       )}
       <div className={styles.postInputWrapper}>
@@ -402,9 +406,14 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
           }}
         />
         <TokenEmbedPicker
-          onSelect={setPendingEmbed}
-          onRemove={() => setPendingEmbed(null)}
-          hasEmbed={!!pendingEmbed}
+          onSelect={(embed) =>
+            setPendingEmbeds((prev) =>
+              prev.some((e) => e.tokenId === embed.tokenId)
+                ? prev
+                : [...prev, embed]
+            )
+          }
+          embedCount={pendingEmbeds.length}
         />
         <Button
           shadow_box
@@ -423,7 +432,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
         <Button
           shadow_box
           onClick={handleSubmit}
-          disabled={sending || (!text.trim() && !pendingEmbed)}
+          disabled={sending || (!text.trim() && pendingEmbeds.length === 0)}
         >
           {sending ? '...' : 'Send'}
         </Button>

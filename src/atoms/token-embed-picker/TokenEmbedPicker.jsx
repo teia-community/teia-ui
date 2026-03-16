@@ -4,7 +4,9 @@ import { tokenToEmbed } from '@data/messaging/token-search'
 import { HashToURL } from '@utils'
 import styles from './index.module.scss'
 
-export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
+const MAX_EMBEDS = 4
+
+export default function TokenEmbedPicker({ onSelect, embedCount = 0 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState(null)
@@ -14,6 +16,8 @@ export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
   const containerRef = useRef(null)
   const debounceRef = useRef(null)
   const inputRef = useRef(null)
+
+  const atLimit = embedCount >= MAX_EMBEDS
 
   const handleClickOutside = useCallback((e) => {
     if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -75,25 +79,16 @@ export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
   const handleTokenSelect = useCallback(
     (token) => {
       onSelect(tokenToEmbed(token))
-      setOpen(false)
-      setQuery('')
-      setResults(null)
-      setArtistTokens(null)
-      setSelectedArtist(null)
     },
     [onSelect]
   )
 
   const handleButtonClick = () => {
-    if (hasEmbed) {
-      onRemove()
-    } else {
-      setOpen(!open)
-      setQuery('')
-      setResults(null)
-      setArtistTokens(null)
-      setSelectedArtist(null)
-    }
+    setOpen(!open)
+    setQuery('')
+    setResults(null)
+    setArtistTokens(null)
+    setSelectedArtist(null)
   }
 
   const tokensToShow = artistTokens || results?.tokens || []
@@ -104,10 +99,10 @@ export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
       <button
         type="button"
         onClick={handleButtonClick}
-        title={hasEmbed ? 'Remove embed' : 'Embed token'}
-        className={`${styles.trigger} ${hasEmbed ? styles.active : ''}`}
+        title="Embed token"
+        className={`${styles.trigger} ${embedCount > 0 ? styles.active : ''}`}
       >
-        {hasEmbed ? '🖼️' : '🖼'}
+        🖼
       </button>
       {open && (
         <div className={styles.dropdown}>
@@ -121,7 +116,14 @@ export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
           />
           <div className={styles.search_hint}>
             Search by token ID, tz address, or name
+            {embedCount > 0 && ` · ${embedCount}/${MAX_EMBEDS} attached`}
           </div>
+
+          {atLimit && (
+            <div className={styles.loading}>
+              Maximum of {MAX_EMBEDS} embeds reached
+            </div>
+          )}
 
           {loading && <div className={styles.loading}>Searching...</div>}
 
@@ -183,6 +185,7 @@ export default function TokenEmbedPicker({ onSelect, onRemove, hasEmbed }) {
                         key={token.token_id}
                         className={styles.token_item}
                         onClick={() => handleTokenSelect(token)}
+                        disabled={atLimit}
                       >
                         {thumbUrl && (
                           <img
