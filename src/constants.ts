@@ -131,7 +131,6 @@ export const ALLOWED_COVER_FILETYPES_LABEL = 'jpeg, png, gif'
 export const MAX_EDITIONS = 10000 // Limited by contract
 export const MIN_ROYALTIES = 10
 export const MAX_ROYALTIES = 25
-export const MAX_MESSAGE_RECIPIENTS = 12
 
 export const IPFS_DEFAULT_THUMBNAIL_URI =
   'ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc'
@@ -173,8 +172,6 @@ export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
-
-export const TMNT_MESSAGING_CONTRACT = 'KT1U4TrFcfo1Q3EAthV9qApCG4tt7nNVoepW'
 
 // Shadownet messaging contracts
 export const SHADOWNET_CHANNEL_CONTRACT = 'KT1GSHgGLxHc3vkYzAPCJrje3qqqopGeLn3t'

@@ -15,6 +15,7 @@ import {
 import { postDmMessage, deleteDmMessage } from '@data/messaging/dm-actions'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
+import { useChatReadStore } from '@context/chatReadStore'
 import EmojiButton from '@atoms/emoji-picker/EmojiButton'
 import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
 import TokenEmbedCard from '@atoms/token-embed-card/TokenEmbedCard'
@@ -403,6 +404,14 @@ export default function ConversationView() {
   } = useDmMessages(conversationId)
   const { data: isAdmin } = useIsDmAdmin(conversationId, address)
   const { data: conversations } = useConversationList(address)
+  const markRead = useChatReadStore((st) => st.markRead)
+
+  useEffect(() => {
+    if (messages?.length && address && conversationId !== undefined) {
+      const maxId = Math.max(...messages.map((m) => m.id))
+      markRead(address, `dm:${conversationId}`, maxId)
+    }
+  }, [messages, address, conversationId, markRead])
 
   // Find this conversation's data (participants, metadata, creator)
   const conversation = conversations?.find((c) => c.id === conversationId)
@@ -466,7 +475,7 @@ export default function ConversationView() {
       <div className={styles.conversationView}>
         <div className={styles.convHeader}>
           <Link
-            to="/testnet/dm"
+            to="/messages/dm"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             &larr;
@@ -500,7 +509,7 @@ export default function ConversationView() {
               Info
             </Button>
             {(isCreator || isAdmin) && (
-              <Button shadow_box to={`/testnet/dm/${conversationId}/settings`}>
+              <Button shadow_box to={`/messages/dm/${conversationId}/settings`}>
                 Settings
               </Button>
             )}

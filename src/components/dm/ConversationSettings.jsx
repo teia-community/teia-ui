@@ -44,7 +44,7 @@ export default function ConversationSettings() {
       <Page title="Conversation Settings">
         <div className={styles.container}>
           <p className={styles.empty}>Conversation not found.</p>
-          <Button to="/testnet/dm">Back to messages</Button>
+          <Button to="/messages/dm">Back to messages</Button>
         </div>
       </Page>
     )
@@ -100,7 +100,7 @@ export default function ConversationSettings() {
     setBusy(true)
     try {
       await deleteConversation(conversationId)
-      navigate('/testnet/dm')
+      navigate('/messages/dm')
     } catch (e) {
       console.error(e)
     } finally {
@@ -218,7 +218,7 @@ export default function ConversationSettings() {
         )}
 
         <div className={styles.actions}>
-          <Button secondary to={`/testnet/dm/${conversationId}`}>
+          <Button secondary to={`/messages/dm/${conversationId}`}>
             Back to Conversation
           </Button>
         </div>

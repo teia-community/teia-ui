@@ -128,7 +128,7 @@ const Packer = new MichelCodecPacker()
 
 // Lazy BeaconWallet initialization — prevents Beacon from claiming
 // the peer connection at module load time, which would block
-// the Shadownet wallet from connecting on /testnet routes.
+// the Shadownet wallet from connecting on /messages routes.
 let wallet: BeaconWallet | null = null
 let current: string
 
@@ -237,9 +237,9 @@ export const useUserStore = create<UserState>()(
           })
         },
         setAccount: async () => {
-          // Skip wallet initialization on testnet routes to avoid
+          // Skip wallet initialization on messaging routes to avoid
           // Beacon peer connection conflicts with the Shadownet wallet.
-          if (window.location.pathname.startsWith('/testnet')) return
+          if (window.location.pathname.startsWith('/messages')) return
 
           const current =
             Tezos !== undefined

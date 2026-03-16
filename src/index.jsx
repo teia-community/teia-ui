@@ -88,10 +88,6 @@ import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
 import { CopyrightCreate } from '@components/copyright/wizard/create'
 import CopyrightDisplay from '@components/copyright/profile/CopyrightDisplay'
-import Messages from '@pages/messages'
-import Inbox from '@pages/messages/Inbox'
-import ThreadView from '@pages/messages/ThreadView'
-import Compose from '@pages/messages/Compose'
 import Testnet from '@pages/testnet'
 import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
@@ -206,12 +202,30 @@ const router = createBrowserRouter(
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />
-      <Route path="messages/*" element={<Messages />}>
-        <Route index element={<Inbox />} />
-        <Route path="thread/:threadId" element={<ThreadView />} />
-        <Route path="compose" element={<Compose />} />
-        <Route path="compose/:prefillAddress" element={<Compose />} />
-      </Route>
+      <Route path="messages" element={<Testnet />} />
+      <Route path="messages/channels" element={<ChannelList />} />
+      <Route path="messages/channels/create" element={<CreateChannel />} />
+      <Route path="messages/channels/:id" element={<ChannelView />} />
+      <Route
+        path="messages/channels/:id/settings"
+        element={<ChannelSettings />}
+      />
+      <Route path="messages/dm" element={<ConversationList />} />
+      <Route path="messages/dm/create" element={<CreateConversation />} />
+      <Route
+        path="messages/dm/create/:prefillAddress"
+        element={<CreateConversation />}
+      />
+      <Route path="messages/dm/:id" element={<ConversationView />} />
+      <Route
+        path="messages/dm/:id/settings"
+        element={<ConversationSettings />}
+      />
+      <Route path="messages/token-chat" element={<TokenRoomBrowser />} />
+      <Route
+        path="messages/token-chat/:fa2Address/:tokenId"
+        element={<TokenRoom />}
+      />
       <Route path="dao/*" element={<DAO />}>
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
@@ -226,30 +240,6 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
-      <Route path="testnet" element={<Testnet />} />
-      <Route path="testnet/channels" element={<ChannelList />} />
-      <Route path="testnet/channels/create" element={<CreateChannel />} />
-      <Route path="testnet/channels/:id" element={<ChannelView />} />
-      <Route
-        path="testnet/channels/:id/settings"
-        element={<ChannelSettings />}
-      />
-      <Route path="testnet/dm" element={<ConversationList />} />
-      <Route path="testnet/dm/create" element={<CreateConversation />} />
-      <Route
-        path="testnet/dm/create/:prefillAddress"
-        element={<CreateConversation />}
-      />
-      <Route path="testnet/dm/:id" element={<ConversationView />} />
-      <Route
-        path="testnet/dm/:id/settings"
-        element={<ConversationSettings />}
-      />
-      <Route path="testnet/token-chat" element={<TokenRoomBrowser />} />
-      <Route
-        path="testnet/token-chat/:fa2Address/:tokenId"
-        element={<TokenRoom />}
-      />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

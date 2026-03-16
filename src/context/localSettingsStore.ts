@@ -36,7 +36,6 @@ interface LocalSettingsState {
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
   customRpcNode: string
-  readMessageIds: string[]
   messageNotifications: boolean
   setCustomRpcNode: (v: string) => void
   setMessageNotifications: (v: boolean) => void
@@ -50,7 +49,6 @@ interface LocalSettingsState {
   setViewMode: (mode: ViewMode) => void
   setHasSeenBanner: (seen: boolean) => void
   setZen: (zen: boolean) => void
-  markMessagesRead: (ids: string[]) => void
   theme: Theme
   themeDark: Theme
   themeLight: Theme
@@ -77,7 +75,6 @@ const defaultValues = {
   tilted: false,
   imgproxy: true,
   has_seen_banner: false,
-  readMessageIds: [] as string[],
   messageNotifications: true,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
@@ -89,12 +86,6 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
         setMessageNotifications: (messageNotifications) =>
           set({ messageNotifications }),
-        markMessagesRead: (ids) =>
-          set((state) => ({
-            readMessageIds: [
-              ...new Set([...state.readMessageIds, ...ids]),
-            ],
-          })),
         setTilted: (tilted) => set({ tilted }),
         setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>

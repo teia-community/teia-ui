@@ -20,14 +20,14 @@ export default function TokenRoomBrowser() {
     <Page title="Token Chat">
       <div className={styles.container}>
         <Link
-          to="/testnet"
+          to="/messages"
           style={{
             fontSize: '13px',
             display: 'inline-block',
             marginBottom: 12,
           }}
         >
-          &larr; Back to Testnet
+          &larr; Back to Messages
         </Link>
         <h1 className={styles.headline}>Token Chat</h1>
 
@@ -47,7 +47,7 @@ export default function TokenRoomBrowser() {
             return (
               <Link
                 key={token.tokenId}
-                to={`/testnet/token-chat/${token.contract.address}/${token.tokenId}`}
+                to={`/messages/token-chat/${token.contract.address}/${token.tokenId}`}
                 className={styles.tokenCard}
               >
                 {imgUrl ? (

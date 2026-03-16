@@ -81,8 +81,12 @@ export default function Profile({ user, isOwner }) {
           </div>
           {shadownetAddress && (
             <div style={{ marginTop: '0.75em' }}>
-              <Button full shadow_box to={`/testnet/dm/create/${user.address}`}>
-                Contact (Testnet)
+              <Button
+                full
+                shadow_box
+                to={`/messages/dm/create/${user.address}`}
+              >
+                Contact
               </Button>
             </div>
           )}

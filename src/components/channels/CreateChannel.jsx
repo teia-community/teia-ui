@@ -75,7 +75,7 @@ export default function CreateChannel() {
         blocklistAddresses,
       })
 
-      navigate(`/testnet/channels/${result.channelId}`)
+      navigate(`/messages/channels/${result.channelId}`)
     } catch (e) {
       console.error('Create failed:', e)
     } finally {
@@ -98,7 +98,7 @@ export default function CreateChannel() {
         <div className={styles.createForm}>
           <h1 className={styles.headline}>Create Channel</h1>
           <p>Connect your Shadownet wallet first.</p>
-          <Button to="/testnet">Go to Sandbox</Button>
+          <Button to="/messages">Go to Messages</Button>
         </div>
       </Page>
     )
@@ -216,7 +216,7 @@ export default function CreateChannel() {
           >
             {submitting ? 'Creating...' : 'Create Channel'}
           </Button>
-          <Button shadow_box secondary to="/testnet/channels">
+          <Button shadow_box secondary to="/messages/channels">
             Cancel
           </Button>
         </div>

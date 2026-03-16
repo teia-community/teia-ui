@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
@@ -18,6 +18,7 @@ import {
 } from '@data/messaging/token-gate-actions'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
+import { useChatReadStore } from '@context/chatReadStore'
 import EmojiButton from '@atoms/emoji-picker/EmojiButton'
 import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
 import TokenEmbedCard from '@atoms/token-embed-card/TokenEmbedCard'
@@ -311,6 +312,14 @@ export default function TokenRoom() {
     isLoading: loadingMessages,
     mutate: refreshMessages,
   } = useTokenRoomMessages(fa2Address, tokenId)
+  const markRead = useChatReadStore((st) => st.markRead)
+
+  useEffect(() => {
+    if (messages?.length && address && fa2Address && tokenId) {
+      const maxId = Math.max(...messages.map((m) => m.id))
+      markRead(address, `token:${fa2Address}:${tokenId}`, maxId)
+    }
+  }, [messages, address, fa2Address, tokenId, markRead])
 
   // Fetch token metadata
   const { data: tokens } = useFA2Tokens(fa2Address)
@@ -364,7 +373,7 @@ export default function TokenRoom() {
       <div className={styles.roomView}>
         <div className={styles.roomHeader}>
           <Link
-            to="/testnet/token-chat"
+            to="/messages/token-chat"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             &larr;

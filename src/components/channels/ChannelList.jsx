@@ -12,12 +12,15 @@ import {
 } from '@data/messaging/channels'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
+import { useChatReadStore } from '@context/chatReadStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import AccessBadge from './AccessBadge'
 import styles from '@style'
 
-function ChannelCard({ ch, profiles }) {
+function ChannelCard({ ch, profiles, hasUnread }) {
   return (
-    <Link to={`/testnet/channels/${ch.id}`} className={styles.channelCard}>
+    <Link to={`/messages/channels/${ch.id}`} className={styles.channelCard}>
+      {hasUnread && <div className={styles.unread_dot} />}
       {ch.metadata?.image ? (
         <img
           src={ipfsToUrl(ch.metadata.image)}
@@ -53,7 +56,9 @@ function ChannelCard({ ch, profiles }) {
 
 export default function ChannelList() {
   const address = useShadownetStore((st) => st.address)
-  const { data: channels, isLoading } = useChannelList()
+  const getLastRead = useChatReadStore((st) => st.getLastRead)
+  const messageNotifications = useLocalSettings((s) => s.messageNotifications)
+  const { data: channels, isLoading } = useChannelList(address)
   const [tab, setTab] = useState('all')
   const [myFilter, setMyFilter] = useState('all')
 
@@ -94,19 +99,19 @@ export default function ChannelList() {
     <Page title="Channels">
       <div className={styles.container}>
         <Link
-          to="/testnet"
+          to="/messages"
           style={{
             fontSize: '13px',
             display: 'inline-block',
             marginBottom: 12,
           }}
         >
-          &larr; Back to Testnet
+          &larr; Back to Messages
         </Link>
         <div className={styles.header}>
           <h1 className={styles.headline}>Channels</h1>
           {address && (
-            <Button shadow_box to="/testnet/channels/create">
+            <Button shadow_box to="/messages/channels/create">
               Create Channel
             </Button>
           )}
@@ -178,7 +183,17 @@ export default function ChannelList() {
 
         <div className={styles.list}>
           {displayChannels?.map((ch) => (
-            <ChannelCard key={ch.id} ch={ch} profiles={profiles} />
+            <ChannelCard
+              key={ch.id}
+              ch={ch}
+              profiles={profiles}
+              hasUnread={
+                messageNotifications &&
+                address &&
+                ch.latestOtherMessageId >
+                  getLastRead(address, `channel:${ch.id}`)
+              }
+            />
           ))}
         </div>
       </div>

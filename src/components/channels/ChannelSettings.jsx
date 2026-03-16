@@ -74,7 +74,7 @@ export default function ChannelSettings() {
       <Page title="Channel Settings">
         <div className={styles.createForm}>
           <p>Channel not found or you do not have access.</p>
-          <Button to="/testnet/channels">Back to channels</Button>
+          <Button to="/messages/channels">Back to channels</Button>
         </div>
       </Page>
     )
@@ -173,7 +173,7 @@ export default function ChannelSettings() {
     setBusy(true)
     try {
       await hideChannel(channelId)
-      navigate('/testnet/channels')
+      navigate('/messages/channels')
     } catch (e) {
       console.error(e)
     } finally {
@@ -186,7 +186,7 @@ export default function ChannelSettings() {
     setBusy(true)
     try {
       await deleteChannel(channelId)
-      navigate('/testnet/channels')
+      navigate('/messages/channels')
     } catch (e) {
       console.error(e)
     } finally {
@@ -346,7 +346,7 @@ export default function ChannelSettings() {
         )}
 
         <div className={styles.actions}>
-          <Button secondary to={`/testnet/channels/${channelId}`}>
+          <Button secondary to={`/messages/channels/${channelId}`}>
             Back to Channel
           </Button>
         </div>

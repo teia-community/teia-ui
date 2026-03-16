@@ -151,6 +151,14 @@
   background-color: var(--border-color);
 }
 
+.unread_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  flex-shrink: 0;
+}
+
 .empty {
   text-align: center;
   margin-top: 40px;

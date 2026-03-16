@@ -90,17 +90,17 @@ export default function Testnet() {
         </div>
 
         <div className={styles.actions}>
-          <Button shadow_box to="/testnet/channels">
+          <Button shadow_box to="/messages/channels">
             Channels
           </Button>
         </div>
         <div className={styles.actions}>
-          <Button shadow_box to="/testnet/dm">
+          <Button shadow_box to="/messages/dm">
             Direct Messages
           </Button>
         </div>
         <div className={styles.actions}>
-          <Button shadow_box to="/testnet/token-chat">
+          <Button shadow_box to="/messages/token-chat">
             Token Chat
           </Button>
         </div>

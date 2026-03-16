@@ -17,6 +17,7 @@ import {
 import { useUserProfiles } from '@data/swr'
 import { postMessage, deleteMessage } from '@data/messaging/channel-actions'
 import { useShadownetStore } from '@context/shadownetStore'
+import { useChatReadStore } from '@context/chatReadStore'
 import { computeProofForAddress } from '@utils/merkle'
 import EmojiButton from '@atoms/emoji-picker/EmojiButton'
 import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
@@ -454,6 +455,14 @@ export default function ChannelView() {
   } = useChannelMessages(channelId)
   const address = useShadownetStore((st) => st.address)
   const { data: isAdmin } = useIsChannelAdmin(channelId, address)
+  const markRead = useChatReadStore((st) => st.markRead)
+
+  useEffect(() => {
+    if (messages?.length && address && channelId !== undefined) {
+      const maxId = Math.max(...messages.map((m) => m.id))
+      markRead(address, `channel:${channelId}`, maxId)
+    }
+  }, [messages, address, channelId, markRead])
 
   // Resolve sender + creator + allowlist + mention aliases and identicons
   const mentionAddrs = messages
@@ -500,7 +509,7 @@ export default function ChannelView() {
       <Page title="Channel not found">
         <div className={styles.empty}>
           <p>Channel not found.</p>
-          <Button to="/testnet/channels">Back to channels</Button>
+          <Button to="/messages/channels">Back to channels</Button>
         </div>
       </Page>
     )
@@ -529,7 +538,7 @@ export default function ChannelView() {
       <div className={styles.channelView}>
         <div className={styles.channelHeader}>
           <Link
-            to="/testnet/channels"
+            to="/messages/channels"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             ←
@@ -579,7 +588,10 @@ export default function ChannelView() {
               Info
             </Button>
             {(isCreator || isAdmin) && (
-              <Button shadow_box to={`/testnet/channels/${channelId}/settings`}>
+              <Button
+                shadow_box
+                to={`/messages/channels/${channelId}/settings`}
+              >
                 Settings
               </Button>
             )}

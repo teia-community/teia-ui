@@ -55,7 +55,7 @@ export default function CreateConversation() {
       <Page title="New Conversation">
         <div className={styles.empty}>
           <p>
-            <Link to="/testnet">Connect your Shadownet wallet</Link> to create
+            <Link to="/messages">Connect your Shadownet wallet</Link> to create
             conversations.
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function CreateConversation() {
         participants: validRecipients,
         conversationFee,
       })
-      navigate('/testnet/dm')
+      navigate('/messages/dm')
     } catch {
       // error handled by modal
     } finally {
@@ -100,7 +100,7 @@ export default function CreateConversation() {
     <Page title="New Conversation">
       <div className={styles.compose_form}>
         <Link
-          to="/testnet/dm"
+          to="/messages/dm"
           style={{
             fontSize: '13px',
             display: 'inline-block',

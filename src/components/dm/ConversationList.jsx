@@ -9,10 +9,14 @@ import { getTimeAgo } from '@utils/time'
 import { useConversationList } from '@data/messaging/dm'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
+import { useChatReadStore } from '@context/chatReadStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import styles from './index.module.scss'
 
 function ConversationList() {
   const address = useShadownetStore((st) => st.address)
+  const getLastRead = useChatReadStore((st) => st.getLastRead)
+  const messageNotifications = useLocalSettings((s) => s.messageNotifications)
   const { data: conversations, isLoading } = useConversationList(address)
 
   const allAddresses = useMemo(() => {
@@ -34,7 +38,7 @@ function ConversationList() {
         <div className={styles.container}>
           <h1 className={styles.headline}>Messages</h1>
           <p className={styles.empty}>
-            <Link to="/testnet">Connect your Shadownet wallet</Link> to view
+            <Link to="/messages">Connect your Shadownet wallet</Link> to view
             messages.
           </p>
         </div>
@@ -46,19 +50,19 @@ function ConversationList() {
     <Page title="Messages">
       <div className={styles.container}>
         <Link
-          to="/testnet"
+          to="/messages"
           style={{
             fontSize: '13px',
             display: 'inline-block',
             marginBottom: 12,
           }}
         >
-          &larr; Back to Testnet
+          &larr; Back to Messages
         </Link>
         <h1 className={styles.headline}>Messages</h1>
 
         <div className={styles.inbox_header}>
-          <Link to="/testnet/dm/create">
+          <Link to="/messages/dm/create">
             <Button shadow_box>New Conversation</Button>
           </Link>
         </div>
@@ -72,13 +76,18 @@ function ConversationList() {
         {conversations?.map((conv) => {
           const others = conv.participants.filter((p) => p !== address)
           const displayNames = others.map(getName).join(', ')
+          const hasUnread =
+            messageNotifications &&
+            address &&
+            conv.latestOtherMessageId > getLastRead(address, `dm:${conv.id}`)
 
           return (
             <Link
               key={conv.id}
-              to={`/testnet/dm/${conv.id}`}
+              to={`/messages/dm/${conv.id}`}
               className={styles.thread_item}
             >
+              {hasUnread && <div className={styles.unread_dot} />}
               <div className={styles.stacked_avatars}>
                 {others.slice(0, 3).map((addr) => (
                   <Identicon
