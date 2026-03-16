@@ -4,12 +4,12 @@ import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { useShadownetStore } from '@context/shadownetStore'
-import { useConversationList } from '@data/dm'
+import { useConversationList } from '@data/messaging/dm'
 import {
   updateParticipants,
   updateDmAdmins,
   deleteConversation,
-} from '@data/dm-actions'
+} from '@data/messaging/dm-actions'
 import styles from '@style'
 
 export default function ConversationSettings() {

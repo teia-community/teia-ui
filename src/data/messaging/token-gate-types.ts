@@ -70,4 +70,5 @@ export interface TgMessagePayload {
   author: string
   timestamp: string
   parentId?: number
+  embeds?: unknown[]
 }

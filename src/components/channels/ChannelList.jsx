@@ -5,7 +5,11 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useChannelList, useChannelAllowlists, ipfsToUrl } from '@data/channels'
+import {
+  useChannelList,
+  useChannelAllowlists,
+  ipfsToUrl,
+} from '@data/messaging/channels'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
 import AccessBadge from './AccessBadge'

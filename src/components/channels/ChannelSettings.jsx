@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { useChannel, useIsChannelAdmin, useChannelAdmins } from '@data/channels'
+import {
+  useChannel,
+  useIsChannelAdmin,
+  useChannelAdmins,
+} from '@data/messaging/channels'
 import { useUserProfiles } from '@data/swr'
 import {
   configureChannel,
@@ -12,7 +16,7 @@ import {
   updateChannel,
   hideChannel,
   deleteChannel,
-} from '@data/channel-actions'
+} from '@data/messaging/channel-actions'
 import { useShadownetStore } from '@context/shadownetStore'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'

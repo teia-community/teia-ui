@@ -15,7 +15,7 @@ import {
   fetchContractEvents,
   fetchBigMapKeys,
   fetchBigMapValue,
-} from './shadownet-tzkt'
+} from '../shadownet-tzkt'
 import type {
   AccessMode,
   Channel,

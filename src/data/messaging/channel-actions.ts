@@ -6,7 +6,7 @@ import { UnitValue } from '@taquito/taquito'
 import { SHADOWNET_CHANNEL_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from './ipfs'
+import { uploadFileToIPFSProxy } from '../ipfs'
 import type { AccessMode, ChannelMetadata, ChannelMessagePayload } from './channel-types'
 
 /** Upload a raw File to IPFS, returns the CID. */
@@ -153,6 +153,7 @@ export async function postMessage({
   proof,
   parentId,
   storageMode = 'onchain',
+  embeds,
 }: {
   channelId: number
   content: string
@@ -160,6 +161,7 @@ export async function postMessage({
   proof?: { hash: string; direction: number }[]
   parentId?: number
   storageMode?: 'onchain' | 'ipfs'
+  embeds?: unknown[]
 }) {
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
@@ -178,6 +180,7 @@ export async function postMessage({
       timestamp: new Date().toISOString(),
     }
     if (parentId !== undefined) payload.parentId = parentId
+    if (embeds?.length) payload.embeds = embeds
 
     let contentBytes: string
     if (storageMode === 'ipfs') {

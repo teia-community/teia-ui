@@ -14,7 +14,7 @@ import {
   fetchContractStorage,
   fetchContractEvents,
   fetchBigMapKeys,
-} from './shadownet-tzkt'
+} from '../shadownet-tzkt'
 import type {
   DmContractStorage,
   ConversationCreatedEvent,

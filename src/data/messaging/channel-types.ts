@@ -36,6 +36,7 @@ export interface ChannelMessagePayload {
   author: string
   timestamp: string
   parentId?: number
+  embeds?: unknown[]
 }
 
 export interface ChannelMessage {

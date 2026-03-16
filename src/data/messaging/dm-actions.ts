@@ -5,7 +5,7 @@ import { stringToBytes } from '@taquito/utils'
 import { SHADOWNET_DM_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from './ipfs'
+import { uploadFileToIPFSProxy } from '../ipfs'
 import type { ConversationMetadata, DmMessagePayload } from './dm-types'
 
 const CONTRACT = SHADOWNET_DM_CONTRACT
@@ -95,12 +95,14 @@ export async function postDmMessage({
   messageFee,
   parentId,
   storageMode = 'onchain',
+  embeds,
 }: {
   conversationId: number
   content: string
   messageFee: number
   parentId?: number
   storageMode?: 'onchain' | 'ipfs'
+  embeds?: unknown[]
 }) {
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
@@ -118,6 +120,7 @@ export async function postDmMessage({
       timestamp: new Date().toISOString(),
     }
     if (parentId !== undefined) payload.parentId = parentId
+    if (embeds?.length) payload.embeds = embeds
 
     let contentBytes: string
     if (storageMode === 'ipfs') {

@@ -7,7 +7,7 @@ import { SHADOWNET_TOKEN_GATE_CONTRACT } from '@constants'
 import {
   fetchContractStorage,
   fetchContractEvents,
-} from './shadownet-tzkt'
+} from '../shadownet-tzkt'
 import type {
   TokenGateContractStorage,
   TgMessagePostedEvent,

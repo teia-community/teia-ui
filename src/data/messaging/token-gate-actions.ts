@@ -5,7 +5,7 @@ import { stringToBytes } from '@taquito/utils'
 import { SHADOWNET_TOKEN_GATE_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from './ipfs'
+import { uploadFileToIPFSProxy } from '../ipfs'
 import type { TgMessagePayload } from './token-gate-types'
 
 const CONTRACT = SHADOWNET_TOKEN_GATE_CONTRACT
@@ -38,6 +38,7 @@ export async function postTokenGateMessage({
   messageFee,
   parentId,
   storageMode = 'onchain',
+  embeds,
 }: {
   fa2Address: string
   tokenId: number
@@ -45,6 +46,7 @@ export async function postTokenGateMessage({
   messageFee: number
   parentId?: number
   storageMode?: 'onchain' | 'ipfs'
+  embeds?: unknown[]
 }) {
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
@@ -62,6 +64,7 @@ export async function postTokenGateMessage({
       timestamp: new Date().toISOString(),
     }
     if (parentId !== undefined) payload.parentId = parentId
+    if (embeds?.length) payload.embeds = embeds
 
     let contentBytes: string
     if (storageMode === 'ipfs') {

@@ -83,4 +83,5 @@ export interface DmMessagePayload {
   author: string
   timestamp: string
   parentId?: number
+  embeds?: unknown[]
 }
