@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
-import { useFA2Tokens } from '@data/token-gate'
+import { useFA2Tokens } from '@data/messaging/token-gate'
 import { CIDToURL } from '@utils/index'
 import styles from './index.module.scss'
 
