@@ -83,7 +83,7 @@ export function useChannelStorage() {
 // ---------------------------------------------------------------------------
 
 /** List all non-hidden channels with resolved IPFS metadata (event-based). */
-export function useChannelList() {
+export function useChannelList(viewerAddress?: string) {
   return useSWR(
     `shadownet:channel-list:${CONTRACT}`,
     async () => {
@@ -101,12 +101,30 @@ export function useChannelList() {
       const deletedIds = new Set(deleted.map((e) => e.payload.channel_id))
       const deletedMsgIds = new Set(msgDeleted.map((e) => e.payload.message_id))
 
-      // Count messages per channel (excluding deleted)
+      // Count messages per channel (excluding deleted) and track latest message ID from others
       const msgCounts: Record<string, number> = {}
+      const latestMsgIds: Record<string, number> = {}
       for (const e of posted) {
         if (!deletedMsgIds.has(e.payload.message_id)) {
           const chId = e.payload.channel_id
           msgCounts[chId] = (msgCounts[chId] || 0) + 1
+          const msgId = parseInt(e.payload.message_id)
+          if (!latestMsgIds[chId] || msgId > latestMsgIds[chId]) {
+            latestMsgIds[chId] = msgId
+          }
+        }
+      }
+      // Track latest message ID excluding the viewer's own messages (for unread dots)
+      const latestOtherMsgIds: Record<string, number> = {}
+      if (viewerAddress) {
+        for (const e of posted) {
+          if (!deletedMsgIds.has(e.payload.message_id) && e.payload.sender !== viewerAddress) {
+            const chId = e.payload.channel_id
+            const msgId = parseInt(e.payload.message_id)
+            if (!latestOtherMsgIds[chId] || msgId > latestOtherMsgIds[chId]) {
+              latestOtherMsgIds[chId] = msgId
+            }
+          }
         }
       }
 
@@ -158,6 +176,8 @@ export function useChannelList() {
             timestamp: p.timestamp,
             accessMode,
             message_count: String(msgCounts[p.channel_id] || 0),
+            latestMessageId: latestMsgIds[p.channel_id] || 0,
+            latestOtherMessageId: latestOtherMsgIds[p.channel_id] || 0,
             hidden: false,
             access_mode: (config?.access_mode || { unrestricted: '' }) as Channel['access_mode'],
             merkle_root: config?.merkle_root ?? null,

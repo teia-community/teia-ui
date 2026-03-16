@@ -105,12 +105,28 @@ export function useConversationList(address: string | undefined) {
         return !deletedIds.has(id) && participantSets[id]?.has(address)
       })
 
-      // Count messages per conversation
+      // Count messages per conversation and track latest message ID
       const msgCounts: Record<string, number> = {}
+      const latestMsgIds: Record<string, number> = {}
       for (const e of posted) {
         if (!deletedMsgIds.has(e.payload.message_id)) {
           const cId = e.payload.conversation_id
           msgCounts[cId] = (msgCounts[cId] || 0) + 1
+          const msgId = parseInt(e.payload.message_id)
+          if (!latestMsgIds[cId] || msgId > latestMsgIds[cId]) {
+            latestMsgIds[cId] = msgId
+          }
+        }
+      }
+      // Track latest message ID excluding the viewer's own messages (for unread dots)
+      const latestOtherMsgIds: Record<string, number> = {}
+      for (const e of posted) {
+        if (!deletedMsgIds.has(e.payload.message_id) && e.payload.sender !== address) {
+          const cId = e.payload.conversation_id
+          const msgId = parseInt(e.payload.message_id)
+          if (!latestOtherMsgIds[cId] || msgId > latestOtherMsgIds[cId]) {
+            latestOtherMsgIds[cId] = msgId
+          }
         }
       }
 
@@ -166,6 +182,8 @@ export function useConversationList(address: string | undefined) {
             timestamp: p.timestamp,
             participants,
             messageCount: msgCounts[p.conversation_id] || 0,
+            latestMessageId: latestMsgIds[p.conversation_id] || 0,
+            latestOtherMessageId: latestOtherMsgIds[p.conversation_id] || 0,
             lastMessage: lastMsg
               ? {
                   sender: lastMsg.sender,

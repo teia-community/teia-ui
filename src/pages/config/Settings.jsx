@@ -168,10 +168,10 @@ export const Settings = () => {
           <Checkbox
             alt={`click to ${
               messageNotifications ? 'disable' : 'enable'
-            } message notifications in the menu`}
+            } unread indicators on channel and DM lists`}
             checked={messageNotifications}
             onCheck={setMessageNotifications}
-            label={'Enable message notifications'}
+            label={'Show unread message indicators'}
           />
 
           {bannerEnabled && (
