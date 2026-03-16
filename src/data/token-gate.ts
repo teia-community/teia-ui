@@ -4,7 +4,6 @@
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'
 import { SHADOWNET_TOKEN_GATE_CONTRACT } from '@constants'
-import { CIDToURL } from '@utils/index'
 import {
   fetchContractStorage,
   fetchContractEvents,
@@ -23,20 +22,26 @@ const SHADOWNET_TZKT_API =
 
 function ipfsToUrl(uri: string): string {
   const cid = uri.replace('ipfs://', '')
-  return CIDToURL(cid, undefined, { size: 'raw' })
+  return `https://ipfs.io/ipfs/${cid}`
 }
+
+const IPFS_GATEWAYS = [
+  (cid: string) => `https://ipfs.io/ipfs/${cid}`,
+  (cid: string) => `https://cloudflare-ipfs.com/ipfs/${cid}`,
+  (cid: string) => `https://dweb.link/ipfs/${cid}`,
+]
 
 async function fetchIpfsJson<T>(uri: string): Promise<T> {
   const cid = uri.replace('ipfs://', '')
-  try {
-    const res = await fetch(CIDToURL(cid, undefined, { size: 'raw' }))
-    if (res.ok) return res.json()
-  } catch (e) {
-    console.error(`IPFS CDN failed for ${uri}:`, e)
+  for (const gateway of IPFS_GATEWAYS) {
+    try {
+      const res = await fetch(gateway(cid))
+      if (res.ok) return res.json()
+    } catch (e) {
+      // try next gateway
+    }
   }
-  const fallback = await fetch(`https://ipfs.io/ipfs/${cid}`)
-  if (!fallback.ok) throw new Error(`IPFS fetch failed: ${fallback.status}`)
-  return fallback.json()
+  throw new Error(`IPFS fetch failed for ${uri}: all gateways exhausted`)
 }
 
 // ---------------------------------------------------------------------------
