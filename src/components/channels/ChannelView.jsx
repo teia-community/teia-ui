@@ -13,12 +13,14 @@ import {
   useChannelFees,
   useIsChannelAdmin,
   ipfsToUrl,
-} from '@data/channels'
+} from '@data/messaging/channels'
 import { useUserProfiles } from '@data/swr'
-import { postMessage, deleteMessage } from '@data/channel-actions'
+import { postMessage, deleteMessage } from '@data/messaging/channel-actions'
 import { useShadownetStore } from '@context/shadownetStore'
 import { computeProofForAddress } from '@utils/merkle'
 import EmojiButton from '@atoms/emoji-picker/EmojiButton'
+import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
+import TokenEmbedCard from '@atoms/token-embed-card/TokenEmbedCard'
 import MentionText from '@atoms/mention-text/MentionText'
 import MentionDropdown from '@atoms/mention-input/MentionDropdown'
 import { extractMentionAddresses, getMentionQuery } from '@utils/mentions'
@@ -210,6 +212,9 @@ function MessageBubble({
           }`}
         >
           <MentionText content={msg.content} profiles={profiles} />
+          {msg.payload?.embeds?.map((embed, i) => (
+            <TokenEmbedCard key={i} embed={embed} />
+          ))}
         </div>
         <div className={styles.bubbleMeta}>
           {isIpfs && <span className={styles.bubbleIpfsBadge}>IPFS</span>}
@@ -241,6 +246,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   const [sending, setSending] = useState(false)
   const [proofError, setProofError] = useState(null)
   const [mentionQuery, setMentionQuery] = useState(null)
+  const [pendingEmbed, setPendingEmbed] = useState(null)
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -252,7 +258,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    if (!text.trim() || sending) return
+    if ((!text.trim() && !pendingEmbed) || sending) return
     setSending(true)
     setProofError(null)
 
@@ -283,8 +289,10 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
         proof,
         storageMode,
         parentId: replyTo?.id,
+        embeds: pendingEmbed ? [pendingEmbed] : undefined,
       })
       setText('')
+      setPendingEmbed(null)
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
@@ -306,6 +314,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
     replyTo,
     onCancelReply,
     onPosted,
+    pendingEmbed,
   ])
 
   const handleKeyDown = (e) => {
@@ -337,6 +346,17 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
               : replyTo.content}
           </span>
           <button className={styles.replyBannerClose} onClick={onCancelReply}>
+            &times;
+          </button>
+        </div>
+      )}
+      {pendingEmbed && (
+        <div className={styles.replyBanner}>
+          <TokenEmbedCard embed={pendingEmbed} />
+          <button
+            className={styles.replyBannerClose}
+            onClick={() => setPendingEmbed(null)}
+          >
             &times;
           </button>
         </div>
@@ -381,6 +401,11 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
             adjustHeight()
           }}
         />
+        <TokenEmbedPicker
+          onSelect={setPendingEmbed}
+          onRemove={() => setPendingEmbed(null)}
+          hasEmbed={!!pendingEmbed}
+        />
         <Button
           shadow_box
           selected={storageMode === 'ipfs'}
@@ -398,7 +423,7 @@ function PostForm({ channelId, channel, onPosted, replyTo, onCancelReply }) {
         <Button
           shadow_box
           onClick={handleSubmit}
-          disabled={sending || !text.trim()}
+          disabled={sending || (!text.trim() && !pendingEmbed)}
         >
           {sending ? '...' : 'Send'}
         </Button>

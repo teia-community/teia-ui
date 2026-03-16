@@ -11,14 +11,16 @@ import {
   useTokenRoomMessages,
   useTokenGateFees,
   useFA2Tokens,
-} from '@data/token-gate'
+} from '@data/messaging/token-gate'
 import {
   postTokenGateMessage,
   deleteTokenGateMessage,
-} from '@data/token-gate-actions'
+} from '@data/messaging/token-gate-actions'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
 import EmojiButton from '@atoms/emoji-picker/EmojiButton'
+import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
+import TokenEmbedCard from '@atoms/token-embed-card/TokenEmbedCard'
 import MentionText from '@atoms/mention-text/MentionText'
 import MentionDropdown from '@atoms/mention-input/MentionDropdown'
 import { extractMentionAddresses, getMentionQuery } from '@utils/mentions'
@@ -95,6 +97,9 @@ function MessageBubble({
           }`}
         >
           <MentionText content={msg.content} profiles={profiles} />
+          {msg.payload?.embeds?.map((embed, i) => (
+            <TokenEmbedCard key={i} embed={embed} />
+          ))}
         </div>
         <div className={styles.bubbleMeta}>
           {isIpfs && <span className={styles.bubbleIpfsBadge}>IPFS</span>}
@@ -125,6 +130,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
   const [storageMode, setStorageMode] = useState('onchain')
   const [sending, setSending] = useState(false)
   const [mentionQuery, setMentionQuery] = useState(null)
+  const [pendingEmbed, setPendingEmbed] = useState(null)
   const textareaRef = useRef(null)
 
   const adjustHeight = useCallback(() => {
@@ -136,7 +142,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    if (!text.trim() || sending) return
+    if ((!text.trim() && !pendingEmbed) || sending) return
     setSending(true)
 
     try {
@@ -147,8 +153,10 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
         messageFee,
         storageMode,
         parentId: replyTo?.id,
+        embeds: pendingEmbed ? [pendingEmbed] : undefined,
       })
       setText('')
+      setPendingEmbed(null)
       if (textareaRef.current) textareaRef.current.style.height = 'auto'
       if (onCancelReply) onCancelReply()
       if (onPosted) onPosted()
@@ -167,6 +175,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
     replyTo,
     onCancelReply,
     onPosted,
+    pendingEmbed,
   ])
 
   const handleKeyDown = (e) => {
@@ -197,6 +206,17 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
               : replyTo.content}
           </span>
           <button className={styles.replyBannerClose} onClick={onCancelReply}>
+            &times;
+          </button>
+        </div>
+      )}
+      {pendingEmbed && (
+        <div className={styles.replyBanner}>
+          <TokenEmbedCard embed={pendingEmbed} />
+          <button
+            className={styles.replyBannerClose}
+            onClick={() => setPendingEmbed(null)}
+          >
             &times;
           </button>
         </div>
@@ -241,6 +261,11 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
             adjustHeight()
           }}
         />
+        <TokenEmbedPicker
+          onSelect={setPendingEmbed}
+          onRemove={() => setPendingEmbed(null)}
+          hasEmbed={!!pendingEmbed}
+        />
         <Button
           shadow_box
           selected={storageMode === 'ipfs'}
@@ -258,7 +283,7 @@ function PostForm({ fa2Address, tokenId, onPosted, replyTo, onCancelReply }) {
         <Button
           shadow_box
           onClick={handleSubmit}
-          disabled={sending || !text.trim()}
+          disabled={sending || (!text.trim() && !pendingEmbed)}
         >
           {sending ? '...' : 'Send'}
         </Button>
