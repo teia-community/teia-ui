@@ -31,6 +31,7 @@ const CONTRACT = SHADOWNET_CHANNEL_CONTRACT
 function accessModeToMichelson(mode: AccessMode) {
   if (mode === 'allowlist') return { allowlist: UnitValue }
   if (mode === 'blocklist') return { blocklist: UnitValue }
+  if (mode === 'members_only') return { members_only: UnitValue }
   return { unrestricted: UnitValue }
 }
 

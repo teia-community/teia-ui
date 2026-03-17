@@ -16,7 +16,7 @@ export default function CreateChannel() {
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [accessMode, setAccessMode] = useState('unrestricted')
+  const [accessMode, setAccessMode] = useState('members_only')
   const [addressList, setAddressList] = useState('')
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -166,6 +166,9 @@ export default function CreateChannel() {
             value={accessMode}
             onChange={(e) => setAccessMode(e.target.value)}
           >
+            <option value="members_only">
+              Members Only (creator &amp; admins only)
+            </option>
             <option value="unrestricted">Unrestricted (anyone can post)</option>
             <option value="allowlist">Allowlist (Merkle proof required)</option>
             <option value="blocklist">

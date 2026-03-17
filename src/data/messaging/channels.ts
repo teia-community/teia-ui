@@ -36,6 +36,7 @@ export function parseAccessMode(
   mode: Channel['access_mode']
 ): AccessMode {
   if ('unrestricted' in mode) return 'unrestricted'
+  if ('members_only' in mode) return 'members_only'
   if ('allowlist' in mode) return 'allowlist'
   if ('blocklist' in mode) return 'blocklist'
   return 'unrestricted'

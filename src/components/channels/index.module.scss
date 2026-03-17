@@ -144,6 +144,12 @@
   color: #fff;
 }
 
+.badgeMembersOnly {
+  composes: badge;
+  background: #d97706;
+  color: #fff;
+}
+
 .msgCount {
   font-size: $font-xsmall;
   padding: 1px 5px;

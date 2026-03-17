@@ -634,13 +634,19 @@ export default function ChannelView() {
           })}
         </div>
 
-        <PostForm
-          channelId={channelId}
-          channel={channel}
-          onPosted={refreshMessages}
-          replyTo={replyTo}
-          onCancelReply={() => setReplyTo(null)}
-        />
+        {channel.accessMode === 'members_only' && !isCreator && !isAdmin ? (
+          <div className={styles.notAllowed}>
+            Only the channel creator and admins can post in this channel.
+          </div>
+        ) : (
+          <PostForm
+            channelId={channelId}
+            channel={channel}
+            onPosted={refreshMessages}
+            replyTo={replyTo}
+            onCancelReply={() => setReplyTo(null)}
+          />
+        )}
 
         {showInfo && (
           <ChannelInfoDialog

@@ -6,6 +6,9 @@ export default function AccessBadge({ mode }) {
       ? styles.badgeAllowlist
       : mode === 'blocklist'
       ? styles.badgeBlocklist
+      : mode === 'members_only'
+      ? styles.badgeMembersOnly
       : styles.badgeUnrestricted
-  return <span className={cls}>{mode}</span>
+  const label = mode === 'members_only' ? 'Members Only' : mode
+  return <span className={cls}>{label}</span>
 }

@@ -213,6 +213,7 @@ export default function ChannelSettings() {
               <option value="unrestricted">Unrestricted</option>
               <option value="allowlist">Allowlist</option>
               <option value="blocklist">Blocklist</option>
+              <option value="members_only">Members Only</option>
             </select>
           </div>
 

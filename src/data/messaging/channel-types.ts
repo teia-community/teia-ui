@@ -3,7 +3,7 @@
  * Deployed at KT1XKBVDayib1Ny36DXtbgnmrTdqJS3tAj2o on Shadownet.
  */
 
-export type AccessMode = 'unrestricted' | 'allowlist' | 'blocklist'
+export type AccessMode = 'unrestricted' | 'allowlist' | 'blocklist' | 'members_only'
 
 export interface Channel {
   id: number
@@ -13,6 +13,7 @@ export interface Channel {
     | { unrestricted: string }
     | { allowlist: string }
     | { blocklist: string }
+    | { members_only: string }
   merkle_root: string | null
   merkle_uri: string | null
   message_count: string
@@ -102,6 +103,7 @@ export interface ChannelConfiguredEvent {
     | { unrestricted: string }
     | { allowlist: string }
     | { blocklist: string }
+    | { members_only: string }
   merkle_root: string | null
   merkle_uri: string | null
   configured_by: string
