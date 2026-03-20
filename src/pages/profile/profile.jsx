@@ -75,21 +75,10 @@ export default function Profile({ user, isOwner }) {
             {isAddressCopied && 'Copied!'}
           </div>
           <div style={{ marginTop: '0.75em' }}>
-            <Button full shadow_box to={`/messages/compose/${user.address}`}>
+            <Button full shadow_box to={`/messages/dm/${user.address}`}>
               Message
             </Button>
           </div>
-          {shadownetAddress && (
-            <div style={{ marginTop: '0.75em' }}>
-              <Button
-                full
-                shadow_box
-                to={`/messages/dm/create/${user.address}`}
-              >
-                Contact
-              </Button>
-            </div>
-          )}
           {isOwner && (
             <div style={{ marginTop: '0.75em' }}>
               <Button full shadow_box to="/subjkt">

@@ -129,11 +129,7 @@ const ItemInfo = ({ nft }) => {
 
       {!isCollab && (
         <div className={styles.main_swap} style={{ marginTop: '0.75em' }}>
-          <Button
-            full
-            shadow_box
-            to={`/messages/compose/${nft.artist_address}`}
-          >
+          <Button full shadow_box to={`/messages/dm/${nft.artist_address}`}>
             Message Artist
           </Button>
         </div>
