@@ -429,7 +429,7 @@ export const useUserStore = create<UserState>()(
               batch = contract.methodsObject.collect(parseInt(listing.swap_id))
             } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methodsObject.fulfill_ask({ask_id: listing.ask_id})
+              batch = contract.methodsObject.fulfill_ask(parseInt(listing.ask_id))
             } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE', 'OBJKT_ASK_V3_2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methodsObject.fulfill_ask(
