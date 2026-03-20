@@ -1,11 +1,8 @@
 /**
  * SWR hooks for fetching DM data from the Shadownet contract via TzKT.
  *
- * Feeds (conversation list, messages) use TzKT events.
- * Access checks (participant, admin) use bigmap queries.
- * 
- * 
- * Subject to change.
+ * Room key uses peer-to-peer model with sorted address.
+ * Rooms are auto-created on first message.
  */
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'
@@ -13,25 +10,18 @@ import { SHADOWNET_DM_CONTRACT } from '@constants'
 import {
   fetchContractStorage,
   fetchContractEvents,
-  fetchBigMapKeys,
 } from '../shadownet-tzkt'
 import type {
   DmContractStorage,
-  ConversationCreatedEvent,
-  ConversationDeletedEvent,
-  ParticipantsUpdatedEvent,
+  RoomKey,
+  RoomCreatedEvent,
   DmMessagePostedEvent,
   DmMessageDeletedEvent,
-  ConversationMetadata,
   DmMessagePayload,
 } from './dm-types'
+import { roomKeyToString } from './dm-types'
 
 const CONTRACT = SHADOWNET_DM_CONTRACT
-
-function ipfsToUrl(uri: string): string {
-  const cid = uri.replace('ipfs://', '')
-  return `https://ipfs.io/ipfs/${cid}`
-}
 
 const IPFS_GATEWAYS = [
   (cid: string) => `https://ipfs.io/ipfs/${cid}`,
@@ -65,142 +55,99 @@ export function useDmStorage() {
 }
 
 // ---------------------------------------------------------------------------
-// Conversation list
+// Room list
 // ---------------------------------------------------------------------------
 
-/** List conversations the user participates in (event-based). */
-export function useConversationList(address: string | undefined) {
+/** List rooms the user participates in. */
+export function useRoomList(address: string | undefined) {
   return useSWR(
-    address ? `shadownet:dm-conversations:${CONTRACT}:${address}` : null,
+    address ? `shadownet:dm-rooms:${CONTRACT}:${address}` : null,
     async () => {
       if (!address) return []
 
-      const [created, deleted, participantEvents, posted, msgDeleted] =
-        await Promise.all([
-          fetchContractEvents<ConversationCreatedEvent>(CONTRACT, 'conversation_created'),
-          fetchContractEvents<ConversationDeletedEvent>(CONTRACT, 'conversation_deleted'),
-          fetchContractEvents<ParticipantsUpdatedEvent>(CONTRACT, 'participants_updated'),
-          fetchContractEvents<DmMessagePostedEvent>(CONTRACT, 'message_posted'),
-          fetchContractEvents<DmMessageDeletedEvent>(CONTRACT, 'message_deleted'),
-        ])
+      const [created, posted, msgDeleted] = await Promise.all([
+        fetchContractEvents<RoomCreatedEvent>(CONTRACT, 'room_created'),
+        fetchContractEvents<DmMessagePostedEvent>(CONTRACT, 'message_posted'),
+        fetchContractEvents<DmMessageDeletedEvent>(CONTRACT, 'message_deleted'),
+      ])
 
-      const deletedIds = new Set(deleted.map((e) => e.payload.conversation_id))
       const deletedMsgIds = new Set(msgDeleted.map((e) => e.payload.message_id))
 
-      // Build participant sets per conversation
-      const participantSets: Record<string, Set<string>> = {}
-      for (const e of created) {
-        participantSets[e.payload.conversation_id] = new Set([e.payload.creator])
-      }
-      for (const e of participantEvents) {
-        const id = e.payload.conversation_id
-        if (!participantSets[id]) participantSets[id] = new Set()
-        for (const addr of e.payload.to_add) participantSets[id].add(addr)
-        for (const addr of e.payload.to_remove) participantSets[id].delete(addr)
-      }
-
-      // Filter to conversations where user is a participant and not deleted
-      const myConversations = created.filter((e) => {
-        const id = e.payload.conversation_id
-        return !deletedIds.has(id) && participantSets[id]?.has(address)
+      // Filter rooms where address is participant_a or participant_b
+      const myRooms = created.filter((e) => {
+        const rk = e.payload.room_key
+        return rk.participant_a === address || rk.participant_b === address
       })
 
-      // Count messages per conversation and track latest message ID
+      // Count messages per room and track latest message ID
       const msgCounts: Record<string, number> = {}
       const latestMsgIds: Record<string, number> = {}
-      for (const e of posted) {
-        if (!deletedMsgIds.has(e.payload.message_id)) {
-          const cId = e.payload.conversation_id
-          msgCounts[cId] = (msgCounts[cId] || 0) + 1
-          const msgId = parseInt(e.payload.message_id)
-          if (!latestMsgIds[cId] || msgId > latestMsgIds[cId]) {
-            latestMsgIds[cId] = msgId
-          }
-        }
-      }
-      // Track latest message ID excluding the viewer's own messages (for unread dots)
       const latestOtherMsgIds: Record<string, number> = {}
-      for (const e of posted) {
-        if (!deletedMsgIds.has(e.payload.message_id) && e.payload.sender !== address) {
-          const cId = e.payload.conversation_id
-          const msgId = parseInt(e.payload.message_id)
-          if (!latestOtherMsgIds[cId] || msgId > latestOtherMsgIds[cId]) {
-            latestOtherMsgIds[cId] = msgId
-          }
-        }
-      }
-
-      // Get last message per conversation for preview
       const lastMessages: Record<string, DmMessagePostedEvent> = {}
+
       for (const e of posted) {
-        if (!deletedMsgIds.has(e.payload.message_id)) {
-          const cId = e.payload.conversation_id
-          lastMessages[cId] = e.payload
+        if (deletedMsgIds.has(e.payload.message_id)) continue
+        const rkStr = roomKeyToString(e.payload.room_key)
+        const msgId = parseInt(e.payload.message_id)
+
+        msgCounts[rkStr] = (msgCounts[rkStr] || 0) + 1
+
+        if (!latestMsgIds[rkStr] || msgId > latestMsgIds[rkStr]) {
+          latestMsgIds[rkStr] = msgId
         }
+
+        if (e.payload.sender !== address) {
+          if (!latestOtherMsgIds[rkStr] || msgId > latestOtherMsgIds[rkStr]) {
+            latestOtherMsgIds[rkStr] = msgId
+          }
+        }
+
+        lastMessages[rkStr] = e.payload
       }
 
-      return Promise.all(
-        myConversations.reverse().map(async (event) => {
-          const p = event.payload
-          const metadataUri = p.metadata_uri
-            ? bytesToString(p.metadata_uri)
-            : ''
-          let metadata: ConversationMetadata = {
-            name: `Conversation #${p.conversation_id}`,
-            description: '',
-          }
-          if (metadataUri.startsWith('ipfs://')) {
-            try {
-              metadata = await fetchIpfsJson<ConversationMetadata>(metadataUri)
-            } catch (e) {
-              console.warn(`Failed to fetch metadata for conversation #${p.conversation_id}:`, e)
-            }
-          }
+      return myRooms.reverse().map((event) => {
+        const rk = event.payload.room_key
+        const rkStr = roomKeyToString(rk)
+        const peer =
+          rk.participant_a === address ? rk.participant_b : rk.participant_a
 
-          const participants = participantSets[p.conversation_id]
-            ? [...participantSets[p.conversation_id]]
-            : [p.creator]
-
-          const lastMsg = lastMessages[p.conversation_id]
-          let lastMessagePreview = ''
-          if (lastMsg) {
-            try {
-              const raw = bytesToString(lastMsg.content)
-              const json = JSON.parse(raw)
-              lastMessagePreview = json.content || raw
-            } catch (e) {
-              console.error(`Failed to parse last message preview:`, e)
-              lastMessagePreview = bytesToString(lastMsg.content)
-            }
+        const lastMsg = lastMessages[rkStr]
+        let lastMessagePreview = ''
+        if (lastMsg) {
+          try {
+            const raw = bytesToString(lastMsg.content)
+            const json = JSON.parse(raw)
+            lastMessagePreview = json.content || raw
+          } catch (e) {
+            console.error(`Failed to parse last message preview:`, e)
+            lastMessagePreview = bytesToString(lastMsg.content)
           }
+        }
 
-          return {
-            id: parseInt(p.conversation_id),
-            creator: p.creator,
-            metadata,
-            metadataUri,
-            timestamp: p.timestamp,
-            participants,
-            messageCount: msgCounts[p.conversation_id] || 0,
-            latestMessageId: latestMsgIds[p.conversation_id] || 0,
-            latestOtherMessageId: latestOtherMsgIds[p.conversation_id] || 0,
-            lastMessage: lastMsg
-              ? {
-                  sender: lastMsg.sender,
-                  preview: lastMessagePreview.slice(0, 80),
-                  timestamp: lastMsg.timestamp,
-                }
-              : null,
-          }
-        })
-      )
+        return {
+          roomKey: rk,
+          roomKeyStr: rkStr,
+          peer,
+          timestamp: event.payload.timestamp,
+          messageCount: msgCounts[rkStr] || 0,
+          latestMessageId: latestMsgIds[rkStr] || 0,
+          latestOtherMessageId: latestOtherMsgIds[rkStr] || 0,
+          lastMessage: lastMsg
+            ? {
+                sender: lastMsg.sender,
+                preview: lastMessagePreview.slice(0, 80),
+                timestamp: lastMsg.timestamp,
+              }
+            : null,
+        }
+      })
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
 }
 
-export type ConversationListItem = NonNullable<
-  ReturnType<typeof useConversationList>['data']
+export type RoomListItem = NonNullable<
+  ReturnType<typeof useRoomList>['data']
 >[number]
 
 // ---------------------------------------------------------------------------
@@ -208,20 +155,22 @@ export type ConversationListItem = NonNullable<
 // ---------------------------------------------------------------------------
 
 /** Fetch messages for a conversation via events. */
-export function useDmMessages(conversationId: number | undefined) {
+export function useDmMessages(roomKey: RoomKey | undefined) {
   return useSWR(
-    conversationId !== undefined
-      ? `shadownet:dm-messages:${CONTRACT}:${conversationId}`
+    roomKey
+      ? `shadownet:dm-messages:${CONTRACT}:${roomKeyToString(roomKey)}`
       : null,
     async () => {
-      if (conversationId === undefined) return []
+      if (!roomKey) return []
 
       const [posted, deleted] = await Promise.all([
         fetchContractEvents<DmMessagePostedEvent>(CONTRACT, 'message_posted', {
-          'payload.conversation_id': String(conversationId),
+          'payload.room_key.participant_a': roomKey.participant_a,
+          'payload.room_key.participant_b': roomKey.participant_b,
         }),
         fetchContractEvents<DmMessageDeletedEvent>(CONTRACT, 'message_deleted', {
-          'payload.conversation_id': String(conversationId),
+          'payload.room_key.participant_a': roomKey.participant_a,
+          'payload.room_key.participant_b': roomKey.participant_b,
         }),
       ])
 
@@ -253,7 +202,7 @@ export function useDmMessages(conversationId: number | undefined) {
 
           return {
             id: parseInt(p.message_id),
-            conversation_id: p.conversation_id,
+            roomKey: p.room_key,
             sender: p.sender,
             parent_id: p.parent_id,
             timestamp: p.timestamp,
@@ -273,60 +222,6 @@ export type ParsedDmMessage = NonNullable<
 >[number]
 
 // ---------------------------------------------------------------------------
-// Access checks (bigmap-based)
-// ---------------------------------------------------------------------------
-
-/** Check if an address is a participant in a conversation. */
-export function useIsParticipant(
-  conversationId: number | undefined,
-  address: string | undefined
-) {
-  const { data: storage } = useDmStorage()
-  const bigmapId = storage?.participants
-
-  return useSWR(
-    bigmapId && conversationId !== undefined && address
-      ? `shadownet:dm-participant:${bigmapId}:${conversationId}:${address}`
-      : null,
-    async () => {
-      if (!bigmapId || conversationId === undefined || !address) return false
-      const entries = await fetchBigMapKeys(bigmapId, {
-        'key.conversation_id': String(conversationId),
-        'key.address': address,
-        limit: '1',
-      })
-      return entries.length > 0
-    },
-    { revalidateOnFocus: false, dedupingInterval: 30_000 }
-  )
-}
-
-/** Check if an address is a conversation admin. */
-export function useIsDmAdmin(
-  conversationId: number | undefined,
-  address: string | undefined
-) {
-  const { data: storage } = useDmStorage()
-  const bigmapId = storage?.conversation_admins
-
-  return useSWR(
-    bigmapId && conversationId !== undefined && address
-      ? `shadownet:dm-admin:${bigmapId}:${conversationId}:${address}`
-      : null,
-    async () => {
-      if (!bigmapId || conversationId === undefined || !address) return false
-      const entries = await fetchBigMapKeys(bigmapId, {
-        'key.conversation_id': String(conversationId),
-        'key.address': address,
-        limit: '1',
-      })
-      return entries.length > 0
-    },
-    { revalidateOnFocus: false, dedupingInterval: 30_000 }
-  )
-}
-
-// ---------------------------------------------------------------------------
 // Fees
 // ---------------------------------------------------------------------------
 
@@ -334,9 +229,6 @@ export function useDmFees() {
   const { data: storage } = useDmStorage()
   return {
     messageFee: storage?.message_fee ? parseInt(storage.message_fee) : 0,
-    conversationFee: storage?.conversation_fee
-      ? parseInt(storage.conversation_fee)
-      : 0,
     paused: storage?.paused ?? false,
   }
 }

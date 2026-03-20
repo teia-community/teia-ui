@@ -6,7 +6,7 @@ import { SHADOWNET_DM_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
 import { uploadFileToIPFSProxy } from '../ipfs'
-import type { ConversationMetadata, DmMessagePayload } from './dm-types'
+import type { DmMessagePayload } from './dm-types'
 
 const CONTRACT = SHADOWNET_DM_CONTRACT
 
@@ -31,73 +31,17 @@ function getAddress() {
 }
 
 /**
- * Create a conversation with initial participants
- */
-export async function createConversation({
-  name,
-  description,
-  participants,
-  conversationFee,
-}: {
-  name: string
-  description: string
-  participants: string[]
-  conversationFee: number
-}) {
-  const step = useModalStore.getState().step
-  const show = useModalStore.getState().show
-  const showError = useModalStore.getState().showError
-
-  step('Create Conversation', 'Uploading metadata to IPFS', true)
-
-  try {
-    const metadata: ConversationMetadata = {
-      type: 'teia-dm',
-      version: 1,
-      name: name.trim(),
-      description: description.trim(),
-    }
-
-    const metadataIpfsUri = await uploadJsonToIPFS(
-      metadata as unknown as Record<string, unknown>
-    )
-    const metadataBytes = stringToBytes(metadataIpfsUri)
-
-    step('Create Conversation', 'Waiting for wallet', false)
-
-    const contract = await ShadownetTezos.wallet.at(CONTRACT)
-    const op = await contract.methodsObject
-      .create_conversation({
-        metadata_uri: metadataBytes,
-        participants,
-      })
-      .send({ amount: conversationFee, mutez: true })
-
-    step(
-      'Create Conversation',
-      `Awaiting confirmation of [operation](https://shadownet.tzkt.io/${op.opHash})`
-    )
-    await op.confirmation()
-    show('Create Conversation', 'Conversation created')
-    return op.opHash
-  } catch (e) {
-    showError('Create Conversation', e)
-    throw e
-  }
-}
-
-/**
- * Post a message to a conversation
+ * Post a message to a peer (room auto-creates on first message)
  */
 export async function postDmMessage({
-  conversationId,
+  recipient,
   content,
   messageFee,
   parentId,
   storageMode = 'onchain',
   embeds,
 }: {
-  conversationId: number
+  recipient: string
   content: string
   messageFee: number
   parentId?: number
@@ -136,7 +80,7 @@ export async function postDmMessage({
     const contract = await ShadownetTezos.wallet.at(CONTRACT)
     const op = await contract.methodsObject
       .post_message({
-        conversation_id: conversationId,
+        recipient,
         content: contentBytes,
         parent_id: parentId !== undefined ? parentId : null,
       })
@@ -183,100 +127,55 @@ export async function deleteDmMessage(messageId: number) {
 }
 
 /**
- * Add or remove participants
+ * Update room metadata (name/description)
  */
-export async function updateParticipants({
-  conversationId,
-  toAdd,
-  toRemove,
+export async function updateRoomMetadata({
+  peer,
+  name,
+  description,
 }: {
-  conversationId: number
-  toAdd: string[]
-  toRemove: string[]
+  peer: string
+  name: string
+  description: string
 }) {
   const step = useModalStore.getState().step
   const show = useModalStore.getState().show
   const showError = useModalStore.getState().showError
 
-  step('Update Participants', 'Waiting for wallet', true)
+  step('Update Room', 'Uploading metadata to IPFS', true)
 
   try {
+    const metadata = {
+      type: 'teia-dm',
+      version: 1,
+      name: name.trim(),
+      description: description.trim(),
+    }
+
+    const metadataIpfsUri = await uploadJsonToIPFS(
+      metadata as unknown as Record<string, unknown>
+    )
+    const metadataBytes = stringToBytes(metadataIpfsUri)
+
+    step('Update Room', 'Waiting for wallet', false)
+
     const contract = await ShadownetTezos.wallet.at(CONTRACT)
     const op = await contract.methodsObject
-      .update_participants({
-        conversation_id: conversationId,
-        to_add: toAdd,
-        to_remove: toRemove,
+      .update_room_metadata({
+        peer,
+        metadata_uri: metadataBytes,
       })
       .send()
 
+    step(
+      'Update Room',
+      `Awaiting confirmation of [operation](https://shadownet.tzkt.io/${op.opHash})`
+    )
     await op.confirmation()
-    show('Update Participants', 'Participants updated')
+    show('Update Room', 'Room metadata updated')
     return op.opHash
   } catch (e) {
-    showError('Update Participants', e)
-    throw e
-  }
-}
-
-/**
- * Add or remove conversation admins. Creator only
- */
-export async function updateDmAdmins({
-  conversationId,
-  toAdd,
-  toRemove,
-}: {
-  conversationId: number
-  toAdd: string[]
-  toRemove: string[]
-}) {
-  const step = useModalStore.getState().step
-  const show = useModalStore.getState().show
-  const showError = useModalStore.getState().showError
-
-  step('Update Admins', 'Waiting for wallet', true)
-
-  try {
-    const contract = await ShadownetTezos.wallet.at(CONTRACT)
-    const op = await contract.methodsObject
-      .update_conversation_admins({
-        conversation_id: conversationId,
-        to_add: toAdd,
-        to_remove: toRemove,
-      })
-      .send()
-
-    await op.confirmation()
-    show('Update Admins', 'Admins updated')
-    return op.opHash
-  } catch (e) {
-    showError('Update Admins', e)
-    throw e
-  }
-}
-
-/**
- * Delete a conversation. Creator only
- */
-export async function deleteConversation(conversationId: number) {
-  const step = useModalStore.getState().step
-  const show = useModalStore.getState().show
-  const showError = useModalStore.getState().showError
-
-  step('Delete Conversation', 'Waiting for wallet', true)
-
-  try {
-    const contract = await ShadownetTezos.wallet.at(CONTRACT)
-    const op = await contract.methodsObject
-      .delete_conversation(conversationId)
-      .send()
-
-    await op.confirmation()
-    show('Delete Conversation', 'Conversation deleted')
-    return op.opHash
-  } catch (e) {
-    showError('Delete Conversation', e)
+    showError('Update Room', e)
     throw e
   }
 }
