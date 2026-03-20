@@ -95,8 +95,6 @@ import CreateChannel from '@components/channels/CreateChannel'
 import ChannelSettings from '@components/channels/ChannelSettings'
 import ConversationList from '@components/dm/ConversationList'
 import ConversationView from '@components/dm/ConversationView'
-import CreateConversation from '@components/dm/CreateConversation'
-import ConversationSettings from '@components/dm/ConversationSettings'
 import TokenRoomBrowser from '@components/token-gate/TokenRoomBrowser'
 import TokenRoom from '@components/token-gate/TokenRoom'
 import { CodeOfConduct } from '@pages/codeofconduct'
@@ -211,16 +209,7 @@ const router = createBrowserRouter(
         element={<ChannelSettings />}
       />
       <Route path="messages/dm" element={<ConversationList />} />
-      <Route path="messages/dm/create" element={<CreateConversation />} />
-      <Route
-        path="messages/dm/create/:prefillAddress"
-        element={<CreateConversation />}
-      />
-      <Route path="messages/dm/:id" element={<ConversationView />} />
-      <Route
-        path="messages/dm/:id/settings"
-        element={<ConversationSettings />}
-      />
+      <Route path="messages/dm/:address" element={<ConversationView />} />
       <Route path="messages/token-chat" element={<TokenRoomBrowser />} />
       <Route
         path="messages/token-chat/:fa2Address/:tokenId"
