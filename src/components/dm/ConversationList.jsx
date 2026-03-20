@@ -1,36 +1,40 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useCallback } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
-import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useConversationList } from '@data/messaging/dm'
+import { useRoomList } from '@data/messaging/dm'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
 import { useChatReadStore } from '@context/chatReadStore'
 import { useLocalSettings } from '@context/localSettingsStore'
+import DmRecipientInput from './DmRecipientInput'
 import styles from './index.module.scss'
 
 function ConversationList() {
   const address = useShadownetStore((st) => st.address)
   const getLastRead = useChatReadStore((st) => st.getLastRead)
   const messageNotifications = useLocalSettings((s) => s.messageNotifications)
-  const { data: conversations, isLoading } = useConversationList(address)
+  const { data: rooms, isLoading } = useRoomList(address)
+  const navigate = useNavigate()
 
-  const allAddresses = useMemo(() => {
-    if (!conversations) return []
-    const set = new Set()
-    for (const conv of conversations) {
-      for (const p of conv.participants) set.add(p)
-    }
-    return [...set]
-  }, [conversations])
+  const [searchValue, setSearchValue] = useState('')
 
-  const [profiles] = useUserProfiles(allAddresses)
+  const peerAddresses = rooms ? rooms.map((r) => r.peer) : []
+  const [profiles] = useUserProfiles(
+    peerAddresses.length > 0 ? peerAddresses : undefined
+  )
 
   const getName = (addr) => profiles?.[addr]?.name || walletPreview(addr)
+
+  const handleRecipientSelect = useCallback(
+    (addr) => {
+      if (addr) navigate(`/messages/dm/${addr}`)
+    },
+    [navigate]
+  )
 
   if (!address) {
     return (
@@ -62,62 +66,66 @@ function ConversationList() {
         <h1 className={styles.headline}>Messages</h1>
 
         <div className={styles.inbox_header}>
-          <Link to="/messages/dm/create">
-            <Button shadow_box>New Conversation</Button>
-          </Link>
+          <DmRecipientInput
+            value={searchValue}
+            onChange={(val) => {
+              setSearchValue(val)
+              if (val && val.trim().length >= 36) {
+                handleRecipientSelect(val)
+                setSearchValue('')
+              }
+            }}
+            showRemove={false}
+          />
         </div>
 
         {isLoading && <Loading />}
 
-        {!isLoading && (!conversations || conversations.length === 0) && (
+        {!isLoading && (!rooms || rooms.length === 0) && (
           <p className={styles.empty}>No conversations yet.</p>
         )}
 
-        {conversations?.map((conv) => {
-          const others = conv.participants.filter((p) => p !== address)
-          const displayNames = others.map(getName).join(', ')
+        {rooms?.map((room) => {
           const hasUnread =
             messageNotifications &&
             address &&
-            conv.latestOtherMessageId > getLastRead(address, `dm:${conv.id}`)
+            room.latestOtherMessageId >
+              getLastRead(address, `dm:${room.roomKeyStr}`)
 
           return (
             <Link
-              key={conv.id}
-              to={`/messages/dm/${conv.id}`}
+              key={room.roomKeyStr}
+              to={`/messages/dm/${room.peer}`}
               className={styles.thread_item}
             >
               {hasUnread && <div className={styles.unread_dot} />}
               <div className={styles.stacked_avatars}>
-                {others.slice(0, 3).map((addr) => (
-                  <Identicon
-                    key={addr}
-                    address={addr}
-                    logo={profiles?.[addr]?.identicon}
-                  />
-                ))}
+                <Identicon
+                  address={room.peer}
+                  logo={profiles?.[room.peer]?.identicon}
+                />
               </div>
               <div className={styles.thread_item_content}>
                 <div className={styles.thread_item_header}>
                   <span className={styles.thread_item_sender}>
-                    {displayNames || 'No participants'}
+                    {getName(room.peer)}
                   </span>
                   <span className={styles.thread_item_time}>
-                    {conv.lastMessage
-                      ? getTimeAgo(conv.lastMessage.timestamp)
-                      : getTimeAgo(conv.timestamp)}
+                    {room.lastMessage
+                      ? getTimeAgo(room.lastMessage.timestamp)
+                      : getTimeAgo(room.timestamp)}
                   </span>
                 </div>
-                {conv.lastMessage && (
+                {room.lastMessage && (
                   <div className={styles.thread_item_preview}>
-                    {conv.lastMessage.preview}
+                    {room.lastMessage.preview}
                   </div>
                 )}
                 <div className={styles.thread_item_meta}>
-                  {conv.messageCount > 0 && (
+                  {room.messageCount > 0 && (
                     <span className={styles.thread_item_badge}>
-                      {conv.messageCount}{' '}
-                      {conv.messageCount === 1 ? 'message' : 'messages'}
+                      {room.messageCount}{' '}
+                      {room.messageCount === 1 ? 'message' : 'messages'}
                     </span>
                   )}
                 </div>

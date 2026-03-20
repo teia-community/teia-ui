@@ -6,12 +6,8 @@ import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import {
-  useDmMessages,
-  useDmFees,
-  useIsDmAdmin,
-  useConversationList,
-} from '@data/messaging/dm'
+import { useDmMessages, useDmFees } from '@data/messaging/dm'
+import { makeRoomKey, roomKeyToString } from '@data/messaging/dm-types'
 import { postDmMessage, deleteDmMessage } from '@data/messaging/dm-actions'
 import { useUserProfiles } from '@data/swr'
 import { useShadownetStore } from '@context/shadownetStore'
@@ -115,7 +111,7 @@ function MessageBubble({
   )
 }
 
-function ConversationInfoDialog({ conversation, profiles, onClose }) {
+function RoomInfoDialog({ peer, profiles, onClose }) {
   const handleKeyDown = useCallback(
     (e) => {
       if (e.key === 'Escape') onClose()
@@ -128,9 +124,7 @@ function ConversationInfoDialog({ conversation, profiles, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
 
-  const creatorAlias =
-    profiles?.[conversation.creator]?.name ||
-    walletPreview(conversation.creator)
+  const peerAlias = profiles?.[peer]?.name || walletPreview(peer)
 
   return (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
@@ -138,7 +132,7 @@ function ConversationInfoDialog({ conversation, profiles, onClose }) {
       className={styles.dialogBackdrop}
       role="dialog"
       aria-modal="true"
-      aria-label="Conversation Info"
+      aria-label="Room Info"
       onClick={onClose}
       onKeyDown={handleKeyDown}
     >
@@ -150,70 +144,29 @@ function ConversationInfoDialog({ conversation, profiles, onClose }) {
         onKeyDown={(e) => e.stopPropagation()}
       >
         <div className={styles.dialogHeader}>
-          <h3>
-            {conversation.metadata?.name || `Conversation #${conversation.id}`}
-          </h3>
+          <h3>Conversation with {peerAlias}</h3>
           <button className={styles.dialogClose} onClick={onClose}>
             &times;
           </button>
         </div>
 
-        {conversation.metadata?.description && (
-          <p style={{ fontSize: '13px', opacity: 0.8, margin: '0 0 12px' }}>
-            {conversation.metadata.description}
-          </p>
-        )}
-
-        <div className={styles.dialogLabel}>Creator</div>
+        <div className={styles.dialogLabel}>Peer</div>
         <div className={styles.dialogRow}>
           <Identicon
-            address={conversation.creator}
-            logo={profiles?.[conversation.creator]?.identicon}
+            address={peer}
+            logo={profiles?.[peer]?.identicon}
             className={styles.dialogAvatar}
           />
-          <Link to={`/tz/${conversation.creator}`} style={{ color: 'inherit' }}>
-            {creatorAlias}
+          <Link to={`/tz/${peer}`} style={{ color: 'inherit' }}>
+            {peerAlias}
           </Link>
         </div>
-
-        <div className={styles.dialogLabel} style={{ marginTop: 12 }}>
-          Details
-        </div>
-        <div className={styles.dialogRow}>
-          Messages: {conversation.messageCount}
-        </div>
-        <div className={styles.dialogRow}>
-          Created: {new Date(conversation.timestamp).toLocaleDateString()}
-        </div>
-
-        <div className={styles.dialogLabel} style={{ marginTop: 12 }}>
-          Participants ({conversation.participants.length})
-        </div>
-        {conversation.participants.map((addr) => (
-          <div key={addr} className={styles.dialogRow}>
-            <Identicon
-              address={addr}
-              logo={profiles?.[addr]?.identicon}
-              className={styles.dialogAvatar}
-            />
-            <Link
-              to={`/tz/${addr}`}
-              style={{
-                fontSize: '12px',
-                wordBreak: 'break-all',
-                color: 'inherit',
-              }}
-            >
-              {profiles?.[addr]?.name || addr}
-            </Link>
-          </div>
-        ))}
       </div>
     </div>
   )
 }
 
-function PostForm({ conversationId, onPosted, replyTo, onCancelReply }) {
+function PostForm({ recipient, onPosted, replyTo, onCancelReply }) {
   const address = useShadownetStore((st) => st.address)
   const { messageFee } = useDmFees()
   const [text, setText] = useState('')
@@ -237,7 +190,7 @@ function PostForm({ conversationId, onPosted, replyTo, onCancelReply }) {
 
     try {
       await postDmMessage({
-        conversationId,
+        recipient,
         content: text.trim(),
         messageFee,
         storageMode,
@@ -259,7 +212,7 @@ function PostForm({ conversationId, onPosted, replyTo, onCancelReply }) {
   }, [
     text,
     sending,
-    conversationId,
+    recipient,
     messageFee,
     storageMode,
     replyTo,
@@ -392,40 +345,42 @@ function PostForm({ conversationId, onPosted, replyTo, onCancelReply }) {
 }
 
 export default function ConversationView() {
-  const { id } = useParams()
-  const conversationId = id ? parseInt(id) : undefined
+  const { address: peerAddress } = useParams()
   const [replyTo, setReplyTo] = useState(null)
   const [showInfo, setShowInfo] = useState(false)
   const address = useShadownetStore((st) => st.address)
+
+  const roomKey =
+    address && peerAddress ? makeRoomKey(address, peerAddress) : undefined
+  const roomKeyStr = roomKey ? roomKeyToString(roomKey) : undefined
+
   const {
     data: messages,
     isLoading: loadingMessages,
     mutate: refreshMessages,
-  } = useDmMessages(conversationId)
-  const { data: isAdmin } = useIsDmAdmin(conversationId, address)
-  const { data: conversations } = useConversationList(address)
+  } = useDmMessages(roomKey)
   const markRead = useChatReadStore((st) => st.markRead)
 
   useEffect(() => {
-    if (messages?.length && address && conversationId !== undefined) {
+    if (messages?.length && address && roomKeyStr) {
       const maxId = Math.max(...messages.map((m) => m.id))
-      markRead(address, `dm:${conversationId}`, maxId)
+      markRead(address, `dm:${roomKeyStr}`, maxId)
     }
-  }, [messages, address, conversationId, markRead])
+  }, [messages, address, roomKeyStr, markRead])
 
-  // Find this conversation's data (participants, metadata, creator)
-  const conversation = conversations?.find((c) => c.id === conversationId)
-  const participants = conversation?.participants || []
-  const others = participants.filter((p) => p !== address)
-  const isCreator = address && conversation?.creator === address
-
-  // Resolve profiles for all participants + mentioned addresses
+  // Resolve profiles for peer + mentioned addresses
   const mentionAddrs = messages
     ? messages.flatMap((m) => extractMentionAddresses(m.content))
     : []
   const allAddrs =
-    participants.length > 0 || mentionAddrs.length > 0
-      ? [...new Set([...participants, ...mentionAddrs])]
+    peerAddress || mentionAddrs.length > 0
+      ? [
+          ...new Set([
+            ...(peerAddress ? [peerAddress] : []),
+            ...(address ? [address] : []),
+            ...mentionAddrs,
+          ]),
+        ]
       : undefined
   const [profiles] = useUserProfiles(allAddrs)
 
@@ -447,20 +402,8 @@ export default function ConversationView() {
     [refreshMessages]
   )
 
-  // Show other participants' names as the conversation title
-  const MAX_AVATARS = 3
-  const MAX_NAMES = 2
-  const displayAvatars = others.slice(0, MAX_AVATARS)
-  const displayNames = others
-    .slice(0, MAX_NAMES)
-    .map((addr) => profiles?.[addr]?.name || walletPreview(addr))
-  const remaining = others.length - MAX_NAMES
-
-  const conversationName =
-    conversation?.metadata?.name ||
-    (displayNames.length > 0
-      ? displayNames.join(', ') + (remaining > 0 ? ` +${remaining}` : '')
-      : `Conversation #${conversationId}`)
+  const peerAlias =
+    profiles?.[peerAddress]?.name || walletPreview(peerAddress || '')
 
   if (loadingMessages && !messages) {
     return (
@@ -471,7 +414,7 @@ export default function ConversationView() {
   }
 
   return (
-    <Page title={conversationName}>
+    <Page title={peerAlias}>
       <div className={styles.conversationView}>
         <div className={styles.convHeader}>
           <Link
@@ -481,38 +424,20 @@ export default function ConversationView() {
             &larr;
           </Link>
           <div className={styles.convHeaderInfo}>
-            <div className={styles.convHeaderName}>{conversationName}</div>
-            <div className={styles.convHeaderSub}>
-              {participants.length} participant
-              {participants.length !== 1 ? 's' : ''}
-            </div>
-            {others.length > 0 && (
-              <div className={styles.convParticipants}>
-                <div className={styles.convStackedAvatars}>
-                  {displayAvatars.map((addr) => (
-                    <Identicon
-                      key={addr}
-                      address={addr}
-                      logo={profiles?.[addr]?.identicon}
-                    />
-                  ))}
-                </div>
-                <span className={styles.convParticipantNames}>
-                  {displayNames.join(', ')}
-                  {remaining > 0 && ` +${remaining}`}
-                </span>
+            <div className={styles.convHeaderName}>{peerAlias}</div>
+            <div className={styles.convParticipants}>
+              <div className={styles.convStackedAvatars}>
+                <Identicon
+                  address={peerAddress}
+                  logo={profiles?.[peerAddress]?.identicon}
+                />
               </div>
-            )}
+            </div>
           </div>
           <div className={styles.convHeaderActions}>
             <Button shadow_box onClick={() => setShowInfo(true)}>
               Info
             </Button>
-            {(isCreator || isAdmin) && (
-              <Button shadow_box to={`/messages/dm/${conversationId}/settings`}>
-                Settings
-              </Button>
-            )}
           </div>
         </div>
 
@@ -534,11 +459,7 @@ export default function ConversationView() {
                 senderLogo={profiles?.[msg.sender]?.identicon}
                 isIpfs={msg.isIpfs}
                 onReply={address ? setReplyTo : undefined}
-                onDelete={
-                  address && (msg.sender === address || isCreator || isAdmin)
-                    ? handleDelete
-                    : undefined
-                }
+                onDelete={address ? handleDelete : undefined}
                 parentMsg={parent}
                 parentAlias={
                   parent ? profiles?.[parent.sender]?.name : undefined
@@ -550,15 +471,15 @@ export default function ConversationView() {
         </div>
 
         <PostForm
-          conversationId={conversationId}
+          recipient={peerAddress}
           onPosted={refreshMessages}
           replyTo={replyTo}
           onCancelReply={() => setReplyTo(null)}
         />
 
-        {showInfo && conversation && (
-          <ConversationInfoDialog
-            conversation={conversation}
+        {showInfo && peerAddress && (
+          <RoomInfoDialog
+            peer={peerAddress}
             profiles={profiles}
             onClose={() => setShowInfo(false)}
           />
