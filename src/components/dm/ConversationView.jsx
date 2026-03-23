@@ -424,15 +424,17 @@ export default function ConversationView() {
             &larr;
           </Link>
           <div className={styles.convHeaderInfo}>
-            <div className={styles.convHeaderName}>{peerAlias}</div>
-            <div className={styles.convParticipants}>
-              <div className={styles.convStackedAvatars}>
-                <Identicon
-                  address={peerAddress}
-                  logo={profiles?.[peerAddress]?.identicon}
-                />
+            <Link to={`/tz/${peerAddress}`}>
+              <div className={styles.convParticipants}>
+                <div className={styles.convStackedAvatars}>
+                  <Identicon
+                    address={peerAddress}
+                    logo={profiles?.[peerAddress]?.identicon}
+                  />
+                </div>
+                <div className={styles.convHeaderName}>{peerAlias}</div>
               </div>
-            </div>
+            </Link>
           </div>
           <div className={styles.convHeaderActions}>
             <Button shadow_box onClick={() => setShowInfo(true)}>
