@@ -1,6 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useTopDonors } from '@data/swr'
-import { DONATION_EXCLUDED_ADDRESSES, DAO_TREASURY_CONTRACT } from '@constants'
+import {
+  DONATION_EXCLUDED_ADDRESSES,
+  DONATION_REASSIGNMENTS,
+  DAO_TREASURY_CONTRACT,
+} from '@constants'
 import styles from './TopDonors.module.scss'
 
 export function TopDonors({
@@ -13,7 +17,7 @@ export function TopDonors({
   const allDonors = useMemo(() => {
     if (!donators) return []
 
-    return donators.map((donor) => ({
+    const donors = donators.map((donor) => ({
       address: donor.donator_address,
       alias: donor.donator_alias,
       totalAmount: donor.total_donated_tez,
@@ -21,6 +25,32 @@ export function TopDonors({
       firstDonation: donor.first_donation,
       lastDonation: donor.last_donation,
     }))
+
+    // Apply donation reassignments (middleman corrections)
+    for (const { from, to, toAlias, amount } of DONATION_REASSIGNMENTS) {
+      const source = donors.find((d) => d.address === from)
+      if (source) {
+        source.totalAmount -= amount
+        source.donationCount -= 1
+      }
+
+      const target = donors.find((d) => d.address === to)
+      if (target) {
+        target.totalAmount += amount
+        target.donationCount += 1
+      } else {
+        donors.push({
+          address: to,
+          alias: toAlias || to,
+          totalAmount: amount,
+          donationCount: 1,
+          firstDonation: null,
+          lastDonation: null,
+        })
+      }
+    }
+
+    return donors.sort((a, b) => b.totalAmount - a.totalAmount)
   }, [donators])
 
   const displayedDonors = useMemo(() => {

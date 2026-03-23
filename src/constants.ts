@@ -183,6 +183,19 @@ export const DONATION_EXCLUDED_ADDRESSES = [
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
   'tz1gnuBF9TbBcgHPV2mUE96tBrW7PxqRmx1h', // Baking Benjamins Payouts
 ]
+
+// Donations that were sent via a middleman and should be reassigned to the actual donor.
+// Each entry moves `amount` tez and 1 donation count from `from` to `to`.
+export const DONATION_REASSIGNMENTS = [
+  {
+    // Tezos Foundation donation sent via Ryan Tanaka
+    // tx: ooKskSzgUPDq32uo757BuEGzhNF6Ks8nSRGFst8iQgtHi2z2hPz
+    from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
+    to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
+    toAlias: 'Tezos Foundation',
+    amount: 25481.22,
+  },
+]
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
   'QmbRmck8A5sBYQC7WEuK8dApnGQGXBhyPEgQpLm8ftfAtL'
