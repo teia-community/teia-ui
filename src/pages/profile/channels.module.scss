@@ -1,0 +1,98 @@
+@import '@styles/variables.scss';
+
+.channels_list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  width: 100%;
+  padding: 20px;
+}
+
+.channelCard {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: var(--text-color);
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.channelImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelImagePlaceholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.channelName {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.cardTime {
+  font-size: $font-xsmall;
+  opacity: 0.5;
+  display: block;
+  margin-top: 2px;
+}
+
+.channelDesc {
+  font-size: $font-small;
+  opacity: 0.7;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  font-size: $font-xsmall;
+}
+
+.msgCount {
+  opacity: 0.5;
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-double);
+  color: var(--text-secondary);
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
