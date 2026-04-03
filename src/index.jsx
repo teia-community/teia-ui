@@ -58,6 +58,7 @@ import {
   Swap,
   Transfer,
   Copyright,
+  Chat,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
@@ -65,6 +66,7 @@ import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
+import ProfileChannels from '@pages/profile/channels'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -109,6 +111,7 @@ const display_routes = (
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
+    <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="text" element={<TextPosts />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
@@ -196,10 +199,12 @@ const router = createBrowserRouter(
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
         <Route path="copyright" element={<Copyright />} />
+        <Route path="chat" element={<Chat />} />
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />
+      <Route path="publicchannels" element={<ChannelList />} />
       <Route path="messages" element={<Testnet />} />
       <Route path="messages/channels" element={<ChannelList />} />
       <Route path="messages/channels/create" element={<CreateChannel />} />
