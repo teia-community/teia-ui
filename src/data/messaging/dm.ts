@@ -20,27 +20,9 @@ import type {
   DmMessagePayload,
 } from './dm-types'
 import { roomKeyToString } from './dm-types'
+import { fetchMsgIpfsJson } from './ipfs'
 
 const CONTRACT = SHADOWNET_DM_CONTRACT
-
-const IPFS_GATEWAYS = [
-  (cid: string) => `https://ipfs.io/ipfs/${cid}`,
-  (cid: string) => `https://cloudflare-ipfs.com/ipfs/${cid}`,
-  (cid: string) => `https://dweb.link/ipfs/${cid}`,
-]
-
-async function fetchIpfsJson<T>(uri: string): Promise<T> {
-  const cid = uri.replace('ipfs://', '')
-  for (const gateway of IPFS_GATEWAYS) {
-    try {
-      const res = await fetch(gateway(cid))
-      if (res.ok) return res.json()
-    } catch (e) {
-      // try next gateway
-    }
-  }
-  throw new Error(`IPFS fetch failed for ${uri}: all gateways exhausted`)
-}
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -186,7 +168,7 @@ export function useDmMessages(roomKey: RoomKey | undefined) {
 
           if (isIpfs) {
             try {
-              const json = await fetchIpfsJson<DmMessagePayload>(raw)
+              const json = await fetchMsgIpfsJson<DmMessagePayload>(raw)
               if (json.type === 'teia-dm-message') parsed = json
             } catch (e) {
               console.error(`IPFS fetch failed for message #${p.message_id}:`, e)

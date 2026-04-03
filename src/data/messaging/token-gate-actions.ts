@@ -5,23 +5,10 @@ import { stringToBytes } from '@taquito/utils'
 import { SHADOWNET_TOKEN_GATE_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from '../ipfs'
+import { uploadMsgJsonToIPFS } from './ipfs'
 import type { TgMessagePayload } from './token-gate-types'
 
 const CONTRACT = SHADOWNET_TOKEN_GATE_CONTRACT
-
-async function uploadJsonToIPFS(
-  data: Record<string, unknown>
-): Promise<string> {
-  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
-  const file = new File([blob], 'metadata.json', { type: 'application/json' })
-  const cid = await uploadFileToIPFSProxy(
-    { blob: file, path: file.name, size: file.size },
-    'TokenGate'
-  )
-  if (!cid) throw new Error('IPFS upload failed')
-  return `ipfs://${cid}`
-}
 
 function getAddress() {
   return useShadownetStore.getState().address
@@ -68,9 +55,9 @@ export async function postTokenGateMessage({
 
     let contentBytes: string
     if (storageMode === 'ipfs') {
-      step('Post Message', 'Uploading to IPFS', true)
-      const ipfsUri = await uploadJsonToIPFS(
-        payload as unknown as Record<string, unknown>
+      const ipfsUri = await uploadMsgJsonToIPFS(
+        payload as unknown as Record<string, unknown>,
+        'Post Message'
       )
       contentBytes = stringToBytes(ipfsUri)
     } else {

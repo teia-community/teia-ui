@@ -5,26 +5,10 @@ import { stringToBytes } from '@taquito/utils'
 import { SHADOWNET_DM_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from '../ipfs'
+import { uploadMsgJsonToIPFS } from './ipfs'
 import type { DmMessagePayload } from './dm-types'
 
 const CONTRACT = SHADOWNET_DM_CONTRACT
-
-/**
- * Redundant code used for testing, needs to be updated to use common upload function
- */
-async function uploadJsonToIPFS(
-  data: Record<string, unknown>
-): Promise<string> {
-  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
-  const file = new File([blob], 'metadata.json', { type: 'application/json' })
-  const cid = await uploadFileToIPFSProxy(
-    { blob: file, path: file.name, size: file.size },
-    'DM'
-  )
-  if (!cid) throw new Error('IPFS upload failed')
-  return `ipfs://${cid}`
-}
 
 function getAddress() {
   return useShadownetStore.getState().address
@@ -68,9 +52,9 @@ export async function postDmMessage({
 
     let contentBytes: string
     if (storageMode === 'ipfs') {
-      step('Post Message', 'Uploading to IPFS', true)
-      const ipfsUri = await uploadJsonToIPFS(
-        payload as unknown as Record<string, unknown>
+      const ipfsUri = await uploadMsgJsonToIPFS(
+        payload as unknown as Record<string, unknown>,
+        'Post Message'
       )
       contentBytes = stringToBytes(ipfsUri)
     } else {
@@ -152,8 +136,9 @@ export async function updateRoomMetadata({
       description: description.trim(),
     }
 
-    const metadataIpfsUri = await uploadJsonToIPFS(
-      metadata as unknown as Record<string, unknown>
+    const metadataIpfsUri = await uploadMsgJsonToIPFS(
+      metadata as unknown as Record<string, unknown>,
+      'Update Room'
     )
     const metadataBytes = stringToBytes(metadataIpfsUri)
 

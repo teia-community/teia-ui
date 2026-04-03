@@ -29,6 +29,10 @@ import type {
   MessagePostedEvent,
   MessageDeletedEvent,
 } from './channel-types'
+import { fetchMsgIpfsJson, msgIpfsToUrl } from './ipfs'
+
+/** @deprecated Use msgIpfsToUrl from ./ipfs instead */
+export const ipfsToUrl = msgIpfsToUrl
 
 const CONTRACT = SHADOWNET_CHANNEL_CONTRACT
 
@@ -40,30 +44,6 @@ export function parseAccessMode(
   if ('allowlist' in mode) return 'allowlist'
   if ('blocklist' in mode) return 'blocklist'
   return 'unrestricted'
-}
-
-export function ipfsToUrl(uri: string): string {
-  const cid = uri.replace('ipfs://', '')
-  return `https://ipfs.io/ipfs/${cid}`
-}
-
-const IPFS_GATEWAYS = [
-  (cid: string) => `https://ipfs.io/ipfs/${cid}`,
-  (cid: string) => `https://cloudflare-ipfs.com/ipfs/${cid}`,
-  (cid: string) => `https://dweb.link/ipfs/${cid}`,
-]
-
-async function fetchIpfsJson<T>(uri: string): Promise<T> {
-  const cid = uri.replace('ipfs://', '')
-  for (const gateway of IPFS_GATEWAYS) {
-    try {
-      const res = await fetch(gateway(cid))
-      if (res.ok) return res.json()
-    } catch (e) {
-      // try next gateway
-    }
-  }
-  throw new Error(`IPFS fetch failed for ${uri}: all gateways exhausted`)
 }
 
 // ---------------------------------------------------------------------------
@@ -159,7 +139,7 @@ export function useChannelList(viewerAddress?: string) {
           }
           if (metadataUri.startsWith('ipfs://')) {
             try {
-              metadata = await fetchIpfsJson<ChannelMetadata>(metadataUri)
+              metadata = await fetchMsgIpfsJson<ChannelMetadata>(metadataUri)
             } catch (e) {
               console.warn(
                 `Failed to fetch metadata for channel #${p.channel_id}:`,
@@ -220,7 +200,7 @@ export function useChannelAllowlists(
           const decoded = bytesToString(ch.merkle_uri)
           if (decoded.startsWith('ipfs://')) {
             try {
-              results[ch.id] = await fetchIpfsJson<string[]>(decoded)
+              results[ch.id] = await fetchMsgIpfsJson<string[]>(decoded)
             } catch (e) {
               console.warn(`Failed to fetch allowlist for channel #${ch.id}:`, e)
             }
@@ -261,7 +241,7 @@ export function useChannel(channelId: number | undefined) {
       }
       if (metadataUri.startsWith('ipfs://')) {
         try {
-          metadata = await fetchIpfsJson<ChannelMetadata>(metadataUri)
+          metadata = await fetchMsgIpfsJson<ChannelMetadata>(metadataUri)
         } catch (e) {
           console.warn(`Failed to fetch metadata for channel #${channelId}:`, e)
         }
@@ -274,7 +254,7 @@ export function useChannel(channelId: number | undefined) {
       let allowlist: string[] | undefined
       if (merkleUriDecoded.startsWith('ipfs://')) {
         try {
-          allowlist = await fetchIpfsJson<string[]>(merkleUriDecoded)
+          allowlist = await fetchMsgIpfsJson<string[]>(merkleUriDecoded)
         } catch (e) {
           console.warn(`Failed to fetch allowlist for channel #${channelId}:`, e)
         }
@@ -334,7 +314,7 @@ export function useChannelMessages(channelId: number | undefined) {
 
         if (isIpfs) {
           try {
-            const json = await fetchIpfsJson<ChannelMessagePayload>(raw)
+            const json = await fetchMsgIpfsJson<ChannelMessagePayload>(raw)
             if (json.type === 'teia-channel-message') parsed = json
           } catch (e) {
             console.error(`IPFS fetch failed for message #${p.message_id}:`, e)

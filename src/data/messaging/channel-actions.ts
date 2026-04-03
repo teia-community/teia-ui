@@ -6,25 +6,8 @@ import { UnitValue } from '@taquito/taquito'
 import { SHADOWNET_CHANNEL_CONTRACT } from '@constants'
 import { ShadownetTezos, useShadownetStore } from '@context/shadownetStore'
 import { useModalStore } from '@context/modalStore'
-import { uploadFileToIPFSProxy } from '../ipfs'
+import { uploadMsgFileToIPFS, uploadMsgJsonToIPFS } from './ipfs'
 import type { AccessMode, ChannelMetadata, ChannelMessagePayload } from './channel-types'
-
-/** Upload a raw File to IPFS, returns the CID. */
-async function uploadToIPFS(file: File): Promise<string> {
-  const cid = await uploadFileToIPFSProxy(
-    { blob: file, path: file.name, size: file.size },
-    'Channel'
-  )
-  if (!cid) throw new Error('IPFS upload failed')
-  return cid
-}
-
-/** Upload a JSON object to IPFS, returns `ipfs://CID`. */
-async function uploadJsonToIPFS(data: Record<string, unknown>): Promise<string> {
-  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
-  const cid = await uploadToIPFS(new File([blob], 'metadata.json', { type: 'application/json' }))
-  return `ipfs://${cid}`
-}
 
 const CONTRACT = SHADOWNET_CHANNEL_CONTRACT
 
@@ -71,7 +54,7 @@ export async function createChannel({
     // Upload image (optional)
     let imageUri: string | undefined
     if (imageFile) {
-      const imageCid = await uploadToIPFS(imageFile)
+      const imageCid = await uploadMsgFileToIPFS(imageFile, 'Create Channel')
       imageUri = `ipfs://${imageCid}`
     }
 
@@ -84,14 +67,13 @@ export async function createChannel({
     }
     if (imageUri) metadata.image = imageUri
 
-    const metadataIpfsUri = await uploadJsonToIPFS(metadata)
+    const metadataIpfsUri = await uploadMsgJsonToIPFS(metadata, 'Create Channel')
     const metadataBytes = stringToBytes(metadataIpfsUri)
 
     // Upload allowlist addresses to IPFS if provided
     let merkleUriBytes: string | null = null
     if (merkleUri && merkleUri.length > 0) {
-      step('Create Channel', 'Uploading allowlist to IPFS', true)
-      const allowlistIpfsUri = await uploadJsonToIPFS(merkleUri as unknown as Record<string, unknown>)
+      const allowlistIpfsUri = await uploadMsgJsonToIPFS(merkleUri as unknown as Record<string, unknown>, 'Create Channel')
       merkleUriBytes = stringToBytes(allowlistIpfsUri)
     }
 
@@ -185,8 +167,7 @@ export async function postMessage({
 
     let contentBytes: string
     if (storageMode === 'ipfs') {
-      step('Post Message', 'Uploading to IPFS', true)
-      const ipfsUri = await uploadJsonToIPFS(payload as unknown as Record<string, unknown>)
+      const ipfsUri = await uploadMsgJsonToIPFS(payload as unknown as Record<string, unknown>, 'Post Message')
       contentBytes = stringToBytes(ipfsUri)
     } else {
       contentBytes = stringToBytes(JSON.stringify(payload))
@@ -268,8 +249,7 @@ export async function configureChannel({
     // Upload allowlist addresses to IPFS if provided
     let merkleUriBytes: string | null = null
     if (merkleUri && merkleUri.length > 0) {
-      step('Configure Channel', 'Uploading allowlist to IPFS', true)
-      const allowlistIpfsUri = await uploadJsonToIPFS(merkleUri as unknown as Record<string, unknown>)
+      const allowlistIpfsUri = await uploadMsgJsonToIPFS(merkleUri as unknown as Record<string, unknown>, 'Configure Channel')
       merkleUriBytes = stringToBytes(allowlistIpfsUri)
     }
 

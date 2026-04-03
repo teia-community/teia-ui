@@ -16,33 +16,11 @@ import type {
   TzktToken,
 } from './token-gate-types'
 
+import { fetchMsgIpfsJson, msgIpfsToUrl } from './ipfs'
+
 const CONTRACT = SHADOWNET_TOKEN_GATE_CONTRACT
 const SHADOWNET_TZKT_API =
   import.meta.env.VITE_SHADOWNET_TZKT_API || 'https://api.shadownet.tzkt.io'
-
-function ipfsToUrl(uri: string): string {
-  const cid = uri.replace('ipfs://', '')
-  return `https://ipfs.io/ipfs/${cid}`
-}
-
-const IPFS_GATEWAYS = [
-  (cid: string) => `https://ipfs.io/ipfs/${cid}`,
-  (cid: string) => `https://cloudflare-ipfs.com/ipfs/${cid}`,
-  (cid: string) => `https://dweb.link/ipfs/${cid}`,
-]
-
-async function fetchIpfsJson<T>(uri: string): Promise<T> {
-  const cid = uri.replace('ipfs://', '')
-  for (const gateway of IPFS_GATEWAYS) {
-    try {
-      const res = await fetch(gateway(cid))
-      if (res.ok) return res.json()
-    } catch (e) {
-      // try next gateway
-    }
-  }
-  throw new Error(`IPFS fetch failed for ${uri}: all gateways exhausted`)
-}
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -116,7 +94,7 @@ export function useTokenRoomMessages(
 
           if (isIpfs) {
             try {
-              const json = await fetchIpfsJson<TgMessagePayload>(raw)
+              const json = await fetchMsgIpfsJson<TgMessagePayload>(raw)
               if (json.type === 'teia-tg-message') parsed = json
             } catch (e) {
               console.error(`IPFS fetch failed for message #${p.message_id}:`, e)
