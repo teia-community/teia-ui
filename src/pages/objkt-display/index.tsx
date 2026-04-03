@@ -56,9 +56,13 @@ const TABS = [
     to: 'transfer',
     private: true,
   },
-  { 
+  {
     title: 'Copyright',
     to: 'copyright',
+  },
+  {
+    title: 'Chat',
+    to: 'chat',
   }
 ]
 
