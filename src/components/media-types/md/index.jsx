@@ -33,7 +33,11 @@ export const MD = ({ displayView, artifactUri, previewUri, preview }) => {
   }, [artifactUri, previewUri, preview])
 
   return displayView ? (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      role="article"
+      aria-label="Article content"
+    >
       <Markdown>{content}</Markdown>
     </div>
   ) : (

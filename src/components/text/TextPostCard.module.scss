@@ -27,12 +27,24 @@
   &:hover .title {
     color: var(--text-color);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .cover {
   flex-shrink: 0;
   width: 160px;
   text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 
   img {
     display: block;
@@ -78,6 +90,12 @@
     color: var(--text-color);
     text-decoration: underline;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .date {
@@ -118,6 +136,12 @@
   &:hover {
     border-color: #e74c3c;
     color: #e74c3c;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
@@ -194,6 +218,12 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .confirm_no {
@@ -212,5 +242,11 @@
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
