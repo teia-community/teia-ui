@@ -1,8 +1,10 @@
 import useClipboard from 'react-use-clipboard'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
 import { useDaoTokenBalance } from '@data/swr'
+import { useUserStore } from '@context/userStore'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
@@ -23,6 +25,23 @@ async function reverseRecord(address) {
     }
   )
   return result?.data?.data?.reverseRecord?.domain?.name || ''
+}
+
+function DmButton({ profileAddress }) {
+  const viewerAddress = useUserStore((st) => st.address)
+  const navigate = useNavigate()
+
+  if (!viewerAddress || viewerAddress === profileAddress) return null
+
+  return (
+    <Button
+      shadow_box
+      onClick={() => navigate(`/messages/dm/${profileAddress}`)}
+      style={{ marginTop: 8 }}
+    >
+      Send Message
+    </Button>
+  )
 }
 
 export default function Profile({ user }) {
@@ -72,6 +91,7 @@ export default function Profile({ user }) {
             <Button className={styles.square} onClick={setAddressCopied} />
             {isAddressCopied && 'Copied!'}
           </div>
+          <DmButton profileAddress={user.address} />
 
           {daoTokenBalance >= 0 && (
             <p>

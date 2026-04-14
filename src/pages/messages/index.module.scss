@@ -1,0 +1,43 @@
+@import '@styles/variables.scss';
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.headline {
+  margin: 0 0 20px;
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.sectionCard {
+  display: block;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-small;
+    opacity: 0.6;
+  }
+}
