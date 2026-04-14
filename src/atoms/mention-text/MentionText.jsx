@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
-import { parseMentions } from '@utils/mentions'
+import { parseMentions, extractMentionAddresses } from '@utils/mentions'
+import { useUsers } from '@data/swr'
 import styles from './MentionText.module.scss'
 
-function MentionLink({ address, profiles }) {
+function MentionLink({ address, user }) {
   const [hover, setHover] = useState(false)
-  const profile = profiles?.[address]
-  const name = profile?.name || walletPreview(address)
+  const name = user?.alias || walletPreview(address)
 
   return (
     <span
@@ -23,12 +23,12 @@ function MentionLink({ address, profiles }) {
         <div className={styles.hoverCard}>
           <Identicon
             address={address}
-            logo={profile?.identicon}
+            logo={user?.logo}
             className={styles.hoverAvatar}
           />
           <div className={styles.hoverInfo}>
-            {profile?.name && (
-              <div className={styles.hoverName}>{profile.name}</div>
+            {user?.alias && (
+              <div className={styles.hoverName}>{user.alias}</div>
             )}
             <div className={styles.hoverAddr}>{walletPreview(address)}</div>
           </div>
@@ -38,8 +38,10 @@ function MentionLink({ address, profiles }) {
   )
 }
 
-export default function MentionText({ content, profiles }) {
+export default function MentionText({ content }) {
   const segments = parseMentions(content)
+  const addresses = extractMentionAddresses(content)
+  const [users] = useUsers(addresses)
 
   if (segments.length === 0) return content
   if (segments.length === 1 && segments[0].type === 'text') return content
@@ -48,7 +50,7 @@ export default function MentionText({ content, profiles }) {
     <>
       {segments.map((seg, i) =>
         seg.type === 'mention' ? (
-          <MentionLink key={i} address={seg.value} profiles={profiles} />
+          <MentionLink key={i} address={seg.value} user={users[seg.value]} />
         ) : (
           seg.value
         )
