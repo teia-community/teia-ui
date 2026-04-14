@@ -132,8 +132,8 @@ export default function TokenRoom({ fa2Override, tokenIdOverride }) {
           onSubmit={handleSubmit}
           replyTo={replyTo}
           onCancelReply={() => setReplyTo(null)}
-          disabled={!address}
-          disabledMessage="Connect your wallet to post (token ownership verified on-chain)"
+          disabled
+          disabledMessage="Token-gated chat is deactivated for now."
         />
       </div>
     </Page>
