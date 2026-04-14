@@ -109,7 +109,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
           }
           return rpcNode
         },
-        setCustomRpcNode: (customRpcNode: string) => {
+        setCustomRpcNode: async (customRpcNode: string) => {
           if (!customRpcNode || typeof customRpcNode !== 'string') {
             return
           }
@@ -118,15 +118,19 @@ export const useLocalSettings = create<LocalSettingsState>()(
             customRpcNode = `https://${customRpcNode}`
           }
           set({ customRpcNode })
+          if (get().rpcNode === 'custom') {
+            const { Tezos } = await import('./userStore')
+            Tezos.setRpcProvider(customRpcNode)
+          }
         },
         setRpcNode: async (rpcNode) => {
-          // const show = useModalStore.getState().show
           set({ rpcNode })
-          // show(
-          //   'RPC Node Changed',
-          //   'Please reload the page for it to take effect.'
-          // )
-          // await useUserStore.getState().sync({ rpcNode })
+          const resolved =
+            rpcNode === 'custom' ? get().customRpcNode : rpcNode
+          if (resolved && resolved !== 'custom') {
+            const { Tezos } = await import('./userStore')
+            Tezos.setRpcProvider(resolved)
+          }
         },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
@@ -136,7 +140,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
       {
         name: 'settings',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
-        version: 2,
+        version: 3,
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>
@@ -155,6 +159,11 @@ export const useLocalSettings = create<LocalSettingsState>()(
           // here we can check against the version of the storage and makes updates accordingly.
           // useful to rename keys or restore value, we will first use it for the banner updates.
           persistedState.has_seen_banner = false
+
+          if (version < 3) {
+            // Switch from mainnet RPCs to Shadownet
+            persistedState.rpcNode = rpc_nodes[0]
+          }
 
           return persistedState
         },
