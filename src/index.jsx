@@ -58,6 +58,7 @@ import {
   Swap,
   Transfer,
   Copyright,
+  Chat,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
 import Collections from '@pages/profile/collections'
@@ -65,6 +66,18 @@ import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
+import ProfileChannels from '@pages/profile/channels'
+
+// Messaging
+import MessagesInbox from '@pages/messages'
+import ChannelList from '@components/channels/ChannelList'
+import ChannelView from '@components/channels/ChannelView'
+import CreateChannel from '@components/channels/CreateChannel'
+import ChannelSettings from '@components/channels/ChannelSettings'
+import ConversationList from '@components/dm/ConversationList'
+import ConversationView from '@components/dm/ConversationView'
+import TokenRoomBrowser from '@components/token-gate/TokenRoomBrowser'
+import TokenRoom from '@components/token-gate/TokenRoom'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -102,6 +115,7 @@ const display_routes = (
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
+    <Route exact path="channels" element={<ProfileChannels />} />
   </>
 )
 
@@ -187,6 +201,7 @@ const router = createBrowserRouter(
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />
         <Route path="copyright" element={<Copyright />} />
+        <Route path="chat" element={<Chat />} />
       </Route>
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
@@ -205,6 +220,23 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      {/* Messaging */}
+      <Route path="publicchannels" element={<ChannelList />} />
+      <Route path="messages" element={<MessagesInbox />} />
+      <Route path="messages/channels" element={<ChannelList />} />
+      <Route path="messages/channels/create" element={<CreateChannel />} />
+      <Route path="messages/channels/:id" element={<ChannelView />} />
+      <Route
+        path="messages/channels/:id/settings"
+        element={<ChannelSettings />}
+      />
+      <Route path="messages/dm" element={<ConversationList />} />
+      <Route path="messages/dm/:address" element={<ConversationView />} />
+      <Route path="messages/token-chat" element={<TokenRoomBrowser />} />
+      <Route
+        path="messages/token-chat/:fa2Address/:tokenId"
+        element={<TokenRoom />}
+      />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

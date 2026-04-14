@@ -103,6 +103,11 @@ export const MainMenu = () => {
             label="Copyright Marketplace"
             route="copyrightmarketplace"
           />
+          <MenuItem
+            className={styles.menu_label}
+            label="Channels"
+            route="publicchannels"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
@@ -118,6 +123,12 @@ export const MainMenu = () => {
             label="Profile"
             route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Messages"
+            route="messages"
+            need_sync
           />
           <MenuItem
             className={styles.menu_label}
