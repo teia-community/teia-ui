@@ -1,0 +1,151 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.headline {
+  margin: 0 0 12px;
+}
+
+// Recipient input
+.recipientInput {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.recipientField {
+  flex: 1;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  color: var(--text-color);
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+// Room list
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.roomCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  flex-shrink: 0;
+}
+
+.roomAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.roomContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.roomPeer {
+  font-size: $font-small;
+  font-weight: 600;
+}
+
+.roomTime {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.roomPreview {
+  font-size: $font-small;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+// Conversation view
+.conversationView {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.convHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.convAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.convPeerName {
+  font-size: $font-large;
+  font-weight: 600;
+}
+
+.convPeerLink {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  color: inherit;
+}
+
+.messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
