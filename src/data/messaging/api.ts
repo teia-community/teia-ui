@@ -49,14 +49,15 @@ export async function fetchAllEvents<P>(
   const all: TzktEvent<P>[] = []
   let offset = 0
 
-  while (true) {
+  let hasMore = true
+  while (hasMore) {
     const page = await fetchEventsPage<P>(contract, tag, params, {
       limit: MAX_PAGE_SIZE,
       offset,
       sort: 'asc',
     })
     all.push(...page)
-    if (page.length < MAX_PAGE_SIZE) break
+    hasMore = page.length === MAX_PAGE_SIZE
     offset += MAX_PAGE_SIZE
   }
 

@@ -133,14 +133,20 @@ export default function ChannelSettings() {
   }
 
   const handleHide = async () => {
-    if (!confirm('Hide this channel? It will no longer appear in the list.'))
+    if (
+      !window.confirm(
+        'Hide this channel? It will no longer appear in the list.'
+      )
+    )
       return
     await hideChannel(channelId)
     navigate('/messages/channels')
   }
 
   const handleDelete = async () => {
-    if (!confirm('Permanently delete this channel? This cannot be undone.'))
+    if (
+      !window.confirm('Permanently delete this channel? This cannot be undone.')
+    )
       return
     await deleteChannel(channelId)
     navigate('/messages/channels')
