@@ -58,6 +58,12 @@ export default function ChannelList() {
     <Page title="Channels">
       <div className={styles.container}>
         <div className={styles.header}>
+          <Link
+            to="/messages"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            ←
+          </Link>
           <h2 className={styles.headline}>Channels</h2>
           <Link to="/messages/channels/create">
             <Button shadow_box>Create Channel</Button>

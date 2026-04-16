@@ -65,7 +65,15 @@ export default function ConversationList() {
   return (
     <Page title="Direct Messages">
       <div className={styles.container}>
-        <h2 className={styles.headline}>Direct Messages</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link
+            to="/messages"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            ←
+          </Link>
+          <h2 className={styles.headline}>Direct Messages</h2>
+        </div>
 
         <DmRecipientInput />
 

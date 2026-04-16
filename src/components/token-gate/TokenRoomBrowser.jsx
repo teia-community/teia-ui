@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import styles from './index.module.scss'
@@ -10,7 +11,15 @@ export default function TokenRoomBrowser() {
   return (
     <Page title="Token Chat">
       <div className={styles.container}>
-        <h2 className={styles.headline}>Token Gated Chat</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link
+            to="/messages"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            ←
+          </Link>
+          <h2 className={styles.headline}>Token Gated Chat</h2>
+        </div>
         <p className={styles.subtitle}>Coming soon.</p>
 
         <div
