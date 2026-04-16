@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import { getMentionQuery } from '@utils/mentions'
@@ -32,7 +32,9 @@ export default function PostForm({
   const [internalSending, setInternalSending] = useState(false)
   const [mentionQuery, setMentionQuery] = useState(null)
   const [pendingEmbeds, setPendingEmbeds] = useState([])
+  const [toolsOpen, setToolsOpen] = useState(false)
   const textareaRef = useRef(null)
+  const toolsMenuRef = useRef(null)
 
   const sending = externalSending || internalSending
 
@@ -43,6 +45,18 @@ export default function PostForm({
       el.style.height = `${Math.min(el.scrollHeight, 120)}px`
     }
   }, [])
+
+  // Close mobile tools menu on outside click
+  useEffect(() => {
+    if (!toolsOpen) return
+    const handleClickOutside = (e) => {
+      if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target)) {
+        setToolsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [toolsOpen])
 
   const handleSubmit = useCallback(async () => {
     if ((!text.trim() && pendingEmbeds.length === 0) || sending) return
@@ -110,39 +124,94 @@ export default function PostForm({
           ))}
         </div>
       )}
-      <div className={styles.postInputWrapper}>
-        {mentionQuery && (
-          <MentionDropdown
-            query={mentionQuery.query}
-            onSelect={(addr) => {
-              const before = text.slice(0, mentionQuery.start)
-              const after = text.slice(
-                mentionQuery.start + 1 + mentionQuery.query.length
+      <div className={styles.postInputRow}>
+        <div className={styles.postInputWrapper}>
+          {mentionQuery && (
+            <MentionDropdown
+              query={mentionQuery.query}
+              onSelect={(addr) => {
+                const before = text.slice(0, mentionQuery.start)
+                const after = text.slice(
+                  mentionQuery.start + 1 + mentionQuery.query.length
+                )
+                const newText = `${before}@${addr} ${after}`
+                setText(newText)
+                setMentionQuery(null)
+                textareaRef.current?.focus()
+              }}
+              onClose={() => setMentionQuery(null)}
+            />
+          )}
+          <textarea
+            ref={textareaRef}
+            className={styles.postTextarea}
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value)
+              adjustHeight()
+              const mq = getMentionQuery(
+                e.target.value,
+                e.target.selectionStart
               )
-              const newText = `${before}@${addr} ${after}`
-              setText(newText)
-              setMentionQuery(null)
-              textareaRef.current?.focus()
+              setMentionQuery(mq)
             }}
-            onClose={() => setMentionQuery(null)}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            disabled={sending}
           />
-        )}
-        <textarea
-          ref={textareaRef}
-          className={styles.postTextarea}
-          placeholder="Type a message..."
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value)
-            adjustHeight()
-            const mq = getMentionQuery(e.target.value, e.target.selectionStart)
-            setMentionQuery(mq)
-          }}
-          onKeyDown={handleKeyDown}
-          rows={1}
-          disabled={sending}
-        />
+        </div>
+
+        {/* Mobile: overflow toggle */}
+        <div className={styles.toolsMenuWrapper} ref={toolsMenuRef}>
+          <button
+            type="button"
+            className={styles.toolsToggle}
+            onClick={() => setToolsOpen((o) => !o)}
+            aria-label="Message tools"
+          >
+            ⋮
+          </button>
+          {toolsOpen && (
+            <div className={styles.toolsPopover}>
+              <EmojiButton
+                onSelect={(emoji) => {
+                  setText((prev) => prev + emoji)
+                  adjustHeight()
+                  setToolsOpen(false)
+                }}
+              />
+              <TokenEmbedPicker
+                onSelect={(embed) => {
+                  setPendingEmbeds((prev) =>
+                    prev.some((e) => e.tokenId === embed.tokenId)
+                      ? prev
+                      : [...prev, embed]
+                  )
+                  setToolsOpen(false)
+                }}
+                embedCount={pendingEmbeds.length}
+              />
+              <Button
+                shadow_box
+                selected={storageMode === 'ipfs'}
+                onClick={() =>
+                  setStorageMode(storageMode === 'onchain' ? 'ipfs' : 'onchain')
+                }
+                title={
+                  storageMode === 'ipfs'
+                    ? 'IPFS storage (lower cost)'
+                    : 'On-chain storage (permanent, higher cost)'
+                }
+              >
+                {storageMode === 'ipfs' ? 'IPFS' : 'On-chain'}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Desktop: inline tools + send */}
       <div className={styles.postActions}>
         <EmojiButton
           onSelect={(emoji) => {
@@ -182,6 +251,16 @@ export default function PostForm({
           {sending ? '...' : 'Send'}
         </Button>
       </div>
+
+      {/* Mobile: full-width send */}
+      <Button
+        shadow_box
+        className={styles.sendButton}
+        onClick={handleSubmit}
+        disabled={sending || (!text.trim() && pendingEmbeds.length === 0)}
+      >
+        {sending ? '...' : 'Send'}
+      </Button>
     </div>
   )
 }

@@ -172,6 +172,10 @@
   z-index: 2;
   background-color: var(--background-color);
   border-bottom: 1px solid var(--border-color);
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+  }
 }
 
 .channelHeaderInfo {
@@ -180,6 +184,7 @@
   gap: 8px;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .channelHeaderImage {
@@ -188,6 +193,11 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+}
+
+.channelHeaderText {
+  min-width: 0;
+  flex: 1;
 }
 
 .channelHeaderNames {

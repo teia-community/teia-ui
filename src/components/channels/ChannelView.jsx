@@ -133,7 +133,7 @@ export default function ChannelView() {
                 className={styles.channelHeaderImage}
               />
             )}
-            <div>
+            <div className={styles.channelHeaderText}>
               <div className={styles.channelHeaderNames}>{channelName}</div>
               <div className={styles.channelHeaderSub}>
                 <Link
