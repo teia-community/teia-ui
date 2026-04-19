@@ -182,7 +182,7 @@ export const useUserStore = create<UserState>()(
             useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
 
-            if(op_to_send.name == "collect") {
+            if(op_to_send.name === "collect") {
               // get token information
               const token_info = await getTokenInformationOnCollect(op_to_send.args)
               const token_name = token_info.token.name ? token_info.token.name : `#${token_info.token_id}`
@@ -209,14 +209,14 @@ export const useUserStore = create<UserState>()(
               `\n\n` +
               `Remember to #SwapOnTeia`
               show(
-                confirm.completed ?
-                  `${title} Successful`
-                :
-                  `${title} Error`,
+                confirm.completed ? `${title} Successful` : `${title} Error`,
                 `${collect_message}`
               )
             } else {
-              show(confirm.completed ? `${title} Successful` : `${title} Error`,`[see on tzkt.io](https://tzkt.io/${op.opHash})`)
+              show(
+                confirm.completed ? `${title} Successful` : `${title} Error`,
+                `[see on tzkt.io](https://tzkt.io/${op.opHash})`
+              )
             }
             return op.opHash
           } catch (e) {
