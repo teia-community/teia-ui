@@ -183,7 +183,6 @@ export const useUserStore = create<UserState>()(
             const confirm = await op.confirmation()
 
             if(op_to_send.name == "collect") {
-              let collect_message
               // get token information
               const token_info = await getTokenInformationOnCollect(op_to_send.args)
               const token_name = token_info.token.name ? token_info.token.name : `#${token_info.token_id}`
@@ -200,7 +199,7 @@ export const useUserStore = create<UserState>()(
                 }
                 socials = `Please share on ${socials.slice(0, -2)}` // drop last ,
               }
-              collect_message = `\`\`\`\n` +
+              const collect_message = `\`\`\`\n` +
               `I just collected "${token_name}" by the artist ${artist_address}\n` +
               `https://teia.art/objkt/${token_info.token_id}\n` +
               `\`\`\`\n\n` +
