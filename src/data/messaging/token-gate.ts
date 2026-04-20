@@ -9,13 +9,12 @@ import useSWR from 'swr'
 import { useCallback, useRef, useState } from 'react'
 import { bytesToString } from '@taquito/utils'
 import { MESSAGING_TOKEN_GATE_CONTRACT, MESSAGING_TZKT_API } from '@constants'
-import { fetchEventsPage, fetchAllEvents, fetchContractStorage } from './api'
+import { fetchEventsPage, fetchAllEvents } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
 import type {
   TgMessagePostedEvent,
   TgMessageDeletedEvent,
   TgMessagePayload,
-  TgContractStorage,
   TzktToken,
 } from './token-gate-types'
 
@@ -63,18 +62,6 @@ async function parseTgMessage(event: { payload: TgMessagePostedEvent }) {
     embeds: parsed?.embeds ?? [],
     isIpfs,
   }
-}
-
-// ---------------------------------------------------------------------------
-// Storage
-// ---------------------------------------------------------------------------
-
-export function useTokenGateStorage() {
-  return useSWR(
-    `msg:tg-storage:${CONTRACT}`,
-    () => fetchContractStorage<TgContractStorage>(CONTRACT),
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -191,13 +178,3 @@ export function useTokenRoomMessages(
 
 export type ParsedTgMessage = Awaited<ReturnType<typeof parseTgMessage>>
 
-// ---------------------------------------------------------------------------
-// Fees
-// ---------------------------------------------------------------------------
-
-export function useTokenGateFees() {
-  const { data: storage } = useTokenGateStorage()
-  return {
-    messageFee: storage?.message_fee ? parseInt(storage.message_fee) : 0,
-  }
-}

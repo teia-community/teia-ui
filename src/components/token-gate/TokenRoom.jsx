@@ -4,11 +4,9 @@ import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
+import { MESSAGING_MESSAGE_FEE } from '@constants'
 import { useUsers } from '@data/swr'
-import {
-  useTokenRoomMessages,
-  useTokenGateFees,
-} from '@data/messaging/token-gate'
+import { useTokenRoomMessages } from '@data/messaging/token-gate'
 import {
   postTokenGateMessage,
   deleteTokenGateMessage,
@@ -23,7 +21,7 @@ export default function TokenRoom({ fa2Override, tokenIdOverride }) {
   const fa2Address = fa2Override || params.fa2Address
   const tokenId = tokenIdOverride || params.tokenId
   const address = useUserStore((st) => st.address)
-  const { messageFee } = useTokenGateFees()
+  const messageFee = MESSAGING_MESSAGE_FEE
   const [replyTo, setReplyTo] = useState(null)
 
   const {

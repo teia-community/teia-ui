@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import { useCallback, useRef, useState } from 'react'
 import { bytesToString } from '@taquito/utils'
 import { MESSAGING_DM_CONTRACT } from '@constants'
-import { fetchAllEvents, fetchEventsPage, fetchContractStorage } from './api'
+import { fetchAllEvents, fetchEventsPage } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
 import type {
   RoomKey,
@@ -17,7 +17,6 @@ import type {
   DmMessagePostedEvent,
   DmMessageDeletedEvent,
   DmMessagePayload,
-  DmContractStorage,
 } from './dm-types'
 import { roomKeyToString } from './dm-types'
 
@@ -85,18 +84,6 @@ async function resolvePreview(contentHex: string): Promise<string> {
   } catch {
     return raw.slice(0, 80)
   }
-}
-
-// ---------------------------------------------------------------------------
-// Storage
-// ---------------------------------------------------------------------------
-
-export function useDmStorage() {
-  return useSWR(
-    `msg:dm-storage:${CONTRACT}`,
-    () => fetchContractStorage<DmContractStorage>(CONTRACT),
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -281,13 +268,3 @@ export function useDmMessages(roomKey: RoomKey | undefined) {
 
 export type ParsedDmMessage = Awaited<ReturnType<typeof parseDmMessage>>
 
-// ---------------------------------------------------------------------------
-// Fees
-// ---------------------------------------------------------------------------
-
-export function useDmFees() {
-  const { data: storage } = useDmStorage()
-  return {
-    messageFee: storage?.message_fee ? parseInt(storage.message_fee) : 0,
-  }
-}

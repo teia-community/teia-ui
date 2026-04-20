@@ -363,15 +363,3 @@ export function useIsChannelAdmin(
   )
 }
 
-// ---------------------------------------------------------------------------
-// Fees
-// ---------------------------------------------------------------------------
-
-export function useChannelFees() {
-  const { data: storage, isLoading } = useChannelStorage()
-  return {
-    messageFee: storage?.message_fee ? parseInt(storage.message_fee) : 0,
-    channelFee: storage?.channel_fee ? parseInt(storage.channel_fee) : 0,
-    isLoading,
-  }
-}

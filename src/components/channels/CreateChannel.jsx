@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
-import { useChannelFees } from '@data/messaging/channels'
+import { MESSAGING_CHANNEL_FEE } from '@constants'
 import { createChannel } from '@data/messaging/channel-actions'
 import { uploadMsgJsonToIPFS } from '@data/messaging/ipfs'
 import { computeMerkleRoot } from '@utils/merkle'
@@ -12,7 +12,7 @@ import styles from './index.module.scss'
 export default function CreateChannel() {
   const navigate = useNavigate()
   const address = useUserStore((st) => st.address)
-  const { channelFee } = useChannelFees()
+  const channelFee = MESSAGING_CHANNEL_FEE
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')

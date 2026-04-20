@@ -253,6 +253,9 @@ export const MESSAGING_DM_CONTRACT =
   'KT1H9NWgLavpFVnW4RydT9NwLM2gM84mzJcP'
 export const MESSAGING_TOKEN_GATE_CONTRACT =
   'KT1Tp9obwP5zE1LBgCXSZc3Dfs4LYFf6Mbti'
+// Messaging fees (mutez)
+export const MESSAGING_CHANNEL_FEE = 100000
+export const MESSAGING_MESSAGE_FEE = 100000
 // TzKT API for messaging, Shadownet for testing, switch to mainnet on deploy
 export const MESSAGING_TZKT_API = 'https://api.shadownet.tzkt.io'
 
