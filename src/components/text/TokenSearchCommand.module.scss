@@ -22,6 +22,12 @@
   &:focus {
     border-color: var(--text-color);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .search_hint {
@@ -68,6 +74,12 @@
 
   &:hover {
     background: var(--border-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
@@ -122,6 +134,12 @@
   &:hover {
     background: var(--border-color);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .artist_name {
@@ -148,5 +166,11 @@
 
   &:hover {
     color: var(--text-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
