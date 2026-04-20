@@ -1,16 +1,17 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
+import { MESSAGING_MESSAGE_FEE } from '@constants'
 import { useUsers } from '@data/swr'
 import {
   useChannel,
   useChannelMessages,
-  useChannelFees,
   useIsChannelAdmin,
+  useChannelAdmins,
 } from '@data/messaging/channels'
 import { postMessage, deleteMessage } from '@data/messaging/channel-actions'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
@@ -20,12 +21,14 @@ import { useChatReadStore } from '@context/chatReadStore'
 import MessageBubble from '@components/chat/MessageBubble'
 import PostForm from '@components/chat/PostForm'
 import AccessBadge from './AccessBadge'
+import AddUserModal from './AddUserModal'
 import styles from './index.module.scss'
 
 export default function ChannelView() {
   const { id } = useParams()
   const channelId = id || undefined
   const [replyTo, setReplyTo] = useState(null)
+  const [addUserOpen, setAddUserOpen] = useState(false)
   const { data: channel, isLoading: loadingChannel } = useChannel(channelId)
   const {
     data: messages,
@@ -36,10 +39,34 @@ export default function ChannelView() {
   } = useChannelMessages(channelId)
   const address = useUserStore((st) => st.address)
   const { data: isAdmin } = useIsChannelAdmin(channelId, address)
-  const { messageFee, isLoading: loadingFees } = useChannelFees()
+  const { data: admins } = useChannelAdmins(channelId)
+  const messageFee = MESSAGING_MESSAGE_FEE
   const senderAddrs = messages?.map((m) => m.sender) ?? []
+
+  const allMembers = useMemo(() => {
+    if (!channel?.creator) return []
+    const seen = new Set()
+    const out = []
+    for (const a of [
+      channel.creator,
+      ...(admins ?? []),
+      ...(channel.allowlist ?? []),
+    ]) {
+      if (a && !seen.has(a)) {
+        seen.add(a)
+        out.push(a)
+      }
+    }
+    return out
+  }, [channel?.creator, admins, channel?.allowlist])
+
+  const stackAddrs = allMembers.slice(0, 3)
+  const extraMemberCount = Math.max(0, allMembers.length - stackAddrs.length)
+
   const [users] = useUsers(
-    channel?.creator ? [channel.creator, ...senderAddrs] : senderAddrs
+    channel?.creator
+      ? [channel.creator, ...stackAddrs, ...senderAddrs]
+      : senderAddrs
   )
   const creatorUser = channel?.creator ? users[channel.creator] : undefined
   const markRead = useChatReadStore((st) => st.markRead)
@@ -51,10 +78,13 @@ export default function ChannelView() {
     }
   }, [messages, address, channelId, markRead])
 
-  const msgById = {}
-  if (messages) {
-    for (const m of messages) msgById[m.id] = m
-  }
+  const msgById = useMemo(() => {
+    const map = {}
+    if (messages) {
+      for (const m of messages) map[m.id] = m
+    }
+    return map
+  }, [messages])
 
   const handleDelete = useCallback(
     async (messageId) => {
@@ -145,18 +175,51 @@ export default function ChannelView() {
               </div>
             </div>
           </div>
+          {stackAddrs.length > 0 && (
+            <div className={styles.walletStack}>
+              {stackAddrs.map((addr, i) => (
+                <Link
+                  key={addr}
+                  to={`/tz/${addr}`}
+                  className={styles.walletStackItem}
+                  style={{ zIndex: stackAddrs.length - i }}
+                  title={users[addr]?.alias || walletPreview(addr)}
+                >
+                  <Identicon address={addr} logo={users[addr]?.logo} />
+                </Link>
+              ))}
+              {extraMemberCount > 0 && (
+                <div
+                  className={`${styles.walletStackItem} ${styles.walletStackMore}`}
+                >
+                  +{extraMemberCount}
+                </div>
+              )}
+            </div>
+          )}
           <div className={styles.channelHeaderActions}>
             <AccessBadge mode={channel.accessMode} />
             {(isCreator || isAdmin) && (
-              <Button
-                shadow_box
-                to={`/messages/channels/${channelId}/settings`}
-              >
-                Settings
-              </Button>
+              <>
+                <Button shadow_box onClick={() => setAddUserOpen(true)}>
+                  + Add User
+                </Button>
+                <Button
+                  shadow_box
+                  to={`/messages/channels/${channelId}/settings`}
+                >
+                  Settings
+                </Button>
+              </>
             )}
           </div>
         </div>
+        {addUserOpen && (
+          <AddUserModal
+            channelId={channelId}
+            onClose={() => setAddUserOpen(false)}
+          />
+        )}
 
         <div className={styles.messages}>
           {hasMore && (
@@ -214,12 +277,8 @@ export default function ChannelView() {
             onSubmit={handleSubmit}
             replyTo={replyTo}
             onCancelReply={() => setReplyTo(null)}
-            disabled={!address || loadingFees}
-            disabledMessage={
-              !address
-                ? 'Connect your wallet to post messages'
-                : 'Loading fees...'
-            }
+            disabled={!address}
+            disabledMessage="Connect your wallet to post messages"
           />
         )}
       </div>
