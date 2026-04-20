@@ -20,7 +20,7 @@ import {
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
 import { NetworkType } from '@airgap/beacon-types'
-import { getUser } from '@data/api'
+import { getUser, getTokenInformationOnCollect, GetUserMetadata } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
   BURN_ADDRESS,
@@ -181,10 +181,43 @@ export const useUserStore = create<UserState>()(
             // skippable
             useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
-            show(
-              confirm.completed ? `${title} Successful` : `${title} Error`,
-              `[see on tzkt.io](https://tzkt.io/${op.opHash})`
-            )
+
+            if(op_to_send.name === "collect") {
+              // get token information
+              const token_info = await getTokenInformationOnCollect(op_to_send.args)
+              const token_name = token_info.token.name ? token_info.token.name : `#${token_info.token_id}`
+              const artist_address = token_info.token.artist_profile?.name ? token_info.token.artist_profile.name : token_info.token.artist_address
+
+              // get socials linked to the current user
+              const user_info = await GetUserMetadata(current)
+              let socials = ''
+              if(user_info.extras?.profile) {
+                for(const key in user_info.extras?.profile) {
+                  if(!['kind', 'description', 'alias'].includes(key)) { // ignore some junk
+                    socials = `${key}, ${socials}`
+                  }
+                }
+                socials = `Please share on ${socials.slice(0, -2)}` // drop last ,
+              }
+              const collect_message = `\`\`\`\n` +
+              `I just collected "${token_name}" by the artist ${artist_address}\n` +
+              `https://teia.art/objkt/${token_info.token_id}\n` +
+              `\`\`\`\n\n` +
+              `\n\n` +
+              `${socials}` +
+              `\n\n` +
+              `\n\n` +
+              `Remember to #SwapOnTeia`
+              show(
+                confirm.completed ? `${title} Successful` : `${title} Error`,
+                `${collect_message}`
+              )
+            } else {
+              show(
+                confirm.completed ? `${title} Successful` : `${title} Error`,
+                `[see on tzkt.io](https://tzkt.io/${op.opHash})`
+              )
+            }
             return op.opHash
           } catch (e) {
             showError('Transfer', e)
