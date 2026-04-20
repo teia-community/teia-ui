@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
+import { isTzAddress } from '@utils/string'
 import UserSearchDropdown from './UserSearchDropdown'
 import styles from './index.module.scss'
 
 export default function DmRecipientInput() {
   const [value, setValue] = useState('')
-  const [showDropdown, setShowDropdown] = useState(true)
+  const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
 
   const goTo = (addr) => {
@@ -17,7 +18,7 @@ export default function DmRecipientInput() {
     }
   }
 
-  const isTzAddress = /^tz[1-3][1-9A-HJ-NP-Za-km-z]{33}$/.test(value.trim())
+  const validAddress = isTzAddress(value)
 
   return (
     <div className={styles.recipientInput}>
@@ -31,13 +32,13 @@ export default function DmRecipientInput() {
         }}
         placeholder="Enter tz address or name..."
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && isTzAddress) goTo(value)
+          if (e.key === 'Enter' && validAddress) goTo(value)
         }}
       />
-      <Button shadow_box onClick={() => goTo(value)} disabled={!isTzAddress}>
+      <Button shadow_box onClick={() => goTo(value)} disabled={!validAddress}>
         Message
       </Button>
-      {showDropdown && !isTzAddress && (
+      {showDropdown && !validAddress && (
         <UserSearchDropdown
           query={value}
           onSelect={(user) => {

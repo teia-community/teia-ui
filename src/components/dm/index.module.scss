@@ -144,8 +144,59 @@
   color: inherit;
 }
 
+.convHeaderActions {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .messages {
   flex: 1;
   padding: 12px 0;
   overflow-y: auto;
+}
+
+// Modal
+.modalOverlay {
+  @include modalOverlay;
+}
+
+.modalContent {
+  @include modalContent(480px);
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modalLabel {
+  @include formLabel;
+}
+
+.modalInput {
+  @include formInput;
+}
+
+.modalTextarea {
+  composes: modalInput;
+  min-height: 60px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.membersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memberRow {
+  font-size: $font-small;
+  font-weight: 400;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  opacity: 0.7;
 }

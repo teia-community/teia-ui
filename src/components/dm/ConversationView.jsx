@@ -1,26 +1,29 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import { Identicon } from '@atoms/identicons'
+import { MESSAGING_MESSAGE_FEE } from '@constants'
 import { useUsers } from '@data/swr'
-import { useDmMessages, useDmFees } from '@data/messaging/dm'
+import { useDmMessages } from '@data/messaging/dm'
 import { makeRoomKey } from '@data/messaging/dm-types'
 import { postDmMessage, deleteDmMessage } from '@data/messaging/dm-actions'
 import { useUserStore } from '@context/userStore'
 import { useChatReadStore } from '@context/chatReadStore'
 import MessageBubble from '@components/chat/MessageBubble'
 import PostForm from '@components/chat/PostForm'
+import ConvertToChannelModal from './ConvertToChannelModal'
 import styles from './index.module.scss'
 
 export default function ConversationView() {
   const { address: peerAddress } = useParams()
   const address = useUserStore((st) => st.address)
   const markRead = useChatReadStore((st) => st.markRead)
-  const { messageFee } = useDmFees()
+  const messageFee = MESSAGING_MESSAGE_FEE
   const [replyTo, setReplyTo] = useState(null)
+  const [convertOpen, setConvertOpen] = useState(false)
 
   const roomKey =
     address && peerAddress ? makeRoomKey(address, peerAddress) : undefined
@@ -43,10 +46,13 @@ export default function ConversationView() {
     }
   }, [messages, address, roomKeyStr, markRead])
 
-  const msgById = {}
-  if (messages) {
-    for (const m of messages) msgById[m.id] = m
-  }
+  const msgById = useMemo(() => {
+    const map = {}
+    if (messages) {
+      for (const m of messages) map[m.id] = m
+    }
+    return map
+  }, [messages])
 
   const handleDelete = useCallback(
     async (messageId) => {
@@ -108,7 +114,21 @@ export default function ConversationView() {
               {peerName}
             </Link>
           </div>
+          {address && (
+            <div className={styles.convHeaderActions}>
+              <Button shadow_box onClick={() => setConvertOpen(true)}>
+                + Add User
+              </Button>
+            </div>
+          )}
         </div>
+        {convertOpen && (
+          <ConvertToChannelModal
+            myAddress={address}
+            peerAddress={peerAddress}
+            onClose={() => setConvertOpen(false)}
+          />
+        )}
 
         <div className={styles.messages}>
           {hasMore && (
