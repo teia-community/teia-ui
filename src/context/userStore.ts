@@ -130,6 +130,10 @@ const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
+  network: {
+    type: NetworkType.SHADOWNET,
+    rpcUrl: useLocalSettings.getState().getRpcNode(),
+  },
 })
 
 Tezos.setWalletProvider(wallet)
@@ -175,7 +179,7 @@ export const useUserStore = create<UserState>()(
           try {
             step(
               title,
-              `Awaiting for confirmation of the [operation](https://tzkt.io/${op.opHash})
+              `Awaiting for confirmation of the [operation](https://shadownet.tzkt.io/${op.opHash})
               *closing this dialog has no effect on the transaction*`
             )
             // skippable
@@ -215,7 +219,7 @@ export const useUserStore = create<UserState>()(
             } else {
               show(
                 confirm.completed ? `${title} Successful` : `${title} Error`,
-                `[see on tzkt.io](https://tzkt.io/${op.opHash})`
+                `[see on tzkt.io](https://shadownet.tzkt.io/${op.opHash})`
               )
             }
             return op.opHash
@@ -224,11 +228,6 @@ export const useUserStore = create<UserState>()(
           }
         },
         sync: async (opts) => {
-          const network = {
-            type: NetworkType.MAINNET,
-            rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
-          }
-
           // Set the client theme
           // const theme = JSON.parse(localStorage.getItem('settings:theme'))
           // await wallet.client.setColorMode(

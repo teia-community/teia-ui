@@ -399,6 +399,33 @@ export async function searchTokensForEmbed(query: string) {
 }
 
 /**
+ * Search users by name for @mentions in chat.
+ */
+export async function searchUsersByName(query: string) {
+  const trimmed = query.trim()
+  if (!trimmed || trimmed.length < 2) return []
+
+  const { data } = await fetchGraphQL(
+    `query SearchUsers($query: String!) {
+      teia_users(
+        where: { name: { _ilike: $query } },
+        limit: 8
+      ) {
+        user_address
+        name
+        metadata {
+          data
+        }
+      }
+    }`,
+    'SearchUsers',
+    { query: `%${trimmed}%` }
+  )
+
+  return data?.teia_users || []
+}
+
+/**
  * Get user claimed tokens
  */
 export async function getClaimedDaoTokens(walletAddr: string) {

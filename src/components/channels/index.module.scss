@@ -1,0 +1,310 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+// Channel list
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.headline {
+  margin: 0;
+}
+
+.channelTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+
+  button {
+    padding: 6px 12px;
+    font-size: $font-small;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.channelImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelImagePlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xsmall;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.channelName {
+  font-size: $font-small;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardTime {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.channelDesc {
+  font-size: $font-small;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.cardMeta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+// Access badges
+.badge {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.badgeUnrestricted {
+  composes: badge;
+  background: #2d7d46;
+  color: #fff;
+}
+
+.badgeAllowlist {
+  composes: badge;
+  background: #2563eb;
+  color: #fff;
+}
+
+.badgeBlocklist {
+  composes: badge;
+  background: #c026d3;
+  color: #fff;
+}
+
+.badgeMembersOnly {
+  composes: badge;
+  background: #d97706;
+  color: #fff;
+}
+
+// Channel view
+.channelView {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.channelHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+  }
+}
+
+.channelHeaderInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.channelHeaderImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelHeaderText {
+  min-width: 0;
+  flex: 1;
+}
+
+.channelHeaderNames {
+  font-size: $font-large;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channelHeaderSub {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.walletStack {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 4px;
+}
+
+.walletStackItem {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--background-color);
+  background-color: var(--background-color);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+
+  &:not(:first-child) {
+    margin-left: -10px;
+  }
+
+  svg,
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.walletStackMore {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  background-color: var(--border-color);
+}
+
+.channelHeaderActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+// Create form
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.formLabel {
+  @include formLabel;
+}
+
+.formInput {
+  @include formInput;
+}
+
+.formTextarea {
+  composes: formInput;
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+// Modal
+.modalOverlay {
+  @include modalOverlay;
+}
+
+.modalContent {
+  @include modalContent(420px);
+}
+
+// Settings
+.settingsSection {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: $font-small;
+  }
+}

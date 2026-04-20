@@ -1,5 +1,6 @@
 // mixin to reset <button>
 @import 'layout.scss';
+@import 'variables.scss';
 
 @mixin resetButton() {
   border: 0;
@@ -48,6 +49,53 @@
   @media (any-pointer: coarse) {
     @content;
   }
+}
+
+@mixin formLabel() {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: $font-small;
+}
+
+@mixin formInput() {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  color: var(--text-color);
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+@mixin modalOverlay() {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+@mixin modalContent($max-width: 480px) {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 20px;
+  width: 100%;
+  max-width: $max-width;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 @mixin hover {
