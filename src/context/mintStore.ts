@@ -334,8 +334,6 @@ export const useMintStore = create<MintState>()(
 
           const editionsNum = editions as number
           const royaltiesNum = royalties as number
-          const previewUri =
-            typeof artifact?.reader === 'string' ? artifact.reader : undefined
 
           step(
             'Mint',
@@ -350,17 +348,21 @@ export const useMintStore = create<MintState>()(
           })
 
           const tzktOp = `[View operation on tzkt.io](https://tzkt.io/${opHash})`
+          const titleLine =
+            title?.trim() !== ''
+              ? `\n\n**OBJKT #${tokenId}** - ${String(title).replace(/\n/g, ' ')}`
+              : `\n\n**OBJKT #${tokenId}**`
 
           const onCloseExtras = () => {
             reset()
           }
 
           if (tokenId) {
-            const body = `${POST_MINT_SUSTAIN_TEIA}
+            const body = `${tzktOp}
 
-**OBJKT #${tokenId}**
+----
 
-${tzktOp}`
+${POST_MINT_SUSTAIN_TEIA}${titleLine}`
 
             show('Mint successful', body, {
               footerSlot: createElement(PostMintSwapFields, {
@@ -368,19 +370,19 @@ ${tzktOp}`
                 minterAddress,
                 editions: editionsNum,
                 royaltiesPercent: royaltiesNum,
-                title: title || undefined,
-                previewUri,
               }),
               onCloseExtras,
             })
           } else {
             show(
               'Mint successful',
-              `${POST_MINT_SUSTAIN_TEIA}
+              `${tzktOp}
 
-We could not look up your OBJKT id yet (indexers can lag). Your mint is on-chain:
+----
 
-${tzktOp}
+${POST_MINT_SUSTAIN_TEIA}
+
+We could not look up your OBJKT id yet (indexers can lag). Your mint is on-chain.
 
 You can list this OBJKT from its page when it appears.`,
               { onCloseExtras }

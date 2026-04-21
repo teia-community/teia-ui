@@ -26,7 +26,7 @@ export const FeedbackComponent = () => {
             {footerSlot}
             <div className={styles.loader}>{progress && <Loading />}</div>
             {confirm && (
-              <div className={styles.buttons}>
+              <div className={styles.buttons} style={{ marginTop: '1rem' }}>
                 <Button shadow_box onClick={() => confirmCallback()}>
                   close
                 </Button>
