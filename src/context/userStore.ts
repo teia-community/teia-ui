@@ -70,7 +70,8 @@ interface UserState {
       amount: number
       mutez?: boolean
       storageLimit?: number
-    }
+    },
+    opOptions?: { skipSuccessModal?: boolean }
   ) => OperationReturn
   /** Wallet sync  */
   sync: (opts?: SyncOptions) => OperationReturn
@@ -130,6 +131,11 @@ const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
+  // Beacon no longer accepts `network` on requestPermissions — set it here (DAppClientOptions).
+  network: {
+    type: NetworkType.MAINNET,
+    rpcUrl: String(useLocalSettings.getState().getRpcNode()),
+  },
 })
 
 Tezos.setWalletProvider(wallet)
@@ -154,10 +160,12 @@ export const useUserStore = create<UserState>()(
         proxyAddress: undefined,
         proxyName: undefined,
         subjktInfo: undefined,
-        handleOp: async (op_to_send, title, send_options) => {
+        handleOp: async (op_to_send, title, send_options, opOptions) => {
           const step = useModalStore.getState().step
           const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
+          const skipSuccessModal =
+            Boolean(opOptions?.skipSuccessModal) && title === 'Mint'
 
           // After 15sec suggest the user to cancel, it will go on
           // if they accept the tx
@@ -182,37 +190,45 @@ export const useUserStore = create<UserState>()(
             useModalStore.setState({ confirm: true })
             const confirm = await op.confirmation()
 
-            if(op_to_send.name === "collect") {
+            if (op_to_send.name === 'collect') {
               // get token information
-              const token_info = await getTokenInformationOnCollect(op_to_send.args)
-              const token_name = token_info.token.name ? token_info.token.name : `#${token_info.token_id}`
-              const artist_address = token_info.token.artist_profile?.name ? token_info.token.artist_profile.name : token_info.token.artist_address
+              const token_info = await getTokenInformationOnCollect(
+                op_to_send.args
+              )
+              const token_name = token_info.token.name
+                ? token_info.token.name
+                : `#${token_info.token_id}`
+              const artist_address = token_info.token.artist_profile?.name
+                ? token_info.token.artist_profile.name
+                : token_info.token.artist_address
 
               // get socials linked to the current user
               const user_info = await GetUserMetadata(current)
               let socials = ''
-              if(user_info.extras?.profile) {
-                for(const key in user_info.extras?.profile) {
-                  if(!['kind', 'description', 'alias'].includes(key)) { // ignore some junk
+              if (user_info.extras?.profile) {
+                for (const key in user_info.extras?.profile) {
+                  if (!['kind', 'description', 'alias'].includes(key)) {
+                    // ignore some junk
                     socials = `${key}, ${socials}`
                   }
                 }
                 socials = `Please share on ${socials.slice(0, -2)}` // drop last ,
               }
-              const collect_message = `\`\`\`\n` +
-              `I just collected "${token_name}" by the artist ${artist_address}\n` +
-              `https://teia.art/objkt/${token_info.token_id}\n` +
-              `\`\`\`\n\n` +
-              `\n\n` +
-              `${socials}` +
-              `\n\n` +
-              `\n\n` +
-              `Remember to #SwapOnTeia`
+              const collect_message =
+                `\`\`\`\n` +
+                `I just collected "${token_name}" by the artist ${artist_address}\n` +
+                `https://teia.art/objkt/${token_info.token_id}\n` +
+                `\`\`\`\n\n` +
+                `\n\n` +
+                `${socials}` +
+                `\n\n` +
+                `\n\n` +
+                `Remember to #SwapOnTeia`
               show(
                 confirm.completed ? `${title} Successful` : `${title} Error`,
                 `${collect_message}`
               )
-            } else {
+            } else if (!(skipSuccessModal && confirm.completed)) {
               show(
                 confirm.completed ? `${title} Successful` : `${title} Error`,
                 `[see on tzkt.io](https://tzkt.io/${op.opHash})`
@@ -224,10 +240,9 @@ export const useUserStore = create<UserState>()(
           }
         },
         sync: async (opts) => {
-          const network = {
-            type: NetworkType.MAINNET,
-            rpcUrl: opts?.rpcNode || useLocalSettings.getState().getRpcNode(),
-          }
+          const rpcUrl = String(
+            opts?.rpcNode || useLocalSettings.getState().getRpcNode()
+          )
 
           // Set the client theme
           // const theme = JSON.parse(localStorage.getItem('settings:theme'))
@@ -238,13 +253,24 @@ export const useUserStore = create<UserState>()(
           // We check the storage and only do a permission request if we don't have an active account yet
           // This piece of code should be called on startup to "load" the current address from the user
           // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
+          let activeAccount = await wallet.client.getActiveAccount()
+          if (
+            activeAccount === undefined ||
+            activeAccount?.network?.rpcUrl !== rpcUrl
+          ) {
+            // Beacon: network is configured on DAppClient / BeaconWallet constructor, not here.
+            await wallet.requestPermissions()
+            activeAccount = await wallet.client.getActiveAccount()
+          }
+          const current = await wallet.getPKH()
+          if (current) {
+            const info = await getUser(current)
+            set({
+              address: current,
+              userInfo: info,
+            })
+          }
 
-          await wallet.client.requestPermissions()
-          const info = await getUser(current)
-          set({
-            address: current,
-            userInfo: await getUser(current),
-          })
           return current
         },
         unsync: async () => {
@@ -630,10 +656,15 @@ export const useUserStore = create<UserState>()(
             royalties: royalties * 10}
           )
 
-          return await handleOp(mint_batch, 'Mint', {
-            amount: 0,
-            storageLimit: 310,
-          })
+          return await handleOp(
+            mint_batch,
+            'Mint',
+            {
+              amount: 0,
+              storageLimit: 310,
+            },
+            { skipSuccessModal: !proxyAddress }
+          )
         },
       }),
       {
