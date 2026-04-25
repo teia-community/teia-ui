@@ -1,0 +1,10 @@
+RewriteEngine on
+# Don't rewrite files or directories
+#RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+RewriteRule ^ - [L]
+# Rewrite everything else to index.html to allow html5 state links
+RewriteRule ^ index.html [L]
+Header always set Content-Security-Policy "upgrade-insecure-requests;"
