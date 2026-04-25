@@ -207,7 +207,7 @@ export const Header = () => {
                   className={styles.config_button}
                 >
                   <ConfigIcon fill="var(--text-color)" width={16} height={16} />
-                  {isWide && 'Config'}
+                  {isWide && 'Settings'}
                 </Button>
                 {/* <Line className={styles.separator} vertical /> */}
               </>
