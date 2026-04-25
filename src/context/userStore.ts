@@ -275,7 +275,7 @@ export const useUserStore = create<UserState>()(
         },
         unsync: async () => {
           // This will clear the active account and the next "syncTaquito" will trigger a new sync
-          await wallet.client.clearActiveAccount()
+          await wallet.client.disconnect()
           set({
             address: undefined,
             userInfo: undefined,
