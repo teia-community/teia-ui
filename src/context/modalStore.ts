@@ -1,4 +1,5 @@
 import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
+import type { ReactNode } from 'react'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
@@ -17,7 +18,15 @@ interface ModalStore {
   progress: boolean
   confirm: boolean
   confirmCallback?: () => void
-  show: (title: string, message?: string) => void
+  /** Optional React content below markdown (e.g. post-mint inline swap). */
+  footerSlot?: ReactNode
+  /** Runs once when the user closes a modal that had footerSlot / extras. */
+  onCloseExtras?: () => void
+  show: (
+    title: string,
+    message?: string,
+    options?: { footerSlot?: ReactNode; onCloseExtras?: () => void }
+  ) => void
   showError: <T>(title: string, error: T) => void
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
@@ -33,16 +42,24 @@ export const useModalStore = create<ModalStore>()(
     progress: false,
     confirm: true,
     confirmCallback: () => get().close(),
-    show: (title, message) => {
+    show: (title, message, options) => {
+      const footerSlot = options?.footerSlot
+      const onCloseExtras = options?.onCloseExtras
       set({
         message: `# ${title}
 ${message || ''}`,
         progress: false,
         visible: true,
         confirm: true,
+        footerSlot,
+        onCloseExtras,
         confirmCallback: () => {
+          const extras = get().onCloseExtras
+          extras?.()
           set({
             visible: false,
+            footerSlot: undefined,
+            onCloseExtras: undefined,
           })
         },
       })
@@ -68,6 +85,8 @@ ${message || ''}`,
         progress: true,
         visible: true,
         confirm: false,
+        footerSlot: undefined,
+        onCloseExtras: undefined,
         message: `# ${title}
 ${message}`,
       })
@@ -77,6 +96,8 @@ ${message}`,
       set({
         visible: false,
         progress: false,
+        footerSlot: undefined,
+        onCloseExtras: undefined,
       })
     },
   }))
