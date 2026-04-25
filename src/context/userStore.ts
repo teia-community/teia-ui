@@ -215,10 +215,10 @@ export const useUserStore = create<UserState>()(
                 socials = `Please share on ${socials.slice(0, -2)}` // drop last ,
               }
               const collect_message =
-                `\`\`\`\n` +
-                `I just collected "${token_name}" by the artist ${artist_address}\n` +
+                `\n` +
+                `I just collected "${token_name}" by ${artist_address}\n` +
                 `https://teia.art/objkt/${token_info.token_id}\n` +
-                `\`\`\`\n\n` +
+                `\n\n` +
                 `\n\n` +
                 `${socials}` +
                 `\n\n` +
