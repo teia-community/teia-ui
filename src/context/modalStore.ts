@@ -1,4 +1,4 @@
-import { ParametersInvalidBeaconError } from '@airgap/beacon-core'
+import { ParametersInvalidBeaconError } from '@ecadlabs/beacon-core'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
