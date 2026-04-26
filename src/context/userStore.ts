@@ -1,11 +1,10 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
-import { BeaconEvent } from '@airgap/beacon-dapp'
+import { BeaconEvent } from '@ecadlabs/beacon-dapp'
 import {
   OpKind,
   MichelCodecPacker,
   TezosToolkit,
   WalletOperationBatch,
-  ContractMethod,
   ContractMethodObject,
   Wallet,
   WalletParamsWithKind,
@@ -64,7 +63,7 @@ interface UserState {
   /** Handle the operation confirmation and error and return the ophash */
   handleOp: (
     // op: TransactionWalletOperation | BatchWalletOperation,
-    op_to_send: WalletOperationBatch | ContractMethod<Wallet> | ContractMethodObject<Wallet>,
+    op_to_send: WalletOperationBatch | ContractMethodObject<Wallet>,
     title: string,
     send_options?: {
       amount: number
