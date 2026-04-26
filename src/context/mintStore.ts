@@ -1,3 +1,4 @@
+import { createElement } from 'react'
 import { create } from 'zustand'
 import {
   createJSONStorage,
@@ -25,6 +26,9 @@ import {
 import type { FileForm, Format } from '@types'
 import { prepareFilesFromZIP } from '@utils/html'
 import { prepareDirectory, prepareFile } from '@data/ipfs'
+import { fetchMintedTokenIdWithRetry } from '@data/tzktMint'
+import { PostMintSwapFields } from '@components/post-mint/PostMintSwapFields'
+import { POST_MINT_SUSTAIN_TEIA } from '@utils/postMintSwap'
 
 interface SelectField {
   label?: string
@@ -309,15 +313,80 @@ export const useMintStore = create<MintState>()(
             royalties,
           })
 
-          const success = await mint(
+          const mintStartedAtMs = Date.now()
+          const opHash = await mint(
             minterAddress,
             editions as number,
             nftCid as string,
             royalties as number
           )
-          console.debug('success', success)
-          if (success) {
+          console.debug('mint opHash', opHash)
+
+          if (!opHash) {
+            return
+          }
+
+          const proxyMint = Boolean(proxyAddress)
+          if (proxyMint) {
             reset()
+            return
+          }
+
+          const editionsNum = editions as number
+          const royaltiesNum = royalties as number
+
+          step(
+            'Mint',
+            'Mint confirmed on-chain. Looking up your new OBJKT…',
+            true
+          )
+
+          const tokenId = await fetchMintedTokenIdWithRetry({
+            minterAddress,
+            mintStartedAtMs,
+            expectedEditions: editionsNum,
+          })
+
+          const tzktOp = `[View operation on tzkt.io](https://tzkt.io/${opHash})`
+          const titleLine =
+            title?.trim() !== ''
+              ? `\n\n**OBJKT #${tokenId}** - ${String(title).replace(/\n/g, ' ')}`
+              : `\n\n**OBJKT #${tokenId}**`
+
+          const onCloseExtras = () => {
+            reset()
+          }
+
+          if (tokenId) {
+            const body = `${tzktOp}
+
+----
+
+${POST_MINT_SUSTAIN_TEIA}${titleLine}`
+
+            show('Mint successful', body, {
+              footerSlot: createElement(PostMintSwapFields, {
+                tokenId,
+                minterAddress,
+                editions: editionsNum,
+                royaltiesPercent: royaltiesNum,
+              }),
+              onCloseExtras,
+            })
+          } else {
+            show(
+              'Mint successful',
+              `${tzktOp}
+
+----
+
+${POST_MINT_SUSTAIN_TEIA}
+
+We could not look up your OBJKT id yet (indexers can lag). Your mint is on-chain.
+
+You can list this OBJKT from its page when it appears.`,
+              { onCloseExtras }
+            )
           }
         },
       }),
