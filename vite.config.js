@@ -10,7 +10,6 @@ import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 import mdPlugin from 'vite-plugin-markdown'
 import child_process from 'child_process'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
-import filterReplace from 'vite-plugin-filter-replace'
 
 // Gets the current git commit (used in <head>)
 const commitHash = child_process
