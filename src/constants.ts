@@ -102,7 +102,7 @@ export const FEED_LIST = [
   'Video',
   'Audio',
   '3D',
-  'Interactive',
+  'Code Art',
   'GIF',
   'PDF',
   'Markdown',
