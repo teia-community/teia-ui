@@ -45,7 +45,7 @@ const locationMap = new Map([
   ['/feed/video', 'Video'],
   ['/feed/audio', 'Audio'],
   ['/feed/glb', '3D'],
-  ['/feed/html-svg', 'HTML & SVG'],
+  ['/feed/html-svg', 'Interactive'],
   ['/feed/gif', 'GIF'],
   ['/feed/pdf', 'PDF'],
   ['/feed/md', 'Markdown'],
