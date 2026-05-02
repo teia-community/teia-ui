@@ -76,7 +76,7 @@ function _M.findTokenDetails(search)
     data = cjson.decode(res.body)['data']['token']
     local token = {}
     token['id'] = _M.clean(data['token_id'])
-    token['name'] = _M.clean(data['name'])
+    token['name'] = (string.len(data['name']) > 0 and _M.clean(data['name']) or "OBJKT#" .. _M.clean(data['token_id']))
     token['description'] = _M.clean(data['description'])
     token['image'] = (data['display_uri'] ~= ngx.null and _M.clean(data['display_uri']) or _M.clean(data['artifact_uri']))
     token['artist_address'] = data['artist_address']
