@@ -6,13 +6,13 @@ import { Loading } from '@atoms/loading'
 import { useChannel, useChannelAdmins } from '@data/messaging/channels'
 import {
   configureChannel,
-  updateBlocklist,
   updateChannelAdmins,
+  removeMerkleUsers,
   hideChannel,
-  deleteChannel,
 } from '@data/messaging/channel-actions'
-import { computeMerkleRoot } from '@utils/merkle'
 import { useUserStore } from '@context/userStore'
+import { useModalStore } from '@context/modalStore'
+import { walletPreview } from '@utils/string'
 import styles from './index.module.scss'
 
 export default function ChannelSettings() {
@@ -20,23 +20,29 @@ export default function ChannelSettings() {
   const channelId = id || undefined
   const navigate = useNavigate()
   const address = useUserStore((st) => st.address)
-  const { data: channel, isLoading } = useChannel(channelId)
-  const { data: admins } = useChannelAdmins(channelId)
+  const {
+    data: channel,
+    isLoading,
+    mutate: refreshChannel,
+  } = useChannel(channelId)
+  const { data: admins, mutate: refreshAdmins } = useChannelAdmins(channelId)
 
+  const ask = useModalStore((s) => s.ask)
   const [accessMode, setAccessMode] = useState('')
   const [allowlistText, setAllowlistText] = useState('')
-  const [blocklistText, setBlocklistText] = useState('')
   const [adminText, setAdminText] = useState('')
   const [saving, setSaving] = useState(false)
   const initializedRef = useRef(false)
 
-  // Initialize form state from channel data (once)
   useEffect(() => {
     if (channel && !initializedRef.current) {
       initializedRef.current = true
       setAccessMode(channel.accessMode)
-      if (channel.accessMode === 'allowlist' && channel.allowlist?.length > 0) {
-        setAllowlistText(channel.allowlist.join(', '))
+      if (
+        channel.accessMode === 'allowlist' &&
+        (channel.merkleUsers?.length ?? 0) > 0
+      ) {
+        setAllowlistText(channel.merkleUsers.join(', '))
       }
     }
   }, [channel])
@@ -49,11 +55,15 @@ export default function ChannelSettings() {
     )
   }
 
-  if (!channel || !address || address !== channel.creator) {
+  const isCreator = address && channel && address === channel.creator
+  const isAdmin = address && admins && admins.includes(address)
+  const canConfigure = isCreator || isAdmin
+
+  if (!channel || !canConfigure) {
     return (
       <Page title="Channel Settings">
         <div style={{ padding: 40, textAlign: 'center' }}>
-          <p>Only the channel creator can access settings.</p>
+          <p>Only the channel creator and admins can access settings.</p>
           <Link to={`/messages/channels/${channelId}`}>Back to channel</Link>
         </div>
       </Page>
@@ -61,50 +71,35 @@ export default function ChannelSettings() {
   }
 
   const handleSaveAccess = async () => {
+    // In closed mode the creator cannot delete a peer's message. Switching
+    // out re-grants creator delete power over prior peer messages — call
+    // that out before submitting the tx.
+    if (channel.accessMode === 'closed' && accessMode !== 'closed') {
+      const ok = await ask(
+        'Switch access mode?',
+        'Switching out of "closed" lets the channel creator delete prior peer messages. Continue?'
+      )
+      if (!ok) return
+    }
+
     setSaving(true)
     try {
-      const allowlistAddresses = allowlistText
-        .split(/[\n,]+/)
-        .map((a) => a.trim())
-        .filter(Boolean)
-
-      let merkleRoot
-      let merkleUri
-      if (accessMode === 'allowlist' && allowlistAddresses.length > 0) {
-        merkleRoot = computeMerkleRoot(allowlistAddresses)
-        merkleUri = allowlistAddresses
-      }
+      const merkleAddresses =
+        accessMode === 'allowlist'
+          ? allowlistText
+              .split(/[\n,]+/)
+              .map((a) => a.trim())
+              .filter(Boolean)
+          : undefined
 
       await configureChannel({
         channelId,
         accessMode,
-        merkleRoot,
-        merkleUri,
+        merkleAddresses,
       })
+      refreshChannel()
     } catch (e) {
       console.error('Configure failed:', e)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleUpdateBlocklist = async () => {
-    const addresses = blocklistText
-      .split(/[\n,]+/)
-      .map((a) => a.trim())
-      .filter(Boolean)
-    if (addresses.length === 0) return
-
-    setSaving(true)
-    try {
-      await updateBlocklist({
-        channelId,
-        toBlock: addresses,
-        toUnblock: [],
-      })
-      setBlocklistText('')
-    } catch (e) {
-      console.error('Blocklist update failed:', e)
     } finally {
       setSaving(false)
     }
@@ -125,31 +120,68 @@ export default function ChannelSettings() {
         toRemove: [],
       })
       setAdminText('')
+      refreshAdmins()
     } catch (e) {
-      console.error('Admin update failed:', e)
+      console.error('Admin add failed:', e)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleRemoveAdmin = async (admin) => {
+    if (
+      !(await ask('Remove admin?', `Remove ${walletPreview(admin)} as admin?`))
+    )
+      return
+    setSaving(true)
+    try {
+      await updateChannelAdmins({
+        channelId,
+        toAdd: [],
+        toRemove: [admin],
+      })
+      refreshAdmins()
+    } catch (e) {
+      console.error('Admin remove failed:', e)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleRemoveMerkleUser = async (user) => {
+    if (
+      !(await ask(
+        'Remove from allowlist?',
+        `Remove ${walletPreview(user)} from the allowlist?`
+      ))
+    )
+      return
+    setSaving(true)
+    try {
+      await removeMerkleUsers({
+        channelId,
+        currentList: channel.merkleUsers ?? [],
+        addresses: [user],
+      })
+      refreshChannel()
+    } catch (e) {
+      console.error('Remove user failed:', e)
     } finally {
       setSaving(false)
     }
   }
 
   const handleHide = async () => {
+    if (!isCreator) return
     if (
-      !window.confirm(
-        'Hide this channel? It will no longer appear in the list.'
-      )
+      !(await ask(
+        'Hide channel?',
+        'It will no longer appear in lists and posting will fail.'
+      ))
     )
       return
     await hideChannel(channelId)
-    navigate('/messages/channels')
-  }
-
-  const handleDelete = async () => {
-    if (
-      !window.confirm('Permanently delete this channel? This cannot be undone.')
-    )
-      return
-    await deleteChannel(channelId)
-    navigate('/messages/channels')
+    navigate('/messages')
   }
 
   return (
@@ -166,16 +198,15 @@ export default function ChannelSettings() {
         </h2>
 
         <div className={styles.settingsSection}>
-          <h3>Access Mode</h3>
+          <h3>Access mode</h3>
           <select
             className={styles.formInput}
             value={accessMode}
             onChange={(e) => setAccessMode(e.target.value)}
           >
             <option value="unrestricted">Unrestricted</option>
-            <option value="members_only">Members Only</option>
-            <option value="allowlist">Allowlist</option>
-            <option value="blocklist">Blocklist</option>
+            <option value="allowlist">Allowlist (Merkle)</option>
+            <option value="closed">Closed (creator + admins only)</option>
           </select>
 
           {accessMode === 'allowlist' && (
@@ -189,62 +220,103 @@ export default function ChannelSettings() {
           )}
 
           <Button shadow_box onClick={handleSaveAccess} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Access Mode'}
+            {saving ? 'Saving...' : 'Save access mode'}
           </Button>
         </div>
-
-        {accessMode === 'blocklist' && (
-          <div className={styles.settingsSection}>
-            <h3>Blocklist</h3>
-            <textarea
-              className={styles.formTextarea}
-              value={blocklistText}
-              onChange={(e) => setBlocklistText(e.target.value)}
-              placeholder="Addresses to block"
-              rows={3}
-            />
-            <Button
-              shadow_box
-              onClick={handleUpdateBlocklist}
-              disabled={saving}
-            >
-              Add to Blocklist
-            </Button>
-          </div>
-        )}
 
         <div className={styles.settingsSection}>
           <h3>Admins</h3>
-          {admins?.length > 0 && (
-            <ul style={{ fontSize: 13, paddingLeft: 20 }}>
+          {(admins?.length ?? 0) === 0 && (
+            <p style={{ fontSize: 13, opacity: 0.6 }}>No admins yet.</p>
+          )}
+          {(admins?.length ?? 0) > 0 && (
+            <ul style={{ fontSize: 13, paddingLeft: 0, listStyle: 'none' }}>
               {admins.map((a) => (
-                <li key={a}>{a}</li>
+                <li
+                  key={a}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '4px 0',
+                  }}
+                >
+                  <span>{a}</span>
+                  {isCreator && (
+                    <Button
+                      shadow_box
+                      onClick={() => handleRemoveAdmin(a)}
+                      disabled={saving}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </li>
               ))}
             </ul>
           )}
-          <textarea
-            className={styles.formTextarea}
-            value={adminText}
-            onChange={(e) => setAdminText(e.target.value)}
-            placeholder="Addresses to add as admin"
-            rows={2}
-          />
-          <Button shadow_box onClick={handleAddAdmin} disabled={saving}>
-            Add Admin
-          </Button>
+          {isCreator ? (
+            <>
+              <textarea
+                className={styles.formTextarea}
+                value={adminText}
+                onChange={(e) => setAdminText(e.target.value)}
+                placeholder="Addresses to add as admin"
+                rows={2}
+              />
+              <Button shadow_box onClick={handleAddAdmin} disabled={saving}>
+                Add admin
+              </Button>
+            </>
+          ) : (
+            <p style={{ fontSize: 13, opacity: 0.6 }}>
+              Only the channel creator can add or remove admins.
+            </p>
+          )}
         </div>
 
-        <div className={styles.settingsSection}>
-          <h3>Danger Zone</h3>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Button shadow_box onClick={handleHide}>
-              Hide Channel
-            </Button>
-            <Button shadow_box onClick={handleDelete}>
-              Delete Channel
+        {accessMode === 'allowlist' && (
+          <div className={styles.settingsSection}>
+            <h3>Allowlist users</h3>
+            {(channel.merkleUsers?.length ?? 0) === 0 ? (
+              <p style={{ fontSize: 13, opacity: 0.6 }}>
+                No allowlist users. Add some in the access-mode section above.
+              </p>
+            ) : (
+              <ul style={{ fontSize: 13, paddingLeft: 0, listStyle: 'none' }}>
+                {channel.merkleUsers.map((u) => (
+                  <li
+                    key={u}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '4px 0',
+                    }}
+                  >
+                    <span>{u}</span>
+                    <Button
+                      shadow_box
+                      onClick={() => handleRemoveMerkleUser(u)}
+                      disabled={saving}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {isCreator && (
+          <div className={styles.settingsSection}>
+            <h3>Danger zone</h3>
+            <Button shadow_box onClick={handleHide} disabled={saving}>
+              Hide channel
             </Button>
           </div>
-        </div>
+        )}
       </div>
     </Page>
   )

@@ -5,7 +5,6 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
-import { MESSAGING_MESSAGE_FEE } from '@constants'
 import { useUsers } from '@data/swr'
 import {
   useChannel,
@@ -40,7 +39,6 @@ export default function ChannelView() {
   const address = useUserStore((st) => st.address)
   const { data: isAdmin } = useIsChannelAdmin(channelId, address)
   const { data: admins } = useChannelAdmins(channelId)
-  const messageFee = MESSAGING_MESSAGE_FEE
   const senderAddrs = messages?.map((m) => m.sender) ?? []
 
   const allMembers = useMemo(() => {
@@ -50,7 +48,7 @@ export default function ChannelView() {
     for (const a of [
       channel.creator,
       ...(admins ?? []),
-      ...(channel.allowlist ?? []),
+      ...(channel.merkleUsers ?? []),
     ]) {
       if (a && !seen.has(a)) {
         seen.add(a)
@@ -58,7 +56,7 @@ export default function ChannelView() {
       }
     }
     return out
-  }, [channel?.creator, admins, channel?.allowlist])
+  }, [channel?.creator, admins, channel?.merkleUsers])
 
   const stackAddrs = allMembers.slice(0, 3)
   const extraMemberCount = Math.max(0, allMembers.length - stackAddrs.length)
@@ -101,7 +99,14 @@ export default function ChannelView() {
   const handleSubmit = useCallback(
     async ({ text, storageMode, embeds }) => {
       let proof
-      if (channel?.accessMode === 'allowlist' && channel?.merkleUri) {
+      const isCreator = address && address === channel?.creator
+      // Creator and admins bypass Merkle on-chain. Others must supply a proof.
+      if (
+        channel?.accessMode === 'allowlist' &&
+        channel?.merkleUri &&
+        !isCreator &&
+        !isAdmin
+      ) {
         const result = await computeProofForAddress(channel.merkleUri, address)
         if (!result) {
           throw new Error("You are not in this channel's allowlist")
@@ -112,7 +117,6 @@ export default function ChannelView() {
       await postMessage({
         channelId,
         content: text,
-        messageFee,
         proof,
         storageMode,
         parentId: replyTo?.id,
@@ -120,7 +124,7 @@ export default function ChannelView() {
       })
       refreshMessages()
     },
-    [channelId, channel, address, messageFee, replyTo, refreshMessages]
+    [channelId, channel, address, isAdmin, replyTo, refreshMessages]
   )
 
   if (loadingChannel) {
@@ -136,7 +140,7 @@ export default function ChannelView() {
       <Page title="Channel not found">
         <div style={{ padding: 40, textAlign: 'center' }}>
           <p>Channel not found.</p>
-          <Link to="/messages/channels">Back to channels</Link>
+          <Link to="/messages">Back to messages</Link>
         </div>
       </Page>
     )
@@ -150,7 +154,7 @@ export default function ChannelView() {
       <div className={styles.channelView}>
         <div className={styles.channelHeader}>
           <Link
-            to="/messages/channels"
+            to="/messages"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             ←
@@ -217,7 +221,13 @@ export default function ChannelView() {
         {addUserOpen && (
           <AddUserModal
             channelId={channelId}
+            currentMerkleList={channel.merkleUsers ?? []}
+            canAddAdmin={isCreator}
+            accessMode={channel.accessMode}
             onClose={() => setAddUserOpen(false)}
+            onAdded={() => {
+              refreshMessages()
+            }}
           />
         )}
 
@@ -250,8 +260,8 @@ export default function ChannelView() {
                 onDelete={
                   address &&
                   (msg.sender === address ||
-                    channel.creator === address ||
-                    isAdmin)
+                    (channel.accessMode !== 'closed' &&
+                      channel.creator === address))
                     ? handleDelete
                     : undefined
                 }
@@ -268,19 +278,13 @@ export default function ChannelView() {
           })}
         </div>
 
-        {channel.accessMode === 'members_only' && !isCreator && !isAdmin ? (
-          <div style={{ padding: 12, textAlign: 'center', opacity: 0.6 }}>
-            Only the channel creator and admins can post in this channel.
-          </div>
-        ) : (
-          <PostForm
-            onSubmit={handleSubmit}
-            replyTo={replyTo}
-            onCancelReply={() => setReplyTo(null)}
-            disabled={!address}
-            disabledMessage="Connect your wallet to post messages"
-          />
-        )}
+        <PostForm
+          onSubmit={handleSubmit}
+          replyTo={replyTo}
+          onCancelReply={() => setReplyTo(null)}
+          disabled={!address}
+          disabledMessage="Connect your wallet to post messages"
+        />
       </div>
     </Page>
   )

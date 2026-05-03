@@ -1,14 +1,12 @@
 import styles from './index.module.scss'
 
+const CLASS_BY_MODE = {
+  allowlist: styles.badgeAllowlist,
+  closed: styles.badgeClosed,
+  unrestricted: styles.badgeUnrestricted,
+}
+
 export default function AccessBadge({ mode }) {
-  const cls =
-    mode === 'allowlist'
-      ? styles.badgeAllowlist
-      : mode === 'blocklist'
-      ? styles.badgeBlocklist
-      : mode === 'members_only'
-      ? styles.badgeMembersOnly
-      : styles.badgeUnrestricted
-  const label = mode === 'members_only' ? 'Members Only' : mode
-  return <span className={cls}>{label}</span>
+  const cls = CLASS_BY_MODE[mode] ?? styles.badgeUnrestricted
+  return <span className={cls}>{mode}</span>
 }

@@ -48,7 +48,7 @@ function ChannelCard({ ch }) {
 
 export default function ChannelList() {
   const address = useUserStore((st) => st.address)
-  const { data: channels, isLoading } = useChannelList(address)
+  const { data: channels, isLoading } = useChannelList()
   const [tab, setTab] = useState('all')
 
   const displayChannels =

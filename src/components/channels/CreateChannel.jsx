@@ -1,65 +1,98 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
-import { MESSAGING_CHANNEL_FEE } from '@constants'
-import { createChannel } from '@data/messaging/channel-actions'
-import { uploadMsgJsonToIPFS } from '@data/messaging/ipfs'
-import { computeMerkleRoot } from '@utils/merkle'
+import { createChannel, createDmChannel } from '@data/messaging/channel-actions'
+import { getUser } from '@data/api'
 import { useUserStore } from '@context/userStore'
+import { isTzAddress, walletPreview } from '@utils/string'
 import styles from './index.module.scss'
 
 export default function CreateChannel() {
   const navigate = useNavigate()
   const address = useUserStore((st) => st.address)
-  const channelFee = MESSAGING_CHANNEL_FEE
+  const [searchParams] = useSearchParams()
+  const dmRecipient = searchParams.get('dm') || ''
+  const isDm = isTzAddress(dmRecipient)
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [imageFile, setImageFile] = useState(null)
   const [accessMode, setAccessMode] = useState('unrestricted')
   const [allowlistText, setAllowlistText] = useState('')
-  const [blocklistText, setBlocklistText] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [recipientAlias, setRecipientAlias] = useState(null)
+  const [aliasResolved, setAliasResolved] = useState(false)
+
+  useEffect(() => {
+    if (!isDm) return
+    let cancelled = false
+    setAliasResolved(false)
+    getUser(dmRecipient)
+      .then((u) => {
+        if (cancelled) return
+        setRecipientAlias(u?.name || null)
+        setAliasResolved(true)
+      })
+      .catch(() => {
+        if (!cancelled) setAliasResolved(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isDm, dmRecipient])
+
+  const recipientLabel =
+    recipientAlias || (isDm ? walletPreview(dmRecipient) : '')
+
+  useEffect(() => {
+    if (isDm && aliasResolved && !name && recipientLabel) {
+      setName(`DM with ${recipientLabel}`)
+    }
+  }, [isDm, aliasResolved, recipientLabel, name])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!name.trim() || submitting) return
+    if (!name.trim() || submitting || !address) return
     setSubmitting(true)
 
     try {
-      const allowlistAddresses = allowlistText
-        .split(/[\n,]+/)
-        .map((a) => a.trim())
-        .filter(Boolean)
-
-      const blocklistAddresses = blocklistText
-        .split(/[\n,]+/)
-        .map((a) => a.trim())
-        .filter(Boolean)
-
-      let merkleRoot
-      let merkleUri
-      if (accessMode === 'allowlist' && allowlistAddresses.length > 0) {
-        merkleRoot = computeMerkleRoot(allowlistAddresses)
-        merkleUri = allowlistAddresses
+      if (isDm) {
+        const { channelId } = await createDmChannel({
+          recipient: dmRecipient,
+          creator: address,
+          name: name.trim(),
+          description: description.trim(),
+        })
+        navigate(
+          channelId
+            ? `/messages/channels/${channelId}`
+            : `/messages/dm/${dmRecipient}`
+        )
+        return
       }
 
-      const result = await createChannel({
-        name,
-        description,
+      const merkleAddresses =
+        accessMode === 'allowlist'
+          ? allowlistText
+              .split(/[\n,]+/)
+              .map((a) => a.trim())
+              .filter(Boolean)
+          : undefined
+
+      const { channelId } = await createChannel({
+        kind: 'channel',
+        name: name.trim(),
+        description: description.trim(),
         imageFile,
         accessMode,
-        channelFee,
-        merkleRoot,
-        merkleUri,
-        blocklistAddresses:
-          accessMode === 'blocklist' ? blocklistAddresses : undefined,
+        merkleAddresses,
+        creator: address,
       })
 
-      navigate(`/messages/channels/${result.channelId}`)
-    } catch (e) {
-      console.error('Create channel failed:', e)
+      navigate(channelId ? `/messages/channels/${channelId}` : '/messages')
+    } catch (err) {
+      console.error('Create channel failed:', err)
     } finally {
       setSubmitting(false)
     }
@@ -76,9 +109,11 @@ export default function CreateChannel() {
   }
 
   return (
-    <Page title="Create Channel">
+    <Page title={isDm ? 'Start DM' : 'Create Channel'}>
       <div className={styles.container}>
-        <h2 className={styles.headline}>Create Channel</h2>
+        <h2 className={styles.headline}>
+          {isDm ? `Start DM with ${recipientLabel}` : 'Create Channel'}
+        </h2>
 
         <form onSubmit={handleSubmit} className={styles.createForm}>
           <label className={styles.formLabel}>
@@ -88,79 +123,81 @@ export default function CreateChannel() {
               className={styles.formInput}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Channel name"
+              placeholder={isDm ? 'DM name (visible to both)' : 'Channel name'}
               required
             />
           </label>
 
           <label className={styles.formLabel}>
-            Description
+            Description{' '}
+            {isDm && <span style={{ opacity: 0.6 }}>(optional)</span>}
             <textarea
               className={styles.formTextarea}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What is this channel about?"
+              placeholder={
+                isDm
+                  ? 'Optional note about this DM'
+                  : 'What is this channel about?'
+              }
               rows={3}
             />
           </label>
 
-          <label className={styles.formLabel}>
-            Image (optional)
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-            />
-          </label>
+          {!isDm && (
+            <>
+              <label className={styles.formLabel}>
+                Image (optional)
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                />
+              </label>
 
-          <label className={styles.formLabel}>
-            Access Mode
-            <select
-              className={styles.formInput}
-              value={accessMode}
-              onChange={(e) => setAccessMode(e.target.value)}
-            >
-              <option value="unrestricted">
-                Unrestricted (anyone can post)
-              </option>
-              <option value="members_only">
-                Members Only (creator/admins)
-              </option>
-              <option value="allowlist">Allowlist (specific addresses)</option>
-              <option value="blocklist">
-                Blocklist (block specific addresses)
-              </option>
-            </select>
-          </label>
+              <label className={styles.formLabel}>
+                Access mode
+                <select
+                  className={styles.formInput}
+                  value={accessMode}
+                  onChange={(e) => setAccessMode(e.target.value)}
+                >
+                  <option value="unrestricted">
+                    Unrestricted (anyone can post)
+                  </option>
+                  <option value="allowlist">
+                    Allowlist (specific addresses, Merkle proofs)
+                  </option>
+                  <option value="closed">
+                    Closed (only creator + admins can post)
+                  </option>
+                </select>
+              </label>
 
-          {accessMode === 'allowlist' && (
-            <label className={styles.formLabel}>
-              Allowlist Addresses (one per line or comma-separated)
-              <textarea
-                className={styles.formTextarea}
-                value={allowlistText}
-                onChange={(e) => setAllowlistText(e.target.value)}
-                placeholder="tz1abc..., tz1def..."
-                rows={4}
-              />
-            </label>
-          )}
-
-          {accessMode === 'blocklist' && (
-            <label className={styles.formLabel}>
-              Blocklist Addresses (one per line or comma-separated)
-              <textarea
-                className={styles.formTextarea}
-                value={blocklistText}
-                onChange={(e) => setBlocklistText(e.target.value)}
-                placeholder="tz1abc..., tz1def..."
-                rows={4}
-              />
-            </label>
+              {accessMode === 'allowlist' && (
+                <label className={styles.formLabel}>
+                  Allowlist addresses (one per line or comma-separated)
+                  <textarea
+                    className={styles.formTextarea}
+                    value={allowlistText}
+                    onChange={(e) => setAllowlistText(e.target.value)}
+                    placeholder="tz1abc..., tz1def..."
+                    rows={4}
+                    required
+                  />
+                </label>
+              )}
+            </>
           )}
 
           <Button shadow_box disabled={submitting || !name.trim()}>
-            {submitting ? 'Creating...' : 'Create Channel'}
+            {submitting
+              ? isDm
+                ? 'Starting DM...'
+                : 'Creating...'
+              : isDm
+              ? 'Start DM'
+              : 'Create Channel'}
           </Button>
         </form>
       </div>

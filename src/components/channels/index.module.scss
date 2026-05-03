@@ -139,6 +139,12 @@
   color: #fff;
 }
 
+.badgeClosed {
+  composes: badge;
+  background: #6b7280;
+  color: #fff;
+}
+
 .badgeBlocklist {
   composes: badge;
   background: #c026d3;
