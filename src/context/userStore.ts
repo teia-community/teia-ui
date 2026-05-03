@@ -132,7 +132,7 @@ const wallet = new BeaconWallet({
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
   // Beacon no longer accepts `network` on requestPermissions — set it here (DAppClientOptions).
   network: {
-    type: NetworkType.MAINNET,
+    type: NetworkType.CUSTOM,
     rpcUrl: String(useLocalSettings.getState().getRpcNode()),
   },
 })
