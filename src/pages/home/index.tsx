@@ -34,7 +34,7 @@ export const feedComponentMap: FeedComponentMap = {
   Video: FEEDS.VideoFeed,
   Image: FEEDS.ImageFeed,
   Audio: FEEDS.AudioFeed,
-  'HTML & SVG': FEEDS.HtmlSvgFeed,
+  'Code Art': FEEDS.HtmlSvgFeed,
   PDF: FEEDS.PdfFeed,
   Markdown: FEEDS.MarkdownFeed,
   GIF: FEEDS.GifFeed,
