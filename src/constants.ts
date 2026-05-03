@@ -247,10 +247,8 @@ export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one th
 export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 // Messaging contracts (Shadownet, will be updated for mainnet)
-export const MESSAGING_CHANNEL_CONTRACT =
-  'KT1WWyGvbs8yPbTKSZEyYMJ9zgRwzHTAKbCW'
-export const MESSAGING_DM_CONTRACT =
-  'KT1H9NWgLavpFVnW4RydT9NwLM2gM84mzJcP'
+export const MESSAGING_CHANNELS_V2_CONTRACT =
+  'KT1XQ1vBkxXgikafk6GrgsXwNLgqjKP7Ubq1'
 export const MESSAGING_TOKEN_GATE_CONTRACT =
   'KT1Tp9obwP5zE1LBgCXSZc3Dfs4LYFf6Mbti'
 // Messaging fees (mutez)

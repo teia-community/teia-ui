@@ -1,6 +1,3 @@
-// Channel event types — based on tested Shadownet events
-// Contract: KT1Vk9xjDRJM8ZxCV6YSGmzg3wcrBQhW69mS
-
 /** TzKT event wrapper */
 export interface TzktEvent<P> {
   id: number
@@ -14,57 +11,73 @@ export interface TzktEvent<P> {
 // --- Event payloads ---
 
 export interface ChannelCreatedEvent {
-  creator: string
-  timestamp: string
   channel_id: string
+  creator: string
   metadata_uri: string // hex-encoded bytes → ipfs://...
+  access_mode: Record<string, unknown> // Michelson variant, e.g. { unrestricted: {} }
+  merkle_root: string | null
+  merkle_uri: string | null
+  admins: string[]
+  timestamp: string
 }
 
 export interface ChannelConfiguredEvent {
   channel_id: string
-  access_mode: Record<string, unknown> // Michelson variant, e.g. { unrestricted: {} }
-  merkle_root?: string
-  merkle_uri?: string // hex-encoded bytes
-  metadata_uri?: string // hex-encoded bytes
+  access_mode: Record<string, unknown>
+  merkle_root: string | null
+  merkle_uri: string | null
+  configured_by: string
 }
 
-export interface MessagePostedEvent {
-  sender: string
-  content: string // hex-encoded bytes → ipfs://... or JSON
-  parent_id: string | null
-  timestamp: string
+export interface ChannelUpdatedEvent {
   channel_id: string
-  message_id: string
+  metadata_uri: string
+  updated_by: string
 }
 
-export interface MessageDeletedEvent {
+export interface ChannelAdminsUpdatedEvent {
   channel_id: string
-  deleted_by: string
-  message_id: string
+  to_add: string[]
+  to_remove: string[]
 }
 
 export interface ChannelHiddenEvent {
   channel_id: string
+  hidden_by: string
 }
 
-export interface ChannelDeletedEvent {
+export interface MessagePostedEvent {
   channel_id: string
+  message_id: string
+  sender: string
+  parent_id: string | null
+  timestamp: string
+}
+
+export interface MessageDeletedEvent {
+  channel_id: string
+  message_id: string
+  deleted_by: string
 }
 
 // --- Domain types ---
 
-export type ChannelAccessMode =
-  | 'unrestricted'
-  | 'members_only'
-  | 'allowlist'
-  | 'blocklist'
+export type ChannelAccessMode = 'unrestricted' | 'allowlist' | 'closed'
+
+/**
+ * Channel kind is a presentation-only flag stored in the IPFS metadata JSON.
+ * group/public channels in the inbox.
+ */
+export type ChannelKind = 'dm' | 'channel'
 
 export interface ChannelMetadata {
   type: 'teia-channel'
   version: number
+  kind: ChannelKind
   name: string
   description: string
   image?: string // ipfs:// URI
+  participants?: string[] // for kind='dm', the canonical [creator, recipient] pair
 }
 
 export interface ChannelMessagePayload {
@@ -88,8 +101,12 @@ export interface Channel {
   createdAt: string
   metadata: ChannelMetadata | null
   accessMode: ChannelAccessMode
-  allowlist?: string[]
+  merkleRoot: string | null
+  merkleUri: string | null
+  /** Off-chain address list pulled from merkleUri when present. */
+  merkleUsers?: string[]
   messageCount: number
+  hidden: boolean
   latestMessageId: string | null
 }
 
@@ -102,14 +119,4 @@ export interface ChannelMessage {
   timestamp: string
   embeds: TokenEmbed[]
   isIpfs: boolean
-}
-
-export interface ChannelContractStorage {
-  channel_id_counter: string
-  channels: number // bigmap ID
-  messages: number // bigmap ID
-  blocked: number // bigmap ID
-  channel_admins: number // bigmap ID
-  channel_fee: string
-  message_fee: string
 }

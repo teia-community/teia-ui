@@ -65,21 +65,6 @@ export async function fetchAllEvents<P>(
 }
 
 /**
- * Fetch contract storage from TzKT.
- */
-export async function fetchContractStorage<T>(
-  contract: string
-): Promise<T> {
-  const res = await fetch(
-    `${MESSAGING_TZKT_API}/v1/contracts/${contract}/storage`
-  )
-  if (!res.ok) {
-    throw new Error(`TzKT error: ${res.status}`)
-  }
-  return res.json()
-}
-
-/**
  * Fetch a single value from a named bigmap.
  * Returns null if the key doesn't exist (404).
  */
@@ -97,6 +82,26 @@ export async function fetchBigMapValue<V>(
   }
   const data = await res.json()
   return data.value
+}
+
+/**
+ * Check on TzKT's transaction ids for a given operation hash.
+ */
+export async function fetchTransactionsByOpHash(opHash: string): Promise<
+  {
+    id: number
+    target?: { address: string }
+    parameter?: { entrypoint: string }
+    status: string
+  }[]
+> {
+  const res = await fetch(
+    `${MESSAGING_TZKT_API}/v1/operations/transactions/${opHash}`
+  )
+  if (!res.ok) {
+    throw new Error(`TzKT error: ${res.status}`)
+  }
+  return res.json()
 }
 
 /**
@@ -120,4 +125,40 @@ export async function fetchBigMapKeys<V>(
     throw new Error(`TzKT error: ${res.status}`)
   }
   return res.json()
+}
+
+/**
+ * Bulk-fetch values from a named bigmap on a contract for a list of keys.
+ * Returns a Map keyed by the string form of each key.
+ */
+export async function fetchBigMapValuesBulk<V>(
+  contract: string,
+  bigmapName: string,
+  keys: string[]
+): Promise<Map<string, V>> {
+  const result = new Map<string, V>()
+  if (keys.length === 0) return result
+
+  const unique = Array.from(new Set(keys))
+  const CHUNK = 100
+  for (let i = 0; i < unique.length; i += CHUNK) {
+    const slice = unique.slice(i, i + CHUNK)
+    const url = new URL(
+      `${MESSAGING_TZKT_API}/v1/contracts/${contract}/bigmaps/${bigmapName}/keys`
+    )
+    url.searchParams.set('active', 'true')
+    url.searchParams.set('select', 'key,value')
+    url.searchParams.set('key.in', slice.join(','))
+    url.searchParams.set('limit', String(slice.length))
+
+    const res = await fetch(url.toString())
+    if (!res.ok) {
+      throw new Error(`TzKT error: ${res.status}`)
+    }
+    const rows: { key: unknown; value: V }[] = await res.json()
+    for (const row of rows) {
+      result.set(String(row.key), row.value)
+    }
+  }
+  return result
 }

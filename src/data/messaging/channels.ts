@@ -1,43 +1,41 @@
 /**
- * SWR hooks for fetching channel data via TzKT events.
+ * SWR hooks for channels data via TzKT events and bigmap reads.
  *
- * Uses server-side payload filtering on all event queries.
- * Messages are paginated (newest first, 50 per page).
+ * group/public channels based on the `kind` field in the IPFS metadata.
  */
 import useSWR from 'swr'
 import { useCallback, useRef, useState } from 'react'
 import { bytesToString } from '@taquito/utils'
-import { MESSAGING_CHANNEL_CONTRACT } from '@constants'
+import { MESSAGING_CHANNELS_V2_CONTRACT } from '@constants'
 import {
   fetchAllEvents,
   fetchEventsPage,
-  fetchContractStorage,
   fetchBigMapValue,
-  fetchBigMapKeys,
+  fetchBigMapValuesBulk,
 } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
 import type {
   ChannelCreatedEvent,
   ChannelConfiguredEvent,
   ChannelHiddenEvent,
-  ChannelDeletedEvent,
+  ChannelUpdatedEvent,
+  ChannelAdminsUpdatedEvent,
   MessagePostedEvent,
   MessageDeletedEvent,
-  ChannelContractStorage,
   ChannelMetadata,
   ChannelMessagePayload,
   ChannelAccessMode,
   TzktEvent,
 } from './channel-types'
 
-const CONTRACT = MESSAGING_CHANNEL_CONTRACT
+const CONTRACT = MESSAGING_CHANNELS_V2_CONTRACT
 const MESSAGE_PAGE_SIZE = 50
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function decodeBytes(hex: string): string {
+function decodeBytes(hex: string | null | undefined): string {
   try {
     return hex ? bytesToString(hex) : ''
   } catch {
@@ -46,23 +44,53 @@ function decodeBytes(hex: string): string {
 }
 
 async function resolveMetadata(
-  metadataHex: string,
+  metadataHex: string | null | undefined,
   channelId: string
 ): Promise<ChannelMetadata> {
   const uri = decodeBytes(metadataHex)
   if (uri.startsWith('ipfs://')) {
     try {
-      return await fetchMsgIpfsJson<ChannelMetadata>(uri)
+      const fetched = await fetchMsgIpfsJson<Partial<ChannelMetadata>>(uri)
+      return {
+        type: 'teia-channel',
+        version: 1,
+        kind: fetched.kind ?? 'channel',
+        name: fetched.name ?? `Channel #${channelId}`,
+        description: fetched.description ?? '',
+        image: fetched.image,
+        participants: fetched.participants,
+      }
     } catch (e) {
       console.warn(`Failed to fetch metadata for channel #${channelId}:`, e)
     }
   }
-  return { type: 'teia-channel', version: 1, name: `Channel #${channelId}`, description: '' }
+  return {
+    type: 'teia-channel',
+    version: 1,
+    kind: 'channel',
+    name: `Channel #${channelId}`,
+    description: '',
+  }
 }
 
-async function parseMessage(event: TzktEvent<MessagePostedEvent>) {
+/**
+ * Raw shape of a row in the `messages` bigmap (TzKT decoded).
+ * `content` is hex-encoded bytes containing either an IPFS URI or a JSON string.
+ */
+interface MessageBigmapRow {
+  channel_id: string
+  sender: string
+  content: string
+  parent_id: string | null
+  timestamp: string
+}
+
+async function parseMessage(
+  event: TzktEvent<MessagePostedEvent>,
+  contentHex: string
+) {
   const p = event.payload
-  const raw = decodeBytes(p.content)
+  const raw = decodeBytes(contentHex)
   const isIpfs = raw.startsWith('ipfs://')
   let parsed: ChannelMessagePayload | null = null
 
@@ -90,56 +118,73 @@ async function parseMessage(event: TzktEvent<MessagePostedEvent>) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Storage
-// ---------------------------------------------------------------------------
-
-export function useChannelStorage() {
-  return useSWR(
-    `msg:channel-storage:${CONTRACT}`,
-    () => fetchContractStorage<ChannelContractStorage>(CONTRACT),
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+/**
+ * Fetch the `content` bytes for a batch of message events from the messages
+ * bigmap.
+ */
+async function fetchMessageContents(
+  events: TzktEvent<MessagePostedEvent>[]
+): Promise<Map<string, string>> {
+  const ids = events.map((e) => e.payload.message_id)
+  const rows = await fetchBigMapValuesBulk<MessageBigmapRow>(
+    CONTRACT,
+    'messages',
+    ids
   )
+  const out = new Map<string, string>()
+  for (const [id, row] of rows.entries()) {
+    if (row?.content) out.set(id, row.content)
+  }
+  return out
+}
+
+function accessModeFromMichelson(
+  variant: Record<string, unknown> | undefined
+): ChannelAccessMode {
+  if (!variant) return 'unrestricted'
+  return (Object.keys(variant)[0] as ChannelAccessMode) ?? 'unrestricted'
 }
 
 // ---------------------------------------------------------------------------
-// Channel list
+// Public channel list (drops DMs and hidden channels)
 // ---------------------------------------------------------------------------
 
-export function useChannelList(viewerAddress?: string) {
+export function useChannelList() {
   return useSWR(
-    `msg:channel-list:${CONTRACT}:${viewerAddress ?? ''}`,
+    `msg:channel-list:${CONTRACT}`,
     async () => {
-      const [created, configured, hidden, deleted] = await Promise.all([
+      const [created, configured, updated, hidden] = await Promise.all([
         fetchAllEvents<ChannelCreatedEvent>(CONTRACT, 'channel_created'),
         fetchAllEvents<ChannelConfiguredEvent>(CONTRACT, 'channel_configured'),
+        fetchAllEvents<ChannelUpdatedEvent>(CONTRACT, 'channel_updated'),
         fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden'),
-        fetchAllEvents<ChannelDeletedEvent>(CONTRACT, 'channel_deleted'),
       ])
 
       const hiddenIds = new Set(hidden.map((e) => e.payload.channel_id))
-      const deletedIds = new Set(deleted.map((e) => e.payload.channel_id))
 
       const latestConfig: Record<string, ChannelConfiguredEvent> = {}
       for (const e of configured) {
         latestConfig[e.payload.channel_id] = e.payload
       }
 
-      const visible = created.filter(
-        (e) =>
-          !hiddenIds.has(e.payload.channel_id) &&
-          !deletedIds.has(e.payload.channel_id)
-      )
+      // Latest metadata_uri per channel: events arrive ascending (id-sorted),
+      // so the last write wins.
+      const latestMetadataUri: Record<string, string> = {}
+      for (const e of updated) {
+        latestMetadataUri[e.payload.channel_id] = e.payload.metadata_uri
+      }
 
-      return Promise.all(
+      const visible = created.filter((e) => !hiddenIds.has(e.payload.channel_id))
+
+      const items = await Promise.all(
         visible.reverse().map(async (event) => {
           const p = event.payload
           const config = latestConfig[p.channel_id]
-          const accessMode: ChannelAccessMode = config
-            ? (Object.keys(config.access_mode)[0] as ChannelAccessMode) ?? 'unrestricted'
-            : 'unrestricted'
-
-          const metadata = await resolveMetadata(p.metadata_uri, p.channel_id)
+          const accessMode = accessModeFromMichelson(
+            config?.access_mode ?? p.access_mode
+          )
+          const metadataUri = latestMetadataUri[p.channel_id] ?? p.metadata_uri
+          const metadata = await resolveMetadata(metadataUri, p.channel_id)
 
           return {
             id: p.channel_id,
@@ -147,11 +192,13 @@ export function useChannelList(viewerAddress?: string) {
             createdAt: p.timestamp,
             metadata,
             accessMode,
-            merkleRoot: config?.merkle_root ?? null,
-            merkleUri: config?.merkle_uri ?? null,
+            merkleRoot: config?.merkle_root ?? p.merkle_root ?? null,
+            merkleUri: decodeBytes(config?.merkle_uri ?? p.merkle_uri) || null,
           }
         })
       )
+
+      return items.filter((c) => c.metadata.kind !== 'dm')
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
@@ -160,6 +207,94 @@ export function useChannelList(viewerAddress?: string) {
 export type ChannelListItem = NonNullable<
   ReturnType<typeof useChannelList>['data']
 >[number]
+
+// ---------------------------------------------------------------------------
+// Inbox: channels I created or am currently admin of (DMs + channels)
+// ---------------------------------------------------------------------------
+
+export function useMyInbox(viewerAddress: string | undefined) {
+  return useSWR(
+    viewerAddress ? `msg:inbox:${CONTRACT}:${viewerAddress}` : null,
+    async () => {
+      if (!viewerAddress) return []
+
+      const [created, adminsUpdated, hidden, configured, updated] =
+        await Promise.all([
+          fetchAllEvents<ChannelCreatedEvent>(CONTRACT, 'channel_created'),
+          fetchAllEvents<ChannelAdminsUpdatedEvent>(
+            CONTRACT,
+            'channel_admins_updated'
+          ),
+          fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden'),
+          fetchAllEvents<ChannelConfiguredEvent>(CONTRACT, 'channel_configured'),
+          fetchAllEvents<ChannelUpdatedEvent>(CONTRACT, 'channel_updated'),
+        ])
+
+      const hiddenIds = new Set(hidden.map((e) => e.payload.channel_id))
+
+      // Replay admin events to compute the current admin set per channel.
+      // Seed from `channel_created.admins` first (initial admins set at creation),
+      // then apply incremental updates from `channel_admins_updated`.
+      const adminsByChannel: Record<string, Set<string>> = {}
+      for (const e of created) {
+        const cid = e.payload.channel_id
+        if (!adminsByChannel[cid]) adminsByChannel[cid] = new Set()
+        for (const a of e.payload.admins ?? []) adminsByChannel[cid].add(a)
+      }
+      for (const e of adminsUpdated) {
+        const cid = e.payload.channel_id
+        if (!adminsByChannel[cid]) adminsByChannel[cid] = new Set()
+        for (const a of e.payload.to_add ?? []) adminsByChannel[cid].add(a)
+        for (const a of e.payload.to_remove ?? []) adminsByChannel[cid].delete(a)
+      }
+
+      const latestConfig: Record<string, ChannelConfiguredEvent> = {}
+      for (const e of configured) {
+        latestConfig[e.payload.channel_id] = e.payload
+      }
+
+      // Latest metadata_uri per channel: events arrive ascending (id-sorted),
+      // so the last write wins.
+      const latestMetadataUri: Record<string, string> = {}
+      for (const e of updated) {
+        latestMetadataUri[e.payload.channel_id] = e.payload.metadata_uri
+      }
+
+      const myChannels = created.filter((e) => {
+        const cid = e.payload.channel_id
+        if (hiddenIds.has(cid)) return false
+        if (e.payload.creator === viewerAddress) return true
+        return adminsByChannel[cid]?.has(viewerAddress) ?? false
+      })
+
+      return Promise.all(
+        myChannels.reverse().map(async (event) => {
+          const p = event.payload
+          const config = latestConfig[p.channel_id]
+          const accessMode = accessModeFromMichelson(
+            config?.access_mode ?? p.access_mode
+          )
+          const metadataUri = latestMetadataUri[p.channel_id] ?? p.metadata_uri
+          const metadata = await resolveMetadata(metadataUri, p.channel_id)
+          return {
+            id: p.channel_id,
+            creator: p.creator,
+            createdAt: p.timestamp,
+            metadata,
+            accessMode,
+            merkleRoot: config?.merkle_root ?? p.merkle_root ?? null,
+            merkleUri: decodeBytes(config?.merkle_uri ?? p.merkle_uri) || null,
+            isCreator: p.creator === viewerAddress,
+            isAdmin: adminsByChannel[p.channel_id]?.has(viewerAddress) ?? false,
+          }
+        })
+      )
+    },
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+  )
+}
+
+export type InboxItem = NonNullable<ReturnType<typeof useMyInbox>['data']>[number]
 
 // ---------------------------------------------------------------------------
 // Single channel
@@ -183,12 +318,12 @@ export function useChannel(channelId: string | undefined) {
       const merkleUriDecoded = raw.merkle_uri
         ? decodeBytes(raw.merkle_uri as string)
         : ''
-      let allowlist: string[] | undefined
+      let merkleUsers: string[] | undefined
       if (merkleUriDecoded.startsWith('ipfs://')) {
         try {
-          allowlist = await fetchMsgIpfsJson<string[]>(merkleUriDecoded)
+          merkleUsers = await fetchMsgIpfsJson<string[]>(merkleUriDecoded)
         } catch (e) {
-          console.warn(`Failed to fetch allowlist for channel #${channelId}:`, e)
+          console.warn(`Failed to fetch merkle list for channel #${channelId}:`, e)
         }
       }
 
@@ -196,10 +331,15 @@ export function useChannel(channelId: string | undefined) {
         id: channelId,
         creator: raw.creator as string,
         metadata,
-        accessMode: (Object.keys(raw.access_mode as object)[0] as ChannelAccessMode) ?? 'unrestricted',
-        allowlist,
+        accessMode: accessModeFromMichelson(
+          raw.access_mode as Record<string, unknown>
+        ),
+        merkleUsers,
         merkleRoot: (raw.merkle_root as string) ?? null,
         merkleUri: merkleUriDecoded || null,
+        hidden: Boolean(raw.hidden),
+        messageCount: Number(raw.message_count ?? 0),
+        createdAt: (raw.timestamp as string) ?? null,
         raw,
       }
     },
@@ -216,7 +356,9 @@ export type ChannelDetail = NonNullable<
 // ---------------------------------------------------------------------------
 
 export function useChannelMessages(channelId: string | undefined) {
-  const [allMessages, setAllMessages] = useState<Awaited<ReturnType<typeof parseMessage>>[]>([])
+  const [allMessages, setAllMessages] = useState<
+    Awaited<ReturnType<typeof parseMessage>>[]
+  >([])
   const [hasMore, setHasMore] = useState(false)
   const offsetRef = useRef(0)
   const deletedIdsRef = useRef<Set<string>>(new Set())
@@ -246,7 +388,12 @@ export function useChannelMessages(channelId: string | undefined) {
       const visible = posted.filter(
         (e) => !deletedIdsRef.current.has(e.payload.message_id)
       )
-      const messages = await Promise.all(visible.map(parseMessage))
+      const contents = await fetchMessageContents(visible)
+      const messages = await Promise.all(
+        visible
+          .filter((e) => contents.has(e.payload.message_id))
+          .map((e) => parseMessage(e, contents.get(e.payload.message_id)!))
+      )
       const sorted = messages.reverse()
       setAllMessages(sorted)
       return sorted
@@ -271,7 +418,12 @@ export function useChannelMessages(channelId: string | undefined) {
       const visible = posted.filter(
         (e) => !deletedIdsRef.current.has(e.payload.message_id)
       )
-      const older = await Promise.all(visible.map(parseMessage))
+      const contents = await fetchMessageContents(visible)
+      const older = await Promise.all(
+        visible
+          .filter((e) => contents.has(e.payload.message_id))
+          .map((e) => parseMessage(e, contents.get(e.payload.message_id)!))
+      )
       setAllMessages((prev) => [...older.reverse(), ...prev])
     } finally {
       isLoadingMoreRef.current = false
@@ -289,51 +441,24 @@ export function useChannelMessages(channelId: string | undefined) {
 export type ParsedChannelMessage = Awaited<ReturnType<typeof parseMessage>>
 
 // ---------------------------------------------------------------------------
-// Blocklist check
-// ---------------------------------------------------------------------------
-
-export function useIsBlocked(
-  channelId: string | undefined,
-  address: string | undefined
-) {
-  const { data: storage } = useChannelStorage()
-  const bigmapId = storage?.blocked
-
-  return useSWR(
-    bigmapId && channelId && address
-      ? `msg:channel-blocked:${bigmapId}:${channelId}:${address}`
-      : null,
-    async () => {
-      if (!bigmapId || !channelId || !address) return false
-      const entries = await fetchBigMapKeys(bigmapId, {
-        'key.channel_id': channelId,
-        'key.address': address,
-        limit: '1',
-      })
-      return entries.length > 0
-    },
-    { revalidateOnFocus: false, dedupingInterval: 30_000 }
-  )
-}
-
-// ---------------------------------------------------------------------------
 // Admin checks
 // ---------------------------------------------------------------------------
 
+/**
+ * Read the admin set for a channel from the `channel_admins` bigmap.
+ * The bigmap is keyed by channel_id (nat) with value `set[address]`.
+ */
 export function useChannelAdmins(channelId: string | undefined) {
-  const { data: storage } = useChannelStorage()
-  const bigmapId = storage?.channel_admins
-
   return useSWR(
-    bigmapId && channelId
-      ? `msg:channel-admins:${bigmapId}:${channelId}`
-      : null,
+    channelId ? `msg:channel-admins:${CONTRACT}:${channelId}` : null,
     async () => {
-      if (!bigmapId || !channelId) return []
-      const entries = await fetchBigMapKeys<unknown>(bigmapId, {
-        'key.channel_id': channelId,
-      })
-      return entries.map((e) => (e.key as { address: string }).address)
+      if (!channelId) return []
+      const value = await fetchBigMapValue<string[]>(
+        CONTRACT,
+        'channel_admins',
+        channelId
+      )
+      return value ?? []
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
@@ -343,23 +468,8 @@ export function useIsChannelAdmin(
   channelId: string | undefined,
   address: string | undefined
 ) {
-  const { data: storage } = useChannelStorage()
-  const bigmapId = storage?.channel_admins
-
-  return useSWR(
-    bigmapId && channelId && address
-      ? `msg:channel-admin:${bigmapId}:${channelId}:${address}`
-      : null,
-    async () => {
-      if (!bigmapId || !channelId || !address) return false
-      const entries = await fetchBigMapKeys(bigmapId, {
-        'key.channel_id': channelId,
-        'key.address': address,
-        limit: '1',
-      })
-      return entries.length > 0
-    },
-    { revalidateOnFocus: false, dedupingInterval: 30_000 }
-  )
+  const { data: admins } = useChannelAdmins(channelId)
+  return {
+    data: address && admins ? admins.includes(address) : false,
+  }
 }
-
