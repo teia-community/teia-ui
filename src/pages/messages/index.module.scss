@@ -1,3 +1,4 @@
+@use '@styles/mixins' as *;
 @import '@styles/variables.scss';
 
 .container {
@@ -11,13 +12,68 @@
   margin: 0 0 20px;
 }
 
+.sectionTitle {
+  margin: 24px 0 8px;
+  font-size: $font-small;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
 .info {
-  margin-bottom: 1.5rem;
+  margin: 1rem 0;
   line-height: 1.5;
+  font-size: $font-small;
+  opacity: 0.7;
 
   p {
-    margin-bottom: 0.5rem;
+    margin: 0;
   }
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 1rem 0;
+}
+
+.sectionCard {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--text-color);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+
+  &:hover {
+    border-color: var(--text-color);
+    background-color: var(--border-color);
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-small;
+    opacity: 0.6;
+  }
+}
+
+.actionsRow {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 8px;
+  flex-wrap: wrap;
 }
 
 .faucetLink {
@@ -30,33 +86,100 @@
   }
 }
 
-.sections {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+.dmSearch {
+  position: relative;
+  margin: 8px 0 12px;
 }
 
-.sectionCard {
-  display: block;
-  padding: 20px;
+.dmInputField {
+  width: 100%;
+  padding: 10px 12px;
   border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
   border-radius: 4px;
+  font-size: $font-small;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
   text-decoration: none;
   color: var(--text-color);
-  transition: border-color 0.15s;
 
-  &:hover {
-    border-color: var(--text-color);
+  @include hover {
+    background-color: var(--border-color);
   }
+}
 
-  h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
-  }
+.channelImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 
-  p {
-    margin: 0;
-    font-size: $font-small;
-    opacity: 0.6;
-  }
+.channelImagePlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xsmall;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.channelName {
+  font-size: $font-small;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardTime {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.channelDesc {
+  font-size: $font-small;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.cardMeta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
 }

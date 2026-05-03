@@ -74,8 +74,7 @@ import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
 import ChannelSettings from '@components/channels/ChannelSettings'
-import ConversationList from '@components/dm/ConversationList'
-import ConversationView from '@components/dm/ConversationView'
+import DmRedirect from '@components/channels/DmRedirect'
 import TokenRoomBrowser from '@components/token-gate/TokenRoomBrowser'
 import TokenRoom from '@components/token-gate/TokenRoom'
 
@@ -230,8 +229,7 @@ const router = createBrowserRouter(
         path="messages/channels/:id/settings"
         element={<ChannelSettings />}
       />
-      <Route path="messages/dm" element={<ConversationList />} />
-      <Route path="messages/dm/:address" element={<ConversationView />} />
+      <Route path="messages/dm/:address" element={<DmRedirect />} />
       <Route path="messages/token-chat" element={<TokenRoomBrowser />} />
       <Route
         path="messages/token-chat/:fa2Address/:tokenId"

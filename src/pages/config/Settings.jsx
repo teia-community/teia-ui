@@ -44,6 +44,8 @@ export const Settings = () => {
     setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
+    messageStorageMode,
+    setMessageStorageMode,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -61,6 +63,8 @@ export const Settings = () => {
     st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
+    st.messageStorageMode,
+    st.setMessageStorageMode,
   ])
 
   return (
@@ -156,6 +160,23 @@ export const Settings = () => {
             onCheck={setImgproxy}
             initial={true}
             label={'Use thumbnails to increase performance'}
+          />
+          <Line />
+          <p>
+            <strong>Messages</strong>
+          </p>
+          <Checkbox
+            alt={`click to ${
+              messageStorageMode === 'onchain' ? 'disable' : 'enable'
+            } on-chain message storage. On-chain messages are permanent but cost more; IPFS messages are cheaper (default)`}
+            title={`click to ${
+              messageStorageMode === 'onchain' ? 'disable' : 'enable'
+            } on-chain message storage. On-chain messages are permanent but cost more; IPFS messages are cheaper (default)`}
+            checked={messageStorageMode === 'onchain'}
+            onCheck={(checked) =>
+              setMessageStorageMode(checked ? 'onchain' : 'ipfs')
+            }
+            label={'Store messages on-chain (higher cost, permanent)'}
           />
           {bannerEnabled && (
             <Checkbox

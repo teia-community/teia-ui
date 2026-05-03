@@ -6,13 +6,14 @@ import EmojiButton from '@atoms/emoji-picker/EmojiButton'
 import TokenEmbedPicker from '@atoms/token-embed-picker/TokenEmbedPicker'
 import TokenEmbedCard from '@atoms/token-embed-card/TokenEmbedCard'
 import MentionDropdown from '@atoms/mention-input/MentionDropdown'
+import { useLocalSettings } from '@context/localSettingsStore'
 import styles from './index.module.scss'
 
 /**
  * Shared post form used across channels, DMs, and token gate chats.
  *
  * Props:
- * - onSubmit(text, storageMode, embeds) — called when the user submits
+ * - onSubmit({ text, storageMode, embeds }) — called when the user submits
  * - replyTo — message being replied to (optional)
  * - onCancelReply — callback to cancel reply
  * - disabled — disable the form (e.g. not connected)
@@ -28,7 +29,7 @@ export default function PostForm({
   sending: externalSending,
 }) {
   const [text, setText] = useState('')
-  const [storageMode, setStorageMode] = useState('ipfs')
+  const storageMode = useLocalSettings((st) => st.messageStorageMode)
   const [internalSending, setInternalSending] = useState(false)
   const [mentionQuery, setMentionQuery] = useState(null)
   const [pendingEmbeds, setPendingEmbeds] = useState([])
@@ -192,20 +193,6 @@ export default function PostForm({
                 }}
                 embedCount={pendingEmbeds.length}
               />
-              <Button
-                shadow_box
-                selected={storageMode === 'ipfs'}
-                onClick={() =>
-                  setStorageMode(storageMode === 'onchain' ? 'ipfs' : 'onchain')
-                }
-                title={
-                  storageMode === 'ipfs'
-                    ? 'IPFS storage (lower cost)'
-                    : 'On-chain storage (permanent, higher cost)'
-                }
-              >
-                {storageMode === 'ipfs' ? 'IPFS' : 'On-chain'}
-              </Button>
             </div>
           )}
         </div>
@@ -229,20 +216,6 @@ export default function PostForm({
           }
           embedCount={pendingEmbeds.length}
         />
-        <Button
-          shadow_box
-          selected={storageMode === 'ipfs'}
-          onClick={() =>
-            setStorageMode(storageMode === 'onchain' ? 'ipfs' : 'onchain')
-          }
-          title={
-            storageMode === 'ipfs'
-              ? 'IPFS storage (lower cost)'
-              : 'On-chain storage (permanent, higher cost)'
-          }
-        >
-          {storageMode === 'ipfs' ? 'IPFS' : 'On-chain'}
-        </Button>
         <Button
           shadow_box
           onClick={handleSubmit}

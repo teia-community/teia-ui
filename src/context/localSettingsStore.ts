@@ -9,6 +9,8 @@ import { FEED_LIST, DEFAULT_START_FEED } from '@constants'
 
 type ViewMode = 'single' | 'masonry'
 
+export type MessageStorageMode = 'ipfs' | 'onchain'
+
 export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
@@ -41,6 +43,8 @@ interface LocalSettingsState {
   setViewMode: (mode: ViewMode) => void
   setHasSeenBanner: (seen: boolean) => void
   setZen: (zen: boolean) => void
+  messageStorageMode: MessageStorageMode
+  setMessageStorageMode: (mode: MessageStorageMode) => void
   theme: Theme
   themeDark: Theme
   themeLight: Theme
@@ -67,6 +71,7 @@ const defaultValues = {
   tilted: false,
   imgproxy: true,
   has_seen_banner: false,
+  messageStorageMode: 'ipfs' as MessageStorageMode,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -136,11 +141,13 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),
         setStartFeed: (startFeed) => set({ startFeed }),
+        setMessageStorageMode: (messageStorageMode) =>
+          set({ messageStorageMode }),
       }),
       {
         name: 'settings',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
-        version: 3,
+        version: 4,
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>
@@ -163,6 +170,10 @@ export const useLocalSettings = create<LocalSettingsState>()(
           if (version < 3) {
             // Switch from mainnet RPCs to Shadownet
             persistedState.rpcNode = rpc_nodes[0]
+          }
+
+          if (version < 4) {
+            persistedState.messageStorageMode = 'ipfs'
           }
 
           return persistedState
