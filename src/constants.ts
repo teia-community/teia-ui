@@ -246,16 +246,16 @@ export const SWAP_TYPE_HEN = 'HEN'
 export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one that is used for swapping
 export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
-// Messaging contracts (Shadownet, will be updated for mainnet)
+// Messaging contracts (mainnet). Token-gate contract is still a Shadownet
+// placeholder — will be replaced when the token-gate contract is deployed.
 export const MESSAGING_CHANNELS_V2_CONTRACT =
-  'KT1XQ1vBkxXgikafk6GrgsXwNLgqjKP7Ubq1'
+  'KT1SLApnpdDAWW2MDQUP6B2iNdSzrhahxzUo'
 export const MESSAGING_TOKEN_GATE_CONTRACT =
   'KT1Tp9obwP5zE1LBgCXSZc3Dfs4LYFf6Mbti'
 // Messaging fees (mutez)
 export const MESSAGING_CHANNEL_FEE = 100000
-export const MESSAGING_MESSAGE_FEE = 100000
-// TzKT API for messaging, Shadownet for testing, switch to mainnet on deploy
-export const MESSAGING_TZKT_API = 'https://api.shadownet.tzkt.io'
+export const MESSAGING_MESSAGE_FEE = 25000
+export const MESSAGING_TZKT_API = 'https://api.tzkt.io'
 
 export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 

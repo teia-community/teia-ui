@@ -9,11 +9,7 @@ import { getTimeAgo } from '@utils/time'
 import { useMyInbox } from '@data/messaging/channels'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import UserSearchDropdown from '@components/shared/UserSearchDropdown'
-import { MESSAGING_TZKT_API } from '@constants'
 import styles from './index.module.scss'
-
-const SHADOWNET_RPC = 'https://rpc.shadownet.teztnets.com'
-const SHADOWNET_TZKT = MESSAGING_TZKT_API
 
 function InboxCard({ item, viewer }) {
   const isDm = item.metadata.kind === 'dm'
@@ -95,22 +91,6 @@ export default function MessagesInbox() {
     <Page title="Messages">
       <div className={styles.container}>
         <h2 className={styles.headline}>Messages</h2>
-
-        <div className={styles.info}>
-          <p>
-            Shadownet test environment.{' '}
-            <a
-              href="https://faucet.shadownet.teztnets.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.faucetLink}
-            >
-              Get test tez
-            </a>
-            . RPC: <code>{SHADOWNET_RPC}</code> · TzKT:{' '}
-            <code>{SHADOWNET_TZKT}</code>
-          </p>
-        </div>
 
         <div className={styles.sections}>
           <button

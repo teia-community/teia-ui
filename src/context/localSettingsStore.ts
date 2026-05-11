@@ -14,7 +14,13 @@ export type MessageStorageMode = 'ipfs' | 'onchain'
 export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
-  'https://rpc.shadownet.teztnets.com',
+  'https://mainnet.api.tez.ie',
+  'https://mainnet.smartpy.io',
+  'https://rpc.tzbeta.net',
+  'https://mainnet.tezos.marigold.dev',
+  'https://rpc.tzkt.io/mainnet',
+  'https://mainnet.teia.rocks',
+  'https://teia.art/rpc',
   'custom',
 ] as const
 
@@ -147,7 +153,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
       {
         name: 'settings',
         storage: createJSONStorage(() => localStorage), // or sessionStorage?
-        version: 4,
+        version: 2,
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>
@@ -167,13 +173,14 @@ export const useLocalSettings = create<LocalSettingsState>()(
           // useful to rename keys or restore value, we will first use it for the banner updates.
           persistedState.has_seen_banner = false
 
-          if (version < 3) {
-            // Switch from mainnet RPCs to Shadownet
-            persistedState.rpcNode = rpc_nodes[0]
-          }
-
           if (version < 4) {
             persistedState.messageStorageMode = 'ipfs'
+          }
+
+          if (version < 5) {
+            // Reset to the new default RPC (mainnet) — users previously had
+            // Shadownet persisted while messaging was under test.
+            persistedState.rpcNode = rpc_nodes[0]
           }
 
           return persistedState
