@@ -8,7 +8,7 @@ import {
   configureChannel,
   updateChannelAdmins,
   removeMerkleUsers,
-  hideChannel,
+  setChannelHidden,
 } from '@data/messaging/channel-actions'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
@@ -180,7 +180,7 @@ export default function ChannelSettings() {
       ))
     )
       return
-    await hideChannel(channelId)
+    await setChannelHidden(channelId, true)
     navigate('/messages')
   }
 

@@ -511,21 +511,28 @@ export async function removeMerkleUsers({
   })
 }
 
-export async function hideChannel(channelId: string) {
+/**
+ * Hide or unhide a channel.
+ */
+export async function setChannelHidden(channelId: string, hidden: boolean) {
   const { step, show, showError } = useModalStore.getState()
+  const title = hidden ? 'Hide Channel' : 'Restore Channel'
 
-  step('Hide Channel', 'Waiting for wallet', true)
+  step(title, 'Waiting for wallet', true)
 
   try {
     const contract = await Tezos.wallet.at(CONTRACT)
     const op = await contract.methodsObject
-      .hide_channel(parseInt(channelId))
+      .set_channel_hidden({
+        channel_id: parseInt(channelId),
+        hidden,
+      })
       .send()
     await op.confirmation()
-    show('Hide Channel', 'Channel hidden')
+    show(title, hidden ? 'Channel hidden' : 'Channel restored')
     return op.opHash
   } catch (e) {
-    showError('Hide Channel', e)
+    showError(title, e)
     throw e
   }
 }
