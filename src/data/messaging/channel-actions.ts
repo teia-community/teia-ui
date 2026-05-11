@@ -11,7 +11,7 @@ import {
   MESSAGING_CHANNEL_FEE,
   MESSAGING_MESSAGE_FEE,
 } from '@constants'
-import { Tezos } from '@context/userStore'
+import { Tezos, useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { computeMerkleRoot } from '@utils/merkle'
 import { fetchEventsPage, fetchTransactionsByOpHash } from './api'
@@ -261,7 +261,7 @@ export async function postMessage({
       type: 'teia-channel-message',
       version: 1,
       content,
-      author: '',
+      author: useUserStore.getState().address ?? '',
       timestamp: new Date().toISOString(),
     }
     if (parentId) payload.parentId = parentId
