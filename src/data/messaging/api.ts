@@ -140,6 +140,13 @@ export async function fetchBigMapValuesBulk<V>(
   if (keys.length === 0) return result
 
   const unique = Array.from(new Set(keys))
+  // fall back to singular keys endpoint when only one key is requested.
+  if (unique.length === 1) {
+    const value = await fetchBigMapValue<V>(contract, bigmapName, unique[0])
+    if (value !== null) result.set(unique[0], value)
+    return result
+  }
+
   const CHUNK = 100
   for (let i = 0; i < unique.length; i += CHUNK) {
     const slice = unique.slice(i, i + CHUNK)
