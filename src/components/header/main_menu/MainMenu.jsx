@@ -105,7 +105,7 @@ export const MainMenu = () => {
           />
           <MenuItem
             className={styles.menu_label}
-            label="Channels"
+            label="Public Channels"
             route="publicchannels"
           />
         </div>
