@@ -198,15 +198,15 @@ export default function ChannelSettings() {
         </h2>
 
         <div className={styles.settingsSection}>
-          <h3>Access mode</h3>
+          <h3>Members</h3>
           <select
             className={styles.formInput}
             value={accessMode}
             onChange={(e) => setAccessMode(e.target.value)}
           >
-            <option value="unrestricted">Unrestricted</option>
-            <option value="allowlist">Allowlist (Merkle)</option>
+            <option value="unrestricted">Public</option>
             <option value="closed">Closed (creator + admins only)</option>
+            <option value="allowlist">Big Chat (Merkle)</option>
           </select>
 
           {accessMode === 'allowlist' && (
@@ -311,7 +311,7 @@ export default function ChannelSettings() {
 
         {isCreator && (
           <div className={styles.settingsSection}>
-            <h3>Danger zone</h3>
+            <h3>Danger Zone</h3>
             <Button shadow_box onClick={handleHide} disabled={saving}>
               Hide channel
             </Button>

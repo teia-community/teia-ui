@@ -313,4 +313,10 @@
     margin: 0 0 12px;
     font-size: $font-small;
   }
+
+  select,
+  textarea,
+  input {
+    margin-bottom: 12px;
+  }
 }
