@@ -6,7 +6,12 @@ const CLASS_BY_MODE = {
   unrestricted: styles.badgeUnrestricted,
 }
 
+const LABEL_BY_MODE = {
+  unrestricted: 'open',
+  closed: 'private',
+}
+
 export default function AccessBadge({ mode }) {
   const cls = CLASS_BY_MODE[mode] ?? styles.badgeUnrestricted
-  return <span className={cls}>{mode}</span>
+  return <span className={cls}>{LABEL_BY_MODE[mode] ?? mode}</span>
 }
