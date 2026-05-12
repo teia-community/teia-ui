@@ -12,33 +12,14 @@
   margin: 0 0 20px;
 }
 
-.sectionTitle {
-  margin: 24px 0 8px;
-  font-size: $font-small;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.7;
-}
-
-.info {
-  margin: 1rem 0;
-  line-height: 1.5;
-  font-size: $font-small;
-  opacity: 0.7;
-
-  p {
-    margin: 0;
-  }
-}
-
-.sections {
+.tabs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
   margin: 1rem 0;
 }
 
-.sectionCard {
+.tab {
   display: block;
   width: 100%;
   text-align: left;
@@ -69,29 +50,24 @@
   }
 }
 
-.actionsRow {
+.tabActive {
+  border-color: var(--text-color);
+  background-color: var(--border-color);
+}
+
+.subTabs {
   display: flex;
   gap: 8px;
   margin: 16px 0 8px;
   flex-wrap: wrap;
 }
 
-.faucetLink {
-  color: var(--text-color);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-
-  &:hover {
-    opacity: 0.7;
-  }
-}
-
-.dmSearch {
+.compose {
   position: relative;
-  margin: 8px 0 12px;
+  margin: 16px 0;
 }
 
-.dmInputField {
+.composeInput {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
@@ -104,23 +80,25 @@
 .list {
   display: flex;
   flex-direction: column;
+  margin-top: 16px;
 }
 
-.channelCard {
+.row {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 0;
+  padding: 12px 8px;
   border-bottom: 1px solid var(--border-color);
   text-decoration: none;
   color: var(--text-color);
+  transition: background-color 0.15s;
 
   @include hover {
     background-color: var(--border-color);
   }
 }
 
-.channelImage {
+.avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -128,7 +106,7 @@
   flex-shrink: 0;
 }
 
-.channelImagePlaceholder {
+.avatarFallback {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -137,24 +115,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-xsmall;
+  font-size: $font-small;
   font-weight: 600;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
-.cardContent {
+.rowBody {
   flex: 1;
   min-width: 0;
 }
 
-.cardHeader {
+.rowTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
 
-.channelName {
+.rowTitle {
   font-size: $font-small;
   font-weight: 600;
   overflow: hidden;
@@ -162,13 +140,13 @@
   white-space: nowrap;
 }
 
-.cardTime {
+.rowTime {
   font-size: $font-xsmall;
   opacity: 0.6;
   flex-shrink: 0;
 }
 
-.channelDesc {
+.rowSub {
   font-size: $font-small;
   opacity: 0.6;
   overflow: hidden;
@@ -177,9 +155,27 @@
   margin-top: 2px;
 }
 
-.cardMeta {
+.rowMeta {
   display: flex;
-  gap: 6px;
   align-items: center;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.rowCreator {
+  font-size: $font-xsmall;
+  opacity: 0.5;
+}
+
+.emptyRow {
+  padding: 16px 8px;
+  font-size: $font-small;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  opacity: 0.6;
 }

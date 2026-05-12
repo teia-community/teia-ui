@@ -1,53 +1,68 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
+import { Identicon } from '@atoms/identicons'
 import { useUserStore } from '@context/userStore'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useMyInbox } from '@data/messaging/channels'
+import { useChannelList, useMyInbox } from '@data/messaging/channels'
+import { useUsers } from '@data/swr'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import UserSearchDropdown from '@components/shared/UserSearchDropdown'
+import AccessBadge from '@components/channels/AccessBadge'
 import styles from './index.module.scss'
 
-function InboxCard({ item, viewer }) {
+function InboxRow({ item, viewer, users }) {
   const isDm = item.metadata.kind === 'dm'
   const peer = isDm
     ? (item.metadata.participants ?? []).find((a) => a !== viewer)
     : null
+
+  const peerUser = peer ? users[peer] : undefined
+  const creatorUser = !isDm && item.creator ? users[item.creator] : undefined
+
   const title = isDm
-    ? peer
-      ? walletPreview(peer)
-      : item.metadata.name || 'DM'
+    ? peerUser?.alias ||
+      (peer ? walletPreview(peer) : item.metadata.name || 'DM')
     : item.metadata.name || `Channel #${item.id}`
 
   return (
-    <Link to={`/messages/channels/${item.id}`} className={styles.channelCard}>
-      {item.metadata?.image ? (
+    <Link to={`/messages/channels/${item.id}`} className={styles.row}>
+      {isDm ? (
+        <Identicon
+          address={peer}
+          logo={peerUser?.logo}
+          className={styles.avatar}
+        />
+      ) : item.metadata?.image ? (
         <img
           src={msgIpfsToUrl(item.metadata.image)}
           alt=""
-          className={styles.channelImage}
+          className={styles.avatar}
         />
       ) : (
-        <div className={styles.channelImagePlaceholder}>
-          {(title || '#')[0].toUpperCase()}
-        </div>
+        <div className={styles.avatarFallback}>#</div>
       )}
-      <div className={styles.cardContent}>
-        <div className={styles.cardHeader}>
-          <span className={styles.channelName}>{title}</span>
-          <span className={styles.cardTime}>{getTimeAgo(item.createdAt)}</span>
+      <div className={styles.rowBody}>
+        <div className={styles.rowTop}>
+          <span className={styles.rowTitle}>{title}</span>
+          <span className={styles.rowTime}>{getTimeAgo(item.createdAt)}</span>
         </div>
         {!isDm && item.metadata?.description && (
-          <div className={styles.channelDesc}>{item.metadata.description}</div>
+          <div className={styles.rowSub}>{item.metadata.description}</div>
         )}
-        <div className={styles.cardMeta}>
-          <span style={{ fontSize: '11px', opacity: 0.5 }}>
-            {item.isCreator ? 'creator' : 'admin'}
-          </span>
-        </div>
+        {!isDm && (
+          <div className={styles.rowMeta}>
+            <AccessBadge mode={item.accessMode} />
+            {item.creator && (
+              <span className={styles.rowCreator}>
+                {creatorUser?.alias || walletPreview(item.creator)}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   )
@@ -56,27 +71,58 @@ function InboxCard({ item, viewer }) {
 export default function MessagesInbox() {
   const address = useUserStore((st) => st.address)
   const navigate = useNavigate()
-  const { data: inbox, isLoading } = useMyInbox(address)
+  const { data: inbox, isLoading: loadingInbox } = useMyInbox(address)
+  const { data: allChannels, isLoading: loadingAll } = useChannelList()
 
+  const [activeTab, setActiveTab] = useState('channels')
+  const [channelFilter, setChannelFilter] = useState('all')
   const [dmInput, setDmInput] = useState('')
-  const [showDmSearch, setShowDmSearch] = useState(false)
   const dmInputRef = useRef(null)
 
   useEffect(() => {
-    if (showDmSearch) dmInputRef.current?.focus()
-  }, [showDmSearch])
+    if (activeTab === 'dm') dmInputRef.current?.focus()
+  }, [activeTab])
 
   const startDm = (peer) => {
     if (!peer) return
     navigate(`/messages/dm/${peer}`)
   }
 
+  const dms = useMemo(
+    () => (inbox ?? []).filter((c) => c.metadata.kind === 'dm'),
+    [inbox]
+  )
+  const myChannels = useMemo(
+    () => (inbox ?? []).filter((c) => c.metadata.kind !== 'dm'),
+    [inbox]
+  )
+
+  const displayedChannels =
+    channelFilter === 'my' ? myChannels : allChannels ?? []
+  const channelsLoading = channelFilter === 'my' ? loadingInbox : loadingAll
+
+  // Collect every address we need to alias-resolve in one batch:
+  // DM peers + creators of the channel rows we're about to render.
+  const lookupAddresses = useMemo(() => {
+    const set = new Set()
+    for (const dm of dms) {
+      const peer = (dm.metadata.participants ?? []).find((a) => a !== address)
+      if (peer) set.add(peer)
+    }
+    for (const ch of displayedChannels) {
+      if (ch.creator) set.add(ch.creator)
+    }
+    return [...set]
+  }, [dms, displayedChannels, address])
+
+  const [users] = useUsers(lookupAddresses)
+
   if (!address) {
     return (
       <Page title="Messages">
         <div className={styles.container}>
           <h2 className={styles.headline}>Messages</h2>
-          <div style={{ padding: 40, textAlign: 'center', opacity: 0.6 }}>
+          <div className={styles.emptyState}>
             Connect your wallet to see your messages.
           </div>
         </div>
@@ -84,95 +130,125 @@ export default function MessagesInbox() {
     )
   }
 
-  const dms = (inbox ?? []).filter((c) => c.metadata.kind === 'dm')
-  const channels = (inbox ?? []).filter((c) => c.metadata.kind !== 'dm')
-
   return (
     <Page title="Messages">
       <div className={styles.container}>
         <h2 className={styles.headline}>Messages</h2>
 
-        <div className={styles.sections}>
+        <div className={styles.tabs}>
           <button
             type="button"
-            className={styles.sectionCard}
-            onClick={() => setShowDmSearch((s) => !s)}
+            className={`${styles.tab} ${
+              activeTab === 'channels' ? styles.tabActive : ''
+            }`}
+            onClick={() => setActiveTab('channels')}
+            aria-pressed={activeTab === 'channels'}
+          >
+            <h3>Channels</h3>
+            <p>Public and private group chat rooms</p>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.tab} ${
+              activeTab === 'dm' ? styles.tabActive : ''
+            }`}
+            onClick={() => setActiveTab('dm')}
+            aria-pressed={activeTab === 'dm'}
           >
             <h3>Direct Messages</h3>
             <p>Private conversations with other users</p>
           </button>
-
-          <Link to="/messages/channels" className={styles.sectionCard}>
-            <h3>Channels</h3>
-            <p>Public and private group chat rooms</p>
-          </Link>
-
-          <Link to="/messages/token-chat" className={styles.sectionCard}>
-            <h3>Token Chat</h3>
-            <p>Chat rooms gated by token ownership</p>
-          </Link>
         </div>
 
-        {showDmSearch && (
-          <div className={styles.dmSearch}>
-            <input
-              type="text"
-              placeholder="Recipient address or name"
-              value={dmInput}
-              onChange={(e) => setDmInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && dmInput.startsWith('tz')) {
-                  startDm(dmInput.trim())
-                }
-              }}
-              className={styles.dmInputField}
-              ref={dmInputRef}
-            />
-            {dmInput.length >= 2 && !dmInput.startsWith('tz') && (
-              <UserSearchDropdown
-                query={dmInput}
-                onSelect={(user) => {
-                  setShowDmSearch(false)
-                  setDmInput('')
-                  startDm(user.user_address)
-                }}
-                onClose={() => setShowDmSearch(false)}
-              />
-            )}
-          </div>
+        {activeTab === 'channels' && (
+          <>
+            <div className={styles.subTabs}>
+              <Button
+                shadow_box
+                selected={channelFilter === 'all'}
+                onClick={() => setChannelFilter('all')}
+              >
+                All
+              </Button>
+              <Button
+                shadow_box
+                selected={channelFilter === 'my'}
+                onClick={() => setChannelFilter('my')}
+              >
+                My Channels
+              </Button>
+            </div>
+
+            {channelsLoading && <Loading />}
+
+            <div className={styles.list}>
+              {displayedChannels.map((ch) => (
+                <InboxRow
+                  key={ch.id}
+                  item={ch}
+                  viewer={address}
+                  users={users}
+                />
+              ))}
+              {!channelsLoading && displayedChannels.length === 0 && (
+                <div className={styles.emptyRow}>
+                  {channelFilter === 'my'
+                    ? "You're not in any channels yet."
+                    : 'No channels found.'}
+                </div>
+              )}
+            </div>
+          </>
         )}
 
-        <div className={styles.actionsRow}>
-          <Link to="/messages/channels/create">
-            <Button shadow_box>New Channel</Button>
-          </Link>
-        </div>
-
-        {isLoading && <Loading />}
-
-        <h3 className={styles.sectionTitle}>Direct Messages</h3>
-        <div className={styles.list}>
-          {dms.map((item) => (
-            <InboxCard key={item.id} item={item} viewer={address} />
-          ))}
-          {!isLoading && dms.length === 0 && (
-            <div style={{ padding: 20, textAlign: 'center', opacity: 0.6 }}>
-              No DMs yet. Click "Direct Messages" above to start one.
+        {activeTab === 'dm' && (
+          <>
+            <div className={styles.compose}>
+              <input
+                type="text"
+                placeholder="Recipient address or name"
+                value={dmInput}
+                onChange={(e) => setDmInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && dmInput.startsWith('tz')) {
+                    startDm(dmInput.trim())
+                  }
+                }}
+                className={styles.composeInput}
+                ref={dmInputRef}
+              />
+              {dmInput.length >= 2 && !dmInput.startsWith('tz') && (
+                <UserSearchDropdown
+                  query={dmInput}
+                  onSelect={(user) => {
+                    setDmInput('')
+                    startDm(user.user_address)
+                  }}
+                  onClose={() => setDmInput('')}
+                />
+              )}
             </div>
-          )}
-        </div>
 
-        <h3 className={styles.sectionTitle}>Channels</h3>
-        <div className={styles.list}>
-          {channels.map((item) => (
-            <InboxCard key={item.id} item={item} viewer={address} />
-          ))}
-          {!isLoading && channels.length === 0 && (
-            <div style={{ padding: 20, textAlign: 'center', opacity: 0.6 }}>
-              You're not in any channels yet.
+            {loadingInbox && <Loading />}
+
+            <div className={styles.list}>
+              {dms.map((item) => (
+                <InboxRow
+                  key={item.id}
+                  item={item}
+                  viewer={address}
+                  users={users}
+                />
+              ))}
+              {!loadingInbox && dms.length === 0 && (
+                <div className={styles.emptyRow}>
+                  No DMs yet. Enter a recipient above to start one.
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </Page>
   )
