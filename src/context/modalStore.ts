@@ -18,6 +18,8 @@ interface ModalStore {
   progress: boolean
   confirm: boolean
   confirmCallback?: () => void
+  /** When set, the feedback modal renders a Cancel button alongside Confirm. */
+  cancelCallback?: () => void
   /** Optional React content below markdown (e.g. post-mint inline swap). */
   footerSlot?: ReactNode
   /** Runs once when the user closes a modal that had footerSlot / extras. */
@@ -31,6 +33,8 @@ interface ModalStore {
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
   step: (title: string, message?: string, start?: boolean) => void
+  /** Yes/no prompt. Resolves true on confirm, false on cancel/dismiss. */
+  ask: (title: string, message?: string) => Promise<boolean>
   close: () => void
 }
 
@@ -51,6 +55,7 @@ ${message || ''}`,
         progress: false,
         visible: true,
         confirm: true,
+        cancelCallback: undefined,
         footerSlot,
         onCloseExtras,
         confirmCallback: () => {
@@ -85,6 +90,7 @@ ${message || ''}`,
         progress: true,
         visible: true,
         confirm: false,
+        cancelCallback: undefined,
         footerSlot: undefined,
         onCloseExtras: undefined,
         message: `# ${title}
@@ -92,10 +98,34 @@ ${message}`,
       })
     },
 
+    ask: (title, message) =>
+      new Promise<boolean>((resolve) => {
+        const finish = (ok: boolean) => {
+          set({
+            visible: false,
+            confirmCallback: undefined,
+            cancelCallback: undefined,
+          })
+          resolve(ok)
+        }
+        set({
+          message: `# ${title}
+${message || ''}`,
+          progress: false,
+          visible: true,
+          confirm: true,
+          footerSlot: undefined,
+          onCloseExtras: undefined,
+          confirmCallback: () => finish(true),
+          cancelCallback: () => finish(false),
+        })
+      }),
+
     close: () => {
       set({
         visible: false,
         progress: false,
+        cancelCallback: undefined,
         footerSlot: undefined,
         onCloseExtras: undefined,
       })

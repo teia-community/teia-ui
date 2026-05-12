@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import { shallow } from 'zustand/shallow'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { fadeIn } from '@utils/motion'
@@ -7,15 +8,28 @@ import { Markdown } from '@components/markdown'
 import { useModalStore } from '@context/modalStore'
 
 export const FeedbackComponent = () => {
-  const [visible, message, progress, confirm, confirmCallback, footerSlot] =
-    useModalStore((st) => [
+  const [
+    visible,
+    message,
+    progress,
+    confirm,
+    confirmCallback,
+    cancelCallback,
+    footerSlot,
+  ] = useModalStore(
+    (st) => [
       st.visible,
       st.message,
       st.progress,
       st.confirm,
       st.confirmCallback,
+      st.cancelCallback,
       st.footerSlot,
-    ])
+    ],
+    shallow
+  )
+
+  const isPrompt = Boolean(cancelCallback)
 
   return (
     <AnimatePresence>
@@ -26,9 +40,15 @@ export const FeedbackComponent = () => {
             {footerSlot}
             <div className={styles.loader}>{progress && <Loading />}</div>
             {confirm && (
-              <div className={styles.buttons} style={{ marginTop: '1rem' }}>
+              <div
+                className={styles.buttons}
+                style={{ marginTop: '1rem', gap: '0.5rem' }}
+              >
+                {isPrompt && (
+                  <Button onClick={() => cancelCallback()}>cancel</Button>
+                )}
                 <Button shadow_box onClick={() => confirmCallback()}>
-                  close
+                  {isPrompt ? 'confirm' : 'close'}
                 </Button>
               </div>
             )}
