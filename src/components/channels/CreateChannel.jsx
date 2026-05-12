@@ -156,20 +156,18 @@ export default function CreateChannel() {
               </label>
 
               <label className={styles.formLabel}>
-                Access mode
+                Members
                 <select
                   className={styles.formInput}
                   value={accessMode}
                   onChange={(e) => setAccessMode(e.target.value)}
                 >
-                  <option value="unrestricted">
-                    Unrestricted (anyone can post)
+                  <option value="unrestricted">Public (anyone can post)</option>
+                  <option value="closed">
+                    Private (only creator + admins can post)
                   </option>
                   <option value="allowlist">
                     Allowlist (specific addresses, Merkle proofs)
-                  </option>
-                  <option value="closed">
-                    Closed (only creator + admins can post)
                   </option>
                 </select>
               </label>
