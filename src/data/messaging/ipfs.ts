@@ -6,7 +6,7 @@ const MSG_IPFS_PROXY =
 const FALLBACK_GATEWAYS = [
   `${MSG_IPFS_PROXY}/ipfs/`,
   'https://ipfs.io/ipfs/',
-  'https://cloudflare-ipfs.com/ipfs/',
+  'https://gateway.pinata.cloud/ipfs/',
 ]
 
 const MAX_UPLOAD_RETRIES = 2
