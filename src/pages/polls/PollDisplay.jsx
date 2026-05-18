@@ -4,6 +4,7 @@ import { Page } from '@atoms/layout'
 import { RootErrorBoundary } from '@atoms/error'
 import { PaginationButtons } from '@atoms/button'
 import { useStorage, usePolls } from '@data/swr'
+import { PollComments } from '@components/poll-comments'
 import LoadingPollsMessage from './LoadingPollsMessage'
 import Poll from './Poll'
 import styles from '@style'
@@ -38,6 +39,10 @@ export default function PollDisplay() {
           <>
             <section className={styles.section}>
               <Poll pollId={id} />
+            </section>
+
+            <section className={styles.section}>
+              <PollComments pollId={id} />
             </section>
 
             <PaginationButtons

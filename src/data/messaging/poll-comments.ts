@@ -1,0 +1,156 @@
+/**
+ * SWR hooks for poll_comments data via TzKT events and bigmap reads.
+ *
+ */
+import useSWR from 'swr'
+import { bytesToString } from '@taquito/utils'
+import { POLL_COMMENTS_CONTRACT } from '@constants'
+import {
+  fetchAllEvents,
+  fetchBigMapValue,
+  fetchBigMapValuesBulk,
+} from './api'
+import { fetchMsgIpfsJson } from './ipfs'
+import type {
+  CommentPostedEvent,
+  CommentPayload,
+  PollComment,
+  TzktEvent,
+} from './poll-comments-types'
+
+const CONTRACT = POLL_COMMENTS_CONTRACT
+
+function decodeBytes(hex: string | null | undefined): string {
+  try {
+    return hex ? bytesToString(hex) : ''
+  } catch {
+    return ''
+  }
+}
+
+interface CommentBigmapRow {
+  poll_id: string
+  sender: string
+  content: string
+  parent_id: string | null
+  hidden: boolean
+  timestamp: string
+}
+
+async function parseComment(
+  event: TzktEvent<CommentPostedEvent>,
+  row: CommentBigmapRow
+): Promise<PollComment> {
+  const p = event.payload
+  const raw = decodeBytes(row.content)
+  const isIpfs = raw.startsWith('ipfs://')
+  let parsed: CommentPayload | null = null
+
+  try {
+    if (isIpfs) {
+      const json = await fetchMsgIpfsJson<CommentPayload>(raw)
+      if (json.type === 'teia-poll-comment') parsed = json
+    } else if (raw) {
+      const json = JSON.parse(raw)
+      if (json.type === 'teia-poll-comment') parsed = json
+    }
+  } catch (e) {
+    console.warn(`Failed to parse comment #${p.comment_id}:`, e)
+  }
+
+  return {
+    id: p.comment_id,
+    pollId: p.poll_id,
+    sender: row.sender,
+    parentId: row.parent_id,
+    timestamp: p.timestamp,
+    // Authoritative: sender, moderator, and any future hide path all
+    // converge in the `comments` bigmap, so reading it here catches every source.
+    hidden: Boolean(row.hidden),
+    content: parsed?.content ?? raw,
+    isIpfs,
+  }
+}
+
+/**
+ * Load all comments for a poll. Returns ascending (oldest first).
+ *
+ * Reads `hidden` directly from the comments bigmap rather than replaying
+ * the various hide events (`comment_hidden_set`, `comment_moderated`).
+ * All hide paths — sender, single-sig moderator, future governance — end
+ * up writing to the same bigmap field, so one read covers everything.
+ */
+export function usePollComments(pollId: string | undefined) {
+  return useSWR(
+    pollId && CONTRACT
+      ? `msg:poll-comments:${CONTRACT}:${pollId}`
+      : null,
+    async () => {
+      if (!pollId) return [] as PollComment[]
+
+      const posted = await fetchAllEvents<CommentPostedEvent>(
+        CONTRACT,
+        'comment_posted',
+        { 'payload.poll_id': pollId }
+      )
+
+      const ids = posted.map((e) => e.payload.comment_id)
+      const rows = await fetchBigMapValuesBulk<CommentBigmapRow>(
+        CONTRACT,
+        'comments',
+        ids
+      )
+
+      const comments = await Promise.all(
+        posted
+          .filter((e) => rows.has(e.payload.comment_id))
+          .map((e) => parseComment(e, rows.get(e.payload.comment_id)!))
+      )
+      return comments
+    },
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+  )
+}
+
+/**
+ * Check whether an address is on the contract's ban list. Banned addresses
+ * are blocked from `post_comment` and `edit_comment` on-chain. We surface
+ * this in the UI so banned users see a clear notice instead of a failed tx.
+ *
+ * The `banned` bigmap stores keys with unit values, so a non-null lookup
+ * means the address is banned.
+ */
+export function useIsBanned(address: string | undefined) {
+  return useSWR<boolean>(
+    address && CONTRACT
+      ? `msg:poll-comments-banned:${CONTRACT}:${address}`
+      : null,
+    async () => {
+      if (!address) return false
+      const row = await fetchBigMapValue<unknown>(CONTRACT, 'banned', address)
+      return row !== null
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+}
+
+/**
+ * Read a single comment from the bigmap. Useful for revalidating one row
+ * after edit/hide without refetching the full list.
+ */
+export function useComment(commentId: string | undefined) {
+  return useSWR<CommentBigmapRow | null>(
+    commentId && CONTRACT
+      ? `msg:poll-comment:${CONTRACT}:${commentId}`
+      : null,
+    async () => {
+      if (!commentId) return null
+      return fetchBigMapValue<CommentBigmapRow>(
+        CONTRACT,
+        'comments',
+        commentId
+      )
+    },
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+  )
+}
