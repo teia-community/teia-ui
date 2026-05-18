@@ -1,8 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
-import { useAliases, useDaoTokenBalance } from '@data/swr'
-import { usePollComments, useIsBanned } from '@data/messaging/poll-comments'
+import { useDaoTokenBalance } from '@data/swr'
+import {
+  usePollComments,
+  useIsBanned,
+  useUserProfiles,
+} from '@data/messaging/poll-comments'
 import { postComment } from '@data/messaging/poll-comments-actions'
 import { walletPreview } from '@utils/string'
 import CommentItem from './CommentItem'
@@ -47,7 +51,7 @@ export default function PollComments({ pollId }) {
 
   const { data: comments, isLoading, mutate: refresh } = usePollComments(pollId)
   const [teiaBalance] = useDaoTokenBalance(address)
-  const { data: isBanned } = useIsBanned(address)
+  const { data: isBanned = false } = useIsBanned(address)
   const isHolder = teiaBalance > 0
 
   const { byId, children, roots } = useMemo(
@@ -59,7 +63,7 @@ export default function PollComments({ pollId }) {
     () => Object.values(byId).map((c) => c.sender),
     [byId]
   )
-  const [aliases] = useAliases(senderAddrs)
+  const { data: profiles = {} } = useUserProfiles(senderAddrs)
 
   const handlePost = async ({ text }) => {
     await postComment({
@@ -76,11 +80,12 @@ export default function PollComments({ pollId }) {
       comment={c}
       replies={children[c.id]}
       viewer={address}
-      senderAlias={aliases?.[c.sender] || walletPreview(c.sender)}
+      senderAlias={profiles[c.sender]?.alias || walletPreview(c.sender)}
+      senderLogo={profiles[c.sender]?.logo}
       parent={c.parentId ? byId[c.parentId] : null}
       parentAlias={
         c.parentId && byId[c.parentId]
-          ? aliases?.[byId[c.parentId].sender] ||
+          ? profiles[byId[c.parentId].sender]?.alias ||
             walletPreview(byId[c.parentId].sender)
           : undefined
       }

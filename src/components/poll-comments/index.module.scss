@@ -20,7 +20,7 @@
   }
 
   .count {
-    font-size: $font-small;
+    font-size: $font-body;
     opacity: 0.6;
   }
 }
@@ -35,7 +35,7 @@
   padding: 24px;
   text-align: center;
   opacity: 0.6;
-  font-size: $font-small;
+  font-size: $font-body;
   border: 1px dashed var(--border-color);
   border-radius: 4px;
 }
@@ -60,14 +60,15 @@
 
 .head {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: $font-xsmall;
+  align-items: center;
+  gap: 10px;
+  font-size: $font-small;
   margin-bottom: 4px;
 }
 
 .sender {
   font-weight: 600;
+  font-size: $font-body;
   color: var(--text-color);
   text-decoration: none;
 
@@ -80,19 +81,8 @@
   opacity: 0.5;
 }
 
-.ipfsBadge {
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-color);
-  background: var(--border-color);
-  padding: 1px 4px;
-  border-radius: 3px;
-}
-
 .content {
-  font-size: $font-small;
+  font-size: $font-body;
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
@@ -101,7 +91,7 @@
 .replyTo {
   @include resetButton;
   display: block;
-  font-size: $font-xsmall;
+  font-size: $font-small;
   font-style: italic;
   opacity: 0.6;
   text-align: left;
@@ -114,26 +104,76 @@
   }
 }
 
-.actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 6px;
-  font-size: $font-xsmall;
+// --- Actions menu (kebab toggle + popover) ---
+
+.menuWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.menuToggle {
+  @include resetButton;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: var(--text-color);
+  font-size: $font-large;
+  line-height: 1;
   opacity: 0.5;
-  transition: opacity 0.15s;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
 
-  button {
-    @include resetButton;
-    color: var(--text-color);
-
-    &:hover {
-      opacity: 1;
-    }
+  &:hover,
+  &[aria-expanded='true'] {
+    opacity: 1;
+    background: var(--border-color);
   }
 }
 
-.comment:hover .actions {
-  opacity: 0.9;
+.menuPopover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  min-width: 120px;
+}
+
+.menuItem {
+  @include resetButton;
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  color: var(--text-color);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--border-color);
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 .replies {
@@ -163,7 +203,7 @@
   max-height: 240px;
   padding: 8px 12px;
   font-family: var(--text-font);
-  font-size: $font-small;
+  font-size: $font-body;
   line-height: 1.4;
   background: var(--background-color);
   color: var(--text-color);
@@ -191,7 +231,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  font-size: $font-xsmall;
+  font-size: $font-small;
   background: var(--border-color);
   border-radius: 4px;
 
@@ -217,7 +257,7 @@
 .notice {
   padding: 12px;
   text-align: center;
-  font-size: $font-small;
+  font-size: $font-body;
   opacity: 0.7;
   border: 1px dashed var(--border-color);
   border-radius: 4px;

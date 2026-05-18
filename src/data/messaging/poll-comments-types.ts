@@ -20,17 +20,6 @@ export interface CommentPostedEvent {
   timestamp: string
 }
 
-export interface CommentEditedEvent {
-  comment_id: string
-  sender: string
-}
-
-export interface CommentHiddenSetEvent {
-  comment_id: string
-  hidden: boolean
-  updated_by: string
-}
-
 // --- Domain types ---
 
 export interface CommentPayload {

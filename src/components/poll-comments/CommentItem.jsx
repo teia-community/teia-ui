@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
@@ -14,6 +14,7 @@ export default function CommentItem({
   replies,
   viewer,
   senderAlias,
+  senderLogo,
   parent,
   parentAlias,
   onReply,
@@ -23,6 +24,20 @@ export default function CommentItem({
   const [editing, setEditing] = useState(false)
   const [editText, setEditText] = useState(comment.content)
   const [busy, setBusy] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+
+  // Close the actions menu when clicking outside of it.
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
 
   const scrollToParent = () => {
     if (!comment.parentId) return
@@ -41,6 +56,7 @@ export default function CommentItem({
         commentId: comment.id,
         pollId: comment.pollId,
         content: trimmed,
+        parentId: comment.parentId ?? undefined,
       })
       setEditing(false)
     } catch (e) {
@@ -66,17 +82,74 @@ export default function CommentItem({
     }
   }, [comment, busy])
 
+  const canShowMenu = !editing && (isOwn || (viewer && onReply))
+
   return (
     <>
       <div id={`comment-${comment.id}`} className={styles.comment}>
-        <Identicon address={comment.sender} className={styles.avatar} />
+        <Identicon
+          address={comment.sender}
+          logo={senderLogo}
+          className={styles.avatar}
+        />
         <div className={styles.body}>
           <div className={styles.head}>
             <Link to={`/tz/${comment.sender}`} className={styles.sender}>
               {senderAlias || walletPreview(comment.sender)}
             </Link>
-            {comment.isIpfs && <span className={styles.ipfsBadge}>IPFS</span>}
             <span className={styles.time}>{getTimeAgo(comment.timestamp)}</span>
+            {canShowMenu && (
+              <div className={styles.menuWrapper} ref={menuRef}>
+                <button
+                  type="button"
+                  className={styles.menuToggle}
+                  aria-label="Comment actions"
+                  aria-expanded={menuOpen}
+                  onClick={() => setMenuOpen((o) => !o)}
+                >
+                  ⋯
+                </button>
+                {menuOpen && (
+                  <div className={styles.menuPopover}>
+                    {viewer && onReply && (
+                      <button
+                        className={styles.menuItem}
+                        onClick={() => {
+                          setMenuOpen(false)
+                          onReply(comment)
+                        }}
+                      >
+                        Reply
+                      </button>
+                    )}
+                    {isOwn && (
+                      <>
+                        <button
+                          className={styles.menuItem}
+                          onClick={() => {
+                            setMenuOpen(false)
+                            setEditing(true)
+                          }}
+                          disabled={busy}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className={styles.menuItem}
+                          onClick={() => {
+                            setMenuOpen(false)
+                            handleHide()
+                          }}
+                          disabled={busy}
+                        >
+                          Hide
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {parent && (
@@ -98,10 +171,15 @@ export default function CommentItem({
                 rows={3}
               />
               <div className={styles.editActions}>
-                <button onClick={handleEditSave} disabled={busy}>
+                <button
+                  className={styles.menuItem}
+                  onClick={handleEditSave}
+                  disabled={busy}
+                >
                   {busy ? 'Saving...' : 'Save'}
                 </button>
                 <button
+                  className={styles.menuItem}
                   onClick={() => {
                     setEditing(false)
                     setEditText(comment.content)
@@ -114,24 +192,6 @@ export default function CommentItem({
             </div>
           ) : (
             <div className={styles.content}>{comment.content}</div>
-          )}
-
-          {!editing && (
-            <div className={styles.actions}>
-              {viewer && onReply && (
-                <button onClick={() => onReply(comment)}>reply</button>
-              )}
-              {isOwn && (
-                <>
-                  <button onClick={() => setEditing(true)} disabled={busy}>
-                    edit
-                  </button>
-                  <button onClick={handleHide} disabled={busy}>
-                    hide
-                  </button>
-                </>
-              )}
-            </div>
           )}
         </div>
       </div>

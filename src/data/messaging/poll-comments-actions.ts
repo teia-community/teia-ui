@@ -42,10 +42,6 @@ function invalidatePoll(pollId: string) {
   mutate(`msg:poll-comments:${CONTRACT}:${pollId}`)
 }
 
-function invalidateComment(commentId: string) {
-  mutate(`msg:poll-comment:${CONTRACT}:${commentId}`)
-}
-
 async function buildContentBytes(payload: CommentPayload): Promise<string> {
   const ipfsUri = await uploadMsgJsonToIPFS(
     payload as unknown as Record<string, unknown>
@@ -143,7 +139,6 @@ export async function editComment({
     step('Edit Comment', 'Awaiting confirmation...')
     await op.confirmation()
     invalidatePoll(pollId)
-    invalidateComment(commentId)
     show('Edit Comment', 'Comment updated')
     return op.opHash
   } catch (e) {
@@ -179,7 +174,6 @@ export async function setOwnCommentHidden({
     step(title, 'Awaiting confirmation...')
     await op.confirmation()
     invalidatePoll(pollId)
-    invalidateComment(commentId)
     show(title, hidden ? 'Comment hidden' : 'Comment restored')
     return op.opHash
   } catch (e) {

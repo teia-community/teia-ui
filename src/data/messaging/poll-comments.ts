@@ -11,6 +11,7 @@ import {
   fetchBigMapValuesBulk,
 } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
+import { fetchGraphQL } from '@data/api'
 import type {
   CommentPostedEvent,
   CommentPayload,
@@ -135,22 +136,48 @@ export function useIsBanned(address: string | undefined) {
 }
 
 /**
- * Read a single comment from the bigmap. Useful for revalidating one row
- * after edit/hide without refetching the full list.
+ * Batched lookup of (alias, identicon) for a set of addresses. 
+ * 
+ * This function will be updated with the upcoming channels branch.
+ * 
  */
-export function useComment(commentId: string | undefined) {
-  return useSWR<CommentBigmapRow | null>(
-    commentId && CONTRACT
-      ? `msg:poll-comment:${CONTRACT}:${commentId}`
-      : null,
+interface UserProfile {
+  alias?: string
+  logo?: string
+}
+
+interface TeiaUserRow {
+  user_address: string
+  name?: string | null
+  metadata?: { data?: { identicon?: string | null } | null } | null
+}
+
+export function useUserProfiles(addresses: string[]) {
+  const unique = [...new Set((addresses ?? []).filter(Boolean))].sort()
+  return useSWR<Record<string, UserProfile>>(
+    unique.length > 0 ? `teia-user-profiles:${unique.join(',')}` : null,
     async () => {
-      if (!commentId) return null
-      return fetchBigMapValue<CommentBigmapRow>(
-        CONTRACT,
-        'comments',
-        commentId
+      const result = await fetchGraphQL(
+        `query CommentAuthors($addresses: [String!]!) {
+           teia_users(where: { user_address: { _in: $addresses } }) {
+             user_address
+             name
+             metadata { data }
+           }
+         }`,
+        'CommentAuthors',
+        { addresses: unique }
       )
+      const out: Record<string, UserProfile> = {}
+      for (const row of (result?.data?.teia_users ?? []) as TeiaUserRow[]) {
+        out[row.user_address] = {
+          alias: row.name ?? undefined,
+          logo: row.metadata?.data?.identicon ?? undefined,
+        }
+      }
+      return out
     },
-    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
   )
 }
+
