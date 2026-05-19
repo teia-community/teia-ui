@@ -121,35 +121,61 @@ interface UserState {
     royalties: number
   ) => OperationReturn
 }
-// const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
-export const Tezos = new TezosToolkit(useLocalSettings.getState().getRpcNode())
+const getRpc = () => String(useLocalSettings.getState().getRpcNode())
 
+export const Tezos = new TezosToolkit(getRpc())
 const Packer = new MichelCodecPacker()
 
 const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
-  // Beacon no longer accepts `network` on requestPermissions — set it here (DAppClientOptions).
   network: {
     type: NetworkType.MAINNET,
-    rpcUrl: String(useLocalSettings.getState().getRpcNode()),
+    rpcUrl: getRpc(), // shared read — can't drift from Tezos init
   },
 })
 
 Tezos.setWalletProvider(wallet)
 
-let current: string
+// Call this after a successful sync if the RPC node may have changed
+export const updateRpcProvider = (rpcUrl: string) => {
+  Tezos.setRpcProvider(rpcUrl)
+}
+
+// Passive listener — syncs module-level address state with Beacon events.
+// Not used for auth decisions; prefer wallet.getPKH() or getActiveAccount() for that.
+let activeAddress: string | undefined
+
 wallet.client.subscribeToEvent(
   BeaconEvent.ACTIVE_ACCOUNT_SET,
-  async (account) => {
-    if (!account) {
-      return;
-    }
-    current = account.address
-  },
-);
+  (account) => {
+    activeAddress = account?.address
+  }
+)
 
+export { activeAddress }
+
+const emptyWalletState = {
+  address: undefined,
+  userInfo: undefined,
+  proxyAddress: undefined,
+  proxyName: undefined,
+}
+
+const normalize = (url) => String(url).replace(/\/$/, '')
+
+const applyAccount = async (address, setState) => {
+  if (!address) return null
+  setState({ address })
+  try {
+    const info = await getUser(address, 'user_address')
+    setState({ userInfo: info })
+  } catch (e) {
+    console.warn('Failed to fetch user info:', e)
+  }
+  return address
+}
 
 export const useUserStore = create<UserState>()(
   subscribeWithSelector(
@@ -239,60 +265,55 @@ export const useUserStore = create<UserState>()(
           }
         },
         sync: async (opts) => {
-          const rpcUrl = String(
+          const rpcUrl = normalize(
             opts?.rpcNode || useLocalSettings.getState().getRpcNode()
           )
 
-          // Set the client theme
-          // const theme = JSON.parse(localStorage.getItem('settings:theme'))
-          // await wallet.client.setColorMode(
-          //   ['midnight', 'dark'].includes(theme) ? 'dark' : 'light'
-          // )
-
-          // We check the storage and only do a permission request if we don't have an active account yet
-          // This piece of code should be called on startup to "load" the current address from the user
-          // If the activeAccount is present, no "permission request" is required again, unless the user "disconnects" first.
           let activeAccount = await wallet.client.getActiveAccount()
+
           if (
             activeAccount === undefined ||
-            activeAccount?.network?.rpcUrl !== rpcUrl
+            normalize(activeAccount?.network?.rpcUrl) !== rpcUrl
           ) {
-            // Beacon: network is configured on DAppClient / BeaconWallet constructor, not here.
-            await wallet.requestPermissions()
+            try {
+              await wallet.requestPermissions()
+            } catch (e) {
+              console.warn('Permission request cancelled or failed:', e)
+              return null
+            }
             activeAccount = await wallet.client.getActiveAccount()
-          }
-          const current = await wallet.getPKH()
-          if (current) {
-            const info = await getUser(current)
-            set({
-              address: current,
-              userInfo: info,
-            })
+            updateRpcProvider(rpcUrl)
           }
 
-          return current
-        },
-        unsync: async () => {
-          // This will clear the active account and the next "syncTaquito" will trigger a new sync
-          await wallet.client.disconnect()
-          set({
-            address: undefined,
-            userInfo: undefined,
-            proxyAddress: undefined,
-            proxyName: undefined,
-          })
-        },
-        setAccount: async () => {
-          const current =
-            Tezos !== undefined
-              ? await wallet.client.getActiveAccount()
-              : undefined
-          if (current?.address) {
-            set({
-              userInfo: await getUser(current.address, 'user_address'),
-              address: current.address,
-            })
+          const current = await wallet.getPKH()
+
+          if (!current) {
+            console.warn('No PKH available after sync')
+            return null
           }
+
+          return applyAccount(current, set)
+        },
+
+        unsync: async () => {
+          try {
+            await wallet.client.disconnect()
+          } catch (e) {
+            console.warn('Disconnect failed:', e)
+          }
+          // Always clear local state regardless of disconnect result
+          set(emptyWalletState)
+        },
+
+        setAccount: async () => {
+          // Tezos being defined is a proxy check for wallet readiness
+          if (Tezos === undefined) return null
+
+          const current = await wallet.client.getActiveAccount()
+
+          if (!current?.address) return null
+
+          return applyAccount(current.address, set)
         },
         getBalance: async (address) => {
           if (address) {
@@ -487,7 +508,9 @@ export const useUserStore = create<UserState>()(
               batch = contract.methodsObject.collect(parseInt(listing.swap_id))
             } else if (['OBJKT_ASK', 'OBJKT_ASK_V2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
-              batch = contract.methodsObject.fulfill_ask(parseInt(listing.ask_id))
+              batch = contract.methodsObject.fulfill_ask({
+                ask_id: parseInt(listing.ask_id)
+              })
             } else if (['OBJKT_ASK_V3', 'OBJKT_ASK_V3_PRE', 'OBJKT_ASK_V3_2'].includes(listing.type)) {
               const contract = await Tezos.wallet.at(listing.contract_address)
               batch = contract.methodsObject.fulfill_ask(
