@@ -114,6 +114,30 @@ export function usePollComments(pollId: string | undefined) {
 }
 
 /**
+ * Quick fetch for all comments posted.
+ * 
+ * This function is subject to change.
+ */
+export function useAllPollCommentCounts() {
+  return useSWR<Record<string, number>>(
+    CONTRACT ? `msg:poll-comments-counts:${CONTRACT}` : null,
+    async () => {
+      const posted = await fetchAllEvents<CommentPostedEvent>(
+        CONTRACT,
+        'comment_posted'
+      )
+      const counts: Record<string, number> = {}
+      for (const e of posted) {
+        const id = e.payload.poll_id
+        counts[id] = (counts[id] ?? 0) + 1
+      }
+      return counts
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
+/**
  * Check whether an address is on the contract's ban list. Banned addresses
  * are blocked from `post_comment` and `edit_comment` on-chain. We surface
  * this in the UI so banned users see a clear notice instead of a failed tx.
