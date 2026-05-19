@@ -8,6 +8,7 @@ import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { resolveVerifiedBluesky } from '@utils/bsky'
 
 async function reverseRecord(address) {
   const result = await axios.post(
@@ -36,6 +37,7 @@ export default function Profile({ user }) {
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
+  const [bluesky, setBluesky] = useState(null)
 
   const loadReverseDomain = useCallback(() => {
     reverseRecord(user.address).then((domain) => {
@@ -43,9 +45,22 @@ export default function Profile({ user }) {
     })
   }, [user.address])
 
+  const loadBluesky = useCallback(() => {
+    let active = true
+    setBluesky(null)
+    resolveVerifiedBluesky(user.address).then((result) => {
+      if (active) setBluesky(result)
+    })
+    return () => {
+      active = false
+    }
+  }, [user.address])
+
   useEffect(() => {
     loadReverseDomain()
   }, [loadReverseDomain])
+
+  useEffect(() => loadBluesky(), [loadBluesky])
 
   return (
     <div className={styles.container}>
@@ -80,6 +95,28 @@ export default function Profile({ user }) {
           )}
 
           <div className={styles.socials}>
+            {bluesky?.handle && (
+              <Button
+                alt={`User on Bluesky (@${bluesky.handle}), verified via on-chain signature`}
+                href={`https://bsky.app/profile/${bluesky.did}`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 568 501"
+                  fill="currentColor"
+                  style={{
+                    fill: 'var(--text-color)',
+                    stroke: 'transparent',
+                    marginRight: '10px',
+                  }}
+                >
+                  <path d="M123.121 33.664C188.241 82.553 258.281 181.68 284 234.873c25.719-53.193 95.759-152.32 160.879-201.21C491.866-1.611 568-28.906 568 57.947c0 17.346-9.945 145.713-15.778 166.555-20.275 72.453-94.155 90.933-159.875 79.748C507.222 323.8 536.444 388.56 473.333 453.32c-119.86 122.992-172.272-30.859-185.702-70.281-2.462-7.227-3.614-10.608-3.631-7.733-.017-2.875-1.169.506-3.631 7.733-13.43 39.422-65.842 193.273-185.702 70.281-63.111-64.76-33.889-129.52 80.986-149.071-65.72 11.185-139.6-7.295-159.875-79.748C9.945 203.66 0 75.293 0 57.947 0-28.906 76.134-1.611 123.121 33.664Z" />
+                </svg>
+              </Button>
+            )}
+
             {user.extras?.profile?.twitter && (
               <Button
                 alt={`User profile on Twitter (@${user.extras?.profile?.twitter})`}

@@ -1,4 +1,5 @@
 // ! NOTE - Keep the comments.
+import { Fragment } from 'react'
 import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
@@ -88,12 +89,12 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
                 {[...locationMap.keys()].map((k) => {
                   if (k.startsWith('-')) {
                     return (
-                      <>
-                        <Line className={styles.separator} key={k} />
+                      <Fragment key={k}>
+                        <Line className={styles.separator} />
                         <span className={styles.subtitle}>
                           {locationMap.get(k)}
                         </span>
-                      </>
+                      </Fragment>
                     )
                   }
                   if (locationNeedSync.includes(k)) {
