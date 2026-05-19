@@ -263,6 +263,11 @@
   border-radius: 4px;
 }
 
+.tip {
+  font-size: $font-small;
+  opacity: 0.6;
+}
+
 .editArea {
   display: flex;
   flex-direction: column;

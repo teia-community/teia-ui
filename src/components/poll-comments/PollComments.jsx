@@ -113,6 +113,18 @@ export default function PollComments({ pollId }) {
         </span>
       </div>
 
+      <div className={styles.tip}>
+        Join the conversation with a single TEIA.{' '}
+        <a
+          href="https://quipuswap.com/swap/tez-KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV_0"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Convert XTZ to TEIA on Quipuswap
+        </a>
+        .
+      </div>
+
       {isLoading && <Loading message="Loading comments..." />}
 
       {!isLoading && roots.length === 0 && (
