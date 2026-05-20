@@ -268,6 +268,51 @@
   opacity: 0.6;
 }
 
+.edited {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.history {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--border-color);
+  background: rgba(127, 127, 127, 0.06);
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyHeader {
+  font-size: $font-small;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.historyEmpty {
+  font-size: $font-small;
+  opacity: 0.6;
+}
+
+.historyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.historyMeta {
+  font-size: $font-small;
+  opacity: 0.5;
+}
+
+.historyContent {
+  font-size: $font-body;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .editArea {
   display: flex;
   flex-direction: column;

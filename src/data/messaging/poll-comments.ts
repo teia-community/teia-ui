@@ -15,6 +15,7 @@ import { fetchGraphQL } from '@data/api'
 import type {
   CommentPostedEvent,
   CommentPayload,
+  CommentVersion,
   PollComment,
   TzktEvent,
 } from './poll-comments-types'
@@ -36,6 +37,7 @@ interface CommentBigmapRow {
   parent_id: string | null
   hidden: boolean
   timestamp: string
+  version: string
 }
 
 async function parseComment(
@@ -64,12 +66,13 @@ async function parseComment(
     pollId: p.poll_id,
     sender: row.sender,
     parentId: row.parent_id,
-    timestamp: p.timestamp,
+    timestamp: row.timestamp ?? p.timestamp,
     // Authoritative: sender, moderator, and any future hide path all
     // converge in the `comments` bigmap, so reading it here catches every source.
     hidden: Boolean(row.hidden),
     content: parsed?.content ?? raw,
     isIpfs,
+    version: parseInt(row.version ?? '1') || 1,
   }
 }
 
@@ -113,9 +116,83 @@ export function usePollComments(pollId: string | undefined) {
   )
 }
 
+interface CommentHistoryRow {
+  poll_id: string
+  sender: string
+  content: string
+  parent_id: string | null
+  timestamp: string
+}
+
+/**
+ * Load archived prior versions of a comment from the `comment_history`
+ * bigmap.
+ *
+ * Load only from version > 1
+ */
+export function useCommentHistory(
+  commentId: string | undefined,
+  version: number
+) {
+  const whatWeAreLookingFor = Boolean(commentId) && version > 1 && Boolean(CONTRACT)
+  return useSWR<CommentVersion[]>(
+    whatWeAreLookingFor
+      ? `msg:poll-comments-history:${CONTRACT}:${commentId}:${version}`
+      : null,
+    async () => {
+      const url = new URL(
+        `${import.meta.env.VITE_TZKT_API}/v1/contracts/${CONTRACT}/bigmaps/comment_history/keys`
+      )
+      url.searchParams.set('active', 'true')
+      url.searchParams.set('key.nat_0', String(commentId))
+      url.searchParams.set('select', 'key,value')
+      url.searchParams.set('limit', String(Math.max(version - 1, 1)))
+
+      const res = await fetch(url.toString())
+      if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
+      const rows: {
+        key: { nat_0: string; nat_1: string }
+        value: CommentHistoryRow
+      }[] = await res.json()
+
+      const versions: CommentVersion[] = await Promise.all(
+        rows.map(async (row) => {
+          const v = row.key.nat_1
+          const raw = decodeBytes(row.value.content)
+          const isIpfs = raw.startsWith('ipfs://')
+          let content = raw
+          try {
+            if (isIpfs) {
+              const json = await fetchMsgIpfsJson<CommentPayload>(raw)
+              if (json.type === 'teia-poll-comment') content = json.content
+            } else if (raw) {
+              const json = JSON.parse(raw)
+              if (json.type === 'teia-poll-comment') content = json.content
+            }
+          } catch (e) {
+            console.warn(
+              `Failed to parse history v${v} of comment #${commentId}:`,
+              e
+            )
+          }
+          return {
+            version: parseInt(String(v)) || 0,
+            timestamp: row.value.timestamp,
+            content,
+            isIpfs,
+          }
+        })
+      )
+
+      return versions.sort((a, b) => b.version - a.version)
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+}
+
 /**
  * Quick fetch for all comments posted.
- * 
+ *
  * This function is subject to change.
  */
 export function useAllPollCommentCounts() {

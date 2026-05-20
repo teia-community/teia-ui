@@ -41,4 +41,13 @@ export interface PollComment {
   timestamp: string
   hidden: boolean
   isIpfs: boolean
+  version: number
+}
+
+/** An archived version of a comment, from `comment_history`. */
+export interface CommentVersion {
+  version: number
+  timestamp: string
+  content: string
+  isIpfs: boolean
 }

@@ -7,6 +7,7 @@ import {
   editComment,
   setOwnCommentHidden,
 } from '@data/messaging/poll-comments-actions'
+import { useCommentHistory } from '@data/messaging/poll-comments'
 import styles from './index.module.scss'
 
 export default function CommentItem({
@@ -21,11 +22,17 @@ export default function CommentItem({
   renderReply,
 }) {
   const isOwn = viewer && comment.sender === viewer
+  const isEdited = comment.version > 1
   const [editing, setEditing] = useState(false)
   const [editText, setEditText] = useState(comment.content)
   const [busy, setBusy] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [historyOpen, setHistoryOpen] = useState(false)
   const menuRef = useRef(null)
+  const { data: history, isLoading: historyLoading } = useCommentHistory(
+    historyOpen ? comment.id : undefined,
+    comment.version
+  )
 
   // Close the actions menu when clicking outside of it.
   useEffect(() => {
@@ -82,7 +89,7 @@ export default function CommentItem({
     }
   }, [comment, busy])
 
-  const canShowMenu = !editing && (isOwn || (viewer && onReply))
+  const canShowMenu = !editing && (isOwn || (viewer && onReply) || isEdited)
 
   return (
     <>
@@ -97,7 +104,10 @@ export default function CommentItem({
             <Link to={`/tz/${comment.sender}`} className={styles.sender}>
               {senderAlias || walletPreview(comment.sender)}
             </Link>
-            <span className={styles.time}>{getTimeAgo(comment.timestamp)}</span>
+            <span className={styles.time}>
+              {getTimeAgo(comment.timestamp)}
+              {isEdited && <span className={styles.edited}> · edited</span>}
+            </span>
             {canShowMenu && (
               <div className={styles.menuWrapper} ref={menuRef}>
                 <button
@@ -146,6 +156,17 @@ export default function CommentItem({
                         </button>
                       </>
                     )}
+                    {isEdited && (
+                      <button
+                        className={styles.menuItem}
+                        onClick={() => {
+                          setMenuOpen(false)
+                          setHistoryOpen((o) => !o)
+                        }}
+                      >
+                        {historyOpen ? 'Hide history' : 'History'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -192,6 +213,28 @@ export default function CommentItem({
             </div>
           ) : (
             <div className={styles.content}>{comment.content}</div>
+          )}
+
+          {historyOpen && isEdited && (
+            <div className={styles.history}>
+              <div className={styles.historyHeader}>Edit history</div>
+              {historyLoading && (
+                <div className={styles.historyEmpty}>Loading history...</div>
+              )}
+              {!historyLoading && (!history || history.length === 0) && (
+                <div className={styles.historyEmpty}>
+                  No archived versions found.
+                </div>
+              )}
+              {history?.map((v) => (
+                <div key={v.version} className={styles.historyItem}>
+                  <div className={styles.historyMeta}>
+                    v{v.version} · {getTimeAgo(v.timestamp)}
+                  </div>
+                  <div className={styles.historyContent}>{v.content}</div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
