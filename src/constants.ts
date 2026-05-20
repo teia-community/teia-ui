@@ -248,7 +248,7 @@ export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 
-export const POLL_COMMENTS_CONTRACT = 'KT1HjHTTVa7hc9C2NGQh6H3m2gNKRDZPtg86'
+export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
