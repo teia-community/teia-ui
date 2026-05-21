@@ -522,7 +522,7 @@ export const useUserStore = create<UserState>()(
           return await Tezos.wallet
             .at(MARKETPLACE_CONTRACT_V1)
             .then((c) =>
-              c.methods
+              c.methodsObject
                 .cancel_swap(parseFloat(swap_id))
                 .send({ amount: 0, storageLimit: 310 })
             )
@@ -531,20 +531,25 @@ export const useUserStore = create<UserState>()(
         cancel: async (contract_address, swap_id) => {
           const { proxyAddress, handleOp } = get()
           const step = useModalStore.getState().step
-
           step('Cancel Swap', 'Waiting for wallet', true)
 
           const isSwapTeia = contract_address === MARKETPLACE_CONTRACT_TEIA
+
           if (proxyAddress && isSwapTeia) {
             /* collab contract cancel swap for Teia Marketplace case */
-            const data: any = {
+            const data = {
               marketplaceAddress: contract_address,
               swap_id: swap_id,
             }
+
             const preparedCancel = packData(data, teiaCancelSwapSchema)
             const { packed } = await Packer.packData(preparedCancel)
             const contract = await Tezos.wallet.at(proxyAddress)
-            const batch = contract.methodsObject.execute(teiaCancelSwapLambda, packed)
+
+            const batch = contract.methodsObject.execute({
+              lambda: teiaCancelSwapLambda,
+              packedParams: packed,
+            })
 
             return handleOp(batch, 'Cancel Swap', {
               amount: 0,
@@ -553,12 +558,8 @@ export const useUserStore = create<UserState>()(
           }
 
           /* Marketplace without collab case OR collab on V1/V2 marketplace */
-          const contract = await Tezos.wallet.at(
-            proxyAddress || contract_address
-          )
-
+          const contract = await Tezos.wallet.at(proxyAddress || contract_address)
           const batch = contract.methodsObject.cancel_swap(swap_id)
-
           return handleOp(batch, 'Cancel Swap', {
             amount: 0,
             storageLimit: 310,
