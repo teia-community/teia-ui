@@ -172,7 +172,7 @@ export async function createLambdaSwapCall(
   royalties: number,
   creator: string
 ): Promise<WalletParamsWithKind> {
-  const data: any = {
+  const data = {
     marketplaceAddress,
     params: {
       fa2: objktsAddress,
@@ -190,7 +190,10 @@ export async function createLambdaSwapCall(
   return {
     kind: OpKind.TRANSACTION,
     ...collabContract.methodsObject
-      .execute([teiaSwapLambda, packed])
+      .execute({
+        lambda: teiaSwapLambda,
+        packedParams: packed,
+      })
       .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
   }
 }
