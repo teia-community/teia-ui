@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 RUN : \
-    && npm install; npm run build \
+    && npm ci; npm run build \
     && echo "add_header x-teia-commit-hash $(git rev-parse HEAD);" > /header.conf
 
 FROM openresty/openresty:alpine

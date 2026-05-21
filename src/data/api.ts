@@ -288,6 +288,7 @@ interface TzktMetadata {
 
 interface TzktData {
   data?: TzktMetadata
+  extras?: Record<string, unknown>
 }
 
 /**
