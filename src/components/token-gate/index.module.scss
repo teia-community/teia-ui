@@ -1,0 +1,90 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.headline {
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: $font-small;
+  opacity: 0.6;
+  margin: 0 0 20px;
+}
+
+.browserForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 500px;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: $font-small;
+}
+
+.formInput {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  color: var(--text-color);
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+}
+
+// Token room view
+.tokenRoom {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.tokenHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tokenTitle {
+  font-size: $font-large;
+  font-weight: 600;
+}
+
+.tokenSub {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.messages {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}

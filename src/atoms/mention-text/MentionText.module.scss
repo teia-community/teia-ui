@@ -1,0 +1,59 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.mentionWrapper {
+  position: relative;
+  display: inline;
+}
+
+.mentionLink {
+  color: var(--tag-color, #1a8cd8);
+  text-decoration: none;
+  font-weight: 600;
+
+  @include hover {
+    text-decoration: underline;
+  }
+}
+
+.hoverCard {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hoverAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hoverInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hoverName {
+  font-weight: 600;
+  font-size: $font-small;
+}
+
+.hoverAddr {
+  font-size: $font-xsmall;
+  opacity: 0.5;
+}

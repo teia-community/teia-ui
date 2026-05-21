@@ -1,0 +1,71 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.6;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.channelImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.channelImagePlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xsmall;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.channelName {
+  font-size: $font-small;
+  font-weight: 600;
+}
+
+.cardMeta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.cardTime {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}

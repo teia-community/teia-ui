@@ -166,6 +166,55 @@ export function useAliases(addresses) {
   return [reorderBigmapData(data, undefined, true), mutate]
 }
 
+/**
+ * Batched teia_users lookup for an array of wallet addresses.
+ * Returns { [address]: { alias, logo } } — alias is the registered Teia name,
+ * logo is the IPFS URI (or base64) from metadata.data.identicon.
+ */
+export function useUsers(addresses) {
+  const unique = addresses
+    ? [
+        ...new Set(
+          addresses.filter((a) => typeof a === 'string' && a.length > 0)
+        ),
+      ]
+    : []
+  unique.sort()
+  const key = unique.length > 0 ? `teia_users:${unique.join(',')}` : null
+
+  const { data, mutate } = useSWR(
+    key,
+    async () => {
+      const { data } = await fetchGraphQL(
+        `
+        query BatchUsers($addresses: [String!]!) {
+          teia_users(where: { user_address: { _in: $addresses } }) {
+            user_address
+            name
+            metadata {
+              data
+            }
+          }
+        }
+        `,
+        'BatchUsers',
+        { addresses: unique }
+      )
+      const map = {}
+      for (const u of data?.teia_users ?? []) {
+        map[u.user_address] = {
+          alias: u.name || undefined,
+          logo: u.metadata?.data?.identicon || undefined,
+        }
+      }
+      return map
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+
+  return [data || {}, mutate]
+}
+
 export function useDaoUsersAliases(userAddress, representatives, proposals) {
   const addresses = new Set()
 

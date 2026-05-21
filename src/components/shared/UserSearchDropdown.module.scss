@@ -1,0 +1,56 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.loading {
+  padding: 8px 12px;
+  font-size: $font-small;
+  opacity: 0.6;
+}
+
+.option {
+  @include resetButton;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: $font-small;
+  text-align: left;
+  color: var(--text-color);
+
+  @include hover {
+    background-color: var(--border-color);
+  }
+}
+
+.optionAvatar {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.optionName {
+  font-weight: 600;
+}
+
+.optionAddr {
+  opacity: 0.5;
+  flex-shrink: 0;
+  margin-left: auto;
+}

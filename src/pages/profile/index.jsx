@@ -128,6 +128,7 @@ export default function Display() {
     { title: 'Collabs', to: 'collabs' },
     { title: 'Text', to: 'text' },
     { title: 'Copyrights', to: 'copyrights' },
+    { title: 'Channels', to: 'channels' },
   ]
 
   return (

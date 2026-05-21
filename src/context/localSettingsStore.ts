@@ -9,6 +9,8 @@ import { FEED_LIST, DEFAULT_START_FEED } from '@constants'
 
 type ViewMode = 'single' | 'masonry'
 
+export type MessageStorageMode = 'ipfs' | 'onchain'
+
 export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
@@ -47,6 +49,8 @@ interface LocalSettingsState {
   setViewMode: (mode: ViewMode) => void
   setHasSeenBanner: (seen: boolean) => void
   setZen: (zen: boolean) => void
+  messageStorageMode: MessageStorageMode
+  setMessageStorageMode: (mode: MessageStorageMode) => void
   theme: Theme
   themeDark: Theme
   themeLight: Theme
@@ -68,11 +72,12 @@ const defaultValues = {
   theme: 'dark' as Theme,
   themeDark: 'dark' as Theme,
   themeLight: 'light' as Theme,
-  rpcNode: rpc_nodes[5],
+  rpcNode: rpc_nodes[0],
   customRpcNode: '',
   tilted: false,
   imgproxy: true,
   has_seen_banner: false,
+  messageStorageMode: 'ipfs' as MessageStorageMode,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -115,7 +120,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
           }
           return rpcNode
         },
-        setCustomRpcNode: (customRpcNode: string) => {
+        setCustomRpcNode: async (customRpcNode: string) => {
           if (!customRpcNode || typeof customRpcNode !== 'string') {
             return
           }
@@ -124,20 +129,26 @@ export const useLocalSettings = create<LocalSettingsState>()(
             customRpcNode = `https://${customRpcNode}`
           }
           set({ customRpcNode })
+          if (get().rpcNode === 'custom') {
+            const { Tezos } = await import('./userStore')
+            Tezos.setRpcProvider(customRpcNode)
+          }
         },
         setRpcNode: async (rpcNode) => {
-          // const show = useModalStore.getState().show
           set({ rpcNode })
-          // show(
-          //   'RPC Node Changed',
-          //   'Please reload the page for it to take effect.'
-          // )
-          // await useUserStore.getState().sync({ rpcNode })
+          const resolved =
+            rpcNode === 'custom' ? get().customRpcNode : rpcNode
+          if (resolved && resolved !== 'custom') {
+            const { Tezos } = await import('./userStore')
+            Tezos.setRpcProvider(resolved)
+          }
         },
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),
         setStartFeed: (startFeed) => set({ startFeed }),
+        setMessageStorageMode: (messageStorageMode) =>
+          set({ messageStorageMode }),
       }),
       {
         name: 'settings',
@@ -161,6 +172,16 @@ export const useLocalSettings = create<LocalSettingsState>()(
           // here we can check against the version of the storage and makes updates accordingly.
           // useful to rename keys or restore value, we will first use it for the banner updates.
           persistedState.has_seen_banner = false
+
+          if (version < 4) {
+            persistedState.messageStorageMode = 'ipfs'
+          }
+
+          if (version < 5) {
+            // Reset to the new default RPC (mainnet) — users previously had
+            // Shadownet persisted while messaging was under test.
+            persistedState.rpcNode = rpc_nodes[0]
+          }
 
           return persistedState
         },
