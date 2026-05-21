@@ -334,15 +334,11 @@ export const useUserStore = create<UserState>()(
           return applyAccount(current, set)
         },
 
-        unsync: async () => {
-          // This will clear the active account and the next "syncTaquito" will trigger a new sync
-          try {
-            await wallet.client.disconnect()
-          } catch (e) {
-            console.warn('Disconnect failed:', e)
-          }
-          // Always clear local state regardless of disconnect result
+        unsync: () => {
+          // Clear local state immediately — don't wait for wallet peer notification,
+          // which can hang if the extension is slow or unreachable.
           set(emptyWalletState)
+          wallet.disconnect().catch((e) => console.warn('Disconnect failed:', e))
         },
 
         setAccount: async () => {
@@ -689,7 +685,42 @@ export const useUserStore = create<UserState>()(
       }),
       {
         name: 'user',
-        storage: createJSONStorage(() => localStorage), // or sessionStorage?
+        // Bump this version whenever a Beacon/Taquito upgrade changes the
+        // localStorage format. All persisted state is discarded and the user
+        // will be asked to reconnect — better than a broken unsync button.
+        version: 3,
+        migrate: async () => {
+          // clearActiveAccount is local-only and resolves fast, ensuring
+          // setAccount() on mount won't re-sync from Beacon before migrate returns.
+          // disconnect() notifies wallet peers but can hang — run it in the background.
+          try {
+            await wallet.client.clearActiveAccount()
+          } catch (e) {
+            console.warn('Migration: failed to clear Beacon account:', e)
+          }
+          wallet.disconnect().catch((e) =>
+            console.warn('Migration: disconnect failed:', e)
+          )
+          return {} as UserState
+        },
+        storage: createJSONStorage(() => localStorage),
+        onRehydrateStorage: () => (state) => {
+          if (!state?.address) return
+          // Beacon runs its own migrations and can silently clear account data
+          // when the SDK version changes. If Zustand thinks we're connected but
+          // Beacon has no active account, the stored address is stale — clear it
+          // so the UI doesn't show a phantom connected state.
+          wallet.client
+            .getActiveAccount()
+            .then((account) => {
+              if (!account) {
+                useUserStore.setState(emptyWalletState)
+              }
+            })
+            .catch(() => {
+              useUserStore.setState(emptyWalletState)
+            })
+        },
       }
     )
   )
