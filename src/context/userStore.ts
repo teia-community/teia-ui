@@ -76,7 +76,7 @@ interface UserState {
   /** Wallet sync  */
   sync: (opts?: SyncOptions) => OperationReturn
   /** Wallet unsync  */
-  unsync: () => void
+  unsync: () => Promise<void>
   /** Register SUBJKT  */
   registry: (alias: string, metadata_cid: string) => OperationReturn
   /** Swap token returns the ophash  */
@@ -334,11 +334,14 @@ export const useUserStore = create<UserState>()(
           return applyAccount(current, set)
         },
 
-        unsync: () => {
-          // Clear local state immediately — don't wait for wallet peer notification,
-          // which can hang if the extension is slow or unreachable.
+        unsync: async () => {
           set(emptyWalletState)
-          wallet.disconnect().catch((e) => console.warn('Disconnect failed:', e))
+          // clearActiveAccount is local-only and fast. We do not call disconnect()
+          // here: disconnect() tears down Beacon's transports, which races with a
+          // subsequent sync() call and leaves the transport in a broken state.
+          await wallet.client.clearActiveAccount().catch((e) =>
+            console.warn('Failed to clear Beacon account:', e)
+          )
         },
 
         setAccount: async () => {
@@ -690,17 +693,14 @@ export const useUserStore = create<UserState>()(
         // will be asked to reconnect — better than a broken unsync button.
         version: 3,
         migrate: async () => {
-          // clearActiveAccount is local-only and resolves fast, ensuring
-          // setAccount() on mount won't re-sync from Beacon before migrate returns.
-          // disconnect() notifies wallet peers but can hang — run it in the background.
+          // clearActiveAccount is local-only and fast. Skipping disconnect() for
+          // the same reason as unsync: it tears down transports and can race with
+          // setAccount() or an early sync() call on the next page load.
           try {
             await wallet.client.clearActiveAccount()
           } catch (e) {
             console.warn('Migration: failed to clear Beacon account:', e)
           }
-          wallet.disconnect().catch((e) =>
-            console.warn('Migration: disconnect failed:', e)
-          )
           return {} as UserState
         },
         storage: createJSONStorage(() => localStorage),
