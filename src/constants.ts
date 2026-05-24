@@ -251,6 +251,9 @@ export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000
 
+export const TOKEN_COMMENTS_CONTRACT = 'KT1FXFxUcZvne1ApoSaeZfvmDR73u2BsuFUP'
+export const TOKEN_MESSAGE_FEE = 25000
+
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 
 export const COVER_COMPRESSOR_OPTIONS = {
