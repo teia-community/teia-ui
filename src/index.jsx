@@ -54,6 +54,7 @@ import {
   Info,
   Burn,
   Collectors,
+  Comments,
   History,
   Swap,
   Transfer,
@@ -183,6 +184,7 @@ const router = createBrowserRouter(
         <Route index element={<Info />} />
         <Route path="listings" element={<Collectors />} />
         <Route path="history" element={<History />} />
+        <Route path="comments" element={<Comments />} />
         <Route path="swap" element={<Swap />} />
         <Route path="burn" element={<Burn />} />
         <Route path="transfer" element={<Transfer />} />

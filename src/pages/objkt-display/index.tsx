@@ -41,6 +41,10 @@ const TABS = [
     to: 'history',
   },
   {
+    title: 'Comments',
+    to: 'comments',
+  },
+  {
     title: 'Swap',
     to: 'swap',
     private: true,

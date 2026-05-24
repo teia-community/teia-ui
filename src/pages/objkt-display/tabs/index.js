@@ -1,5 +1,6 @@
 export { Burn } from './Burn'
 export { Collectors } from './Collectors'
+export { Comments } from './Comments'
 export { History } from './History'
 export { Info } from './Info'
 export { Swap } from './Swap'
