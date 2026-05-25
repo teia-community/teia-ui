@@ -85,6 +85,50 @@ export async function fetchBigMapValue<V>(
 }
 
 /**
+ * Look up transactions by operation hash.
+ * Used to resolve channel IDs after creation.
+ */
+export async function fetchTransactionsByOpHash(opHash: string): Promise<
+  {
+    id: number
+    target?: { address: string }
+    parameter?: { entrypoint: string }
+    status: string
+  }[]
+> {
+  const res = await fetch(
+    `${TZKT_API}/v1/operations/transactions/${opHash}`
+  )
+  if (!res.ok) {
+    throw new Error(`TzKT error: ${res.status}`)
+  }
+  return res.json()
+}
+
+/**
+ * Fetch keys from a bigmap by numeric ID.
+ * Supports composite key filtering via params.
+ */
+export async function fetchBigMapKeys<V>(
+  bigmapId: number,
+  params: Record<string, string> = {}
+): Promise<{ key: unknown; value: V }[]> {
+  const url = new URL(`${TZKT_API}/v1/bigmaps/${bigmapId}/keys`)
+  url.searchParams.set('active', 'true')
+  url.searchParams.set('select', 'key,value')
+
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value)
+  }
+
+  const res = await fetch(url.toString())
+  if (!res.ok) {
+    throw new Error(`TzKT error: ${res.status}`)
+  }
+  return res.json()
+}
+
+/**
  * Bulk-fetch values from a named bigmap for a list of keys.
  * Returns a Map keyed by the string form of each key.
  */

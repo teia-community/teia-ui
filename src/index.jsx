@@ -66,6 +66,15 @@ import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
+import ProfileChannels from '@pages/profile/channels'
+
+// Messaging
+import MessagesInbox from '@pages/messages'
+import ChannelList from '@components/channels/ChannelList'
+import ChannelView from '@components/channels/ChannelView'
+import CreateChannel from '@components/channels/CreateChannel'
+import ChannelSettings from '@components/channels/ChannelSettings'
+import DmRedirect from '@components/channels/DmRedirect'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -102,6 +111,7 @@ const display_routes = (
     <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
+    <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
@@ -207,6 +217,16 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      <Route path="publicchannels" element={<ChannelList />} />
+      <Route path="messages" element={<MessagesInbox />} />
+      <Route path="messages/channels" element={<ChannelList />} />
+      <Route path="messages/channels/create" element={<CreateChannel />} />
+      <Route path="messages/channels/:id" element={<ChannelView />} />
+      <Route
+        path="messages/channels/:id/settings"
+        element={<ChannelSettings />}
+      />
+      <Route path="messages/dm/:address" element={<DmRedirect />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

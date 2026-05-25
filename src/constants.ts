@@ -254,6 +254,10 @@ export const POLL_MESSAGE_FEE = 25000
 export const TOKEN_COMMENTS_CONTRACT = 'KT1FXFxUcZvne1ApoSaeZfvmDR73u2BsuFUP'
 export const TOKEN_MESSAGE_FEE = 25000
 
+export const CHANNELS_V2_CONTRACT = 'KT19ooSLPFxJQ5mx3kR4Qo2UY4KJDcdMdng9'
+export const CHANNEL_FEE = 100000
+export const CHANNEL_MESSAGE_FEE = 25000
+
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 
 export const COVER_COMPRESSOR_OPTIONS = {
