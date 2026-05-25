@@ -284,8 +284,13 @@ export default function ChannelView() {
         )}
         {imageOpen && channel.metadata?.image && (
           <div
+            role="button"
+            tabIndex={0}
             className={styles.imageOverlay}
             onClick={() => setImageOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape' || e.key === 'Enter') setImageOpen(false)
+            }}
           >
             <img
               src={msgIpfsToUrl(channel.metadata.image)}
