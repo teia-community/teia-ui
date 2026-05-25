@@ -66,8 +66,8 @@ export default function CreateChannel() {
         })
         navigate(
           channelId
-            ? `/messages/channels/${channelId}`
-            : `/messages/dm/${dmRecipient}`
+            ? `/inbox/channels/${channelId}`
+            : `/inbox/dm/${dmRecipient}`
         )
         return
       }
@@ -96,7 +96,7 @@ export default function CreateChannel() {
         creator: address,
       })
 
-      navigate(channelId ? `/messages/channels/${channelId}` : '/messages')
+      navigate(channelId ? `/inbox/channels/${channelId}` : '/inbox')
     } catch (err) {
       console.warn('Create channel failed:', err)
     } finally {
@@ -201,7 +201,7 @@ export default function CreateChannel() {
                 : 'Creating...'
               : isDm
               ? 'Start DM'
-              : 'Create Channel (0.1 XTZ)'}
+              : 'Create Channel'}
           </Button>
         </form>
       </div>

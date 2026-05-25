@@ -27,7 +27,7 @@ export default function ProfileChannels() {
       <div className={styles.empty}>
         <p>No channels yet.</p>
         {isOwnProfile && (
-          <Link to="/messages/channels/create">
+          <Link to="/inbox/channels/create">
             <Button shadow_box>Create a Channel</Button>
           </Link>
         )}
@@ -40,7 +40,7 @@ export default function ProfileChannels() {
       {userChannels.map((ch) => (
         <Link
           key={ch.id}
-          to={`/messages/channels/${ch.id}`}
+          to={`/inbox/channels/${ch.id}`}
           className={styles.channelCard}
         >
           <div className={styles.cardTop}>

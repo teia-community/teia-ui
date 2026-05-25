@@ -7,8 +7,15 @@
   padding: 0 20px 60px;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .headline {
-  margin: 0 0 20px;
+  margin: 0;
 }
 
 .tabs {

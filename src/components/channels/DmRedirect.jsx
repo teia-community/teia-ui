@@ -11,7 +11,7 @@ export default function DmRedirect() {
 
   useEffect(() => {
     if (!viewer) {
-      navigate('/messages', { replace: true })
+      navigate('/inbox', { replace: true })
       return
     }
     if (!peer || isLoading || !inbox) return
@@ -23,9 +23,9 @@ export default function DmRedirect() {
     )
 
     if (existing) {
-      navigate(`/messages/channels/${existing.id}`, { replace: true })
+      navigate(`/inbox/channels/${existing.id}`, { replace: true })
     } else {
-      navigate(`/messages/channels/create?dm=${peer}`, { replace: true })
+      navigate(`/inbox/channels/create?dm=${peer}`, { replace: true })
     }
   }, [viewer, peer, inbox, isLoading, navigate])
 

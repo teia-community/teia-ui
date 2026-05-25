@@ -142,7 +142,7 @@ export default function TokenComments({ fa2Address, tokenId, isHolder }) {
         onCancelReply={() => setReplyTo(null)}
         disabled={disabled}
         disabledMessage={disabledMessage}
-        submitLabel={`Post (${POST_FEE_LABEL})`}
+        submitLabel={`Post`}
       />
     </div>
   )

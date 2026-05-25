@@ -131,8 +131,8 @@ export const MainMenu = () => {
           />
           <MenuItem
             className={styles.menu_label}
-            label="Messages"
-            route="messages"
+            label="Inbox"
+            route="inbox"
             need_sync
           />
 

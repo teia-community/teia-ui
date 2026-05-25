@@ -64,7 +64,7 @@ export default function ChannelSettings() {
       <Page title="Channel Settings">
         <div style={{ padding: 40, textAlign: 'center' }}>
           <p>Only the channel creator and admins can access settings.</p>
-          <Link to={`/messages/channels/${channelId}`}>Back to channel</Link>
+          <Link to={`/inbox/channels/${channelId}`}>Back to channel</Link>
         </div>
       </Page>
     )
@@ -184,14 +184,14 @@ export default function ChannelSettings() {
     )
       return
     await setChannelHidden(channelId, true)
-    navigate('/messages')
+    navigate('/inbox')
   }
 
   return (
     <Page title="Channel Settings">
       <div className={styles.container}>
         <Link
-          to={`/messages/channels/${channelId}`}
+          to={`/inbox/channels/${channelId}`}
           style={{ textDecoration: 'none', color: 'inherit', fontSize: 14 }}
         >
           ← Back to channel

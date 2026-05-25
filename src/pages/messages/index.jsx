@@ -29,7 +29,7 @@ function InboxRow({ item, viewer, users }) {
     : item.metadata.name || `Channel #${item.id}`
 
   return (
-    <Link to={`/messages/channels/${item.id}`} className={styles.row}>
+    <Link to={`/inbox/channels/${item.id}`} className={styles.row}>
       {isDm ? (
         <Identicon
           address={peer}
@@ -85,7 +85,7 @@ export default function MessagesInbox() {
 
   const startDm = (peer) => {
     if (!peer) return
-    navigate(`/messages/dm/${peer}`)
+    navigate(`/inbox/dm/${peer}`)
   }
 
   const dms = useMemo(
@@ -121,9 +121,9 @@ export default function MessagesInbox() {
 
   if (!address) {
     return (
-      <Page title="Messages">
+      <Page title="Inbox">
         <div className={styles.container}>
-          <h2 className={styles.headline}>Messages</h2>
+          <h2 className={styles.headline}>Inbox</h2>
           <div className={styles.emptyState}>
             Connect your wallet to see your messages.
           </div>
@@ -133,9 +133,14 @@ export default function MessagesInbox() {
   }
 
   return (
-    <Page title="Messages">
+    <Page title="Inbox">
       <div className={styles.container}>
-        <h2 className={styles.headline}>Messages</h2>
+        <div className={styles.header}>
+          <h2 className={styles.headline}>Inbox</h2>
+          <Link to="/inbox/channels/create">
+            <Button shadow_box>Create Channel</Button>
+          </Link>
+        </div>
 
         <div className={styles.tabs}>
           <button

@@ -218,15 +218,12 @@ const router = createBrowserRouter(
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
       <Route path="publicchannels" element={<ChannelList />} />
-      <Route path="messages" element={<MessagesInbox />} />
-      <Route path="messages/channels" element={<ChannelList />} />
-      <Route path="messages/channels/create" element={<CreateChannel />} />
-      <Route path="messages/channels/:id" element={<ChannelView />} />
-      <Route
-        path="messages/channels/:id/settings"
-        element={<ChannelSettings />}
-      />
-      <Route path="messages/dm/:address" element={<DmRedirect />} />
+      <Route path="inbox" element={<MessagesInbox />} />
+      <Route path="inbox/channels" element={<ChannelList />} />
+      <Route path="inbox/channels/create" element={<CreateChannel />} />
+      <Route path="inbox/channels/:id" element={<ChannelView />} />
+      <Route path="inbox/channels/:id/settings" element={<ChannelSettings />} />
+      <Route path="inbox/dm/:address" element={<DmRedirect />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}

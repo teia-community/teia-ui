@@ -180,12 +180,18 @@
   overflow: hidden;
 }
 
+.channelHeaderImageBtn {
+  all: unset;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .channelHeaderImage {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  flex-shrink: 0;
+  display: block;
 }
 
 .channelHeaderText {
@@ -204,6 +210,35 @@
 .channelHeaderSub {
   font-size: $font-xsmall;
   opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channelHeaderDesc {
+  opacity: 0.8;
+}
+
+// Image lightbox
+.imageOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.imageFull {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .walletStack {

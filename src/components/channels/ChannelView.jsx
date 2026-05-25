@@ -34,6 +34,7 @@ export default function ChannelView() {
   const channelId = id || undefined
   const [replyTo, setReplyTo] = useState(null)
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [imageOpen, setImageOpen] = useState(false)
   const {
     data: channel,
     isLoading: loadingChannel,
@@ -190,7 +191,7 @@ export default function ChannelView() {
       <Page title="Channel not found">
         <div style={{ padding: 40, textAlign: 'center' }}>
           <p>Channel not found.</p>
-          <Link to="/messages">Back to messages</Link>
+          <Link to="/inbox">Back to inbox</Link>
         </div>
       </Page>
     )
@@ -204,29 +205,32 @@ export default function ChannelView() {
       <div className={styles.channelView}>
         <div className={styles.channelHeader}>
           <Link
-            to="/messages"
+            to="/inbox"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             ←
           </Link>
           <div className={styles.channelHeaderInfo}>
             {channel.metadata?.image && (
-              <img
-                src={msgIpfsToUrl(channel.metadata.image)}
-                alt=""
-                className={styles.channelHeaderImage}
-              />
+              <button
+                type="button"
+                className={styles.channelHeaderImageBtn}
+                onClick={() => setImageOpen(true)}
+              >
+                <img
+                  src={msgIpfsToUrl(channel.metadata.image)}
+                  alt=""
+                  className={styles.channelHeaderImage}
+                />
+              </button>
             )}
             <div className={styles.channelHeaderText}>
               <div className={styles.channelHeaderNames}>{channelName}</div>
-              <div className={styles.channelHeaderSub}>
-                <Link
-                  to={`/tz/${channel.creator}`}
-                  style={{ color: 'inherit' }}
-                >
-                  {creatorUser?.alias || walletPreview(channel.creator)}
-                </Link>
-              </div>
+              {channel.metadata?.description && (
+                <div className={styles.channelHeaderSub}>
+                  {channel.metadata.description}
+                </div>
+              )}
             </div>
           </div>
           {stackAddrs.length > 0 && (
@@ -258,10 +262,7 @@ export default function ChannelView() {
                 <Button shadow_box onClick={() => setAddUserOpen(true)}>
                   + Add User
                 </Button>
-                <Button
-                  shadow_box
-                  to={`/messages/channels/${channelId}/settings`}
-                >
+                <Button shadow_box to={`/inbox/channels/${channelId}/settings`}>
                   Settings
                 </Button>
               </>
@@ -280,6 +281,18 @@ export default function ChannelView() {
               refreshMessages()
             }}
           />
+        )}
+        {imageOpen && channel.metadata?.image && (
+          <div
+            className={styles.imageOverlay}
+            onClick={() => setImageOpen(false)}
+          >
+            <img
+              src={msgIpfsToUrl(channel.metadata.image)}
+              alt={channelName}
+              className={styles.imageFull}
+            />
+          </div>
         )}
 
         <div className={styles.messages}>
@@ -328,7 +341,7 @@ export default function ChannelView() {
           onCancelReply={() => setReplyTo(null)}
           disabled={!address}
           disabledMessage="Connect your wallet to post messages"
-          submitLabel="Send (0.025 XTZ)"
+          submitLabel="Send"
         />
       </div>
     </Page>
