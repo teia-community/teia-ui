@@ -52,7 +52,9 @@ export default function ChannelList() {
   const [tab, setTab] = useState('all')
 
   const displayChannels =
-    tab === 'my' ? channels?.filter((ch) => ch.creator === address) : channels
+    tab === 'my'
+      ? channels?.filter((ch) => ch.creator === address)
+      : channels?.filter((ch) => ch.accessMode === 'unrestricted')
 
   return (
     <Page title="Channels">
