@@ -6,65 +6,89 @@
   opacity: 0.6;
 }
 
-.list {
-  display: flex;
-  flex-direction: column;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 0;
 }
 
 .channelCard {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-color);
+  flex-direction: column;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
   text-decoration: none;
   color: var(--text-color);
+  transition: border-color 0.15s, background-color 0.15s;
 
   &:hover {
+    border-color: var(--text-color);
     background-color: var(--border-color);
   }
 }
 
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .channelImage {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .channelImagePlaceholder {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
   background-color: var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-xsmall;
+  font-size: $font-small;
   font-weight: 600;
   opacity: 0.6;
-}
-
-.cardContent {
-  flex: 1;
-  min-width: 0;
 }
 
 .channelName {
   font-size: $font-small;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.channelDesc {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10px;
 }
 
 .cardMeta {
   display: flex;
   gap: 6px;
   align-items: center;
-  margin-top: 4px;
+  margin-top: auto;
 }
 
 .cardTime {
   font-size: $font-xsmall;
-  opacity: 0.6;
+  opacity: 0.5;
+  margin-left: auto;
 }
