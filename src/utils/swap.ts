@@ -99,7 +99,7 @@ export function createSwapCall(
       kind: OpKind.TRANSACTION,
       ...marketplaceContract.methodsObject.swap({
           fa2: objktsAddress,
-          objkt_id: parseFloat(objkt_id),
+          objkt_id: parseInt(objkt_id, 10),
           objkt_amount: objkt_amount,
           xtz_per_objkt: xtz_per_objkt,
           royalties: royalties,
@@ -112,7 +112,13 @@ export function createSwapCall(
   if (type === SWAP_TYPE_HEN) {
     return {
       kind: OpKind.TRANSACTION,
-      ...marketplaceContract.methodsObject.swap([creator, objkt_amount, objkt_id, royalties, xtz_per_objkt])
+      ...marketplaceContract.methodsObject.swap({
+          creator,
+          objkt_amount,
+          objkt_id: parseInt(objkt_id, 10),
+          royalties,
+          xtz_per_objkt,
+        })
         .toTransferParams({ amount: 0, mutez: true, storageLimit: 300 }),
     }
   }
