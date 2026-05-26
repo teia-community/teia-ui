@@ -207,13 +207,13 @@ export const useDaoStore = create<DaoState>()(
             }
             let batch = Tezos.wallet.batch()
             batch = batch.withContractCall(
-              tokenContract.methods.update_operators([{ add_operator: operator }])
+              tokenContract.methodsObject.update_operators([{ add_operator: operator }])
             )
             batch = batch.withContractCall(
               contract.methodsObject.create_proposal(parameters)
             )
             batch = batch.withContractCall(
-              tokenContract.methods.update_operators([{ remove_operator: operator }])
+              tokenContract.methodsObject.update_operators([{ remove_operator: operator }])
             )
             const opHash = await handleOp(batch, modalTitle)
             
@@ -365,10 +365,10 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_TOKEN_CLAIM_CONTRACT)
 
-            const batch = contract.methodsObject.claim(
-              userMerkleData.proof,
-              userMerkleData.leafDataPacked
-            )
+            const batch = contract.methodsObject.claim({
+              proof: userMerkleData.proof,
+              leaf: userMerkleData.leafDataPacked,
+            })
 
             return await handleOp(batch, modalTitle, {
               amount: 0,

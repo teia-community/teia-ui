@@ -120,7 +120,10 @@ export const useCollabStore = create<CollabState>()(
 
           // Blockchain ops
           const contract = await Tezos.wallet.at(PROXY_FACTORY_CONTRACT)
-          const op = contract.methodsObject.create_proxy(packed, 'hic_proxy')
+          const op = contract.methodsObject.create_proxy({
+            params: packed,
+            templateName: 'hic_proxy',
+          })
 
           const opHash = await handleOp(op, 'Originate', { amount: 0 })
           set({
