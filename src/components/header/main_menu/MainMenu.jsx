@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { walletPreview } from '@utils/string'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import {
   useUnreadChannels,
   useHasNewNotification,
@@ -22,7 +23,6 @@ import { Toggle } from '@atoms/toggles'
 import { Line } from '@atoms/line'
 import { ThemeSelection } from '@atoms/select'
 import { shallow } from 'zustand/shallow'
-import { useLocalSettings } from '@context/localSettingsStore'
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea'
@@ -84,6 +84,8 @@ export const MainMenu = () => {
     }
   }, [setCollapsed])
 
+  const messageNotifications = useLocalSettings((s) => s.messageNotifications)
+
   const { data: inbox } = useMyInbox(address)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
   const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
@@ -101,6 +103,10 @@ export const MainMenu = () => {
     'token-notifications',
     tokenNotifId
   )
+
+  const showInboxBadge = messageNotifications && totalUnread > 0
+  const showPollBadge = messageNotifications && hasNewPollComments
+  const showTokenBadge = messageNotifications && hasNewTokenComments
 
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
@@ -151,7 +157,7 @@ export const MainMenu = () => {
             label="Profile"
             route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
-            badge={hasNewTokenComments}
+            badge={showTokenBadge}
           />
           <MenuItem
             className={styles.menu_label}
@@ -163,7 +169,7 @@ export const MainMenu = () => {
             label="Inbox"
             route="inbox"
             need_sync
-            badge={totalUnread > 0}
+            badge={showInboxBadge}
           />
 
           <MenuItem
@@ -195,7 +201,7 @@ export const MainMenu = () => {
             className={styles.menu_label}
             label="Polls"
             route="polls"
-            badge={hasNewPollComments}
+            badge={showPollBadge}
           />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}

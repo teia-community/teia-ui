@@ -44,6 +44,8 @@ export const Settings = () => {
     setImgproxy,
     has_seen_banner,
     setHasSeenBanner,
+    messageNotifications,
+    setMessageNotifications,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -61,6 +63,8 @@ export const Settings = () => {
     st.setImgproxy,
     st.has_seen_banner,
     st.setHasSeenBanner,
+    st.messageNotifications,
+    st.setMessageNotifications,
   ])
 
   return (
@@ -156,6 +160,18 @@ export const Settings = () => {
             onCheck={setImgproxy}
             initial={true}
             label={'Use thumbnails to increase performance'}
+          />
+          <Line />
+          <p>
+            <strong>Messages</strong>
+          </p>
+          <Checkbox
+            alt={`click to ${
+              messageNotifications ? 'disable' : 'enable'
+            } unread indicators on channel and DM lists`}
+            checked={messageNotifications}
+            onCheck={setMessageNotifications}
+            label={'Show unread message indicators'}
           />
           {bannerEnabled && (
             <Checkbox
