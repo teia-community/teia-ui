@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { useUserStore } from '@context/userStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useUnreadChannels } from '@context/chatReadStore'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
@@ -15,8 +16,9 @@ import {
 } from '@data/messaging/channels'
 import { useUsers } from '@data/swr'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
-import UserSearchDropdown from '@components/shared/UserSearchDropdown'
 import AccessBadge from '@components/channels/AccessBadge'
+import CreateChannelModal from '@components/channels/CreateChannelModal'
+import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from './index.module.scss'
 
 function InboxRow({ item, viewer, users, hasUnread }) {
@@ -76,23 +78,13 @@ function InboxRow({ item, viewer, users, hasUnread }) {
 
 export default function MessagesInbox() {
   const address = useUserStore((st) => st.address)
-  const navigate = useNavigate()
   const { data: inbox, isLoading: loadingInbox } = useMyInbox(address)
   const { data: allChannels, isLoading: loadingAll } = useChannelList()
 
   const [activeTab, setActiveTab] = useState('channels')
   const [channelFilter, setChannelFilter] = useState('all')
-  const [dmInput, setDmInput] = useState('')
-  const dmInputRef = useRef(null)
-
-  useEffect(() => {
-    if (activeTab === 'dm') dmInputRef.current?.focus()
-  }, [activeTab])
-
-  const startDm = (peer) => {
-    if (!peer) return
-    navigate(`/inbox/dm/${peer}`)
-  }
+  const [showCreateChannel, setShowCreateChannel] = useState(false)
+  const [showCreateDm, setShowCreateDm] = useState(false)
 
   const dms = useMemo(
     () => (inbox ?? []).filter((c) => c.metadata.kind === 'dm'),
@@ -125,17 +117,20 @@ export default function MessagesInbox() {
 
   const [users] = useUsers(lookupAddresses)
 
+  const messageNotifications = useLocalSettings((s) => s.messageNotifications)
+
   const allInboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
   const { data: latestIds } = useChannelLatestMessageIds(allInboxIds)
   const { unread, total: totalUnread } = useUnreadChannels(address, latestIds)
 
   const unreadDmCount = useMemo(
-    () => dms.filter((d) => unread[d.id]).length,
-    [dms, unread]
+    () => (messageNotifications ? dms.filter((d) => unread[d.id]).length : 0),
+    [dms, unread, messageNotifications]
   )
   const unreadChannelCount = useMemo(
-    () => myChannels.filter((c) => unread[c.id]).length,
-    [myChannels, unread]
+    () =>
+      messageNotifications ? myChannels.filter((c) => unread[c.id]).length : 0,
+    [myChannels, unread, messageNotifications]
   )
 
   if (!address) {
@@ -156,9 +151,9 @@ export default function MessagesInbox() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.headline}>Inbox</h2>
-          <Link to="/inbox/channels/create">
-            <Button shadow_box>Create Channel</Button>
-          </Link>
+          <Button shadow_box onClick={() => setShowCreateChannel(true)}>
+            Create Channel
+          </Button>
         </div>
 
         <div className={styles.tabs}>
@@ -225,7 +220,7 @@ export default function MessagesInbox() {
                   item={ch}
                   viewer={address}
                   users={users}
-                  hasUnread={unread[ch.id]}
+                  hasUnread={messageNotifications && unread[ch.id]}
                 />
               ))}
               {!channelsLoading && displayedChannels.length === 0 && (
@@ -242,29 +237,9 @@ export default function MessagesInbox() {
         {activeTab === 'dm' && (
           <>
             <div className={styles.compose}>
-              <input
-                type="text"
-                placeholder="Recipient address or name"
-                value={dmInput}
-                onChange={(e) => setDmInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && dmInput.startsWith('tz')) {
-                    startDm(dmInput.trim())
-                  }
-                }}
-                className={styles.composeInput}
-                ref={dmInputRef}
-              />
-              {dmInput.length >= 2 && !dmInput.startsWith('tz') && (
-                <UserSearchDropdown
-                  query={dmInput}
-                  onSelect={(user) => {
-                    setDmInput('')
-                    startDm(user.user_address)
-                  }}
-                  onClose={() => setDmInput('')}
-                />
-              )}
+              <Button shadow_box onClick={() => setShowCreateDm(true)}>
+                New DM
+              </Button>
             </div>
 
             {loadingInbox && <Loading />}
@@ -276,18 +251,28 @@ export default function MessagesInbox() {
                   item={item}
                   viewer={address}
                   users={users}
-                  hasUnread={unread[item.id]}
+                  hasUnread={messageNotifications && unread[item.id]}
                 />
               ))}
               {!loadingInbox && dms.length === 0 && (
                 <div className={styles.emptyRow}>
-                  No DMs yet. Enter a recipient above to start one.
+                  No DMs yet. Start a conversation above.
                 </div>
               )}
             </div>
           </>
         )}
       </div>
+
+      <CreateChannelModal
+        isOpen={showCreateChannel}
+        onClose={() => setShowCreateChannel(false)}
+      />
+      <CreateDmModal
+        isOpen={showCreateDm}
+        onClose={() => setShowCreateDm(false)}
+        inbox={inbox}
+      />
     </Page>
   )
 }

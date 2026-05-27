@@ -357,6 +357,330 @@
   overflow-y: auto;
 }
 
+// Wizard modal
+.wizardModal {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.wizardTitle {
+  margin: 0 0 20px;
+  font-size: $font-large;
+}
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.stepCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xsmall;
+  font-weight: 600;
+  color: var(--border-color);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.stepCircleActive {
+  composes: stepCircle;
+  border-color: var(--text-color);
+  color: var(--text-color);
+}
+
+.stepCircleDone {
+  composes: stepCircle;
+  border-color: var(--text-color);
+  background-color: var(--text-color);
+  color: var(--background-color);
+}
+
+.stepLine {
+  width: 40px;
+  height: 2px;
+  background-color: var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.stepLineActive {
+  composes: stepLine;
+  background-color: var(--text-color);
+}
+
+.wizardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.wizardFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.reviewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviewRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reviewLabel {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.reviewValue {
+  font-size: $font-small;
+  word-break: break-word;
+}
+
+.reviewEmpty {
+  composes: reviewValue;
+  opacity: 0.4;
+  font-style: italic;
+}
+
+.imagePreview {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.accessOption {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font-family: var(--text-font);
+  color: var(--text-color);
+  box-sizing: border-box;
+  text-align: left;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+.accessOptionActive {
+  composes: accessOption;
+  border-color: var(--text-color);
+}
+
+.accessOptionRadio {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+}
+
+.accessOptionRadioActive {
+  composes: accessOptionRadio;
+  border-color: var(--text-color);
+
+  &::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-color);
+  }
+}
+
+.accessOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.accessOptionTitle {
+  font-size: $font-small;
+  font-weight: 600;
+}
+
+.accessOptionDesc {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+// Admin input
+.adminSection {
+  margin-top: 4px;
+}
+
+.adminInput {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.adminInputRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.adminList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adminChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  font-size: $font-xsmall;
+}
+
+.adminChipName {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminChipRemove {
+  all: unset;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Allowlist divider & button
+.allowlistDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.allowlistDividerLine {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.allowlistDividerText {
+  font-size: $font-xsmall;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.allowlistButton {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--text-font);
+  color: var(--text-color);
+  box-sizing: border-box;
+  text-align: left;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+.allowlistArrow {
+  margin-left: auto;
+  font-size: $font-large;
+  opacity: 0.4;
+}
+
+// Allowlist explainer
+.allowlistExplainer {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: $font-xsmall;
+  line-height: 1.5;
+
+  h4 {
+    margin: 0 0 6px;
+    font-size: $font-small;
+  }
+
+  p {
+    margin: 0 0 6px;
+    opacity: 0.8;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.addressCount {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+}
+
+.addressError {
+  font-size: $font-xsmall;
+  color: #e53e3e;
+}
+
 // Settings
 .settingsSection {
   border: 1px solid var(--border-color);

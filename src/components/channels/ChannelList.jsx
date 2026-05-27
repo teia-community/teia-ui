@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
@@ -7,6 +8,7 @@ import { getTimeAgo } from '@utils/time'
 import { useChannelList } from '@data/messaging/channels'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import AccessBadge from './AccessBadge'
+import CreateChannelModal from './CreateChannelModal'
 import styles from './index.module.scss'
 
 function ChannelCard({ ch }) {
@@ -45,6 +47,7 @@ function ChannelCard({ ch }) {
 
 export default function ChannelList() {
   const { data: channels, isLoading } = useChannelList()
+  const [showCreateModal, setShowCreateModal] = useState(false)
 
   const openChannels = channels?.filter(
     (ch) => ch.accessMode === 'unrestricted'
@@ -55,9 +58,9 @@ export default function ChannelList() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.headline}>Public Channels</h2>
-          <Link to="/inbox/channels/create">
-            <Button shadow_box>Create Public Channel</Button>
-          </Link>
+          <Button shadow_box onClick={() => setShowCreateModal(true)}>
+            Create Public Channel
+          </Button>
         </div>
 
         {isLoading && <Loading />}
@@ -73,6 +76,11 @@ export default function ChannelList() {
           )}
         </div>
       </div>
+
+      <CreateChannelModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
     </Page>
   )
 }
