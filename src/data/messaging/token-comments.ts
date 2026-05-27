@@ -199,6 +199,64 @@ export function useCommentHistory(
 }
 
 /**
+ * Returns the highest comment ID relevant to the viewer:
+ * comments on tokens they created, or replies to their own comments.
+ * Used for unread notification badges.
+ */
+export function useMyTokenNotificationId(viewerAddress: string | undefined) {
+  return useSWR<number>(
+    viewerAddress && CONTRACT
+      ? `msg:token-notify:${CONTRACT}:${viewerAddress}`
+      : null,
+    async () => {
+      if (!viewerAddress) return 0
+
+      const posted = await fetchAllEvents<TokenCommentPostedEvent>(
+        CONTRACT,
+        'comment_posted'
+      )
+
+      const myCommentIds = new Set<string>()
+      for (const e of posted) {
+        if (e.payload.sender === viewerAddress) {
+          myCommentIds.add(e.payload.comment_id)
+        }
+      }
+
+      const result = await fetchGraphQL(
+        `query MyTokenIds($addr: String!) {
+           tokens(
+             where: { artist_address: { _eq: $addr } }
+             limit: 10000
+           ) { token_id fa2_address }
+         }`,
+        'MyTokenIds',
+        { addr: viewerAddress }
+      )
+      const myTokenKeys = new Set<string>()
+      for (const t of result?.data?.tokens ?? []) {
+        myTokenKeys.add(`${t.fa2_address}:${t.token_id}`)
+      }
+
+      let maxId = 0
+      for (const e of posted) {
+        if (e.payload.sender === viewerAddress) continue
+        const cid = parseInt(e.payload.comment_id, 10)
+        const tokenKey = `${e.payload.fa2_address}:${e.payload.token_id}`
+        const isOnMyToken = myTokenKeys.has(tokenKey)
+        const isReplyToMe =
+          e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
+        if ((isOnMyToken || isReplyToMe) && cid > maxId) {
+          maxId = cid
+        }
+      }
+      return maxId
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
+/**
  * Check whether an address is on the token_comments contract's ban list.
  * The ban list is contract-wide (not per-token), so this matches the
  * poll-comments shape.

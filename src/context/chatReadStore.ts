@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
@@ -38,3 +39,42 @@ export const useChatReadStore = create<ChatReadState>()(
     }
   )
 )
+
+export function useUnreadChannels(
+  address: string | undefined,
+  latestByChannel: Record<string, number> | undefined
+) {
+  const reads = useChatReadStore((st) => st.reads)
+
+  return useMemo(() => {
+    const unread: Record<string, boolean> = {}
+    let total = 0
+
+    if (!address || !latestByChannel) return { unread, total }
+
+    const userReads = reads[address] ?? {}
+    for (const [channelId, latestId] of Object.entries(latestByChannel)) {
+      const lastRead = userReads[`channel:${channelId}`] ?? 0
+      if (latestId > lastRead) {
+        unread[channelId] = true
+        total++
+      }
+    }
+
+    return { unread, total }
+  }, [address, latestByChannel, reads])
+}
+
+export function useHasNewNotification(
+  address: string | undefined,
+  key: string,
+  latestId: number | undefined
+) {
+  const reads = useChatReadStore((st) => st.reads)
+
+  return useMemo(() => {
+    if (!address || latestId === undefined || latestId === 0) return false
+    const lastRead = reads[address]?.[key] ?? 0
+    return latestId > lastRead
+  }, [address, key, latestId, reads])
+}

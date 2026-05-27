@@ -4,7 +4,7 @@
  */
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'
-import { POLL_COMMENTS_CONTRACT } from '@constants'
+import { POLL_COMMENTS_CONTRACT, POLLS_CONTRACT } from '@constants'
 import {
   fetchAllEvents,
   fetchBigMapValue,
@@ -209,6 +209,66 @@ export function useAllPollCommentCounts() {
         counts[id] = (counts[id] ?? 0) + 1
       }
       return counts
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
+/**
+ * Returns the highest comment ID relevant to the viewer:
+ * comments on polls they created, or replies to their own comments.
+ * Used for unread notification badges.
+ */
+export function useMyPollNotificationId(viewerAddress: string | undefined) {
+  return useSWR<number>(
+    viewerAddress && CONTRACT
+      ? `msg:poll-notify:${CONTRACT}:${viewerAddress}`
+      : null,
+    async () => {
+      if (!viewerAddress) return 0
+
+      const posted = await fetchAllEvents<CommentPostedEvent>(
+        CONTRACT,
+        'comment_posted'
+      )
+
+      const myCommentIds = new Set<string>()
+      for (const e of posted) {
+        if (e.payload.sender === viewerAddress) {
+          myCommentIds.add(e.payload.comment_id)
+        }
+      }
+
+      const TZKT_API = import.meta.env.VITE_TZKT_API
+      const storageRes = await fetch(
+        `${TZKT_API}/v1/contracts/${POLLS_CONTRACT}/storage`
+      )
+      if (!storageRes.ok) return 0
+      const storage = await storageRes.json()
+      const bigmapId = storage?.polls
+      if (!bigmapId) return 0
+
+      const pollsRes = await fetch(
+        `${TZKT_API}/v1/bigmaps/${bigmapId}/keys?value.issuer=${viewerAddress}&active=true&select=key&limit=10000`
+      )
+      if (!pollsRes.ok) return 0
+      const pollKeys: { key: string }[] | string[] = await pollsRes.json()
+      const myPollIds = new Set(
+        pollKeys.map((k) => (typeof k === 'object' ? k.key : String(k)))
+      )
+
+      let maxId = 0
+      for (const e of posted) {
+        if (e.payload.sender === viewerAddress) continue
+        const cid = parseInt(e.payload.comment_id, 10)
+        const isOnMyPoll = myPollIds.has(e.payload.poll_id)
+        const isReplyToMe =
+          e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
+        if ((isOnMyPoll || isReplyToMe) && cid > maxId) {
+          maxId = cid
+        }
+      }
+      return maxId
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )

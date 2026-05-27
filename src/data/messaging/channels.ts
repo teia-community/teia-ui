@@ -492,6 +492,40 @@ export function useMessageHistory(
 }
 
 // ---------------------------------------------------------------------------
+// Latest message IDs (for unread tracking)
+// ---------------------------------------------------------------------------
+
+export function useChannelLatestMessageIds(channelIds: string[]) {
+  const key =
+    channelIds.length > 0
+      ? `msg:channel-latest:${CONTRACT}:${channelIds.slice().sort().join(',')}`
+      : null
+
+  return useSWR<Record<string, number>>(
+    key,
+    async () => {
+      const events = await fetchAllEvents<MessagePostedEvent>(
+        CONTRACT,
+        'message_posted'
+      )
+
+      const wanted = new Set(channelIds)
+      const latest: Record<string, number> = {}
+      for (const e of events) {
+        const cid = e.payload.channel_id
+        if (!wanted.has(cid)) continue
+        const mid = parseInt(e.payload.message_id, 10)
+        if (!latest[cid] || mid > latest[cid]) {
+          latest[cid] = mid
+        }
+      }
+      return latest
+    },
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Admin checks
 // ---------------------------------------------------------------------------
 

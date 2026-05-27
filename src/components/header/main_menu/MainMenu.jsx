@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Footer } from '@components/footer'
 import { fadeIn } from '@utils/motion'
 import styles from '@style'
@@ -6,6 +6,16 @@ import { motion } from 'framer-motion'
 import { walletPreview } from '@utils/string'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import {
+  useUnreadChannels,
+  useHasNewNotification,
+} from '@context/chatReadStore'
+import {
+  useMyInbox,
+  useChannelLatestMessageIds,
+} from '@data/messaging/channels'
+import { useMyPollNotificationId } from '@data/messaging/poll-comments'
+import { useMyTokenNotificationId } from '@data/messaging/token-comments'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
@@ -74,6 +84,24 @@ export const MainMenu = () => {
     }
   }, [setCollapsed])
 
+  const { data: inbox } = useMyInbox(address)
+  const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
+  const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
+  const { total: totalUnread } = useUnreadChannels(address, latestIds)
+
+  const { data: pollNotifId } = useMyPollNotificationId(address)
+  const hasNewPollComments = useHasNewNotification(
+    address,
+    'poll-notifications',
+    pollNotifId
+  )
+  const { data: tokenNotifId } = useMyTokenNotificationId(address)
+  const hasNewTokenComments = useHasNewNotification(
+    address,
+    'token-notifications',
+    tokenNotifId
+  )
+
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
 
@@ -123,6 +151,7 @@ export const MainMenu = () => {
             label="Profile"
             route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
+            badge={hasNewTokenComments}
           />
           <MenuItem
             className={styles.menu_label}
@@ -134,6 +163,7 @@ export const MainMenu = () => {
             label="Inbox"
             route="inbox"
             need_sync
+            badge={totalUnread > 0}
           />
 
           <MenuItem
@@ -161,7 +191,12 @@ export const MainMenu = () => {
             route="copyright"
           />
 
-          <MenuItem className={styles.menu_label} label="Polls" route="polls" />
+          <MenuItem
+            className={styles.menu_label}
+            label="Polls"
+            route="polls"
+            badge={hasNewPollComments}
+          />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />

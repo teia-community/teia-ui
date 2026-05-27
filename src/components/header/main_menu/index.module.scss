@@ -102,6 +102,17 @@
   gap: 0.5em;
 }
 
+.menuBadge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  margin-left: 2px;
+  position: relative;
+  top: -0.5em;
+}
+
 .line {
   height: 200%;
   align-self: center;

@@ -5,16 +5,21 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { useUserStore } from '@context/userStore'
+import { useUnreadChannels } from '@context/chatReadStore'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useChannelList, useMyInbox } from '@data/messaging/channels'
+import {
+  useChannelList,
+  useMyInbox,
+  useChannelLatestMessageIds,
+} from '@data/messaging/channels'
 import { useUsers } from '@data/swr'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import UserSearchDropdown from '@components/shared/UserSearchDropdown'
 import AccessBadge from '@components/channels/AccessBadge'
 import styles from './index.module.scss'
 
-function InboxRow({ item, viewer, users }) {
+function InboxRow({ item, viewer, users, hasUnread }) {
   const isDm = item.metadata.kind === 'dm'
   const peer = isDm
     ? (item.metadata.participants ?? []).find((a) => a !== viewer)
@@ -30,6 +35,7 @@ function InboxRow({ item, viewer, users }) {
 
   return (
     <Link to={`/inbox/channels/${item.id}`} className={styles.row}>
+      {hasUnread && <span className={styles.unreadDot} />}
       {isDm ? (
         <Identicon
           address={peer}
@@ -119,6 +125,19 @@ export default function MessagesInbox() {
 
   const [users] = useUsers(lookupAddresses)
 
+  const allInboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
+  const { data: latestIds } = useChannelLatestMessageIds(allInboxIds)
+  const { unread, total: totalUnread } = useUnreadChannels(address, latestIds)
+
+  const unreadDmCount = useMemo(
+    () => dms.filter((d) => unread[d.id]).length,
+    [dms, unread]
+  )
+  const unreadChannelCount = useMemo(
+    () => myChannels.filter((c) => unread[c.id]).length,
+    [myChannels, unread]
+  )
+
   if (!address) {
     return (
       <Page title="Inbox">
@@ -151,7 +170,12 @@ export default function MessagesInbox() {
             onClick={() => setActiveTab('channels')}
             aria-pressed={activeTab === 'channels'}
           >
-            <h3>Channels</h3>
+            <h3>
+              Channels
+              {unreadChannelCount > 0 && (
+                <span className={styles.tabBadge}>{unreadChannelCount}</span>
+              )}
+            </h3>
             <p>Public and private group chat rooms</p>
           </button>
 
@@ -163,7 +187,12 @@ export default function MessagesInbox() {
             onClick={() => setActiveTab('dm')}
             aria-pressed={activeTab === 'dm'}
           >
-            <h3>Direct Messages</h3>
+            <h3>
+              Direct Messages
+              {unreadDmCount > 0 && (
+                <span className={styles.tabBadge}>{unreadDmCount}</span>
+              )}
+            </h3>
             <p>Private conversations with other users</p>
           </button>
         </div>
@@ -196,6 +225,7 @@ export default function MessagesInbox() {
                   item={ch}
                   viewer={address}
                   users={users}
+                  hasUnread={unread[ch.id]}
                 />
               ))}
               {!channelsLoading && displayedChannels.length === 0 && (
@@ -246,6 +276,7 @@ export default function MessagesInbox() {
                   item={item}
                   viewer={address}
                   users={users}
+                  hasUnread={unread[item.id]}
                 />
               ))}
               {!loadingInbox && dms.length === 0 && (

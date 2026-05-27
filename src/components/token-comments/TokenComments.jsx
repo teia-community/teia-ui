@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
+import { useChatReadStore } from '@context/chatReadStore'
 import {
   useTokenComments,
   useIsBanned,
@@ -53,6 +54,14 @@ export default function TokenComments({ fa2Address, tokenId, isHolder }) {
     mutate: refresh,
   } = useTokenComments(fa2Address, tokenId)
   const { data: isBanned = false } = useIsBanned(address)
+  const markRead = useChatReadStore((st) => st.markRead)
+
+  useEffect(() => {
+    if (comments?.length && address) {
+      const maxId = Math.max(...comments.map((c) => parseInt(c.id)))
+      markRead(address, 'token-notifications', maxId)
+    }
+  }, [comments, address, markRead])
 
   const { byId, children, roots } = useMemo(
     () => buildTree(comments ?? []),

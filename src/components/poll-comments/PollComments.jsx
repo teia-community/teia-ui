@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
+import { useChatReadStore } from '@context/chatReadStore'
 import { useDaoTokenBalance } from '@data/swr'
 import {
   usePollComments,
@@ -52,6 +53,15 @@ export default function PollComments({ pollId }) {
   const { data: comments, isLoading, mutate: refresh } = usePollComments(pollId)
   const [teiaBalance] = useDaoTokenBalance(address)
   const { data: isBanned = false } = useIsBanned(address)
+  const markRead = useChatReadStore((st) => st.markRead)
+
+  useEffect(() => {
+    if (comments?.length && address) {
+      const maxId = Math.max(...comments.map((c) => parseInt(c.id)))
+      markRead(address, 'poll-notifications', maxId)
+    }
+  }, [comments, address, markRead])
+
   const isHolder = teiaBalance > 0
 
   const { byId, children, roots } = useMemo(
