@@ -1,12 +1,16 @@
 import useClipboard from 'react-use-clipboard'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
 import { useDaoTokenBalance } from '@data/swr'
+import { useUserStore } from '@context/userStore'
+import { useMyInbox, findDmWith } from '@data/messaging/channels'
+import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import { resolveVerifiedBluesky } from '@utils/bsky'
 
@@ -27,6 +31,26 @@ async function reverseRecord(address) {
 }
 
 export default function Profile({ user }) {
+  const navigate = useNavigate()
+  const viewerAddress = useUserStore((st) => st.address)
+  const { data: inbox } = useMyInbox(viewerAddress)
+  const [showDmModal, setShowDmModal] = useState(false)
+
+  const isOwnProfile = viewerAddress === user.address
+
+  const existingDm = useMemo(
+    () => (isOwnProfile ? null : findDmWith(inbox, user.address)),
+    [inbox, user.address, isOwnProfile]
+  )
+
+  const handleMessageClick = () => {
+    if (existingDm) {
+      navigate(`/inbox/channels/${existingDm.id}`)
+    } else {
+      setShowDmModal(true)
+    }
+  }
+
   const [isDiscordCopied, setDiscordCopied] = useClipboard(
     user.extras?.profile?.discord
   )
@@ -391,8 +415,42 @@ export default function Profile({ user }) {
               </Button>
             )}
           </div>
+
+          {viewerAddress && !isOwnProfile && (
+            <Button
+              shadow_box
+              onClick={handleMessageClick}
+              style={{ marginTop: '1em' }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                style={{
+                  fill: 'var(--text-color)',
+                  stroke: 'transparent',
+                  marginRight: '8px',
+                }}
+              >
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+              </svg>
+              Message
+            </Button>
+          )}
         </div>
       </div>
+
+      <CreateDmModal
+        isOpen={showDmModal}
+        onClose={() => setShowDmModal(false)}
+        inbox={inbox}
+        initialRecipient={{
+          address: user.address,
+          name: user.subjkt || user.alias,
+        }}
+      />
     </div>
   )
 }

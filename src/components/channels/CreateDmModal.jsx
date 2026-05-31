@@ -5,11 +5,17 @@ import { Button } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
 import { useClickOutside } from '@hooks/use-click-outside'
 import { createDmChannel } from '@data/messaging/channel-actions'
+import { findDmWith } from '@data/messaging/channels'
 import { isTzAddress, walletPreview } from '@utils/string'
 import UserSearchDropdown from '@components/shared/UserSearchDropdown'
 import styles from './index.module.scss'
 
-export default function CreateDmModal({ isOpen, onClose, inbox }) {
+export default function CreateDmModal({
+  isOpen,
+  onClose,
+  inbox,
+  initialRecipient,
+}) {
   const navigate = useNavigate()
   const address = useUserStore((st) => st.address)
   const contentRef = useRef(null)
@@ -35,8 +41,15 @@ export default function CreateDmModal({ isOpen, onClose, inbox }) {
       setName('')
       setDescription('')
       setSubmitting(false)
+    } else if (initialRecipient) {
+      const label =
+        initialRecipient.name || walletPreview(initialRecipient.address)
+      setRecipient(initialRecipient.address)
+      setRecipientName(label)
+      setQuery(label)
+      setName(`DM with ${label}`)
     }
-  }, [isOpen])
+  }, [isOpen, initialRecipient])
 
   useEffect(() => {
     if (!isOpen) return
@@ -58,11 +71,7 @@ export default function CreateDmModal({ isOpen, onClose, inbox }) {
   const handleSubmit = async () => {
     if (submitting || !address || !recipient) return
 
-    const existingDm = (inbox ?? []).find(
-      (c) =>
-        c.metadata.kind === 'dm' &&
-        (c.metadata.participants ?? []).includes(recipient)
-    )
+    const existingDm = findDmWith(inbox, recipient)
     if (existingDm) {
       onClose()
       navigate(`/inbox/channels/${existingDm.id}`)

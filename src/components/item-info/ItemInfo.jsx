@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
 import get from 'lodash/get'
 import { PATH } from '@constants'
 import { Button, Secondary } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
+import { useMyInbox, findDmWith } from '@data/messaging/channels'
+import CreateDmModal from '@components/channels/CreateDmModal'
 
 import { walletPreview } from '@utils/string'
 import styles from '@style'
@@ -22,9 +25,32 @@ import Editions from './Editions'
  **/
 const ItemInfo = ({ nft }) => {
   const address = useUserStore((st) => st.address)
+  const navigate = useNavigate()
+  const { data: inbox } = useMyInbox(address)
+  const [showDmModal, setShowDmModal] = useState(false)
 
   const { walletBlockMap } = useSettings()
   const [showSignStatus, setShowSignStatus] = useState(false)
+
+  // Message the artist (non-collab tokens only)
+  const canMessageArtist =
+    address &&
+    nft.artist_address &&
+    address !== nft.artist_address &&
+    !get(nft, 'artist_profile.is_split')
+
+  const existingDm = useMemo(
+    () => findDmWith(inbox, nft.artist_address),
+    [inbox, nft.artist_address]
+  )
+
+  const handleMessageClick = () => {
+    if (existingDm) {
+      navigate(`/inbox/channels/${existingDm.id}`)
+    } else {
+      setShowDmModal(true)
+    }
+  }
 
   const restricted = walletBlockMap.get(nft.artist_address) === 1
 
@@ -97,6 +123,29 @@ const ItemInfo = ({ nft }) => {
         <div className={`${styles.spread} ${styles.objkt_details_container}`}>
           <div className={styles.objkt_label_container}>
             <p className={styles.objkt_label}>OBJKT#{nft.token_id}</p>
+            {canMessageArtist && (
+              <Button
+                shadow_box
+                onClick={handleMessageClick}
+                alt="Message the artist"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  style={{
+                    fill: 'var(--text-color)',
+                    stroke: 'transparent',
+                    marginRight: '8px',
+                  }}
+                >
+                  <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+                </svg>
+                Message
+              </Button>
+            )}
             {isCollab && (
               <div className={collabStyles.relative}>
                 <div className={styles.collab_verification_title}>
@@ -126,6 +175,16 @@ const ItemInfo = ({ nft }) => {
           <CheapestButton listing={cheapestListing} />
         </div>
       )}
+
+      <CreateDmModal
+        isOpen={showDmModal}
+        onClose={() => setShowDmModal(false)}
+        inbox={inbox}
+        initialRecipient={{
+          address: nft.artist_address,
+          name: nft.artist_profile?.name,
+        }}
+      />
     </>
   )
 }

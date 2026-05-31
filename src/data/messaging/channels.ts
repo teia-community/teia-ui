@@ -263,6 +263,24 @@ export function useMyInbox(viewerAddress: string | undefined) {
 
 export type InboxItem = NonNullable<ReturnType<typeof useMyInbox>['data']>[number]
 
+/**
+ * Find an existing DM in the inbox with a given peer, or null. Shared by the
+ * profile / token "Message" buttons and the DM modal.
+ */
+export function findDmWith(
+  inbox: InboxItem[] | undefined,
+  peerAddress: string | undefined
+): InboxItem | null {
+  if (!inbox || !peerAddress) return null
+  return (
+    inbox.find(
+      (c) =>
+        c.metadata.kind === 'dm' &&
+        (c.metadata.participants ?? []).includes(peerAddress)
+    ) ?? null
+  )
+}
+
 // ---------------------------------------------------------------------------
 // Single channel
 // ---------------------------------------------------------------------------
