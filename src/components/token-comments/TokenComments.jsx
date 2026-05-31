@@ -59,9 +59,9 @@ export default function TokenComments({ fa2Address, tokenId, isHolder }) {
   useEffect(() => {
     if (comments?.length && address) {
       const maxId = Math.max(...comments.map((c) => parseInt(c.id)))
-      markRead(address, 'token-notifications', maxId)
+      markRead(address, `token-comments:${fa2Address}:${tokenId}`, maxId)
     }
-  }, [comments, address, markRead])
+  }, [comments, address, fa2Address, tokenId, markRead])
 
   const { byId, children, roots } = useMemo(
     () => buildTree(comments ?? []),

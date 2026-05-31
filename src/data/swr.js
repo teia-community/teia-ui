@@ -315,6 +315,40 @@ export function useObjkt(id) {
   return [data, mutate]
 }
 
+/**
+ * Batch-fetch multiple tokens by id in a single GraphQL request.
+ * Returns a map of token_id -> minimal token info (name + cover uris),
+ * avoiding the N+1 problem of calling useObjkt per row.
+ */
+export function useObjktsByIds(ids) {
+  const unique = [...new Set((ids ?? []).filter(Boolean).map(String))].sort()
+  const { data } = useSWR(
+    unique.length ? ['/objkts-by-ids', unique.join(',')] : null,
+    async () => {
+      const result = await fetchGraphQL(
+        `query ObjktsByIds($ids: [String!]!) {
+           tokens(where: { token_id: { _in: $ids } }) {
+             token_id
+             name
+             display_uri
+             thumbnail_uri
+           }
+         }`,
+        'ObjktsByIds',
+        { ids: unique }
+      )
+      const out = {}
+      for (const t of result?.data?.tokens ?? []) {
+        out[t.token_id] = t
+      }
+      return out
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  )
+
+  return data ?? {}
+}
+
 export const fetchTokenMetadataForCopyrightSearch = async (
   contractAddress,
   tokenId

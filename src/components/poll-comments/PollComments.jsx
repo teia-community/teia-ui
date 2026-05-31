@@ -58,9 +58,9 @@ export default function PollComments({ pollId }) {
   useEffect(() => {
     if (comments?.length && address) {
       const maxId = Math.max(...comments.map((c) => parseInt(c.id)))
-      markRead(address, 'poll-notifications', maxId)
+      markRead(address, `poll-comments:${pollId}`, maxId)
     }
-  }, [comments, address, markRead])
+  }, [comments, address, pollId, markRead])
 
   const isHolder = teiaBalance > 0
 

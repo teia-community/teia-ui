@@ -40,9 +40,15 @@ export const useChatReadStore = create<ChatReadState>()(
   )
 )
 
-export function useUnreadChannels(
+/**
+ * Generic per-item unread selector. Given a map of itemKey -> latestId and a
+ * read-key prefix, returns which items are unread and the total count, by
+ * comparing each item's latest id against reads[address]["<prefix>:<itemKey>"].
+ */
+export function useUnreadItems(
   address: string | undefined,
-  latestByChannel: Record<string, number> | undefined
+  prefix: string,
+  latestByItem: Record<string, number> | undefined
 ) {
   const reads = useChatReadStore((st) => st.reads)
 
@@ -50,31 +56,24 @@ export function useUnreadChannels(
     const unread: Record<string, boolean> = {}
     let total = 0
 
-    if (!address || !latestByChannel) return { unread, total }
+    if (!address || !latestByItem) return { unread, total }
 
     const userReads = reads[address] ?? {}
-    for (const [channelId, latestId] of Object.entries(latestByChannel)) {
-      const lastRead = userReads[`channel:${channelId}`] ?? 0
+    for (const [itemKey, latestId] of Object.entries(latestByItem)) {
+      const lastRead = userReads[`${prefix}:${itemKey}`] ?? 0
       if (latestId > lastRead) {
-        unread[channelId] = true
+        unread[itemKey] = true
         total++
       }
     }
 
     return { unread, total }
-  }, [address, latestByChannel, reads])
+  }, [address, prefix, latestByItem, reads])
 }
 
-export function useHasNewNotification(
+export function useUnreadChannels(
   address: string | undefined,
-  key: string,
-  latestId: number | undefined
+  latestByChannel: Record<string, number> | undefined
 ) {
-  const reads = useChatReadStore((st) => st.reads)
-
-  return useMemo(() => {
-    if (!address || latestId === undefined || latestId === 0) return false
-    const lastRead = reads[address]?.[key] ?? 0
-    return latestId > lastRead
-  }, [address, key, latestId, reads])
+  return useUnreadItems(address, 'channel', latestByChannel)
 }

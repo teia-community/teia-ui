@@ -199,18 +199,21 @@ export function useCommentHistory(
 }
 
 /**
- * Returns the highest comment ID relevant to the viewer:
- * comments on tokens they created, or replies to their own comments.
- * Used for unread notification badges.
+ * Returns a map of "fa2_address:token_id" -> maxCommentId for comments on
+ * tokens the viewer created (excluding their own comments). Compared against
+ * read state to compute unread token comments in the notifications center.
  */
-export function useMyTokenNotificationId(viewerAddress: string | undefined) {
-  return useSWR<number>(
+export function useMyTokenNotifications(viewerAddress: string | undefined) {
+  return useSWR<Record<string, number>>(
     viewerAddress && CONTRACT
-      ? `msg:token-notify:${CONTRACT}:${viewerAddress}`
+      ? `msg:token-notify-map:${CONTRACT}:${viewerAddress}`
       : null,
     async () => {
-      if (!viewerAddress) return 0
+      if (!viewerAddress) return {}
 
+      // NOTE: scans the full comment_posted history on every load. Fine at
+      // current volume; revisit with a cursor / server-side filter as the
+      // comment history grows.
       const posted = await fetchAllEvents<TokenCommentPostedEvent>(
         CONTRACT,
         'comment_posted'
@@ -238,7 +241,7 @@ export function useMyTokenNotificationId(viewerAddress: string | undefined) {
         myTokenKeys.add(`${t.fa2_address}:${t.token_id}`)
       }
 
-      let maxId = 0
+      const maxByToken: Record<string, number> = {}
       for (const e of posted) {
         if (e.payload.sender === viewerAddress) continue
         const cid = parseInt(e.payload.comment_id, 10)
@@ -246,11 +249,11 @@ export function useMyTokenNotificationId(viewerAddress: string | undefined) {
         const isOnMyToken = myTokenKeys.has(tokenKey)
         const isReplyToMe =
           e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
-        if ((isOnMyToken || isReplyToMe) && cid > maxId) {
-          maxId = cid
+        if ((isOnMyToken || isReplyToMe) && cid > (maxByToken[tokenKey] ?? 0)) {
+          maxByToken[tokenKey] = cid
         }
       }
-      return maxId
+      return maxByToken
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )

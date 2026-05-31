@@ -215,18 +215,22 @@ export function useAllPollCommentCounts() {
 }
 
 /**
- * Returns the highest comment ID relevant to the viewer:
- * comments on polls they created, or replies to their own comments.
- * Used for unread notification badges.
+ * Returns a map of pollId -> maxCommentId for comments on polls the viewer
+ * created (or replies to their own comments), excluding the viewer's own
+ * comments. Compared against read state to compute unread poll comments in
+ * the notifications center.
  */
-export function useMyPollNotificationId(viewerAddress: string | undefined) {
-  return useSWR<number>(
+export function useMyPollNotifications(viewerAddress: string | undefined) {
+  return useSWR<Record<string, number>>(
     viewerAddress && CONTRACT
-      ? `msg:poll-notify:${CONTRACT}:${viewerAddress}`
+      ? `msg:poll-notify-map:${CONTRACT}:${viewerAddress}`
       : null,
     async () => {
-      if (!viewerAddress) return 0
+      if (!viewerAddress) return {}
 
+      // NOTE: scans the full comment_posted history on every load. Fine at
+      // current volume; revisit with a cursor / server-side filter as the
+      // comment history grows.
       const posted = await fetchAllEvents<CommentPostedEvent>(
         CONTRACT,
         'comment_posted'
@@ -243,32 +247,33 @@ export function useMyPollNotificationId(viewerAddress: string | undefined) {
       const storageRes = await fetch(
         `${TZKT_API}/v1/contracts/${POLLS_CONTRACT}/storage`
       )
-      if (!storageRes.ok) return 0
+      if (!storageRes.ok) return {}
       const storage = await storageRes.json()
       const bigmapId = storage?.polls
-      if (!bigmapId) return 0
+      if (!bigmapId) return {}
 
       const pollsRes = await fetch(
         `${TZKT_API}/v1/bigmaps/${bigmapId}/keys?value.issuer=${viewerAddress}&active=true&select=key&limit=10000`
       )
-      if (!pollsRes.ok) return 0
+      if (!pollsRes.ok) return {}
       const pollKeys: { key: string }[] | string[] = await pollsRes.json()
       const myPollIds = new Set(
         pollKeys.map((k) => (typeof k === 'object' ? k.key : String(k)))
       )
 
-      let maxId = 0
+      const maxByPoll: Record<string, number> = {}
       for (const e of posted) {
         if (e.payload.sender === viewerAddress) continue
         const cid = parseInt(e.payload.comment_id, 10)
-        const isOnMyPoll = myPollIds.has(e.payload.poll_id)
+        const pollId = e.payload.poll_id
+        const isOnMyPoll = myPollIds.has(pollId)
         const isReplyToMe =
           e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
-        if ((isOnMyPoll || isReplyToMe) && cid > maxId) {
-          maxId = cid
+        if ((isOnMyPoll || isReplyToMe) && cid > (maxByPoll[pollId] ?? 0)) {
+          maxByPoll[pollId] = cid
         }
       }
-      return maxId
+      return maxByPoll
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )

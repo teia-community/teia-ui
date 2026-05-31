@@ -7,16 +7,13 @@ import { walletPreview } from '@utils/string'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { useLocalSettings } from '@context/localSettingsStore'
-import {
-  useUnreadChannels,
-  useHasNewNotification,
-} from '@context/chatReadStore'
+import { useUnreadChannels, useUnreadItems } from '@context/chatReadStore'
 import {
   useMyInbox,
   useChannelLatestMessageIds,
 } from '@data/messaging/channels'
-import { useMyPollNotificationId } from '@data/messaging/poll-comments'
-import { useMyTokenNotificationId } from '@data/messaging/token-comments'
+import { useMyPollNotifications } from '@data/messaging/poll-comments'
+import { useMyTokenNotifications } from '@data/messaging/token-comments'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
@@ -85,28 +82,30 @@ export const MainMenu = () => {
   }, [setCollapsed])
 
   const messageNotifications = useLocalSettings((s) => s.messageNotifications)
+  const notifAddress = messageNotifications ? address : undefined
 
   const { data: inbox } = useMyInbox(address)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
   const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
-  const { total: totalUnread } = useUnreadChannels(address, latestIds)
+  const { total: channelUnread } = useUnreadChannels(notifAddress, latestIds)
 
-  const { data: pollNotifId } = useMyPollNotificationId(address)
-  const hasNewPollComments = useHasNewNotification(
-    address,
-    'poll-notifications',
-    pollNotifId
+  const { data: pollMap } = useMyPollNotifications(notifAddress)
+  const { total: pollUnread } = useUnreadItems(
+    notifAddress,
+    'poll-comments',
+    pollMap
   )
-  const { data: tokenNotifId } = useMyTokenNotificationId(address)
-  const hasNewTokenComments = useHasNewNotification(
-    address,
-    'token-notifications',
-    tokenNotifId
+  const { data: tokenMap } = useMyTokenNotifications(notifAddress)
+  const { total: tokenUnread } = useUnreadItems(
+    notifAddress,
+    'token-comments',
+    tokenMap
   )
 
-  const showInboxBadge = messageNotifications && totalUnread > 0
-  const showPollBadge = messageNotifications && hasNewPollComments
-  const showTokenBadge = messageNotifications && hasNewTokenComments
+  // Unread is surfaced in one place only: the aggregate badge on the
+  // Notifications menu item (and the /notifications + /inbox pages). The
+  // per-section dots were removed to keep the menu clean.
+  const showNotificationsBadge = channelUnread + pollUnread + tokenUnread > 0
 
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
@@ -157,7 +156,6 @@ export const MainMenu = () => {
             label="Profile"
             route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
             need_sync={!currentName || !currentAddress}
-            badge={showTokenBadge}
           />
           <MenuItem
             className={styles.menu_label}
@@ -169,7 +167,13 @@ export const MainMenu = () => {
             label="Inbox"
             route="inbox"
             need_sync
-            badge={showInboxBadge}
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Notifications"
+            route="notifications"
+            need_sync
+            badge={showNotificationsBadge}
           />
 
           <MenuItem
@@ -197,12 +201,7 @@ export const MainMenu = () => {
             route="copyright"
           />
 
-          <MenuItem
-            className={styles.menu_label}
-            label="Polls"
-            route="polls"
-            badge={showPollBadge}
-          />
+          <MenuItem className={styles.menu_label} label="Polls" route="polls" />
           <div className={styles.state_buttons}>
             {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />

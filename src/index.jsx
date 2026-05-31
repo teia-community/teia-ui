@@ -70,6 +70,7 @@ import ProfileChannels from '@pages/profile/channels'
 
 // Messaging
 import MessagesInbox from '@pages/messages'
+import NotificationsCenter from '@pages/notifications'
 import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
@@ -219,6 +220,7 @@ const router = createBrowserRouter(
       <Route path="poll/:id" element={<PollDisplay />} />
       <Route path="publicchannels" element={<ChannelList />} />
       <Route path="inbox" element={<MessagesInbox />} />
+      <Route path="notifications" element={<NotificationsCenter />} />
       <Route path="inbox/channels" element={<ChannelList />} />
       <Route path="inbox/channels/create" element={<CreateChannel />} />
       <Route path="inbox/channels/:id" element={<ChannelView />} />
