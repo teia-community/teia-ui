@@ -260,7 +260,7 @@ export default function ChannelView() {
             {(isCreator || isAdmin) && (
               <>
                 <Button shadow_box onClick={() => setAddUserOpen(true)}>
-                  + Add User
+                  + Add Admin
                 </Button>
                 <Button shadow_box to={`/inbox/channels/${channelId}/settings`}>
                   Settings
