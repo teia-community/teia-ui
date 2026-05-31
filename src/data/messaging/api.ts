@@ -2,7 +2,7 @@ import type { TzktEvent } from './poll-comments-types'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 const DEFAULT_PAGE_SIZE = 50
-const MAX_PAGE_SIZE = 1000
+const MAX_PAGE_SIZE = 10000
 
 /**
  * Fetch a single page of contract events from TzKT.
