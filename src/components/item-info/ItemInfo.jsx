@@ -129,20 +129,13 @@ const ItemInfo = ({ nft }) => {
                 onClick={handleMessageClick}
                 alt="Message the artist"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  style={{
-                    fill: 'var(--text-color)',
-                    stroke: 'transparent',
-                    marginRight: '8px',
-                  }}
+                <span
+                  role="img"
+                  aria-label="message"
+                  style={{ marginRight: '8px' }}
                 >
-                  <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
-                </svg>
+                  💬
+                </span>
                 Message
               </Button>
             )}
