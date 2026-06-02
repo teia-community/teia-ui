@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
@@ -98,17 +99,19 @@ export default function MessageBubble({
       className={`${styles.bubbleRow} ${isOwn ? styles.bubbleRowOwn : ''}`}
     >
       {!isOwn && (
-        <Identicon
-          address={msg.sender}
-          logo={senderLogo}
-          className={styles.bubbleAvatar}
-        />
+        <Link to={`/tz/${msg.sender}`} className={styles.bubbleAvatarLink}>
+          <Identicon
+            address={msg.sender}
+            logo={senderLogo}
+            className={styles.bubbleAvatar}
+          />
+        </Link>
       )}
       <div>
         {!isOwn && (
-          <div className={styles.bubbleSender}>
+          <Link to={`/tz/${msg.sender}`} className={styles.bubbleSender}>
             {senderAlias || walletPreview(msg.sender)}
-          </div>
+          </Link>
         )}
         {msg.parentId && (
           <button className={styles.replyIndicator} onClick={scrollToParent}>

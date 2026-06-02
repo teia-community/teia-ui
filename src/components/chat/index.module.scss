@@ -11,6 +11,12 @@
   flex-direction: row-reverse;
 }
 
+.bubbleAvatarLink {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
 .bubbleAvatar {
   border-radius: 50%;
   width: 24px;
@@ -42,9 +48,16 @@
 }
 
 .bubbleSender {
+  display: inline-block;
   font-weight: 600;
   font-size: $font-xsmall;
   margin-bottom: 2px;
+  color: var(--text-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .bubbleMeta {

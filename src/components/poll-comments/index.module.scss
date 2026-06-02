@@ -46,6 +46,12 @@
   padding: 8px 0;
 }
 
+.avatarLink {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
 .avatar {
   width: 32px;
   height: 32px;

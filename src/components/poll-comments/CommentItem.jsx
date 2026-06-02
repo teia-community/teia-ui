@@ -94,11 +94,13 @@ export default function CommentItem({
   return (
     <>
       <div id={`comment-${comment.id}`} className={styles.comment}>
-        <Identicon
-          address={comment.sender}
-          logo={senderLogo}
-          className={styles.avatar}
-        />
+        <Link to={`/tz/${comment.sender}`} className={styles.avatarLink}>
+          <Identicon
+            address={comment.sender}
+            logo={senderLogo}
+            className={styles.avatar}
+          />
+        </Link>
         <div className={styles.body}>
           <div className={styles.head}>
             <Link to={`/tz/${comment.sender}`} className={styles.sender}>
