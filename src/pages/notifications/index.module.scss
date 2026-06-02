@@ -1,9 +1,9 @@
 @import '@styles/variables.scss';
 
 .container {
-  max-width: 720px;
+  width: 100%;
   margin: 0 auto;
-  padding: 1.5em 1em 4em;
+  padding: 1.5em 2em 4em;
 }
 
 .header {
@@ -31,8 +31,31 @@
   font-weight: bold;
 }
 
+.infoNote {
+  margin: 0 0 2em;
+  padding: 0.85em 1em;
+  border-radius: 8px;
+  background-color: var(--gray-05);
+  border: 1px solid var(--gray-10);
+  font-size: $font-small;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5em 2em;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .section {
-  margin-bottom: 2em;
+  margin-bottom: 0;
+  min-width: 0;
 }
 
 .sectionTitle {
@@ -67,6 +90,14 @@
 
   &:hover {
     background-color: var(--gray-05);
+  }
+}
+
+.read {
+  opacity: 0.55;
+
+  .rowTitle {
+    font-weight: normal;
   }
 }
 
