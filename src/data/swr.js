@@ -38,6 +38,32 @@ export function useBalance(address) {
   return [data ? data / 1000000 : 0, mutate]
 }
 
+/**
+ * Fetch baker an account currently delegates to.
+ * Returns the TzKT delegate object `{ alias, address, active }` or null when
+ * the account delegates to nobody. `active === false` means the baker has been
+ * deactivated.
+ */
+export function useAccountDelegate(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/accounts/${address}` : null,
+    getTzktData
+  )
+  return [data ? data.delegate ?? null : undefined, mutate]
+}
+
+/**
+ * Fetch on-chain info about a baker (delegate) straight from TzKT.
+ */
+export function useBakerInfo(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/delegates/${address}` : null,
+    getTzktData
+  )
+
+  return [data, mutate]
+}
+
 export function useDaoTokenBalance(address) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
