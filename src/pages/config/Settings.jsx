@@ -46,6 +46,10 @@ export const Settings = () => {
     setHasSeenBanner,
     messageNotifications,
     setMessageNotifications,
+    showBakerOnProfile,
+    setShowBakerOnProfile,
+    showBakerOnToken,
+    setShowBakerOnToken,
   ] = useLocalSettings((st) => [
     st.nsfwFriendly,
     st.setNsfwFriendly,
@@ -65,6 +69,10 @@ export const Settings = () => {
     st.setHasSeenBanner,
     st.messageNotifications,
     st.setMessageNotifications,
+    st.showBakerOnProfile,
+    st.setShowBakerOnProfile,
+    st.showBakerOnToken,
+    st.setShowBakerOnToken,
   ])
 
   return (
@@ -172,6 +180,26 @@ export const Settings = () => {
             checked={messageNotifications}
             onCheck={setMessageNotifications}
             label={'Show unread message indicators'}
+          />
+          <Line />
+          <p>
+            <strong>Baker</strong>
+          </p>
+          <Checkbox
+            alt={`click to ${
+              showBakerOnProfile ? 'hide' : 'show'
+            } the baker a user delegates to on their profile`}
+            checked={showBakerOnProfile}
+            onCheck={setShowBakerOnProfile}
+            label={'Show baker on profiles'}
+          />
+          <Checkbox
+            alt={`click to ${
+              showBakerOnToken ? 'hide' : 'show'
+            } the baker tab on token pages`}
+            checked={showBakerOnToken}
+            onCheck={setShowBakerOnToken}
+            label={"Show the artist's baker tab on token pages"}
           />
           {bannerEnabled && (
             <Checkbox

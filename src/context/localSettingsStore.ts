@@ -31,6 +31,8 @@ interface LocalSettingsState {
   has_seen_banner: boolean
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
+  showBakerOnProfile: boolean
+  showBakerOnToken: boolean
   startFeed: FeedType
   rpcNode: RPC_NODES
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
@@ -41,6 +43,8 @@ interface LocalSettingsState {
   setMessageNotifications: (v: boolean) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
+  setShowBakerOnProfile: (v: boolean) => void
+  setShowBakerOnToken: (v: boolean) => void
   setStartFeed: (v: FeedType | undefined) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
@@ -65,6 +69,8 @@ const defaultValues = {
   viewMode: 'single' as ViewMode,
   nsfwFriendly: false,
   photosensitiveFriendly: false,
+  showBakerOnProfile: true,
+  showBakerOnToken: false,
   startFeed: DEFAULT_START_FEED,
   zen: false,
   theme: 'dark' as Theme,
@@ -142,6 +148,9 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),
+        setShowBakerOnProfile: (showBakerOnProfile) =>
+          set({ showBakerOnProfile }),
+        setShowBakerOnToken: (showBakerOnToken) => set({ showBakerOnToken }),
         setStartFeed: (startFeed) => set({ startFeed }),
       }),
       {
