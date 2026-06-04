@@ -141,6 +141,11 @@ export const MainMenu = () => {
             label="Public Channels"
             route="publicchannels"
           />
+          <MenuItem
+            className={styles.menu_label}
+            label="Bakers"
+            route="bakers"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>

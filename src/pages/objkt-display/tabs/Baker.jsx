@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
@@ -46,11 +47,21 @@ export const Baker = () => {
   return (
     <Container>
       <div className={styles.tab}>
-        <BakerOverview
-          address={delegate.address}
-          alias={delegate.alias}
-          addressTo={`/baker/${delegate.address}`}
-        />
+        <div className={styles.topRow}>
+          <p className={styles.intro}>
+            This is the baker that the artist is currently delegated to. Bakers
+            help to secure the network and vote on essential upgrades that keep
+            the Tezos ecosystem running. To learn more,{' '}
+            <Link to="/bakers">click here</Link>.
+          </p>
+          <div className={styles.overviewCol}>
+            <BakerOverview
+              address={delegate.address}
+              alias={delegate.alias}
+              addressTo={`/baker/${delegate.address}`}
+            />
+          </div>
+        </div>
         <p className={styles.note}>Data from TzKT.</p>
       </div>
     </Container>
