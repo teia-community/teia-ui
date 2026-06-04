@@ -4,7 +4,7 @@ import Identicon from '@atoms/identicons'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
-import { useBakerDelegators } from '@data/swr'
+import { useBakerDelegators, useUsers } from '@data/swr'
 import styles from './BakerDelegators.module.scss'
 
 const PAGE_SIZE = 25
@@ -20,6 +20,7 @@ const fmtXTZ = (mutez) =>
 export default function BakerDelegators({ address, total }) {
   const [page, setPage] = useState(0)
   const [delegators] = useBakerDelegators(address, PAGE_SIZE, page * PAGE_SIZE)
+  const [profiles] = useUsers((delegators ?? []).map((d) => d.address))
 
   const hasMore =
     typeof total === 'number'
@@ -38,17 +39,24 @@ export default function BakerDelegators({ address, total }) {
         <p className={styles.empty}>No delegators.</p>
       ) : (
         <ul className={styles.list}>
-          {delegators.map((d) => (
-            <li key={d.address} className={styles.row}>
-              <Link to={`/tz/${d.address}`} className={styles.delegator}>
-                <Identicon address={d.address} className={styles.dAvatar} />
-                <span className={styles.dName}>
-                  {d.alias || walletPreview(d.address)}
-                </span>
-              </Link>
-              <span className={styles.dBalance}>{fmtXTZ(d.balance)}</span>
-            </li>
-          ))}
+          {delegators.map((d) => {
+            const profile = profiles[d.address]
+            return (
+              <li key={d.address} className={styles.row}>
+                <Link to={`/tz/${d.address}`} className={styles.delegator}>
+                  <Identicon
+                    address={d.address}
+                    logo={profile?.logo}
+                    className={styles.dAvatar}
+                  />
+                  <span className={styles.dName}>
+                    {profile?.alias || d.alias || walletPreview(d.address)}
+                  </span>
+                </Link>
+                <span className={styles.dBalance}>{fmtXTZ(d.balance)}</span>
+              </li>
+            )
+          })}
         </ul>
       )}
 

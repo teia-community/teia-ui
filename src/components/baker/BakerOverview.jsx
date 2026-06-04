@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Identicon from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
 import { useBakerInfo } from '@data/swr'
+import { TZKT_AVATARS_URL } from '@constants'
 import styles from './BakerOverview.module.scss'
 
 const fmtXTZ = (mutez) =>
@@ -48,7 +49,7 @@ export default function BakerOverview({
       <div className={styles.header}>
         <Identicon
           address={address}
-          logo={`https://services.tzkt.io/v1/avatars/${address}`}
+          logo={`${TZKT_AVATARS_URL}/${address}`}
           className={styles.avatar}
         />
         <div className={styles.headerText}>

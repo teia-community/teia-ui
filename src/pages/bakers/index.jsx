@@ -5,7 +5,8 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import Identicon from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
-import { useBakers, useBakersCount } from '@data/swr'
+import { useBakers, useBakersCount, useUsers } from '@data/swr'
+import { TZKT_AVATARS_URL } from '@constants'
 import styles from './Bakers.module.scss'
 
 const PAGE_SIZE = 25
@@ -15,10 +16,15 @@ const fmtXTZ = (mutez) =>
     ? `${Math.round(mutez / 1000000).toLocaleString()} ꜩ`
     : '—'
 
+const tzktAvatar = (address) => `${TZKT_AVATARS_URL}/${address}`
+
 export default function BakersPage() {
   const [page, setPage] = useState(0)
   const [bakers] = useBakers(PAGE_SIZE, page * PAGE_SIZE)
   const [total] = useBakersCount()
+
+  // Prefer a teia name/pfp when the baker is also a teia user.
+  const [profiles] = useUsers((bakers ?? []).map((b) => b.address))
 
   const hasMore = total
     ? (page + 1) * PAGE_SIZE < total
@@ -37,30 +43,33 @@ export default function BakersPage() {
             <Loading message="Loading bakers..." />
           ) : (
             <ul className={styles.list}>
-              {bakers.map((b) => (
-                <li key={b.address} className={styles.row}>
-                  <Link to={`/baker/${b.address}`} className={styles.baker}>
-                    <Identicon
-                      address={b.address}
-                      logo={`https://services.tzkt.io/v1/avatars/${b.address}`}
-                      className={styles.avatar}
-                    />
-                    <span className={styles.name}>
-                      {b.alias || walletPreview(b.address)}
-                    </span>
-                  </Link>
-                  <div className={styles.metrics}>
-                    <span className={styles.metric}>
-                      <span className={styles.metricLabel}>Staking</span>
-                      {fmtXTZ(b.stakingBalance)}
-                    </span>
-                    <span className={styles.metric}>
-                      <span className={styles.metricLabel}>Delegators</span>
-                      {b.numDelegators ?? '—'}
-                    </span>
-                  </div>
-                </li>
-              ))}
+              {bakers.map((b) => {
+                const profile = profiles[b.address]
+                return (
+                  <li key={b.address} className={styles.row}>
+                    <Link to={`/baker/${b.address}`} className={styles.baker}>
+                      <Identicon
+                        address={b.address}
+                        logo={profile?.logo || tzktAvatar(b.address)}
+                        className={styles.avatar}
+                      />
+                      <span className={styles.name}>
+                        {profile?.alias || b.alias || walletPreview(b.address)}
+                      </span>
+                    </Link>
+                    <div className={styles.metrics}>
+                      <span className={styles.metric}>
+                        <span className={styles.metricLabel}>Staking</span>
+                        {fmtXTZ(b.stakingBalance)}
+                      </span>
+                      <span className={styles.metric}>
+                        <span className={styles.metricLabel}>Delegators</span>
+                        {b.numDelegators ?? '—'}
+                      </span>
+                    </div>
+                  </li>
+                )
+              })}
             </ul>
           )}
 
