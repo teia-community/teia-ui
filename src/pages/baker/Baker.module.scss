@@ -1,0 +1,41 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.backLink {
+  font-size: var(--font-size-small, 0.85rem);
+  opacity: 0.7;
+  text-decoration: none;
+  width: fit-content;
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+}
+
+.inactive {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  opacity: 0.85;
+}
+
+.notBaker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.note {
+  margin: 0;
+  opacity: 0.5;
+  font-size: var(--font-size-small, 0.8rem);
+}

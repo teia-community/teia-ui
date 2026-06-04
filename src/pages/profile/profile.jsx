@@ -439,7 +439,7 @@ export default function Profile({ user }) {
               ) : delegate.active === false ? (
                 'Inactive baker'
               ) : (
-                <Button href={`https://tzkt.io/${delegate.address}`}>
+                <Button to={`/baker/${delegate.address}`}>
                   {delegate.alias || walletPreview(delegate.address)}
                 </Button>
               )}
