@@ -5,6 +5,9 @@ export const BANNER_URL = 'https://lists.teia.art/teia-status'
 /** TzKT avatar service base, append `/{address}` for a baker or any account image. */
 export const TZKT_AVATARS_URL = 'https://services.tzkt.io/v1/avatars'
 
+/** Baking Bad bakers registry. */
+export const BAKING_BAD_BAKERS_API = 'https://api.baking-bad.org/v3/bakers'
+
 export const PATH = {
   FEED: '/',
   ISSUER: '/tz',

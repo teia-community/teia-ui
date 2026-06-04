@@ -3,6 +3,7 @@ import { Page, Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { useAccount } from '@data/swr'
 import BakerOverview from '@components/baker/BakerOverview'
+import BakerServiceCards from '@components/baker/BakerServiceCards'
 import BakerDelegators from '@components/baker/BakerDelegators'
 import styles from './Baker.module.scss'
 
@@ -48,6 +49,8 @@ export default function BakerPage() {
           )}
 
           <BakerOverview address={address} alias={account.alias} extended />
+
+          <BakerServiceCards address={address} />
 
           <BakerDelegators address={address} total={account.numDelegators} />
 

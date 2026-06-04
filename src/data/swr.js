@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import axios from 'axios'
 import { gql, request } from 'graphql-request'
 import { bytesToString } from '@taquito/utils'
 import {
@@ -8,6 +9,7 @@ import {
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
   TEIA_MULTISIG_BLOG_TAG,
+  BAKING_BAD_BAKERS_API,
 } from '@constants'
 import {
   getTzktData,
@@ -103,6 +105,51 @@ export function useBakers(limit = 25, offset = 0) {
     offset,
   }
   const { data, mutate } = useSWR(['/v1/delegates', parameters], getTzktData)
+
+  return [data, mutate]
+}
+
+/**
+ * Test Cakk ti fetch delegators.
+ * Subject to change,
+ */
+export function useAllDelegates() {
+  const parameters = {
+    select: 'address,bakingPower,numDelegators',
+    limit: 10000,
+  }
+  const { data, mutate } = useSWR(['/v1/delegates', parameters], getTzktData)
+
+  return [data, mutate]
+}
+
+const fetchJson = async (url) => (await axios.get(url)).data
+
+/**
+ * Fetch Baking Bad bakers registry.
+ */
+export function useBakerRegistry() {
+  const { data, error, mutate } = useSWR(BAKING_BAD_BAKERS_API, fetchJson, {
+    revalidateOnFocus: false,
+    dedupingInterval: 300_000,
+  })
+
+  return [data, error, mutate]
+}
+
+/**
+ * Fetch a single baker from Baking Bad API
+ */
+export function useBakerRegistryEntry(address) {
+  const { data, mutate } = useSWR(
+    address ? `${BAKING_BAD_BAKERS_API}/${address}` : null,
+    fetchJson,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 300_000,
+      shouldRetryOnError: false,
+    }
+  )
 
   return [data, mutate]
 }

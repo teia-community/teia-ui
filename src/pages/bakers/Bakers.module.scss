@@ -16,21 +16,88 @@
   font-size: var(--font-size-small, 0.85rem);
 }
 
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty {
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+.table {
   display: flex;
   flex-direction: column;
 }
 
+.headRow,
 .row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) repeat(5, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
+}
+
+.headRow {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.row {
   padding: 0.6rem 0;
   border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background-color: var(--background-secondary);
+  }
+
+  &:hover .name {
+    text-decoration: underline;
+  }
+}
+
+.thName {
+  font-size: var(--font-size-small, 0.7rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
+
+.th {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  font-size: var(--font-size-small, 0.7rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.thActive {
+  opacity: 1;
+}
+
+.arrow {
+  font-size: 0.7em;
 }
 
 .baker {
@@ -38,12 +105,6 @@
   align-items: center;
   gap: 0.6rem;
   min-width: 0;
-  text-decoration: none;
-  color: inherit;
-
-  &:hover .name {
-    text-decoration: underline;
-  }
 }
 
 .avatar {
@@ -57,24 +118,11 @@
   overflow-wrap: anywhere;
 }
 
-.metrics {
-  display: flex;
-  gap: 1.25rem;
-  flex-shrink: 0;
+.cell {
   text-align: right;
-}
-
-.metric {
-  display: flex;
-  flex-direction: column;
   white-space: nowrap;
-}
-
-.metricLabel {
-  font-size: var(--font-size-small, 0.7rem);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pager {
@@ -95,12 +143,13 @@
   font-size: var(--font-size-small, 0.8rem);
 }
 
-@media (max-width: 500px) {
-  .metrics {
-    gap: 0.75rem;
+@media (max-width: 640px) {
+  .headRow,
+  .row {
+    grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
   }
 
-  .metric:not(:first-child) {
+  .hideSmall {
     display: none;
   }
 }
