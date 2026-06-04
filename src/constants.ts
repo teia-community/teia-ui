@@ -2,6 +2,9 @@ import { flipObject } from './utils'
 
 export const BANNER_URL = 'https://lists.teia.art/teia-status'
 
+/** TzKT avatar service base, append `/{address}` for a baker or any account image. */
+export const TZKT_AVATARS_URL = 'https://services.tzkt.io/v1/avatars'
+
 export const PATH = {
   FEED: '/',
   ISSUER: '/tz',

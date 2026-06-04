@@ -62,6 +62,8 @@ import {
   Baker,
 } from '@pages/objkt-display/tabs'
 import Display from '@pages/profile'
+import BakerPage from '@pages/baker'
+import BakersPage from '@pages/bakers'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
@@ -203,6 +205,8 @@ const router = createBrowserRouter(
         <Route path="copyright" element={<Copyright />} />
         <Route path="baker" element={<Baker />} />
       </Route>
+      <Route path="bakers" element={<BakersPage />} />
+      <Route path="baker/:address" element={<BakerPage />} />
       <Route path="subjkt/*" element={<Subjkt />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="claim/*" element={<Claim />} />

@@ -64,6 +64,68 @@ export function useBakerInfo(address) {
   return [data, mutate]
 }
 
+/**
+ * Full TzKT account object. `undefined` while loading. `type === 'delegate'`
+ * means the account is a baker.
+ */
+export function useAccount(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/accounts/${address}` : null,
+    getTzktData
+  )
+
+  return [data, mutate]
+}
+
+/**
+ * Total number of bakers (active only by default).
+ */
+export function useBakersCount(active = true) {
+  const parameters = active ? { active: true } : {}
+  const { data, mutate } = useSWR(
+    ['/v1/delegates/count', parameters],
+    getTzktData
+  )
+
+  return [data ? parseInt(data) : 0, mutate]
+}
+
+/**
+ * A page of bakers, by default active ones sorted by staking power.
+ */
+export function useBakers(limit = 25, offset = 0) {
+  const parameters = {
+    active: true,
+    'sort.desc': 'votingPower',
+    select:
+      'address,alias,active,stakingBalance,delegatedBalance,numDelegators,balance',
+    limit,
+    offset,
+  }
+  const { data, mutate } = useSWR(['/v1/delegates', parameters], getTzktData)
+
+  return [data, mutate]
+}
+
+/**
+ * A page of accounts that delegate to the given baker, heaviest first.
+ */
+export function useBakerDelegators(address, limit = 25, offset = 0) {
+  const parameters = {
+    delegate: address,
+    'sort.desc': 'balance',
+    select: 'address,alias,balance,delegationLevel,delegationTime',
+    limit,
+    offset,
+  }
+  const { data, mutate } = useSWR(
+    address ? ['/v1/accounts', parameters] : null,
+    getTzktData
+  )
+
+  return [data, mutate]
+}
+
 export function useDaoTokenBalance(address) {
   const parameters = {
     'token.contract': DAO_TOKEN_CONTRACT,
