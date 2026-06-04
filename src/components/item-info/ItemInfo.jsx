@@ -25,6 +25,7 @@ import Editions from './Editions'
  **/
 const ItemInfo = ({ nft }) => {
   const address = useUserStore((st) => st.address)
+  const sync = useUserStore((st) => st.sync)
   const navigate = useNavigate()
   const { data: inbox } = useMyInbox(address)
   const [showDmModal, setShowDmModal] = useState(false)
@@ -34,7 +35,6 @@ const ItemInfo = ({ nft }) => {
 
   // Message the artist (non-collab tokens only)
   const canMessageArtist =
-    address &&
     nft.artist_address &&
     address !== nft.artist_address &&
     !get(nft, 'artist_profile.is_split')
@@ -44,7 +44,15 @@ const ItemInfo = ({ nft }) => {
     [inbox, nft.artist_address]
   )
 
-  const handleMessageClick = () => {
+  const handleMessageClick = async () => {
+    // Message Artist button, calls sync on click
+    if (!address) {
+      const account = await sync()
+      if (!account) return // user cancelled the wallet connection
+      setShowDmModal(true)
+      return
+    }
+
     if (existingDm) {
       navigate(`/inbox/channels/${existingDm.id}`)
     } else {
