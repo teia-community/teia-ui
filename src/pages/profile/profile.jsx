@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
-import { useDaoTokenBalance } from '@data/swr'
+import { useDaoTokenBalance, useAccountDelegate } from '@data/swr'
 import { useUserStore } from '@context/userStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { useMyInbox, findDmWith } from '@data/messaging/channels'
 import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from '@style'
@@ -33,6 +34,7 @@ async function reverseRecord(address) {
 export default function Profile({ user }) {
   const navigate = useNavigate()
   const viewerAddress = useUserStore((st) => st.address)
+  const sync = useUserStore((st) => st.sync)
   const { data: inbox } = useMyInbox(viewerAddress)
   const [showDmModal, setShowDmModal] = useState(false)
 
@@ -43,7 +45,15 @@ export default function Profile({ user }) {
     [inbox, user.address, isOwnProfile]
   )
 
-  const handleMessageClick = () => {
+  const handleMessageClick = async () => {
+    // Message Artist button, calls sync on click
+    if (!viewerAddress) {
+      const account = await sync()
+      if (!account) return // user cancelled the wallet connection
+      setShowDmModal(true)
+      return
+    }
+
     if (existingDm) {
       navigate(`/inbox/channels/${existingDm.id}`)
     } else {
@@ -58,6 +68,11 @@ export default function Profile({ user }) {
     successDuration: 2500,
   })
   const [daoTokenBalance] = useDaoTokenBalance(user.address)
+
+  const showBakerOnProfile = useLocalSettings((st) => st.showBakerOnProfile)
+  const [delegate] = useAccountDelegate(
+    showBakerOnProfile ? user.address : null
+  )
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
@@ -416,7 +431,22 @@ export default function Profile({ user }) {
             )}
           </div>
 
-          {viewerAddress && !isOwnProfile && (
+          {showBakerOnProfile && delegate !== undefined && (
+            <p className={styles.baker}>
+              <span style={{ marginRight: '0.5em' }}>Baker:</span>
+              {!delegate ? (
+                'Not delegated'
+              ) : delegate.active === false ? (
+                'Inactive baker'
+              ) : (
+                <Button href={`https://tzkt.io/${delegate.address}`}>
+                  {delegate.alias || walletPreview(delegate.address)}
+                </Button>
+              )}
+            </p>
+          )}
+
+          {!isOwnProfile && (
             <Button
               shadow_box
               onClick={handleMessageClick}
