@@ -9,17 +9,24 @@ interface TokenCardProps {
   contract: string
   tokenId: string
   metadata?: NFTMetadata
+  managed?: boolean
 }
 
-export default function TokenCard({ contract, tokenId, metadata }: TokenCardProps) {
+export default function TokenCard({ contract, tokenId, metadata, managed }: TokenCardProps) {
   const [meta, setMeta] = useState<NFTMetadata>(metadata || {})
 
+  // Sync local state when the parent supplies/updates metadata.
   useEffect(() => {
-    if (metadata) return
+    if (metadata) setMeta(metadata)
+  }, [metadata])
+
+  useEffect(() => {
+    // Parent-managed cards wait for the batched result; they never self-fetch.
+    if (managed || metadata) return
     fetchTokenMetadataForCopyrightSearch(contract, tokenId)
       .then((data) => setMeta(data?.metadata || {}))
       .catch(() => setMeta({}))
-  }, [contract, tokenId, metadata])
+  }, [contract, tokenId, metadata, managed])
 
   const imageSrc =
     (meta.thumbnailUri && HashToURL(meta.thumbnailUri, 'IPFS')) ||

@@ -338,6 +338,96 @@ export const fetchTokenMetadataForCopyrightSearch = async (
   return data[0]
 }
 
+// Batch fetching for teia & non teia tokens on graphql
+
+const TOKEN_BATCH_CHUNK = 50
+
+const fetchHenTokensMetadata = async (tokenIds, result) => {
+  const query = `
+    query CopyrightHenTokens($tokenIds: [String!]!) {
+      tokens(
+        where: {
+          token_id: { _in: $tokenIds }
+          fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+        }
+      ) {
+        ...baseTokenFields
+      }
+    }
+    ${BaseTokenFieldsFragment}
+  `
+  const res = await fetchGraphQL(query, 'CopyrightHenTokens', { tokenIds })
+  res?.data?.tokens?.forEach((t) => {
+    result.set(`${HEN_CONTRACT_FA2}:${t.token_id}`, {
+      name: t.name,
+      description: t.description,
+      displayUri: t.display_uri,
+      thumbnailUri: t.thumbnail_uri,
+      artifactUri: t.artifact_uri,
+      mimeType: t.mime_type,
+      creators: [t.artist_address],
+      editions: t.editions,
+      tags: t.tags?.map((tag) => tag.tag) || [],
+    })
+  })
+}
+
+/**
+ * Batch-fetch token metadata for the copyright pages.
+ *
+ * @param {Array<{ contract: string, tokenId: string | number }>} tokens
+ * @returns {Promise<Map<string, any>>} keyed by `${contract}:${tokenId}` -> metadata
+ */
+export const fetchTokensMetadataBatch = async (tokens = []) => {
+  const result = new Map()
+
+  const henIds = []
+  const byContract = new Map()
+  for (const { contract, tokenId } of tokens) {
+    if (contract === HEN_CONTRACT_FA2) {
+      henIds.push(String(tokenId))
+    } else {
+      if (!byContract.has(contract)) byContract.set(contract, [])
+      byContract.get(contract).push(String(tokenId))
+    }
+  }
+
+  // Expand each contract into chunked `tokenId.in=` requests.
+  const tzktChunks = []
+  for (const [contract, tokenIds] of byContract.entries()) {
+    for (let i = 0; i < tokenIds.length; i += TOKEN_BATCH_CHUNK) {
+      tzktChunks.push([contract, tokenIds.slice(i, i + TOKEN_BATCH_CHUNK)])
+    }
+  }
+
+  await Promise.all([
+    ...(henIds.length
+      ? [fetchHenTokensMetadata(henIds, result).catch(() => {})]
+      : []),
+    ...tzktChunks.map(async ([contract, tokenIds]) => {
+      try {
+        const url = `${
+          import.meta.env.VITE_TZKT_API
+        }/v1/tokens?contract=${contract}&tokenId.in=${tokenIds.join(
+          ','
+        )}&limit=${TOKEN_BATCH_CHUNK}`
+        const response = await fetch(url)
+        if (!response.ok) return
+        const data = await response.json()
+        for (const item of data) {
+          if (item?.metadata) {
+            result.set(`${contract}:${item.tokenId}`, item.metadata)
+          }
+        }
+      } catch {
+        // ignore chunk-level failures; affected cards show a placeholder
+      }
+    }),
+  ])
+
+  return result
+}
+
 export async function fetchUserCopyrights(address) {
   if (!address) return []
 
