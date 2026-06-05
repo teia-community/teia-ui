@@ -27,7 +27,9 @@ export default function TokenCard({ contract, tokenId, metadata }: TokenCardProp
     (meta.artifactUri && HashToURL(meta.artifactUri, 'IPFS'))
 
   const isHen = contract === HEN_CONTRACT_FA2
-  const link = isHen ? `/objkt/${tokenId}` : `${import.meta.env.VITE_TZKT_API?.replace('/v1', '')}/${contract}/tokens/${tokenId}`
+  const link = isHen
+    ? `/objkt/${tokenId}`
+    : `https://tzkt.io/${contract}/tokens/${tokenId}/metadata`
 
   return (
     <div className={styles.tokenCard}>
