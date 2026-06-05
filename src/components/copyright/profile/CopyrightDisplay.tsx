@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router'
-import { fetchUserCopyrights, fetchCreatorAliases, fetchTokenMetadataForCopyrightSearch } from '@data/swr'
+import { fetchUserCopyrights, fetchCreatorAliases, fetchTokensMetadataBatch } from '@data/swr'
 import { HashToURL } from '@utils'
 import { Loading } from '@atoms/loading'
 import type { CopyrightEntry } from '../shared/CopyrightTypes'
 import ClausesPreview from '../shared/ClausesPreview'
-import TokenCard from '../shared/TokenCard'
+import RegisteredWorks from '../shared/RegisteredWorks'
 import AgreementViewer from '../shared/AgreementViewer'
 import styles from './index.module.scss'
 import sharedStyles from '../shared/index.module.scss'
@@ -18,7 +18,6 @@ export default function CopyrightDisplay() {
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [showFullText, setShowFullText] = useState<Record<number, boolean>>({})
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({})
-  const [tokenMeta, setTokenMeta] = useState<Record<string, any>>({})
 
   useEffect(() => {
     if (!address) return
@@ -31,31 +30,26 @@ export default function CopyrightDisplay() {
       const addresses = [...new Set(data.map((e) => e.key.address))]
       fetchCreatorAliases(addresses).then(setAliases)
 
-      // Fetch thumbnails for all NFTs across all entries
-      const allNfts = data.flatMap((e) =>
-        e.value.related_tezos_nfts.map((nft) => ({ ...nft, entryId: e.id }))
-      )
-      const thumbResults = await Promise.allSettled(
-        allNfts.map(async (nft) => {
-          const meta = await fetchTokenMetadataForCopyrightSearch(nft.contract, nft.token_id)
-          const md = meta?.metadata || {}
-          const src =
-            (md.thumbnailUri && HashToURL(md.thumbnailUri, 'IPFS')) ||
-            (md.displayUri && HashToURL(md.displayUri, 'IPFS')) ||
-            (md.artifactUri && HashToURL(md.artifactUri, 'IPFS'))
-          return { key: `${nft.contract}:${nft.token_id}`, src, md }
-        })
+      // Fetch a single cover thumbnail per copyright (its first registered
+      // work), batched. The remaining works load lazily when a copyright is
+      // expanded (see RegisteredWorks).
+      const coverNfts = data
+        .map((e) => e.value.related_tezos_nfts[0])
+        .filter(Boolean)
+      const coverMeta = await fetchTokensMetadataBatch(
+        coverNfts.map((nft) => ({ contract: nft.contract, tokenId: nft.token_id }))
       )
       const thumbMap: Record<string, string> = {}
-      const metaMap: Record<string, any> = {}
-      thumbResults.forEach((r) => {
-        if (r.status === 'fulfilled') {
-          if (r.value.src) thumbMap[r.value.key] = r.value.src
-          metaMap[r.value.key] = r.value.md
-        }
+      coverNfts.forEach((nft) => {
+        const md = coverMeta.get(`${nft.contract}:${nft.token_id}`)
+        if (!md) return
+        const src =
+          (md.thumbnailUri && HashToURL(md.thumbnailUri, 'IPFS')) ||
+          (md.displayUri && HashToURL(md.displayUri, 'IPFS')) ||
+          (md.artifactUri && HashToURL(md.artifactUri, 'IPFS'))
+        if (src) thumbMap[`${nft.contract}:${nft.token_id}`] = src
       })
       setThumbnails(thumbMap)
-      setTokenMeta(metaMap)
     })
   }, [address])
 
@@ -114,15 +108,15 @@ export default function CopyrightDisplay() {
 
                 {works > 0 && (
                   <div className={styles.thumbStrip}>
-                    {entry.value.related_tezos_nfts.map((nft) => {
-                      const key = `${nft.contract}:${nft.token_id}`
-                      const src = thumbnails[key]
+                    {(() => {
+                      const cover = entry.value.related_tezos_nfts[0]
+                      const src = thumbnails[`${cover.contract}:${cover.token_id}`]
                       return src ? (
-                        <img key={key} src={src} alt="" className={styles.thumbImg} />
+                        <img src={src} alt="" className={styles.thumbImg} />
                       ) : (
-                        <div key={key} className={styles.thumbPlaceholder} />
+                        <div className={styles.thumbPlaceholder} />
                       )
-                    })}
+                    })()}
                   </div>
                 )}
 
@@ -166,16 +160,7 @@ export default function CopyrightDisplay() {
                   {entry.value.related_tezos_nfts.length > 0 && (
                     <>
                       <h4 className={sharedStyles.sectionTitle}>Registered Works</h4>
-                      <div className={sharedStyles.tokensGrid}>
-                        {entry.value.related_tezos_nfts.map((nft) => (
-                          <TokenCard
-                            key={`${nft.contract}:${nft.token_id}`}
-                            contract={nft.contract}
-                            tokenId={nft.token_id}
-                            metadata={tokenMeta[`${nft.contract}:${nft.token_id}`]}
-                          />
-                        ))}
-                      </div>
+                      <RegisteredWorks nfts={entry.value.related_tezos_nfts} />
                     </>
                   )}
 

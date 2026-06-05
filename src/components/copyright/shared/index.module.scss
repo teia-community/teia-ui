@@ -244,6 +244,12 @@
   }
 }
 
+.worksLoadMore {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
 .emptyState {
   text-align: center;
   padding: 3rem 1rem;
