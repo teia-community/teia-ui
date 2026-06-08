@@ -237,7 +237,7 @@ export default function CreateChannelModal({ isOpen, onClose }) {
         creator: address,
       })
       onClose()
-      navigate(channelId ? `/inbox/channels/${channelId}` : '/inbox')
+      navigate(channelId ? `/inbox/channels/${channelId}` : '/notifications')
     } catch (err) {
       console.warn('Create channel failed:', err)
       setSubmitting(false)

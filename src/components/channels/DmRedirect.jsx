@@ -11,7 +11,7 @@ export default function DmRedirect() {
 
   useEffect(() => {
     if (!viewer) {
-      navigate('/inbox', { replace: true })
+      navigate('/notifications', { replace: true })
       return
     }
     if (!peer || isLoading || !inbox) return

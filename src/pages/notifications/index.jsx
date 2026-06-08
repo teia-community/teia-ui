@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { bytesToString } from '@taquito/utils'
 import { Page } from '@atoms/layout'
+import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { POLLS_CONTRACT } from '@constants'
@@ -17,6 +18,9 @@ import { useMyPollNotifications } from '@data/messaging/poll-comments'
 import { useMyTokenNotifications } from '@data/messaging/token-comments'
 import { useUsers, useObjktsByIds, useStorage, usePolls } from '@data/swr'
 import { walletPreview } from '@utils/string'
+import AccessBadge from '@components/channels/AccessBadge'
+import CreateChannelModal from '@components/channels/CreateChannelModal'
+import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from './index.module.scss'
 
 function TokenRow({ tokenId, token, unread }) {
@@ -57,12 +61,14 @@ export default function NotificationsCenter() {
   const messageNotifications = useLocalSettings((s) => s.messageNotifications)
   const notifAddress = messageNotifications ? address : undefined
 
+  const [showCreateChannel, setShowCreateChannel] = useState(false)
+  const [showCreateDm, setShowCreateDm] = useState(false)
+
   // --- Channels / DMs ---
   const { data: inbox, isLoading: loadingInbox } = useMyInbox(notifAddress)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
   const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
-  const { unread: unreadChannels, total: unreadChannelCount } =
-    useUnreadChannels(notifAddress, latestIds)
+  const { unread: unreadChannels } = useUnreadChannels(notifAddress, latestIds)
 
   // --- Poll comments ---
   const { data: pollMap } = useMyPollNotifications(notifAddress)
@@ -95,32 +101,52 @@ export default function NotificationsCenter() {
   }, [inbox, address])
   const [users] = useUsers(peerAddresses)
 
-  // All channels, most-recent first, with an unread flag.
-  const channelItems = useMemo(() => {
+  // DMs, most-recent first, with an unread flag.
+  const dmItems = useMemo(() => {
     return (inbox ?? [])
+      .filter((ch) => ch.metadata.kind === 'dm')
       .map((ch) => {
-        const isDm = ch.metadata.kind === 'dm'
-        const peer = isDm
-          ? (ch.metadata.participants ?? []).find((a) => a !== address)
-          : null
-        const title = isDm
-          ? users?.[peer]?.alias ||
-            (peer ? walletPreview(peer) : ch.metadata.name || 'DM')
-          : ch.metadata.name || `Channel #${ch.id}`
+        const peer = (ch.metadata.participants ?? []).find((a) => a !== address)
+        const title =
+          users?.[peer]?.alias ||
+          (peer ? walletPreview(peer) : ch.metadata.name || 'DM')
         return {
-          key: `channel:${ch.id}`,
+          key: `dm:${ch.id}`,
           to: `/inbox/channels/${ch.id}`,
           latest: latestIds?.[ch.id] ?? 0,
           unread: Boolean(unreadChannels[ch.id]),
-          peer: isDm ? peer : null,
-          peerLogo: isDm ? users?.[peer]?.logo : undefined,
-          channelImage: !isDm ? ch.metadata?.image : null,
+          peer,
+          peerLogo: users?.[peer]?.logo,
           title,
-          subtitle: isDm ? 'Direct message' : 'Message in channel',
         }
       })
       .sort((a, b) => b.latest - a.latest)
   }, [inbox, unreadChannels, latestIds, users, address])
+
+  // Channels I'm in, most-recent first, with an unread flag.
+  const channelItems = useMemo(() => {
+    return (inbox ?? [])
+      .filter((ch) => ch.metadata.kind !== 'dm')
+      .map((ch) => ({
+        key: `channel:${ch.id}`,
+        to: `/inbox/channels/${ch.id}`,
+        latest: latestIds?.[ch.id] ?? 0,
+        unread: Boolean(unreadChannels[ch.id]),
+        channelImage: ch.metadata?.image,
+        accessMode: ch.accessMode,
+        title: ch.metadata.name || `Channel #${ch.id}`,
+      }))
+      .sort((a, b) => b.latest - a.latest)
+  }, [inbox, unreadChannels, latestIds])
+
+  const unreadDmCount = useMemo(
+    () => dmItems.filter((i) => i.unread).length,
+    [dmItems]
+  )
+  const unreadChannelCount = useMemo(
+    () => channelItems.filter((i) => i.unread).length,
+    [channelItems]
+  )
 
   // All polls / tokens with activity, most-recent first (maxId is monotonic).
   const pollEntries = useMemo(() => {
@@ -147,8 +173,12 @@ export default function NotificationsCenter() {
   const tokens = useObjktsByIds(tokenIds)
 
   const itemCount =
-    channelItems.length + pollEntries.length + tokenEntries.length
-  const unreadCount = unreadChannelCount + unreadPollCount + unreadTokenCount
+    dmItems.length +
+    channelItems.length +
+    pollEntries.length +
+    tokenEntries.length
+  const unreadCount =
+    unreadDmCount + unreadChannelCount + unreadPollCount + unreadTokenCount
 
   if (!address) {
     return (
@@ -171,6 +201,17 @@ export default function NotificationsCenter() {
           {messageNotifications && unreadCount > 0 && (
             <span className={styles.totalBadge}>{unreadCount}</span>
           )}
+          <div className={styles.headerActions}>
+            <Button shadow_box onClick={() => setShowCreateChannel(true)}>
+              Create Channel
+            </Button>
+            <Button shadow_box onClick={() => setShowCreateDm(true)}>
+              New DM
+            </Button>
+            <Link to="/inbox/channels" className={styles.browseLink}>
+              Browse all channels
+            </Link>
+          </div>
         </div>
 
         <p className={styles.infoNote}>
@@ -192,10 +233,41 @@ export default function NotificationsCenter() {
         )}
 
         <div className={styles.sections}>
+          {messageNotifications && dmItems.length > 0 && (
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Direct Messages
+                {unreadDmCount > 0 && ` · ${unreadDmCount} new`}
+              </h3>
+              <div className={styles.list}>
+                {dmItems.map((item) => (
+                  <Link
+                    key={item.key}
+                    to={item.to}
+                    className={`${styles.row} ${
+                      item.unread ? '' : styles.read
+                    }`}
+                  >
+                    {item.unread && <span className={styles.unreadDot} />}
+                    <Identicon
+                      address={item.peer}
+                      logo={item.peerLogo}
+                      className={styles.thumb}
+                    />
+                    <div className={styles.rowBody}>
+                      <span className={styles.rowTitle}>{item.title}</span>
+                      <span className={styles.rowSub}>Direct message</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {messageNotifications && channelItems.length > 0 && (
             <section className={styles.section}>
               <h3 className={styles.sectionTitle}>
-                Messages
+                Channels
                 {unreadChannelCount > 0 && ` · ${unreadChannelCount} new`}
               </h3>
               <div className={styles.list}>
@@ -208,13 +280,7 @@ export default function NotificationsCenter() {
                     }`}
                   >
                     {item.unread && <span className={styles.unreadDot} />}
-                    {item.peer ? (
-                      <Identicon
-                        address={item.peer}
-                        logo={item.peerLogo}
-                        className={styles.thumb}
-                      />
-                    ) : item.channelImage ? (
+                    {item.channelImage ? (
                       <img
                         src={HashToURL(item.channelImage, 'CDN', {
                           size: 'small',
@@ -227,7 +293,9 @@ export default function NotificationsCenter() {
                     )}
                     <div className={styles.rowBody}>
                       <span className={styles.rowTitle}>{item.title}</span>
-                      <span className={styles.rowSub}>{item.subtitle}</span>
+                      <div className={styles.rowMeta}>
+                        <AccessBadge mode={item.accessMode} />
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -289,6 +357,16 @@ export default function NotificationsCenter() {
           )}
         </div>
       </div>
+
+      <CreateChannelModal
+        isOpen={showCreateChannel}
+        onClose={() => setShowCreateChannel(false)}
+      />
+      <CreateDmModal
+        isOpen={showCreateDm}
+        onClose={() => setShowCreateDm(false)}
+        inbox={inbox}
+      />
     </Page>
   )
 }

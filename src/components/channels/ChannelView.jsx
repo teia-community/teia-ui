@@ -191,7 +191,7 @@ export default function ChannelView() {
       <Page title="Channel not found">
         <div style={{ padding: 40, textAlign: 'center' }}>
           <p>Channel not found.</p>
-          <Link to="/inbox">Back to inbox</Link>
+          <Link to="/notifications">Back to notifications</Link>
         </div>
       </Page>
     )
@@ -205,7 +205,7 @@ export default function ChannelView() {
       <div className={styles.channelView}>
         <div className={styles.channelHeader}>
           <Link
-            to="/inbox"
+            to="/notifications"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             ←

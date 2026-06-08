@@ -96,7 +96,7 @@ export default function CreateChannel() {
         creator: address,
       })
 
-      navigate(channelId ? `/inbox/channels/${channelId}` : '/inbox')
+      navigate(channelId ? `/inbox/channels/${channelId}` : '/notifications')
     } catch (err) {
       console.warn('Create channel failed:', err)
     } finally {

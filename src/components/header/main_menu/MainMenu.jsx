@@ -103,7 +103,7 @@ export const MainMenu = () => {
   )
 
   // Unread is surfaced in one place only: the aggregate badge on the
-  // Notifications menu item (and the /notifications + /inbox pages). The
+  // Notifications menu item (and the /notifications page). The
   // per-section dots were removed to keep the menu clean.
   const showNotificationsBadge = channelUnread + pollUnread + tokenUnread > 0
 
@@ -166,12 +166,6 @@ export const MainMenu = () => {
             className={styles.menu_label}
             need_sync
             route="collaborate"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Inbox"
-            route="inbox"
-            need_sync
           />
           <MenuItem
             className={styles.menu_label}

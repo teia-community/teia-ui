@@ -184,7 +184,7 @@ export default function ChannelSettings() {
     )
       return
     await setChannelHidden(channelId, true)
-    navigate('/inbox')
+    navigate('/notifications')
   }
 
   return (
