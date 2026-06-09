@@ -4,6 +4,7 @@ import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
 import { useDaoTokenBalance, useAccountDelegate } from '@data/swr'
+import { TZKT_AVATARS_URL } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { useMyInbox, findDmWith } from '@data/messaging/channels'
@@ -73,6 +74,7 @@ export default function Profile({ user }) {
   const [delegate] = useAccountDelegate(
     showBakerOnProfile ? user.address : null
   )
+  console.log('user', { user })
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
@@ -440,7 +442,14 @@ export default function Profile({ user }) {
                 'Inactive baker'
               ) : (
                 <Button to={`/baker/${delegate.address}`}>
-                  {delegate.alias || walletPreview(delegate.address)}
+                  <span className={styles.bakerLink}>
+                    <Identicon
+                      address={delegate.address}
+                      logo={`${TZKT_AVATARS_URL}/${delegate.address}`}
+                      className={styles.bakerAvatar}
+                    />
+                    {delegate.alias || walletPreview(delegate.address)}
+                  </span>
                 </Button>
               )}
             </p>
