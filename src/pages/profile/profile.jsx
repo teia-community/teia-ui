@@ -74,7 +74,6 @@ export default function Profile({ user }) {
   const [delegate] = useAccountDelegate(
     showBakerOnProfile ? user.address : null
   )
-  console.log('user', { user })
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
