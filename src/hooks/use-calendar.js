@@ -23,19 +23,20 @@ export function useCalendarEvents() {
   }
 }
 
-// TEMPORARY (dev only): bypass the wallet gate so the calendar can be
-// exercised without connecting a wallet. `import.meta.env.DEV` is false in
-// production builds, so this is dead code there even if left `true`.
-// Remove once real admin addresses are configured.
+// TEMPORARY (demo stage): bypass the wallet gate so the calendar can be
+// exercised without connecting a wallet — in dev AND deployed demos. Edits
+// only touch the visitor's own browser-local IndexedDB, so this is harmless
+// until a real shared backend lands. Set to false (or remove) to restore the
+// CALENDAR_ADMINS allowlist gate.
 const MOCK_WALLET_GATE = true
 
 /**
  * The wallet-owner edit gate. True when a wallet is connected and its address
  * is in {@link CALENDAR_ADMINS}. Components use this to show/hide editing UI.
- * In dev, {@link MOCK_WALLET_GATE} short-circuits this to always-true.
+ * While {@link MOCK_WALLET_GATE} is on, it short-circuits to always-true.
  */
 export function useIsCalendarAdmin() {
   const address = useUserStore((st) => st.address)
-  if (import.meta.env.DEV && MOCK_WALLET_GATE) return true
+  if (MOCK_WALLET_GATE) return true
   return Boolean(address) && CALENDAR_ADMINS.includes(address)
 }

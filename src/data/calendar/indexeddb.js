@@ -73,13 +73,14 @@ function makeId() {
 }
 
 /**
- * Dev-only: upsert the mock events (./mock-events.json) once per browser.
+ * Demo-stage: upsert the mock events (./mock-events.json) once per browser.
  * `put` keyed on the fixed mock ids merges with any events the user already
  * created; the versioned localStorage flag means deleting the mocks doesn't
- * resurrect them on reload.
+ * resurrect them on reload. Runs in production too while the calendar is
+ * IndexedDB-backed (per-browser demo data) — remove this whole function when
+ * a real backend lands.
  */
 async function seedMocks(db) {
-  if (!import.meta.env.DEV) return
   if (localStorage.getItem(SEEDED_FLAG)) return
   const s = store(db, 'readwrite')
   for (const event of mockEvents) s.put(event)
