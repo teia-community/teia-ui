@@ -1,0 +1,288 @@
+// Shared styles for the calendar components (resolved via the `@style` alias,
+// which points at this folder's index.module.scss).
+
+/* ---------------------------------------------------------- month grid --- */
+.month {
+  border: 1px solid var(--border-color);
+  padding: var(--spacing, 1rem);
+  margin-bottom: var(--spacing-double, 2rem);
+}
+
+.month_nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.month_title {
+  font-weight: 600;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.weekday {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  padding: 4px 0;
+}
+
+.day,
+.day_blank {
+  aspect-ratio: 1 / 1;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid var(--border-color);
+  background: none;
+  color: var(--text-color);
+  font-size: var(--font-size);
+  cursor: pointer;
+  padding: 4px;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.45;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--border-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: -2px;
+  }
+}
+
+.day_today {
+  border: 2px solid var(--text-color);
+}
+
+.day_has_events .day_number {
+  font-weight: 700;
+}
+
+.day_count {
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0 6px;
+  line-height: 1.4;
+}
+
+/* -------------------------------------------------------- day dialog --- */
+.dialog {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing, 1rem);
+  width: min(720px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.dialog_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing, 1rem);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--spacing, 1rem);
+}
+
+/* ---------------------------------------------------------------- card --- */
+.card {
+  border: 1px solid var(--border-color);
+  padding: var(--spacing, 1rem);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing, 1rem);
+}
+
+.card_title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.card_when {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin: 4px 0 0;
+}
+
+.card_where {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin: 2px 0 0;
+}
+
+.card_actions {
+  display: flex;
+  gap: var(--spacing-half, 0.5rem);
+  flex-shrink: 0;
+}
+
+.card_description {
+  margin: var(--spacing, 1rem) 0 0;
+  white-space: pre-wrap;
+}
+
+.card_links {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-half, 0.5rem) 0 0;
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+}
+
+/* ------------------------------------------------------------ carousel --- */
+.carousel {
+  margin-top: var(--spacing, 1rem);
+}
+
+.carousel_img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  display: block;
+  background: var(--gray-10, rgba(0, 0, 0, 0.04));
+}
+
+.carousel_controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing, 1rem);
+  margin-top: var(--spacing-half, 0.5rem);
+
+  button {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 2px 10px;
+  }
+}
+
+.carousel_count {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+}
+
+/* ---------------------------------------------------------------- form --- */
+.form {
+  border: 1px solid var(--border-color);
+  padding: var(--spacing, 1rem);
+  margin-bottom: var(--spacing-double, 2rem);
+}
+
+.form_top {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing, 1rem);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.field {
+  display: block;
+  margin-bottom: var(--spacing, 1rem);
+
+  span {
+    display: block;
+    margin-bottom: var(--spacing-quarter, 0.25rem);
+    font-weight: 600;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: var(--spacing-half, 0.5rem);
+    font-size: var(--font-size);
+  }
+}
+
+.field_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing, 1rem);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.group {
+  border: 1px solid var(--border-color);
+  margin: 0 0 var(--spacing, 1rem);
+  padding: var(--spacing-half, 0.5rem);
+
+  legend {
+    padding: 0 var(--spacing-quarter, 0.25rem);
+    font-weight: 600;
+  }
+}
+
+.repeat_row {
+  display: flex;
+  gap: var(--spacing-half, 0.5rem);
+  margin-bottom: var(--spacing-half, 0.5rem);
+  align-items: center;
+
+  input {
+    flex: 1;
+    box-sizing: border-box;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: var(--spacing-half, 0.5rem);
+    font-size: var(--font-size);
+  }
+}
+
+.form_error {
+  color: var(--error-color, crimson);
+  margin: 0 0 var(--spacing-half, 0.5rem);
+}
+
+.form_actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-half, 0.5rem);
+  margin-top: var(--spacing, 1rem);
+}

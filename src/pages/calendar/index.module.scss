@@ -1,0 +1,63 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing, 1rem);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.headline {
+  font-size: 24px;
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--error-color, crimson);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+// Popup for the create/edit form (native <dialog>).
+.form_dialog {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0;
+  width: min(720px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  // EventForm already draws its own border/padding; avoid doubling up.
+  form {
+    border: none;
+    margin-bottom: 0;
+  }
+}

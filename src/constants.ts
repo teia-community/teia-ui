@@ -248,6 +248,16 @@ export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 
+// Wallet addresses allowed to create / edit / delete calendar events.
+// This is the client-side "edit gate": only a connected wallet whose address is
+// listed here sees the editing UI. When the calendar moves to a Postgres-backed
+// API, enforce this server-side with a signed-message check (this list becomes a
+// convenience for hiding UI, not the security boundary).
+// Add your admin tz address(es) below to enable editing.
+export const CALENDAR_ADMINS: string[] = [
+  // 'tz1...your-admin-address',
+]
+
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 
 export const COVER_COMPRESSOR_OPTIONS = {

@@ -1,0 +1,1105 @@
+[
+  {
+    "id": "mock-0001-objkt4objkt",
+    "title": "OBJKT4OBJKT Summer Edition",
+    "description": "Community art-swap weekend. Mint an OBJKT, trade an OBJKT — everyone leaves with new art.\n\nFree claims open all weekend.",
+    "startDate": "2026-06-20T12:00",
+    "endDate": "2026-06-22T23:59",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Event tag feed",
+        "url": "https://teia.art/tags/objkt4objkt"
+      },
+      {
+        "label": "Discord announcement",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-0001-objkt4objkt-0/1200/800",
+      "https://picsum.photos/seed/mock-0001-objkt4objkt-1/1200/800",
+      "/teia_avatar.png"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-01T00:00:00.000Z",
+    "updatedAt": "2026-06-01T00:00:00.000Z"
+  },
+  {
+    "id": "mock-0002-community-call",
+    "title": "Teia Community Call",
+    "description": "Monthly all-hands: DAO updates, working group reports, open floor.",
+    "startDate": "2026-07-02T17:00",
+    "endDate": "2026-07-02T18:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Agenda (Discourse)",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-0002-community-call-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-01T00:00:00.000Z",
+    "updatedAt": "2026-06-01T00:00:00.000Z"
+  },
+  {
+    "id": "mock-0003-pride-mint",
+    "title": "Tezos Pride Mint Party",
+    "description": "Celebrate with the tezospride tag — group minting session and curated showcase.",
+    "startDate": "2026-06-27T15:00",
+    "endDate": "",
+    "location": "Online",
+    "links": [
+      {
+        "label": "tezospride feed",
+        "url": "https://teia.art/feed/tezospride"
+      }
+    ],
+    "images": [
+      "/hen-pride.gif",
+      "https://picsum.photos/seed/mock-0003-pride-mint-1/1200/800",
+      "https://picsum.photos/seed/mock-0003-pride-mint-2/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-01T00:00:00.000Z",
+    "updatedAt": "2026-06-01T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-001",
+    "title": "Morning Mint Warmup — Generative June",
+    "description": "Kick off Generative June with a casual group minting session. Share your screen, mint your first piece of the month, and get feedback from the community.\n\nAll skill levels welcome — beginners encouraged.",
+    "startDate": "2026-06-10T09:30",
+    "endDate": "2026-06-10T11:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Join Discord",
+        "url": "https://discord.gg/teia"
+      },
+      {
+        "label": "Generative June tag",
+        "url": "https://teia.art/tags/generativejune"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-001-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-002",
+    "title": "DAO Working Group: Legal & Copyright",
+    "description": "Open working group call covering the latest updates to Teia's copyright policy proposal, on-chain attribution discussions, and Q&A.",
+    "startDate": "2026-06-10T14:00",
+    "endDate": "2026-06-10T15:30",
+    "location": "Discord voice — #dao-calls",
+    "links": [
+      {
+        "label": "Discourse thread",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-003",
+    "title": "Artist AMA: Coding with p5.js on Teia",
+    "description": "Live ask-me-anything with generative artist and Teia contributor blksqd. Topics: p5.js workflows, minting generative art, pricing strategy, and community feedback loops.",
+    "startDate": "2026-06-10T18:00",
+    "endDate": "2026-06-10T19:30",
+    "location": "Twitter/X Spaces",
+    "links": [
+      {
+        "label": "blksqd on Teia",
+        "url": "https://teia.art/blksqd"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-003-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-003-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-004",
+    "title": "Onboarding Session: Your First NFT on Teia",
+    "description": "Guided walkthrough for new creators — setting up a Tezos wallet, connecting to Teia, and minting your first piece. Volunteers on hand to help troubleshoot live.",
+    "startDate": "2026-06-10T20:30",
+    "endDate": "2026-06-10T22:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Getting started guide",
+        "url": "https://teia.art/about"
+      },
+      {
+        "label": "Discord support",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-005",
+    "title": "Gallery Walkthrough: Tezos Landscapes",
+    "description": "Curated live tour of the best landscape photography and digital art minted under #tezoslandscape. The host will spotlight five artists and open the floor for questions.",
+    "startDate": "2026-06-11T10:00",
+    "endDate": "2026-06-11T11:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Tag feed",
+        "url": "https://teia.art/tags/tezoslandscape"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-005-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-006",
+    "title": "Charity Fundraiser Drop: Ocean Cleanup",
+    "description": "Special edition charity mint — 100% of primary sales go to Ocean Cleanup Foundation. Twenty artists have prepared exclusive pieces for this drop.\n\nLimited editions, first come first served.",
+    "startDate": "2026-06-11T13:00",
+    "endDate": "2026-06-11T21:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Drop page",
+        "url": "https://teia.art/tags/oceancleanup2026"
+      },
+      {
+        "label": "Announcement",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-006-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-006-1/1200/800",
+      "https://picsum.photos/seed/mock-gen-006-2/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-007",
+    "title": "Collab Contract Workshop",
+    "description": "Hands-on session walking through Teia's collab contract tooling — how to set up revenue splits with co-creators, what the smart contract actually does, and common pitfalls.",
+    "startDate": "2026-06-11T16:30",
+    "endDate": "2026-06-11T18:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Collab docs",
+        "url": "https://teia.art/collab"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-008",
+    "title": "Music NFT Listening Party: Tezos Beats Vol. 3",
+    "description": "Settle in and press play. We stream the newest music NFTs minted on Teia while artists share the stories behind their tracks. Chat is open for real-time reaction.",
+    "startDate": "2026-06-11T20:00",
+    "endDate": "2026-06-11T22:00",
+    "location": "Discord voice — #music-lounge",
+    "links": [
+      {
+        "label": "Music tag",
+        "url": "https://teia.art/tags/tezosmusicnft"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-008-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-009",
+    "title": "Critique Circle: Pixel Art Edition",
+    "description": "Submit your pixel art pieces before the session starts. We'll give structured, supportive feedback on composition, palette, and storytelling. Max 8 artists per session.",
+    "startDate": "2026-06-12T09:15",
+    "endDate": "2026-06-12T10:45",
+    "location": "Discord voice — #critique-circle",
+    "links": [
+      {
+        "label": "Submit your work",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-009-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-009-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-010",
+    "title": "Copyright Q&A: What Can You Mint?",
+    "description": "Legal Q&A panel discussing what artists can and cannot mint on Teia — derivative works, AI-assisted art, sampling, and fair use. Community legal volunteers answer questions live.",
+    "startDate": "2026-06-12T13:30",
+    "endDate": "2026-06-12T15:00",
+    "location": "Twitter/X Spaces",
+    "links": [
+      {
+        "label": "Discourse discussion",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-011",
+    "title": "Generative Art Workshop: Noise & Flow Fields",
+    "description": "Intermediate workshop on Perlin noise and flow field algorithms for generative art. We'll code live in p5.js and mint the results at the end of the session.",
+    "startDate": "2026-06-12T17:00",
+    "endDate": "2026-06-12T19:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Workshop repo",
+        "url": "https://teia.art/tags/workshop"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-011-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-012",
+    "title": "Teia DAO Treasury Update Presentation",
+    "description": "The core team presents the current state of the Teia DAO treasury, recent spending, runway projections, and community proposals for funding allocation.",
+    "startDate": "2026-06-12T20:00",
+    "endDate": "2026-06-12T21:00",
+    "location": "Discord voice — #dao-calls",
+    "links": [
+      {
+        "label": "Treasury report",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-013",
+    "title": "Artist Spotlight: Abstract Digital Painting",
+    "description": "Live studio visit with Berlin-based artist Mariana V. She shares her process for creating large-scale abstract pieces, how she prices editions, and answers audience questions.",
+    "startDate": "2026-06-13T10:30",
+    "endDate": "2026-06-13T11:30",
+    "location": "Twitter/X Spaces",
+    "links": [
+      {
+        "label": "Mariana's gallery",
+        "url": "https://teia.art/marianav"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-013-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-013-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-014",
+    "title": "Teia Accessibility Working Group Call",
+    "description": "Monthly meeting of the accessibility WG — reviewing UI changes, screen reader testing results, and planning the next sprint of improvements to teia.art.",
+    "startDate": "2026-06-13T14:00",
+    "endDate": "2026-06-13T15:30",
+    "location": "Discord voice — #accessibility-wg",
+    "links": [
+      {
+        "label": "WG notes",
+        "url": "https://discourse.teia.art"
+      },
+      {
+        "label": "GitHub issues",
+        "url": "https://teia.art/about"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-015",
+    "title": "Open Studio: Paint & Mint",
+    "description": "Two hours of unstructured creative time. Work on whatever you like, share progress in #studio-chat, and mint anything you finish before the session ends.\n\nNo agenda, just art.",
+    "startDate": "2026-06-13T18:30",
+    "endDate": "2026-06-13T20:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-015-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-016",
+    "title": "Tezos Ecosystem Roundup: June Week 2",
+    "description": "Weekly roundtable covering news across the Tezos ecosystem — protocol updates, new marketplaces, artist milestones, and anything relevant to the Teia community.",
+    "startDate": "2026-06-13T21:00",
+    "endDate": "2026-06-13T22:00",
+    "location": "Twitter/X Spaces",
+    "links": [
+      {
+        "label": "Teia homepage",
+        "url": "https://teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-017",
+    "title": "Photography NFT Meetup",
+    "description": "Photographers from across the Teia community meet to discuss shooting for digital collections, edition sizing for photo work, and building a collector base on Tezos.",
+    "startDate": "2026-06-14T09:00",
+    "endDate": "2026-06-14T10:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Photography tag",
+        "url": "https://teia.art/tags/teziosphotography"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-017-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-017-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-018",
+    "title": "Collab Drop: Community Mosaic Project",
+    "description": "Thirty artists each contribute one tile to a community mosaic minted as a single collab OBJKT. Participants vote on the final composition before it goes live.",
+    "startDate": "2026-06-14T13:15",
+    "endDate": "",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Project thread",
+        "url": "https://discourse.teia.art"
+      },
+      {
+        "label": "Collab page",
+        "url": "https://teia.art/collab"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-018-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-019",
+    "title": "Beginner's Guide to Smart Contracts on Tezos",
+    "description": "Educational session for artists curious about what's happening under the hood when they mint. No coding required — just a conceptual overview of how FA2 contracts work.",
+    "startDate": "2026-06-14T16:00",
+    "endDate": "2026-06-14T17:30",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Teia docs",
+        "url": "https://teia.art/about"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-020",
+    "title": "Evening Mint Party: Animation & GIF",
+    "description": "Dedicated minting session for animated work — GIFs, video loops, and HTML canvas animations welcome. Share your piece as you mint and get instant community reactions.",
+    "startDate": "2026-06-14T19:30",
+    "endDate": "2026-06-14T21:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Animation tag",
+        "url": "https://teia.art/tags/tezosanimation"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-020-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-020-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-021",
+    "title": "Teia Curation Working Group: Open Applications",
+    "description": "The curation WG reviews open applications for the featured artist programme and discusses the criteria for homepage spotlights. Observers welcome.",
+    "startDate": "2026-06-15T10:00",
+    "endDate": "2026-06-15T11:30",
+    "location": "Discord voice — #curation-wg",
+    "links": [
+      {
+        "label": "Apply to be featured",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-022",
+    "title": "Global South Artists Meetup",
+    "description": "Community space for artists from Africa, Latin America, Southeast Asia, and the Middle East — sharing experiences, challenges, and opportunities on Teia and the broader Tezos ecosystem.",
+    "startDate": "2026-06-15T14:30",
+    "endDate": "2026-06-15T16:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Community thread",
+        "url": "https://discourse.teia.art"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-022-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-023",
+    "title": "Live Coding: Generative Typography",
+    "description": "Watch and learn as artist typeform.tez codes a generative typography piece from scratch. The final output will be minted live at the end of the stream.",
+    "startDate": "2026-06-15T17:15",
+    "endDate": "2026-06-15T19:15",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Teia feed",
+        "url": "https://teia.art/tags/generativejune"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-023-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-023-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-024",
+    "title": "Collector Onboarding: Buying Your First NFT",
+    "description": "A session aimed at collectors new to Tezos. We cover wallet setup, funding with XTZ, browsing Teia, and making your first purchase safely.\n\nQ&A throughout.",
+    "startDate": "2026-06-15T20:00",
+    "endDate": "2026-06-15T21:30",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Teia about page",
+        "url": "https://teia.art/about"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-025",
+    "title": "Teia Summer Festival — Opening Night",
+    "description": "Three-day summer festival on Teia kicks off tonight. Opening ceremony features live minting by five invited artists, a curated homepage takeover, and community celebrations in Discord.\n\nStay for the whole weekend — events run through June 19.",
+    "startDate": "2026-06-16T18:00",
+    "endDate": "2026-06-19T22:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Festival page",
+        "url": "https://teia.art/tags/teiasummerfest2026"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-025-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-025-1/1200/800",
+      "https://picsum.photos/seed/mock-gen-025-2/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-026",
+    "title": "Social Media Strategy for NFT Artists",
+    "description": "Panel discussion with three Teia artists on how they built their collector base through Twitter, Instagram, and Farcaster. Practical tactics and what actually works.",
+    "startDate": "2026-06-16T10:30",
+    "endDate": "2026-06-16T12:00",
+    "location": "Twitter/X Spaces",
+    "links": [],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-026-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-027",
+    "title": "Pricing Your Art: Editions vs 1/1s",
+    "description": "Community discussion on edition sizing and pricing strategies. We look at data from successful Teia drops and hear from collectors on what drives their decisions.",
+    "startDate": "2026-06-16T14:00",
+    "endDate": "2026-06-16T15:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Discourse thread",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-028",
+    "title": "Critique Circle: 3D & Sculptural Digital Art",
+    "description": "Structured critique session for 3D renders, sculptural NFTs, and spatial art. Six spots available — DM the moderator in advance to reserve a critique slot.",
+    "startDate": "2026-06-17T09:30",
+    "endDate": "2026-06-17T11:00",
+    "location": "Discord voice — #critique-circle",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-028-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-029",
+    "title": "DAO Governance: Proposal Review Session",
+    "description": "Community members present active governance proposals for discussion before they go to on-chain vote. Questions and amendments accepted from the floor.",
+    "startDate": "2026-06-17T13:00",
+    "endDate": "2026-06-17T14:30",
+    "location": "Discord voice — #dao-calls",
+    "links": [
+      {
+        "label": "Active proposals",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-030",
+    "title": "HTML Canvas Art Workshop: Interactive NFTs",
+    "description": "Learn to create interactive, browser-based NFTs using vanilla HTML canvas and JavaScript. We'll build a piece that responds to mouse movement and mint the result.",
+    "startDate": "2026-06-17T16:15",
+    "endDate": "2026-06-17T18:15",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Workshop info",
+        "url": "https://teia.art/tags/workshop"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-030-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-030-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-031",
+    "title": "Mid-June Mint Party: Open Theme",
+    "description": "Come as you are. Mint whatever you've been working on. The community gathers to share new work, celebrate recent sales, and enjoy each other's creativity.",
+    "startDate": "2026-06-17T19:30",
+    "endDate": "2026-06-17T21:30",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Teia feed",
+        "url": "https://teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-031-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-032",
+    "title": "Tezos Wallet Security for Artists",
+    "description": "Practical session on keeping your Tezos wallet safe — seed phrase management, hardware wallets, phishing awareness, and what to do if you're compromised.",
+    "startDate": "2026-06-18T10:00",
+    "endDate": "2026-06-18T11:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Security guide",
+        "url": "https://teia.art/about"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-033",
+    "title": "Artist AMA: Illustration & Character Design on Teia",
+    "description": "Illustrator and character artist Yuki N. takes questions on her creative process, how she transitioned from freelance to NFTs, and growing an audience on Teia.",
+    "startDate": "2026-06-18T13:30",
+    "endDate": "2026-06-18T15:00",
+    "location": "Twitter/X Spaces",
+    "links": [
+      {
+        "label": "Yuki's gallery",
+        "url": "https://teia.art/yukin"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-033-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-033-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-034",
+    "title": "Teia x Tezos Commons: Ecosystem Integration Call",
+    "description": "Joint call between Teia contributors and the Tezos Commons team discussing cross-ecosystem collaboration, grants, and shared infrastructure initiatives.",
+    "startDate": "2026-06-18T16:00",
+    "endDate": "2026-06-18T17:30",
+    "location": "Discord voice — #dao-calls",
+    "links": [
+      {
+        "label": "Discourse post",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-035",
+    "title": "Music NFT Listening Party: Ambient & Electronic",
+    "description": "An evening dedicated to ambient and electronic music NFTs on Teia. Artists drop in to introduce their tracks and answer questions about their creative and technical process.",
+    "startDate": "2026-06-18T20:00",
+    "endDate": "2026-06-18T22:00",
+    "location": "Discord voice — #music-lounge",
+    "links": [
+      {
+        "label": "Music tag",
+        "url": "https://teia.art/tags/tezosmusicnft"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-035-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-035-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-036",
+    "title": "Gallery Walkthrough: Teia Highlights — May Picks",
+    "description": "Community curators walk through their favourite pieces minted on Teia in May. Each curator picks three works and explains what drew them in.",
+    "startDate": "2026-06-19T09:30",
+    "endDate": "2026-06-19T10:30",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Curated feed",
+        "url": "https://teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-036-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-037",
+    "title": "Royalty & Resale Rights: How It Works on Teia",
+    "description": "Educational session on how on-chain royalties function for Teia OBJKTs, how collectors see royalty info, and what happens when pieces trade on other Tezos platforms.",
+    "startDate": "2026-06-19T13:00",
+    "endDate": "2026-06-19T14:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Teia docs",
+        "url": "https://teia.art/about"
+      },
+      {
+        "label": "Discourse",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-038",
+    "title": "Generative Art Live Judging: Community Picks",
+    "description": "Community votes in real time on generative pieces minted during Generative June. Top three pieces win a community spotlight and Discord role badge.",
+    "startDate": "2026-06-19T16:30",
+    "endDate": "2026-06-19T18:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Generative June tag",
+        "url": "https://teia.art/tags/generativejune"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-038-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-038-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-039",
+    "title": "Late Night Drop: Glitch Art Special",
+    "description": "Surprise drop from ten glitch artists who have been collaborating in secret for three weeks. Pieces go live at 9 PM sharp, edition sizes revealed at mint time.",
+    "startDate": "2026-06-19T21:00",
+    "endDate": "",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Glitch tag",
+        "url": "https://teia.art/tags/glitchart"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-039-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-040",
+    "title": "Teia Town Hall: Community Roadmap Discussion",
+    "description": "Open town hall for the entire Teia community to weigh in on the platform roadmap for the second half of 2026 — feature priorities, community programmes, and partnership goals.",
+    "startDate": "2026-06-20T14:00",
+    "endDate": "2026-06-20T16:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Roadmap doc",
+        "url": "https://discourse.teia.art"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-040-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-040-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-041",
+    "title": "Drawing Marathon: 12-Hour Community Stream",
+    "description": "Artists take turns at the canvas in a rolling 12-hour drawing stream. Pieces are minted live throughout the day as they're completed. Join any time.",
+    "startDate": "2026-06-21T09:00",
+    "endDate": "2026-06-21T21:00",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Event tag",
+        "url": "https://teia.art/tags/teiadrawmarathon"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-041-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-041-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-042",
+    "title": "Artist Talk: From Traditional to Digital — Migration Stories",
+    "description": "Four artists share their journeys from traditional media (oil, watercolour, printmaking) to digital NFT work — what was lost, what was gained, and advice for others making the transition.",
+    "startDate": "2026-06-21T18:30",
+    "endDate": "2026-06-21T20:00",
+    "location": "Twitter/X Spaces",
+    "links": [],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-043",
+    "title": "Charity Fundraiser: Mental Health & Artists",
+    "description": "Collaborative charity drop supporting artist mental health resources. Fifty percent of primary sales donated to Open Path Collective. Pieces curated by the Teia community team.",
+    "startDate": "2026-06-22T10:00",
+    "endDate": "",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Drop page",
+        "url": "https://teia.art/tags/teiaformentalhealth"
+      },
+      {
+        "label": "Announcement",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-043-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-043-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-044",
+    "title": "Technical Q&A: IPFS, Metadata & Long-Term Preservation",
+    "description": "Deep-dive session on how Teia stores metadata, what IPFS pinning means for your work's longevity, and what you should know to ensure your pieces survive long-term.",
+    "startDate": "2026-06-22T13:15",
+    "endDate": "2026-06-22T14:45",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Discourse",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-045",
+    "title": "Portfolio Review: Feedback for Emerging Artists",
+    "description": "Established Teia artists offer portfolio feedback to five emerging creators. Spots are allocated by lottery — enter by posting in #feedback-queue in Discord before noon on June 21.",
+    "startDate": "2026-06-22T16:00",
+    "endDate": "2026-06-22T18:00",
+    "location": "Discord voice — #critique-circle",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-045-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-046",
+    "title": "Evening Social: Teia Community Hang",
+    "description": "No agenda — just the community hanging out, sharing what they've been making, playing music, and celebrating the mid-point of the summer season.",
+    "startDate": "2026-06-22T20:30",
+    "endDate": "2026-06-22T22:00",
+    "location": "Discord voice — #community-stage",
+    "links": [
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-047",
+    "title": "Tezos IRL: Lisbon Artist Meetup",
+    "description": "In-person meetup for Teia and Tezos artists based in or visiting Lisbon. Informal drinks and conversation — no pitches, just people.\n\nVenue details shared in Discord #irl-events channel.",
+    "startDate": "2026-06-23T18:00",
+    "endDate": "2026-06-23T21:00",
+    "location": "Lisbon, Portugal",
+    "links": [
+      {
+        "label": "IRL events channel",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-047-0/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-048",
+    "title": "Minting Masterclass: Metadata Best Practices",
+    "description": "Walk through the best practices for writing OBJKT titles, descriptions, and tags to help collectors discover your work. Includes a live demo on Teia.",
+    "startDate": "2026-06-23T10:00",
+    "endDate": "2026-06-23T11:30",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Teia mint page",
+        "url": "https://teia.art/mint"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-048-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-048-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-049",
+    "title": "DAO Working Group: Platform Development Sprint Review",
+    "description": "The dev working group shares completed items from the latest sprint, demos new features coming to teia.art, and invites community testing and bug reports.",
+    "startDate": "2026-06-24T13:00",
+    "endDate": "2026-06-24T14:30",
+    "location": "Discord voice — #dao-calls",
+    "links": [
+      {
+        "label": "Discourse",
+        "url": "https://discourse.teia.art"
+      }
+    ],
+    "images": [],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "mock-gen-050",
+    "title": "Closing Week Celebration: Community Thank-You Mint",
+    "description": "A special edition community thank-you drop to celebrate everyone who participated in Teia's June events programme. Minted by the community for the community — free claims for all attendees.",
+    "startDate": "2026-06-24T15:00",
+    "endDate": "",
+    "location": "Online — teia.art",
+    "links": [
+      {
+        "label": "Drop page",
+        "url": "https://teia.art/tags/teiajune2026"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/teia"
+      }
+    ],
+    "images": [
+      "https://picsum.photos/seed/mock-gen-050-0/1200/800",
+      "https://picsum.photos/seed/mock-gen-050-1/1200/800"
+    ],
+    "createdBy": "",
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-10T00:00:00.000Z"
+  }
+]
