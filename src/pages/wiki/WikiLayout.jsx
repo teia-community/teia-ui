@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import classnames from 'classnames'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
@@ -16,6 +17,9 @@ import styles from '@style'
 export default function WikiLayout() {
   const address = useUserStore((st) => st.address)
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const hideSidebar = pathname === `${PATH.WIKI}/admin`
 
   const { data, error, mutate } = useWiki()
   const isLoading = !data && !error
@@ -78,31 +82,37 @@ export default function WikiLayout() {
         ) : isLoading ? (
           <p className={styles.notice}>Loading wiki…</p>
         ) : (
-          <div className={styles.layout}>
-            <aside className={styles.sidebar_col}>
-              <Button
-                small
-                secondary
-                onClick={() => navigate(PATH.WIKI)}
-                className={styles.home_link}
-              >
-                Home
-              </Button>
-              <div className={styles.sidebar_sort}>
-                <label htmlFor="wiki-sort">Sort by</label>
-                <select
-                  id="wiki-sort"
-                  className={styles.select}
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+          <div
+            className={classnames(styles.layout, {
+              [styles.layout_full]: hideSidebar,
+            })}
+          >
+            {!hideSidebar && (
+              <aside className={styles.sidebar_col}>
+                <Button
+                  small
+                  secondary
+                  onClick={() => navigate(PATH.WIKI)}
+                  className={styles.home_link}
                 >
-                  <option value="title">Alphabetical</option>
-                  <option value="created">Date created</option>
-                  <option value="updated">Date last edited</option>
-                </select>
-              </div>
-              <WikiSidebar tree={tree} hiddenSlugs={hiddenSlugs} />
-            </aside>
+                  Home
+                </Button>
+                <div className={styles.sidebar_sort}>
+                  <label htmlFor="wiki-sort">Sort by</label>
+                  <select
+                    id="wiki-sort"
+                    className={styles.select}
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="title">Alphabetical</option>
+                    <option value="created">Date created</option>
+                    <option value="updated">Date last edited</option>
+                  </select>
+                </div>
+                <WikiSidebar tree={tree} hiddenSlugs={hiddenSlugs} />
+              </aside>
+            )}
             <section className={styles.content_col}>
               <Outlet context={outletContext} />
             </section>

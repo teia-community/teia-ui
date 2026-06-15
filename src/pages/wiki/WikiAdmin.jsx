@@ -183,25 +183,26 @@ export default function WikiAdmin() {
                   </td>
                   <td>{new Date(page.updatedAt).toLocaleDateString()}</td>
                   <td className={styles.row_actions}>
-                    <Button small secondary to={`${PATH.WIKI}/${page.slug}`}>
+                    <Button small shadow_box to={`${PATH.WIKI}/${page.slug}`}>
                       View
                     </Button>
                     <Button
                       small
-                      secondary
+                      shadow_box
                       to={`${PATH.WIKI}/${page.slug}/edit`}
                     >
                       Edit
                     </Button>
                     <Button
                       small
-                      secondary
+                      shadow_box
                       to={`${PATH.WIKI}/${page.slug}/history`}
                     >
                       History
                     </Button>
                     <Button
                       small
+                      shadow_box
                       disabled={busySlug === page.slug}
                       onClick={() => toggleHidden(page)}
                     >

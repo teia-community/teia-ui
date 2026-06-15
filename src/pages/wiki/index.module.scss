@@ -41,6 +41,10 @@
   }
 }
 
+.layout_full {
+  grid-template-columns: 1fr;
+}
+
 .sidebar_col {
   position: sticky;
   top: 80px;
