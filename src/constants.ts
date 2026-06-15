@@ -2,6 +2,12 @@ import { flipObject } from './utils'
 
 export const BANNER_URL = 'https://lists.teia.art/teia-status'
 
+/** TzKT avatar service base, append `/{address}` for a baker or any account image. */
+export const TZKT_AVATARS_URL = 'https://services.tzkt.io/v1/avatars'
+
+/** Baking Bad bakers registry. */
+export const BAKING_BAD_BAKERS_API = 'https://api.baking-bad.org/v3/bakers'
+
 export const PATH = {
   FEED: '/',
   ISSUER: '/tz',
@@ -247,6 +253,16 @@ export const MAIN_MARKETPLACE_CONTRACT = MARKETPLACE_CONTRACT_TEIA // the one th
 export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
+
+export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
+export const POLL_MESSAGE_FEE = 25000
+
+export const TOKEN_COMMENTS_CONTRACT = 'KT1FXFxUcZvne1ApoSaeZfvmDR73u2BsuFUP'
+export const TOKEN_MESSAGE_FEE = 25000
+
+export const CHANNELS_V2_CONTRACT = 'KT19ooSLPFxJQ5mx3kR4Qo2UY4KJDcdMdng9'
+export const CHANNEL_FEE = 100000
+export const CHANNEL_MESSAGE_FEE = 25000
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 

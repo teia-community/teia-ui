@@ -18,6 +18,9 @@ interface ModalStore {
   progress: boolean
   confirm: boolean
   confirmCallback?: () => void
+  /** When true, the modal shows Confirm + Cancel instead of just Close. */
+  asking: boolean
+  askResolve?: (value: boolean) => void
   /** Optional React content below markdown (e.g. post-mint inline swap). */
   footerSlot?: ReactNode
   /** Runs once when the user closes a modal that had footerSlot / extras. */
@@ -28,6 +31,8 @@ interface ModalStore {
     options?: { footerSlot?: ReactNode; onCloseExtras?: () => void }
   ) => void
   showError: <T>(title: string, error: T) => void
+  /** Show a confirmation dialog. Resolves true if confirmed, false if cancelled. */
+  ask: (title: string, message?: string) => Promise<boolean>
   setCollapsed: (collapse: boolean) => void
   toggleMenu: () => void
   step: (title: string, message?: string, start?: boolean) => void
@@ -41,6 +46,8 @@ export const useModalStore = create<ModalStore>()(
     message: '',
     progress: false,
     confirm: true,
+    asking: false,
+    askResolve: undefined,
     confirmCallback: () => get().close(),
     show: (title, message, options) => {
       const footerSlot = options?.footerSlot
@@ -75,6 +82,21 @@ ${message || ''}`,
         show(`${title} (${error.title})`, error.description)
       }
     },
+    ask: (title, message) => {
+      return new Promise<boolean>((resolve) => {
+        set({
+          message: `# ${title}\n${message || ''}`,
+          progress: false,
+          visible: true,
+          confirm: false,
+          asking: true,
+          askResolve: resolve,
+          footerSlot: undefined,
+          onCloseExtras: undefined,
+        })
+      })
+    },
+
     setCollapsed: (collapse: boolean) => set({ collapsed: collapse }),
     toggleMenu: () => set({ collapsed: !get().collapsed }),
     step: (title, message, start) => {
@@ -93,9 +115,13 @@ ${message}`,
     },
 
     close: () => {
+      const { askResolve } = get()
+      if (askResolve) askResolve(false)
       set({
         visible: false,
         progress: false,
+        asking: false,
+        askResolve: undefined,
         footerSlot: undefined,
         onCloseExtras: undefined,
       })

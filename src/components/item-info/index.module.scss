@@ -192,6 +192,10 @@ span[data-tooltip][data-position='top']:after {
 }
 .objkt_label_container {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
 }
 
 .collab_verification_title {

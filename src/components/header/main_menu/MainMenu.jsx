@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Footer } from '@components/footer'
 import { fadeIn } from '@utils/motion'
 import styles from '@style'
@@ -6,13 +6,20 @@ import { motion } from 'framer-motion'
 import { walletPreview } from '@utils/string'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { useLocalSettings } from '@context/localSettingsStore'
+import { useUnreadChannels, useUnreadItems } from '@context/chatReadStore'
+import {
+  useMyInbox,
+  useChannelLatestMessageIds,
+} from '@data/messaging/channels'
+import { useMyPollNotifications } from '@data/messaging/poll-comments'
+import { useMyTokenNotifications } from '@data/messaging/token-comments'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
 import { Line } from '@atoms/line'
 import { ThemeSelection } from '@atoms/select'
 import { shallow } from 'zustand/shallow'
-import { useLocalSettings } from '@context/localSettingsStore'
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea'
@@ -74,6 +81,32 @@ export const MainMenu = () => {
     }
   }, [setCollapsed])
 
+  const messageNotifications = useLocalSettings((s) => s.messageNotifications)
+  const notifAddress = messageNotifications ? address : undefined
+
+  const { data: inbox } = useMyInbox(address)
+  const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
+  const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
+  const { total: channelUnread } = useUnreadChannels(notifAddress, latestIds)
+
+  const { data: pollMap } = useMyPollNotifications(notifAddress)
+  const { total: pollUnread } = useUnreadItems(
+    notifAddress,
+    'poll-comments',
+    pollMap
+  )
+  const { data: tokenMap } = useMyTokenNotifications(notifAddress)
+  const { total: tokenUnread } = useUnreadItems(
+    notifAddress,
+    'token-comments',
+    tokenMap
+  )
+
+  // Unread is surfaced in one place only: the aggregate badge on the
+  // Notifications menu item (and the /notifications page). The
+  // per-section dots were removed to keep the menu clean.
+  const showNotificationsBadge = channelUnread + pollUnread + tokenUnread > 0
+
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
 
@@ -103,6 +136,16 @@ export const MainMenu = () => {
             label="Copyright Marketplace"
             route="copyrightmarketplace"
           />
+          <MenuItem
+            className={styles.menu_label}
+            label="Public Channels"
+            route="publicchannels"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Bakers"
+            route="bakers"
+          />
         </div>
         <Line className={styles.line} vertical />
         <div className={styles.menu_right}>
@@ -123,6 +166,13 @@ export const MainMenu = () => {
             className={styles.menu_label}
             need_sync
             route="collaborate"
+          />
+          <MenuItem
+            className={styles.menu_label}
+            label="Notifications"
+            route="notifications"
+            need_sync
+            badge={showNotificationsBadge}
           />
 
           <MenuItem

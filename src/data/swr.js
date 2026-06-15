@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import axios from 'axios'
 import { gql, request } from 'graphql-request'
 import { bytesToString } from '@taquito/utils'
 import {
@@ -8,6 +9,7 @@ import {
   DAO_TREASURY_CONTRACT,
   HEN_CONTRACT_FA2,
   TEIA_MULTISIG_BLOG_TAG,
+  BAKING_BAD_BAKERS_API,
 } from '@constants'
 import {
   getTzktData,
@@ -36,6 +38,139 @@ export function useBalance(address) {
   )
 
   return [data ? data / 1000000 : 0, mutate]
+}
+
+/**
+ * Fetch baker an account currently delegates to.
+ * Returns the TzKT delegate object `{ alias, address, active }` or null when
+ * the account delegates to nobody. `active === false` means the baker has been
+ * deactivated.
+ */
+export function useAccountDelegate(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/accounts/${address}` : null,
+    getTzktData
+  )
+  return [data ? data.delegate ?? null : undefined, mutate]
+}
+
+/**
+ * Fetch on-chain info about a baker (delegate) straight from TzKT.
+ */
+export function useBakerInfo(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/delegates/${address}` : null,
+    getTzktData
+  )
+
+  return [data, mutate]
+}
+
+/**
+ * Full TzKT account object. `undefined` while loading. `type === 'delegate'`
+ * means the account is a baker.
+ */
+export function useAccount(address) {
+  const { data, mutate } = useSWR(
+    address ? `/v1/accounts/${address}` : null,
+    getTzktData
+  )
+
+  return [data, mutate]
+}
+
+/**
+ * Total number of bakers (active only by default).
+ */
+export function useBakersCount(active = true) {
+  const parameters = active ? { active: true } : {}
+  const { data, mutate } = useSWR(
+    ['/v1/delegates/count', parameters],
+    getTzktData
+  )
+
+  return [data ? parseInt(data) : 0, mutate]
+}
+
+/**
+ * A page of bakers, by default active ones sorted by staking power.
+ */
+export function useBakers(limit = 25, offset = 0) {
+  const parameters = {
+    active: true,
+    'sort.desc': 'votingPower',
+    select:
+      'address,alias,active,stakingBalance,delegatedBalance,numDelegators,balance',
+    limit,
+    offset,
+  }
+  const { data, mutate } = useSWR(['/v1/delegates', parameters], getTzktData)
+
+  return [data, mutate]
+}
+
+/**
+ * Test Cakk ti fetch delegators.
+ * Subject to change,
+ */
+export function useAllDelegates() {
+  const parameters = {
+    select: 'address,bakingPower,numDelegators',
+    limit: 10000,
+  }
+  const { data, mutate } = useSWR(['/v1/delegates', parameters], getTzktData)
+
+  return [data, mutate]
+}
+
+const fetchJson = async (url) => (await axios.get(url)).data
+
+/**
+ * Fetch Baking Bad bakers registry.
+ */
+export function useBakerRegistry() {
+  const { data, error, mutate } = useSWR(BAKING_BAD_BAKERS_API, fetchJson, {
+    revalidateOnFocus: false,
+    dedupingInterval: 300_000,
+  })
+
+  return [data, error, mutate]
+}
+
+/**
+ * Fetch a single baker from Baking Bad API
+ */
+export function useBakerRegistryEntry(address) {
+  const { data, mutate } = useSWR(
+    address ? `${BAKING_BAD_BAKERS_API}/${address}` : null,
+    fetchJson,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 300_000,
+      shouldRetryOnError: false,
+    }
+  )
+
+  return [data, mutate]
+}
+
+/**
+ * A page of accounts that delegate to the given baker, heaviest first.
+ */
+export function useBakerDelegators(address, limit = 25, offset = 0) {
+  const parameters = {
+    delegate: address,
+    'sort.desc': 'balance',
+    select: 'address,alias,balance,delegationLevel,delegationTime',
+    limit,
+    offset,
+  }
+  const { data, mutate } = useSWR(
+    address ? ['/v1/accounts', parameters] : null,
+    getTzktData
+  )
+
+  return [data, mutate]
 }
 
 export function useDaoTokenBalance(address) {
@@ -166,6 +301,50 @@ export function useAliases(addresses) {
   return [reorderBigmapData(data, undefined, true), mutate]
 }
 
+export function useUsers(addresses) {
+  const unique = addresses
+    ? [
+        ...new Set(
+          addresses.filter((a) => typeof a === 'string' && a.length > 0)
+        ),
+      ]
+    : []
+  unique.sort()
+  const key = unique.length > 0 ? `teia_users:${unique.join(',')}` : null
+
+  const { data, mutate } = useSWR(
+    key,
+    async () => {
+      const { data } = await fetchGraphQL(
+        `
+        query BatchUsers($addresses: [String!]!) {
+          teia_users(where: { user_address: { _in: $addresses } }) {
+            user_address
+            name
+            metadata {
+              data
+            }
+          }
+        }
+        `,
+        'BatchUsers',
+        { addresses: unique }
+      )
+      const map = {}
+      for (const u of data?.teia_users ?? []) {
+        map[u.user_address] = {
+          alias: u.name || undefined,
+          logo: u.metadata?.data?.identicon || undefined,
+        }
+      }
+      return map
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+
+  return [data || {}, mutate]
+}
+
 export function useDaoUsersAliases(userAddress, representatives, proposals) {
   const addresses = new Set()
 
@@ -269,6 +448,40 @@ export function useObjkt(id) {
   )
 
   return [data, mutate]
+}
+
+/**
+ * Batch-fetch multiple tokens by id in a single GraphQL request.
+ * Returns a map of token_id -> minimal token info (name + cover uris),
+ * avoiding the N+1 problem of calling useObjkt per row.
+ */
+export function useObjktsByIds(ids) {
+  const unique = [...new Set((ids ?? []).filter(Boolean).map(String))].sort()
+  const { data } = useSWR(
+    unique.length ? ['/objkts-by-ids', unique.join(',')] : null,
+    async () => {
+      const result = await fetchGraphQL(
+        `query ObjktsByIds($ids: [String!]!) {
+           tokens(where: { token_id: { _in: $ids } }) {
+             token_id
+             name
+             display_uri
+             thumbnail_uri
+           }
+         }`,
+        'ObjktsByIds',
+        { ids: unique }
+      )
+      const out = {}
+      for (const t of result?.data?.tokens ?? []) {
+        out[t.token_id] = t
+      }
+      return out
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  )
+
+  return data ?? {}
 }
 
 export const fetchTokenMetadataForCopyrightSearch = async (

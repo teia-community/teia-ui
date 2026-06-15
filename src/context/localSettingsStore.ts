@@ -31,14 +31,20 @@ interface LocalSettingsState {
   has_seen_banner: boolean
   nsfwFriendly: boolean
   photosensitiveFriendly: boolean
+  showBakerOnProfile: boolean
+  showBakerOnToken: boolean
   startFeed: FeedType
   rpcNode: RPC_NODES
   /** Use this to query the current rpc url since it will also resolve the custom one.*/
   getRpcNode: () => RPC_NODES | string
   customRpcNode: string
+  messageNotifications: boolean
   setCustomRpcNode: (v: string) => void
+  setMessageNotifications: (v: boolean) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
+  setShowBakerOnProfile: (v: boolean) => void
+  setShowBakerOnToken: (v: boolean) => void
   setStartFeed: (v: FeedType | undefined) => void
   setRpcNode: (rpcNode?: RPC_NODES) => Promise<void>
   setTheme: (theme: Theme, apply?: boolean) => void
@@ -63,6 +69,8 @@ const defaultValues = {
   viewMode: 'single' as ViewMode,
   nsfwFriendly: false,
   photosensitiveFriendly: false,
+  showBakerOnProfile: true,
+  showBakerOnToken: false,
   startFeed: DEFAULT_START_FEED,
   zen: false,
   theme: 'dark' as Theme,
@@ -73,6 +81,7 @@ const defaultValues = {
   tilted: false,
   imgproxy: true,
   has_seen_banner: false,
+  messageNotifications: true,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -81,6 +90,8 @@ export const useLocalSettings = create<LocalSettingsState>()(
       (set, get) => ({
         ...defaultValues,
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
+        setMessageNotifications: (messageNotifications) =>
+          set({ messageNotifications }),
         setTilted: (tilted) => set({ tilted }),
         setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>
@@ -137,6 +148,9 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setNsfwFriendly: (nsfwFriendly) => set({ nsfwFriendly }),
         setPhotosensitiveFriendly: (photosensitiveFriendly) =>
           set({ photosensitiveFriendly }),
+        setShowBakerOnProfile: (showBakerOnProfile) =>
+          set({ showBakerOnProfile }),
+        setShowBakerOnToken: (showBakerOnToken) => set({ showBakerOnToken }),
         setStartFeed: (startFeed) => set({ startFeed }),
       }),
       {

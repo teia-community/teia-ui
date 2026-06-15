@@ -1,12 +1,18 @@
 import useClipboard from 'react-use-clipboard'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
-import { useDaoTokenBalance } from '@data/swr'
+import { useDaoTokenBalance, useAccountDelegate } from '@data/swr'
+import { TZKT_AVATARS_URL } from '@constants'
+import { useUserStore } from '@context/userStore'
+import { useLocalSettings } from '@context/localSettingsStore'
+import { useMyInbox, findDmWith } from '@data/messaging/channels'
+import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import { resolveVerifiedBluesky } from '@utils/bsky'
 
@@ -27,6 +33,35 @@ async function reverseRecord(address) {
 }
 
 export default function Profile({ user }) {
+  const navigate = useNavigate()
+  const viewerAddress = useUserStore((st) => st.address)
+  const sync = useUserStore((st) => st.sync)
+  const { data: inbox } = useMyInbox(viewerAddress)
+  const [showDmModal, setShowDmModal] = useState(false)
+
+  const isOwnProfile = viewerAddress === user.address
+
+  const existingDm = useMemo(
+    () => (isOwnProfile ? null : findDmWith(inbox, user.address)),
+    [inbox, user.address, isOwnProfile]
+  )
+
+  const handleMessageClick = async () => {
+    // Message Artist button, calls sync on click
+    if (!viewerAddress) {
+      const account = await sync()
+      if (!account) return // user cancelled the wallet connection
+      setShowDmModal(true)
+      return
+    }
+
+    if (existingDm) {
+      navigate(`/inbox/channels/${existingDm.id}`)
+    } else {
+      setShowDmModal(true)
+    }
+  }
+
   const [isDiscordCopied, setDiscordCopied] = useClipboard(
     user.extras?.profile?.discord
   )
@@ -34,6 +69,11 @@ export default function Profile({ user }) {
     successDuration: 2500,
   })
   const [daoTokenBalance] = useDaoTokenBalance(user.address)
+
+  const showBakerOnProfile = useLocalSettings((st) => st.showBakerOnProfile)
+  const [delegate] = useAccountDelegate(
+    showBakerOnProfile ? user.address : null
+  )
 
   const coreParticipants = useDisplayStore((st) => st.coreParticipants)
   const [reverseDomain, setReverseDomain] = useState('')
@@ -391,8 +431,57 @@ export default function Profile({ user }) {
               </Button>
             )}
           </div>
+
+          {showBakerOnProfile && delegate !== undefined && (
+            <p className={styles.baker}>
+              <span style={{ marginRight: '0.5em' }}>Baker:</span>
+              {!delegate ? (
+                'Not delegated'
+              ) : delegate.active === false ? (
+                'Inactive baker'
+              ) : (
+                <Button to={`/baker/${delegate.address}`}>
+                  <span className={styles.bakerLink}>
+                    <Identicon
+                      address={delegate.address}
+                      logo={`${TZKT_AVATARS_URL}/${delegate.address}`}
+                      className={styles.bakerAvatar}
+                    />
+                    {delegate.alias || walletPreview(delegate.address)}
+                  </span>
+                </Button>
+              )}
+            </p>
+          )}
+
+          {!isOwnProfile && (
+            <Button
+              shadow_box
+              onClick={handleMessageClick}
+              style={{ marginTop: '1em' }}
+            >
+              <span
+                role="img"
+                aria-label="message"
+                style={{ marginRight: '8px' }}
+              >
+                💬
+              </span>
+              Message
+            </Button>
+          )}
         </div>
       </div>
+
+      <CreateDmModal
+        isOpen={showDmModal}
+        onClose={() => setShowDmModal(false)}
+        inbox={inbox}
+        initialRecipient={{
+          address: user.address,
+          name: user.subjkt || user.alias,
+        }}
+      />
     </div>
   )
 }
