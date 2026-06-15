@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { CopyrightEntry } from '../shared/CopyrightTypes'
 import ClausesPreview from '../shared/ClausesPreview'
-import TokenCard from '../shared/TokenCard'
+import RegisteredWorks from '../shared/RegisteredWorks'
 import AgreementViewer from '../shared/AgreementViewer'
 import styles from './index.module.scss'
 import sharedStyles from '../shared/index.module.scss'
@@ -106,15 +106,7 @@ export default function CopyrightListItem({ entry, aliases }: CopyrightListItemP
           {nfts.length > 0 && (
             <>
               <h4 className={sharedStyles.sectionTitle}>Registered Works</h4>
-              <div className={sharedStyles.tokensGrid}>
-                {nfts.map((nft) => (
-                  <TokenCard
-                    key={`${nft.contract}:${nft.token_id}`}
-                    contract={nft.contract}
-                    tokenId={nft.token_id}
-                  />
-                ))}
-              </div>
+              <RegisteredWorks nfts={nfts} />
             </>
           )}
 
