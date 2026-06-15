@@ -1,0 +1,139 @@
+@import '@styles/variables.scss';
+
+// --- Sidebar tree ---
+.sidebar {
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+.sidebar_empty {
+  color: var(--gray-60);
+  font-size: 0.9em;
+}
+
+.tree_root,
+.tree_children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree_children {
+  margin-left: 0.85em;
+  border-left: 1px solid var(--border-color);
+  padding-left: 0.6em;
+}
+
+.tree_item {
+  margin: 0.15em 0;
+}
+
+.tree_link {
+  display: block;
+  padding: 0.25em 0;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.95em;
+  line-height: 1.35;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tree_link_active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.tree_link_hidden {
+  color: var(--gray-60);
+  font-style: italic;
+}
+
+// --- Markdown body ---
+.markdown {
+  width: 100%;
+  font-family: var(--text-font);
+  line-height: 1.6;
+  word-break: break-word;
+
+  h1,
+  h2,
+  h3 {
+    margin: 1.2em 0 0.5em;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+  h2 {
+    font-size: 1.4em;
+  }
+  h3 {
+    font-size: 1.15em;
+  }
+
+  p {
+    margin: 0.75em 0;
+  }
+
+  a {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
+
+  ul,
+  ol {
+    margin: 0.75em 0;
+    padding-left: 1.4em;
+  }
+
+  li {
+    margin: 0.25em 0;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  pre {
+    overflow-x: auto;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    background: var(--gray-10);
+  }
+
+  blockquote {
+    margin: 0.75em 0;
+    padding-left: 1em;
+    border-left: 3px solid var(--border-color);
+    color: var(--gray-70);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 1.5em 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--border-color);
+    padding: 0.4em 0.6em;
+    text-align: left;
+  }
+}

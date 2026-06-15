@@ -23,6 +23,15 @@ import {
 } from '@pages/dao/tabs'
 import { TeiaPolls, PollDisplay } from '@pages/polls'
 import { Polls, CreatePolls, Discourse } from '@pages/polls/tabs'
+import {
+  WikiLayout,
+  WikiHome,
+  WikiPage,
+  WikiCreate,
+  WikiEdit,
+  WikiHistory,
+  WikiProposals,
+} from '@pages/wiki'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -223,6 +232,14 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      <Route path="wiki/*" element={<WikiLayout />}>
+        <Route index element={<WikiHome />} />
+        <Route path="create" element={<WikiCreate />} />
+        <Route path="proposals" element={<WikiProposals />} />
+        <Route path=":slug" element={<WikiPage />} />
+        <Route path=":slug/edit" element={<WikiEdit />} />
+        <Route path=":slug/history" element={<WikiHistory />} />
+      </Route>
       <Route path="publicchannels" element={<ChannelList />} />
       <Route path="notifications" element={<NotificationsCenter />} />
       <Route path="inbox/channels" element={<ChannelList />} />

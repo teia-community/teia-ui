@@ -1,0 +1,7 @@
+export { default as WikiLayout } from './WikiLayout'
+export { default as WikiHome } from './WikiHome'
+export { default as WikiPage } from './WikiPage'
+export { default as WikiCreate } from './WikiCreate'
+export { default as WikiEdit } from './WikiEdit'
+export { default as WikiHistory } from './WikiHistory'
+export { default as WikiProposals } from './WikiProposals'
