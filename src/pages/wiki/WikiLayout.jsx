@@ -63,6 +63,11 @@ export default function WikiLayout() {
                 Proposals
               </Button>
             )}
+            {canModerate && (
+              <Button small shadow_box to={`${PATH.WIKI}/admin`}>
+                Admin
+              </Button>
+            )}
           </div>
         </div>
 

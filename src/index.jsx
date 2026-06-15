@@ -31,6 +31,7 @@ import {
   WikiEdit,
   WikiHistory,
   WikiProposals,
+  WikiAdmin,
 } from '@pages/wiki'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
@@ -235,6 +236,7 @@ const router = createBrowserRouter(
       <Route path="wiki/*" element={<WikiLayout />}>
         <Route index element={<WikiHome />} />
         <Route path="create" element={<WikiCreate />} />
+        <Route path="admin" element={<WikiAdmin />} />
         <Route path="proposals" element={<WikiProposals />} />
         <Route path=":slug" element={<WikiPage />} />
         <Route path=":slug/edit" element={<WikiEdit />} />

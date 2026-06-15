@@ -333,3 +333,97 @@
   gap: 0.75em;
   margin-top: 0.75em;
 }
+
+// --- Admin overview ---
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5em;
+  margin: 1em 0 1.5em;
+  padding: 1em;
+  border: 1px solid var(--border-color);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat_num {
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.stat_label {
+  font-size: 0.8em;
+  color: var(--gray-60);
+}
+
+.admin_search {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.5em;
+  margin-bottom: 1em;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-body);
+}
+
+.table_wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--gray-60);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+.sort_header {
+  @include resetButton();
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.row_hidden {
+  color: var(--gray-60);
+  font-style: italic;
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 0.95em;
+}
+
+.row_actions {
+  display: flex;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.admin_proposals_head {
+  margin-top: 2em;
+}
