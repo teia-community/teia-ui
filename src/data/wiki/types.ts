@@ -106,15 +106,21 @@ export interface WikiPage {
   versionCount: number
   /** Last on-chain editor (moderator/multisig who applied the current version). */
   editor: string
+  proposer: string | null
   createdAt: string
   updatedAt: string
 }
+
+/** How the sidebar page list is ordered. */
+export type WikiSortKey = 'title' | 'created' | 'updated'
 
 /** A node in the sidebar tree (page + resolved children). */
 export interface WikiTreeNode {
   slug: string
   title: string
   parent: string | null
+  createdAt: string
+  updatedAt: string
   children: WikiTreeNode[]
 }
 

@@ -60,6 +60,22 @@
   margin-bottom: 0.75em;
 }
 
+.sidebar_sort {
+  margin-bottom: 1em;
+
+  label {
+    display: block;
+    margin-bottom: 0.35em;
+    font-size: 0.8em;
+    color: var(--gray-60);
+  }
+
+  .select {
+    font-size: 0.85em;
+    padding: 0.35em;
+  }
+}
+
 .content_col {
   min-width: 0;
 }
@@ -130,6 +146,12 @@
   display: block;
   margin-top: 0.35em;
   color: var(--gray-60);
+}
+
+.error {
+  display: block;
+  margin-top: 0.35em;
+  color: var(--error-color, #c0392b);
 }
 
 .select {

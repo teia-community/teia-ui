@@ -13,13 +13,15 @@ export default function WikiHome() {
   const indexPage = wiki?.pages.find((p) => p.slug === WIKI_INDEX_SLUG)
   const { data: content, error } = useWikiPageContent(indexPage?.cid)
 
-  if (indexPage) {
-    if (!content && !error) return <p className={styles.notice}>Loading…</p>
+  if (indexPage && content) {
     return (
       <article className={styles.article}>
-        <WikiMarkdown>{content?.content}</WikiMarkdown>
+        <WikiMarkdown>{content.content}</WikiMarkdown>
       </article>
     )
+  }
+  if (indexPage && !error) {
+    return <p className={styles.notice}>Loading…</p>
   }
 
   // Fallback: list top-level pages.

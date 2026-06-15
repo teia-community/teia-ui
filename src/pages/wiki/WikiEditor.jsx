@@ -66,6 +66,11 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
     .map((p) => ({ slug: p.slug, title: wiki.meta[p.slug]?.title || p.slug }))
     .sort((a, b) => a.title.localeCompare(b.title))
 
+  const slugTaken =
+    !isEdit &&
+    slug.trim().length > 0 &&
+    (wiki?.pages || []).some((p) => p.slug === slug.trim())
+
   if (!canSubmit) {
     return (
       <p className={styles.notice}>
@@ -76,7 +81,7 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!title.trim() || !slug.trim() || !content.trim()) return
+    if (!title.trim() || !slug.trim() || !content.trim() || slugTaken) return
     setSubmitting(true)
     const input = {
       title: title.trim(),
@@ -147,6 +152,12 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
             ? 'The slug is fixed for existing pages.'
             : 'Used in the page URL: /wiki/your-slug'}
         </small>
+        {slugTaken && (
+          <small className={styles.error}>
+            A page with the slug “{slug.trim()}” already exists — choose a
+            different title or slug.
+          </small>
+        )}
       </div>
 
       <div className={styles.field}>
@@ -204,7 +215,11 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
           type="submit"
           shadow_box
           disabled={
-            submitting || !title.trim() || !slug.trim() || !content.trim()
+            submitting ||
+            !title.trim() ||
+            !slug.trim() ||
+            !content.trim() ||
+            slugTaken
           }
         >
           {submitting ? 'Submitting…' : verb}

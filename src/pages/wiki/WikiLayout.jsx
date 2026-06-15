@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
@@ -23,18 +23,20 @@ export default function WikiLayout() {
   const canModerate = Boolean(roles?.canModerate)
   const canPropose = Boolean(roles?.canPropose)
 
+  const [sortBy, setSortBy] = useState('title')
+
   const { tree, hiddenSlugs } = useMemo(() => {
     if (!data) return { tree: [], hiddenSlugs: new Set() }
     const visible = canModerate
       ? data.pages
       : data.pages.filter((p) => !p.hidden)
     return {
-      tree: buildTree(visible, data.meta),
+      tree: buildTree(visible, data.meta, sortBy),
       hiddenSlugs: new Set(
         data.pages.filter((p) => p.hidden).map((p) => p.slug)
       ),
     }
-  }, [data, canModerate])
+  }, [data, canModerate, sortBy])
 
   const outletContext = {
     wiki: data,
@@ -52,12 +54,12 @@ export default function WikiLayout() {
           <h1 className={styles.headline}>Teia Wiki</h1>
           <div className={styles.header_actions}>
             {(canModerate || canPropose) && (
-              <Button small to={`${PATH.WIKI}/create`}>
+              <Button small shadow_box to={`${PATH.WIKI}/create`}>
                 {canModerate ? 'New Page' : 'Propose Page'}
               </Button>
             )}
             {canModerate && (
-              <Button small to={`${PATH.WIKI}/proposals`}>
+              <Button small shadow_box to={`${PATH.WIKI}/proposals`}>
                 Proposals
               </Button>
             )}
@@ -81,6 +83,19 @@ export default function WikiLayout() {
               >
                 Home
               </Button>
+              <div className={styles.sidebar_sort}>
+                <label htmlFor="wiki-sort">Sort by</label>
+                <select
+                  id="wiki-sort"
+                  className={styles.select}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="title">Alphabetical</option>
+                  <option value="created">Date created</option>
+                  <option value="updated">Date last edited</option>
+                </select>
+              </div>
               <WikiSidebar tree={tree} hiddenSlugs={hiddenSlugs} />
             </aside>
             <section className={styles.content_col}>

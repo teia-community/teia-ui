@@ -3,6 +3,7 @@ import { useOutletContext, useParams, Link, Navigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
+import { useUserProfiles } from '@data/messaging/token-comments'
 import { useWikiPageContent, setPageHidden } from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
@@ -28,6 +29,9 @@ export default function WikiPage() {
   const page = wiki?.pages.find((p) => p.slug === slug)
   const { data: content, error } = useWikiPageContent(page?.cid)
   const crumbs = useBreadcrumbs(slug, wiki?.meta || {})
+  const { data: profiles = {} } = useUserProfiles(
+    page ? [page.editor, page.proposer].filter(Boolean) : []
+  )
 
   if (!page || (page.hidden && !canModerate)) {
     return <Navigate to={PATH.WIKI} replace />
@@ -64,15 +68,20 @@ export default function WikiPage() {
         </h1>
         <div className={styles.page_actions}>
           {(canModerate || canPropose) && (
-            <Button small to={`${PATH.WIKI}/${slug}/edit`}>
+            <Button small shadow_box to={`${PATH.WIKI}/${slug}/edit`}>
               {canModerate ? 'Edit' : 'Propose edit'}
             </Button>
           )}
-          <Button small secondary to={`${PATH.WIKI}/${slug}/history`}>
+          <Button
+            small
+            secondary
+            shadow_box
+            to={`${PATH.WIKI}/${slug}/history`}
+          >
             History
           </Button>
           {canModerate && (
-            <Button small secondary onClick={onToggleHidden}>
+            <Button small secondary shadow_box onClick={onToggleHidden}>
               {page.hidden ? 'Unhide' : 'Hide'}
             </Button>
           )}
@@ -80,8 +89,19 @@ export default function WikiPage() {
       </div>
 
       <p className={styles.page_meta}>
-        v{page.versionCount} · last edited by {walletPreview(page.editor)} ·{' '}
-        {new Date(page.updatedAt).toLocaleDateString()}
+        v{page.versionCount} · last edited by{' '}
+        <Link to={`/tz/${page.editor}`}>
+          {profiles[page.editor]?.alias || walletPreview(page.editor)}
+        </Link>
+        {page.proposer && (
+          <>
+            {' · proposed by '}
+            <Link to={`/tz/${page.proposer}`}>
+              {profiles[page.proposer]?.alias || walletPreview(page.proposer)}
+            </Link>
+          </>
+        )}{' '}
+        · {new Date(page.updatedAt).toLocaleDateString()}
       </p>
 
       {!content && !error ? (

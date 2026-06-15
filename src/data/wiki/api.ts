@@ -96,6 +96,7 @@ export function reconstructState(
           hidden: p.hidden,
           versionCount: 1,
           editor: p.editor,
+          proposer: null,
           createdAt: p.timestamp,
           updatedAt: p.timestamp,
         })
@@ -109,6 +110,8 @@ export function reconstructState(
           existing.hidden = p.hidden
           existing.versionCount = Number(p.version)
           existing.editor = p.editor
+          // Direct edits emit proposer=null; proposal-applied edits carry it.
+          existing.proposer = p.proposer ?? null
           existing.updatedAt = p.timestamp
         }
         break
@@ -145,16 +148,21 @@ export function reconstructState(
           prop.resolvedBy = p.approved_by
           prop.resolvedAt = p.timestamp
         }
-        // New-page approvals also emit page_created (handled above). For edit
-        // approvals, advance the page here since no page_updated is emitted.
-        if (!p.is_new_page) {
-          const existing = pages.get(p.page_slug)
-          if (existing) {
-            existing.cid = p.proposed_cid
-            existing.versionCount += 1
-            existing.editor = p.approved_by
-            existing.updatedAt = p.timestamp
-          }
+        // The proposal_approved event has no `proposer`; recover the author
+        // from the matching proposal_created we already folded in.
+        const author = prop?.proposer ?? null
+        const existing = pages.get(p.page_slug)
+        if (p.is_new_page) {
+          // The page was created by the page_created event emitted just before
+          // this one; credit the proposer as its author.
+          if (existing) existing.proposer = author
+        } else if (existing) {
+          // Edit approvals emit no page_updated, so advance the page here.
+          existing.cid = p.proposed_cid
+          existing.versionCount += 1
+          existing.editor = p.approved_by
+          existing.proposer = author
+          existing.updatedAt = p.timestamp
         }
         break
       }
