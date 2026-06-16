@@ -490,6 +490,57 @@ export async function setChannelBanned({
   }
 }
 
+/**
+ * Add or remove an address from the ban list (distinct from the
+ * per-channel ban in `setChannelBanned`).
+ */
+export async function setUserBanned({
+  address,
+  banned,
+}: {
+  address: string
+  banned: boolean
+}) {
+  const { step, show, showError } = useModalStore.getState()
+  const title = banned ? 'Ban User' : 'Unban User'
+
+  step(title, 'Waiting for wallet', true)
+
+  try {
+    const contract = await Tezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject
+      .set_user_banned({ address, banned })
+      .send()
+    await op.confirmation()
+    show(title, banned ? 'User banned from channels' : 'User unbanned')
+    return op.opHash
+  } catch (e) {
+    const friendly = friendlyError(e)
+    showError(title, friendly)
+    throw friendly
+  }
+}
+
+/** Pause or unpause the whole channels contract. */
+export async function setPaused(paused: boolean) {
+  const { step, show, showError } = useModalStore.getState()
+  const title = paused ? 'Pause Channels' : 'Unpause Channels'
+
+  step(title, 'Waiting for wallet', true)
+
+  try {
+    const contract = await Tezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject.set_pause(paused).send()
+    await op.confirmation()
+    show(title, paused ? 'Channels paused' : 'Channels resumed')
+    return op.opHash
+  } catch (e) {
+    const friendly = friendlyError(e)
+    showError(title, friendly)
+    throw friendly
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Messaging
 // ---------------------------------------------------------------------------

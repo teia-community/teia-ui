@@ -83,6 +83,12 @@ import ProfileChannels from '@pages/profile/channels'
 
 // Messaging
 import NotificationsCenter from '@pages/notifications'
+import {
+  AdminConsole,
+  ChannelsAdmin,
+  CommentsAdmin,
+  RequireModerator,
+} from '@pages/admin'
 import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
@@ -223,6 +229,30 @@ const router = createBrowserRouter(
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route
+          path="channels"
+          element={
+            <RequireModerator>
+              <ChannelsAdmin />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="poll-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="poll" />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="token-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="token" />
+            </RequireModerator>
+          }
+        />
         <Route path="*" element={<DaoParameters />} />
       </Route>
       <Route path="proposal/:id" element={<ProposalDisplay />} />
@@ -244,6 +274,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="publicchannels" element={<ChannelList />} />
       <Route path="notifications" element={<NotificationsCenter />} />
+      <Route path="inbox/admin" element={<AdminConsole />} />
       <Route path="inbox/channels" element={<ChannelList />} />
       <Route path="inbox/channels/create" element={<CreateChannel />} />
       <Route path="inbox/channels/:id" element={<ChannelView />} />

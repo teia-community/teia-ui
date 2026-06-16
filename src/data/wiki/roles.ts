@@ -25,7 +25,7 @@ const EMPTY_ROLES: WikiUserRoles = {
  *   VITE_WIKI_DEV_MODERATORS=tz1aaa,tz1bbb  (in .env)
  * Then reload the page.
  */
-function devModerateOverride(address?: string): boolean {
+export function devModerateOverride(address?: string): boolean {
   try {
     if (localStorage.getItem('wiki_dev_force_moderate') === '1') return true
     const fromLs = localStorage.getItem('wiki_dev_moderators') || ''
