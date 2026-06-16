@@ -89,6 +89,7 @@ import {
   CommentsAdmin,
   RequireModerator,
 } from '@pages/admin'
+import { StatsPage } from '@pages/stats'
 import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
@@ -229,6 +230,7 @@ const router = createBrowserRouter(
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route path="stats" element={<StatsPage />} />
         <Route
           path="channels"
           element={

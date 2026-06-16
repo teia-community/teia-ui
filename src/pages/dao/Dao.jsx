@@ -29,6 +29,10 @@ const TABS = [
     private: true,
   },
   {
+    title: 'Stats',
+    to: 'stats',
+  },
+  {
     title: 'Channels',
     to: 'channels',
     restricted: true,
