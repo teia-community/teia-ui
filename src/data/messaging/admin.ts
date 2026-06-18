@@ -12,6 +12,7 @@ import {
 } from '@constants'
 import { fetchEventsPage, fetchBigMapValuesBulk } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
+import type { ChannelAccessMode } from './channel-types'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
@@ -30,6 +31,14 @@ function decodeBytes(hex: string | null | undefined): string {
   } catch {
     return ''
   }
+}
+
+/** Get a channel's on-chain `access_mode`: `unrestricted` | `allowlist` | `closed`. */
+function accessModeFromMichelson(
+  variant: Record<string, unknown> | null | undefined
+): ChannelAccessMode {
+  if (!variant) return 'unrestricted'
+  return (Object.keys(variant)[0] as ChannelAccessMode) ?? 'unrestricted'
 }
 
 /** Decode a comment/message `content` field (raw JSON or ipfs:// pointer). */
@@ -145,6 +154,8 @@ export interface AdminMessage {
   content: string
   hidden: boolean
   timestamp: string
+  /** Access mode of the channel. */
+  channelAccessMode: ChannelAccessMode
 }
 
 interface MessagePostedPayload {
@@ -180,6 +191,14 @@ export function useRecentChannelMessages() {
         ids
       )
 
+      // Resolve the access mode of every channel.
+      const channelIds = [...new Set(posted.map((e) => e.payload.channel_id))]
+      const channelRows = await fetchBigMapValuesBulk<ChannelRow>(
+        contract,
+        'channels',
+        channelIds
+      )
+
       return Promise.all(
         posted
           .filter((e) => rows.has(e.payload.message_id))
@@ -189,6 +208,7 @@ export function useRecentChannelMessages() {
               row.content,
               'teia-channel-message'
             )
+            const channelRow = channelRows.get(e.payload.channel_id)
             return {
               id: e.payload.message_id,
               channelId: e.payload.channel_id,
@@ -196,6 +216,9 @@ export function useRecentChannelMessages() {
               content,
               hidden: Boolean(row.hidden),
               timestamp: row.timestamp ?? e.payload.timestamp,
+              channelAccessMode: accessModeFromMichelson(
+                channelRow?.access_mode
+              ),
             } as AdminMessage
           })
       )
@@ -215,6 +238,7 @@ export interface AdminChannel {
   hidden: boolean
   messageCount: number
   createdAt: string
+  accessMode: ChannelAccessMode
 }
 
 interface ChannelCreatedPayload {
@@ -229,6 +253,7 @@ interface ChannelRow {
   hidden: boolean
   message_count?: string
   timestamp?: string
+  access_mode?: Record<string, unknown>
 }
 
 async function resolveChannelName(
@@ -283,6 +308,7 @@ export function useAdminChannels() {
               hidden: Boolean(row.hidden),
               messageCount: Number(row.message_count ?? 0),
               createdAt: row.timestamp ?? e.payload.timestamp,
+              accessMode: accessModeFromMichelson(row.access_mode),
             } as AdminChannel
           })
       )

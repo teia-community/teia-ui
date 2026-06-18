@@ -51,23 +51,31 @@ export default function ChannelsAdmin() {
   const [busyChannel, setBusyChannel] = useState(null)
   const [busyMsg, setBusyMsg] = useState(null)
 
+  const openChannels = useMemo(
+    () => (channels ?? []).filter((c) => c.accessMode === 'unrestricted'),
+    [channels]
+  )
+  const openMessages = useMemo(
+    () =>
+      (messages ?? []).filter((m) => m.channelAccessMode === 'unrestricted'),
+    [messages]
+  )
+
   const addrs = useMemo(() => {
     const set = new Set(banned)
-    for (const c of channels ?? []) set.add(c.creator)
-    for (const m of messages ?? []) set.add(m.sender)
+    for (const c of openChannels) set.add(c.creator)
+    for (const m of openMessages) set.add(m.sender)
     return [...set]
-  }, [channels, messages, banned])
+  }, [openChannels, openMessages, banned])
   const { data: profiles = {} } = useUserProfiles(addrs)
 
   const stats = useMemo(() => {
-    const ch = channels ?? []
-    const msg = messages ?? []
     return {
-      channels: ch.length,
-      hiddenChannels: ch.filter((c) => c.hidden).length,
-      hiddenMessages: msg.filter((m) => m.hidden).length,
+      channels: openChannels.length,
+      hiddenChannels: openChannels.filter((c) => c.hidden).length,
+      hiddenMessages: openMessages.filter((m) => m.hidden).length,
     }
-  }, [channels, messages])
+  }, [openChannels, openMessages])
 
   const alias = (a) => profiles[a]?.alias || walletPreview(a)
 
@@ -211,12 +219,18 @@ export default function ChannelsAdmin() {
         <StatCard label="Banned users" value={banned.length} />
       </div>
 
+      <p className={styles.muted}>
+        Only open (unrestricted) channels are shown. Private, allowlist and
+        direct-message channels are hidden here to avoid exposing their
+        contents.
+      </p>
+
       <h3 className={styles.section_head}>Channels</h3>
       {loadingChannels ? (
         <Loading message="Loading channels…" />
       ) : (
         <ModerationTable
-          items={channels ?? []}
+          items={openChannels}
           headers={['Channel', 'Creator', 'Msgs', 'Created', 'Actions']}
           renderRow={renderChannelRow}
           searchText={(c) => `${c.name} ${c.creator} ${c.id}`}
@@ -229,7 +243,7 @@ export default function ChannelsAdmin() {
         <Loading message="Loading messages…" />
       ) : (
         <ModerationTable
-          items={messages ?? []}
+          items={openMessages}
           headers={['Author', 'Message', 'Channel', 'Posted', 'Actions']}
           renderRow={renderMessageRow}
           searchText={(m) => `${m.sender} ${m.content} ${m.channelId}`}
