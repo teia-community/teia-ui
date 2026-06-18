@@ -33,6 +33,10 @@ const TABS = [
     to: 'stats',
   },
   {
+    title: 'Fees',
+    to: 'fees',
+  },
+  {
     title: 'Moderators',
     to: 'moderators',
   },
