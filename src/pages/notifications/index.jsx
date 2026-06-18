@@ -220,6 +220,13 @@ export default function NotificationsCenter() {
           — your messages and comments themselves are safe and stored on-chain.
         </p>
 
+        <p className={styles.infoNote}>
+          Messages, direct messages and comments are currently stored
+          unencrypted on the Tezos blockchain. That means their contents are
+          publicly readable on-chain by anyone. Treat them as public and
+          don&apos;t share anything private or sensitive.
+        </p>
+
         {!messageNotifications && (
           <div className={styles.empty}>
             Notifications are turned off in your settings.
