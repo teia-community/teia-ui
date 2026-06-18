@@ -9,17 +9,24 @@ interface TokenCardProps {
   contract: string
   tokenId: string
   metadata?: NFTMetadata
+  managed?: boolean
 }
 
-export default function TokenCard({ contract, tokenId, metadata }: TokenCardProps) {
+export default function TokenCard({ contract, tokenId, metadata, managed }: TokenCardProps) {
   const [meta, setMeta] = useState<NFTMetadata>(metadata || {})
 
+  // Sync local state when the parent supplies/updates metadata.
   useEffect(() => {
-    if (metadata) return
+    if (metadata) setMeta(metadata)
+  }, [metadata])
+
+  useEffect(() => {
+    // Parent-managed cards wait for the batched result; they never self-fetch.
+    if (managed || metadata) return
     fetchTokenMetadataForCopyrightSearch(contract, tokenId)
       .then((data) => setMeta(data?.metadata || {}))
       .catch(() => setMeta({}))
-  }, [contract, tokenId, metadata])
+  }, [contract, tokenId, metadata, managed])
 
   const imageSrc =
     (meta.thumbnailUri && HashToURL(meta.thumbnailUri, 'IPFS')) ||
@@ -27,7 +34,9 @@ export default function TokenCard({ contract, tokenId, metadata }: TokenCardProp
     (meta.artifactUri && HashToURL(meta.artifactUri, 'IPFS'))
 
   const isHen = contract === HEN_CONTRACT_FA2
-  const link = isHen ? `/objkt/${tokenId}` : `${import.meta.env.VITE_TZKT_API?.replace('/v1', '')}/${contract}/tokens/${tokenId}`
+  const link = isHen
+    ? `/objkt/${tokenId}`
+    : `https://tzkt.io/${contract}/tokens/${tokenId}/metadata`
 
   return (
     <div className={styles.tokenCard}>
