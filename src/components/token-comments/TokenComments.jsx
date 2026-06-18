@@ -3,11 +3,8 @@ import { Link } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
 import { useChatReadStore } from '@context/chatReadStore'
-import {
-  useTokenComments,
-  useIsBanned,
-  useUserProfiles,
-} from '@data/messaging/token-comments'
+import { useTokenComments, useIsBanned } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import { postComment } from '@data/messaging/token-comments-actions'
 import { walletPreview } from '@utils/string'
 import CommentItem from './CommentItem'

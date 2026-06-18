@@ -10,10 +10,11 @@
 import useSWR from 'swr'
 import {
   DAO_TREASURY_CONTRACT,
-  WIKI_MODERATOR_CONTRACT,
+  MODERATOR_CONTRACT,
   DAO_TOKEN_CONTRACT,
   WIKI_TOKEN_ID,
 } from '@constants'
+import { fetchGraphQL } from '@data/api'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
@@ -43,7 +44,7 @@ export async function fetchMultisigUsers(): Promise<string[]> {
 /** Standalone moderators — moderator contract storage `moderators` set. */
 export async function fetchModerators(): Promise<string[]> {
   const res = await fetch(
-    `${TZKT_API}/v1/contracts/${WIKI_MODERATOR_CONTRACT}/storage?path=moderators`
+    `${TZKT_API}/v1/contracts/${MODERATOR_CONTRACT}/storage?path=moderators`
   )
   if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
   const data = await res.json()
@@ -134,4 +135,52 @@ export function useAccountRoles(address?: string): AccountRoles {
     isModerator: Boolean(address && moderators?.includes(address)),
     isTokenHolder: (balance ?? 0) > 0,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Profiles (alias + avatar)
+// ---------------------------------------------------------------------------
+
+/** Display profile for an address: alias (name) and avatar (logo). */
+export interface UserProfile {
+  alias?: string
+  logo?: string
+}
+
+interface TeiaUserRow {
+  user_address: string
+  name?: string | null
+  metadata?: { data?: { identicon?: string | null } | null } | null
+}
+
+/**
+ * Batched (alias, avatar) lookup, subject to merge into a global lookup.
+ */
+export function useUserProfiles(addresses: string[]) {
+  const unique = [...new Set((addresses ?? []).filter(Boolean))].sort()
+  return useSWR<Record<string, UserProfile>>(
+    unique.length > 0 ? `teia-user-profiles:${unique.join(',')}` : null,
+    async () => {
+      const result = await fetchGraphQL(
+        `query UserProfiles($addresses: [String!]!) {
+           teia_users(where: { user_address: { _in: $addresses } }) {
+             user_address
+             name
+             metadata { data }
+           }
+         }`,
+        'UserProfiles',
+        { addresses: unique }
+      )
+      const out: Record<string, UserProfile> = {}
+      for (const row of (result?.data?.teia_users ?? []) as TeiaUserRow[]) {
+        out[row.user_address] = {
+          alias: row.name ?? undefined,
+          logo: row.metadata?.data?.identicon ?? undefined,
+        }
+      }
+      return out
+    },
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
 }

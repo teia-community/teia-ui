@@ -7,7 +7,7 @@ import { PATH, WIKI_CONTRACT } from '@constants'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
-import { useUserProfiles } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import {
   approveProposal,
   rejectProposal,

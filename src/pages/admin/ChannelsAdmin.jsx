@@ -6,7 +6,7 @@ import { CHANNELS_V2_CONTRACT } from '@constants'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { useModalStore } from '@context/modalStore'
-import { useUserProfiles } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import {
   useAdminChannels,
   useRecentChannelMessages,

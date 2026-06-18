@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
-import { useUserProfiles } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import styles from '@style'
 
 /**

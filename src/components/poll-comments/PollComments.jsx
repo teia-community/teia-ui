@@ -3,11 +3,8 @@ import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
 import { useChatReadStore } from '@context/chatReadStore'
 import { useDaoTokenBalance } from '@data/swr'
-import {
-  usePollComments,
-  useIsBanned,
-  useUserProfiles,
-} from '@data/messaging/poll-comments'
+import { usePollComments, useIsBanned } from '@data/messaging/poll-comments'
+import { useUserProfiles } from '@data/roles'
 import { postComment } from '@data/messaging/poll-comments-actions'
 import { walletPreview } from '@utils/string'
 import CommentItem from './CommentItem'

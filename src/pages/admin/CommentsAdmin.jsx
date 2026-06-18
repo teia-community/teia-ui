@@ -4,7 +4,7 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useUserProfiles } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import {
   useRecentComments,
   useBannedList,
