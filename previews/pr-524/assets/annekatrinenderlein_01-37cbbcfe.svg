@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" stroke-linecap="round" stroke-linejoin="round"
+    stroke-miterlimit="10" clip-rule="evenodd" viewBox="0 0 512 128">
+    <g fill="currentColor">
+        <path
+            d="m208 114-15-8V42l8 4 27 14 18 10v16l-3-2-35-18v8l19 10 19 10v16l-2-1a4531 4531 0 0 1-36-18v7l15 8 16 9-15 8-16-9Zm91-3-22-11V78l18-9 18-10 32 17 32 17-8 4-8 4-10-5-11-6-6 3-12 7-7 3 11 5 10 6-16 8-21-11Zm13-22 12-7-6-3-5-3-12 6-13 7 11 6 13-6Z" />
+        <path
+            d="M255 86V65l-7-4-6-3 7-4 7-4 7 4 6 3v42l-7 4-7 4V86ZM147 50l-8-4 19-11 19-10-9-5c-8-4-9-4-8-5l7-4 7-3 24 12 27 14 3 2-8 3-8 4-10-6-9-4-20 10-20 10-6-3Z" />
+    </g>
+</svg>
