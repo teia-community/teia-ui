@@ -18,6 +18,7 @@ import {
   fetchGraphQL,
 } from '@data/api'
 import laggy from '@utils/swr-laggy-middleware'
+import { useModerators } from '@data/roles'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -1059,14 +1060,16 @@ export function useMultisigAddresses() {
 
 export function useOfficialTextPosts(limit = 100) {
   const multisigAddresses = useMultisigAddresses()
+  const { data: moderators } = useModerators()
+  const addresses = [...new Set([...multisigAddresses, ...(moderators || [])])]
   return useSWR(
-    multisigAddresses.length > 0 ? ['text-official', multisigAddresses] : null,
+    addresses.length > 0 ? ['text-official', addresses] : null,
     () =>
       request(
         import.meta.env.VITE_TEIA_GRAPHQL_API,
         OFFICIAL_TEXT_POSTS_QUERY,
         {
-          addresses: multisigAddresses,
+          addresses,
           tag: TEIA_MULTISIG_BLOG_TAG,
           limit,
         }

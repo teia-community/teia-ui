@@ -32,8 +32,8 @@ export default function OfficialPosts() {
   return (
     <>
       <p className={styles.description}>
-        Official updates from TEIA's core members on community events and
-        developments.
+        Official updates from TEIA's core members and moderators on community
+        events and developments.
       </p>
       <div className={styles.posts_list}>
         {posts.map((nft) => (
