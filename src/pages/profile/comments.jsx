@@ -75,7 +75,7 @@ export default function ProfileComments() {
               to={`/objkt/${group.tokenId}/comments`}
               className={styles.tokenLink}
             >
-              OBJKT#{group.tokenId}
+              <span className={styles.objktText}>OBJKT</span>#{group.tokenId}
               <span className={styles.tokenLinkCount}>
                 {group.comments.length}{' '}
                 {group.comments.length === 1 ? 'comment' : 'comments'}
@@ -138,7 +138,8 @@ function ProfileCommentItem({ comment, profiles, showTokenLink = false }) {
               to={`/objkt/${comment.tokenId}/comments`}
               className={styles.inlineTokenLink}
             >
-              on OBJKT#{comment.tokenId}
+              on <span className={styles.objktText}>OBJKT</span>#
+              {comment.tokenId}
             </Link>
           )}
         </div>

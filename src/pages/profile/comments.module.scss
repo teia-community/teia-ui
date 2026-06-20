@@ -101,3 +101,11 @@
   opacity: 0.6;
   font-size: $font-body;
 }
+
+.objktText {
+  display: none;
+
+  @include respond-to('tablet') {
+    display: inline;
+  }
+}
