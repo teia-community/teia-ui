@@ -8,11 +8,7 @@
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'
 import { TOKEN_COMMENTS_CONTRACT } from '@constants'
-import {
-  fetchAllEvents,
-  fetchBigMapValue,
-  fetchBigMapValuesBulk,
-} from './api'
+import { fetchAllEvents, fetchBigMapValue, fetchBigMapValuesBulk } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
 import { fetchGraphQL } from '@data/api'
 import type {
@@ -88,9 +84,7 @@ export function useTokenComments(
 ) {
   const enabled = Boolean(fa2Address) && Boolean(tokenId) && Boolean(CONTRACT)
   return useSWR(
-    enabled
-      ? `msg:token-comments:${CONTRACT}:${fa2Address}:${tokenId}`
-      : null,
+    enabled ? `msg:token-comments:${CONTRACT}:${fa2Address}:${tokenId}` : null,
     async () => {
       if (!fa2Address || !tokenId) return [] as TokenComment[]
 
@@ -121,6 +115,42 @@ export function useTokenComments(
   )
 }
 
+/**
+ * Load all comments posted by a given address, across all tokens.
+ * Sorted newest-first for the profile Comments tab.
+ */
+export function useUserComments(address: string | undefined) {
+  const enabled = Boolean(address) && Boolean(CONTRACT)
+  return useSWR(
+    enabled ? `msg:user-comments:${CONTRACT}:${address}` : null,
+    async () => {
+      if (!address) return [] as TokenComment[]
+
+      const posted = await fetchAllEvents<TokenCommentPostedEvent>(
+        CONTRACT,
+        'comment_posted',
+        { 'payload.sender': address }
+      )
+
+      const ids = posted.map((e) => e.payload.comment_id)
+      const rows = await fetchBigMapValuesBulk<TokenCommentBigmapRow>(
+        CONTRACT,
+        'comments',
+        ids
+      )
+
+      const comments = await Promise.all(
+        posted
+          .filter((e) => rows.has(e.payload.comment_id))
+          .map((e) => parseComment(e, rows.get(e.payload.comment_id)!))
+      )
+      // Newest first for the profile view
+      return comments.reverse()
+    },
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+}
+
 interface TokenCommentHistoryRow {
   fa2_address: string
   token_id: string
@@ -141,15 +171,16 @@ export function useCommentHistory(
   commentId: string | undefined,
   version: number
 ) {
-  const enabled =
-    Boolean(commentId) && version > 1 && Boolean(CONTRACT)
+  const enabled = Boolean(commentId) && version > 1 && Boolean(CONTRACT)
   return useSWR<TokenCommentVersion[]>(
     enabled
       ? `msg:token-comments-history:${CONTRACT}:${commentId}:${version}`
       : null,
     async () => {
       const url = new URL(
-        `${import.meta.env.VITE_TZKT_API}/v1/contracts/${CONTRACT}/bigmaps/comment_history/keys`
+        `${
+          import.meta.env.VITE_TZKT_API
+        }/v1/contracts/${CONTRACT}/bigmaps/comment_history/keys`
       )
       url.searchParams.set('active', 'true')
       url.searchParams.set('key.nat_0', String(commentId))

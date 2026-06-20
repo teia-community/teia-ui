@@ -1,0 +1,103 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.count {
+  font-size: $font-body;
+  opacity: 0.6;
+}
+
+.viewToggle {
+  @include resetButton;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  color: var(--text-color);
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: opacity 0.15s, border-color 0.15s;
+
+  &:hover {
+    opacity: 1;
+    border-color: var(--text-color);
+  }
+
+  &[aria-pressed='true'] {
+    opacity: 0.9;
+    border-color: var(--text-color);
+  }
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tokenGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.tokenLink {
+  font-size: $font-body;
+  font-weight: 600;
+  color: var(--text-color);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tokenLinkCount {
+  font-weight: 400;
+  font-size: $font-small;
+  opacity: 0.5;
+}
+
+.inlineTokenLink {
+  font-size: $font-small;
+  color: var(--text-color);
+  text-decoration: none;
+  opacity: 0.5;
+  margin-left: auto;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.9;
+    text-decoration: underline;
+  }
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  opacity: 0.6;
+  font-size: $font-body;
+}

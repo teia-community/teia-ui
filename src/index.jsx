@@ -70,6 +70,7 @@ import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
 import ProfileChannels from '@pages/profile/channels'
+import ProfileComments from '@pages/profile/comments'
 
 // Messaging
 import NotificationsCenter from '@pages/notifications'
@@ -115,6 +116,7 @@ const display_routes = (
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
     <Route exact path="channels" element={<ProfileChannels />} />
+    <Route exact path="comments" element={<ProfileComments />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
