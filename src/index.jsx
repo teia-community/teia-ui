@@ -81,6 +81,7 @@ import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
+import Activity from '@pages/profile/activity'
 import ProfileChannels from '@pages/profile/channels'
 
 // Messaging
@@ -115,6 +116,7 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import TeiaActivity from '@pages/activity'
 import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
@@ -133,6 +135,7 @@ const display_routes = (
     <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
+    <Route exact path="activity" element={<Activity />} />
     <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
@@ -279,6 +282,7 @@ const router = createBrowserRouter(
         <Route path=":slug/history" element={<WikiHistory />} />
       </Route>
       <Route path="publicchannels" element={<ChannelList />} />
+      <Route path="activity" element={<TeiaActivity />} />
       <Route path="notifications" element={<NotificationsCenter />} />
       <Route path="inbox/admin" element={<AdminConsole />} />
       <Route path="inbox/channels" element={<ChannelList />} />

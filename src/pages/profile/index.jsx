@@ -127,6 +127,7 @@ export default function Display() {
     { title: 'Curation', to: 'curation' },
     { title: 'Collabs', to: 'collabs' },
     { title: 'Text', to: 'text' },
+    { title: 'Activity', to: 'activity' },
     { title: 'Channels', to: 'channels' },
     { title: 'Copyrights', to: 'copyrights' },
   ]
