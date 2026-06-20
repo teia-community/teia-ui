@@ -12,10 +12,10 @@ type ViewMode = 'single' | 'masonry'
 export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
 export const rpc_nodes = [
-  'https://mainnet.api.tez.ie',
+  'https://tezos-mainnet.octez.io/',
+  'https://tcinfra.net/rpc/tezos/mainnet',
   'https://mainnet.smartpy.io',
   'https://rpc.tzbeta.net',
-  'https://mainnet.tezos.marigold.dev',
   'https://rpc.tzkt.io/mainnet',
   'https://mainnet.teia.rocks',
   'https://teia.art/rpc',
@@ -160,13 +160,22 @@ export const useLocalSettings = create<LocalSettingsState>()(
         partialize: (state) =>
           Object.fromEntries(
             Object.entries(state).filter(([key]) =>
-              Object.keys(defaultValues).includes(key)
-            )
+              Object.keys(defaultValues).includes(key),
+            ),
           ) as LocalSettingsState,
         onRehydrateStorage: (state) => {
           return (state, error) => {
             if (error) {
               console.error('an error happened during hydration', error)
+            }
+            if (state) {
+              const isValid = rpc_nodes.includes(state.rpcNode as any)
+              if (!isValid) {
+                console.warn(
+                  `Persisted RPC node "${state.rpcNode}" is no longer supported. Resetting to default.`,
+                )
+                state.rpcNode = rpc_nodes[5]
+              }
             }
           }
         },
@@ -178,7 +187,7 @@ export const useLocalSettings = create<LocalSettingsState>()(
 
           return persistedState
         },
-      }
-    )
-  )
+      },
+    ),
+  ),
 )
