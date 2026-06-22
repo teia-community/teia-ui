@@ -83,6 +83,7 @@ import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
 import Activity from '@pages/profile/activity'
 import ProfileChannels from '@pages/profile/channels'
+import ProfileComments from '@pages/profile/comments'
 
 // Messaging
 import NotificationsCenter from '@pages/notifications'
@@ -137,6 +138,7 @@ const display_routes = (
     <Route exact path="text" element={<TextPosts />} />
     <Route exact path="activity" element={<Activity />} />
     <Route exact path="channels" element={<ProfileChannels />} />
+    <Route exact path="comments" element={<ProfileComments />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
