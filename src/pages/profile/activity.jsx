@@ -3,14 +3,17 @@ import { useOutletContext } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserActivity } from '@data/swr'
 import useActivityFilter from '@hooks/use-activity-filter'
-import { resolveActivityEvent } from '@utils/activity'
+import { resolveActivityEvent, MARKET_FILTERS } from '@utils/activity'
 import { ActivityList, ActivityFilters } from '@components/activity'
 import styles from './activity.module.scss'
 
 export default function Activity() {
   const { address } = useOutletContext()
 
-  const { active, toggle, matches } = useActivityFilter()
+  const type = useActivityFilter()
+  const market = useActivityFilter()
+  const { matches: matchesType } = type
+  const { matches: matchesMarket } = market
 
   const {
     events,
@@ -29,8 +32,11 @@ export default function Activity() {
           return meta ? { event, meta } : null
         })
         .filter(Boolean)
-        .filter(({ meta }) => matches(meta.filterKey)),
-    [events, address, matches]
+        .filter(
+          ({ meta }) =>
+            matchesType(meta.filterKey) && matchesMarket(meta.marketKey)
+        ),
+    [events, address, matchesType, matchesMarket]
   )
 
   if (error) {
@@ -47,7 +53,12 @@ export default function Activity() {
 
   return (
     <div className={styles.activity}>
-      <ActivityFilters active={active} onToggle={toggle} />
+      <ActivityFilters active={type.active} onToggle={type.toggle} />
+      <ActivityFilters
+        active={market.active}
+        onToggle={market.toggle}
+        filters={MARKET_FILTERS}
+      />
 
       <ActivityList
         rows={rows}
@@ -55,7 +66,9 @@ export default function Activity() {
         isReachingEnd={isReachingEnd}
         isLoadingMore={isLoadingMore}
         emptyMessage={`No activity${
-          active.length > 0 ? ' for this filter' : ''
+          type.active.length > 0 || market.active.length > 0
+            ? ' for this filter'
+            : ''
         } yet.`}
       />
     </div>

@@ -1,8 +1,9 @@
 // Activity-feed events.
 //
 // Resolves a teztok `events` row into a display descriptor:
-//   { filterKey, label, color, fromAttr, toAttr, showPrice, editions }
-// or `null` when the event is marketplace plumbing that should not be shown
+//   { filterKey, marketKey, label, color, fromAttr, toAttr, showPrice, editions }
+// or `null` when the event is marketplace plumbing that should not be shown.
+// marketKey is 'primary' | 'secondary' for trades/listings/mints, else null.
 
 import { BURN_ADDRESS } from '@constants'
 
@@ -43,7 +44,22 @@ export const ACTIVITY_FILTERS = [
   { key: 'create', label: 'Create' },
 ]
 
+/** Market filter chips (primary = artist's first market, secondary = resale). */
+export const MARKET_FILTERS = [
+  { key: 'primary', label: 'Primary' },
+  { key: 'secondary', label: 'Secondary' },
+]
+
 const isContract = (addr) => typeof addr === 'string' && addr.startsWith('KT1')
+
+/**
+ * Primary vs secondary market for a trade/listing: primary when the seller is
+ * the token's artist (first sale), secondary otherwise.
+ */
+const marketOf = (event) => {
+  const artist = event.token?.artist_address
+  return artist && event.seller_address === artist ? 'primary' : 'secondary'
+}
 
 /**
  * Map a raw event to a display descriptor for the given viewer address, or
@@ -59,6 +75,7 @@ export function resolveActivityEvent(event, address) {
     const sold = !address || event.seller_address === address
     return {
       filterKey: sold ? 'sale' : 'buy',
+      marketKey: marketOf(event),
       label: sold ? 'Sale' : 'Purchase',
       color: sold ? 'sale' : 'buy',
       fromAttr: 'seller',
@@ -71,6 +88,7 @@ export function resolveActivityEvent(event, address) {
   if (LISTING_TYPES.includes(event.type)) {
     return {
       filterKey: 'list',
+      marketKey: marketOf(event),
       label: 'List',
       color: 'list',
       fromAttr: 'seller',
@@ -84,6 +102,7 @@ export function resolveActivityEvent(event, address) {
     if (event.to_address === BURN_ADDRESS) {
       return {
         filterKey: 'transfer',
+        marketKey: null,
         label: 'Burn',
         color: 'burn',
         fromAttr: 'from',
@@ -98,6 +117,7 @@ export function resolveActivityEvent(event, address) {
     }
     return {
       filterKey: 'transfer',
+      marketKey: null,
       label: 'Transfer',
       color: 'transfer',
       fromAttr: 'from',
@@ -110,6 +130,7 @@ export function resolveActivityEvent(event, address) {
   if (MINT_TYPES.includes(event.type)) {
     return {
       filterKey: 'create',
+      marketKey: 'primary',
       label: 'Create',
       color: 'create',
       fromAttr: null,

@@ -3,7 +3,11 @@ import { Loading } from '@atoms/loading'
 import useSettings from '@hooks/use-settings'
 import useActivityFilter from '@hooks/use-activity-filter'
 import { useGlobalActivity } from '@data/swr'
-import { resolveActivityEvent, ACTIVITY_FILTERS } from '@utils/activity'
+import {
+  resolveActivityEvent,
+  ACTIVITY_FILTERS,
+  MARKET_FILTERS,
+} from '@utils/activity'
 import { ActivityList, ActivityFilters } from '@components/activity'
 import styles from './teia-activity-feed.module.scss'
 
@@ -15,7 +19,10 @@ const FEED_FILTERS = ACTIVITY_FILTERS.filter((f) => f.key !== 'buy')
  */
 export function GlobalActivityFeed() {
   const { walletBlockMap } = useSettings()
-  const { active, toggle, matches } = useActivityFilter()
+  const type = useActivityFilter()
+  const market = useActivityFilter()
+  const { matches: matchesType } = type
+  const { matches: matchesMarket } = market
   const {
     events,
     error,
@@ -36,8 +43,11 @@ export function GlobalActivityFeed() {
           return meta ? { event, meta } : null
         })
         .filter(Boolean)
-        .filter(({ meta }) => matches(meta.filterKey)),
-    [events, walletBlockMap, matches]
+        .filter(
+          ({ meta }) =>
+            matchesType(meta.filterKey) && matchesMarket(meta.marketKey)
+        ),
+    [events, walletBlockMap, matchesType, matchesMarket]
   )
 
   if (error) {
@@ -55,9 +65,14 @@ export function GlobalActivityFeed() {
   return (
     <div className={styles.feed}>
       <ActivityFilters
-        active={active}
-        onToggle={toggle}
+        active={type.active}
+        onToggle={type.toggle}
         filters={FEED_FILTERS}
+      />
+      <ActivityFilters
+        active={market.active}
+        onToggle={market.toggle}
+        filters={MARKET_FILTERS}
       />
 
       <ActivityList
@@ -66,7 +81,9 @@ export function GlobalActivityFeed() {
         isReachingEnd={isReachingEnd}
         isLoadingMore={isLoadingMore}
         emptyMessage={`No recent activity${
-          active.length > 0 ? ' for this filter' : ''
+          type.active.length > 0 || market.active.length > 0
+            ? ' for this filter'
+            : ''
         }.`}
       />
     </div>
