@@ -20,7 +20,7 @@ import styles from '@style'
  * - Data lives in IndexedDB via `calendarDB`, swappable for Postgres later.
  */
 export default function Calendar() {
-  const { events, isLoading, error, refresh } = useCalendarEvents()
+  const { events, isLoading, error, refresh, dismiss } = useCalendarEvents()
   const isAdmin = useIsCalendarAdmin()
   const address = useUserStore((st) => st.address)
 
@@ -54,11 +54,16 @@ export default function Calendar() {
     }
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (event) => {
+    // Read-only WP events aren't deletable — kick them out of state instead.
+    if (event.readOnly) {
+      dismiss(event.id)
+      return
+    }
     if (!window.confirm('Delete this event?')) return
     setActionError(null)
     try {
-      await calendarDB.remove(id)
+      await calendarDB.remove(event.id)
       refresh()
     } catch (e) {
       setActionError(`Could not delete event: ${e.message}`)

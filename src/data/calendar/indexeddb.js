@@ -9,14 +9,10 @@
  * Everything here runs in the browser; there are no network calls.
  */
 import { blankEvent } from './schema'
-import mockEvents from './mock-events.json'
 
 const DB_NAME = 'teia-calendar'
 const DB_VERSION = 1
 const STORE = 'events'
-// Marks that mock data was seeded once, so deleting it doesn't resurrect it.
-// Bump the suffix to force a re-seed in browsers that already set the flag.
-const SEEDED_FLAG = 'teia-calendar:seeded-v5'
 
 let dbPromise
 
@@ -73,31 +69,14 @@ function makeId() {
 }
 
 /**
- * Demo-stage: upsert the mock events (./mock-events.json) once per browser.
- * `put` keyed on the fixed mock ids merges with any events the user already
- * created; the versioned localStorage flag means deleting the mocks doesn't
- * resurrect them on reload. Runs in production too while the calendar is
- * IndexedDB-backed (per-browser demo data) — remove this whole function when
- * a real backend lands.
- */
-async function seedMocks(db) {
-  if (localStorage.getItem(SEEDED_FLAG)) return
-  const s = store(db, 'readwrite')
-  for (const event of mockEvents) s.put(event)
-  await new Promise((resolve, reject) => {
-    s.transaction.oncomplete = resolve
-    s.transaction.onerror = () => reject(s.transaction.error)
-  })
-  localStorage.setItem(SEEDED_FLAG, '1')
-}
-
-/**
  * List all events, soonest first.
  * @returns {Promise<import('./schema').CalendarEvent[]>}
  */
 export async function list() {
   const db = await openDB()
-  await seedMocks(db)
+  // Mock seeding is retired: the calendar is now populated from the WordPress
+  // `mec-events` feed (see @data/calendar/wordpress). IndexedDB now holds only
+  // events the user creates locally. Re-enable seedMocks(db) to restore demos.
   const events = await asPromise(store(db, 'readonly').getAll())
   return events.sort((a, b) =>
     (a.startDate || '').localeCompare(b.startDate || '')

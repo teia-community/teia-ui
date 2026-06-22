@@ -47,11 +47,15 @@ export default function CalendarEventCard({
 
         {canEdit && (
           <div className={styles.card_actions}>
-            <Button small secondary onClick={() => onEdit?.(event)}>
-              Edit
-            </Button>
-            <Button small secondary onClick={() => onDelete?.(event.id)}>
-              Delete
+            {/* WP-sourced events are read-only: they can be dismissed from
+                state but not edited or written back. */}
+            {!event.readOnly && (
+              <Button small secondary onClick={() => onEdit?.(event)}>
+                Edit
+              </Button>
+            )}
+            <Button small secondary onClick={() => onDelete?.(event)}>
+              {event.readOnly ? 'Dismiss' : 'Delete'}
             </Button>
           </div>
         )}
