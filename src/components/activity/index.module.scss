@@ -19,34 +19,35 @@ $grid: 104px minmax(150px, 2fr) 1fr 1fr 64px 104px 92px;
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0;
   font-weight: 600;
-  font-size: 0.8rem;
-  color: #fff;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-0);
   white-space: nowrap;
 }
 
-.badge_sale {
-  background: #1db954;
-}
-.badge_buy {
-  background: #2f7bf6;
-}
-.badge_list {
-  background: #5a5af6;
+.badge_create {
+  background: var(--gray-50);
 }
 .badge_transfer {
-  background: var(--gray-90);
-  color: var(--gray-0);
+  background: var(--gray-60);
 }
-.badge_create {
+.badge_list {
+  background: var(--gray-70);
+}
+.badge_buy {
+  background: var(--gray-80);
+}
+.badge_sale {
   background: var(--gray-90);
-  color: var(--gray-0);
 }
 .badge_burn {
-  background: #e0384d;
+  background: var(--gray-100);
 }
 
 .item {

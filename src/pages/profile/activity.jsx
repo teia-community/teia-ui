@@ -1,15 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserActivity } from '@data/swr'
-import { resolveActivityEvent, ACTIVITY_FILTERS } from '@utils/activity'
-import { ActivityList } from '@components/activity'
+import useActivityFilter from '@hooks/use-activity-filter'
+import { resolveActivityEvent } from '@utils/activity'
+import { ActivityList, ActivityFilters } from '@components/activity'
 import styles from './activity.module.scss'
 
 export default function Activity() {
   const { address } = useOutletContext()
 
-  const [active, setActive] = useState([])
+  const { active, toggle, matches } = useActivityFilter()
 
   const {
     events,
@@ -28,16 +29,9 @@ export default function Activity() {
           return meta ? { event, meta } : null
         })
         .filter(Boolean)
-        .filter(
-          ({ meta }) => active.length === 0 || active.includes(meta.filterKey)
-        ),
-    [events, address, active]
+        .filter(({ meta }) => matches(meta.filterKey)),
+    [events, address, matches]
   )
-
-  const toggle = (key) =>
-    setActive((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    )
 
   if (error) {
     return (
@@ -53,20 +47,7 @@ export default function Activity() {
 
   return (
     <div className={styles.activity}>
-      <div className={styles.filters}>
-        {ACTIVITY_FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            className={`${styles.chip} ${
-              active.includes(f.key) ? styles.chip_active : ''
-            }`}
-            onClick={() => toggle(f.key)}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <ActivityFilters active={active} onToggle={toggle} />
 
       <ActivityList
         rows={rows}

@@ -1,16 +1,21 @@
 import { useMemo } from 'react'
 import { Loading } from '@atoms/loading'
 import useSettings from '@hooks/use-settings'
+import useActivityFilter from '@hooks/use-activity-filter'
 import { useGlobalActivity } from '@data/swr'
-import { resolveActivityEvent } from '@utils/activity'
-import { ActivityList } from '@components/activity'
+import { resolveActivityEvent, ACTIVITY_FILTERS } from '@utils/activity'
+import { ActivityList, ActivityFilters } from '@components/activity'
 import styles from './teia-activity-feed.module.scss'
+
+// Drop the "buy" filer, not needed here.
+const FEED_FILTERS = ACTIVITY_FILTERS.filter((f) => f.key !== 'buy')
 
 /**
  * Global Activity Tab
  */
 export function GlobalActivityFeed() {
   const { walletBlockMap } = useSettings()
+  const { active, toggle, matches } = useActivityFilter()
   const {
     events,
     error,
@@ -30,8 +35,9 @@ export function GlobalActivityFeed() {
           const meta = resolveActivityEvent(event, null)
           return meta ? { event, meta } : null
         })
-        .filter(Boolean),
-    [events, walletBlockMap]
+        .filter(Boolean)
+        .filter(({ meta }) => matches(meta.filterKey)),
+    [events, walletBlockMap, matches]
   )
 
   if (error) {
@@ -48,12 +54,20 @@ export function GlobalActivityFeed() {
 
   return (
     <div className={styles.feed}>
+      <ActivityFilters
+        active={active}
+        onToggle={toggle}
+        filters={FEED_FILTERS}
+      />
+
       <ActivityList
         rows={rows}
         onLoadMore={loadMore}
         isReachingEnd={isReachingEnd}
         isLoadingMore={isLoadingMore}
-        emptyMessage="No recent activity."
+        emptyMessage={`No recent activity${
+          active.length > 0 ? ' for this filter' : ''
+        }.`}
       />
     </div>
   )
