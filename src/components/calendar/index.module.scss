@@ -6,6 +6,14 @@
   border: 1px solid var(--border-color);
   padding: var(--spacing, 1rem);
   margin-bottom: var(--spacing-double, 2rem);
+
+  // Desktop only: squares stay 1:1, sized by column width. Pad the sides to
+  // narrow the grid so 6 rows fit vertically within the viewport. On mobile
+  // this padding would shrink columns below their min square width and overflow
+  // the border, so it's gated to wider screens.
+  @media (min-width: 601px) {
+    padding-inline: clamp(1rem, 18vw, 22rem);
+  }
 }
 
 .month_nav {
@@ -36,6 +44,17 @@
 .day,
 .day_blank {
   aspect-ratio: 1 / 1;
+}
+
+// Mobile: keep cells the size of the empty calendar. Without this, the count
+// badge's content raises the automatic min-height (min-height: auto), which
+// overrides aspect-ratio and makes event days grow. Pinning min-height: 0 lets
+// the 1:1 square win; overflow clips any rare overshoot instead of resizing.
+@media (max-width: 600px) {
+  .day {
+    min-height: 0;
+    overflow: hidden;
+  }
 }
 
 .day {
@@ -81,6 +100,8 @@
   border-radius: 8px;
   padding: 0 6px;
   line-height: 1.4;
+  // Tiny breathing room beneath the count circle.
+  margin-bottom: 3px;
 }
 
 /* -------------------------------------------------------- day dialog --- */
@@ -110,6 +131,38 @@
   color: var(--text-secondary);
   text-align: center;
   padding: var(--spacing, 1rem);
+}
+
+/* -------------------------------------------------- previous events --- */
+.prev {
+  margin-top: var(--spacing, 1rem);
+}
+
+.prev_summary {
+  cursor: pointer;
+  padding: var(--spacing-half, 0.5rem);
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+
+  &:hover {
+    background: var(--border-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: -2px;
+  }
+}
+
+// Indent each nested level so the year → month hierarchy reads clearly.
+.prev_body {
+  padding-left: var(--spacing, 1rem);
+  margin-top: var(--spacing-half, 0.5rem);
+}
+
+.prev_year,
+.prev_month {
+  margin-bottom: var(--spacing-half, 0.5rem);
 }
 
 /* ---------------------------------------------------------------- card --- */

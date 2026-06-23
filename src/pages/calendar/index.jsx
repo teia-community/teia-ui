@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
@@ -9,7 +9,15 @@ import { useCalendarEvents, useIsCalendarAdmin } from '@hooks/use-calendar'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
 import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
+import PreviousEvents from '@components/calendar/PreviousEvents'
 import styles from '@style'
+
+/** First day of the current month as a YYYY-MM-DD string (local time). */
+function currentMonthStart() {
+  const now = new Date()
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  return `${now.getFullYear()}-${m}-01`
+}
 
 /**
  * Calendar — thinnest viable slice.
@@ -27,6 +35,21 @@ export default function Calendar() {
   // null = form closed; {} = creating; {id,...} = editing an existing event.
   const [editing, setEditing] = useState(null)
   const [actionError, setActionError] = useState(null)
+
+  // Split the date-sorted feed: this month + upcoming go in the main list;
+  // everything before this month moves into the "Show Previous Events"
+  // accordion (grouped by year then month).
+  const { upcoming, previous } = useMemo(() => {
+    const threshold = currentMonthStart()
+    const upcoming = []
+    const previous = []
+    for (const ev of events) {
+      const date = (ev.startDate || '').slice(0, 10)
+      if (date && date < threshold) previous.push(ev)
+      else upcoming.push(ev)
+    }
+    return { upcoming, previous }
+  }, [events])
 
   // The create/edit form lives in a popup; sync the <dialog> to `editing`.
   const formDialogRef = useRef(null)
@@ -132,17 +155,29 @@ export default function Calendar() {
         ) : events.length === 0 ? (
           <p className={styles.empty}>No events yet.</p>
         ) : (
-          <div className={styles.list}>
-            {events.map((event) => (
-              <CalendarEventCard
-                key={event.id}
-                event={event}
-                canEdit={isAdmin}
-                onEdit={setEditing}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            {upcoming.length === 0 ? (
+              <p className={styles.empty}>No upcoming events.</p>
+            ) : (
+              <div className={styles.list}>
+                {upcoming.map((event) => (
+                  <CalendarEventCard
+                    key={event.id}
+                    event={event}
+                    canEdit={isAdmin}
+                    onEdit={setEditing}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            )}
+            <PreviousEvents
+              events={previous}
+              canEdit={isAdmin}
+              onEdit={setEditing}
+              onDelete={handleDelete}
+            />
+          </>
         )}
       </div>
     </Page>
