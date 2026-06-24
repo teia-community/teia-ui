@@ -99,3 +99,75 @@ $grid: 104px minmax(150px, 2fr) 1fr 1fr 64px 104px 92px;
     text-decoration: underline;
   }
 }
+
+// --- Social activity feed (public channels + poll/token comments) ---
+$social-grid: 104px minmax(120px, 1fr) minmax(180px, 3fr) minmax(120px, 1fr)
+  92px;
+
+.social_scroll {
+  overflow-x: auto;
+}
+
+.social_head,
+.social_row {
+  display: grid;
+  grid-template-columns: $social-grid;
+  align-items: center;
+  gap: 1rem;
+  min-width: 680px;
+}
+
+.social_head {
+  padding: 0 0 0.6rem;
+  color: var(--secondary-color);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.social_row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.social_content {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+
+.social_target {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  a {
+    color: var(--secondary-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.social_more {
+  display: flex;
+  justify-content: center;
+  padding: 1.2rem 0;
+}
+
+.badge_channel {
+  background: var(--gray-60);
+}
+.badge_poll {
+  background: var(--gray-80);
+}
+.badge_token {
+  background: var(--gray-90);
+}

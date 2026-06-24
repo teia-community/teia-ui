@@ -98,47 +98,52 @@ interface CommentRow {
   token_id?: string
 }
 
+/** Fetch one page of recent comments (newest first), normalized to AdminComment. */
+export async function fetchRecentCommentsPage(
+  kind: CommentKind,
+  { limit = RECENT_LIMIT, offset = 0 }: { limit?: number; offset?: number } = {}
+): Promise<AdminComment[]> {
+  const contract = commentContractFor(kind)
+  if (!contract) return []
+  const type = kind === 'poll' ? 'teia-poll-comment' : 'teia-token-comment'
+
+  const posted = await fetchEventsPage<CommentPostedPayload>(
+    contract,
+    'comment_posted',
+    {},
+    { limit, offset, sort: 'desc' }
+  )
+
+  const ids = posted.map((e) => e.payload.comment_id)
+  const rows = await fetchBigMapValuesBulk<CommentRow>(contract, 'comments', ids)
+
+  return Promise.all(
+    posted
+      .filter((e) => rows.has(e.payload.comment_id))
+      .map(async (e) => {
+        const row = rows.get(e.payload.comment_id)!
+        const content = await decodeContent(row.content, type)
+        return {
+          id: e.payload.comment_id,
+          kind,
+          sender: row.sender ?? e.payload.sender,
+          content,
+          hidden: Boolean(row.hidden),
+          timestamp: row.timestamp ?? e.payload.timestamp,
+          pollId: row.poll_id ?? e.payload.poll_id,
+          fa2Address: row.fa2_address ?? e.payload.fa2_address,
+          tokenId: row.token_id ?? e.payload.token_id,
+        } as AdminComment
+      })
+  )
+}
+
 export function useRecentComments(kind: CommentKind) {
   const contract = commentContractFor(kind)
-  const type = kind === 'poll' ? 'teia-poll-comment' : 'teia-token-comment'
 
   return useSWR<AdminComment[]>(
     contract ? `admin:recent-comments:${kind}:${contract}` : null,
-    async () => {
-      const posted = await fetchEventsPage<CommentPostedPayload>(
-        contract,
-        'comment_posted',
-        {},
-        { limit: RECENT_LIMIT, sort: 'desc' }
-      )
-
-      const ids = posted.map((e) => e.payload.comment_id)
-      const rows = await fetchBigMapValuesBulk<CommentRow>(
-        contract,
-        'comments',
-        ids
-      )
-
-      return Promise.all(
-        posted
-          .filter((e) => rows.has(e.payload.comment_id))
-          .map(async (e) => {
-            const row = rows.get(e.payload.comment_id)!
-            const content = await decodeContent(row.content, type)
-            return {
-              id: e.payload.comment_id,
-              kind,
-              sender: row.sender ?? e.payload.sender,
-              content,
-              hidden: Boolean(row.hidden),
-              timestamp: row.timestamp ?? e.payload.timestamp,
-              pollId: row.poll_id ?? e.payload.poll_id,
-              fa2Address: row.fa2_address ?? e.payload.fa2_address,
-              tokenId: row.token_id ?? e.payload.token_id,
-            } as AdminComment
-          })
-      )
-    },
+    () => fetchRecentCommentsPage(kind),
     { revalidateOnFocus: false, dedupingInterval: 15_000 }
   )
 }
@@ -172,57 +177,57 @@ interface MessageRow {
   timestamp: string
 }
 
+/** Fetch one page of recent channel messages (newest first) as AdminMessage. */
+export async function fetchRecentChannelMessagesPage({
+  limit = RECENT_LIMIT,
+  offset = 0,
+}: { limit?: number; offset?: number } = {}): Promise<AdminMessage[]> {
+  const contract = CHANNELS_V2_CONTRACT
+  if (!contract) return []
+
+  const posted = await fetchEventsPage<MessagePostedPayload>(
+    contract,
+    'message_posted',
+    {},
+    { limit, offset, sort: 'desc' }
+  )
+
+  const ids = posted.map((e) => e.payload.message_id)
+  const rows = await fetchBigMapValuesBulk<MessageRow>(contract, 'messages', ids)
+
+  // Resolve the access mode of every channel.
+  const channelIds = [...new Set(posted.map((e) => e.payload.channel_id))]
+  const channelRows = await fetchBigMapValuesBulk<ChannelRow>(
+    contract,
+    'channels',
+    channelIds
+  )
+
+  return Promise.all(
+    posted
+      .filter((e) => rows.has(e.payload.message_id))
+      .map(async (e) => {
+        const row = rows.get(e.payload.message_id)!
+        const content = await decodeContent(row.content, 'teia-channel-message')
+        const channelRow = channelRows.get(e.payload.channel_id)
+        return {
+          id: e.payload.message_id,
+          channelId: e.payload.channel_id,
+          sender: row.sender ?? e.payload.sender,
+          content,
+          hidden: Boolean(row.hidden),
+          timestamp: row.timestamp ?? e.payload.timestamp,
+          channelAccessMode: accessModeFromMichelson(channelRow?.access_mode),
+        } as AdminMessage
+      })
+  )
+}
+
 export function useRecentChannelMessages() {
   const contract = CHANNELS_V2_CONTRACT
   return useSWR<AdminMessage[]>(
     contract ? `admin:recent-messages:${contract}` : null,
-    async () => {
-      const posted = await fetchEventsPage<MessagePostedPayload>(
-        contract,
-        'message_posted',
-        {},
-        { limit: RECENT_LIMIT, sort: 'desc' }
-      )
-
-      const ids = posted.map((e) => e.payload.message_id)
-      const rows = await fetchBigMapValuesBulk<MessageRow>(
-        contract,
-        'messages',
-        ids
-      )
-
-      // Resolve the access mode of every channel.
-      const channelIds = [...new Set(posted.map((e) => e.payload.channel_id))]
-      const channelRows = await fetchBigMapValuesBulk<ChannelRow>(
-        contract,
-        'channels',
-        channelIds
-      )
-
-      return Promise.all(
-        posted
-          .filter((e) => rows.has(e.payload.message_id))
-          .map(async (e) => {
-            const row = rows.get(e.payload.message_id)!
-            const content = await decodeContent(
-              row.content,
-              'teia-channel-message'
-            )
-            const channelRow = channelRows.get(e.payload.channel_id)
-            return {
-              id: e.payload.message_id,
-              channelId: e.payload.channel_id,
-              sender: row.sender ?? e.payload.sender,
-              content,
-              hidden: Boolean(row.hidden),
-              timestamp: row.timestamp ?? e.payload.timestamp,
-              channelAccessMode: accessModeFromMichelson(
-                channelRow?.access_mode
-              ),
-            } as AdminMessage
-          })
-      )
-    },
+    () => fetchRecentChannelMessagesPage(),
     { revalidateOnFocus: false, dedupingInterval: 15_000 }
   )
 }

@@ -10,3 +10,31 @@
   padding: 2rem;
   color: var(--secondary-color);
 }
+
+.view_toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.view_chip {
+  appearance: none;
+  cursor: pointer;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+.view_chip_active {
+  color: var(--gray-0);
+  background: var(--text-color);
+  border-color: var(--text-color);
+}

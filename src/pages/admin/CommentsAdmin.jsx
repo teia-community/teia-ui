@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { walletPreview } from '@utils/string'
+import { walletPreview, preview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { useUserProfiles } from '@data/roles'
 import {
@@ -18,11 +18,6 @@ import ModerationTable from './ModerationTable'
 import BanListManager from './BanListManager'
 import PauseToggle from './PauseToggle'
 import styles from '@style'
-
-function preview(text, len = 90) {
-  const t = (text ?? '').replace(/\s+/g, ' ').trim()
-  return t.length > len ? t.slice(0, len) + '…' : t || '(empty)'
-}
 
 function topicLinkFor(c) {
   if (c.kind === 'poll') {

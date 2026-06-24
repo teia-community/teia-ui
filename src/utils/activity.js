@@ -50,6 +50,13 @@ export const MARKET_FILTERS = [
   { key: 'secondary', label: 'Secondary' },
 ]
 
+/** Social activity filter chips (public channel posts + poll/token comments). */
+export const SOCIAL_FILTERS = [
+  { key: 'channel', label: 'Channels' },
+  { key: 'poll_comment', label: 'Poll comments' },
+  { key: 'token_comment', label: 'Token comments' },
+]
+
 const isContract = (addr) => typeof addr === 'string' && addr.startsWith('KT1')
 
 /**

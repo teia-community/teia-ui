@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { CHANNELS_V2_CONTRACT } from '@constants'
-import { walletPreview } from '@utils/string'
+import { walletPreview, preview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { useModalStore } from '@context/modalStore'
 import { useUserProfiles } from '@data/roles'
@@ -25,11 +25,6 @@ import ModerationTable from './ModerationTable'
 import BanListManager from './BanListManager'
 import PauseToggle from './PauseToggle'
 import styles from '@style'
-
-function preview(text, len = 90) {
-  const t = (text ?? '').replace(/\s+/g, ' ').trim()
-  return t.length > len ? t.slice(0, len) + '…' : t || '(empty)'
-}
 
 export default function ChannelsAdmin() {
   const {
