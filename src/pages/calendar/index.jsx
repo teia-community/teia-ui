@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { calendarDB } from '@data/calendar'
+import { calendarDB, hasTempCalendarAPI } from '@data/calendar'
 import { useUserStore } from '@context/userStore'
 import { CALENDAR_ADMINS } from '@constants'
 import { useCalendarEvents, useIsCalendarAdmin } from '@hooks/use-calendar'
@@ -11,6 +11,9 @@ import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
 import PreviousEvents from '@components/calendar/PreviousEvents'
 import styles from '@style'
+
+const MAX_PASSWORD_LENGTH = 20
+const MAX_PASSWORD_FAILURES = 10
 
 /** First day of the current month as a YYYY-MM-DD string (local time). */
 function currentMonthStart() {
@@ -35,6 +38,14 @@ export default function Calendar() {
   // null = form closed; {} = creating; {id,...} = editing an existing event.
   const [editing, setEditing] = useState(null)
   const [actionError, setActionError] = useState(null)
+  const [calendarPassword, setCalendarPassword] = useState('')
+  const [passwordDraft, setPasswordDraft] = useState('')
+  const [passwordError, setPasswordError] = useState(null)
+  const [passwordSaving, setPasswordSaving] = useState(false)
+  const [pendingWrite, setPendingWrite] = useState(null)
+  const [passwordFailures, setPasswordFailures] = useState(0)
+
+  const passwordLocked = passwordFailures >= MAX_PASSWORD_FAILURES
 
   // Split the date-sorted feed: this month + upcoming go in the main list;
   // everything before this month moves into the "Show Previous Events"
@@ -53,6 +64,8 @@ export default function Calendar() {
 
   // The create/edit form lives in a popup; sync the <dialog> to `editing`.
   const formDialogRef = useRef(null)
+  const passwordDialogRef = useRef(null)
+  const passwordInputRef = useRef(null)
   useEffect(() => {
     const dialog = formDialogRef.current
     if (!dialog) return
@@ -60,15 +73,82 @@ export default function Calendar() {
     else if (!editing && dialog.open) dialog.close()
   }, [editing])
 
+  useEffect(() => {
+    const dialog = passwordDialogRef.current
+    if (!dialog) return
+    if (pendingWrite && !dialog.open) {
+      dialog.showModal()
+      passwordInputRef.current?.focus()
+    } else if (!pendingWrite && dialog.open) dialog.close()
+  }, [pendingWrite])
+
+  const continueWrite = (action) => {
+    if (!action) return
+    if (action.type === 'create') setEditing({})
+    else if (action.type === 'edit') setEditing(action.event)
+    else if (action.type === 'delete') deleteEvent(action.event)
+  }
+
+  const requirePassword = (action) => {
+    if (!hasTempCalendarAPI || calendarPassword) {
+      continueWrite(action)
+      return
+    }
+    setPasswordDraft('')
+    setPasswordError(null)
+    setPendingWrite(action)
+  }
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault()
+    if (passwordSaving || passwordLocked) return
+    if (passwordDraft.length > MAX_PASSWORD_LENGTH) {
+      setPasswordError(
+        `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer.`
+      )
+      return
+    }
+    setPasswordSaving(true)
+    setPasswordError(null)
+    try {
+      await calendarDB.validatePassword(passwordDraft)
+      const action = pendingWrite
+      setCalendarPassword(passwordDraft)
+      setPasswordFailures(0)
+      setPendingWrite(null)
+      continueWrite(action)
+    } catch (err) {
+      setPasswordFailures((count) => {
+        const next = count + 1
+        if (next >= MAX_PASSWORD_FAILURES) {
+          setPasswordError(
+            'Too many failed password attempts. Reload the page to try again.'
+          )
+        } else {
+          setPasswordError(
+            `${
+              err.message || 'Invalid calendar password'
+            } (${next}/${MAX_PASSWORD_FAILURES})`
+          )
+        }
+        return next
+      })
+    } finally {
+      setPasswordSaving(false)
+    }
+  }
+
   const handleSubmit = async (values) => {
     setActionError(null)
     try {
       // Audit who last wrote the record (see schema.js `createdBy`).
       const stamped = { ...values, createdBy: address || '' }
       if (editing?.id) {
-        await calendarDB.update(editing.id, stamped)
+        await calendarDB.update(editing.id, stamped, {
+          password: calendarPassword,
+        })
       } else {
-        await calendarDB.create(stamped)
+        await calendarDB.create(stamped, { password: calendarPassword })
       }
       setEditing(null)
       refresh()
@@ -77,7 +157,7 @@ export default function Calendar() {
     }
   }
 
-  const handleDelete = async (event) => {
+  const deleteEvent = async (event) => {
     // Read-only WP events aren't deletable — kick them out of state instead.
     if (event.readOnly) {
       dismiss(event.id)
@@ -86,12 +166,14 @@ export default function Calendar() {
     if (!window.confirm('Delete this event?')) return
     setActionError(null)
     try {
-      await calendarDB.remove(event.id)
+      await calendarDB.remove(event.id, { password: calendarPassword })
       refresh()
     } catch (e) {
       setActionError(`Could not delete event: ${e.message}`)
     }
   }
+
+  const handleDelete = (event) => requirePassword({ type: 'delete', event })
 
   return (
     <Page title="Teia Calendar">
@@ -99,7 +181,7 @@ export default function Calendar() {
         <header className={styles.header}>
           <h1 className={styles.headline}>Calendar</h1>
           {isAdmin && !editing && (
-            <Button small onClick={() => setEditing({})}>
+            <Button small onClick={() => requirePassword({ type: 'create' })}>
               + New event
             </Button>
           )}
@@ -120,7 +202,7 @@ export default function Calendar() {
           <MonthGrid
             events={events}
             canEdit={isAdmin}
-            onEdit={setEditing}
+            onEdit={(event) => requirePassword({ type: 'edit', event })}
             onDelete={handleDelete}
           />
         )}
@@ -139,6 +221,60 @@ export default function Calendar() {
               onCancel={() => setEditing(null)}
             />
           )}
+        </dialog>
+
+        <dialog
+          ref={passwordDialogRef}
+          className={styles.password_dialog}
+          onClose={() => setPendingWrite(null)}
+        >
+          <form
+            className={styles.password_form}
+            onSubmit={handlePasswordSubmit}
+          >
+            <div className={styles.password_top}>
+              <strong>Calendar password</strong>
+              <Button
+                small
+                secondary
+                type="button"
+                onClick={() => setPendingWrite(null)}
+              >
+                Cancel
+              </Button>
+            </div>
+            <label className={styles.password_field}>
+              <span>Write password</span>
+              <input
+                type="password"
+                required
+                ref={passwordInputRef}
+                maxLength={MAX_PASSWORD_LENGTH}
+                value={passwordDraft}
+                onChange={(e) => setPasswordDraft(e.target.value)}
+                autoComplete="current-password"
+              />
+            </label>
+            {passwordLocked && (
+              <p className={styles.error} role="alert">
+                Too many failed password attempts. Reload the page to try again.
+              </p>
+            )}
+            {passwordError && (
+              <p className={styles.error} role="alert">
+                {passwordError}
+              </p>
+            )}
+            <div className={styles.password_actions}>
+              <Button
+                small
+                type="submit"
+                disabled={passwordSaving || passwordLocked}
+              >
+                {passwordSaving ? 'Checking...' : 'Continue'}
+              </Button>
+            </div>
+          </form>
         </dialog>
 
         {error && (
@@ -165,7 +301,7 @@ export default function Calendar() {
                     key={event.id}
                     event={event}
                     canEdit={isAdmin}
-                    onEdit={setEditing}
+                    onEdit={(event) => requirePassword({ type: 'edit', event })}
                     onDelete={handleDelete}
                   />
                 ))}
@@ -174,7 +310,7 @@ export default function Calendar() {
             <PreviousEvents
               events={previous}
               canEdit={isAdmin}
-              onEdit={setEditing}
+              onEdit={(event) => requirePassword({ type: 'edit', event })}
               onDelete={handleDelete}
             />
           </>

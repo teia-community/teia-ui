@@ -31,6 +31,7 @@
  * @property {string}         [createdBy] wallet address that last wrote it
  * @property {string}         createdAt
  * @property {string}         updatedAt
+ * @property {string}         [source]
  */
 
 /**

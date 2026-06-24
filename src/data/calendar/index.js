@@ -32,8 +32,67 @@
  * `calendar_events` table 1:1.
  */
 import { backend as indexedDbBackend } from './indexeddb'
+import { backend as tempApiBackend, hasTempCalendarAPI } from './temp-api'
 
-/** @type {{ list: Function, get: Function, create: Function, update: Function, remove: Function }} */
-export const calendarDB = indexedDbBackend
+function isTempEvent(id) {
+  return String(id || '').startsWith('temp-')
+}
+
+function sortEvents(events) {
+  return events.sort((a, b) =>
+    (a.startDate || '').localeCompare(b.startDate || '')
+  )
+}
+
+/**
+ * Temporary bridge backend.
+ *
+ * Reads include browser-local IndexedDB records plus the shared Netlify
+ * Functions/Blobs records when VITE_CALENDAR_TEMP_API is configured. Writes go
+ * to the shared temp API for temp ids, while legacy/demo local records remain
+ * editable in IndexedDB.
+ */
+export const calendarDB = {
+  async list() {
+    const local = await indexedDbBackend.list()
+    if (!hasTempCalendarAPI) return local
+
+    const remote = await tempApiBackend.list()
+    const events = new Map()
+    for (const event of local) events.set(event.id, event)
+    for (const event of remote) events.set(event.id, event)
+    return sortEvents([...events.values()])
+  },
+
+  async get(id) {
+    if (hasTempCalendarAPI && isTempEvent(id)) return tempApiBackend.get(id)
+    return indexedDbBackend.get(id)
+  },
+
+  async create(input, options) {
+    if (hasTempCalendarAPI) return tempApiBackend.create(input, options)
+    return indexedDbBackend.create(input)
+  },
+
+  async update(id, patch, options) {
+    if (hasTempCalendarAPI && isTempEvent(id)) {
+      return tempApiBackend.update(id, patch, options)
+    }
+    return indexedDbBackend.update(id, patch)
+  },
+
+  async remove(id, options) {
+    if (hasTempCalendarAPI && isTempEvent(id)) {
+      return tempApiBackend.remove(id, options)
+    }
+    return indexedDbBackend.remove(id)
+  },
+
+  async validatePassword(password) {
+    if (!hasTempCalendarAPI) return true
+    return tempApiBackend.validatePassword(password)
+  },
+}
 
 export { blankEvent } from './schema'
+export { hasTempCalendarAPI } from './temp-api'

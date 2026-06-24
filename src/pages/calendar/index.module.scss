@@ -19,9 +19,33 @@
   margin: 0;
 }
 
+.password_field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+
+  input {
+    width: 180px;
+  }
+}
+
 .list {
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 600px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .password_field,
+  .password_field input {
+    width: 100%;
+  }
 }
 
 .empty {
@@ -60,4 +84,31 @@
     border: none;
     margin-bottom: 0;
   }
+}
+
+.password_dialog {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0;
+  width: min(420px, 92vw);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.password_form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing, 1rem);
+  padding: var(--spacing, 1rem);
+}
+
+.password_top,
+.password_actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing, 1rem);
 }
