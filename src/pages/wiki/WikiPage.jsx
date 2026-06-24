@@ -4,7 +4,7 @@ import { Button } from '@atoms/button'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
 import { useUserProfiles } from '@data/roles'
-import { useWikiPageContent, setPageHidden } from '@data/wiki'
+import { useWikiPageContent, setPageHidden, showGetTeiaModal } from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
@@ -67,9 +67,13 @@ export default function WikiPage() {
           {page.hidden && <span className={styles.hidden_tag}> (hidden)</span>}
         </h1>
         <div className={styles.page_actions}>
-          {(canModerate || canPropose) && (
+          {canModerate || canPropose ? (
             <Button small shadow_box to={`${PATH.WIKI}/${slug}/edit`}>
-              {canModerate ? 'Edit' : 'Propose edit'}
+              {canModerate ? 'Edit' : 'Propose Edit'}
+            </Button>
+          ) : (
+            <Button small shadow_box onClick={showGetTeiaModal}>
+              Propose Edit
             </Button>
           )}
           <Button

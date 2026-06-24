@@ -5,7 +5,7 @@ import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
 import { PATH } from '@constants'
-import { useWiki, useWikiRoles, buildTree } from '@data/wiki'
+import { useWiki, useWikiRoles, buildTree, showGetTeiaModal } from '@data/wiki'
 import { WikiSidebar } from '@components/wiki'
 import styles from '@style'
 
@@ -57,9 +57,13 @@ export default function WikiLayout() {
         <div className={styles.header}>
           <h1 className={styles.headline}>Teia Wiki</h1>
           <div className={styles.header_actions}>
-            {(canModerate || canPropose) && (
+            {canModerate || canPropose ? (
               <Button small shadow_box to={`${PATH.WIKI}/create`}>
                 {canModerate ? 'New Page' : 'Propose Page'}
+              </Button>
+            ) : (
+              <Button small shadow_box onClick={showGetTeiaModal}>
+                Propose Page
               </Button>
             )}
             {canModerate && (

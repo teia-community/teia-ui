@@ -178,6 +178,7 @@ export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
+export const QUIPUSWAP_TEIA_URL = `https://quipuswap.com/swap/tez-${DAO_TOKEN_CONTRACT}_0`
 
 // Specific tz addresses to exclude from donation lists
 export const DONATION_EXCLUDED_ADDRESSES = [
