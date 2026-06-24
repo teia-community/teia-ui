@@ -13,8 +13,9 @@ import {
   rejectProposal,
   fetchOpHash,
   useWikiPageContent,
+  useWikiVersions,
 } from '@data/wiki'
-import { WikiMarkdown } from '@components/wiki'
+import { WikiMarkdown, WikiDiff } from '@components/wiki'
 import styles from '@style'
 
 const PREVIEW_LEN = 100
@@ -22,7 +23,20 @@ const PREVIEW_LEN = 100
 function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
   const [busy, setBusy] = useState(false)
   const [showMore, setShowMore] = useState(false)
+  const isEdit = !proposal.isNewPage
   const { data: content, error } = useWikiPageContent(proposal.proposedCid)
+
+  // For edit proposals, find the version this edit is based on to show what was changed.
+  const { data: versions } = useWikiVersions(
+    isEdit ? proposal.pageSlug : undefined
+  )
+  const baseCid = useMemo(() => {
+    if (!isEdit || !versions?.length) return undefined
+    const idx = versions.findIndex((v) => v.cid === proposal.proposedCid)
+    return idx === -1 ? versions[0].cid : versions[idx + 1]?.cid
+  }, [isEdit, versions, proposal.proposedCid])
+  const { data: baseContent, error: baseError } = useWikiPageContent(baseCid)
+
   const { data: opHash } = useSWR(
     proposal.transactionId ? `wiki:ophash:${proposal.transactionId}` : null,
     () => fetchOpHash(proposal.transactionId)
@@ -89,6 +103,12 @@ function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
       <div className={styles.proposal_preview}>
         {!content && !error ? (
           <p className={styles.notice}>Loading preview…</p>
+        ) : isEdit ? (
+          baseCid && baseContent === undefined && !baseError ? (
+            <p className={styles.notice}>Loading changes…</p>
+          ) : (
+            <WikiDiff oldText={baseContent?.content || ''} newText={body} />
+          )
         ) : showMore ? (
           <WikiMarkdown>{body}</WikiMarkdown>
         ) : (
@@ -97,7 +117,7 @@ function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
             {hasMore && '…'}
           </p>
         )}
-        {hasMore && (
+        {!isEdit && hasMore && (
           <button
             type="button"
             className={styles.show_more}

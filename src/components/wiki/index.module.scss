@@ -137,3 +137,33 @@
     text-align: left;
   }
 }
+
+// --- Edit proposal diff ---
+.diff {
+  margin: 0;
+  max-height: 24em;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--text-font);
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+.diff_added {
+  background: color-mix(in srgb, var(--yes-vote-color) 30%, transparent);
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+.diff_removed {
+  background: color-mix(in srgb, var(--no-vote-color) 30%, transparent);
+  text-decoration: line-through;
+  border-radius: 2px;
+}
+
+.diff_empty {
+  margin: 0;
+  color: var(--gray-60);
+  font-style: italic;
+}
