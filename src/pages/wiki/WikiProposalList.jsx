@@ -20,7 +20,14 @@ import styles from '@style'
 
 const PREVIEW_LEN = 100
 
-function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
+function ProposalCard({
+  proposal,
+  canModerate,
+  refresh,
+  alias,
+  logo,
+  resolverAlias,
+}) {
   const [busy, setBusy] = useState(false)
   const [showMore, setShowMore] = useState(false)
   const isEdit = !proposal.isNewPage
@@ -65,12 +72,21 @@ function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
   return (
     <li className={styles.proposal_card}>
       <div className={styles.proposal_head}>
-        <span className={styles.proposal_kind}>
-          {proposal.isNewPage ? 'New page' : 'Edit'}
-        </span>
-        <Link to={`${PATH.WIKI}/${proposal.pageSlug}`}>
-          {proposal.pageSlug}
-        </Link>
+        <div className={styles.proposal_title}>
+          <span
+            className={`${styles.proposal_kind} ${
+              proposal.isNewPage ? styles.kind_new : styles.kind_edit
+            }`}
+          >
+            {proposal.isNewPage ? 'New Page' : 'Edit'}
+          </span>
+          <Link
+            to={`${PATH.WIKI}/${proposal.pageSlug}`}
+            className={styles.proposal_slug}
+          >
+            {proposal.pageSlug}
+          </Link>
+        </div>
         <span
           className={`${styles.proposal_status} ${styles[proposal.status]}`}
         >
@@ -94,8 +110,14 @@ function ProposalCard({ proposal, canModerate, refresh, alias, logo }) {
           </Link>
           <span className={styles.proposal_sub}>
             #{proposal.id} · {getTimeAgo(proposal.createdAt)}
-            {proposal.resolvedBy &&
-              ` · ${proposal.status} by ${walletPreview(proposal.resolvedBy)}`}
+            {proposal.resolvedBy && (
+              <>
+                {` · ${proposal.status} by `}
+                <Link to={`/tz/${proposal.resolvedBy}`}>
+                  {resolverAlias || walletPreview(proposal.resolvedBy)}
+                </Link>
+              </>
+            )}
           </span>
         </div>
       </div>
@@ -181,11 +203,15 @@ export default function WikiProposalList({
   const pending = proposals.filter((p) => p.status === 'pending')
   const resolved = proposals.filter((p) => p.status !== 'pending')
 
-  const proposerAddrs = useMemo(
-    () => [...new Set(proposals.map((p) => p.proposer))],
+  const addrs = useMemo(
+    () => [
+      ...new Set(
+        proposals.flatMap((p) => [p.proposer, p.resolvedBy].filter(Boolean))
+      ),
+    ],
     [proposals]
   )
-  const { data: profiles = {} } = useUserProfiles(proposerAddrs)
+  const { data: profiles = {} } = useUserProfiles(addrs)
 
   const renderCard = (p) => (
     <ProposalCard
@@ -195,6 +221,7 @@ export default function WikiProposalList({
       refresh={refresh}
       alias={profiles[p.proposer]?.alias}
       logo={profiles[p.proposer]?.logo}
+      resolverAlias={profiles[p.resolvedBy]?.alias}
     />
   )
 

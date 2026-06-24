@@ -230,16 +230,63 @@
 .proposal_head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75em;
   flex-wrap: wrap;
+  padding-bottom: 0.6em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.proposal_title {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .proposal_kind {
+  flex: 0 0 auto;
+  padding: 0.15em 0.55em;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-size: 0.7em;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kind_new {
+  color: var(--yes-vote-color);
+  border-color: color-mix(
+    in srgb,
+    var(--yes-vote-color) 55%,
+    var(--border-color)
+  );
+}
+
+.kind_edit {
+  color: var(--secondary-color);
+  border-color: color-mix(
+    in srgb,
+    var(--secondary-color) 55%,
+    var(--border-color)
+  );
+}
+
+.proposal_slug {
+  font-size: 1.15em;
+  font-weight: 700;
+  text-decoration: none;
+  word-break: break-word;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .proposal_status {
-  margin-left: auto;
+  flex: 0 0 auto;
   text-transform: uppercase;
   font-size: 0.75em;
   letter-spacing: 0.05em;
