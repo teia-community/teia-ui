@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
@@ -31,7 +31,18 @@ import styles from './index.module.scss'
 
 export default function ChannelView() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const channelId = id || undefined
+
+  // Go back to the page the user came from. Fall back to /notifications when the channel was opened directly.
+  const handleBack = useCallback(() => {
+    if (location.key !== 'default') {
+      navigate(-1)
+    } else {
+      navigate('/notifications')
+    }
+  }, [navigate, location.key])
   const [replyTo, setReplyTo] = useState(null)
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [imageOpen, setImageOpen] = useState(false)
@@ -204,12 +215,14 @@ export default function ChannelView() {
     <Page title={channelName}>
       <div className={styles.channelView}>
         <div className={styles.channelHeader}>
-          <Link
-            to="/notifications"
-            style={{ textDecoration: 'none', color: 'inherit' }}
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label="Go back"
+            className={styles.channelBackBtn}
           >
             ←
-          </Link>
+          </button>
           <div className={styles.channelHeaderInfo}>
             {channel.metadata?.image && (
               <button
