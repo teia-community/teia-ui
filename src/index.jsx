@@ -67,7 +67,6 @@ import BakersPage from '@pages/bakers'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
-import Curation from '@pages/profile/curation'
 import TextPosts from '@pages/profile/text-posts'
 import ProfileChannels from '@pages/profile/channels'
 import ProfileComments from '@pages/profile/comments'
@@ -112,7 +111,6 @@ const display_routes = (
   <>
     <Route index element={<Creations />} />
     <Route exact path="collection" element={<Collections />} />
-    <Route exact path="curation" element={<Curation />} />
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
     <Route exact path="channels" element={<ProfileChannels />} />
