@@ -62,6 +62,7 @@ jobs:
       - name: ⚙️ Install and Build
         run: |
           export GH_BASE_URL="/teia-ui/previews/pr-${{ github.event.pull_request.number }}/"
+          export VITE_HASH_ROUTER=true
           npm ci
           npm run build
           
