@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { HashToURL } from '@utils'
 import { BURN_ADDRESS } from '@constants'
 import { getTimeAgo } from '@utils/time'
-import { formatTez } from '@utils/activity'
+import { formatTez, marketplaceForType } from '@utils/activity'
 import { UserLink } from '@components/user-link'
 import { ActivityBadge } from './ActivityBadge'
 import styles from './index.module.scss'
@@ -21,7 +21,10 @@ export function ActivityRow({ event, meta }) {
   const token = event.token || {}
   const thumb = HashToURL(token.display_uri || token.thumbnail_uri, 'CDN')
   const from = participant(event, meta.fromAttr)
-  const to = participant(event, meta.toAttr)
+  // Listings target a marketplace (derived from the event type), not a wallet.
+  const market =
+    meta.toAttr === 'market' ? marketplaceForType(event.type) : null
+  const to = market ? null : participant(event, meta.toAttr)
   const price = meta.showPrice ? formatTez(event.price) : null
 
   const itemInner = (
@@ -56,7 +59,19 @@ export function ActivityRow({ event, meta }) {
       )}
 
       <div className={styles.from}>{from ? <UserLink {...from} /> : null}</div>
-      <div className={styles.to}>{to ? <UserLink {...to} /> : null}</div>
+      <div className={styles.to}>
+        {market ? (
+          <a
+            href={`https://tzkt.io/${market.address}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {market.name}
+          </a>
+        ) : to ? (
+          <UserLink {...to} />
+        ) : null}
+      </div>
 
       <div className={`${styles.num} ${styles.amount}`}>
         {meta.editions != null ? `x${meta.editions}` : null}

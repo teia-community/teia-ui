@@ -5,7 +5,13 @@
 // or `null` when the event is marketplace plumbing that should not be shown.
 // marketKey is 'primary' | 'secondary' for trades/listings/mints, else null.
 
-import { BURN_ADDRESS } from '@constants'
+import {
+  BURN_ADDRESS,
+  MARKETPLACE_CONTRACT_TEIA,
+  MARKETPLACE_CONTRACT_V1,
+  MARKETPLACE_CONTRACT_V2,
+  MARKETPLACE_CONTRACTS_TO_NAME,
+} from '@constants'
 
 /** Listing / swap creation across the marketplaces teztok indexes. */
 export const LISTING_TYPES = [
@@ -24,6 +30,27 @@ export const MINT_TYPES = ['HEN_MINT']
 
 /** Listing types on Teia's own + the shared HEN marketplace (excludes objkt/versum). */
 export const TEIA_LISTING_TYPES = ['TEIA_SWAP', 'HEN_SWAP', 'HEN_SWAP_V2']
+
+/**
+ * Teztok leaves `contract_address` null on swap events, so we are
+ * deriving the marketplace from the type instead. Only the Teia/HEN markets are
+ * mapped today
+ */
+const LISTING_MARKETPLACE = {
+  TEIA_SWAP: MARKETPLACE_CONTRACT_TEIA,
+  HEN_SWAP: MARKETPLACE_CONTRACT_V1,
+  HEN_SWAP_V2: MARKETPLACE_CONTRACT_V2,
+}
+
+/** Resolve a listing event's marketplace ({ address, name }), or null. */
+export function marketplaceForType(type) {
+  const address = LISTING_MARKETPLACE[type]
+  if (!address) return null
+  return {
+    address,
+    name: MARKETPLACE_CONTRACTS_TO_NAME[address] || 'Marketplace',
+  }
+}
 
 /**
  * Event `type` values fetched for the activity feed. SALE is matched on
@@ -99,7 +126,7 @@ export function resolveActivityEvent(event, address) {
       label: 'List',
       color: 'list',
       fromAttr: 'seller',
-      toAttr: null,
+      toAttr: 'market',
       showPrice: true,
       editions: event.amount,
     }
