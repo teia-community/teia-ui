@@ -1,12 +1,19 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'BYOB mx TEIA',
+    icon: '📽️',
+    link: 'https://byob.teia.art/',
+    subtitle: 'Mexico City · June 25 2026',
+    content:
+      'Bring Your Own Beamer. Digital art exhibition + NFT drop in Mexico City, organised by Psychofuturist, supported by Teia.',
+  },
+  {
     title: 'Art4Artists',
     icon: '🖼️ ',
     link: 'https://x.com/EggsUnknow/status/1848805355620602309',
     subtitle: 'Art4Artists',
-    content:
-      'Tezos Ecosystem #Art4Artists Breadfond',
+    content: 'Tezos Ecosystem #Art4Artists Breadfond',
   },
   {
     title: 'Objkt4Objkt (4th edition)',
