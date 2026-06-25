@@ -5,6 +5,11 @@ const PASSWORD_HEADER = 'x-calendar-password'
 
 export const hasTempCalendarAPI = Boolean(API)
 
+function imageAPI() {
+  if (!API) throw new Error('VITE_CALENDAR_TEMP_API is not configured')
+  return API.replace(/\/events$/, '/calendar-images')
+}
+
 function url(id = '') {
   if (!API) throw new Error('VITE_CALENDAR_TEMP_API is not configured')
   return id ? `${API}/${encodeURIComponent(id)}` : API
@@ -37,7 +42,9 @@ function clean(input) {
   return {
     ...blankEvent(),
     ...input,
-    images: [],
+    images: Array.isArray(input?.images)
+      ? input.images.map((image) => String(image || '').trim()).filter(Boolean)
+      : [],
   }
 }
 
@@ -85,4 +92,24 @@ export async function validatePassword(password) {
   return true
 }
 
-export const backend = { list, get, create, update, remove, validatePassword }
+export async function uploadImage(file, options = {}) {
+  const body = new FormData()
+  body.append('image', file)
+  const res = await fetch(imageAPI(), {
+    method: 'POST',
+    headers: options.password ? { [PASSWORD_HEADER]: options.password } : {},
+    body,
+  })
+  if (!res.ok) throw new Error(await readError(res))
+  return res.json()
+}
+
+export const backend = {
+  list,
+  get,
+  create,
+  update,
+  remove,
+  validatePassword,
+  uploadImage,
+}

@@ -92,6 +92,13 @@ export const calendarDB = {
     if (!hasTempCalendarAPI) return true
     return tempApiBackend.validatePassword(password)
   },
+
+  async uploadImage(file, options) {
+    if (!hasTempCalendarAPI) {
+      throw new Error('Calendar image uploads require VITE_CALENDAR_TEMP_API')
+    }
+    return tempApiBackend.uploadImage(file, options)
+  },
 }
 
 export { blankEvent } from './schema'

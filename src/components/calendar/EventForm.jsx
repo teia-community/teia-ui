@@ -12,12 +12,20 @@ import styles from '@style'
  * @param {{
  *   initial?: Partial<import('@data/calendar/schema').CalendarEvent>,
  *   onSubmit: (values: any) => Promise<void> | void,
+ *   onUploadImage?: (file: File) => Promise<{ url: string }>,
  *   onCancel: () => void,
  * }} props
  */
-export default function EventForm({ initial, onSubmit, onCancel }) {
+export default function EventForm({
+  initial,
+  onSubmit,
+  onUploadImage,
+  onCancel,
+}) {
   const [values, setValues] = useState(() => ({ ...blankEvent(), ...initial }))
   const [saving, setSaving] = useState(false)
+  const [uploadingImages, setUploadingImages] = useState(false)
+  const [selectedImages, setSelectedImages] = useState([])
   const [formError, setFormError] = useState(null)
 
   const set = (field) => (e) =>
@@ -47,6 +55,25 @@ export default function EventForm({ initial, onSubmit, onCancel }) {
     setValues((v) => ({ ...v, links: v.links.filter((_, idx) => idx !== i) }))
 
   // --- images -------------------------------------------------------------
+  const setImageFiles = (e) => setSelectedImages([...e.target.files])
+  const uploadImages = async () => {
+    if (!onUploadImage || selectedImages.length === 0 || uploadingImages) return
+    setFormError(null)
+    setUploadingImages(true)
+    try {
+      const uploaded = []
+      for (const file of selectedImages) {
+        const result = await onUploadImage(file)
+        if (result?.url) uploaded.push(result.url)
+      }
+      setValues((v) => ({ ...v, images: [...v.images, ...uploaded] }))
+      setSelectedImages([])
+    } catch (e) {
+      setFormError(`Could not upload image: ${e.message}`)
+    } finally {
+      setUploadingImages(false)
+    }
+  }
   const addImage = () => setValues((v) => ({ ...v, images: [...v.images, ''] }))
   const setImage = (i) => (e) =>
     setValues((v) => ({
@@ -59,7 +86,7 @@ export default function EventForm({ initial, onSubmit, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     // Button's `disabled` prop is style-only, so guard re-entry here.
-    if (saving) return
+    if (saving || uploadingImages) return
     setFormError(null)
     // datetime-local strings share a format, so lexicographic == chronological.
     if (
@@ -184,6 +211,26 @@ export default function EventForm({ initial, onSubmit, onCancel }) {
       {/* Images (carousel) */}
       <fieldset className={styles.group}>
         <legend>Images (carousel)</legend>
+        {onUploadImage && (
+          <div className={styles.repeat_row}>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={setImageFiles}
+              aria-label="Upload event images"
+            />
+            <Button
+              small
+              secondary
+              type="button"
+              onClick={uploadImages}
+              disabled={uploadingImages || selectedImages.length === 0}
+            >
+              {uploadingImages ? 'Uploading...' : 'Upload'}
+            </Button>
+          </div>
+        )}
         {values.images.map((url, i) => (
           <div className={styles.repeat_row} key={i}>
             <input
@@ -220,11 +267,11 @@ export default function EventForm({ initial, onSubmit, onCancel }) {
           secondary
           type="button"
           onClick={onCancel}
-          disabled={saving}
+          disabled={saving || uploadingImages}
         >
           Cancel
         </Button>
-        <Button small type="submit" disabled={saving}>
+        <Button small type="submit" disabled={saving || uploadingImages}>
           {saving ? 'Saving…' : 'Save event'}
         </Button>
       </div>

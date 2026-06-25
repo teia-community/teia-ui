@@ -218,6 +218,9 @@ export default function Calendar() {
               key={editing.id || 'new'}
               initial={editing}
               onSubmit={handleSubmit}
+              onUploadImage={(file) =>
+                calendarDB.uploadImage(file, { password: calendarPassword })
+              }
               onCancel={() => setEditing(null)}
             />
           )}
