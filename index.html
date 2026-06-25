@@ -60,15 +60,6 @@
     <noscript aria-hidden="true"
       >You need to enable JavaScript to run this app.</noscript
     >
-    <script>
-      ;(function () {
-        var r = sessionStorage.getItem('spa-404-redirect')
-        if (r) {
-          sessionStorage.removeItem('spa-404-redirect')
-          window.history.replaceState(null, null, r)
-        }
-      })()
-    </script>
     <div id="root"></div>
     <script type="module" src="/src/node_polyfill.js"></script>
     <script type="module" src="/src/index.jsx"></script>
