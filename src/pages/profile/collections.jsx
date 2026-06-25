@@ -8,7 +8,6 @@ import { useOutletContext } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
 
 const FILTER_ALL = 'ALL'
-const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 const FILTER_PRIMARY = 'PRIMARY'
 const FILTER_SECONDARY = 'SECONDARY'
@@ -36,10 +35,9 @@ export default function Collections() {
         onChange={setFilter}
         items={[
           { type: FILTER_ALL, label: 'All' },
-          { type: FILTER_FOR_SALE, label: 'For sale' },
-          { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
           { type: FILTER_PRIMARY, label: 'Primary' },
           { type: FILTER_SECONDARY, label: 'Secondary' },
+          { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
         ]}
       />
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
@@ -53,17 +51,8 @@ export default function Collections() {
         emptyMessage="no collections"
         maxItems={null}
         postProcessTokens={(tokens) => {
-          if (filter === FILTER_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address }) => listing_seller_address === address
-            )
-          }
-
           if (filter === FILTER_NOT_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address, artist_address }) =>
-                artist_address !== address // && listing_seller_address !== address
-            )
+            return tokens.filter(({ listings }) => !listings?.length)
           }
 
           if (filter === FILTER_PRIMARY) {
