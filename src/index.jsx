@@ -239,7 +239,8 @@ const router = createBrowserRouter(
         {display_routes}
       </Route>
     </Route>
-  )
+  ),
+  { basename: import.meta.env.BASE_URL }
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
