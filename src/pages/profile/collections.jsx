@@ -6,11 +6,12 @@ import { BaseTokenFieldsFragment } from '@data/api'
 
 import { useOutletContext } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
-
-const FILTER_ALL = 'ALL'
-const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
-const FILTER_PRIMARY = 'PRIMARY'
-const FILTER_SECONDARY = 'SECONDARY'
+import {
+  FILTER_ALL,
+  FILTER_PRIMARY,
+  FILTER_SECONDARY,
+  FILTER_NOT_FOR_SALE,
+} from '@constants'
 
 export default function Collections() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
