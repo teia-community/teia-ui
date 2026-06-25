@@ -32,7 +32,7 @@
     <link rel="preconnect" href="https://cache.teia.rocks" />
     <link rel="preconnect" href="https://imgproxy.teia.rocks" />
     <link rel="preconnect" href="https://lists.teia.art" />
-    <meta name="build-commit" content="e8e050d44c9b2bb86d033be0a8ee639a10779e3c" />
+    <meta name="build-commit" content="31a0d739820220ac1950343d24459dc82a01351c" />
     <meta name="msapplication-TileColor" content="#ffc40d" />
     <meta name="msapplication-config" content="/icons/browserconfig.xml?v=1" />
     <meta name="theme-color" content="#ffffff" />
@@ -65,6 +65,15 @@
     <noscript aria-hidden="true"
       >You need to enable JavaScript to run this app.</noscript
     >
+    <script>
+      ;(function () {
+        var r = sessionStorage.getItem('spa-404-redirect')
+        if (r) {
+          sessionStorage.removeItem('spa-404-redirect')
+          window.history.replaceState(null, null, r)
+        }
+      })()
+    </script>
     <div id="root"></div>
     
     
