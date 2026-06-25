@@ -554,3 +554,8 @@ export const teiaSwapSchema = `
 export const teiaCancelSwapSchema = `
 (pair (address %marketplaceAddress) (nat %swap_id))
 `
+
+export const FILTER_ALL = 'ALL'
+export const FILTER_PRIMARY = 'PRIMARY'
+export const FILTER_SECONDARY = 'SECONDARY'
+export const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'

@@ -1,17 +1,18 @@
 import { gql } from 'graphql-request'
 import { BaseTokenFieldsFragment } from '@data/api'
-import { HEN_CONTRACT_FA2 } from '@constants'
+import {
+  HEN_CONTRACT_FA2,
+  FILTER_ALL,
+  FILTER_PRIMARY,
+  FILTER_SECONDARY,
+  FILTER_NOT_FOR_SALE,
+} from '@constants'
 import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 
 import { useOutletContext } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
 import { orderBy } from 'lodash'
-
-const FILTER_ALL = 'ALL'
-const FILTER_PRIMARY = 'PRIMARY'
-const FILTER_SECONDARY = 'SECONDARY'
-const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Creations() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
