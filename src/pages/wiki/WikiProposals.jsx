@@ -10,6 +10,7 @@ export default function WikiProposals() {
       <h2>Community proposals</h2>
       <WikiProposalList
         proposals={wiki?.proposals || []}
+        meta={wiki?.meta || {}}
         canModerate={canModerate}
         refresh={refresh}
       />

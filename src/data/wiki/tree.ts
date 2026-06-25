@@ -1,11 +1,16 @@
-// Build the sidebar tree from on-chain pages joined with the IPFS `parent` field.
+// Build the sidebar tree from on-chain pages joined with the IPFS metadata.
+// Hierarchy is resolved to page ids (the IPFS `parent` slug is mapped to an id
+// in hooks.ts before this runs).
 
 import type { WikiPage, WikiTreeNode, WikiSortKey } from './types'
 
-/** Per-slug metadata pulled from each page's IPFS document. */
+/** Per-id metadata pulled from each page's IPFS document. */
 export interface WikiPageMeta {
   title: string
-  parent: string | null
+  /** The page's own slug (for pretty links / parent matching). */
+  slug: string
+  /** Resolved parent page id, or null for a top-level page. */
+  parent: number | null
 }
 
 /** Comparators for sibling ordering. Date keys sort most-recent first. */
@@ -19,32 +24,32 @@ const COMPARATORS: Record<
 }
 
 function createsCycle(
-  slug: string,
-  parentSlug: string | null,
-  bySlug: Map<string, WikiTreeNode>
+  id: number,
+  parentId: number | null,
+  byId: Map<number, WikiTreeNode>
 ): boolean {
-  let cur: string | null = parentSlug
-  const seen = new Set<string>()
-  while (cur && !seen.has(cur)) {
-    if (cur === slug) return true
+  let cur: number | null = parentId
+  const seen = new Set<number>()
+  while (cur !== null && !seen.has(cur)) {
+    if (cur === id) return true
     seen.add(cur)
-    cur = bySlug.get(cur)?.parent ?? null
+    cur = byId.get(cur)?.parent ?? null
   }
   return false
 }
 
 export function buildTree(
   pages: WikiPage[],
-  meta: Record<string, WikiPageMeta>,
+  meta: Record<number, WikiPageMeta>,
   sortBy: WikiSortKey = 'title'
 ): WikiTreeNode[] {
-  const bySlug = new Map<string, WikiTreeNode>()
+  const byId = new Map<number, WikiTreeNode>()
 
   for (const page of pages) {
-    const m = meta[page.slug]
-    bySlug.set(page.slug, {
-      slug: page.slug,
-      title: m?.title || page.slug,
+    const m = meta[page.id]
+    byId.set(page.id, {
+      id: page.id,
+      title: m?.title || `Page ${page.id}`,
       parent: m?.parent ?? null,
       createdAt: page.createdAt,
       updatedAt: page.updatedAt,
@@ -53,9 +58,9 @@ export function buildTree(
   }
 
   const roots: WikiTreeNode[] = []
-  for (const node of bySlug.values()) {
-    const parent = node.parent ? bySlug.get(node.parent) : undefined
-    if (parent && !createsCycle(node.slug, node.parent, bySlug)) {
+  for (const node of byId.values()) {
+    const parent = node.parent !== null ? byId.get(node.parent) : undefined
+    if (parent && !createsCycle(node.id, node.parent, byId)) {
       parent.children.push(node)
     } else {
       roots.push(node)

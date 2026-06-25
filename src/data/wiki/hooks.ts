@@ -2,9 +2,10 @@
 
 import useSWR from 'swr'
 import {
-  fetchAllWikiEvents,
+  fetchPages,
+  fetchProposals,
   fetchPageVersions,
-  reconstructState,
+  fetchWikiPaused,
 } from './api'
 import { fetchPageContent } from './ipfs'
 import { fetchUserRoles } from './roles'
@@ -22,32 +23,58 @@ import type {
 export interface WikiData {
   pages: WikiPage[]
   proposals: WikiProposal[]
-  meta: Record<string, WikiPageMeta>
+  /** Per-page-id metadata (title, slug, resolved parent id). */
+  meta: Record<number, WikiPageMeta>
+  /** Maps an IPFS doc slug to its page id (for legacy slug URLs + links). */
+  slugToId: Record<string, number>
   tree: WikiTreeNode[]
+  paused: boolean
 }
 
 async function fetchWiki(): Promise<WikiData> {
-  const events = await fetchAllWikiEvents()
-  const { pages, proposals } = reconstructState(events)
+  const [{ pages }, proposals, paused] = await Promise.all([
+    fetchPages(),
+    fetchProposals(),
+    fetchWikiPaused(),
+  ])
 
-  // Recover title + parent from each page's IPFS doc
-  const results = await Promise.allSettled(
+  // Recover title + slug + parent(slug) from each page's IPFS doc.
+  const docs = await Promise.allSettled(
     pages.map((p) => fetchPageContent(p.cid))
   )
-  const meta: Record<string, WikiPageMeta> = {}
+
+  // First pass: collect each page's own slug so we can resolve parents.
+  const slugToId: Record<string, number> = {}
   pages.forEach((page, i) => {
-    const r = results[i]
-    if (r.status === 'fulfilled') {
-      meta[page.slug] = {
-        title: r.value.title || page.slug,
-        parent: r.value.parent ?? null,
-      }
-    } else {
-      meta[page.slug] = { title: page.slug, parent: null }
+    const r = docs[i]
+    if (r.status === 'fulfilled' && r.value.slug) {
+      slugToId[r.value.slug] = page.id
     }
   })
 
-  return { pages, proposals, meta, tree: buildTree(pages, meta) }
+  const meta: Record<number, WikiPageMeta> = {}
+  pages.forEach((page, i) => {
+    const r = docs[i]
+    if (r.status === 'fulfilled') {
+      const parentSlug = r.value.parent ?? null
+      meta[page.id] = {
+        title: r.value.title || `Page ${page.id}`,
+        slug: r.value.slug || '',
+        parent: parentSlug ? slugToId[parentSlug] ?? null : null,
+      }
+    } else {
+      meta[page.id] = { title: `Page ${page.id}`, slug: '', parent: null }
+    }
+  })
+
+  return {
+    pages,
+    proposals,
+    meta,
+    slugToId,
+    tree: buildTree(pages, meta),
+    paused,
+  }
 }
 
 /** Full wiki state: pages, proposals, sidebar tree. */
@@ -68,10 +95,10 @@ export function useWikiPageContent(cid: string | undefined) {
 }
 
 /** Full version history of a page, newest first. */
-export function useWikiVersions(slug: string | undefined) {
+export function useWikiVersions(pageId: number | undefined) {
   return useSWR<WikiVersion[]>(
-    slug ? `wiki:versions:${slug}` : null,
-    () => fetchPageVersions(slug as string),
+    pageId !== undefined ? `wiki:versions:${pageId}` : null,
+    () => fetchPageVersions(pageId as number),
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
 }

@@ -1,16 +1,19 @@
 import { useOutletContext, Link } from 'react-router-dom'
-import { PATH, WIKI_INDEX_SLUG } from '@constants'
+import { PATH, WIKI_INDEX_PAGE_ID } from '@constants'
 import { useWikiPageContent } from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
 /**
- * Wiki landing page. Renders the curated [Index] page when it exists,
- * otherwise falls back to an auto-generated list of top-level pages.
+ * Wiki landing page. Renders the curated index page (by page id) when one is
+ * configured, otherwise falls back to an auto-generated list of top-level pages.
  */
 export default function WikiHome() {
   const { wiki } = useOutletContext()
-  const indexPage = wiki?.pages.find((p) => p.slug === WIKI_INDEX_SLUG)
+  const indexPage =
+    WIKI_INDEX_PAGE_ID !== null
+      ? wiki?.pages.find((p) => p.id === WIKI_INDEX_PAGE_ID)
+      : undefined
   const { data: content, error } = useWikiPageContent(indexPage?.cid)
 
   if (indexPage && content) {
@@ -26,7 +29,7 @@ export default function WikiHome() {
 
   // Fallback: list top-level pages.
   const topLevel = (wiki?.pages || []).filter(
-    (p) => !p.hidden && !wiki.meta[p.slug]?.parent
+    (p) => !p.hidden && wiki.meta[p.id]?.parent == null
   )
 
   return (
@@ -37,9 +40,9 @@ export default function WikiHome() {
       ) : (
         <ul>
           {topLevel.map((p) => (
-            <li key={p.slug}>
-              <Link to={`${PATH.WIKI}/${p.slug}`}>
-                {wiki.meta[p.slug]?.title || p.slug}
+            <li key={p.id}>
+              <Link to={`${PATH.WIKI}/${p.id}`}>
+                {wiki.meta[p.id]?.title || `Page ${p.id}`}
               </Link>
             </li>
           ))}

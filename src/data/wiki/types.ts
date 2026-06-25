@@ -1,88 +1,20 @@
 // Wiki contract types.
 //
-// The wiki contract stores only `slug -> current IPFS CID` plus version history
-// and community proposals. Page hierarchy (the `parent` relationship) is not
-// on-chain — it lives in the IPFS page document, see WikiPageContent below.
-
-/** TzKT event wrapper (shared shape with the messaging module). */
-export interface TzktEvent<P> {
-  id: number
-  level: number
-  timestamp: string
-  tag: string
-  payload: P
-  transactionId: number
-}
-
-// --- On-chain event payloads (emitted via sp.emit) ---
-
-export interface PageCreatedEvent {
-  slug: string
-  cid: string
-  hidden: boolean
-  editor: string
-  timestamp: string
-}
-
-export interface PageUpdatedEvent {
-  slug: string
-  cid: string
-  hidden: boolean
-  version: string
-  editor: string
-  proposer: string | null
-  timestamp: string
-}
-
-export interface PageHiddenUpdatedEvent {
-  slug: string
-  hidden: boolean
-  editor: string
-  timestamp: string
-}
-
-export interface ProposalCreatedEvent {
-  proposal_id: string
-  page_slug: string
-  proposed_cid: string
-  proposer: string
-  is_new_page: boolean
-  timestamp: string
-}
-
-export interface ProposalApprovedEvent {
-  proposal_id: string
-  page_slug: string
-  proposed_cid: string
-  is_new_page: boolean
-  approved_by: string
-  timestamp: string
-}
-
-export interface ProposalRejectedEvent {
-  proposal_id: string
-  page_slug: string
-  rejected_by: string
-  timestamp: string
-}
-
-export const WIKI_EVENT_TAGS = {
-  PAGE_CREATED: 'page_created',
-  PAGE_UPDATED: 'page_updated',
-  PAGE_HIDDEN_UPDATED: 'page_hidden_updated',
-  PROPOSAL_CREATED: 'proposal_created',
-  PROPOSAL_APPROVED: 'proposal_approved',
-  PROPOSAL_REJECTED: 'proposal_rejected',
-} as const
+// The wiki contract stores pages keyed by an auto-incrementing integer
+// `page_id` (no slug on-chain). Each page record holds only `current_cid`,
+// `hidden` and `version_count`; the title/slug live off-chain in the IPFS
+// page document (see WikiPageContent). Page hierarchy (the `parent`
+// relationship) is also IPFS-only.
 
 // --- IPFS document (the content the CID points at) ---
 
 /**
  * The JSON document stored on IPFS for each page version.
  *
- * `parent` is the teia-ui addition: the contract has no notion of hierarchy,
- * so we track each page's parent slug here to build the sidebar tree.
- * `null` (or absent) means a top-level page.
+ * `slug` is a human-readable identifier kept for pretty internal links and
+ * parent resolution; it is NOT used on-chain and uniqueness is enforced by
+ * the UI only. `parent` is the slug of the parent page (the contract has no
+ * notion of hierarchy); `null`/absent means a top-level page.
  */
 export interface WikiPageContent {
   schema_version: number
@@ -96,11 +28,12 @@ export interface WikiPageContent {
   summary?: string
 }
 
-// --- Domain types (reconstructed from events / bigmaps) ---
+// --- Domain types (read from the pages / versions / proposals bigmaps) ---
 
-/** Current state of a page, folded from its events. */
+/** Current state of a page, joined from the `pages` + `versions` bigmaps. */
 export interface WikiPage {
-  slug: string
+  /** On-chain auto-incrementing page id (primary key). */
+  id: number
   cid: string
   hidden: boolean
   versionCount: number
@@ -116,9 +49,10 @@ export type WikiSortKey = 'title' | 'created' | 'updated'
 
 /** A node in the sidebar tree (page + resolved children). */
 export interface WikiTreeNode {
-  slug: string
+  id: number
   title: string
-  parent: string | null
+  /** Parent page id (resolved from the IPFS `parent` slug), or null. */
+  parent: number | null
   createdAt: string
   updatedAt: string
   children: WikiTreeNode[]
@@ -126,7 +60,7 @@ export interface WikiTreeNode {
 
 /** One historical version of a page, from the `versions` bigmap. */
 export interface WikiVersion {
-  slug: string
+  pageId: number
   version: number
   cid: string
   editor: string
@@ -137,18 +71,17 @@ export interface WikiVersion {
 
 export type WikiProposalStatus = 'pending' | 'approved' | 'rejected'
 
-/** A community proposal, folded from proposal_* events. */
+/** A community proposal, read from the `proposals` bigmap. */
 export interface WikiProposal {
   id: string
-  pageSlug: string
+  /** Target page id for an edit proposal; null for a new-page proposal. */
+  pageId: number | null
   proposedCid: string
   proposer: string
   isNewPage: boolean
   status: WikiProposalStatus
   createdAt: string
-  /** TzKT operation id of the proposal_created tx (for the tzkt link). */
-  transactionId?: number
-  /** Moderator who resolved it (approved_by / rejected_by), when resolved. */
+  /** Moderator who resolved it (resolved_by), when resolved. */
   resolvedBy?: string
   resolvedAt?: string
 }

@@ -268,12 +268,13 @@ export const CHANNEL_MESSAGE_FEE = 25000
 
 // --- Wiki ---
 // teia-smart-contracts/python/contracts/wiki/wiki.py
-export const WIKI_CONTRACT = 'KT1BpPYWmzJiLjcBTYod5yHudkZ8ehSw2b2Q'
-// Moderator + multisig contracts the wiki checks via is_moderator / is_user.
+export const WIKI_CONTRACT = 'KT1UW3BnYemVjA4HggNZeR4wq2eKbVvpq15Y'
+// Moderator Contract.
 export const MODERATOR_CONTRACT = 'KT1RbVvb4eZh618krF49abrpEmAdb3zK92v6'
 export const WIKI_TOKEN_ID = 0
-// Slug of the curated landing page (Table of Contents) shown at /wiki.
-export const WIKI_INDEX_SLUG = 'index-table-of-contents'
+// page_id of the curated landing page (Table of Contents) shown at /wiki, or
+// null to fall back to an auto-generated list of top-level pages.
+export const WIKI_INDEX_PAGE_ID: number | null = null
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 

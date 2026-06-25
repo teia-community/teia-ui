@@ -1,4 +1,4 @@
-// Wiki role detection 
+// Wiki role detection
 
 import {
   fetchModerators,
@@ -41,14 +41,17 @@ export function devModerateOverride(address?: string): boolean {
 }
 
 /** Resolve the current user's wiki capabilities. Returns no-access if unsynced. */
-export async function fetchUserRoles(
-  address?: string
-): Promise<WikiUserRoles> {
+export async function fetchUserRoles(address?: string): Promise<WikiUserRoles> {
   const devModerate = devModerateOverride(address)
 
   if (!address) {
     return devModerate
-      ? { isModerator: true, isMultisig: true, canModerate: true, canPropose: false }
+      ? {
+          isModerator: true,
+          isMultisig: true,
+          canModerate: true,
+          canPropose: false,
+        }
       : EMPTY_ROLES
   }
 

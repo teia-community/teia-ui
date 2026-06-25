@@ -24,21 +24,20 @@ export default function WikiLayout() {
   const { data, error, mutate } = useWiki()
   const isLoading = !data && !error
   const { data: roles } = useWikiRoles(address)
-  const canModerate = Boolean(roles?.canModerate)
-  const canPropose = Boolean(roles?.canPropose)
+  const paused = Boolean(data?.paused)
+  const canModerate = Boolean(roles?.canModerate) && !paused
+  const canPropose = Boolean(roles?.canPropose) && !paused
 
   const [sortBy, setSortBy] = useState('title')
 
-  const { tree, hiddenSlugs } = useMemo(() => {
-    if (!data) return { tree: [], hiddenSlugs: new Set() }
+  const { tree, hiddenIds } = useMemo(() => {
+    if (!data) return { tree: [], hiddenIds: new Set() }
     const visible = canModerate
       ? data.pages
       : data.pages.filter((p) => !p.hidden)
     return {
       tree: buildTree(visible, data.meta, sortBy),
-      hiddenSlugs: new Set(
-        data.pages.filter((p) => p.hidden).map((p) => p.slug)
-      ),
+      hiddenIds: new Set(data.pages.filter((p) => p.hidden).map((p) => p.id)),
     }
   }, [data, canModerate, sortBy])
 
@@ -47,6 +46,7 @@ export default function WikiLayout() {
     roles,
     canModerate,
     canPropose,
+    paused,
     address,
     refresh: mutate,
   }
@@ -78,6 +78,13 @@ export default function WikiLayout() {
             )}
           </div>
         </div>
+
+        {paused && (
+          <p className={styles.notice}>
+            The wiki is temporarily paused by governance. Pages are read-only
+            until it resumes.
+          </p>
+        )}
 
         {error ? (
           <p className={styles.notice}>
@@ -114,7 +121,7 @@ export default function WikiLayout() {
                     <option value="updated">Date last edited</option>
                   </select>
                 </div>
-                <WikiSidebar tree={tree} hiddenSlugs={hiddenSlugs} />
+                <WikiSidebar tree={tree} hiddenIds={hiddenIds} />
               </aside>
             )}
             <section className={styles.content_col}>

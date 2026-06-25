@@ -41,7 +41,7 @@ export default function WikiAdmin() {
   const { wiki, canModerate, refresh } = useOutletContext()
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState({ key: 'updated', dir: 'desc' })
-  const [busySlug, setBusySlug] = useState(null)
+  const [busyId, setBusyId] = useState(null)
 
   const pages = useMemo(() => wiki?.pages || [], [wiki?.pages])
   const proposals = useMemo(() => wiki?.proposals || [], [wiki?.proposals])
@@ -70,12 +70,17 @@ export default function WikiAdmin() {
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
     const list = pages
-      .map((page) => ({ page, title: meta[page.slug]?.title || page.slug }))
+      .map((page) => ({
+        page,
+        title: meta[page.id]?.title || `Page ${page.id}`,
+        slug: meta[page.id]?.slug || '',
+      }))
       .filter(
         (r) =>
           !q ||
           r.title.toLowerCase().includes(q) ||
-          r.page.slug.toLowerCase().includes(q)
+          r.slug.toLowerCase().includes(q) ||
+          String(r.page.id) === q
       )
     const cmp = SORTS[sort.key] ?? SORTS.title
     list.sort((a, b) => (sort.dir === 'asc' ? cmp(a, b) : -cmp(a, b)))
@@ -85,14 +90,14 @@ export default function WikiAdmin() {
   if (!canModerate) return <Navigate to={PATH.WIKI} replace />
 
   const toggleHidden = async (page) => {
-    setBusySlug(page.slug)
+    setBusyId(page.id)
     try {
-      await setPageHidden({ slug: page.slug, hidden: !page.hidden })
+      await setPageHidden({ pageId: page.id, hidden: !page.hidden })
       refresh()
     } catch {
       // surfaced via modal
     } finally {
-      setBusySlug(null)
+      setBusyId(null)
     }
   }
 
@@ -122,7 +127,7 @@ export default function WikiAdmin() {
       <input
         type="search"
         className={styles.admin_search}
-        placeholder="Filter by title or slug…"
+        placeholder="Filter by title, slug or id…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -137,7 +142,7 @@ export default function WikiAdmin() {
                 sort={sort}
                 setSort={setSort}
               />
-              <th>Slug</th>
+              <th>ID</th>
               <SortHeader
                 label="Ver"
                 sortKey="version"
@@ -164,16 +169,16 @@ export default function WikiAdmin() {
             ) : (
               rows.map(({ page, title }) => (
                 <tr
-                  key={page.slug}
+                  key={page.id}
                   className={page.hidden ? styles.row_hidden : ''}
                 >
                   <td>
-                    <Link to={`${PATH.WIKI}/${page.slug}`}>{title}</Link>
+                    <Link to={`${PATH.WIKI}/${page.id}`}>{title}</Link>
                     {page.hidden && (
                       <span className={styles.hidden_tag}> (hidden)</span>
                     )}
                   </td>
-                  <td className={styles.mono}>{page.slug}</td>
+                  <td className={styles.mono}>{page.id}</td>
                   <td>{page.versionCount}</td>
                   <td>
                     <Link to={`/tz/${page.editor}`}>
@@ -183,27 +188,27 @@ export default function WikiAdmin() {
                   </td>
                   <td>{new Date(page.updatedAt).toLocaleDateString()}</td>
                   <td className={styles.row_actions}>
-                    <Button small shadow_box to={`${PATH.WIKI}/${page.slug}`}>
+                    <Button small shadow_box to={`${PATH.WIKI}/${page.id}`}>
                       View
                     </Button>
                     <Button
                       small
                       shadow_box
-                      to={`${PATH.WIKI}/${page.slug}/edit`}
+                      to={`${PATH.WIKI}/${page.id}/edit`}
                     >
                       Edit
                     </Button>
                     <Button
                       small
                       shadow_box
-                      to={`${PATH.WIKI}/${page.slug}/history`}
+                      to={`${PATH.WIKI}/${page.id}/history`}
                     >
                       History
                     </Button>
                     <Button
                       small
                       shadow_box
-                      disabled={busySlug === page.slug}
+                      disabled={busyId === page.id}
                       onClick={() => toggleHidden(page)}
                     >
                       {page.hidden ? 'Unhide' : 'Hide'}
@@ -221,6 +226,7 @@ export default function WikiAdmin() {
       </h2>
       <WikiProposalList
         proposals={proposals}
+        meta={meta}
         canModerate={canModerate}
         refresh={refresh}
         pendingOnly

@@ -1,188 +1,16 @@
-// Fetch Wiki contract events from TzKT to create...
-// current page list, proposal list and per-page version history
+// Fetch the wiki's current state from its bigmaps via TzKT.
+
 
 import { WIKI_CONTRACT } from '@constants'
-import type {
-  TzktEvent,
-  WikiPage,
-  WikiProposal,
-  WikiVersion,
-  PageCreatedEvent,
-  PageUpdatedEvent,
-  PageHiddenUpdatedEvent,
-  ProposalCreatedEvent,
-  ProposalApprovedEvent,
-  ProposalRejectedEvent,
-} from './types'
-import { WIKI_EVENT_TAGS } from './types'
+import type { WikiPage, WikiProposal, WikiVersion } from './types'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 const MAX_PAGE_SIZE = 10000
 
-/**
- * Fetch every event emitted by the wiki contract, oldest first.
- * Paginates defensively but in practice returns in one request.
- */
-export async function fetchAllWikiEvents(): Promise<TzktEvent<unknown>[]> {
-  const all: TzktEvent<unknown>[] = []
-  let offset = 0
-  let hasMore = true
-
-  while (hasMore) {
-    const url = new URL(`${TZKT_API}/v1/contracts/events`)
-    url.searchParams.set('contract', WIKI_CONTRACT)
-    url.searchParams.set('sort.asc', 'id')
-    url.searchParams.set('limit', String(MAX_PAGE_SIZE))
-    if (offset > 0) url.searchParams.set('offset', String(offset))
-
-    const res = await fetch(url.toString())
-    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-    const page: TzktEvent<unknown>[] = await res.json()
-
-    all.push(...page)
-    hasMore = page.length === MAX_PAGE_SIZE
-    offset += MAX_PAGE_SIZE
-  }
-
-  return all
-}
-
-/**
- * Fetch every event touching a single page, oldest first.
- */
-export async function fetchPageEvents(
-  slug: string
-): Promise<TzktEvent<unknown>[]> {
-  const base = `${TZKT_API}/v1/contracts/events?contract=${WIKI_CONTRACT}&sort.asc=id&limit=${MAX_PAGE_SIZE}`
-
-  const [bySlug, byPageSlug] = await Promise.all([
-    fetch(`${base}&payload.slug=${encodeURIComponent(slug)}`),
-    fetch(`${base}&payload.page_slug=${encodeURIComponent(slug)}`),
-  ])
-  if (!bySlug.ok || !byPageSlug.ok) throw new Error('TzKT error fetching page events')
-
-  const merged: TzktEvent<unknown>[] = [
-    ...(await bySlug.json()),
-    ...(await byPageSlug.json()),
-  ]
-  merged.sort((a, b) => a.id - b.id)
-  return merged
-}
-
-interface ReconstructedState {
-  pages: WikiPage[]
-  proposals: WikiProposal[]
-}
-
-/**
- * Fold the full event stream into the current set of pages and proposals.
- *
- * Note on edit-proposal approvals: the contract does NOT emit `page_updated`
- * when an edit proposal is approved, only `proposal_approved`. 
- */
-export function reconstructState(
-  events: TzktEvent<unknown>[]
-): ReconstructedState {
-  const pages = new Map<string, WikiPage>()
-  const proposals = new Map<string, WikiProposal>()
-
-  for (const ev of events) {
-    switch (ev.tag) {
-      case WIKI_EVENT_TAGS.PAGE_CREATED: {
-        const p = ev.payload as PageCreatedEvent
-        pages.set(p.slug, {
-          slug: p.slug,
-          cid: p.cid,
-          hidden: p.hidden,
-          versionCount: 1,
-          editor: p.editor,
-          proposer: null,
-          createdAt: p.timestamp,
-          updatedAt: p.timestamp,
-        })
-        break
-      }
-      case WIKI_EVENT_TAGS.PAGE_UPDATED: {
-        const p = ev.payload as PageUpdatedEvent
-        const existing = pages.get(p.slug)
-        if (existing) {
-          existing.cid = p.cid
-          existing.hidden = p.hidden
-          existing.versionCount = Number(p.version)
-          existing.editor = p.editor
-          // Direct edits emit proposer=null; proposal-applied edits carry it.
-          existing.proposer = p.proposer ?? null
-          existing.updatedAt = p.timestamp
-        }
-        break
-      }
-      case WIKI_EVENT_TAGS.PAGE_HIDDEN_UPDATED: {
-        const p = ev.payload as PageHiddenUpdatedEvent
-        const existing = pages.get(p.slug)
-        if (existing) {
-          existing.hidden = p.hidden
-          existing.editor = p.editor
-          existing.updatedAt = p.timestamp
-        }
-        break
-      }
-      case WIKI_EVENT_TAGS.PROPOSAL_CREATED: {
-        const p = ev.payload as ProposalCreatedEvent
-        proposals.set(p.proposal_id, {
-          id: p.proposal_id,
-          pageSlug: p.page_slug,
-          proposedCid: p.proposed_cid,
-          proposer: p.proposer,
-          isNewPage: p.is_new_page,
-          status: 'pending',
-          createdAt: p.timestamp,
-          transactionId: ev.transactionId,
-        })
-        break
-      }
-      case WIKI_EVENT_TAGS.PROPOSAL_APPROVED: {
-        const p = ev.payload as ProposalApprovedEvent
-        const prop = proposals.get(p.proposal_id)
-        if (prop) {
-          prop.status = 'approved'
-          prop.resolvedBy = p.approved_by
-          prop.resolvedAt = p.timestamp
-        }
-        // The proposal_approved event has no `proposer`; recover the author
-        // from the matching proposal_created we already folded in.
-        const author = prop?.proposer ?? null
-        const existing = pages.get(p.page_slug)
-        if (p.is_new_page) {
-          // The page was created by the page_created event emitted just before
-          // this one; credit the proposer as its author.
-          if (existing) existing.proposer = author
-        } else if (existing) {
-          // Edit approvals emit no page_updated, so advance the page here.
-          existing.cid = p.proposed_cid
-          existing.versionCount += 1
-          existing.editor = p.approved_by
-          existing.proposer = author
-          existing.updatedAt = p.timestamp
-        }
-        break
-      }
-      case WIKI_EVENT_TAGS.PROPOSAL_REJECTED: {
-        const p = ev.payload as ProposalRejectedEvent
-        const prop = proposals.get(p.proposal_id)
-        if (prop) {
-          prop.status = 'rejected'
-          prop.resolvedBy = p.rejected_by
-          prop.resolvedAt = p.timestamp
-        }
-        break
-      }
-    }
-  }
-
-  return {
-    pages: Array.from(pages.values()),
-    proposals: Array.from(proposals.values()),
-  }
+interface RawPageValue {
+  current_cid: string
+  hidden: boolean
+  version_count: string
 }
 
 interface RawVersionValue {
@@ -193,28 +21,139 @@ interface RawVersionValue {
   version: string
 }
 
+interface RawProposalTarget {
+  edit?: string
+  new_page?: unknown
+}
+
+interface RawProposalValue {
+  target: RawProposalTarget
+  proposed_cid: string
+  proposer: string
+  status: string
+  created_at: string
+  resolved_by: string | null
+  resolved_at: string | null
+}
+
+async function getJson<T>(url: string): Promise<T> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
+  return res.json()
+}
+
+/** Whether the contract is currently paused (all writes revert when true). */
+export async function fetchWikiPaused(): Promise<boolean> {
+  try {
+    const storage = await getJson<{ paused?: boolean }>(
+      `${TZKT_API}/v1/contracts/${WIKI_CONTRACT}/storage`
+    )
+    return Boolean(storage.paused)
+  } catch {
+    return false
+  }
+}
+
+const PROPOSAL_STATUS = ['pending', 'approved', 'rejected'] as const
+
 /**
- * Read the full version history of a page from the `versions` bigmap.
- * The bigmap key is a record(slug, version); we filter by `key.slug`.
- * Authoritative for version metadata (editor, proposer, timestamp, cid).
+ * Read every page from the `pages` bigmap, joined with its first/current
+ * version from the `versions` bigmap to recover editor/proposer/timestamps
+ * (the page record itself only carries cid/hidden/version_count).
  */
-export async function fetchPageVersions(slug: string): Promise<WikiVersion[]> {
+export async function fetchPages(): Promise<{
+  pages: WikiPage[]
+  versions: Map<string, RawVersionValue>
+}> {
+  const [pageRows, versionRows] = await Promise.all([
+    getJson<{ key: string; value: RawPageValue }[]>(
+      `${TZKT_API}/v1/contracts/${WIKI_CONTRACT}/bigmaps/pages/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
+    ),
+    getJson<
+      { key: { page_id: string; version: string }; value: RawVersionValue }[]
+    >(
+      `${TZKT_API}/v1/contracts/${WIKI_CONTRACT}/bigmaps/versions/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
+    ),
+  ])
+
+  // Index versions by `${page_id}:${version}` for the join below.
+  const versions = new Map<string, RawVersionValue>()
+  for (const row of versionRows) {
+    versions.set(`${row.key.page_id}:${row.key.version}`, row.value)
+  }
+
+  const pages: WikiPage[] = pageRows.map((row) => {
+    const id = Number(row.key)
+    const versionCount = Number(row.value.version_count)
+    const current = versions.get(`${id}:${versionCount}`)
+    const first = versions.get(`${id}:1`)
+    return {
+      id,
+      cid: row.value.current_cid,
+      hidden: row.value.hidden,
+      versionCount,
+      editor: current?.editor ?? '',
+      proposer: current?.proposer ?? null,
+      createdAt: first?.ts ?? current?.ts ?? '',
+      updatedAt: current?.ts ?? first?.ts ?? '',
+    }
+  })
+
+  pages.sort((a, b) => a.id - b.id)
+  return { pages, versions }
+}
+
+/** Read every community proposal from the `proposals` bigmap. */
+export async function fetchProposals(): Promise<WikiProposal[]> {
+  const rows = await getJson<{ key: string; value: RawProposalValue }[]>(
+    `${TZKT_API}/v1/contracts/${WIKI_CONTRACT}/bigmaps/proposals/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
+  )
+
+  return rows
+    .map((row) => {
+      const isNewPage = row.value.target.new_page !== undefined
+      const pageId =
+        row.value.target.edit !== undefined
+          ? Number(row.value.target.edit)
+          : null
+      const status = PROPOSAL_STATUS[Number(row.value.status)] ?? 'pending'
+      return {
+        id: row.key,
+        pageId,
+        proposedCid: row.value.proposed_cid,
+        proposer: row.value.proposer,
+        isNewPage,
+        status,
+        createdAt: row.value.created_at,
+        resolvedBy: row.value.resolved_by ?? undefined,
+        resolvedAt: row.value.resolved_at ?? undefined,
+      } as WikiProposal
+    })
+    .sort((a, b) => Number(a.id) - Number(b.id))
+}
+
+/**
+ * Read the full version history of one page from the `versions` bigmap,
+ * filtering by `key.page_id`. Newest version first.
+ */
+export async function fetchPageVersions(
+  pageId: number
+): Promise<WikiVersion[]> {
   const url = new URL(
     `${TZKT_API}/v1/contracts/${WIKI_CONTRACT}/bigmaps/versions/keys`
   )
   url.searchParams.set('active', 'true')
   url.searchParams.set('select', 'key,value')
-  url.searchParams.set('key.slug', slug)
+  url.searchParams.set('key.page_id', String(pageId))
   url.searchParams.set('limit', String(MAX_PAGE_SIZE))
 
-  const res = await fetch(url.toString())
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const rows: { key: { slug: string; version: string }; value: RawVersionValue }[] =
-    await res.json()
+  const rows = await getJson<
+    { key: { page_id: string; version: string }; value: RawVersionValue }[]
+  >(url.toString())
 
   return rows
     .map((row) => ({
-      slug: row.key.slug,
+      pageId: Number(row.key.page_id),
       version: Number(row.key.version),
       cid: row.value.cid,
       editor: row.value.editor,
@@ -222,16 +161,4 @@ export async function fetchPageVersions(slug: string): Promise<WikiVersion[]> {
       timestamp: row.value.ts,
     }))
     .sort((a, b) => b.version - a.version)
-}
-
-/** Resolve a TzKT operation id to its operation hash (for tzkt.io links). */
-export async function fetchOpHash(
-  transactionId: number
-): Promise<string | null> {
-  const res = await fetch(
-    `${TZKT_API}/v1/operations/transactions?id=${transactionId}&select=hash`
-  )
-  if (!res.ok) return null
-  const rows: string[] = await res.json()
-  return rows[0] ?? null
 }

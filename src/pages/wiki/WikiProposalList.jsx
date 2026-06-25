@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import useSWR from 'swr'
 import { Button } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
 import { PATH, WIKI_CONTRACT } from '@constants'
@@ -11,7 +10,6 @@ import { useUserProfiles } from '@data/roles'
 import {
   approveProposal,
   rejectProposal,
-  fetchOpHash,
   useWikiPageContent,
   useWikiVersions,
 } from '@data/wiki'
@@ -22,6 +20,7 @@ const PREVIEW_LEN = 100
 
 function ProposalCard({
   proposal,
+  pageTitle,
   canModerate,
   refresh,
   alias,
@@ -35,7 +34,7 @@ function ProposalCard({
 
   // For edit proposals, find the version this edit is based on to show what was changed.
   const { data: versions } = useWikiVersions(
-    isEdit ? proposal.pageSlug : undefined
+    isEdit ? proposal.pageId ?? undefined : undefined
   )
   const baseCid = useMemo(() => {
     if (!isEdit || !versions?.length) return undefined
@@ -44,14 +43,9 @@ function ProposalCard({
   }, [isEdit, versions, proposal.proposedCid])
   const { data: baseContent, error: baseError } = useWikiPageContent(baseCid)
 
-  const { data: opHash } = useSWR(
-    proposal.transactionId ? `wiki:ophash:${proposal.transactionId}` : null,
-    () => fetchOpHash(proposal.transactionId)
-  )
-
-  const tzktUrl = opHash
-    ? `https://tzkt.io/${opHash}`
-    : `https://tzkt.io/${WIKI_CONTRACT}/operations`
+  // The proposal_created op hash isn't carried in the bigmap snapshot; link to
+  // the contract's operation list instead.
+  const tzktUrl = `https://tzkt.io/${WIKI_CONTRACT}/operations`
 
   const act = async (fn) => {
     setBusy(true)
@@ -80,12 +74,16 @@ function ProposalCard({
           >
             {proposal.isNewPage ? 'New Page' : 'Edit'}
           </span>
-          <Link
-            to={`${PATH.WIKI}/${proposal.pageSlug}`}
-            className={styles.proposal_slug}
-          >
-            {proposal.pageSlug}
-          </Link>
+          {proposal.isNewPage || proposal.pageId == null ? (
+            <span className={styles.proposal_slug}>{pageTitle}</span>
+          ) : (
+            <Link
+              to={`${PATH.WIKI}/${proposal.pageId}`}
+              className={styles.proposal_slug}
+            >
+              {pageTitle}
+            </Link>
+          )}
         </div>
         <span
           className={`${styles.proposal_status} ${styles[proposal.status]}`}
@@ -196,6 +194,7 @@ function ProposalCard({
  */
 export default function WikiProposalList({
   proposals = [],
+  meta = {},
   canModerate,
   refresh,
   pendingOnly = false,
@@ -213,10 +212,16 @@ export default function WikiProposalList({
   )
   const { data: profiles = {} } = useUserProfiles(addrs)
 
+  const pageTitleFor = (p) =>
+    p.isNewPage || p.pageId == null
+      ? 'New page'
+      : meta[p.pageId]?.title || `Page ${p.pageId}`
+
   const renderCard = (p) => (
     <ProposalCard
       key={p.id}
       proposal={p}
+      pageTitle={pageTitleFor(p)}
       canModerate={canModerate}
       refresh={refresh}
       alias={profiles[p.proposer]?.alias}

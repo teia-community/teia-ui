@@ -62,11 +62,12 @@ function VersionRow({ version, isCurrent, profiles }) {
 }
 
 export default function WikiHistory() {
-  const { slug } = useParams()
+  const { id } = useParams()
   const { wiki } = useOutletContext()
-  const { data: versions, error } = useWikiVersions(slug)
-  const page = wiki?.pages.find((p) => p.slug === slug)
-  const title = wiki?.meta[slug]?.title || slug
+  const pageId = /^\d+$/.test(id ?? '') ? Number(id) : undefined
+  const { data: versions, error } = useWikiVersions(pageId)
+  const page = wiki?.pages.find((p) => p.id === pageId)
+  const title = wiki?.meta[pageId]?.title || `Page ${pageId}`
 
   const addrs = useMemo(() => {
     const s = new Set()
@@ -82,7 +83,7 @@ export default function WikiHistory() {
     <article className={styles.article}>
       <div className={styles.page_head}>
         <h2>History: {title}</h2>
-        <Button small secondary to={`${PATH.WIKI}/${slug}`}>
+        <Button small secondary to={`${PATH.WIKI}/${pageId}`}>
           Back to page
         </Button>
       </div>

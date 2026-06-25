@@ -38,15 +38,17 @@ export function slugify(text) {
  * Shared create/edit form. The submitted action depends on role:
  *  - moderators write directly (create_page / update_page)
  *  - token holders submit a community proposal (prop_new_page / create_proposal)
+ *
+ * Each page is identified by its integer `pageId`; the slug only lives
+ * in the IPFS doc (for pretty links + parent hierarchy) and is derived from the
+ * title for new pages.
  */
-export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
+export default function WikiEditor({ mode, pageId, initial }) {
   const navigate = useNavigate()
   const { wiki, canModerate, canPropose } = useOutletContext()
   const theme = useLocalSettings((st) => st.theme)
 
   const [title, setTitle] = useState(initial?.title || '')
-  const [slug, setSlug] = useState(fixedSlug || '')
-  const [slugTouched, setSlugTouched] = useState(Boolean(fixedSlug))
   const [parent, setParent] = useState(initial?.parent || '')
   const [content, setContent] = useState(initial?.content || '')
   const [summary, setSummary] = useState('')
@@ -55,21 +57,32 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
   const isEdit = mode === 'edit'
   const canSubmit = canModerate || canPropose
 
+  // For edits the slug is fixed; for new pages it's derived from the title.
+  const slug = isEdit ? initial?.slug || '' : slugify(title)
+
   const onTitleChange = (v) => {
     const next = typeof v === 'string' ? v : v?.target?.value || ''
     setTitle(next)
-    if (!isEdit && !slugTouched) setSlug(slugify(next))
   }
 
   const parentOptions = (wiki?.pages || [])
-    .filter((p) => p.slug !== slug)
-    .map((p) => ({ slug: p.slug, title: wiki.meta[p.slug]?.title || p.slug }))
+    .filter((p) => p.id !== pageId)
+    .map((p) => ({
+      slug: wiki.meta[p.id]?.slug || '',
+      title: wiki.meta[p.id]?.title || `Page ${p.id}`,
+    }))
+    .filter((opt) => opt.slug)
     .sort((a, b) => a.title.localeCompare(b.title))
 
-  const slugTaken =
+  // The contract has no duplicate-name check, so the UI owns it.
+  const titleTaken =
     !isEdit &&
-    slug.trim().length > 0 &&
-    (wiki?.pages || []).some((p) => p.slug === slug.trim())
+    title.trim().length > 0 &&
+    (wiki?.pages || []).some(
+      (p) =>
+        (wiki.meta[p.id]?.title || '').trim().toLowerCase() ===
+        title.trim().toLowerCase()
+    )
 
   if (!canSubmit) {
     return (
@@ -81,7 +94,7 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!title.trim() || !slug.trim() || !content.trim() || slugTaken) return
+    if (!title.trim() || !content.trim() || titleTaken) return
     setSubmitting(true)
     const input = {
       title: title.trim(),
@@ -92,16 +105,16 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
     }
     try {
       if (isEdit) {
-        if (canModerate) await updatePage(input)
-        else await createEditProposal(input)
+        if (canModerate) await updatePage(pageId, input)
+        else await createEditProposal(pageId, input)
       } else {
         if (canModerate) await createPage(input)
         else await proposeNewPage(input)
       }
-      // Direct moderator edits land immediately on the page; community
-      // proposals need review, so send those users back to the wiki home.
-      if (canModerate || isEdit) {
-        navigate(`${PATH.WIKI}/${input.slug}`)
+      // Direct moderator edits land on the page immediately; new pages (id
+      // assigned on-chain) and community proposals go back to the wiki home.
+      if (isEdit && canModerate) {
+        navigate(`${PATH.WIKI}/${pageId}`)
       } else {
         navigate(PATH.WIKI)
       }
@@ -132,30 +145,15 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
           value={title}
           onChange={onTitleChange}
         />
-      </div>
-
-      <div className={styles.field}>
-        <label htmlFor="wiki-slug">Slug</label>
-        <Input
-          id="wiki-slug"
-          type="text"
-          placeholder="page-slug"
-          value={slug}
-          disabled={isEdit}
-          onChange={(v) => {
-            setSlugTouched(true)
-            setSlug(slugify(typeof v === 'string' ? v : v?.target?.value || ''))
-          }}
-        />
-        <small className={styles.hint}>
-          {isEdit
-            ? 'The slug is fixed for existing pages.'
-            : 'Used in the page URL: /wiki/your-slug'}
-        </small>
-        {slugTaken && (
+        {!isEdit && (
+          <small className={styles.hint}>
+            Pretty link: /wiki/{slug || 'page-title'}
+          </small>
+        )}
+        {titleTaken && (
           <small className={styles.error}>
-            A page with the slug “{slug.trim()}” already exists — choose a
-            different title or slug.
+            A page titled “{title.trim()}” already exists — choose a different
+            title.
           </small>
         )}
       </div>
@@ -215,11 +213,7 @@ export default function WikiEditor({ mode, slug: fixedSlug, initial }) {
           type="submit"
           shadow_box
           disabled={
-            submitting ||
-            !title.trim() ||
-            !slug.trim() ||
-            !content.trim() ||
-            slugTaken
+            submitting || !title.trim() || !content.trim() || titleTaken
           }
         >
           {submitting ? 'Submitting…' : verb}

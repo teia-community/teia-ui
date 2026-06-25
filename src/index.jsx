@@ -279,9 +279,9 @@ const router = createBrowserRouter(
         <Route path="create" element={<WikiCreate />} />
         <Route path="admin" element={<WikiAdmin />} />
         <Route path="proposals" element={<WikiProposals />} />
-        <Route path=":slug" element={<WikiPage />} />
-        <Route path=":slug/edit" element={<WikiEdit />} />
-        <Route path=":slug/history" element={<WikiHistory />} />
+        <Route path=":id" element={<WikiPage />} />
+        <Route path=":id/edit" element={<WikiEdit />} />
+        <Route path=":id/history" element={<WikiHistory />} />
       </Route>
       <Route path="publicchannels" element={<ChannelList />} />
       <Route path="activity" element={<TeiaActivity />} />

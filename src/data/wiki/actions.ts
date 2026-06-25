@@ -32,9 +32,6 @@ function friendlyError(e: unknown): unknown {
   if (raw.includes('WIKI_NO_TOKENS')) {
     return new Error('You must hold Teia (TEIA) tokens to submit a proposal.')
   }
-  if (raw.includes('WIKI_PAGE_EXISTS')) {
-    return new Error('A page with this slug already exists.')
-  }
   if (raw.includes('WIKI_PAGE_NOT_FOUND')) {
     return new Error('That page no longer exists.')
   }
@@ -45,13 +42,15 @@ function friendlyError(e: unknown): unknown {
     return new Error('That proposal does not exist.')
   }
   if (raw.includes('WIKI_INCORRECT_FEE')) {
-    return new Error('The attached fee does not match the current proposal fee.')
+    return new Error(
+      'The attached fee does not match the current proposal fee.'
+    )
   }
   if (raw.includes('WIKI_PAUSED')) {
     return new Error('The wiki is temporarily paused by governance.')
   }
-  if (raw.includes('WIKI_EMPTY_SLUG') || raw.includes('WIKI_EMPTY_CID')) {
-    return new Error('Title/slug and content are required.')
+  if (raw.includes('WIKI_EMPTY_CID')) {
+    return new Error('Title and content are required.')
   }
   return e
 }
@@ -98,9 +97,7 @@ export async function createPage(input: PageInput) {
     const cid = await uploadDoc(input)
     step('Create Page', 'Waiting for wallet confirmation', false)
     const contract = await Tezos.wallet.at(WIKI_CONTRACT)
-    const op = await contract.methodsObject
-      .create_page({ slug: input.slug, cid })
-      .send()
+    const op = await contract.methodsObject.create_page(cid).send()
     step('Create Page', 'Awaiting confirmation...')
     await op.confirmation()
     invalidateWiki()
@@ -113,7 +110,7 @@ export async function createPage(input: PageInput) {
   }
 }
 
-export async function updatePage(input: PageInput) {
+export async function updatePage(pageId: number, input: PageInput) {
   const { step, show, showError } = useModalStore.getState()
   step('Update Page', 'Uploading to IPFS', true)
   try {
@@ -121,7 +118,7 @@ export async function updatePage(input: PageInput) {
     step('Update Page', 'Waiting for wallet confirmation', false)
     const contract = await Tezos.wallet.at(WIKI_CONTRACT)
     const op = await contract.methodsObject
-      .update_page({ slug: input.slug, cid })
+      .update_page({ page_id: pageId, cid })
       .send()
     step('Update Page', 'Awaiting confirmation...')
     await op.confirmation()
@@ -136,10 +133,10 @@ export async function updatePage(input: PageInput) {
 }
 
 export async function setPageHidden({
-  slug,
+  pageId,
   hidden,
 }: {
-  slug: string
+  pageId: number
   hidden: boolean
 }) {
   const { step, show, showError } = useModalStore.getState()
@@ -148,7 +145,7 @@ export async function setPageHidden({
   try {
     const contract = await Tezos.wallet.at(WIKI_CONTRACT)
     const op = await contract.methodsObject
-      .set_page_hidden({ slug, hidden })
+      .set_page_hidden({ page_id: pageId, hidden })
       .send()
     step(title, 'Awaiting confirmation...')
     await op.confirmation()
@@ -204,7 +201,7 @@ export async function rejectProposal(proposalId: string) {
 
 // --- Community proposals (token-gated, fee-bearing) ---
 
-export async function createEditProposal(input: PageInput) {
+export async function createEditProposal(pageId: number, input: PageInput) {
   const { step, show, showError } = useModalStore.getState()
   step('Propose Edit', 'Uploading to IPFS', true)
   try {
@@ -214,7 +211,7 @@ export async function createEditProposal(input: PageInput) {
     step('Propose Edit', 'Waiting for wallet confirmation', false)
     const contract = await Tezos.wallet.at(WIKI_CONTRACT)
     const op = await contract.methodsObject
-      .create_proposal({ page_slug: input.slug, proposed_cid: cid })
+      .create_proposal({ page_id: pageId, proposed_cid: cid })
       .send({ amount: proposeEditFee, mutez: true })
     step('Propose Edit', 'Awaiting confirmation...')
     await op.confirmation()
@@ -238,7 +235,7 @@ export async function proposeNewPage(input: PageInput) {
     step('Propose Page', 'Waiting for wallet confirmation', false)
     const contract = await Tezos.wallet.at(WIKI_CONTRACT)
     const op = await contract.methodsObject
-      .prop_new_page({ slug: input.slug, cid })
+      .prop_new_page(cid)
       .send({ amount: proposePageFee, mutez: true })
     step('Propose Page', 'Awaiting confirmation...')
     await op.confirmation()

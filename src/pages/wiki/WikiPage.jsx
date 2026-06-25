@@ -8,39 +8,52 @@ import { useWikiPageContent, setPageHidden, showGetTeiaModal } from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
-/** Walk the parent chain (via IPFS meta) to build breadcrumbs. */
-function useBreadcrumbs(slug, meta) {
+/** Walk the parent chain (via IPFS meta, by page id) to build breadcrumbs. */
+function useBreadcrumbs(pageId, meta) {
   return useMemo(() => {
     const crumbs = []
-    let current = slug
+    let current = pageId
     const seen = new Set()
-    while (current && meta[current] && !seen.has(current)) {
+    while (current != null && meta[current] && !seen.has(current)) {
       seen.add(current)
-      crumbs.unshift({ slug: current, title: meta[current].title || current })
+      crumbs.unshift({
+        id: current,
+        title: meta[current].title || `Page ${current}`,
+      })
       current = meta[current].parent
     }
     return crumbs
-  }, [slug, meta])
+  }, [pageId, meta])
 }
 
 export default function WikiPage() {
-  const { slug } = useParams()
+  const { id } = useParams()
   const { wiki, canModerate, canPropose, refresh } = useOutletContext()
-  const page = wiki?.pages.find((p) => p.slug === slug)
+
+  // Legacy/pretty slug URLs (`/wiki/some-slug`) resolve to the numeric id.
+  const isNumeric = /^\d+$/.test(id ?? '')
+  const slugId = !isNumeric ? wiki?.slugToId?.[id] : undefined
+  const pageId = isNumeric ? Number(id) : slugId
+
+  const page =
+    pageId !== undefined ? wiki?.pages.find((p) => p.id === pageId) : undefined
   const { data: content, error } = useWikiPageContent(page?.cid)
-  const crumbs = useBreadcrumbs(slug, wiki?.meta || {})
+  const crumbs = useBreadcrumbs(pageId, wiki?.meta || {})
   const { data: profiles = {} } = useUserProfiles(
     page ? [page.editor, page.proposer].filter(Boolean) : []
   )
 
+  if (!isNumeric && slugId !== undefined) {
+    return <Navigate to={`${PATH.WIKI}/${slugId}`} replace />
+  }
   if (!page || (page.hidden && !canModerate)) {
     return <Navigate to={PATH.WIKI} replace />
   }
 
-  const title = wiki.meta[slug]?.title || slug
+  const title = wiki.meta[pageId]?.title || `Page ${pageId}`
 
   const onToggleHidden = async () => {
-    await setPageHidden({ slug, hidden: !page.hidden })
+    await setPageHidden({ pageId, hidden: !page.hidden })
     refresh()
   }
 
@@ -49,12 +62,12 @@ export default function WikiPage() {
       {crumbs.length > 1 && (
         <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
           {crumbs.map((c, i) => (
-            <span key={c.slug}>
+            <span key={c.id}>
               {i > 0 && <span className={styles.crumb_sep}>/</span>}
               {i === crumbs.length - 1 ? (
                 <span>{c.title}</span>
               ) : (
-                <Link to={`${PATH.WIKI}/${c.slug}`}>{c.title}</Link>
+                <Link to={`${PATH.WIKI}/${c.id}`}>{c.title}</Link>
               )}
             </span>
           ))}
@@ -68,7 +81,7 @@ export default function WikiPage() {
         </h1>
         <div className={styles.page_actions}>
           {canModerate || canPropose ? (
-            <Button small shadow_box to={`${PATH.WIKI}/${slug}/edit`}>
+            <Button small shadow_box to={`${PATH.WIKI}/${pageId}/edit`}>
               {canModerate ? 'Edit' : 'Propose Edit'}
             </Button>
           ) : (
@@ -80,7 +93,7 @@ export default function WikiPage() {
             small
             secondary
             shadow_box
-            to={`${PATH.WIKI}/${slug}/history`}
+            to={`${PATH.WIKI}/${pageId}/history`}
           >
             History
           </Button>

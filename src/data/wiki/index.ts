@@ -6,9 +6,8 @@ export { showGetTeiaModal } from './proposeGate'
 export type { WikiPageMeta } from './tree'
 export { fetchPageContent, buildPageDocument, uploadPageContent } from './ipfs'
 export {
-  fetchAllWikiEvents,
-  fetchPageEvents,
+  fetchPages,
+  fetchProposals,
   fetchPageVersions,
-  reconstructState,
-  fetchOpHash,
+  fetchWikiPaused,
 } from './api'
