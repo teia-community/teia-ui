@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
@@ -6,30 +5,41 @@ import Filters from './filters'
 import { BaseTokenFieldsFragment } from '@data/api'
 
 import { useOutletContext } from 'react-router'
+import { useSearchParams } from 'react-router-dom'
 
 const FILTER_ALL = 'ALL'
-const FILTER_FOR_SALE = 'FOR_SALE'
 const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
+const FILTER_PRIMARY = 'PRIMARY'
+const FILTER_SECONDARY = 'SECONDARY'
 
 export default function Collections() {
-  const { showFilters, showRestricted, overrideProtections, address } =
-    useOutletContext()
+  const { showRestricted, overrideProtections, address } = useOutletContext()
 
-  const [filter, setFilter] = useState(FILTER_ALL)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') || FILTER_ALL
+
+  const setFilter = (value) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        value === FILTER_ALL ? next.delete('filter') : next.set('filter', value)
+        return next
+      },
+      { preventScrollReset: true }
+    )
 
   return (
     <>
-      {showFilters && (
-        <Filters
-          filter={filter}
-          onChange={setFilter}
-          items={[
-            { type: FILTER_ALL, label: 'All' },
-            { type: FILTER_FOR_SALE, label: 'For sale' },
-            { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
-          ]}
-        />
-      )}
+      <Filters
+        filter={filter}
+        onChange={setFilter}
+        items={[
+          { type: FILTER_ALL, label: 'All' },
+          { type: FILTER_PRIMARY, label: 'Primary' },
+          { type: FILTER_SECONDARY, label: 'Secondary' },
+          { type: FILTER_NOT_FOR_SALE, label: 'Not for sale' },
+        ]}
+      />
       {/* TODO (xat): do we need that v1 cancel-swap ui here again? */}
       <TokenCollection
         showRestricted={showRestricted}
@@ -41,16 +51,21 @@ export default function Collections() {
         emptyMessage="no collections"
         maxItems={null}
         postProcessTokens={(tokens) => {
-          if (filter === FILTER_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address }) => listing_seller_address === address
+          if (filter === FILTER_NOT_FOR_SALE) {
+            return tokens.filter(({ listings }) => !listings?.length)
+          }
+
+          if (filter === FILTER_PRIMARY) {
+            // Listed directly by the original artist
+            return tokens.filter(({ listings, artist_address }) =>
+              listings?.some((l) => l.seller_address === artist_address)
             )
           }
 
-          if (filter === FILTER_NOT_FOR_SALE) {
-            return tokens.filter(
-              ({ listing_seller_address, artist_address }) =>
-                artist_address !== address // && listing_seller_address !== address
+          if (filter === FILTER_SECONDARY) {
+            // Listed by a collector (anyone other than the original artist)
+            return tokens.filter(({ listings, artist_address }) =>
+              listings?.some((l) => l.seller_address !== artist_address)
             )
           }
 
@@ -87,6 +102,12 @@ export default function Collections() {
             ) {
               token {
                 ...baseTokenFields
+                listings(
+                  where: { status: { _eq: "active" } }
+                  order_by: { price: asc }
+                ) {
+                  seller_address
+                }
               }
             }
             listings(
@@ -100,6 +121,12 @@ export default function Collections() {
               seller_address
               token {
                 ...baseTokenFields
+                listings(
+                  where: { status: { _eq: "active" } }
+                  order_by: { price: asc }
+                ) {
+                  seller_address
+                }
               }
               contract_address
               amount_left
