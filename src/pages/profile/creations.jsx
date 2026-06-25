@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { gql } from 'graphql-request'
 import { BaseTokenFieldsFragment } from '@data/api'
 import { HEN_CONTRACT_FA2 } from '@constants'
@@ -6,6 +5,7 @@ import TokenCollection from '@atoms/token-collection'
 import Filters from './filters'
 
 import { useOutletContext } from 'react-router'
+import { useSearchParams } from 'react-router-dom'
 import { orderBy } from 'lodash'
 
 const FILTER_ALL = 'ALL'
@@ -15,7 +15,18 @@ const FILTER_NOT_FOR_SALE = 'NOT_FOR_SALE'
 
 export default function Creations() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
-  const [filter, setFilter] = useState(FILTER_ALL)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') || FILTER_ALL
+
+  const setFilter = (value) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        value === FILTER_ALL ? next.delete('filter') : next.set('filter', value)
+        return next
+      },
+      { preventScrollReset: true }
+    )
 
   return (
     <>

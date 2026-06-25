@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
@@ -6,6 +5,7 @@ import Filters from './filters'
 import { BaseTokenFieldsFragment } from '@data/api'
 
 import { useOutletContext } from 'react-router'
+import { useSearchParams } from 'react-router-dom'
 
 const FILTER_ALL = 'ALL'
 const FILTER_FOR_SALE = 'FOR_SALE'
@@ -16,7 +16,18 @@ const FILTER_SECONDARY = 'SECONDARY'
 export default function Collections() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
 
-  const [filter, setFilter] = useState(FILTER_ALL)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') || FILTER_ALL
+
+  const setFilter = (value) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        value === FILTER_ALL ? next.delete('filter') : next.set('filter', value)
+        return next
+      },
+      { preventScrollReset: true }
+    )
 
   return (
     <>
