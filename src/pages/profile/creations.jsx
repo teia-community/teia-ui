@@ -73,14 +73,22 @@ export default function Creations() {
         }}
         postProcessTokens={(tokens) => {
           if (filter === FILTER_PRIMARY) {
-            return tokens.filter(({ listings }) =>
-              listings?.some((l) => l.seller_address === address)
+            return tokens.filter(({ listings, artist_address }) =>
+              listings?.some(
+                (l) =>
+                  l.seller_address === address ||
+                  l.seller_address === artist_address
+              )
             )
           }
 
           if (filter === FILTER_SECONDARY) {
-            return tokens.filter(({ listings }) =>
-              listings?.some((l) => l.seller_address !== address)
+            return tokens.filter(({ listings, artist_address }) =>
+              listings?.some(
+                (l) =>
+                  l.seller_address !== address &&
+                  l.seller_address !== artist_address
+              )
             )
           }
 
