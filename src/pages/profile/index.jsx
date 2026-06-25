@@ -124,7 +124,6 @@ export default function Display() {
   const TABS = [
     { title: 'Creations', to: '' },
     { title: 'Collection', to: 'collection' },
-    { title: 'Curation', to: 'curation' },
     { title: 'Collabs', to: 'collabs' },
     { title: 'Text', to: 'text' },
     { title: 'Activity', to: 'activity' },
