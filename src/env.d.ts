@@ -22,6 +22,11 @@ interface ImportMetaEnv {
     | 'DWEB'
     | 'NFTSTORAGE'
   readonly VITE_TEZOS_RPC: string
+  /** Dev/testing only: comma-separated tz addresses treated as wiki moderators in the UI.
+   * 
+   * This will be removed in a future commit.
+   */
+  readonly VITE_WIKI_DEV_MODERATORS: string
 }
 
 interface ImportMeta {

@@ -20,6 +20,7 @@ export const PATH = {
   PROPOSAL: '/proposal',
   POLLS: '/polls',
   POLL: '/poll',
+  WIKI: '/wiki',
   SYNC: '/sync',
   MINT: '/mint',
   OBJKT: '/objkt',
@@ -177,6 +178,7 @@ export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
+export const QUIPUSWAP_TEIA_URL = `https://quipuswap.com/swap/tez-${DAO_TOKEN_CONTRACT}_0`
 
 // Specific tz addresses to exclude from donation lists
 export const DONATION_EXCLUDED_ADDRESSES = [
@@ -263,6 +265,16 @@ export const TOKEN_MESSAGE_FEE = 25000
 export const CHANNELS_V2_CONTRACT = 'KT19ooSLPFxJQ5mx3kR4Qo2UY4KJDcdMdng9'
 export const CHANNEL_FEE = 100000
 export const CHANNEL_MESSAGE_FEE = 25000
+
+// --- Wiki ---
+// teia-smart-contracts/python/contracts/wiki/wiki.py
+export const WIKI_CONTRACT = 'KT1UW3BnYemVjA4HggNZeR4wq2eKbVvpq15Y'
+// Moderator Contract.
+export const MODERATOR_CONTRACT = 'KT1RbVvb4eZh618krF49abrpEmAdb3zK92v6'
+export const WIKI_TOKEN_ID = 0
+// page_id of the curated landing page (Table of Contents) shown at /wiki, or
+// null to fall back to an auto-generated list of top-level pages.
+export const WIKI_INDEX_PAGE_ID: number | null = null
 
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 

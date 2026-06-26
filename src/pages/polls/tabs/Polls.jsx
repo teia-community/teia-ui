@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { POLLS_CONTRACT } from '@constants'
+import { POLLS_CONTRACT, QUIPUSWAP_TEIA_URL } from '@constants'
 import { Line } from '@atoms/line'
 import { Select } from '@atoms/select'
 import { useStorage, usePolls } from '@data/swr'
@@ -73,11 +73,7 @@ export default function Polls() {
         soon.
       </p>
       <p>
-        <a
-          href="https://quipuswap.com/swap/tez-KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV_0"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={QUIPUSWAP_TEIA_URL} target="_blank" rel="noreferrer">
           Convert XTZ to TEIA on Quipuswap (Decentralized Exchange)
         </a>
       </p>

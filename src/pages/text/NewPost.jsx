@@ -14,6 +14,7 @@ import {
   TEIA_MULTISIG_BLOG_TAG,
 } from '@constants'
 import { useMultisigAddresses } from '@data/swr'
+import { useModerators } from '@data/roles'
 import { prepareFile } from '@data/ipfs'
 import {
   convertFileToFileForm,
@@ -93,7 +94,10 @@ export default function NewPost() {
 
   const minterAddress = proxyAddress || address
   const multisigAddresses = useMultisigAddresses()
-  const isMultisig = multisigAddresses.includes(minterAddress)
+  const { data: moderators } = useModerators()
+  const canPostOfficial =
+    multisigAddresses.includes(minterAddress) ||
+    Boolean(moderators?.includes(minterAddress))
 
   // Parse embedded tokens from markdown content
   const embeddedTokens = useMemo(() => parseEmbeddedTokens(content), [content])
@@ -307,10 +311,10 @@ export default function NewPost() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.newpost_form}>
-      {isMultisig && (
+      {canPostOfficial && (
         <div className={styles.field}>
           <Checkbox
-            label="Bulletin Teia Text Post (Multisig Members Only)"
+            label="Bulletin Teia Text Post (Multisig Members & Moderators Only)"
             checked={isOfficialPost}
             onCheck={setIsOfficialPost}
           />

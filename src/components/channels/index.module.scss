@@ -171,6 +171,15 @@
   }
 }
 
+.channelBackBtn {
+  all: unset;
+  cursor: pointer;
+  color: inherit;
+  font-size: $font-large;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .channelHeaderInfo {
   display: flex;
   align-items: center;
@@ -698,4 +707,11 @@
   input {
     margin-bottom: 12px;
   }
+}
+
+.dangerHint {
+  margin: 0 0 12px;
+  font-size: $font-small;
+  line-height: 1.5;
+  color: var(--gray-60);
 }

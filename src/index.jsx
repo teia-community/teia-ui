@@ -20,9 +20,21 @@ import {
   DaoParameters,
   DaoProposals,
   SubmitDaoProposals,
+  DaoModerators,
+  DaoFees,
 } from '@pages/dao/tabs'
 import { TeiaPolls, PollDisplay } from '@pages/polls'
 import { Polls, CreatePolls, Discourse } from '@pages/polls/tabs'
+import {
+  WikiLayout,
+  WikiHome,
+  WikiPage,
+  WikiCreate,
+  WikiEdit,
+  WikiHistory,
+  WikiProposals,
+  WikiAdmin,
+} from '@pages/wiki'
 import { FAQ } from '@pages/faq'
 import { Home } from '@pages/home'
 import FriendsFeed from '@pages/home/feeds/friends-feed'
@@ -68,11 +80,19 @@ import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import TextPosts from '@pages/profile/text-posts'
+import Activity from '@pages/profile/activity'
 import ProfileChannels from '@pages/profile/channels'
 import ProfileComments from '@pages/profile/comments'
 
 // Messaging
 import NotificationsCenter from '@pages/notifications'
+import {
+  AdminConsole,
+  ChannelsAdmin,
+  CommentsAdmin,
+  RequireModerator,
+} from '@pages/admin'
+import { StatsPage } from '@pages/stats'
 import ChannelList from '@components/channels/ChannelList'
 import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
@@ -96,6 +116,7 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import TeiaActivity from '@pages/activity'
 import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
@@ -113,6 +134,7 @@ const display_routes = (
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
+    <Route exact path="activity" element={<Activity />} />
     <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="comments" element={<ProfileComments />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
@@ -213,6 +235,33 @@ const router = createBrowserRouter(
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route path="stats" element={<StatsPage />} />
+        <Route path="fees" element={<DaoFees />} />
+        <Route path="moderators" element={<DaoModerators />} />
+        <Route
+          path="channels"
+          element={
+            <RequireModerator>
+              <ChannelsAdmin />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="poll-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="poll" />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="token-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="token" />
+            </RequireModerator>
+          }
+        />
         <Route path="*" element={<DaoParameters />} />
       </Route>
       <Route path="proposal/:id" element={<ProposalDisplay />} />
@@ -223,8 +272,19 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      <Route path="wiki/*" element={<WikiLayout />}>
+        <Route index element={<WikiHome />} />
+        <Route path="create" element={<WikiCreate />} />
+        <Route path="admin" element={<WikiAdmin />} />
+        <Route path="proposals" element={<WikiProposals />} />
+        <Route path=":id" element={<WikiPage />} />
+        <Route path=":id/edit" element={<WikiEdit />} />
+        <Route path=":id/history" element={<WikiHistory />} />
+      </Route>
       <Route path="publicchannels" element={<ChannelList />} />
+      <Route path="activity" element={<TeiaActivity />} />
       <Route path="notifications" element={<NotificationsCenter />} />
+      <Route path="inbox/admin" element={<AdminConsole />} />
       <Route path="inbox/channels" element={<ChannelList />} />
       <Route path="inbox/channels/create" element={<CreateChannel />} />
       <Route path="inbox/channels/:id" element={<ChannelView />} />

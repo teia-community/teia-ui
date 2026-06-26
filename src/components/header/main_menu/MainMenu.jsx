@@ -14,6 +14,7 @@ import {
 } from '@data/messaging/channels'
 import { useMyPollNotifications } from '@data/messaging/poll-comments'
 import { useMyTokenNotifications } from '@data/messaging/token-comments'
+import { useAccountRoles } from '@data/roles'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
@@ -107,6 +108,9 @@ export const MainMenu = () => {
   // per-section dots were removed to keep the menu clean.
   const showNotificationsBadge = channelUnread + pollUnread + tokenUnread > 0
 
+  const { isModerator, isMultisig } = useAccountRoles(address)
+  const canModerate = isModerator || isMultisig
+
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
 
@@ -124,7 +128,13 @@ export const MainMenu = () => {
         <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
+          <MenuItem
+            className={styles.menu_label}
+            label="Activity"
+            route="activity"
+          />
           <MenuItem className={styles.menu_label} route="text" />
+          <MenuItem className={styles.menu_label} label="Wiki" route="wiki" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem
             className={styles.menu_label}
@@ -174,6 +184,15 @@ export const MainMenu = () => {
             need_sync
             badge={showNotificationsBadge}
           />
+
+          {canModerate && (
+            <MenuItem
+              className={styles.menu_label}
+              label="Moderation"
+              route="inbox/admin"
+              need_sync
+            />
+          )}
 
           <MenuItem
             className={styles.menu_label}

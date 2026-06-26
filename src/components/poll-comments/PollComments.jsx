@@ -3,13 +3,11 @@ import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
 import { useChatReadStore } from '@context/chatReadStore'
 import { useDaoTokenBalance } from '@data/swr'
-import {
-  usePollComments,
-  useIsBanned,
-  useUserProfiles,
-} from '@data/messaging/poll-comments'
+import { usePollComments, useIsBanned } from '@data/messaging/poll-comments'
+import { useUserProfiles } from '@data/roles'
 import { postComment } from '@data/messaging/poll-comments-actions'
 import { walletPreview } from '@utils/string'
+import { QUIPUSWAP_TEIA_URL } from '@constants'
 import CommentItem from './CommentItem'
 import CommentForm from './CommentForm'
 import styles from './index.module.scss'
@@ -125,11 +123,7 @@ export default function PollComments({ pollId }) {
 
       <div className={styles.tip}>
         Join the conversation with a single TEIA.{' '}
-        <a
-          href="https://quipuswap.com/swap/tez-KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV_0"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={QUIPUSWAP_TEIA_URL} target="_blank" rel="noreferrer">
           Convert XTZ to TEIA on Quipuswap
         </a>
         .

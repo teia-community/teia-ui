@@ -1,0 +1,12 @@
+.activity {
+  width: 100%;
+  max-width: var(--max-width-internal);
+  margin: 0 auto;
+  padding: 2rem 1rem 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--secondary-color);
+}
