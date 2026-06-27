@@ -37,6 +37,10 @@ const TABS = [
     to: 'moderators',
   },
   {
+    title: 'Fees',
+    to: 'fees',
+  },
+  {
     title: 'Channels',
     to: 'channels',
     restricted: true,

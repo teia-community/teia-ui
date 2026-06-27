@@ -21,7 +21,18 @@ import {
   DaoProposals,
   SubmitDaoProposals,
   DaoModerators,
+  DaoFees,
 } from '@pages/dao/tabs'
+import {
+  WikiLayout,
+  WikiHome,
+  WikiPage,
+  WikiCreate,
+  WikiEdit,
+  WikiHistory,
+  WikiProposals,
+  WikiAdmin,
+} from '@pages/wiki'
 import { TeiaPolls, PollDisplay } from '@pages/polls'
 import { Polls, CreatePolls, Discourse } from '@pages/polls/tabs'
 import { FAQ } from '@pages/faq'
@@ -226,6 +237,7 @@ const router = createBrowserRouter(
         <Route path="submit" element={<SubmitDaoProposals />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="moderators" element={<DaoModerators />} />
+        <Route path="fees" element={<DaoFees />} />
         <Route
           path="channels"
           element={
@@ -260,6 +272,15 @@ const router = createBrowserRouter(
         <Route path="*" element={<Polls />} />
       </Route>
       <Route path="poll/:id" element={<PollDisplay />} />
+      <Route path="wiki/*" element={<WikiLayout />}>
+        <Route index element={<WikiHome />} />
+        <Route path="create" element={<WikiCreate />} />
+        <Route path="admin" element={<WikiAdmin />} />
+        <Route path="proposals" element={<WikiProposals />} />
+        <Route path=":id" element={<WikiPage />} />
+        <Route path=":id/edit" element={<WikiEdit />} />
+        <Route path=":id/history" element={<WikiHistory />} />
+      </Route>
       <Route path="publicchannels" element={<ChannelList />} />
       <Route path="notifications" element={<NotificationsCenter />} />
       <Route path="inbox/channels" element={<ChannelList />} />
