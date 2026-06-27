@@ -178,6 +178,10 @@ export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 
+// Moderator Contract.
+export const MODERATOR_CONTRACT = 'KT1RbVvb4eZh618krF49abrpEmAdb3zK92v6'
+export const WIKI_TOKEN_ID = 0
+
 // Specific tz addresses to exclude from donation lists
 export const DONATION_EXCLUDED_ADDRESSES = [
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
