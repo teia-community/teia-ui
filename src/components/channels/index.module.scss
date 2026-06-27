@@ -171,6 +171,15 @@
   }
 }
 
+.channelBackBtn {
+  all: unset;
+  cursor: pointer;
+  color: inherit;
+  font-size: $font-large;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .channelHeaderInfo {
   display: flex;
   align-items: center;
