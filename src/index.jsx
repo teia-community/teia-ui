@@ -84,6 +84,7 @@ import {
   CommentsAdmin,
   RequireModerator,
 } from '@pages/admin'
+import { StatsPage } from '@pages/stats'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -219,6 +220,7 @@ const router = createBrowserRouter(
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route path="stats" element={<StatsPage />} />
         <Route
           path="channels"
           element={
