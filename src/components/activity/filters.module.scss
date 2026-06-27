@@ -1,0 +1,33 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  // Primary & Secondary Sales row
+  & + & {
+    margin-top: -0.5rem;
+  }
+}
+
+.chip {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 200ms ease;
+
+  &:hover {
+    background: var(--border-color);
+  }
+}
+
+.chip_active {
+  background: var(--text-color);
+  color: var(--background-color);
+  border-color: var(--text-color);
+}

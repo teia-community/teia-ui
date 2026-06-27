@@ -1,0 +1,34 @@
+.scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Keep these columns in sync with the row grid in ./index.module.scss
+.head {
+  display: grid;
+  grid-template-columns: 104px minmax(150px, 2fr) 1fr 1fr 64px 104px 92px;
+  gap: 1rem;
+  min-width: 720px;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--secondary-color);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  .num {
+    text-align: right;
+  }
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--secondary-color);
+}
