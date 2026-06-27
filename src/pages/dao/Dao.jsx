@@ -27,6 +27,10 @@ const TABS = [
     to: 'submit',
     private: true,
   },
+  {
+    title: 'Moderators',
+    to: 'moderators',
+  },
 ]
 
 export default function DAO() {
