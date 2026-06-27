@@ -78,6 +78,12 @@ import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
 import ChannelSettings from '@components/channels/ChannelSettings'
 import DmRedirect from '@components/channels/DmRedirect'
+import {
+  AdminConsole,
+  ChannelsAdmin,
+  CommentsAdmin,
+  RequireModerator,
+} from '@pages/admin'
 
 import Sync from '@pages/sync'
 import { Terms } from '@pages/terms'
@@ -213,6 +219,30 @@ const router = createBrowserRouter(
         <Route index element={<DaoParameters />} />
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
+        <Route
+          path="channels"
+          element={
+            <RequireModerator>
+              <ChannelsAdmin />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="poll-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="poll" />
+            </RequireModerator>
+          }
+        />
+        <Route
+          path="token-comments"
+          element={
+            <RequireModerator>
+              <CommentsAdmin kind="token" />
+            </RequireModerator>
+          }
+        />
         <Route path="*" element={<DaoParameters />} />
       </Route>
       <Route path="proposal/:id" element={<ProposalDisplay />} />
@@ -230,6 +260,7 @@ const router = createBrowserRouter(
       <Route path="inbox/channels/:id" element={<ChannelView />} />
       <Route path="inbox/channels/:id/settings" element={<ChannelSettings />} />
       <Route path="inbox/dm/:address" element={<DmRedirect />} />
+      <Route path="inbox/admin" element={<AdminConsole />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
