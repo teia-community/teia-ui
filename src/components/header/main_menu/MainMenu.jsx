@@ -126,6 +126,7 @@ export const MainMenu = () => {
           <MenuItem className={styles.menu_label} route="search" />
           <MenuItem className={styles.menu_label} route="text" />
           <MenuItem className={styles.menu_label} route="about" />
+          <MenuItem className={styles.menu_label} label="Wiki" route="wiki" />
           <MenuItem
             className={styles.menu_label}
             label="Getting Started"

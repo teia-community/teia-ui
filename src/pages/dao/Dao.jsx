@@ -27,6 +27,10 @@ const TABS = [
     to: 'submit',
     private: true,
   },
+  {
+    title: 'Fees',
+    to: 'fees',
+  },
 ]
 
 export default function DAO() {
