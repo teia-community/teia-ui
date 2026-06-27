@@ -33,6 +33,10 @@ const TABS = [
     to: 'stats',
   },
   {
+    title: 'Moderators',
+    to: 'moderators',
+  },
+  {
     title: 'Channels',
     to: 'channels',
     restricted: true,
