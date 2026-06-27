@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 import axios from 'axios'
 import { gql, request } from 'graphql-request'
 import { bytesToString } from '@taquito/utils'
@@ -19,6 +20,11 @@ import {
 } from '@data/api'
 import laggy from '@utils/swr-laggy-middleware'
 import { useModerators } from '@data/roles'
+import {
+  ACTIVITY_EVENT_TYPES,
+  MINT_TYPES,
+  TEIA_LISTING_TYPES,
+} from '@utils/activity'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -1080,4 +1086,242 @@ export function useOfficialTextPosts(limit = 100) {
       use: [laggy],
     }
   )
+}
+
+const USER_ACTIVITY_QUERY = gql`
+  query UserActivity(
+    $address: String!
+    $types: [String!]!
+    $mintTypes: [String!]!
+    $limit: Int!
+    $offset: Int!
+  ) {
+    events(
+      where: {
+        _or: [
+          {
+            # Trades, listings and transfers the user is a direct party to.
+            _and: [
+              {
+                _or: [
+                  { seller_address: { _eq: $address } }
+                  { buyer_address: { _eq: $address } }
+                  { from_address: { _eq: $address } }
+                  { to_address: { _eq: $address } }
+                ]
+              }
+              {
+                _or: [
+                  { implements: { _eq: "SALE" } }
+                  { type: { _in: $types } }
+                ]
+              }
+            ]
+          }
+          {
+            # Mints — the user is identified by artist_address, not by any of
+            # the trade/transfer address fields (which are null on a mint).
+            _and: [
+              { artist_address: { _eq: $address } }
+              { type: { _in: $mintTypes } }
+            ]
+          }
+        ]
+      }
+      order_by: [{ level: desc }, { opid: desc }]
+      limit: $limit
+      offset: $offset
+    ) {
+      id
+      timestamp
+      ophash
+      implements
+      type
+      price
+      amount
+      editions
+      seller_address
+      seller_profile {
+        name
+      }
+      buyer_address
+      buyer_profile {
+        name
+      }
+      from_address
+      from_profile {
+        name
+      }
+      to_address
+      to_profile {
+        name
+      }
+      token {
+        token_id
+        fa2_address
+        name
+        display_uri
+        thumbnail_uri
+        mime_type
+        artist_address
+        artist_profile {
+          name
+        }
+      }
+    }
+  }
+`
+
+const ACTIVITY_PAGE_SIZE = 50
+
+/**
+ * Paginated activity feed (sales, purchases, listings, transfers, mints) for a
+ * single address, newest first. Uses SWR infinite for "load more" paging.
+ * Note: events are pre-filtered to the relevant types here; category resolution
+ * and chip filtering happen client-side in the Activity tab.
+ */
+export function useUserActivity(address) {
+  const getKey = (pageIndex, previousPageData) => {
+    if (!address) return null
+    if (previousPageData && previousPageData.length === 0) return null
+    return ['user-activity', address, pageIndex]
+  }
+
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    // SWR v1 spreads array-key parts as separate fetcher args.
+    async (_ns, addr, pageIndex) => {
+      const res = await request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        USER_ACTIVITY_QUERY,
+        {
+          address: addr,
+          types: ACTIVITY_EVENT_TYPES,
+          mintTypes: MINT_TYPES,
+          limit: ACTIVITY_PAGE_SIZE,
+          offset: pageIndex * ACTIVITY_PAGE_SIZE,
+        }
+      )
+      return res.events || []
+    },
+    { revalidateFirstPage: false, revalidateOnFocus: false }
+  )
+
+  const events = data ? data.flat() : []
+  const isLoadingInitial = !data && !error
+  const isLoadingMore =
+    isValidating && data && typeof data[size - 1] === 'undefined'
+  const isReachingEnd =
+    error || (data && data[data.length - 1]?.length < ACTIVITY_PAGE_SIZE)
+
+  return {
+    events,
+    error,
+    isLoadingInitial,
+    isLoadingMore,
+    isReachingEnd,
+    loadMore: () => setSize(size + 1),
+  }
+}
+
+const GLOBAL_ACTIVITY_QUERY = gql`
+  query GlobalActivity($types: [String!]!, $limit: Int!, $offset: Int!) {
+    events(
+      where: {
+        token: { metadata_status: { _eq: "processed" } }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+        _or: [
+          { implements: { _eq: "SALE" } }
+          { type: { _in: $types } }
+        ]
+      }
+      order_by: [{ level: desc }, { opid: desc }]
+      limit: $limit
+      offset: $offset
+    ) {
+      id
+      timestamp
+      ophash
+      implements
+      type
+      price
+      amount
+      editions
+      seller_address
+      seller_profile {
+        name
+      }
+      buyer_address
+      buyer_profile {
+        name
+      }
+      from_address
+      from_profile {
+        name
+      }
+      to_address
+      to_profile {
+        name
+      }
+      token {
+        token_id
+        fa2_address
+        name
+        display_uri
+        thumbnail_uri
+        mime_type
+        artist_address
+        artist_profile {
+          name
+        }
+      }
+    }
+  }
+`
+
+const GLOBAL_FEED_TYPES = [...MINT_TYPES, ...TEIA_LISTING_TYPES]
+
+/**
+ * Platform-wide Teia/HEN activity feed (sales, listings, mints), newest first,
+ * with "load more" paging. Not scoped to any address.
+ */
+export function useGlobalActivity() {
+  const getKey = (pageIndex, previousPageData) => {
+    if (previousPageData && previousPageData.length === 0) return null
+    return ['global-activity', pageIndex]
+  }
+
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    // SWR v1 spreads array-key parts as separate fetcher args.
+    async (_ns, pageIndex) => {
+      const res = await request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        GLOBAL_ACTIVITY_QUERY,
+        {
+          types: GLOBAL_FEED_TYPES,
+          limit: ACTIVITY_PAGE_SIZE,
+          offset: pageIndex * ACTIVITY_PAGE_SIZE,
+        }
+      )
+      return res.events || []
+    },
+    { revalidateFirstPage: false, revalidateOnFocus: false }
+  )
+
+  const events = data ? data.flat() : []
+  const isLoadingInitial = !data && !error
+  const isLoadingMore =
+    isValidating && data && typeof data[size - 1] === 'undefined'
+  const isReachingEnd =
+    error || (data && data[data.length - 1]?.length < ACTIVITY_PAGE_SIZE)
+
+  return {
+    events,
+    error,
+    isLoadingInitial,
+    isLoadingMore,
+    isReachingEnd,
+    loadMore: () => setSize(size + 1),
+  }
 }

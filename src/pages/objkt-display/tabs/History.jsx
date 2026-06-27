@@ -1,34 +1,23 @@
 import get from 'lodash/get'
 import isNumber from 'lodash/isNumber'
 import { Container } from '@atoms/layout'
-import { walletPreview } from '@utils/string'
 import { formatRoyalties } from '@utils'
 import { getTimeAgo } from '@utils/time'
 import styles from '@style'
 import { BURN_ADDRESS } from '@constants'
 import { TradeIcon, MintedIcon, SwapIcon, BurnIcon } from '@icons'
 import Button from '@atoms/button/Button'
+import { UserLink } from '@components/user-link'
 import { useObjktDisplayContext } from '..'
 
 function UsernameAndLink({ event, attr }) {
   return (
-    <>
-      {get(event, `${attr}_profile.name`) ? (
-        <span>
-          <Button
-            href={`/${encodeURIComponent(get(event, `${attr}_profile.name`))}`}
-          >
-            {get(event, `${attr}_profile.name`)}
-          </Button>
-        </span>
-      ) : (
-        <span>
-          <Button href={`/tz/${get(event, `${attr}_address`)}`}>
-            {walletPreview(get(event, `${attr}_address`))}
-          </Button>
-        </span>
-      )}
-    </>
+    <span>
+      <UserLink
+        address={get(event, `${attr}_address`)}
+        name={get(event, `${attr}_profile.name`)}
+      />
+    </span>
   )
 }
 
@@ -101,8 +90,6 @@ function HistoryRow({ eventType, from, to, editions, price, timestamp }) {
  */
 export const History = () => {
   const { nft } = useObjktDisplayContext()
-
-  console.debug('nft.events', nft?.events)
 
   return (
     <Container>
@@ -183,8 +170,8 @@ export const History = () => {
           if (
             e.type === 'FA2_TRANSFER' &&
             e.to_address !== BURN_ADDRESS &&
-            !e.from_address.startsWith('KT1') &&
-            !e.to_address.startsWith('KT1')
+            !e.from_address?.startsWith('KT1') &&
+            !e.to_address?.startsWith('KT1')
           ) {
             return (
               <HistoryRow

@@ -128,6 +128,11 @@ export const MainMenu = () => {
         <div className={`${styles.menu_left}`}>
           {/* <MenuItem route="search" /> */}
           <MenuItem className={styles.menu_label} route="search" />
+          <MenuItem
+            className={styles.menu_label}
+            label="Activity"
+            route="activity"
+          />
           <MenuItem className={styles.menu_label} route="text" />
           <MenuItem className={styles.menu_label} route="about" />
           <MenuItem

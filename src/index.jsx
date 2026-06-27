@@ -68,6 +68,7 @@ import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
 import TextPosts from '@pages/profile/text-posts'
+import Activity from '@pages/profile/activity'
 import ProfileChannels from '@pages/profile/channels'
 import ProfileComments from '@pages/profile/comments'
 
@@ -103,6 +104,7 @@ import { Preview } from '@components/preview/index'
 import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
+import TeiaActivity from '@pages/activity'
 import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
@@ -120,6 +122,7 @@ const display_routes = (
     <Route exact path="collection" element={<Collections />} />
     <Route exact path="collabs" element={<Collabs />} />
     <Route exact path="text" element={<TextPosts />} />
+    <Route exact path="activity" element={<Activity />} />
     <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="comments" element={<ProfileComments />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
@@ -263,6 +266,7 @@ const router = createBrowserRouter(
       <Route path="inbox/channels/:id/settings" element={<ChannelSettings />} />
       <Route path="inbox/dm/:address" element={<DmRedirect />} />
       <Route path="inbox/admin" element={<AdminConsole />} />
+      <Route path="activity" element={<TeiaActivity />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>
         {display_routes}
