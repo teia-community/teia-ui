@@ -171,6 +171,13 @@ export default function CopyrightDisplay() {
                     </>
                   )}
 
+                  {clauses.addendum && (
+                    <>
+                      <h4 className={sharedStyles.sectionTitle}>Addendum</h4>
+                      <p className={sharedStyles.agreementText}>{clauses.addendum}</p>
+                    </>
+                  )}
+
                   <p className={sharedStyles.registrarLine}>Registrar: {entry.key.address}</p>
 
                   {entry.value.related_external_nfts.length > 0 && (
