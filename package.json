@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@magenta/music": "^1.23.1",
-    "@taquito/beacon-wallet": "^24.3.1-beta.1",
-    "@taquito/michelson-encoder": "^24.3.1-beta.1",
-    "@taquito/taquito": "^24.3.1-beta.1",
+    "@taquito/beacon-wallet": "^25.0.0",
+    "@taquito/michelson-encoder": "^25.0.0",
+    "@taquito/taquito": "^25.0.0",
     "@tonejs/midi": "^2.0.28",
     "@uiw/react-md-editor": "^4.0.11",
     "axios": "^0.27.2",
