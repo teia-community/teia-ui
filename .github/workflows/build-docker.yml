@@ -37,7 +37,7 @@ jobs:
           file: ./docker/Dockerfile
       - name: Restart containers
         run: |
-          curl -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
+          curl -X POST -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
       - name: Check deployed prod version
         if: github.ref == 'refs/heads/main'
         run: |
