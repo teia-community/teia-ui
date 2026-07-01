@@ -10,25 +10,25 @@
 .badge {
   font-size: $font-xsmall;
   font-weight: 600;
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 6px;
+  border-radius: 0;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
-  color: #fff;
+  color: var(--gray-0);
 }
 
 .badgeMultisig {
   composes: badge;
-  background: #7c3aed;
+  background: var(--gray-100);
 }
 
 .badgeModerator {
   composes: badge;
-  background: #2563eb;
+  background: var(--gray-80);
 }
 
 .badgeTokenHolder {
   composes: badge;
-  background: #2d7d46;
+  background: var(--gray-60);
 }
