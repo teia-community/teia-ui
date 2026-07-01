@@ -5,7 +5,12 @@ import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { useUserProfiles } from '@data/roles'
-import { useWikiVersions, useWikiPageContent } from '@data/wiki'
+import {
+  useWikiVersions,
+  useWikiPageContent,
+  resolvePageId,
+  wikiSeg,
+} from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
@@ -64,7 +69,7 @@ function VersionRow({ version, isCurrent, profiles }) {
 export default function WikiHistory() {
   const { id } = useParams()
   const { wiki } = useOutletContext()
-  const pageId = /^\d+$/.test(id ?? '') ? Number(id) : undefined
+  const pageId = resolvePageId(wiki, id)
   const { data: versions, error } = useWikiVersions(pageId)
   const page = wiki?.pages.find((p) => p.id === pageId)
   const title = wiki?.meta[pageId]?.title || `Page ${pageId}`
@@ -83,7 +88,11 @@ export default function WikiHistory() {
     <article className={styles.article}>
       <div className={styles.page_head}>
         <h2>History: {title}</h2>
-        <Button small secondary to={`${PATH.WIKI}/${pageId}`}>
+        <Button
+          small
+          secondary
+          to={`${PATH.WIKI}/${wikiSeg(wiki?.meta, pageId)}`}
+        >
           Back to page
         </Button>
       </div>

@@ -9,6 +9,7 @@ import {
   updatePage,
   proposeNewPage,
   createEditProposal,
+  slugify,
 } from '@data/wiki'
 import styles from '@style'
 
@@ -22,16 +23,6 @@ const previewComponents = {
     }
     return <img alt={alt} src={src} {...props} />
   },
-}
-
-export function slugify(text) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
 }
 
 /**
@@ -84,6 +75,15 @@ export default function WikiEditor({ mode, pageId, initial }) {
         title.trim().toLowerCase()
     )
 
+  // Pretty URLs follow the current title; a title whose slug collides with a
+  // static wiki route or looks like a numeric page id can't resolve, so block
+  // it (on create and on rename).
+  const urlSlug = slugify(title)
+  const RESERVED_SLUGS = ['create', 'admin', 'proposals']
+  const slugInvalid =
+    urlSlug.length > 0 &&
+    (RESERVED_SLUGS.includes(urlSlug) || /^\d+$/.test(urlSlug))
+
   if (!canSubmit) {
     return (
       <p className={styles.notice}>
@@ -94,7 +94,7 @@ export default function WikiEditor({ mode, pageId, initial }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!title.trim() || !content.trim() || titleTaken) return
+    if (!title.trim() || !content.trim() || titleTaken || slugInvalid) return
     setSubmitting(true)
     const input = {
       title: title.trim(),
@@ -114,6 +114,8 @@ export default function WikiEditor({ mode, pageId, initial }) {
       // Direct moderator edits land on the page immediately; new pages (id
       // assigned on-chain) and community proposals go back to the wiki home.
       if (isEdit && canModerate) {
+        // Land on the numeric id; WikiPage canonicalises to the current slug
+        // once the refreshed data (with the new title) has loaded.
         navigate(`${PATH.WIKI}/${pageId}`)
       } else {
         navigate(PATH.WIKI)
@@ -154,6 +156,12 @@ export default function WikiEditor({ mode, pageId, initial }) {
           <small className={styles.error}>
             A page titled “{title.trim()}” already exists — choose a different
             title.
+          </small>
+        )}
+        {slugInvalid && (
+          <small className={styles.error}>
+            This title produces a reserved link (/wiki/{urlSlug}) — choose a
+            different title.
           </small>
         )}
       </div>
@@ -213,7 +221,11 @@ export default function WikiEditor({ mode, pageId, initial }) {
           type="submit"
           shadow_box
           disabled={
-            submitting || !title.trim() || !content.trim() || titleTaken
+            submitting ||
+            !title.trim() ||
+            !content.trim() ||
+            titleTaken ||
+            slugInvalid
           }
         >
           {submitting ? 'Submitting…' : verb}

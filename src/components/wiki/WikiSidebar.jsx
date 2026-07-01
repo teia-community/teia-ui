@@ -7,7 +7,7 @@ const TreeNode = ({ node, hiddenIds }) => {
   return (
     <li className={styles.tree_item}>
       <NavLink
-        to={`${PATH.WIKI}/${node.id}`}
+        to={`${PATH.WIKI}/${node.slug || node.id}`}
         className={({ isActive }) =>
           `${styles.tree_link} ${isActive ? styles.tree_link_active : ''} ${
             isHidden ? styles.tree_link_hidden : ''

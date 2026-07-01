@@ -1,6 +1,6 @@
 import { useOutletContext, useParams, Navigate } from 'react-router-dom'
 import { PATH } from '@constants'
-import { useWikiPageContent } from '@data/wiki'
+import { useWikiPageContent, resolvePageId } from '@data/wiki'
 import WikiEditor from './WikiEditor'
 import styles from '@style'
 
@@ -8,7 +8,7 @@ import styles from '@style'
 export default function WikiEdit() {
   const { id } = useParams()
   const { wiki, canModerate, canPropose } = useOutletContext()
-  const pageId = /^\d+$/.test(id ?? '') ? Number(id) : undefined
+  const pageId = resolvePageId(wiki, id)
   const page =
     pageId !== undefined ? wiki?.pages.find((p) => p.id === pageId) : undefined
   const { data: content, error } = useWikiPageContent(page?.cid)

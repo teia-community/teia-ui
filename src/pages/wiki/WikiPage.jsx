@@ -4,7 +4,13 @@ import { Button } from '@atoms/button'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
 import { useUserProfiles } from '@data/roles'
-import { useWikiPageContent, setPageHidden, showGetTeiaModal } from '@data/wiki'
+import {
+  useWikiPageContent,
+  setPageHidden,
+  showGetTeiaModal,
+  resolvePageId,
+  wikiSeg,
+} from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
@@ -30,10 +36,11 @@ export default function WikiPage() {
   const { id } = useParams()
   const { wiki, canModerate, canPropose, refresh } = useOutletContext()
 
-  // Legacy/pretty slug URLs (`/wiki/some-slug`) resolve to the numeric id.
-  const isNumeric = /^\d+$/.test(id ?? '')
-  const slugId = !isNumeric ? wiki?.slugToId?.[id] : undefined
-  const pageId = isNumeric ? Number(id) : slugId
+  // The URL param may be the pretty slug, a numeric id, or a stale slug from a
+  // renamed page; all resolve to the page id and canonicalise to the current
+  // title slug below, so old `/wiki/3` and `/wiki/old-slug` links keep working.
+  const pageId = resolvePageId(wiki, id)
+  const slug = pageId !== undefined ? wiki?.meta[pageId]?.slug : undefined
 
   const page =
     pageId !== undefined ? wiki?.pages.find((p) => p.id === pageId) : undefined
@@ -43,11 +50,12 @@ export default function WikiPage() {
     page ? [page.editor, page.proposer].filter(Boolean) : []
   )
 
-  if (!isNumeric && slugId !== undefined) {
-    return <Navigate to={`${PATH.WIKI}/${slugId}`} replace />
-  }
   if (!page || (page.hidden && !canModerate)) {
     return <Navigate to={PATH.WIKI} replace />
+  }
+  // Normalise numeric ids and stale slugs to the page's current title slug.
+  if (slug && id !== slug) {
+    return <Navigate to={`${PATH.WIKI}/${slug}`} replace />
   }
 
   const title = wiki.meta[pageId]?.title || `Page ${pageId}`
@@ -67,7 +75,9 @@ export default function WikiPage() {
               {i === crumbs.length - 1 ? (
                 <span>{c.title}</span>
               ) : (
-                <Link to={`${PATH.WIKI}/${c.id}`}>{c.title}</Link>
+                <Link to={`${PATH.WIKI}/${wikiSeg(wiki.meta, c.id)}`}>
+                  {c.title}
+                </Link>
               )}
             </span>
           ))}
@@ -81,7 +91,11 @@ export default function WikiPage() {
         </h1>
         <div className={styles.page_actions}>
           {canModerate || canPropose ? (
-            <Button small shadow_box to={`${PATH.WIKI}/${pageId}/edit`}>
+            <Button
+              small
+              shadow_box
+              to={`${PATH.WIKI}/${wikiSeg(wiki.meta, pageId)}/edit`}
+            >
               {canModerate ? 'Edit' : 'Propose Edit'}
             </Button>
           ) : (
@@ -93,7 +107,7 @@ export default function WikiPage() {
             small
             secondary
             shadow_box
-            to={`${PATH.WIKI}/${pageId}/history`}
+            to={`${PATH.WIKI}/${wikiSeg(wiki.meta, pageId)}/history`}
           >
             History
           </Button>

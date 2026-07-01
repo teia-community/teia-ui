@@ -4,7 +4,7 @@ import { Button } from '@atoms/button'
 import { PATH } from '@constants'
 import { walletPreview } from '@utils/string'
 import { useUserProfiles } from '@data/roles'
-import { setPageHidden } from '@data/wiki'
+import { setPageHidden, wikiSeg } from '@data/wiki'
 import WikiProposalList from './WikiProposalList'
 import styles from '@style'
 
@@ -173,7 +173,9 @@ export default function WikiAdmin() {
                   className={page.hidden ? styles.row_hidden : ''}
                 >
                   <td>
-                    <Link to={`${PATH.WIKI}/${page.id}`}>{title}</Link>
+                    <Link to={`${PATH.WIKI}/${wikiSeg(meta, page.id)}`}>
+                      {title}
+                    </Link>
                     {page.hidden && (
                       <span className={styles.hidden_tag}> (hidden)</span>
                     )}
@@ -188,20 +190,24 @@ export default function WikiAdmin() {
                   </td>
                   <td>{new Date(page.updatedAt).toLocaleDateString()}</td>
                   <td className={styles.row_actions}>
-                    <Button small shadow_box to={`${PATH.WIKI}/${page.id}`}>
+                    <Button
+                      small
+                      shadow_box
+                      to={`${PATH.WIKI}/${wikiSeg(meta, page.id)}`}
+                    >
                       View
                     </Button>
                     <Button
                       small
                       shadow_box
-                      to={`${PATH.WIKI}/${page.id}/edit`}
+                      to={`${PATH.WIKI}/${wikiSeg(meta, page.id)}/edit`}
                     >
                       Edit
                     </Button>
                     <Button
                       small
                       shadow_box
-                      to={`${PATH.WIKI}/${page.id}/history`}
+                      to={`${PATH.WIKI}/${wikiSeg(meta, page.id)}/history`}
                     >
                       History
                     </Button>

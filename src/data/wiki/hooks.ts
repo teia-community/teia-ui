@@ -9,6 +9,7 @@ import {
 } from './api'
 import { fetchPageContent } from './ipfs'
 import { fetchUserRoles } from './roles'
+import { slugify } from './links'
 import { buildTree, type WikiPageMeta } from './tree'
 import { WIKI_SWR_KEY } from './actions'
 import type {
@@ -43,13 +44,16 @@ async function fetchWiki(): Promise<WikiData> {
     pages.map((p) => fetchPageContent(p.cid))
   )
 
-  // First pass: collect each page's own slug so we can resolve parents.
+  // First pass: index each page by both its stored slug and its current
+  // title-derived slug, so parent links (which reference the stored slug) and
+  // pretty URLs (which follow the current title) both resolve.
   const slugToId: Record<string, number> = {}
   pages.forEach((page, i) => {
     const r = docs[i]
-    if (r.status === 'fulfilled' && r.value.slug) {
-      slugToId[r.value.slug] = page.id
-    }
+    if (r.status !== 'fulfilled') return
+    if (r.value.slug) slugToId[r.value.slug] = page.id
+    const titleSlug = slugify(r.value.title || '')
+    if (titleSlug) slugToId[titleSlug] = page.id
   })
 
   const meta: Record<number, WikiPageMeta> = {}
@@ -57,9 +61,12 @@ async function fetchWiki(): Promise<WikiData> {
     const r = docs[i]
     if (r.status === 'fulfilled') {
       const parentSlug = r.value.parent ?? null
+      // The pretty URL follows the current title, not the (possibly stale)
+      // stored slug. A renamed page gets a URL matching its new title.
+      const titleSlug = slugify(r.value.title || '')
       meta[page.id] = {
         title: r.value.title || `Page ${page.id}`,
-        slug: r.value.slug || '',
+        slug: titleSlug || r.value.slug || '',
         parent: parentSlug ? slugToId[parentSlug] ?? null : null,
       }
     } else {

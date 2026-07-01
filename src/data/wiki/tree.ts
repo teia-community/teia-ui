@@ -50,6 +50,7 @@ export function buildTree(
     byId.set(page.id, {
       id: page.id,
       title: m?.title || `Page ${page.id}`,
+      slug: m?.slug || '',
       parent: m?.parent ?? null,
       createdAt: page.createdAt,
       updatedAt: page.updatedAt,
