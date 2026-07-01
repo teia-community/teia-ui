@@ -315,6 +315,11 @@ export default function ChannelSettings() {
         {isCreator && (
           <div className={styles.settingsSection}>
             <h3>Danger Zone</h3>
+            <p className={styles.dangerHint}>
+              Hiding the channel removes it from channel lists and blocks new
+              messages. Existing messages stay on-chain and the channel can be
+              restored later.
+            </p>
             <Button shadow_box onClick={handleHide} disabled={saving}>
               Hide channel
             </Button>

@@ -181,3 +181,98 @@ export async function setOwnCommentHidden({
     throw e
   }
 }
+
+// ---------------------------------------------------------------------------
+// Moderation for multisig users & moderators
+// ---------------------------------------------------------------------------
+
+/** Moderator hide/unhide of any comment. */
+export async function moderateCommentHidden({
+  commentId,
+  pollId,
+  hidden,
+}: {
+  commentId: string
+  pollId: string
+  hidden: boolean
+}) {
+  const { step, show, showError } = useModalStore.getState()
+  const title = hidden ? 'Moderate: Hide' : 'Moderate: Unhide'
+
+  step(title, 'Waiting for wallet', true)
+
+  try {
+    const contract = await Tezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject
+      .moderate_comment_hidden({
+        comment_id: parseInt(commentId),
+        hidden,
+      })
+      .send()
+
+    step(title, 'Awaiting confirmation...')
+    await op.confirmation()
+    invalidatePoll(pollId)
+    show(
+      title,
+      hidden ? 'Comment hidden by moderator' : 'Comment restored by moderator'
+    )
+    return op.opHash
+  } catch (e) {
+    const friendly = friendlyError(e)
+    showError(title, friendly)
+    throw friendly
+  }
+}
+
+/** Add or remove an address from the ban list. */
+export async function setUserBanned({
+  address,
+  banned,
+}: {
+  address: string
+  banned: boolean
+}) {
+  const { step, show, showError } = useModalStore.getState()
+  const title = banned ? 'Ban User' : 'Unban User'
+
+  step(title, 'Waiting for wallet', true)
+
+  try {
+    const contract = await Tezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject
+      .set_user_banned({ address, banned })
+      .send()
+
+    step(title, 'Awaiting confirmation...')
+    await op.confirmation()
+    show(title, banned ? 'User banned from comments' : 'User unbanned')
+    return op.opHash
+  } catch (e) {
+    const friendly = friendlyError(e)
+    showError(title, friendly)
+    throw friendly
+  }
+}
+
+/** Pause or unpause the whole contract. */
+export async function setPaused(paused: boolean) {
+  const { step, show, showError } = useModalStore.getState()
+  const title = paused ? 'Pause Comments' : 'Unpause Comments'
+
+  step(title, 'Waiting for wallet', true)
+
+  try {
+    const contract = await Tezos.wallet.at(CONTRACT)
+    const op = await contract.methodsObject.set_pause(paused).send()
+
+    step(title, 'Awaiting confirmation...')
+    await op.confirmation()
+    show(title, paused ? 'Comments paused' : 'Comments resumed')
+    return op.opHash
+  } catch (e) {
+    const friendly = friendlyError(e)
+    showError(title, friendly)
+    throw friendly
+  }
+}

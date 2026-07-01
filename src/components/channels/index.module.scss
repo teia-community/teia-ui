@@ -171,6 +171,15 @@
   }
 }
 
+.channelBackBtn {
+  all: unset;
+  cursor: pointer;
+  color: inherit;
+  font-size: $font-large;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .channelHeaderInfo {
   display: flex;
   align-items: center;
@@ -691,6 +700,13 @@
   h3 {
     margin: 0 0 12px;
     font-size: $font-small;
+  }
+
+  .dangerHint {
+    margin: 0 0 12px;
+    font-size: $font-small;
+    line-height: 1.5;
+    color: var(--gray-60);
   }
 
   select,

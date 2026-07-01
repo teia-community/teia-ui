@@ -193,6 +193,20 @@ export const Copyright = () => {
                     )
                   })}
               </ul>
+              {licenseData?.clauses?.addendum && (
+                <>
+                  <h4>Addendum</h4>
+                  <p
+                    style={{
+                      whiteSpace: 'pre-wrap',
+                      wordWrap: 'break-word',
+                      overflowWrap: 'break-word',
+                    }}
+                  >
+                    {licenseData.clauses.addendum}
+                  </p>
+                </>
+              )}
             </div>
           </Container>
           <Line />

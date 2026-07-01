@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
-import {
-  useUserComments,
-  useUserProfiles,
-} from '@data/messaging/token-comments'
+import { useUserComments } from '@data/messaging/token-comments'
+import { useUserProfiles } from '@data/roles'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { Identicon } from '@atoms/identicons'

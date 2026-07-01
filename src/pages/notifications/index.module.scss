@@ -140,7 +140,7 @@
 .thumb {
   width: 44px;
   height: 44px;
-  border-radius: 6px;
+  border-radius: 0;
   object-fit: cover;
   flex-shrink: 0;
   background-color: var(--gray-10);
@@ -149,7 +149,7 @@
 .thumbFallback {
   width: 44px;
   height: 44px;
-  border-radius: 6px;
+  border-radius: 0;
   flex-shrink: 0;
   display: flex;
   align-items: center;
