@@ -12,6 +12,7 @@ import {
   rejectProposal,
   useWikiPageContent,
   useWikiVersions,
+  wikiSeg,
 } from '@data/wiki'
 import { WikiMarkdown, WikiDiff } from '@components/wiki'
 import styles from '@style'
@@ -21,6 +22,7 @@ const PREVIEW_LEN = 100
 function ProposalCard({
   proposal,
   pageTitle,
+  pageSeg,
   canModerate,
   refresh,
   alias,
@@ -78,7 +80,7 @@ function ProposalCard({
             <span className={styles.proposal_slug}>{pageTitle}</span>
           ) : (
             <Link
-              to={`${PATH.WIKI}/${proposal.pageId}`}
+              to={`${PATH.WIKI}/${pageSeg}`}
               className={styles.proposal_slug}
             >
               {pageTitle}
@@ -222,6 +224,7 @@ export default function WikiProposalList({
       key={p.id}
       proposal={p}
       pageTitle={pageTitleFor(p)}
+      pageSeg={p.pageId != null ? wikiSeg(meta, p.pageId) : ''}
       canModerate={canModerate}
       refresh={refresh}
       alias={profiles[p.proposer]?.alias}

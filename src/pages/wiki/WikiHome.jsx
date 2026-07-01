@@ -1,6 +1,6 @@
 import { useOutletContext, Link } from 'react-router-dom'
 import { PATH, WIKI_INDEX_PAGE_ID } from '@constants'
-import { useWikiPageContent } from '@data/wiki'
+import { useWikiPageContent, wikiSeg } from '@data/wiki'
 import { WikiMarkdown } from '@components/wiki'
 import styles from '@style'
 
@@ -41,7 +41,7 @@ export default function WikiHome() {
         <ul>
           {topLevel.map((p) => (
             <li key={p.id}>
-              <Link to={`${PATH.WIKI}/${p.id}`}>
+              <Link to={`${PATH.WIKI}/${wikiSeg(wiki.meta, p.id)}`}>
                 {wiki.meta[p.id]?.title || `Page ${p.id}`}
               </Link>
             </li>

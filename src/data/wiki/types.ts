@@ -51,6 +51,7 @@ export type WikiSortKey = 'title' | 'created' | 'updated'
 export interface WikiTreeNode {
   id: number
   title: string
+  slug: string
   /** Parent page id (resolved from the IPFS `parent` slug), or null. */
   parent: number | null
   createdAt: string
