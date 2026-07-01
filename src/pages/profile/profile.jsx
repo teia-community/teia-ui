@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
 import Identicon from '@atoms/identicons'
+import { RoleBadges } from '@components/user-badges'
 import { useDaoTokenBalance, useAccountDelegate } from '@data/swr'
 import { TZKT_AVATARS_URL } from '@constants'
 import { useUserStore } from '@context/userStore'
@@ -114,6 +115,8 @@ export default function Profile({ user }) {
         </div>
         <div className={styles.info}>
           <p className={styles.user}>{user.subjkt || user.alias}</p>
+
+          <RoleBadges address={user.address} />
 
           {user.description && <p>{user.description}</p>}
 

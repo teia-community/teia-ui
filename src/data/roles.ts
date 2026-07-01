@@ -66,6 +66,30 @@ export async function fetchTokenBalance(address: string): Promise<number> {
 }
 
 /**
+ * Every address currently holding at least one Teia (DAO) token.
+ */
+export async function fetchTokenHolders(): Promise<Set<string>> {
+  const holders = new Set<string>()
+  const LIMIT = 10000
+  for (let offset = 0; ; offset += LIMIT) {
+    const url = new URL(`${TZKT_API}/v1/tokens/balances`)
+    url.searchParams.set('token.contract', DAO_TOKEN_CONTRACT)
+    url.searchParams.set('token.tokenId', String(WIKI_TOKEN_ID))
+    url.searchParams.set('balance.gt', '0')
+    url.searchParams.set('select', 'account.address')
+    url.searchParams.set('limit', String(LIMIT))
+    url.searchParams.set('offset', String(offset))
+
+    const res = await fetch(url.toString())
+    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
+    const rows: string[] = await res.json()
+    for (const addr of rows) if (addr) holders.add(addr)
+    if (rows.length < LIMIT) break
+  }
+  return holders
+}
+
+/**
  * Batched Teia DAO token balances for many addresses (one request per ~50).
  * Returns a Map address -> raw balance. Useful for rendering many role badges.
  */
@@ -117,23 +141,28 @@ export function useModerators() {
   })
 }
 
+/** Cached set of all Teia (DAO) token holders. */
+export function useTokenHolders() {
+  return useSWR<Set<string>>('roles:token-holders', fetchTokenHolders, {
+    revalidateOnFocus: false,
+    dedupingInterval: 300_000,
+  })
+}
+
 /**
- * Resolve a single address to its roles. The two membership lists are shared
- * across all callers (deduped by SWR); only the token balance is per-address.
+ * Resolve a single address to its roles. All three source sets are fetched once
+ * and shared across every caller (deduped by SWR), so this — and any role badge
+ * — is a pure O(1) membership check with no per-address requests.
  */
 export function useAccountRoles(address?: string): AccountRoles {
   const { data: users } = useMultisigUsers()
   const { data: moderators } = useModerators()
-  const { data: balance } = useSWR(
-    address ? ['roles:balance', address] : null,
-    () => fetchTokenBalance(address as string),
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
-  )
+  const { data: holders } = useTokenHolders()
 
   return {
     isMultisig: Boolean(address && users?.includes(address)),
     isModerator: Boolean(address && moderators?.includes(address)),
-    isTokenHolder: (balance ?? 0) > 0,
+    isTokenHolder: Boolean(address && holders?.has(address)),
   }
 }
 

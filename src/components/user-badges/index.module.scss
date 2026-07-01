@@ -1,0 +1,34 @@
+@import '@styles/variables.scss';
+
+.badges {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.badgeMultisig {
+  composes: badge;
+  background: #7c3aed;
+}
+
+.badgeModerator {
+  composes: badge;
+  background: #2563eb;
+}
+
+.badgeTokenHolder {
+  composes: badge;
+  background: #2d7d46;
+}
