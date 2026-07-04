@@ -8,7 +8,7 @@ import {
   fetchWikiPaused,
 } from './api'
 import { fetchPageContent } from './ipfs'
-import { fetchUserRoles } from './roles'
+import { useGateRoles } from '@data/roles'
 import { slugify } from './links'
 import { buildTree, type WikiPageMeta } from './tree'
 import { WIKI_SWR_KEY } from './actions'
@@ -111,10 +111,16 @@ export function useWikiVersions(pageId: number | undefined) {
 }
 
 /** Current user's wiki capabilities (moderator / multisig / token holder). */
-export function useWikiRoles(address: string | undefined) {
-  return useSWR<WikiUserRoles>(
-    address ? `wiki:roles:${address}` : 'wiki:roles:anon',
-    () => fetchUserRoles(address),
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
-  )
+export function useWikiRoles(address: string | undefined): {
+  data?: WikiUserRoles
+} {
+  const { data } = useGateRoles(address)
+  return {
+    data: data && {
+      isModerator: data.isModerator,
+      isMultisig: data.isMultisig,
+      canModerate: data.canModerate,
+      canPropose: data.isTokenHolder,
+    },
+  }
 }
