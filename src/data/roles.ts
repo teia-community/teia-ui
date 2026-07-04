@@ -166,6 +166,70 @@ export function useAccountRoles(address?: string): AccountRoles {
   }
 }
 
+/** Cached Teia (DAO) token balance for a single address. */
+export function useTokenBalance(address?: string) {
+  return useSWR<number>(
+    address ? `roles:balance:${address}` : null,
+    () => fetchTokenBalance(address as string),
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+}
+
+export interface GateRoles {
+  isMultisig: boolean
+  isModerator: boolean
+  canModerate: boolean
+  isTokenHolder: boolean
+}
+
+const EMPTY_GATE_ROLES: GateRoles = {
+  isMultisig: false,
+  isModerator: false,
+  canModerate: false,
+  isTokenHolder: false,
+}
+
+/**
+ * Token-gate capabilities for the connected account, shared by gated features
+ * (wiki, curations). Reads the shared moderator/multisig caches plus a single
+ * per-address balance request.
+ * Full holders set, fetch many addresses at once (badges).
+ *
+ * Unsynced visitors resolve to no-access
+ * immediately with no requests.
+ */
+export function useGateRoles(address?: string): { data?: GateRoles } {
+  const { data: users, error: usersError } = useSWR<string[]>(
+    address ? 'roles:multisig-users' : null,
+    fetchMultisigUsers,
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+  const { data: moderators, error: moderatorsError } = useSWR<string[]>(
+    address ? 'roles:moderators' : null,
+    fetchModerators,
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+  const { data: balance, error: balanceError } = useTokenBalance(address)
+
+  if (!address) return { data: EMPTY_GATE_ROLES }
+
+  const usersList = users ?? (usersError ? [] : undefined)
+  const moderatorsList = moderators ?? (moderatorsError ? [] : undefined)
+  const balanceValue = balance ?? (balanceError ? 0 : undefined)
+  if (!usersList || !moderatorsList || balanceValue === undefined) return {}
+
+  const isMultisig = usersList.includes(address)
+  const isModerator = moderatorsList.includes(address)
+  return {
+    data: {
+      isMultisig,
+      isModerator,
+      canModerate: isMultisig || isModerator,
+      isTokenHolder: balanceValue > 0,
+    },
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Profiles (alias + avatar)
 // ---------------------------------------------------------------------------
