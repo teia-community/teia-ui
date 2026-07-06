@@ -1,0 +1,250 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
+.admin {
+  width: 100%;
+  padding-bottom: 60px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75em;
+  flex-wrap: wrap;
+  margin-bottom: 0.5em;
+}
+
+.title {
+  margin: 0;
+}
+
+.sub {
+  color: var(--gray-60);
+  font-size: 0.85em;
+}
+
+// --- Tabs ---
+.tabs {
+  display: flex;
+  gap: 0.25em;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5em;
+}
+
+.tab {
+  @include resetButton();
+  cursor: pointer;
+  padding: 0.6em 1em;
+  color: var(--gray-60);
+  font: inherit;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.tab_active {
+  color: var(--text-color);
+  font-weight: 600;
+  border-bottom-color: var(--text-color);
+}
+
+.panel {
+  width: 100%;
+}
+
+.tab_body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25em;
+  margin-top: 1.5em;
+}
+
+.section_head {
+  margin: 0.5em 0 0;
+}
+
+// --- Stat cards ---
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.stat_card {
+  display: flex;
+  flex-direction: column;
+  min-width: 130px;
+  padding: 0.75em 1em;
+  border: 1px solid var(--border-color);
+}
+
+.stat_value {
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat_label {
+  font-size: 0.8em;
+  color: var(--gray-60);
+}
+
+.stat_sub {
+  font-size: 0.72em;
+  color: var(--gray-60);
+}
+
+// --- Pause toggle ---
+.pause_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  flex-wrap: wrap;
+  padding: 0.75em 1em;
+  border: 1px solid var(--border-color);
+}
+
+.pause_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.badge {
+  font-weight: 600;
+  font-size: 0.85em;
+}
+
+.badge_active {
+  color: var(--success-color, #1d9e75);
+}
+
+.badge_paused {
+  color: var(--error-color, #c0392b);
+}
+
+.muted {
+  color: var(--gray-60);
+  font-size: 0.85em;
+  margin: 0;
+}
+
+// --- Table + controls ---
+.table_controls {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.checkbox_label {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.9em;
+  color: var(--gray-60);
+  cursor: pointer;
+}
+
+.input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+  padding: 0.5em;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-body);
+}
+
+.table_wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--gray-60);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+.cell_content {
+  max-width: 360px;
+}
+
+.row_hidden {
+  color: var(--gray-60);
+  font-style: italic;
+}
+
+.hidden_tag {
+  color: var(--gray-60);
+  font-weight: 400;
+  font-size: 0.8em;
+}
+
+.row_actions {
+  display: flex;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 0.95em;
+}
+
+.empty {
+  color: var(--gray-60);
+  padding: 1em 0.75em;
+}
+
+// --- Ban list ---
+.ban_box {
+  border: 1px solid var(--border-color);
+  padding: 1em;
+}
+
+.ban_head {
+  margin: 0 0 0.75em;
+}
+
+.ban_input_row {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 0.75em;
+}
+
+.ban_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75em;
+    padding: 0.4em 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+}

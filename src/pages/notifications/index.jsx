@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { bytesToString } from '@taquito/utils'
 import { Page } from '@atoms/layout'
@@ -9,7 +9,11 @@ import { POLLS_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
 import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
-import { useUnreadChannels, useUnreadItems } from '@context/chatReadStore'
+import {
+  useChatReadStore,
+  useUnreadChannels,
+  useUnreadItems,
+} from '@context/chatReadStore'
 import {
   useMyInbox,
   useChannelLatestMessageIds,
@@ -180,6 +184,21 @@ export default function NotificationsCenter() {
   const unreadCount =
     unreadDmCount + unreadChannelCount + unreadPollCount + unreadTokenCount
 
+  // Mark every notification as read
+  const markRead = useChatReadStore((st) => st.markRead)
+  const handleMarkAllRead = useCallback(() => {
+    if (!address) return
+    for (const [id, latest] of Object.entries(latestIds ?? {})) {
+      markRead(address, `channel:${id}`, latest)
+    }
+    for (const [pollId, latest] of Object.entries(pollMap ?? {})) {
+      markRead(address, `poll-comments:${pollId}`, latest)
+    }
+    for (const [tokenKey, latest] of Object.entries(tokenMap ?? {})) {
+      markRead(address, `token-comments:${tokenKey}`, latest)
+    }
+  }, [address, latestIds, pollMap, tokenMap, markRead])
+
   if (!address) {
     return (
       <Page title="Notifications">
@@ -202,6 +221,11 @@ export default function NotificationsCenter() {
             <span className={styles.totalBadge}>{unreadCount}</span>
           )}
           <div className={styles.headerActions}>
+            {messageNotifications && unreadCount > 0 && (
+              <Button shadow_box onClick={handleMarkAllRead}>
+                Mark all as read
+              </Button>
+            )}
             <Button shadow_box onClick={() => setShowCreateChannel(true)}>
               Create Channel
             </Button>
@@ -218,6 +242,13 @@ export default function NotificationsCenter() {
           Read/unread status is stored on this device only. If you open Teia in
           another browser or on another computer, items may appear unread again
           — your messages and comments themselves are safe and stored on-chain.
+        </p>
+
+        <p className={styles.infoNote}>
+          Messages, direct messages and comments are currently stored
+          unencrypted on the Tezos blockchain. That means their contents are
+          publicly readable on-chain by anyone. Treat them as public and
+          don&apos;t share anything private or sensitive.
         </p>
 
         {!messageNotifications && (

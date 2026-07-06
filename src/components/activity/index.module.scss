@@ -1,0 +1,173 @@
+// Keep these columns in sync with the header in pages/profile/activity.module.scss
+$grid: 104px minmax(150px, 2fr) 1fr 1fr 64px 104px 92px;
+
+.row {
+  display: grid;
+  grid-template-columns: $grid;
+  align-items: center;
+  gap: 1rem;
+  min-width: 720px;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.event {
+  display: flex;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-0);
+  white-space: nowrap;
+}
+
+.badge_create {
+  background: var(--gray-50);
+}
+.badge_transfer {
+  background: var(--gray-60);
+}
+.badge_list {
+  background: var(--gray-70);
+}
+.badge_buy {
+  background: var(--gray-80);
+}
+.badge_sale {
+  background: var(--gray-90);
+}
+.badge_burn {
+  background: var(--gray-100);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  color: var(--text-color);
+}
+
+.thumb {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--border-color);
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.from,
+.to {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.num {
+  text-align: right;
+  color: var(--secondary-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.price {
+  color: var(--text-color);
+}
+
+.time a {
+  color: var(--secondary-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --- Social activity feed (public channels + poll/token comments) ---
+$social-grid: 104px minmax(120px, 1fr) minmax(180px, 3fr) minmax(120px, 1fr)
+  92px;
+
+.social_scroll {
+  overflow-x: auto;
+}
+
+.social_head,
+.social_row {
+  display: grid;
+  grid-template-columns: $social-grid;
+  align-items: center;
+  gap: 1rem;
+  min-width: 680px;
+}
+
+.social_head {
+  padding: 0 0 0.6rem;
+  color: var(--secondary-color);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.social_row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.social_content {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+
+.social_target {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  a {
+    color: var(--secondary-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.social_more {
+  display: flex;
+  justify-content: center;
+  padding: 1.2rem 0;
+}
+
+.badge_channel {
+  background: var(--gray-60);
+}
+.badge_poll {
+  background: var(--gray-80);
+}
+.badge_token {
+  background: var(--gray-90);
+}
