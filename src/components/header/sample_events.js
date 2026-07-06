@@ -1,6 +1,13 @@
 // DEV SAMPLES
 export const sample_events = [
   {
+    title: 'TezCon 2026 Gallery',
+    icon: '🖼️ ',
+    link: 'https://tezcon2026-gallery.teia.art/',
+    subtitle: 'TezCon 2026',
+    content: 'Gallery for the TezCon 2026 event.',
+  },
+  {
     title: 'BYOB mx TEIA',
     icon: '📽️',
     link: 'https://byob.teia.art/',
