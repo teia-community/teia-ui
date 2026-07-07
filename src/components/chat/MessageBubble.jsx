@@ -107,7 +107,7 @@ export default function MessageBubble({
           />
         </Link>
       )}
-      <div>
+      <div className={styles.bubbleContent}>
         {!isOwn && (
           <Link to={`/tz/${msg.sender}`} className={styles.bubbleSender}>
             {senderAlias || walletPreview(msg.sender)}
