@@ -6,7 +6,9 @@ import {
   fetchCopyrightsPaginated,
   fetchCopyrightsCount,
   fetchCreatorAliases,
+  fetchUserCopyrights,
 } from '@data/swr'
+import { useUserStore } from '@context/userStore'
 import CopyrightFilters, {
   type FilterValues,
 } from '@components/copyright/marketplace/CopyrightFilters'
@@ -44,6 +46,8 @@ export default function CopyrightMarketplace() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [offset, setOffset] = useState(0)
   const [filters, setFilters] = useState<FilterValues>(INITIAL_FILTERS)
+  const [myCount, setMyCount] = useState<number | null>(null)
+  const address = useUserStore((st) => st.address)
 
   const loadData = useCallback(
     async (currentOffset: number, append: boolean) => {
@@ -93,6 +97,15 @@ export default function CopyrightMarketplace() {
     })
   }, [filters, loadData])
 
+  // Count of copyrights the connected wallet has registered
+  useEffect(() => {
+    if (!address) {
+      setMyCount(null)
+      return
+    }
+    fetchUserCopyrights(address).then((data) => setMyCount(data.length))
+  }, [address])
+
   const handleLoadMore = async () => {
     const nextOffset = offset + PAGE_SIZE
     setLoadingMore(true)
@@ -117,11 +130,11 @@ export default function CopyrightMarketplace() {
             <Button to="/copyright" shadow_box>
               Register Your Work
             </Button>
-            <span className={styles.stats}>
-              you have {totalCount} copyright{totalCount !== 1 ? 's' : ''} registered
-              {Object.values(filters).some((v) => v !== 'all') &&
-                ` (${entries.length} shown)`}
-            </span>
+            {address && myCount !== null && (
+              <span className={styles.stats}>
+                you have {myCount} copyright{myCount !== 1 ? 's' : ''} registered
+              </span>
+            )}
           </div>
         </div>
 
