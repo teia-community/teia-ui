@@ -669,6 +669,32 @@ export async function fetchUserCopyrights(address) {
   }
 }
 
+/**
+ * Fetch the copyright registry records connected to a specific token.
+ */
+export async function fetchTokenCopyrights(contract, tokenId) {
+  if (!contract || tokenId == null) return []
+
+  const url = `${
+    import.meta.env.VITE_TZKT_API
+  }/v1/contracts/${COPYRIGHT_CONTRACT}/bigmaps/copyrights/keys?active=true&limit=100&value.related_tezos_nfts.%5B*%5D.contract=${contract}&value.related_tezos_nfts.%5B*%5D.token_id=${tokenId}`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`TzKT API error: ${res.statusText}`)
+    const data = await res.json()
+    return data.filter((entry) =>
+      entry.value?.related_tezos_nfts?.some(
+        (nft) =>
+          nft.contract === contract && String(nft.token_id) === String(tokenId)
+      )
+    )
+  } catch (err) {
+    console.error('Failed to fetch token copyrights:', err)
+    return []
+  }
+}
+
 const clauseFilterMap = {
   reproduce: 'value.clauses.reproduce',
   broadcast: 'value.clauses.broadcast',
