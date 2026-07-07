@@ -1,0 +1,218 @@
+@use '@styles/layout' as *;
+
+.tab {
+  font-family: var(--text-font);
+  max-width: 720px;
+  padding: 0.5rem 0 2rem;
+}
+
+/* ---- status header ---- */
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.statusOn {
+  color: var(--yes-vote-color);
+}
+
+.statusOff {
+  color: var(--secondary-color);
+}
+
+/* ---- verified record card ---- */
+.record {
+  border: 1px solid var(--border-color);
+  border-left: 2px solid var(--yes-vote-color);
+  border-radius: 4px;
+  background: var(--gray-0);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.recordMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.55rem;
+  font-size: 12px;
+  color: var(--secondary-color);
+  margin-bottom: 1.15rem;
+}
+
+.registrar {
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-color);
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+.sep {
+  color: var(--border-color);
+}
+
+/* ---- rights ledger (signature) ---- */
+.matrix {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 2rem;
+  row-gap: 0.1rem;
+
+  @include respond-to('tablet') {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 12px;
+  padding: 0.28rem 0;
+}
+
+.rowLabel {
+  color: var(--secondary-color);
+  white-space: nowrap;
+}
+
+.leader {
+  flex: 1 1 auto;
+  min-width: 0.75rem;
+  align-self: center;
+  border-bottom: 1px dotted var(--border-color);
+}
+
+.allow {
+  color: var(--yes-vote-color);
+  white-space: nowrap;
+}
+
+.deny {
+  color: var(--secondary-color);
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* ---- record footer meta ---- */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  margin-top: 1.1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--secondary-color);
+
+  b {
+    color: var(--text-color);
+    font-weight: 600;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.link {
+  font-size: 12px;
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-color);
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+}
+
+/* ---- token metadata license section ---- */
+.meta {
+  margin-top: 2rem;
+}
+
+.metaEyebrow {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+  margin-bottom: 0.85rem;
+}
+
+.metaValue {
+  font-size: 14px;
+  color: var(--text-color);
+  word-break: break-word;
+}
+
+.muted {
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.doc {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 0.85rem;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.addendum {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-color);
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.subhead {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 1.1rem 0 0.4rem;
+}
