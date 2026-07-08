@@ -19,17 +19,62 @@
   margin: 0;
 }
 
+// The "Subscribe ▾" dropdown + the primary CTA
+.header_actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-half, 0.5rem);
+}
+
 .list {
   display: flex;
   flex-direction: column;
 }
 
 .subscribe {
+  position: relative;
+}
+
+.subscribe_toggle {
+  list-style: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: var(--font-size-small);
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  user-select: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    content: ' ▾';
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+}
+
+details[open] > .subscribe_toggle::after {
+  content: ' ▴';
+}
+
+.subscribe_panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 10;
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing, 1rem);
-  margin-bottom: var(--spacing, 1rem);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-half, 0.5rem);
+  min-width: 240px;
+  padding: var(--spacing, 1rem);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
 }
 
 .subscribe_hint {

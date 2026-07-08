@@ -206,31 +206,35 @@ export default function Calendar() {
       <div className={styles.container}>
         <header className={styles.header}>
           <h1 className={styles.headline}>Calendar</h1>
-          {!editing && (
-            <Button shadow_box fit onClick={startCreate} disabled={opening}>
-              {opening
-                ? 'Opening…'
-                : canModerate
-                ? '+ New event'
-                : 'Propose an event'}
-            </Button>
-          )}
-        </header>
-
-        {ICS_URL && (
-          <div className={styles.subscribe}>
-            <Button small href={webcal}>
-              Subscribe in calendar app
-            </Button>
-            <Button small secondary onClick={copy}>
-              {copied ? 'Copied!' : 'Copy feed URL'}
-            </Button>
-            <p className={styles.subscribe_hint}>
-              Google Calendar can take up to a day to refresh subscribed
-              calendars.
-            </p>
+          <div className={styles.header_actions}>
+            {ICS_URL && (
+              <details className={styles.subscribe}>
+                <summary className={styles.subscribe_toggle}>Subscribe</summary>
+                <div className={styles.subscribe_panel}>
+                  <Button shadow_box small href={webcal}>
+                    Subscribe to calendar
+                  </Button>
+                  <Button shadow_box small secondary onClick={copy}>
+                    {copied ? 'Copied!' : 'Copy feed URL'}
+                  </Button>
+                  <p className={styles.subscribe_hint}>
+                    Some 3rd Party Calendars can take up to a day to refresh
+                    subscribed calendars.
+                  </p>
+                </div>
+              </details>
+            )}
+            {!editing && (
+              <Button shadow_box fit onClick={startCreate} disabled={opening}>
+                {opening
+                  ? 'Opening…'
+                  : canModerate
+                  ? '+ New event'
+                  : 'Propose an event'}
+              </Button>
+            )}
           </div>
-        )}
+        </header>
 
         {/* Moderator proposal queue */}
         {canModerate && proposals?.length > 0 && (
