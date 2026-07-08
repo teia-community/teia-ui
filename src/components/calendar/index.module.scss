@@ -172,6 +172,33 @@
   margin-bottom: var(--spacing, 1rem);
 }
 
+.card_teia {
+  border-left: 3px solid var(--text-color);
+}
+
+.card_ttc {
+  border-left: 3px solid var(--gray-40);
+}
+
+.source_tag {
+  display: inline-block;
+  font-size: var(--font-size-small);
+  line-height: 1.4;
+  padding: 0 6px;
+  margin-bottom: 4px;
+  letter-spacing: 0.03em;
+}
+
+.source_tag_teia {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+
+.source_tag_ttc {
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
 .card_header {
   display: flex;
   justify-content: space-between;

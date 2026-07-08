@@ -20,7 +20,6 @@ function formatDate(value) {
  * the viewer's roles:
  *  - on-chain events: moderators get Edit + Hide/Unhide; TEIA holders (non
  *    moderators) get "Propose edit".
- *  - read-only (WordPress) events: Dismiss (session only).
  * "Add to calendar" (one-off .ics download) is always available.
  *
  * @param {{
@@ -29,7 +28,6 @@ function formatDate(value) {
  *   onEdit?: (event: any) => void,
  *   onHide?: (event: any) => void,
  *   onProposeEdit?: (event: any) => void,
- *   onDismiss?: (event: any) => void,
  * }} props
  */
 export default function CalendarEventCard({
@@ -38,7 +36,6 @@ export default function CalendarEventCard({
   onEdit,
   onHide,
   onProposeEdit,
-  onDismiss,
 }) {
   const { title, description, startDate, endDate, location, links, images } =
     event
@@ -51,10 +48,40 @@ export default function CalendarEventCard({
   const canModerate = Boolean(roles?.canModerate)
   const canPropose = Boolean(roles?.canPropose)
 
+  // Check on feed source
+  const sourceKind = isChain ? 'teia' : event.source === 'wp' ? 'ttc' : null
+
+  // Whole-calendar subscribe link (webcal:), the same feed as the header
+  // "Subscribe" dropdown — derived here so every card can offer it. To be adjusted.
+  const feedIcs =
+    import.meta.env.VITE_CALENDAR_ICS_URL ||
+    (typeof window !== 'undefined'
+      ? `${window.location.origin}/calendar.ics`
+      : '')
+  const feedWebcal = feedIcs.replace(/^https?:\/\//, 'webcal://')
+
   return (
-    <article className={styles.card}>
+    <article
+      className={`${styles.card} ${
+        sourceKind === 'teia'
+          ? styles.card_teia
+          : sourceKind === 'ttc'
+          ? styles.card_ttc
+          : ''
+      }`}
+    >
       <header className={styles.card_header}>
         <div>
+          {sourceKind === 'teia' && (
+            <span className={`${styles.source_tag} ${styles.source_tag_teia}`}>
+              Teia
+            </span>
+          )}
+          {sourceKind === 'ttc' && (
+            <span className={`${styles.source_tag} ${styles.source_tag_ttc}`}>
+              thetezos.com
+            </span>
+          )}
           <h2 className={styles.card_title}>
             {title || 'Untitled event'}
             {isChain && event.hidden ? ' (hidden)' : ''}
@@ -75,6 +102,11 @@ export default function CalendarEventCard({
           <Button shadow_box fit onClick={() => downloadEventICS(event)}>
             Add to calendar
           </Button>
+          {isChain && feedWebcal && (
+            <Button shadow_box fit href={feedWebcal}>
+              Subscribe to Teia Calendar
+            </Button>
+          )}
           {isChain && canModerate && (
             <>
               <Button shadow_box fit onClick={() => onEdit?.(event)}>
@@ -88,11 +120,6 @@ export default function CalendarEventCard({
           {isChain && !canModerate && canPropose && (
             <Button shadow_box fit onClick={() => onProposeEdit?.(event)}>
               Propose edit
-            </Button>
-          )}
-          {!isChain && event.readOnly && (
-            <Button shadow_box fit onClick={() => onDismiss?.(event)}>
-              Dismiss
             </Button>
           )}
         </div>
