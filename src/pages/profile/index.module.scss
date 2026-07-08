@@ -16,6 +16,15 @@
   width: 128px;
   height: 128px;
 }
+.bakerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.bakerAvatar {
+  width: 1.5em;
+  height: 1.5em;
+}
 .square {
   width: 12px;
   height: 12px;
@@ -37,6 +46,7 @@
   grid-template-rows: 1fr;
   gap: 0px 10px;
   grid-template-areas: 'Photo Details';
+  margin-bottom: 30px;
 
   .info {
     grid-area: Details;

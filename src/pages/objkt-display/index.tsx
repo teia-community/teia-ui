@@ -16,6 +16,7 @@ import './style.css'
 import useSettings from '@hooks/use-settings'
 import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { NFT } from '@types'
 
 type ObjktDisplayContext = {
@@ -41,6 +42,10 @@ const TABS = [
     to: 'history',
   },
   {
+    title: 'Comments',
+    to: 'comments',
+  },
+  {
     title: 'Swap',
     to: 'swap',
     private: true,
@@ -56,10 +61,14 @@ const TABS = [
     to: 'transfer',
     private: true,
   },
-  { 
+  {
     title: 'Copyright',
     to: 'copyright',
-  }
+  },
+  {
+    title: 'Baker',
+    to: 'baker',
+  },
 ]
 
 export const ObjktDisplay = () => {
@@ -67,6 +76,7 @@ export const ObjktDisplay = () => {
 
   const address = useUserStore((st) => st.address)
   const proxy = useUserStore((st) => st.proxyAddress)
+  const showBakerOnToken = useLocalSettings((st) => st.showBakerOnToken)
 
   const { walletBlockMap, nsfwMap, photosensitiveMap, underReviewMap } =
     useSettings()
@@ -197,6 +207,11 @@ export const ObjktDisplay = () => {
           tabs={TABS}
           className={styles.profile_tabs}
           filter={(tab: TabOptions) => {
+            // the baker tab is opt-in via local settings (default off)
+            if (tab.to === 'baker' && !showBakerOnToken) {
+              return null
+            }
+
             // if nft.owners exist and this is a private route, try to hide the tab.
             // if nft.owners fails, always show route!
             if (nft?.restricted && tab.restricted) {

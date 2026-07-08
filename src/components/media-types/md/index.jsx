@@ -5,6 +5,21 @@ import styles from '@style'
 
 import axios from 'axios'
 
+// Strip markdown syntax for plain-text feed previews to avoid MarkdownToJSX
+// recursion issues when many items are rendered simultaneously.
+const stripMarkdown = (text) => {
+  return text
+    .replace(/!\[.*?\]\(.*?\)/g, '') // images
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links → label
+    .replace(/#{1,6}\s+/gm, '') // headings
+    .replace(/[*_]{1,3}([^*_]+)[*_]{1,3}/g, '$1') // bold/italic
+    .replace(/`{1,3}[^`]*`{1,3}/g, '') // inline code / fenced
+    .replace(/^>\s+/gm, '') // blockquotes
+    .replace(/^[-*+]\s+/gm, '') // list items
+    .replace(/\n{2,}/g, ' ') // collapse blank lines
+    .trim()
+}
+
 /**
  * @param {import("@types").MediaTypeProps} renderOptions - Th options for the media renderer
  */
@@ -43,7 +58,7 @@ export const MD = ({ displayView, artifactUri, previewUri, preview }) => {
   ) : (
     <div className={styles.feed}>
       <Container>
-        <Markdown>{content}</Markdown>
+        <p className={styles.preview}>{stripMarkdown(content).slice(0, 600)}</p>
       </Container>
     </div>
   )

@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Login to docker registry
@@ -37,7 +37,7 @@ jobs:
           file: ./docker/Dockerfile
       - name: Restart containers
         run: |
-          curl -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
+          curl -X POST -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" "${{ secrets.WEBHOOK_URL }}"
       - name: Check deployed prod version
         if: github.ref == 'refs/heads/main'
         run: |

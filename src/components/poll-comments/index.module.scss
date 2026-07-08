@@ -1,0 +1,332 @@
+@use '@styles/mixins' as *;
+@import '@styles/variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: $font-large;
+  }
+
+  .count {
+    font-size: $font-body;
+    opacity: 0.6;
+  }
+}
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  opacity: 0.6;
+  font-size: $font-body;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+}
+
+.comment {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.avatarLink {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: $font-small;
+  margin-bottom: 4px;
+}
+
+.sender {
+  font-weight: 600;
+  font-size: $font-body;
+  color: var(--text-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.time {
+  opacity: 0.5;
+}
+
+.content {
+  font-size: $font-body;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.replyTo {
+  @include resetButton;
+  display: block;
+  font-size: $font-small;
+  font-style: italic;
+  opacity: 0.6;
+  text-align: left;
+  color: var(--text-color);
+  margin-bottom: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// --- Actions menu (kebab toggle + popover) ---
+
+.menuWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.menuToggle {
+  @include resetButton;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: var(--text-color);
+  font-size: $font-large;
+  line-height: 1;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    opacity: 1;
+    background: var(--border-color);
+  }
+}
+
+.menuPopover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  min-width: 120px;
+}
+
+.menuItem {
+  @include resetButton;
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  font-family: var(--text-font);
+  font-size: $font-small;
+  color: var(--text-color);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--border-color);
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.replies {
+  margin-left: 42px;
+  border-left: 1px solid var(--border-color);
+  padding-left: 10px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.formRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.textarea {
+  flex: 1;
+  resize: vertical;
+  min-height: 60px;
+  max-height: 240px;
+  padding: 8px 12px;
+  font-family: var(--text-font);
+  font-size: $font-body;
+  line-height: 1.4;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 16px;
+  }
+}
+
+.replyBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: $font-small;
+  background: var(--border-color);
+  border-radius: 4px;
+
+  span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  button {
+    @include resetButton;
+    color: var(--text-color);
+    opacity: 0.6;
+    font-size: 16px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.notice {
+  padding: 12px;
+  text-align: center;
+  font-size: $font-body;
+  opacity: 0.7;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+}
+
+.tip {
+  font-size: $font-small;
+  opacity: 0.6;
+}
+
+.edited {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.history {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--border-color);
+  background: rgba(127, 127, 127, 0.06);
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyHeader {
+  font-size: $font-small;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.historyEmpty {
+  font-size: $font-small;
+  opacity: 0.6;
+}
+
+.historyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.historyMeta {
+  font-size: $font-small;
+  opacity: 0.5;
+}
+
+.historyContent {
+  font-size: $font-body;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.editArea {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+}

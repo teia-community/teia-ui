@@ -1,0 +1,41 @@
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing, 1rem);
+  padding: 1rem 0;
+  width: 100%;
+}
+
+.topRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.intro {
+  margin: 0;
+  opacity: 0.8;
+  flex: 1 1 260px;
+  max-width: 46ch;
+  line-height: 1.5;
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+.overviewCol {
+  flex: 2 1 340px;
+  min-width: 0;
+}
+
+.note {
+  margin: 0;
+  opacity: 0.5;
+  font-size: var(--font-size-small, 0.8rem);
+}
+
+.state {
+  margin: 0;
+}

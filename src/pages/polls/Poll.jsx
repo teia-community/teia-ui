@@ -15,6 +15,7 @@ import {
   usePollsUsersAliases,
   useObjkt,
 } from '@data/swr'
+import { useAllPollCommentCounts } from '@data/messaging/poll-comments'
 import { getWordDate } from '@utils/time'
 import styles from '@style'
 
@@ -33,6 +34,9 @@ export default function Poll({ pollId }) {
 
   // Get all the relevant users aliases
   const [usersAliases] = usePollsUsersAliases(userAddress, polls)
+
+  // Get Comment Count
+  const { data: commentCounts } = useAllPollCommentCounts()
 
   // Return if we are missing important information
   if (!polls) {
@@ -65,7 +69,11 @@ export default function Poll({ pollId }) {
         {bytesToString(poll.question)}
       </h3>
 
-      <PollDescription poll={poll} aliases={usersAliases} />
+      <PollDescription
+        poll={poll}
+        aliases={usersAliases}
+        commentCount={commentCounts?.[pollId] ?? 0}
+      />
 
       <PollVotesSummary
         poll={poll}
@@ -80,7 +88,7 @@ export default function Poll({ pollId }) {
   )
 }
 
-function PollDescription({ poll, aliases }) {
+function PollDescription({ poll, aliases, commentCount }) {
   // Try to extract an ipfs cid from the poll description
   const description =
     poll.description !== '' ? bytesToString(poll.description) : ''
@@ -114,6 +122,8 @@ function PollDescription({ poll, aliases }) {
         Vote weight method:{' '}
         {Object.keys(poll.vote_weight_method)[0].toUpperCase()}
       </p>
+
+      <p>Comments: {commentCount}</p>
     </>
   )
 }

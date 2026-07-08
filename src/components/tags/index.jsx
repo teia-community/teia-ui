@@ -11,7 +11,7 @@ export const Tags = ({ tags }) => {
           return (
             <Button
               key={`tag${tag}${index}`}
-              to={`${PATH.TAGS}/${encodeURI(tag)}`}
+              to={`${PATH.TAGS}/${encodeURIComponent(tag)}`}
             >
               <div className={styles.tag}>{tag}</div>
             </Button>

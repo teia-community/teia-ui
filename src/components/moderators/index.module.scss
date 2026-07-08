@@ -1,0 +1,214 @@
+@import '@styles/mixins.scss';
+@import '@styles/variables.scss';
+
+.section {
+  margin: 2.5em 0 0;
+  padding-bottom: 4em;
+
+  > p {
+    margin: 1em 0;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+.section_title {
+  margin-bottom: 0.75em;
+}
+
+.subtitle {
+  margin: 1.5em 0 1em;
+  font-weight: bold;
+}
+
+// Section dividers — breathing room above and below the rules.
+.divider {
+  margin: 2em 0;
+}
+
+.notice {
+  color: var(--gray-60);
+}
+
+.error {
+  color: var(--error-color, red);
+  margin-top: 0.5em;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  // Mobile: address and action stacked one over the other.
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+  margin: 0.6em 0;
+
+  // Desktop: action sits to the right of the address.
+  @include respond-to('desktop') {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+  }
+}
+
+// Fixed-width wrapper so every row's action button is the same length
+// (the button itself stretches to 100% of this box).
+.row_action {
+  display: flex;
+  flex-shrink: 0;
+  width: 100%;
+
+  @include respond-to('desktop') {
+    width: 14em;
+  }
+}
+
+// Address rendered as avatar + alias.
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  vertical-align: middle;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// Proposal lines that embed an account chip — keep avatar + text aligned.
+.proposal_head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35em;
+}
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+
+  @include respond-to('desktop') {
+    flex-direction: row;
+    gap: 3em;
+    align-items: flex-start;
+  }
+}
+
+.column {
+  flex: 1 1 0;
+  min-width: 0;
+
+  .subtitle:first-child {
+    margin-top: 0;
+  }
+}
+
+.add_form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75em;
+  flex-wrap: wrap;
+
+  > :first-child {
+    flex: 1 1 16em;
+  }
+}
+
+// Each proposal is a bordered card with a title, a labelled meta block
+// and the action buttons.
+.proposal {
+  border: 1px solid var(--gray-20);
+  border-radius: 4px;
+  padding: 1em 1.25em;
+  margin: 1em 0;
+}
+
+.proposal_title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  font-weight: bold;
+  margin-bottom: 0.85em;
+}
+
+.proposal_id {
+  padding: 0 0.5em;
+  background-color: var(--gray-20);
+  border-radius: 3px;
+}
+
+.proposal_action {
+  font-weight: bold;
+}
+
+// Labelled key/value list.
+.proposal_meta {
+  display: grid;
+  gap: 0.4em;
+  margin: 0;
+}
+
+.meta_row {
+  display: grid;
+  grid-template-columns: 7em 1fr;
+  align-items: baseline;
+  gap: 0.75em;
+
+  dt {
+    color: var(--gray-60);
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35em;
+  }
+}
+
+.meta_hint {
+  color: var(--gray-60);
+}
+
+.badge_ready {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.badge_pending {
+  color: var(--gray-60);
+}
+
+.proposal_buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  margin-top: 1em;
+  flex-wrap: wrap;
+}
+
+// Compact, equal-width action buttons (full width when wrapped on mobile).
+.action_btn {
+  display: flex;
+  flex: 1 1 8em;
+
+  @include respond-to('desktop') {
+    flex: 0 0 9em;
+  }
+}

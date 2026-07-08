@@ -46,7 +46,7 @@ const ItemInfoCompact = ({ nft }) => {
         alt={`Go to artist page of ${nft.artist_profile?.name}`}
         to={
           nft.artist_profile?.name
-            ? encodeURI(`/${nft.artist_profile.name}`)
+            ? `/${encodeURIComponent(nft.artist_profile.name)}`
             : `/tz/${nft.artist_address}`
         }
       >

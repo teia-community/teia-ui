@@ -1,6 +1,7 @@
 import { Button } from '@atoms/button'
 import { capitalizeFirstLetter } from '@utils/string'
 import styles from '@style'
+import menuStyles from './index.module.scss'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 
@@ -9,6 +10,7 @@ interface MenuItemProps {
   route: string
   need_sync?: boolean
   className?: string
+  badge?: boolean
 }
 
 export const MenuItem = ({
@@ -16,6 +18,7 @@ export const MenuItem = ({
   route,
   need_sync,
   className,
+  badge,
 }: MenuItemProps) => {
   label = label ? label : capitalizeFirstLetter(route)
 
@@ -31,7 +34,10 @@ export const MenuItem = ({
       state={need_sync && address ? `/${route}` : null}
       onTo={() => setCollapsed(true)}
     >
-      {label}
+      <span>
+        {label}
+        {badge && <span className={menuStyles.menuBadge} />}
+      </span>
     </Button>
   )
 }

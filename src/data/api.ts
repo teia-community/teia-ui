@@ -206,6 +206,51 @@ export async function getUser(addressOrName: string, type = 'user_address') {
   return data?.teia_users?.length ? data.teia_users[0] : null
 }
 
+export async function searchUsersByName(query: string) {
+  const trimmed = query.trim()
+  if (!trimmed || trimmed.length < 2) return []
+
+  const { data } = await fetchGraphQL(
+    `query SearchUsers($query: String!) {
+      teia_users(
+        where: { name: { _ilike: $query } },
+        limit: 8
+      ) {
+        user_address
+        name
+        metadata {
+          data
+        }
+      }
+    }`,
+    'SearchUsers',
+    { query: `%${trimmed}%` }
+  )
+
+  return data?.teia_users || []
+}
+
+export async function getTokenInformationOnCollect(swap_id: number) {
+  const { data } = await fetchGraphQL(
+    `query getTokenInformationOnCollect($swap_id: bigint!) {
+      listings(limit: 1, where: {swap_id: {_eq: $swap_id}}) {
+        token_id
+        token {
+          name
+          artist_profile {
+            name
+          }
+          artist_address
+        }
+      }
+    }`,
+    'getTokenInformationOnCollect',
+    {"swap_id": swap_id}
+  )
+
+  return data?.listings?.length ? data.listings[0] : null
+}
+
 export async function fetchCollabCreations(
   addressOrSubjkt: string,
   type = 'address'
@@ -267,6 +312,7 @@ interface TzktMetadata {
 
 interface TzktData {
   data?: TzktMetadata
+  extras?: Record<string, unknown>
 }
 
 /**

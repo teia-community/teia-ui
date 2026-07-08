@@ -20,6 +20,77 @@
   }
 }
 
+.fee_list {
+  list-style: none;
+  margin: 1em 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fee_row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.75em 1em;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.fee_label {
+  color: var(--text-color);
+}
+
+.fee_value {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.fee_free {
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+.contracts_box {
+  margin: 1em 0;
+  padding: 1em 1.25em;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.contracts_box_title {
+  margin: 0 0 0.75em;
+}
+
+.contracts_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.contract_row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.4em 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.contract_name {
+  color: var(--text-color);
+}
+
 .proposal_form {
   margin-top: 2em;
 }

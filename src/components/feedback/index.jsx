@@ -7,15 +7,37 @@ import { Markdown } from '@components/markdown'
 import { useModalStore } from '@context/modalStore'
 
 export const FeedbackComponent = () => {
-  const [visible, message, progress, confirm, confirmCallback] = useModalStore(
-    (st) => [
-      st.visible,
-      st.message,
-      st.progress,
-      st.confirm,
-      st.confirmCallback,
-    ]
-  )
+  const [
+    visible,
+    message,
+    progress,
+    confirm,
+    confirmCallback,
+    footerSlot,
+    asking,
+    askResolve,
+  ] = useModalStore((st) => [
+    st.visible,
+    st.message,
+    st.progress,
+    st.confirm,
+    st.confirmCallback,
+    st.footerSlot,
+    st.asking,
+    st.askResolve,
+  ])
+
+  const close = useModalStore((st) => st.close)
+
+  const handleConfirm = () => {
+    if (askResolve) askResolve(true)
+    close()
+  }
+
+  const handleCancel = () => {
+    if (askResolve) askResolve(false)
+    close()
+  }
 
   return (
     <AnimatePresence>
@@ -23,9 +45,20 @@ export const FeedbackComponent = () => {
         <motion.div className={styles.container} {...fadeIn()}>
           <div className={styles.content}>
             <Markdown className={styles.message}>{message}</Markdown>
+            {footerSlot}
             <div className={styles.loader}>{progress && <Loading />}</div>
-            {confirm && (
-              <div className={styles.buttons}>
+            {asking && (
+              <div className={styles.buttons} style={{ marginTop: '1rem' }}>
+                <Button shadow_box onClick={handleConfirm}>
+                  Confirm
+                </Button>
+                <Button shadow_box onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </div>
+            )}
+            {confirm && !asking && (
+              <div className={styles.buttons} style={{ marginTop: '1rem' }}>
                 <Button shadow_box onClick={() => confirmCallback()}>
                   close
                 </Button>

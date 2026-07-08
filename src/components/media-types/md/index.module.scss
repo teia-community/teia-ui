@@ -33,3 +33,11 @@
     pointer-events: none;
   }
 }
+
+.preview {
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
