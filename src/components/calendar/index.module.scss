@@ -177,6 +177,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--spacing, 1rem);
+  flex-wrap: wrap;
 }
 
 .card_title {
@@ -200,6 +201,25 @@
   display: flex;
   gap: var(--spacing-half, 0.5rem);
   flex-shrink: 0;
+
+  > * {
+    white-space: nowrap;
+    font-size: var(--font-size-small);
+  }
+  > * > * {
+    width: auto;
+  }
+
+  // Stacked full-width on mobile to save horizontal space.
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+
+    > * > * {
+      width: 100%;
+    }
+  }
 }
 
 .card_description {

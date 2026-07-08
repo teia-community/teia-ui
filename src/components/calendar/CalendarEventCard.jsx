@@ -72,7 +72,7 @@ export default function CalendarEventCard({
         </div>
 
         <div className={styles.card_actions}>
-          <Button small secondary onClick={() => downloadEventICS(event)}>
+          <Button shadow_box fit onClick={() => downloadEventICS(event)}>
             Add to calendar
           </Button>
           {isChain && canModerate && (
@@ -80,7 +80,7 @@ export default function CalendarEventCard({
               <Button shadow_box fit onClick={() => onEdit?.(event)}>
                 Edit
               </Button>
-              <Button small secondary onClick={() => onHide?.(event)}>
+              <Button shadow_box fit onClick={() => onHide?.(event)}>
                 {event.hidden ? 'Unhide' : 'Hide'}
               </Button>
             </>
@@ -91,7 +91,7 @@ export default function CalendarEventCard({
             </Button>
           )}
           {!isChain && event.readOnly && (
-            <Button small secondary onClick={() => onDismiss?.(event)}>
+            <Button shadow_box fit onClick={() => onDismiss?.(event)}>
               Dismiss
             </Button>
           )}
