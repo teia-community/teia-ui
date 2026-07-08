@@ -23,15 +23,52 @@
   z-index: 400;
   height: 100vh;
 
+  // Intent-based sections in a wrapping grid: multi-column on wide screens
   .content {
-    line-height: 2.5em;
-    display: flex;
+    line-height: 1.9em;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, max-content));
     justify-content: center;
-    flex-direction: row;
-    align-items: flex-start;
+    align-items: start;
+    column-gap: 3.5rem;
+    row-gap: 2rem;
     pointer-events: all;
+
     width: 100%;
-    padding: 1em 0 1em 0;
+    max-width: var(--max-width-internal, 1200px);
+    padding: 1rem 1.5rem;
+    max-height: calc(100vh - 140px); // header + pinned footer stay clear
+    overflow-y: auto;
+  }
+}
+
+.menu_section {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu_section_title {
+  font-size: 12px;
+  font-weight: normal;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+  line-height: 1.5;
+  margin: 0 0 0.5em;
+}
+
+.menu_section_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  a {
+    align-self: flex-start;
+  }
+  button {
+    text-align: left;
   }
 }
 
@@ -44,48 +81,19 @@
   }
 
   @include respond-to('desktop') {
-    font-size: 30px;
+    font-size: 24px;
   }
+}
+
+.menu_primary {
+  font-weight: bold;
 }
 
 .address {
-  position: absolute;
-
   color: var(--secondary-color);
-  transform: translateY(-100%);
-}
-
-.menu_left,
-.menu_right {
-  //padding-top: 10cqh;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.menu_right {
-  padding-left: 15px;
-
-  @include respond-to('desktop') {
-    padding-left: 30px;
-  }
-  a {
-    align-self: flex-start;
-  }
-  button {
-    text-align: left;
-  }
-}
-.menu_left {
-  padding-right: 15px;
-
-  @include respond-to('desktop') {
-    padding-right: 30px;
-  }
-  a {
-    text-align: right;
-    align-self: flex-end;
-  }
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 0.3em;
 }
 
 .disabled {
@@ -112,7 +120,14 @@
   top: -0.5em;
 }
 
-.line {
-  height: 200%;
-  align-self: center;
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
