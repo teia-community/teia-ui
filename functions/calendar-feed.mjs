@@ -1,5 +1,9 @@
 import { buildICS } from '../src/utils/ics.mjs'
 
+// Serve at /calendar.ics directly. A function route beats the SPA catch-all
+// (public/_redirects `/*`), which would shadow a netlify.toml redirect.
+export const config = { path: '/calendar.ics' }
+
 const CONCURRENCY = 8
 
 // Mainnet teiaCalendar contract (public, on-chain), mirrored from
