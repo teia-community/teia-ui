@@ -17,10 +17,36 @@
  * @property {string} [location]
  * @property {string} [url]
  * @property {string} [dtstamp]
+ * @property {{ freq: string, interval?: number, until?: string, count?: number }} [recurrence]
  */
 
 const ALL_DAY_RE = /^\d{4}-\d{2}-\d{2}$/
 const ZONED_RE = /T.*(Z|[+-]\d{2}:\d{2})$/
+const DATE_PREFIX_RE = /^\d{4}-\d{2}-\d{2}/
+const VALID_FREQS = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']
+
+/**
+ * Strip CR/LF (and other C0 controls) so an untrusted value can never inject
+ * extra content lines. escapeText covers the text fields; this is the backstop
+ * for values that must stay unescaped (UID, URL, RRULE parts).
+ * @param {string} value
+ * @returns {string}
+ */
+function stripBreaks(value) {
+  // eslint-disable-next-line no-control-regex
+  return String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, '')
+}
+
+/**
+ * Event URLs come from community-controlled IPFS JSON: only allow http(s)/
+ * mailto, with line breaks stripped. Returns '' (drop the line) otherwise.
+ * @param {string} url
+ * @returns {string}
+ */
+function sanitizeUrl(url) {
+  const clean = stripBreaks(url).trim()
+  return /^(https?:|mailto:)/i.test(clean) ? clean : ''
+}
 
 /**
  * Escape SUMMARY/DESCRIPTION/LOCATION text per RFC 5545 (section 3.3.11).
@@ -148,6 +174,40 @@ function formatDtStamp(iso) {
   )
 }
 
+/**
+ * Format an RRULE UNTIL value. Per RFC 5545 3.3.10 it must share the DTSTART
+ * value type: a DATE for all-day, a floating DATE-TIME for naive starts, and a
+ * UTC DATE-TIME for zoned starts. `until` is a YYYY-MM-DD date; we anchor it to
+ * end-of-day so the last instance on that date is included.
+ * @param {string} until
+ * @param {string} start
+ * @returns {string}
+ */
+function formatUntil(until, start) {
+  const day = String(until).slice(0, 10).replace(/-/g, '')
+  if (ALL_DAY_RE.test(start)) return day
+  if (ZONED_RE.test(start)) return `${day}T235959Z`
+  return `${day}T235959`
+}
+
+/**
+ * Build an RRULE value (without the property name) from a simple recurrence.
+ * @param {{ freq: string, interval?: number, until?: string, count?: number }} recurrence
+ * @param {string} start
+ * @returns {string}
+ */
+function buildRRule(recurrence, start) {
+  const parts = [`FREQ=${recurrence.freq}`]
+  const interval = Math.max(1, Number(recurrence.interval) || 1)
+  if (interval > 1) parts.push(`INTERVAL=${interval}`)
+  if (recurrence.count) {
+    parts.push(`COUNT=${Math.max(1, Number(recurrence.count))}`)
+  } else if (recurrence.until) {
+    parts.push(`UNTIL=${formatUntil(recurrence.until, start)}`)
+  }
+  return parts.join(';')
+}
+
 function buildEvent(event, feedDtstamp) {
   const {
     uid,
@@ -159,10 +219,19 @@ function buildEvent(event, feedDtstamp) {
     location,
     url,
     dtstamp,
+    recurrence,
   } = event
 
+  // A start that isn't date-shaped (missing/garbage IPFS data) would crash the
+  // formatters below — skip the event rather than break the whole calendar.
+  if (!DATE_PREFIX_RE.test(String(start ?? ''))) return []
+
   const isAllDay = ALL_DAY_RE.test(start)
-  const lines = ['BEGIN:VEVENT', `UID:${uid}`, `SEQUENCE:${sequence}`]
+  const lines = [
+    'BEGIN:VEVENT',
+    `UID:${stripBreaks(uid)}`,
+    `SEQUENCE:${Number(sequence) || 0}`,
+  ]
 
   lines.push(`DTSTAMP:${formatDtStamp(dtstamp || feedDtstamp)}`)
 
@@ -177,6 +246,16 @@ function buildEvent(event, feedDtstamp) {
     }
   }
 
+  // Recurrence comes from untrusted JSON: only emit an RRULE when freq is one
+  // of the four supported values and any until is date-shaped (no injection).
+  if (
+    recurrence &&
+    VALID_FREQS.includes(recurrence.freq) &&
+    (!recurrence.until || DATE_PREFIX_RE.test(String(recurrence.until)))
+  ) {
+    lines.push(`RRULE:${buildRRule(recurrence, start)}`)
+  }
+
   lines.push(`SUMMARY:${escapeText(title)}`)
 
   if (description) {
@@ -185,8 +264,9 @@ function buildEvent(event, feedDtstamp) {
   if (location) {
     lines.push(`LOCATION:${escapeText(location)}`)
   }
-  if (url) {
-    lines.push(`URL:${url}`)
+  const safeUrl = sanitizeUrl(url)
+  if (safeUrl) {
+    lines.push(`URL:${safeUrl}`)
   }
 
   lines.push('END:VEVENT')
@@ -205,7 +285,7 @@ export function buildICS({ events, dtstamp, calName, prodId }) {
     `PRODID:${prodId || '-//Teia//Community Calendar//EN'}`,
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    `X-WR-CALNAME:${calName || 'Teia Community Calendar'}`,
+    `X-WR-CALNAME:${escapeText(calName || 'Teia Community Calendar')}`,
     'X-PUBLISHED-TTL:PT1H',
     'REFRESH-INTERVAL;VALUE=DURATION:PT1H',
   ]

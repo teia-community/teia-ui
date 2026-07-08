@@ -9,19 +9,25 @@ const slug = (s) =>
 
 /** Download a single CalendarEvent as a one-shot .ics file. */
 export function downloadEventICS(event) {
+  // Recurring: emit the RRULE anchored at the series' first start, not at the
+  // clicked occurrence — re-anchoring would shift a COUNT-bound series. The
+  // UID also drops the occurrence suffix (`chain-<n>::<iso>`) so downloading
+  // the series from two occurrences dedupes to one series on import.
+  const isSeries = Boolean(event.recurrence?.freq && event.seriesStart)
   const ics = buildICS({
     calName: event.title || 'Event',
     dtstamp: new Date().toISOString(),
     events: [
       {
-        uid: `${event.id}@teia.art`,
+        uid: `${String(event.id).split('::')[0]}@teia.art`,
         sequence: 0,
         title: event.title,
-        start: event.startDate,
-        end: event.endDate || undefined,
+        start: isSeries ? event.seriesStart : event.startDate,
+        end: (isSeries ? event.seriesEnd : event.endDate) || undefined,
         description: event.description,
         location: event.location,
         url: event.links?.[0]?.url,
+        recurrence: event.recurrence,
       },
     ],
   })

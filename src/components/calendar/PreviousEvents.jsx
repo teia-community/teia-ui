@@ -56,12 +56,21 @@ function groupByYearMonth(events) {
  *
  * @param {{
  *   events: import('@data/calendar/schema').CalendarEvent[],
- *   canEdit?: boolean,
+ *   roles?: { canModerate?: boolean, canPropose?: boolean },
  *   onEdit?: (event: any) => void,
- *   onDelete?: (event: any) => void,
+ *   onHide?: (event: any) => void,
+ *   onProposeEdit?: (event: any) => void,
+ *   onDismiss?: (event: any) => void,
  * }} props
  */
-export default function PreviousEvents({ events, canEdit, onEdit, onDelete }) {
+export default function PreviousEvents({
+  events,
+  roles,
+  onEdit,
+  onHide,
+  onProposeEdit,
+  onDismiss,
+}) {
   const grouped = useMemo(() => groupByYearMonth(events), [events])
 
   if (events.length === 0) return null
@@ -86,9 +95,11 @@ export default function PreviousEvents({ events, canEdit, onEdit, onDelete }) {
                       <CalendarEventCard
                         key={event.id}
                         event={event}
-                        canEdit={canEdit}
+                        roles={roles}
                         onEdit={onEdit}
-                        onDelete={onDelete}
+                        onHide={onHide}
+                        onProposeEdit={onProposeEdit}
+                        onDismiss={onDismiss}
                       />
                     ))}
                   </div>

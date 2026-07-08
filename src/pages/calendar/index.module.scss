@@ -19,18 +19,6 @@
   margin: 0;
 }
 
-.password_field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: var(--font-size-small);
-  color: var(--text-secondary);
-
-  input {
-    width: 180px;
-  }
-}
-
 .list {
   display: flex;
   flex-direction: column;
@@ -54,11 +42,6 @@
   .header {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .password_field,
-  .password_field input {
-    width: 100%;
   }
 }
 
@@ -100,29 +83,33 @@
   }
 }
 
-.password_dialog {
-  background: var(--background-color);
-  color: var(--text-color);
+// Moderator proposal queue.
+.queue {
+  margin-bottom: var(--spacing, 1rem);
   border: 1px solid var(--border-color);
-  padding: 0;
-  width: min(420px, 92vw);
-
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
-}
-
-.password_form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing, 1rem);
   padding: var(--spacing, 1rem);
 }
 
-.password_top,
-.password_actions {
+.queue_title {
+  font-size: 18px;
+  margin: 0 0 var(--spacing, 1rem);
+}
+
+.queue_row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing, 1rem);
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.queue_meta {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.queue_actions {
+  display: flex;
+  gap: 8px;
 }

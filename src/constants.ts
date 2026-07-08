@@ -268,15 +268,11 @@ export const MAIN_MARKETPLACE_CONTRACT_SWAP_TYPE = SWAP_TYPE_TEIA
 
 export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 
-// Wallet addresses allowed to create / edit / delete calendar events.
-// This is the client-side "edit gate": only a connected wallet whose address is
-// listed here sees the editing UI. When the calendar moves to a Postgres-backed
-// API, enforce this server-side with a signed-message check (this list becomes a
-// convenience for hiding UI, not the security boundary).
-// Add your admin tz address(es) below to enable editing.
-export const CALENDAR_ADMINS: string[] = [
-  // 'tz1...your-admin-address',
-]
+// The deployed on-chain teiaCalendar contract (mainnet). Source of truth for
+// the client read-path. The .ics feed function (functions/calendar-feed.mjs)
+// keeps its own copy of this literal, since a Netlify function can't import
+// this TS module.
+export const CALENDAR_CONTRACT = 'KT1FER3RWZxJtrwcYouvZzU4bGA8fBUSGppy'
 
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000

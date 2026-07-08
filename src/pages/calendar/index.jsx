@@ -3,18 +3,26 @@ import useClipboard from 'react-use-clipboard'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { calendarDB, hasTempCalendarAPI } from '@data/calendar'
-import { useUserStore } from '@context/userStore'
-import { CALENDAR_ADMINS } from '@constants'
-import { useCalendarEvents, useIsCalendarAdmin } from '@hooks/use-calendar'
+import { useCalendarEvents } from '@hooks/use-calendar'
+import {
+  useCalendarRoles,
+  useCalendarProposals,
+  createEvent,
+  updateEvent,
+  setEventHidden,
+  proposeEvent,
+  proposeEdit,
+  approveProposal,
+  rejectProposal,
+  fetchEventContent,
+  uploadEventImage,
+  showGetTeiaModal,
+} from '@data/calendar-chain'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
 import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
 import PreviousEvents from '@components/calendar/PreviousEvents'
 import styles from '@style'
-
-const MAX_PASSWORD_LENGTH = 20
-const MAX_PASSWORD_FAILURES = 10
 
 /** First day of the current month as a YYYY-MM-DD string (local time). */
 function currentMonthStart() {
@@ -24,21 +32,20 @@ function currentMonthStart() {
 }
 
 /**
- * Calendar — thinnest viable slice.
- *
- * - Anyone can view the list of events.
- * - Only a connected wallet listed in CALENDAR_ADMINS sees the editing UI
- *   (the "edit gate" — see {@link useIsCalendarAdmin}).
- * - Data lives in IndexedDB via `calendarDB`, swappable for Postgres later.
+ * Calendar page — community events live on the teiaCalendar contract:
+ *  - moderators / multisig create/edit/hide directly + approve/reject proposals;
+ *  - TEIA holders propose new events and edits;
+ *  - everyone else views + subscribes, and gets a "get TEIA" prompt.
+ * WordPress events are merged in read-only.
  */
 export default function Calendar() {
-  const { events, isLoading, error, refresh, dismiss } = useCalendarEvents()
-  const isAdmin = useIsCalendarAdmin()
-  const address = useUserStore((st) => st.address)
-  // The .ics feed is served from this same site at /calendar.ics (see
-  // netlify.toml). Derive the URL from the current origin so the Subscribe UI
-  // works on every deploy with no config; VITE_CALENDAR_ICS_URL overrides it if
-  // the feed is ever hosted on a different domain.
+  const { events, isLoading, error, dismiss } = useCalendarEvents()
+  const roles = useCalendarRoles()
+  const { canModerate, canPropose } = roles
+  const { data: proposals, mutate: refreshProposals } =
+    useCalendarProposals(canModerate)
+
+  // Feed URL for the Subscribe block (served at /calendar.ics — see netlify.toml).
   const ICS_URL =
     import.meta.env.VITE_CALENDAR_ICS_URL ||
     (typeof window !== 'undefined'
@@ -47,21 +54,15 @@ export default function Calendar() {
   const webcal = ICS_URL.replace(/^https?:\/\//, 'webcal://')
   const [copied, copy] = useClipboard(ICS_URL)
 
-  // null = form closed; {} = creating; {id,...} = editing an existing event.
+  // Form state. `editing`:
+  //   null                                → closed
+  //   { values, eventId: null, propose }  → create (propose = !canModerate)
+  //   { values, eventId, propose }        → edit / propose-edit an existing event
   const [editing, setEditing] = useState(null)
   const [actionError, setActionError] = useState(null)
-  const [calendarPassword, setCalendarPassword] = useState('')
-  const [passwordDraft, setPasswordDraft] = useState('')
-  const [passwordError, setPasswordError] = useState(null)
-  const [passwordSaving, setPasswordSaving] = useState(false)
-  const [pendingWrite, setPendingWrite] = useState(null)
-  const [passwordFailures, setPasswordFailures] = useState(0)
+  const [opening, setOpening] = useState(false)
 
-  const passwordLocked = passwordFailures >= MAX_PASSWORD_FAILURES
-
-  // Split the date-sorted feed: this month + upcoming go in the main list;
-  // everything before this month moves into the "Show Previous Events"
-  // accordion (grouped by year then month).
+  // Split the date-sorted feed into upcoming vs the "Previous Events" accordion.
   const { upcoming, previous } = useMemo(() => {
     const threshold = currentMonthStart()
     const upcoming = []
@@ -74,10 +75,8 @@ export default function Calendar() {
     return { upcoming, previous }
   }, [events])
 
-  // The create/edit form lives in a popup; sync the <dialog> to `editing`.
+  // Sync the create/edit <dialog> to `editing`.
   const formDialogRef = useRef(null)
-  const passwordDialogRef = useRef(null)
-  const passwordInputRef = useRef(null)
   useEffect(() => {
     const dialog = formDialogRef.current
     if (!dialog) return
@@ -85,116 +84,127 @@ export default function Calendar() {
     else if (!editing && dialog.open) dialog.close()
   }, [editing])
 
-  useEffect(() => {
-    const dialog = passwordDialogRef.current
-    if (!dialog) return
-    if (pendingWrite && !dialog.open) {
-      dialog.showModal()
-      passwordInputRef.current?.focus()
-    } else if (!pendingWrite && dialog.open) dialog.close()
-  }, [pendingWrite])
+  // --- opening the form ----------------------------------------------------
 
-  const continueWrite = (action) => {
-    if (!action) return
-    if (action.type === 'create') setEditing({})
-    else if (action.type === 'edit') setEditing(action.event)
-    else if (action.type === 'delete') deleteEvent(action.event)
+  const startCreate = () => {
+    setActionError(null)
+    if (canModerate || canPropose) {
+      setEditing({ values: {}, eventId: null, propose: !canModerate })
+    } else {
+      showGetTeiaModal()
+    }
   }
 
-  const requirePassword = (action) => {
-    if (!hasTempCalendarAPI || calendarPassword) {
-      continueWrite(action)
-      return
-    }
-    setPasswordDraft('')
-    setPasswordError(null)
-    setPendingWrite(action)
-  }
-
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault()
-    if (passwordSaving || passwordLocked) return
-    if (passwordDraft.length > MAX_PASSWORD_LENGTH) {
-      setPasswordError(
-        `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer.`
-      )
-      return
-    }
-    setPasswordSaving(true)
-    setPasswordError(null)
+  // Editing/proposing an edit needs the event's RAW IPFS doc so images stay as
+  // ipfs:// URIs (the display feed rewrites them to gateway URLs).
+  const startEditChain = async (event, propose) => {
+    setActionError(null)
+    setOpening(true)
     try {
-      await calendarDB.validatePassword(passwordDraft)
-      const action = pendingWrite
-      setCalendarPassword(passwordDraft)
-      setPasswordFailures(0)
-      setPendingWrite(null)
-      continueWrite(action)
-    } catch (err) {
-      setPasswordFailures((count) => {
-        const next = count + 1
-        if (next >= MAX_PASSWORD_FAILURES) {
-          setPasswordError(
-            'Too many failed password attempts. Reload the page to try again.'
-          )
-        } else {
-          setPasswordError(
-            `${
-              err.message || 'Invalid calendar password'
-            } (${next}/${MAX_PASSWORD_FAILURES})`
-          )
-        }
-        return next
+      const doc = await fetchEventContent(event.cid)
+      setEditing({
+        values: {
+          id: event.id,
+          title: doc.title || '',
+          startDate: doc.startDate || '',
+          endDate: doc.endDate || '',
+          location: doc.location || '',
+          description: doc.description || '',
+          links: Array.isArray(doc.links) ? doc.links : [],
+          images: Array.isArray(doc.images) ? doc.images : [],
+          recurrence: doc.recurrence,
+        },
+        eventId: event.eventId,
+        propose,
       })
+    } catch (e) {
+      setActionError(`Could not load event for editing: ${e.message}`)
     } finally {
-      setPasswordSaving(false)
+      setOpening(false)
     }
   }
+
+  // --- write handlers (each on-chain action drives its own progress modal) ---
 
   const handleSubmit = async (values) => {
     setActionError(null)
+    const { eventId, propose } = editing
+    const input = {
+      title: values.title,
+      startDate: values.startDate,
+      endDate: values.endDate || undefined,
+      location: values.location || undefined,
+      description: values.description || undefined,
+      links: values.links || [],
+      images: values.images || [],
+      recurrence: values.recurrence,
+    }
     try {
-      // Audit who last wrote the record (see schema.js `createdBy`).
-      const stamped = { ...values, createdBy: address || '' }
-      if (editing?.id) {
-        await calendarDB.update(editing.id, stamped, {
-          password: calendarPassword,
-        })
+      if (eventId == null) {
+        if (propose) await proposeEvent(input)
+        else await createEvent(input)
+      } else if (propose) {
+        await proposeEdit(eventId, input)
       } else {
-        await calendarDB.create(stamped, { password: calendarPassword })
+        await updateEvent(eventId, input)
       }
       setEditing(null)
-      refresh()
     } catch (e) {
-      setActionError(`Could not save event: ${e.message}`)
+      // The action already surfaced a modal error; keep the form open.
+      setActionError(e.message)
     }
   }
 
-  const deleteEvent = async (event) => {
-    // Read-only WP events aren't deletable — kick them out of state instead.
-    if (event.readOnly) {
-      dismiss(event.id)
-      return
-    }
-    if (!window.confirm('Delete this event?')) return
+  const handleEdit = (event) => startEditChain(event, false)
+  const handleProposeEdit = (event) => startEditChain(event, true)
+
+  const handleHide = async (event) => {
     setActionError(null)
     try {
-      await calendarDB.remove(event.id, { password: calendarPassword })
-      refresh()
+      await setEventHidden({ eventId: event.eventId, hidden: !event.hidden })
     } catch (e) {
-      setActionError(`Could not delete event: ${e.message}`)
+      setActionError(e.message)
     }
   }
 
-  const handleDelete = (event) => requirePassword({ type: 'delete', event })
+  const handleApprove = async (id) => {
+    try {
+      await approveProposal(id)
+      refreshProposals()
+    } catch (e) {
+      setActionError(e.message)
+    }
+  }
+  const handleReject = async (id) => {
+    try {
+      await rejectProposal(id)
+      refreshProposals()
+    } catch (e) {
+      setActionError(e.message)
+    }
+  }
+
+  // Shared handlers passed to every card / grid / accordion.
+  const cardHandlers = {
+    roles,
+    onEdit: handleEdit,
+    onHide: handleHide,
+    onProposeEdit: handleProposeEdit,
+    onDismiss: (event) => dismiss(event.id),
+  }
 
   return (
     <Page title="Teia Calendar">
       <div className={styles.container}>
         <header className={styles.header}>
           <h1 className={styles.headline}>Calendar</h1>
-          {isAdmin && !editing && (
-            <Button small onClick={() => requirePassword({ type: 'create' })}>
-              + New event
+          {!editing && (
+            <Button shadow_box fit onClick={startCreate} disabled={opening}>
+              {opening
+                ? 'Opening…'
+                : canModerate
+                ? '+ New event'
+                : 'Propose an event'}
             </Button>
           )}
         </header>
@@ -214,25 +224,36 @@ export default function Calendar() {
           </div>
         )}
 
-        {/* Surfaced when a connected wallet can't edit because the allowlist
-            is empty — a config hint, not shown to ordinary visitors once
-            admins exist. */}
-        {address && !isAdmin && CALENDAR_ADMINS.length === 0 && (
-          <p className={styles.hint}>
-            Editing is disabled: no admin addresses are configured (see
-            CALENDAR_ADMINS in src/constants.ts).
-          </p>
+        {/* Moderator proposal queue */}
+        {canModerate && proposals?.length > 0 && (
+          <section className={styles.queue}>
+            <h2 className={styles.queue_title}>
+              Pending proposals ({proposals.length})
+            </h2>
+            {proposals.map((p) => (
+              <div key={p.id} className={styles.queue_row}>
+                <div>
+                  <strong>{p.title}</strong>{' '}
+                  <span className={styles.queue_meta}>
+                    {p.isNewEvent ? 'new event' : `edit #${p.eventId}`} · by{' '}
+                    {p.proposer.slice(0, 8)}…
+                  </span>
+                </div>
+                <div className={styles.queue_actions}>
+                  <Button small onClick={() => handleApprove(p.id)}>
+                    Approve
+                  </Button>
+                  <Button small secondary onClick={() => handleReject(p.id)}>
+                    Reject
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </section>
         )}
 
         {/* Month grid: click a day to view its events in a popup. */}
-        {!isLoading && (
-          <MonthGrid
-            events={events}
-            canEdit={isAdmin}
-            onEdit={(event) => requirePassword({ type: 'edit', event })}
-            onDelete={handleDelete}
-          />
-        )}
+        {!isLoading && <MonthGrid events={events} {...cardHandlers} />}
 
         {/* Create/edit popup. Esc fires onClose; Back/Cancel call onCancel. */}
         <dialog
@@ -240,71 +261,17 @@ export default function Calendar() {
           className={styles.form_dialog}
           onClose={() => setEditing(null)}
         >
-          {isAdmin && editing && (
+          {editing && (
             <EventForm
-              key={editing.id || 'new'}
-              initial={editing}
+              key={editing.values.id || 'new'}
+              initial={editing.values}
               onSubmit={handleSubmit}
-              onUploadImage={(file) =>
-                calendarDB.uploadImage(file, { password: calendarPassword })
-              }
+              onUploadImage={async (file) => ({
+                url: await uploadEventImage(file),
+              })}
               onCancel={() => setEditing(null)}
             />
           )}
-        </dialog>
-
-        <dialog
-          ref={passwordDialogRef}
-          className={styles.password_dialog}
-          onClose={() => setPendingWrite(null)}
-        >
-          <form
-            className={styles.password_form}
-            onSubmit={handlePasswordSubmit}
-          >
-            <div className={styles.password_top}>
-              <strong>Calendar password</strong>
-              <Button
-                small
-                secondary
-                type="button"
-                onClick={() => setPendingWrite(null)}
-              >
-                Cancel
-              </Button>
-            </div>
-            <label className={styles.password_field}>
-              <span>Write password</span>
-              <input
-                type="password"
-                required
-                ref={passwordInputRef}
-                maxLength={MAX_PASSWORD_LENGTH}
-                value={passwordDraft}
-                onChange={(e) => setPasswordDraft(e.target.value)}
-                autoComplete="current-password"
-              />
-            </label>
-            {passwordLocked && (
-              <p className={styles.error} role="alert">
-                Too many failed password attempts. Reload the page to try again.
-              </p>
-            )}
-            {passwordError && (
-              <p className={styles.error} role="alert">
-                {passwordError}
-              </p>
-            )}
-            <div className={styles.password_actions}>
-              <Button
-                small
-                type="submit"
-                disabled={passwordSaving || passwordLocked}
-              >
-                {passwordSaving ? 'Checking...' : 'Continue'}
-              </Button>
-            </div>
-          </form>
         </dialog>
 
         {error && (
@@ -330,19 +297,12 @@ export default function Calendar() {
                   <CalendarEventCard
                     key={event.id}
                     event={event}
-                    canEdit={isAdmin}
-                    onEdit={(event) => requirePassword({ type: 'edit', event })}
-                    onDelete={handleDelete}
+                    {...cardHandlers}
                   />
                 ))}
               </div>
             )}
-            <PreviousEvents
-              events={previous}
-              canEdit={isAdmin}
-              onEdit={(event) => requirePassword({ type: 'edit', event })}
-              onDelete={handleDelete}
-            />
+            <PreviousEvents events={previous} {...cardHandlers} />
           </>
         )}
       </div>

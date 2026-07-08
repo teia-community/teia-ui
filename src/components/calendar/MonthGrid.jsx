@@ -55,12 +55,21 @@ function eventsByDay(events) {
  *
  * @param {{
  *   events: import('@data/calendar/schema').CalendarEvent[],
- *   canEdit?: boolean,
+ *   roles?: { canModerate?: boolean, canPropose?: boolean },
  *   onEdit?: (event: any) => void,
- *   onDelete?: (id: string) => void,
+ *   onHide?: (event: any) => void,
+ *   onProposeEdit?: (event: any) => void,
+ *   onDismiss?: (event: any) => void,
  * }} props
  */
-export default function MonthGrid({ events, canEdit, onEdit, onDelete }) {
+export default function MonthGrid({
+  events,
+  roles,
+  onEdit,
+  onHide,
+  onProposeEdit,
+  onDismiss,
+}) {
   const today = new Date()
   const [view, setView] = useState({
     year: today.getFullYear(),
@@ -181,12 +190,17 @@ export default function MonthGrid({ events, canEdit, onEdit, onDelete }) {
             <CalendarEventCard
               key={event.id}
               event={event}
-              canEdit={canEdit}
+              roles={roles}
               onEdit={(ev) => {
                 closeDialog()
                 onEdit?.(ev)
               }}
-              onDelete={onDelete}
+              onHide={onHide}
+              onProposeEdit={(ev) => {
+                closeDialog()
+                onProposeEdit?.(ev)
+              }}
+              onDismiss={onDismiss}
             />
           ))
         )}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@atoms/button'
-import { blankEvent } from '@data/calendar'
+import { blankEvent } from '@data/calendar/schema'
 import styles from '@style'
 
 /**
@@ -83,6 +83,58 @@ export default function EventForm({
   const removeImage = (i) =>
     setValues((v) => ({ ...v, images: v.images.filter((_, idx) => idx !== i) }))
 
+  // --- recurrence ---------------------------------------------------------
+  const rec = values.recurrence
+  const enabled = Boolean(rec)
+  const endMode = rec?.count != null ? 'count' : 'until'
+  const UNIT = {
+    DAILY: 'day',
+    WEEKLY: 'week',
+    MONTHLY: 'month',
+    YEARLY: 'year',
+  }
+  const plural = (n, unit) => `${unit}${Number(n) === 1 ? '' : 's'}`
+
+  const toggleRepeat = (on) =>
+    setValues((v) => ({
+      ...v,
+      // End is required, so a fresh rule starts on the "until a date" mode.
+      recurrence: on ? { freq: 'WEEKLY', interval: 1, until: '' } : undefined,
+    }))
+  const setRec = (patch) =>
+    setValues((v) => ({ ...v, recurrence: { ...v.recurrence, ...patch } }))
+  const setEndMode = (mode) =>
+    setValues((v) => ({
+      ...v,
+      recurrence: {
+        ...v.recurrence,
+        until: mode === 'until' ? v.recurrence?.until || '' : undefined,
+        count: mode === 'count' ? v.recurrence?.count || 1 : undefined,
+      },
+    }))
+
+  /** Plain-language summary shown under the repeat controls. */
+  const repeatSummary = () => {
+    if (!rec) return ''
+    const n = Math.max(1, Number(rec.interval) || 1)
+    const adverb =
+      n === 1
+        ? {
+            DAILY: 'daily',
+            WEEKLY: 'weekly',
+            MONTHLY: 'monthly',
+            YEARLY: 'yearly',
+          }[rec.freq]
+        : `every ${n} ${plural(n, UNIT[rec.freq])}`
+    if (endMode === 'count' && rec.count) {
+      return `Repeats ${adverb} — ${rec.count} events`
+    }
+    if (endMode === 'until' && rec.until) {
+      return `Repeats ${adverb} until ${rec.until}`
+    }
+    return `Repeats ${adverb}`
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     // Button's `disabled` prop is style-only, so guard re-entry here.
@@ -97,6 +149,23 @@ export default function EventForm({
       setFormError('End must be after start.')
       return
     }
+    if (values.recurrence) {
+      const r = values.recurrence
+      if (!r.until && !r.count) {
+        setFormError(
+          'Choose when the repeat ends — a date or a number of times.'
+        )
+        return
+      }
+      if (
+        r.until &&
+        values.startDate &&
+        r.until.slice(0, 10) < values.startDate.slice(0, 10)
+      ) {
+        setFormError('The repeat end date must be on or after the start.')
+        return
+      }
+    }
     setSaving(true)
     try {
       // Drop empty rows before saving.
@@ -104,6 +173,18 @@ export default function EventForm({
         ...values,
         links: values.links.filter((l) => l.url.trim()),
         images: values.images.filter((url) => url.trim()),
+        recurrence: values.recurrence?.freq
+          ? {
+              freq: values.recurrence.freq,
+              interval: Math.max(1, Number(values.recurrence.interval) || 1),
+              ...(values.recurrence.until
+                ? { until: values.recurrence.until }
+                : {}),
+              ...(values.recurrence.count
+                ? { count: Math.max(1, Number(values.recurrence.count)) }
+                : {}),
+            }
+          : undefined,
       }
       await onSubmit(cleaned)
     } finally {
@@ -158,6 +239,103 @@ export default function EventForm({
           />
         </label>
       </div>
+
+      {/* Recurrence — occurrences are generated from the Start date above. */}
+      <fieldset className={styles.group}>
+        <legend>Repeat</legend>
+        <div className={styles.repeat_toggle}>
+          <Button
+            shadow_box
+            fit
+            type="button"
+            onClick={() => toggleRepeat(!enabled)}
+          >
+            {enabled ? '✓ Repeating' : 'Repeat this event'}
+          </Button>
+        </div>
+
+        {enabled && (
+          <>
+            <div className={styles.repeat_line}>
+              <span>Every</span>
+              <input
+                type="number"
+                min="1"
+                value={rec.interval || 1}
+                onChange={(e) => setRec({ interval: Number(e.target.value) })}
+                aria-label="Repeat interval"
+              />
+              <select
+                value={rec.freq}
+                onChange={(e) => setRec({ freq: e.target.value })}
+                aria-label="Repeat unit"
+              >
+                <option value="DAILY">
+                  {plural(rec.interval || 1, 'day')}
+                </option>
+                <option value="WEEKLY">
+                  {plural(rec.interval || 1, 'week')}
+                </option>
+                <option value="MONTHLY">
+                  {plural(rec.interval || 1, 'month')}
+                </option>
+                <option value="YEARLY">
+                  {plural(rec.interval || 1, 'year')}
+                </option>
+              </select>
+            </div>
+
+            <div className={styles.repeat_line}>
+              <span>Ends</span>
+              <label
+                className={`${styles.repeat_radio} ${
+                  endMode === 'until' ? styles.repeat_radio_active : ''
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={endMode === 'until'}
+                  onChange={() => setEndMode('until')}
+                />
+                <span>on</span>
+              </label>
+              <input
+                type="date"
+                value={rec.until || ''}
+                disabled={endMode !== 'until'}
+                min={(values.startDate || '').slice(0, 10)}
+                onChange={(e) => setRec({ until: e.target.value })}
+                aria-label="Repeat until date"
+              />
+              <label
+                className={`${styles.repeat_radio} ${
+                  endMode === 'count' ? styles.repeat_radio_active : ''
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={endMode === 'count'}
+                  onChange={() => setEndMode('count')}
+                />
+                <span>after</span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={rec.count || 1}
+                disabled={endMode !== 'count'}
+                onChange={(e) => setRec({ count: Number(e.target.value) })}
+                aria-label="Repeat count"
+              />
+              <span>times</span>
+            </div>
+
+            {repeatSummary() && (
+              <p className={styles.repeat_summary}>{repeatSummary()}</p>
+            )}
+          </>
+        )}
+      </fieldset>
 
       <label className={styles.field}>
         <span>Location (optional)</span>
@@ -263,15 +441,20 @@ export default function EventForm({
 
       <div className={styles.form_actions}>
         <Button
-          small
-          secondary
+          shadow_box
+          fit
           type="button"
           onClick={onCancel}
           disabled={saving || uploadingImages}
         >
           Cancel
         </Button>
-        <Button small type="submit" disabled={saving || uploadingImages}>
+        <Button
+          shadow_box
+          fit
+          type="submit"
+          disabled={saving || uploadingImages}
+        >
           {saving ? 'Saving…' : 'Save event'}
         </Button>
       </div>
