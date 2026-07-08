@@ -11,7 +11,7 @@
   justify-content: center;
   pointer-events: none;
   flex-direction: column;
-
+  overflow-y: auto;
   container: main_menu / inline-size;
   width: 100%;
   top: 0;
@@ -24,15 +24,14 @@
   height: 100vh;
 
   .content {
-    line-height: 2.75em;
+    line-height: 2.5em;
     display: flex;
     justify-content: center;
     flex-direction: row;
     align-items: flex-start;
     pointer-events: all;
-    transform: translateY(-10%);
-
     width: 100%;
+    padding: 1em 0 1em 0;
   }
 }
 
