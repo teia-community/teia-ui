@@ -311,8 +311,15 @@
 .form_top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing, 1rem);
   margin-bottom: var(--spacing, 1rem);
+}
+
+.form_close {
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
 }
 
 .field {
@@ -372,6 +379,11 @@
     color: var(--text-color);
     padding: var(--spacing-half, 0.5rem);
     font-size: var(--font-size);
+  }
+
+  // Teia CTA (shadow_box) buttons default to width:100%
+  > * > * {
+    width: auto;
   }
 }
 

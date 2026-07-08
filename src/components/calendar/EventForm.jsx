@@ -195,16 +195,15 @@ export default function EventForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.form_top}>
+        <strong>{initial?.id ? 'Edit event' : 'New event'}</strong>
         <Button
-          small
-          secondary
+          className={styles.form_close}
           type="button"
           onClick={onCancel}
-          alt="Back to calendar"
+          alt="Close"
         >
-          ← Back
+          ✕
         </Button>
-        <strong>{initial?.id ? 'Edit event' : 'New event'}</strong>
       </div>
 
       <label className={styles.field}>
@@ -399,8 +398,8 @@ export default function EventForm({
               aria-label="Upload event images"
             />
             <Button
-              small
-              secondary
+              shadow_box
+              fit
               type="button"
               onClick={uploadImages}
               disabled={uploadingImages || selectedImages.length === 0}
@@ -418,12 +417,7 @@ export default function EventForm({
               placeholder="https://…/image.png"
               aria-label={`Image ${i + 1} URL`}
             />
-            <Button
-              small
-              secondary
-              type="button"
-              onClick={() => removeImage(i)}
-            >
+            <Button shadow_box fit type="button" onClick={() => removeImage(i)}>
               Remove
             </Button>
           </div>
