@@ -36,6 +36,20 @@
   flex-direction: column;
 }
 
+.subscribe {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing, 1rem);
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.subscribe_hint {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  margin: 0;
+}
+
 @media (max-width: 600px) {
   .header {
     align-items: flex-start;

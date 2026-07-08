@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import useClipboard from 'react-use-clipboard'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
@@ -34,6 +35,17 @@ export default function Calendar() {
   const { events, isLoading, error, refresh, dismiss } = useCalendarEvents()
   const isAdmin = useIsCalendarAdmin()
   const address = useUserStore((st) => st.address)
+  // The .ics feed is served from this same site at /calendar.ics (see
+  // netlify.toml). Derive the URL from the current origin so the Subscribe UI
+  // works on every deploy with no config; VITE_CALENDAR_ICS_URL overrides it if
+  // the feed is ever hosted on a different domain.
+  const ICS_URL =
+    import.meta.env.VITE_CALENDAR_ICS_URL ||
+    (typeof window !== 'undefined'
+      ? `${window.location.origin}/calendar.ics`
+      : '')
+  const webcal = ICS_URL.replace(/^https?:\/\//, 'webcal://')
+  const [copied, copy] = useClipboard(ICS_URL)
 
   // null = form closed; {} = creating; {id,...} = editing an existing event.
   const [editing, setEditing] = useState(null)
@@ -186,6 +198,21 @@ export default function Calendar() {
             </Button>
           )}
         </header>
+
+        {ICS_URL && (
+          <div className={styles.subscribe}>
+            <Button small href={webcal}>
+              Subscribe in calendar app
+            </Button>
+            <Button small secondary onClick={copy}>
+              {copied ? 'Copied!' : 'Copy feed URL'}
+            </Button>
+            <p className={styles.subscribe_hint}>
+              Google Calendar can take up to a day to refresh subscribed
+              calendars.
+            </p>
+          </div>
+        )}
 
         {/* Surfaced when a connected wallet can't edit because the allowlist
             is empty — a config hint, not shown to ordinary visitors once

@@ -1,4 +1,5 @@
 import { Button } from '@atoms/button'
+import { downloadEventICS } from '@utils/calendarDownload'
 import ImageCarousel from './ImageCarousel'
 import styles from '@style'
 
@@ -45,20 +46,25 @@ export default function CalendarEventCard({
           {location && <p className={styles.card_where}>{location}</p>}
         </div>
 
-        {canEdit && (
-          <div className={styles.card_actions}>
-            {/* WP-sourced events are read-only: they can be dismissed from
-                state but not edited or written back. */}
-            {!event.readOnly && (
-              <Button small secondary onClick={() => onEdit?.(event)}>
-                Edit
+        <div className={styles.card_actions}>
+          <Button small secondary onClick={() => downloadEventICS(event)}>
+            Add to calendar
+          </Button>
+          {canEdit && (
+            <>
+              {/* WP-sourced events are read-only: they can be dismissed from
+                  state but not edited or written back. */}
+              {!event.readOnly && (
+                <Button small secondary onClick={() => onEdit?.(event)}>
+                  Edit
+                </Button>
+              )}
+              <Button small secondary onClick={() => onDelete?.(event)}>
+                {event.readOnly ? 'Dismiss' : 'Delete'}
               </Button>
-            )}
-            <Button small secondary onClick={() => onDelete?.(event)}>
-              {event.readOnly ? 'Dismiss' : 'Delete'}
-            </Button>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </header>
 
       <ImageCarousel images={images} />
