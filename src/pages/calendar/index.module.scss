@@ -95,13 +95,21 @@
   margin: 0 0 var(--spacing, 1rem);
 }
 
-.queue_row {
+// One proposal: header line (kind, proposer, actions) + the proposed event card.
+.queue_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.queue_head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing, 1rem);
-  padding: 8px 0;
-  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
 }
 
 .queue_meta {

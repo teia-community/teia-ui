@@ -9,7 +9,7 @@ import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { fetchEvents } from './api'
 import { fetchEventContent } from './ipfs'
 import { expandOccurrences } from './recurrence.mjs'
-import type { CalendarFeedEvent } from './types'
+import type { CalendarEventContent, CalendarFeedEvent } from './types'
 
 export * from './types'
 export { fetchEvents, fetchProposals } from './api'
@@ -50,6 +50,28 @@ function expansionWindow() {
   const end = new Date(now)
   end.setMonth(end.getMonth() + 18)
   return { windowStart: fmt(start), windowEnd: fmt(end) }
+}
+
+/**
+ * Map a raw IPFS event document onto the shape CalendarEventCard renders, so
+ * the moderator queue can show a proposal's full content (with the same link/
+ * image sanitizing as the live feed) before approving it.
+ */
+export function docToDisplayEvent(
+  doc: CalendarEventContent,
+  id: string
+): Partial<CalendarFeedEvent> & { id: string } {
+  return {
+    id,
+    title: doc.title || '',
+    description: doc.description || '',
+    location: doc.location || '',
+    startDate: doc.startDate || '',
+    endDate: doc.endDate || '',
+    links: safeLinks(doc.links) as CalendarFeedEvent['links'],
+    images: Array.isArray(doc.images) ? doc.images.map(imageUrl) : [],
+    recurrence: doc.recurrence,
+  }
 }
 
 /**

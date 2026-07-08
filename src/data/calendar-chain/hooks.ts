@@ -6,7 +6,7 @@ import { useUserStore } from '@context/userStore'
 import { useGateRoles } from '@data/roles'
 import { fetchProposals } from './api'
 import { fetchEventContent } from './ipfs'
-import type { CalendarProposal } from './types'
+import type { CalendarProposal, CalendarEventContent } from './types'
 
 export interface CalendarRoles {
   /** Moderator or multisig member — can create/edit/hide + approve/reject. */
@@ -33,11 +33,14 @@ export function useCalendarRoles(): CalendarRoles {
 export interface ProposalListItem extends CalendarProposal {
   /** Proposed title, resolved from the proposal's IPFS document. */
   title: string
+  /** The full proposed document; undefined when the IPFS fetch failed. */
+  doc?: CalendarEventContent
 }
 
 /**
- * Pending proposals with their proposed title resolved from IPFS, for the
- * moderator queue. Only fetches when `enabled` (i.e. the viewer can moderate).
+ * Pending proposals with their proposed document resolved from IPFS, for the
+ * moderator queue — moderators must see what they approve, not just a title.
+ * Only fetches when `enabled` (i.e. the viewer can moderate).
  */
 export function useCalendarProposals(enabled: boolean) {
   return useSWR<ProposalListItem[]>(
@@ -51,10 +54,11 @@ export function useCalendarProposals(enabled: boolean) {
       )
       return proposals.map((p, i) => {
         const r = docs[i]
+        const doc = r.status === 'fulfilled' ? r.value : undefined
         return {
           ...p,
-          title:
-            r.status === 'fulfilled' ? r.value.title || 'Untitled' : 'Untitled',
+          title: doc?.title || 'Untitled',
+          doc,
         }
       })
     },

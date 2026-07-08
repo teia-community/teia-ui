@@ -17,7 +17,9 @@ import {
   fetchEventContent,
   uploadEventImage,
   showGetTeiaModal,
+  docToDisplayEvent,
 } from '@data/calendar-chain'
+import { useUserProfiles } from '@data/roles'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
 import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
@@ -44,6 +46,12 @@ export default function Calendar() {
   const { canModerate, canPropose } = roles
   const { data: proposals, mutate: refreshProposals } =
     useCalendarProposals(canModerate)
+  // Aliases for proposer addresses shown in the moderator queue.
+  const { data: proposerProfiles } = useUserProfiles(
+    (proposals ?? []).map((p) => p.proposer)
+  )
+  const proposerLabel = (address) =>
+    proposerProfiles?.[address]?.alias || `${address.slice(0, 8)}…`
 
   // Feed URL for the Subscribe block (served at /calendar.ics — see netlify.toml).
   const ICS_URL =
@@ -231,22 +239,32 @@ export default function Calendar() {
               Pending proposals ({proposals.length})
             </h2>
             {proposals.map((p) => (
-              <div key={p.id} className={styles.queue_row}>
-                <div>
-                  <strong>{p.title}</strong>{' '}
+              <div key={p.id} className={styles.queue_item}>
+                <div className={styles.queue_head}>
                   <span className={styles.queue_meta}>
-                    {p.isNewEvent ? 'new event' : `edit #${p.eventId}`} · by{' '}
-                    {p.proposer.slice(0, 8)}…
+                    {p.isNewEvent ? 'New event' : `Edit of event #${p.eventId}`}{' '}
+                    · proposed by {proposerLabel(p.proposer)}
                   </span>
+                  <div className={styles.queue_actions}>
+                    <Button shadow_box fit onClick={() => handleApprove(p.id)}>
+                      Approve
+                    </Button>
+                    <Button shadow_box fit onClick={() => handleReject(p.id)}>
+                      Reject
+                    </Button>
+                  </div>
                 </div>
-                <div className={styles.queue_actions}>
-                  <Button small onClick={() => handleApprove(p.id)}>
-                    Approve
-                  </Button>
-                  <Button small secondary onClick={() => handleReject(p.id)}>
-                    Reject
-                  </Button>
-                </div>
+                {/* Full proposed content — moderators see what they approve. */}
+                {p.doc ? (
+                  <CalendarEventCard
+                    event={docToDisplayEvent(p.doc, `proposal-${p.id}`)}
+                  />
+                ) : (
+                  <p className={styles.queue_meta}>
+                    Couldn’t load the proposed content from IPFS (CID:{' '}
+                    {p.proposedCid}).
+                  </p>
+                )}
               </div>
             ))}
           </section>
