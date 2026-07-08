@@ -9,7 +9,7 @@ const CONCURRENCY = 8
 // Mainnet teiaCalendar contract (public, on-chain), mirrored from
 // CALENDAR_CONTRACT in src/constants.ts (a Netlify function can't import that
 // TS module — it would drag in the Vite app's module graph).
-const CONTRACT = 'KT1FER3RWZxJtrwcYouvZzU4bGA8fBUSGppy'
+const CONTRACT = 'KT1Nsjh6rQrXrwH1KFAhLcpWHLFRiZxdjmcG'
 
 function isHidden(value) {
   return value?.hidden === true || value?.hidden === 'true'

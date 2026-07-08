@@ -19,7 +19,9 @@ function formatDate(value) {
  * A single calendar event card. Action buttons depend on the event source and
  * the viewer's roles:
  *  - on-chain events: moderators get Edit + Hide/Unhide; TEIA holders (non
- *    moderators) get "Propose edit".
+ *    moderators) get "Propose edit"; the event's own creator additionally gets
+ *    Hide/Unhide for it — until a moderator hides it (mod_locked), after which
+ *    only a moderator can unhide.
  * "Add to calendar" (one-off .ics download) is always available.
  *
  * @param {{
@@ -47,6 +49,15 @@ export default function CalendarEventCard({
   const isChain = event.source === 'chain'
   const canModerate = Boolean(roles?.canModerate)
   const canPropose = Boolean(roles?.canPropose)
+  // The connected wallet created this event (approved from its own proposal),
+  // so it may hide it and unhide it, unless a moderator has locked it.
+  const isMine = Boolean(
+    isChain &&
+      event.creator &&
+      roles?.address &&
+      event.creator === roles.address
+  )
+  const canToggleHide = isMine && (!event.hidden || !event.modLocked)
 
   // Check on feed source
   const sourceKind = isChain ? 'teia' : event.source === 'wp' ? 'ttc' : null
@@ -120,6 +131,11 @@ export default function CalendarEventCard({
           {isChain && !canModerate && canPropose && (
             <Button shadow_box fit onClick={() => onProposeEdit?.(event)}>
               Propose edit
+            </Button>
+          )}
+          {isChain && !canModerate && canToggleHide && (
+            <Button shadow_box fit onClick={() => onHide?.(event)}>
+              {event.hidden ? 'Unhide' : 'Hide'}
             </Button>
           )}
         </div>

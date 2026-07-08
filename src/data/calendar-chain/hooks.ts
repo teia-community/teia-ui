@@ -9,6 +9,8 @@ import { fetchEventContent } from './ipfs'
 import type { CalendarProposal, CalendarEventContent } from './types'
 
 export interface CalendarRoles {
+  /** Connected wallet address, for own-event ("proposed by me") checks. */
+  address?: string
   /** Moderator or multisig member — can create/edit/hide + approve/reject. */
   canModerate: boolean
   /** Holds TEIA — can propose new events and edits. */
@@ -23,6 +25,7 @@ export function useCalendarRoles(): CalendarRoles {
   const address = useUserStore((st) => st.address)
   const { data } = useGateRoles(address)
   return {
+    address,
     canModerate: Boolean(data?.canModerate),
     canPropose: Boolean(data?.isTokenHolder),
     isConnected: Boolean(address),

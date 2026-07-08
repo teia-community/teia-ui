@@ -23,6 +23,8 @@ interface RawEventValue {
   current_cid: string
   hidden: boolean
   version_count: string
+  creator: string | null
+  mod_locked: boolean
 }
 
 interface RawVersionValue {
@@ -76,6 +78,8 @@ export async function fetchEvents(): Promise<ChainEvent[]> {
         cid: row.value.current_cid,
         hidden: row.value.hidden,
         versionCount,
+        creator: row.value.creator ?? null,
+        modLocked: Boolean(row.value.mod_locked),
         editor: current?.editor ?? '',
         proposer: current?.proposer ?? null,
         createdAt: first?.ts ?? current?.ts ?? '',

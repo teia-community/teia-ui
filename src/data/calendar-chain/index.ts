@@ -77,15 +77,27 @@ export function docToDisplayEvent(
 /**
  * Fetch on-chain events, mapped onto the calendar UI shape. Recurring events are
  * expanded into one entry per occurrence (id `chain-<n>::<iso>`), all sharing
- * the same eventId/cid so edit/hide act on the whole series. Hidden events are
- * filtered unless `includeHidden` (moderators); an event whose IPFS document
- * fails to load is skipped rather than breaking the feed.
+ * the same eventId/cid so edit/hide act on the whole series. An event whose IPFS
+ * document fails to load is skipped rather than breaking the feed.
+ *
+ * Hidden events are filtered out, except: moderators see all of them
+ * (`includeHidden`), and a creator still sees their own event when they hid it
+ * themselves (not `mod_locked`) so they can unhide it. A moderator-hidden event
+ * disappears for the creator too, matching the on-chain rule that only a
+ * moderator can unhide it.
  */
 export async function fetchChainCalendarEvents({
   includeHidden = false,
-}: { includeHidden?: boolean } = {}): Promise<CalendarFeedEvent[]> {
+  viewerAddress,
+}: {
+  includeHidden?: boolean
+  viewerAddress?: string
+} = {}): Promise<CalendarFeedEvent[]> {
   const events = (await fetchEvents()).filter(
-    (e) => includeHidden || !e.hidden
+    (e) =>
+      includeHidden ||
+      !e.hidden ||
+      (!e.modLocked && !!viewerAddress && e.creator === viewerAddress)
   )
   const docs = await Promise.allSettled(
     events.map((e) => fetchEventContent(e.cid))
@@ -101,6 +113,8 @@ export async function fetchChainCalendarEvents({
       eventId: e.id,
       cid: e.cid,
       hidden: e.hidden,
+      creator: e.creator || '',
+      modLocked: e.modLocked,
       title: c.title || '',
       description: c.description || '',
       location: c.location || '',

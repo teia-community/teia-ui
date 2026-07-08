@@ -76,15 +76,17 @@ export function useCalendarEvents() {
     // A chain read failure just means no on-chain events, not a broken feed.
     chainCache = await fetchChainCalendarEvents({
       includeHidden: canModerate,
+      viewerAddress: address,
     }).catch(() => [])
     startWpLoad()
     return combine()
   })
 
-  // Re-fetch when the viewer's moderator status resolves (toggles hidden events).
+  // Re-fetch when the viewer's address or moderator status resolves — both
+  // change which hidden events are visible (own self-hidden / all).
   useEffect(() => {
     mutate()
-  }, [canModerate, mutate])
+  }, [canModerate, address, mutate])
 
   // Re-merge whenever a background WP page lands.
   useEffect(() => {

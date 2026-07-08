@@ -43,6 +43,10 @@ export interface ChainEvent {
   cid: string
   hidden: boolean
   versionCount: number
+  /** On-chain creator (the proposer, for approved proposals); null if unset. */
+  creator: string | null
+  /** True once a moderator/multisig hid it — only they can unhide from then on. */
+  modLocked: boolean
   /** Last on-chain editor (moderator/multisig who applied the current version). */
   editor: string
   proposer: string | null
@@ -62,6 +66,10 @@ export interface CalendarFeedEvent {
   /** Current on-chain CID, for fetching the raw doc when editing. */
   cid: string
   hidden: boolean
+  /** On-chain creator address (the proposer for approved proposals). */
+  creator: string
+  /** True once a moderator/multisig hid it — the creator can no longer unhide. */
+  modLocked: boolean
   title: string
   description: string
   startDate: string
