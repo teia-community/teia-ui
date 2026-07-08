@@ -11,6 +11,11 @@
   flex-direction: row-reverse;
 }
 
+.bubbleContent {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .bubbleAvatarLink {
   display: inline-flex;
   flex-shrink: 0;
