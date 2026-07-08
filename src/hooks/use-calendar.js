@@ -16,9 +16,6 @@ const SWR_KEY = 'calendar/events'
 let wpCache = []
 let wpStarted = false
 const wpSubscribers = new Set()
-// WP ids the user "kicked out of state". They never come back during the
-// session, even as later background pages stream in.
-const dismissed = new Set()
 
 // On-chain events, fetched once per SWR load and cached at module scope so the
 // progressive WP re-merges below don't drop them.
@@ -50,18 +47,13 @@ function startWpLoad() {
 }
 
 /**
- * Merge on-chain + (non-dismissed) WordPress events, de-duped by id and
- * date-sorted. Ids are namespaced per source (chain-, wp-) so they never
- * collide.
+ * Merge on-chain + WordPress events, de-duped by id and date-sorted. Ids are
+ * namespaced per source (chain-, wp-) so they never collide.
  */
 function combine() {
   const map = new Map()
-  for (const ev of chainCache) {
-    if (!dismissed.has(ev.id)) map.set(ev.id, ev)
-  }
-  for (const ev of wpCache) {
-    if (!dismissed.has(ev.id)) map.set(ev.id, ev)
-  }
+  for (const ev of chainCache) map.set(ev.id, ev)
+  for (const ev of wpCache) map.set(ev.id, ev)
   return [...map.values()].sort((a, b) =>
     (a.startDate || '').localeCompare(b.startDate || '')
   )
@@ -72,7 +64,7 @@ function combine() {
  *
  * Reads merge two sources: the on-chain calendar contract (authoritative) and
  * the WordPress `mec-events` feed (in-memory, read-only). Writes go on-chain via
- * `@data/calendar-chain`; read-only WP events are dismissed via {@link dismiss}.
+ * `@data/calendar-chain`.
  */
 export function useCalendarEvents() {
   // Moderators additionally see hidden on-chain events (so they can unhide).
@@ -107,10 +99,5 @@ export function useCalendarEvents() {
     isLoading,
     /** Re-read the feed. */
     refresh: mutate,
-    /** Kick a read-only WP event out of state for the rest of the session. */
-    dismiss: (id) => {
-      dismissed.add(id)
-      mutate(combine(), { revalidate: false })
-    },
   }
 }

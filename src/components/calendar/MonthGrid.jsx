@@ -59,7 +59,6 @@ function eventsByDay(events) {
  *   onEdit?: (event: any) => void,
  *   onHide?: (event: any) => void,
  *   onProposeEdit?: (event: any) => void,
- *   onDismiss?: (event: any) => void,
  * }} props
  */
 export default function MonthGrid({
@@ -68,7 +67,6 @@ export default function MonthGrid({
   onEdit,
   onHide,
   onProposeEdit,
-  onDismiss,
 }) {
   const today = new Date()
   const [view, setView] = useState({
@@ -200,7 +198,6 @@ export default function MonthGrid({
                 closeDialog()
                 onProposeEdit?.(ev)
               }}
-              onDismiss={onDismiss}
             />
           ))
         )}

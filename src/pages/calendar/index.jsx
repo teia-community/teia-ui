@@ -41,7 +41,7 @@ function currentMonthStart() {
  * WordPress events are merged in read-only.
  */
 export default function Calendar() {
-  const { events, isLoading, error, dismiss } = useCalendarEvents()
+  const { events, isLoading, error } = useCalendarEvents()
   const roles = useCalendarRoles()
   const { canModerate, canPropose } = roles
   const { data: proposals, mutate: refreshProposals } =
@@ -198,7 +198,6 @@ export default function Calendar() {
     onEdit: handleEdit,
     onHide: handleHide,
     onProposeEdit: handleProposeEdit,
-    onDismiss: (event) => dismiss(event.id),
   }
 
   return (

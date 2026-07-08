@@ -60,7 +60,6 @@ function groupByYearMonth(events) {
  *   onEdit?: (event: any) => void,
  *   onHide?: (event: any) => void,
  *   onProposeEdit?: (event: any) => void,
- *   onDismiss?: (event: any) => void,
  * }} props
  */
 export default function PreviousEvents({
@@ -69,7 +68,6 @@ export default function PreviousEvents({
   onEdit,
   onHide,
   onProposeEdit,
-  onDismiss,
 }) {
   const grouped = useMemo(() => groupByYearMonth(events), [events])
 
@@ -99,7 +97,6 @@ export default function PreviousEvents({
                         onEdit={onEdit}
                         onHide={onHide}
                         onProposeEdit={onProposeEdit}
-                        onDismiss={onDismiss}
                       />
                     ))}
                   </div>
