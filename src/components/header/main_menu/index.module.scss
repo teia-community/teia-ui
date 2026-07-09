@@ -22,6 +22,7 @@
 
   z-index: 400;
   height: 100vh;
+  height: 100dvh; // mobile: exclude browser chrome (collapsing URL bar)
 
   // Intent-based sections in a wrapping grid: multi-column on wide screens
   .content {
@@ -36,8 +37,9 @@
 
     width: 100%;
     max-width: var(--max-width-internal, 1200px);
-    padding: 1rem 1.5rem;
-    max-height: calc(100vh - 140px); // header + pinned footer stay clear
+    padding: 84px 1.5rem 1.5rem;
+    flex: 1 1 auto;
+    min-height: 0; // seems to work
     overflow-y: auto;
   }
 }
