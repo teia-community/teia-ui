@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@atoms/button'
 import { blankEvent } from '@data/calendar/schema'
 import styles from '@style'
@@ -14,6 +14,7 @@ import styles from '@style'
  *   onSubmit: (values: any) => Promise<void> | void,
  *   onUploadImage?: (file: File) => Promise<{ url: string }>,
  *   onCancel: () => void,
+ *   onValuesChange?: (values: any) => void,
  * }} props
  */
 export default function EventForm({
@@ -21,12 +22,17 @@ export default function EventForm({
   onSubmit,
   onUploadImage,
   onCancel,
+  onValuesChange,
 }) {
   const [values, setValues] = useState(() => ({ ...blankEvent(), ...initial }))
   const [saving, setSaving] = useState(false)
   const [uploadingImages, setUploadingImages] = useState(false)
   const [selectedImages, setSelectedImages] = useState([])
   const [formError, setFormError] = useState(null)
+
+  useEffect(() => {
+    onValuesChange?.(values)
+  }, [values, onValuesChange])
 
   const set = (field) => (e) =>
     setValues((v) => ({ ...v, [field]: e.target.value }))
@@ -56,24 +62,6 @@ export default function EventForm({
 
   // --- images -------------------------------------------------------------
   const setImageFiles = (e) => setSelectedImages([...e.target.files])
-  const uploadImages = async () => {
-    if (!onUploadImage || selectedImages.length === 0 || uploadingImages) return
-    setFormError(null)
-    setUploadingImages(true)
-    try {
-      const uploaded = []
-      for (const file of selectedImages) {
-        const result = await onUploadImage(file)
-        if (result?.url) uploaded.push(result.url)
-      }
-      setValues((v) => ({ ...v, images: [...v.images, ...uploaded] }))
-      setSelectedImages([])
-    } catch (e) {
-      setFormError(`Could not upload image: ${e.message}`)
-    } finally {
-      setUploadingImages(false)
-    }
-  }
   const addImage = () => setValues((v) => ({ ...v, images: [...v.images, ''] }))
   const setImage = (i) => (e) =>
     setValues((v) => ({
@@ -168,11 +156,32 @@ export default function EventForm({
     }
     setSaving(true)
     try {
+      // Pin any selected files to IPFS before saving.
+      let images = values.images
+      if (selectedImages.length > 0 && onUploadImage) {
+        setUploadingImages(true)
+        try {
+          const uploaded = []
+          for (const file of selectedImages) {
+            const result = await onUploadImage(file)
+            if (result?.url) uploaded.push(result.url)
+          }
+          images = [...images, ...uploaded]
+          setValues((v) => ({ ...v, images }))
+          setSelectedImages([])
+        } catch (err) {
+          setFormError(`Could not upload image: ${err.message}`)
+          return
+        } finally {
+          setUploadingImages(false)
+        }
+      }
+
       // Drop empty rows before saving.
       const cleaned = {
         ...values,
         links: values.links.filter((l) => l.url.trim()),
-        images: values.images.filter((url) => url.trim()),
+        images: images.filter((url) => url.trim()),
         recurrence: values.recurrence?.freq
           ? {
               freq: values.recurrence.freq,
@@ -397,15 +406,6 @@ export default function EventForm({
               onChange={setImageFiles}
               aria-label="Upload event images"
             />
-            <Button
-              shadow_box
-              fit
-              type="button"
-              onClick={uploadImages}
-              disabled={uploadingImages || selectedImages.length === 0}
-            >
-              {uploadingImages ? 'Uploading...' : 'Upload'}
-            </Button>
           </div>
         )}
         {values.images.map((url, i) => (
@@ -449,7 +449,11 @@ export default function EventForm({
           type="submit"
           disabled={saving || uploadingImages}
         >
-          {saving ? 'Saving…' : 'Save event'}
+          {uploadingImages
+            ? 'Uploading images…'
+            : saving
+            ? 'Saving…'
+            : 'Save event'}
         </Button>
       </div>
     </form>

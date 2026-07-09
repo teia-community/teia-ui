@@ -226,8 +226,9 @@
 
 .card_actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--spacing-half, 0.5rem);
-  flex-shrink: 0;
+  min-width: 0;
 
   > * {
     white-space: nowrap;

@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import useClipboard from 'react-use-clipboard'
 import { Page } from '@atoms/layout'
+import { useCalendarDraftStore, draftKey } from '@context/calendarDraftStore'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { useCalendarEvents } from '@hooks/use-calendar'
@@ -69,6 +71,8 @@ export default function Calendar() {
   const [editing, setEditing] = useState(null)
   const [actionError, setActionError] = useState(null)
   const [opening, setOpening] = useState(false)
+  // Keep form open when submitting
+  const submittingRef = useRef(false)
 
   // Split the date-sorted feed into upcoming vs the "Previous Events" accordion.
   const { upcoming, previous } = useMemo(() => {
@@ -83,21 +87,58 @@ export default function Calendar() {
     return { upcoming, previous }
   }, [events])
 
-  // Sync the create/edit <dialog> to `editing`.
-  const formDialogRef = useRef(null)
+  // Trying to fix DOM overlay on create form
+  const modalRef = useRef(null)
+  const closeForm = useCallback(() => {
+    if (submittingRef.current) return
+    setEditing(null)
+  }, [])
+
   useEffect(() => {
-    const dialog = formDialogRef.current
-    if (!dialog) return
-    if (editing && !dialog.open) dialog.showModal()
-    else if (!editing && dialog.open) dialog.close()
-  }, [editing])
+    if (!editing) return
+    const modal = modalRef.current
+    const FOCUSABLE =
+      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    modal?.querySelector(FOCUSABLE)?.focus()
+
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const onKeyDown = (e) => {
+      if (submittingRef.current) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeForm()
+        return
+      }
+      if (e.key === 'Tab' && modal) {
+        const items = modal.querySelectorAll(FOCUSABLE)
+        if (!items.length) return
+        const first = items[0]
+        const last = items[items.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [editing, closeForm])
 
   // --- opening the form ----------------------------------------------------
 
   const startCreate = () => {
     setActionError(null)
     if (canModerate || canPropose) {
-      setEditing({ values: {}, eventId: null, propose: !canModerate })
+      const draft = useCalendarDraftStore.getState().drafts[draftKey(null)]
+      setEditing({ values: draft || {}, eventId: null, propose: !canModerate })
     } else {
       showGetTeiaModal()
     }
@@ -110,8 +151,10 @@ export default function Calendar() {
     setOpening(true)
     try {
       const doc = await fetchEventContent(event.cid)
+      const draft =
+        useCalendarDraftStore.getState().drafts[draftKey(event.eventId)]
       setEditing({
-        values: {
+        values: draft || {
           id: event.id,
           title: doc.title || '',
           startDate: doc.startDate || '',
@@ -136,6 +179,7 @@ export default function Calendar() {
 
   const handleSubmit = async (values) => {
     setActionError(null)
+    submittingRef.current = true
     const { eventId, propose } = editing
     const input = {
       title: values.title,
@@ -156,15 +200,28 @@ export default function Calendar() {
       } else {
         await updateEvent(eventId, input)
       }
+      // Saved on-chain, drop the draft and close the form.
+      useCalendarDraftStore.getState().clearDraft(draftKey(eventId))
       setEditing(null)
     } catch (e) {
-      // The action already surfaced a modal error; keep the form open.
       setActionError(e.message)
+    } finally {
+      submittingRef.current = false
     }
   }
 
   const handleEdit = (event) => startEditChain(event, false)
   const handleProposeEdit = (event) => startEditChain(event, true)
+
+  const persistDraft = useCallback(
+    (values) => {
+      if (!editing) return
+      useCalendarDraftStore
+        .getState()
+        .setDraft(draftKey(editing.eventId), values)
+    },
+    [editing]
+  )
 
   const handleHide = async (event) => {
     setActionError(null)
@@ -276,24 +333,39 @@ export default function Calendar() {
         {/* Month grid: click a day to view its events in a popup. */}
         {!isLoading && <MonthGrid events={events} {...cardHandlers} />}
 
-        {/* Create/edit popup. Esc fires onClose; Back/Cancel call onCancel. */}
-        <dialog
-          ref={formDialogRef}
-          className={styles.form_dialog}
-          onClose={() => setEditing(null)}
-        >
-          {editing && (
-            <EventForm
-              key={editing.values.id || 'new'}
-              initial={editing.values}
-              onSubmit={handleSubmit}
-              onUploadImage={async (file) => ({
-                url: await uploadEventImage(file),
-              })}
-              onCancel={() => setEditing(null)}
-            />
+        {/* Needs an overhaul */}
+        {editing &&
+          createPortal(
+            <div
+              className={styles.form_overlay}
+              role="presentation"
+              onMouseDown={(e) => {
+                if (e.target === e.currentTarget) closeForm()
+              }}
+            >
+              <div
+                ref={modalRef}
+                className={styles.form_modal}
+                role="dialog"
+                aria-modal="true"
+                aria-label={
+                  editing.eventId != null ? 'Edit event' : 'New event'
+                }
+              >
+                <EventForm
+                  key={editing.values.id || 'new'}
+                  initial={editing.values}
+                  onSubmit={handleSubmit}
+                  onValuesChange={persistDraft}
+                  onUploadImage={async (file) => ({
+                    url: await uploadEventImage(file),
+                  })}
+                  onCancel={closeForm}
+                />
+              </div>
+            </div>,
+            document.body
           )}
-        </dialog>
 
         {error && (
           <p className={styles.error}>Could not load events: {error.message}</p>

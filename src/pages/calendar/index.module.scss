@@ -107,19 +107,26 @@ details[open] > .subscribe_toggle::after {
   margin-bottom: var(--spacing, 1rem);
 }
 
-// Popup for the create/edit form (native <dialog>).
-.form_dialog {
+.form_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 5vh 16px;
+  box-sizing: border-box;
+}
+
+.form_modal {
   background: var(--background-color);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 0;
   width: min(720px, 92vw);
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
-
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
 
   // EventForm already draws its own border/padding; avoid doubling up.
   form {
