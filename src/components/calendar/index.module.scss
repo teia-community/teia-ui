@@ -7,12 +7,10 @@
   padding: var(--spacing, 1rem);
   margin-bottom: var(--spacing-double, 2rem);
 
-  // Desktop only: squares stay 1:1, sized by column width. Pad the sides to
-  // narrow the grid so 6 rows fit vertically within the viewport. On mobile
-  // this padding would shrink columns below their min square width and overflow
-  // the border, so it's gated to wider screens.
+  // Desktop only: narrow the grid so the bars keep phone-like proportions
+  // instead of stretching edge to edge on wide screens.
   @media (min-width: 601px) {
-    padding-inline: clamp(1rem, 18vw, 22rem);
+    padding-inline: clamp(1rem, 9vw, 9rem);
   }
 }
 
@@ -27,11 +25,10 @@
   font-weight: 600;
 }
 
-.weekdays,
-.grid {
+.weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  margin-bottom: 4px;
 }
 
 .weekday {
@@ -41,42 +38,43 @@
   padding: 4px 0;
 }
 
-.day,
-.day_blank {
-  aspect-ratio: 1 / 1;
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  --cal-daynum-h: 3em;
+  --cal-bar-track: 22px;
+  --cal-bar-h: 18px;
 }
 
-// Mobile: keep cells the size of the empty calendar. Without this, the count
-// badge's content raises the automatic min-height (min-height: auto), which
-// overrides aspect-ratio and makes event days grow. Pinning min-height: 0 lets
-// the 1:1 square win; overflow clips any rare overshoot instead of resizing.
-@media (max-width: 600px) {
-  .day {
-    min-height: 0;
-    overflow: hidden;
-  }
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  column-gap: 0;
+  row-gap: 3px;
 }
 
 .day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  border: 1px solid var(--border-color);
+  justify-content: flex-start;
+  min-width: 0;
+  padding: 2px 0 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
   background: none;
   color: var(--text-color);
   font-size: var(--font-size);
   cursor: pointer;
-  padding: 4px;
 
   &:disabled {
     cursor: default;
-    opacity: 0.45;
   }
 
   &:not(:disabled):hover {
-    background: var(--border-color);
+    background: var(--gray-15);
   }
 
   &:focus-visible {
@@ -85,23 +83,57 @@
   }
 }
 
-.day_today {
-  border: 2px solid var(--text-color);
+.day_number {
+  font-size: 1.25rem;
+  line-height: 1.4;
 }
 
 .day_has_events .day_number {
   font-weight: 700;
 }
 
-.day_count {
-  font-size: var(--font-size-small);
+// Days with no events read as muted, non-interactive labels.
+.day:disabled .day_number {
   color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0 6px;
-  line-height: 1.4;
-  // Tiny breathing room beneath the count circle.
-  margin-bottom: 3px;
+  opacity: 0.6;
+}
+
+.day_today {
+  border-color: var(--text-secondary);
+
+  .day_number {
+    font-weight: 700;
+  }
+}
+
+.bar {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  height: var(--cal-bar-h, 18px);
+  margin-inline: 2px;
+  border-radius: 4px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bar_title {
+  padding-inline: 6px;
+  font-size: var(--font-size-small);
+  line-height: 1;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.more {
+  align-self: center;
+  font-size: var(--font-size-small);
+  line-height: 1;
+  color: var(--text-secondary);
+  pointer-events: none;
 }
 
 /* -------------------------------------------------------- day dialog --- */
