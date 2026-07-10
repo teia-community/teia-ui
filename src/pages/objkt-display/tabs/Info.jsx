@@ -68,7 +68,7 @@ export const Info = () => {
               <Attribute
                 label="Moderation"
                 value={
-                  'The TEIA content moderation team has overridden the NSFW or Photosensitive attributes on this token'
+                  'This mint has been tagged as NSFW or Photosensitive by the TEIA content moderation team to allow users to limit what content they see. Please manually tag scenes as appropriate when minting.'
                 }
               />
             )}
