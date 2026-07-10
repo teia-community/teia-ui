@@ -18,9 +18,11 @@ export default async (req) => {
   if (!token) {
     return json({ events: [], error: 'MEC_TOKEN is not configured' }, 500)
   }
-  const limit = Number(new URL(req.url).searchParams.get('limit')) || DEFAULT_LIMIT
+  const params = new URL(req.url).searchParams
+  const limit = Number(params.get('limit')) || DEFAULT_LIMIT
+  const past = params.get('past') === '1'
   try {
-    const events = await fetchThetezosEvents(token, limit)
+    const events = await fetchThetezosEvents(token, { limit, past })
     return json({ events }, 200, {
       'Cache-Control':
         'public, max-age=0, s-maxage=900, stale-while-revalidate=3600',
