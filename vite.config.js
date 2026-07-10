@@ -77,7 +77,8 @@ const thetezosDevApi = (token) => ({
       try {
         const url = new URL(req.url, 'http://localhost')
         const limit = Number(url.searchParams.get('limit')) || 100
-        const events = await fetchThetezosEvents(token, limit)
+        const past = url.searchParams.get('past') === '1'
+        const events = await fetchThetezosEvents(token, { limit, past })
         res.end(JSON.stringify({ events }))
       } catch (e) {
         res.statusCode = 502

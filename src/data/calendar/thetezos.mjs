@@ -12,8 +12,12 @@
  * Unlike the old `wp/v2/mec-events` endpoint, this one exposes the REAL event
  * start/end date+time per occurrence (recurring events are pre-expanded), so
  * events land on the day they actually happen instead of their post date.
- * It only returns UPCOMING occurrences — past events still come from the old
- * endpoint (see wordpress.js).
+ *
+ * Two scopes are used (see {@link fetchThetezosEvents}):
+ *  - upcoming (`include_past_events=1`): current + future, and any ongoing
+ *    multi-day event spanning today (which a pure future query would miss);
+ *  - past (`show_only_past_events=1`): past occurrences, newest first, with
+ *    `limit` controlling how far back it reaches.
  */
 
 const MEC_API = 'https://thetezos.com/wp-json/mec/v1.0/events'
@@ -102,13 +106,20 @@ function mapOccurrence(item) {
 }
 
 /**
- * Fetch upcoming events from the MEC API and normalize them.
+ * Fetch events from the MEC API and normalize them.
  * @param {string} token  the `mec-token` value
- * @param {number} limit  max occurrences to request (recurring events expand)
+ * @param {{ limit?: number, past?: boolean }} [opts]
+ *   `limit` — max occurrences (recurring events expand; for `past`, this also
+ *   controls how far back the newest-first list reaches).
+ *   `past` — true to fetch past occurrences instead of upcoming/ongoing.
  * @returns {Promise<object[]>}
  */
-export async function fetchThetezosEvents(token, limit = 100) {
-  const res = await fetch(`${MEC_API}?limit=${limit}`, {
+export async function fetchThetezosEvents(token, { limit = 100, past = false } = {}) {
+  const params = new URLSearchParams({ limit: String(limit) })
+  // Past: only past occurrences (newest first). Upcoming: current + future,
+  // including ongoing events that started before today.
+  params.set(past ? 'show_only_past_events' : 'include_past_events', '1')
+  const res = await fetch(`${MEC_API}?${params}`, {
     headers: { 'mec-token': token },
   })
   if (!res.ok) throw new Error(`MEC ${res.status} ${res.statusText}`)

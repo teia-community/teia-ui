@@ -1,19 +1,19 @@
 import { useEffect } from 'react'
 import useSWR from 'swr'
-import { fetchPage, fetchUpcomingEvents } from '@data/calendar/wordpress'
+import { fetchUpcomingEvents, fetchPastEvents } from '@data/calendar/wordpress'
 import { fetchChainCalendarEvents } from '@data/calendar-chain'
 import { useUserStore } from '@context/userStore'
 import { useGateRoles } from '@data/roles'
-import { toInstant, localDayKey } from '@utils/datetime'
+import { toInstant } from '@utils/datetime'
 
 const SWR_KEY = 'calendar/events'
 
 /**
  * WordPress event population is read-only and lives only in memory. We load it
  * once per session into a module-level cache and notify any mounted hook each
- * time more events arrive so the calendar fills in live. Two sources feed it:
- * the MEC proxy for upcoming events (real dates, fast first paint) and the old
- * `wp/v2` endpoint (post dates) for past events only.
+ * time more events arrive so the calendar fills in live. Both scopes (upcoming
+ * and past) come from the MEC proxy with real dates; the upcoming feed paints
+ * first, past events stream in behind it.
  */
 let wpCache = []
 let wpStarted = false
@@ -27,57 +27,31 @@ function notifyWp() {
   for (const fn of wpSubscribers) fn()
 }
 
-/** First day of the current month, YYYY-MM-DD (local). */
-function currentMonthStart() {
-  const now = new Date()
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  return `${now.getFullYear()}-${m}-01`
-}
-
 /** Kick off the one-time WP load (idempotent). */
 function startWpLoad() {
   if (wpStarted) return
   wpStarted = true
   ;(async () => {
-    // 1. Upcoming events with real dates — the primary feed, fast first paint.
-    let upcomingPostIds = new Set()
+    // 1. Upcoming + ongoing events — the primary feed, fast first paint.
     try {
-      const upcoming = await fetchUpcomingEvents()
-      wpCache = upcoming
-      upcomingPostIds = new Set(upcoming.map((e) => e.postId))
+      wpCache = await fetchUpcomingEvents()
       notifyWp()
     } catch {
-      // No upcoming feed just means fewer events, not a broken calendar.
+      // A failed feed just means fewer events, not a broken calendar.
     }
 
-    // 2. Past events (old endpoint, post dates) for the "Previous Events"
-    // accordion. Keep only events strictly before this month, and skip any
-    // whose post already appears in the upcoming feed.
-    const threshold = currentMonthStart()
+    // 2. Past events for the "Previous Events" accordion. Occurrence ids are
+    // shared with the upcoming feed, so the recent-past overlap de-dupes on id.
     try {
-      const first = await fetchPage(1)
-      const keepPast = (events) =>
-        events.filter(
-          (e) =>
-            !upcomingPostIds.has(e.postId) &&
-            localDayKey(e.startDate) < threshold
-        )
-      const firstPast = keepPast(first.events)
-      if (firstPast.length) {
-        wpCache = wpCache.concat(firstPast)
+      const past = await fetchPastEvents()
+      const seen = new Set(wpCache.map((e) => e.id))
+      const fresh = past.filter((e) => !seen.has(e.id))
+      if (fresh.length) {
+        wpCache = wpCache.concat(fresh)
         notifyWp()
       }
-      for (let page = 2; page <= first.totalPages; page++) {
-        const { events } = await fetchPage(page)
-        const past = keepPast(events)
-        if (past.length) {
-          wpCache = wpCache.concat(past)
-          notifyWp()
-        }
-      }
     } catch {
-      // Leave whatever loaded; a failed background page just means fewer
-      // past events.
+      // Past events failing just means an emptier Previous Events accordion.
     }
   })()
 }
