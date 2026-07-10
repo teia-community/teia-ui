@@ -1,26 +1,39 @@
 /**
- * WordPress (Modern Events Calendar) read-only calendar source.
+ * WordPress read-only calendar source (thetezos.com).
  *
- * Pulls events from thetezos.com's `wp/v2/mec-events` REST endpoint and maps
- * each post onto our {@link import('./schema').CalendarEvent} shape so the same
- * UI renders them alongside locally-created (IndexedDB) events.
+ * Two endpoints feed the calendar:
  *
- * ## Caveats baked into the mapping
- * - **No real event date is exposed by this endpoint.** MEC stores start/end
- *   dates under the `mec/v1` namespace, which we are not allowed to call. The
- *   only structured timestamp here is the WordPress publish `date`, so that is
- *   what we place on the calendar grid (`startDate`). It is the post date, not
- *   necessarily the day the event happens.
- * - `title` / `excerpt` come back as rendered HTML with entities; we strip tags
- *   and decode entities to plain text to match the card layout.
- * - The featured image only resolves to a URL when the request is made with
- *   `_embed=1` (`wp:featuredmedia[0].source_url`).
+ * 1. **Upcoming events — {@link fetchUpcomingEvents}.** The MEC API
+ *    (`mec/v1.0/events`) exposes real per-occurrence start/end dates, so these
+ *    land on the day they actually happen. It's token-gated and CORS-locked, so
+ *    the browser hits our own `/api/thetezos-events` proxy (Netlify function in
+ *    prod, Vite dev middleware locally) which adds the token server-side. This
+ *    endpoint only returns future occurrences.
  *
- * These events are READ-ONLY. They are merged into state at read time and can
- * be dismissed ("kicked out of state") but never written back to the API.
+ * 2. **Past events — {@link fetchPage}.** The old `wp/v2/mec-events` endpoint
+ *    has no real event date (only the post publish `date`), so it is used
+ *    solely to back-fill the "Previous Events" accordion. `title`/`excerpt`
+ *    come back as HTML; we strip tags and decode entities. The featured image
+ *    only resolves with `_embed=1` (`wp:featuredmedia[0].source_url`).
+ *
+ * All of these are READ-ONLY — merged in at read time, never written back.
  */
 
 const API = 'https://thetezos.com/wp-json/wp/v2/mec-events'
+
+/**
+ * Upcoming events with REAL dates, via our server-side proxy (which holds the
+ * MEC token). Returns already-normalized CalendarEvent-shaped objects.
+ * @param {number} limit max occurrences to request
+ * @returns {Promise<object[]>}
+ */
+export async function fetchUpcomingEvents(limit = 100) {
+  const res = await fetch(`/api/thetezos-events?limit=${limit}`)
+  if (!res.ok)
+    throw new Error(`thetezos-events ${res.status} ${res.statusText}`)
+  const { events } = await res.json()
+  return Array.isArray(events) ? events : []
+}
 
 /** Default page size for both the first paint and the background sweep. */
 export const PER_PAGE = 25
@@ -45,6 +58,8 @@ function mapEvent(post) {
   return {
     // Namespaced so a WP id can never collide with a local UUID.
     id: `wp-${post.id}`,
+    // Underlying WP post id, so the upcoming feed can de-dupe against these.
+    postId: post.id,
     title: toPlainText(post?.title?.rendered),
     description: toPlainText(post?.excerpt?.rendered),
     // Only structured date available — the post publish date (see file header).
