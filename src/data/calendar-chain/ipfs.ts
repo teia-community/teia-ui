@@ -23,11 +23,13 @@ export interface EventDocInput {
   startDate: string
   endDate?: string
   location?: string
+  locations?: string[]
   description?: string
   links: CalendarLink[]
   /** ipfs:// URIs (uploaded via {@link uploadEventImage}). */
   images: string[]
   recurrence?: Recurrence
+  tags?: string[]
 }
 
 /** Build the IPFS event document (the content the CID points at). */
@@ -40,13 +42,16 @@ export function buildEventDocument(
     title: input.title,
     startDate: input.startDate,
     ...(input.endDate ? { endDate: input.endDate } : {}),
-    ...(input.location ? { location: input.location } : {}),
+    ...(input.locations?.length
+      ? { locations: input.locations, location: input.locations.join(', ') }
+      : {}),
     ...(input.description ? { description: input.description } : {}),
     links: input.links ?? [],
     images: input.images ?? [],
     ...(input.recurrence?.freq ? { recurrence: input.recurrence } : {}),
     author,
     timestamp: new Date().toISOString(),
+    ...(input.tags?.length ? { tags: input.tags } : {}),
   }
 }
 

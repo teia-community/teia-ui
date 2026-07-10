@@ -22,6 +22,7 @@ import {
   docToDisplayEvent,
 } from '@data/calendar-chain'
 import { useUserProfiles } from '@data/roles'
+import { toUTC, toLocalInput, localDayKey } from '@utils/datetime'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
 import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
@@ -80,7 +81,7 @@ export default function Calendar() {
     const upcoming = []
     const previous = []
     for (const ev of events) {
-      const date = (ev.startDate || '').slice(0, 10)
+      const date = localDayKey(ev.startDate)
       if (date && date < threshold) previous.push(ev)
       else upcoming.push(ev)
     }
@@ -157,9 +158,15 @@ export default function Calendar() {
         values: draft || {
           id: event.id,
           title: doc.title || '',
-          startDate: doc.startDate || '',
-          endDate: doc.endDate || '',
-          location: doc.location || '',
+          startDate: toLocalInput(doc.startDate || ''),
+          endDate: toLocalInput(doc.endDate || ''),
+          location: (doc.locations?.length
+            ? doc.locations
+            : doc.location
+            ? [doc.location]
+            : []
+          ).join(', '),
+          tags: (doc.tags ?? []).join(', '),
           description: doc.description || '',
           links: Array.isArray(doc.links) ? doc.links : [],
           images: Array.isArray(doc.images) ? doc.images : [],
@@ -183,13 +190,14 @@ export default function Calendar() {
     const { eventId, propose } = editing
     const input = {
       title: values.title,
-      startDate: values.startDate,
-      endDate: values.endDate || undefined,
-      location: values.location || undefined,
+      startDate: toUTC(values.startDate),
+      endDate: values.endDate ? toUTC(values.endDate) : undefined,
+      locations: values.locations || [],
       description: values.description || undefined,
       links: values.links || [],
       images: values.images || [],
       recurrence: values.recurrence,
+      tags: values.tags || [],
     }
     try {
       if (eventId == null) {

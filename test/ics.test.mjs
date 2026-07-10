@@ -11,6 +11,16 @@ test('escapeText escapes backslash first, then semicolon/comma/newline', () => {
   assert.equal(escapeText('a\\nb'), 'a\\\\nb')
 })
 
+test('formatDtStart converts a zoned (Z) start to UTC basic form', () => {
+  // New timed events are stored as UTC instants; the feed must emit them as
+  // UTC DATE-TIME (basic form ending in Z), not slice the digits verbatim.
+  assert.equal(formatDtStart('2026-07-09T01:52:00Z'), '20260709T015200Z')
+  // A naive/legacy start stays floating (no Z, no TZID).
+  assert.equal(formatDtStart('2026-07-09T15:00'), '20260709T150000')
+  // An all-day date stays a bare DATE.
+  assert.equal(formatDtStart('2026-07-09'), '20260709')
+})
+
 test('foldLine folds at 75 octets without splitting a multi-byte char', () => {
   const long = 'DESCRIPTION:' + 'a'.repeat(100)
   const folded = foldLine(long)
@@ -159,6 +169,56 @@ test('every line is CRLF-terminated', () => {
   const withoutTrailing = ics.slice(0, -2)
   assert.equal(withoutTrailing.split('\r\n').join('\r\n'), withoutTrailing)
   assert.ok(!/[^\r]\n/.test(ics))
+})
+
+test('all-day event with explicit end emits DTEND as end+1day', () => {
+  const ics = buildICS({
+    dtstamp: '2026-01-01T00:00:00Z',
+    events: [
+      {
+        uid: 'h@teia.art',
+        sequence: 0,
+        title: 'Multi-day',
+        start: '2026-06-15',
+        end: '2026-06-17',
+      },
+    ],
+  })
+  assert.match(ics, /DTSTART;VALUE=DATE:20260615/)
+  assert.match(ics, /DTEND;VALUE=DATE:20260618/)
+})
+
+test('CATEGORIES is emitted from categories, comma/semicolon-escaped, joined with unescaped commas', () => {
+  const ics = buildICS({
+    dtstamp: '2026-01-01T00:00:00Z',
+    events: [
+      {
+        uid: 'i@teia.art',
+        sequence: 0,
+        title: 'Tagged',
+        start: '2026-06-15',
+        categories: ['music, live', 'art;show'],
+      },
+    ],
+  })
+  assert.match(ics, /CATEGORIES:music\\, live,art\\;show/)
+})
+
+test('CATEGORIES is omitted when categories is empty or absent', () => {
+  const ics = buildICS({
+    dtstamp: '2026-01-01T00:00:00Z',
+    events: [
+      { uid: 'j@teia.art', sequence: 0, title: 'No tags', start: '2026-06-15' },
+      {
+        uid: 'k@teia.art',
+        sequence: 0,
+        title: 'Empty tags',
+        start: '2026-06-15',
+        categories: [],
+      },
+    ],
+  })
+  assert.doesNotMatch(ics, /CATEGORIES/)
 })
 
 test('single-element events array is a valid single-event .ics', () => {

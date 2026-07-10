@@ -4,6 +4,7 @@ import { fetchPage } from '@data/calendar/wordpress'
 import { fetchChainCalendarEvents } from '@data/calendar-chain'
 import { useUserStore } from '@context/userStore'
 import { useGateRoles } from '@data/roles'
+import { toInstant } from '@utils/datetime'
 
 const SWR_KEY = 'calendar/events'
 
@@ -54,9 +55,13 @@ function combine() {
   const map = new Map()
   for (const ev of chainCache) map.set(ev.id, ev)
   for (const ev of wpCache) map.set(ev.id, ev)
-  return [...map.values()].sort((a, b) =>
-    (a.startDate || '').localeCompare(b.startDate || '')
-  )
+  return [...map.values()].sort((a, b) => {
+    const ia = toInstant(a.startDate)
+    const ib = toInstant(b.startDate)
+    return (
+      (Number.isNaN(ia) ? Infinity : ia) - (Number.isNaN(ib) ? Infinity : ib)
+    )
+  })
 }
 
 /**

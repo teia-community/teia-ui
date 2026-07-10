@@ -97,6 +97,7 @@ export default async (req) => {
       end: json.endDate || undefined,
       description: json.description,
       location: json.location,
+      categories: Array.isArray(json.tags) ? json.tags : undefined,
       url: json.links?.[0]?.url,
       recurrence: json.recurrence,
     }

@@ -61,16 +61,23 @@ export function docToDisplayEvent(
   doc: CalendarEventContent,
   id: string
 ): Partial<CalendarFeedEvent> & { id: string } {
+  const locations = doc.locations?.length
+    ? doc.locations
+    : doc.location
+    ? [doc.location]
+    : []
   return {
     id,
     title: doc.title || '',
     description: doc.description || '',
-    location: doc.location || '',
+    location: locations.join(', '),
+    locations,
     startDate: doc.startDate || '',
     endDate: doc.endDate || '',
     links: safeLinks(doc.links) as CalendarFeedEvent['links'],
     images: Array.isArray(doc.images) ? doc.images.map(imageUrl) : [],
     recurrence: doc.recurrence,
+    tags: doc.tags ?? [],
   }
 }
 
@@ -109,6 +116,11 @@ export async function fetchChainCalendarEvents({
     const r = docs[i]
     if (r.status !== 'fulfilled') return
     const c = r.value
+    const locations = c.locations?.length
+      ? c.locations
+      : c.location
+      ? [c.location]
+      : []
     const base = {
       eventId: e.id,
       cid: e.cid,
@@ -117,9 +129,11 @@ export async function fetchChainCalendarEvents({
       modLocked: e.modLocked,
       title: c.title || '',
       description: c.description || '',
-      location: c.location || '',
+      location: locations.join(', '),
+      locations,
       links: safeLinks(c.links),
       images: Array.isArray(c.images) ? c.images.map(imageUrl) : [],
+      tags: c.tags ?? [],
       createdBy: c.author || '',
       createdAt: e.createdAt || '',
       updatedAt: e.updatedAt || '',

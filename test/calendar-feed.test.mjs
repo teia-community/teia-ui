@@ -45,6 +45,7 @@ test('feed maps on-chain events to VEVENTs and drops hidden ones', async () => {
         endDate: '2026-08-01T20:00:00Z',
         location: 'Online',
         description: 'Hello, world',
+        tags: ['music', 'live'],
         links: [{ label: 'site', url: 'https://teia.art/e/1' }],
       },
     ],
@@ -69,6 +70,7 @@ test('feed maps on-chain events to VEVENTs and drops hidden ones', async () => {
     assert.match(body, /DTSTART:20260801T180000Z/)
     assert.match(body, /DTEND:20260801T200000Z/)
     assert.match(body, /LOCATION:Online/)
+    assert.match(body, /CATEGORIES:music,live/)
     assert.match(body, /URL:https:\/\/teia\.art\/e\/1/)
     // Hidden event must not appear at all.
     assert.doesNotMatch(body, /Hidden Event/)

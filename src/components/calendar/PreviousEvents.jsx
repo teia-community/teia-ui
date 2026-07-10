@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { localDayKey, toInstant } from '@utils/datetime'
 import CalendarEventCard from './CalendarEventCard'
 import styles from '@style'
 
@@ -24,7 +25,7 @@ const MONTHS = [
 function groupByYearMonth(events) {
   const byYear = new Map()
   for (const ev of events) {
-    const date = (ev.startDate || '').slice(0, 10)
+    const date = localDayKey(ev.startDate)
     if (!date) continue
     const year = date.slice(0, 4)
     const month = Number(date.slice(5, 7)) - 1 // 0-indexed
@@ -42,9 +43,7 @@ function groupByYearMonth(events) {
         .sort((a, b) => b[0] - a[0])
         .map(([month, evs]) => [
           month,
-          evs.sort((a, b) =>
-            (b.startDate || '').localeCompare(a.startDate || '')
-          ),
+          evs.sort((a, b) => toInstant(b.startDate) - toInstant(a.startDate)),
         ]),
     ])
 }

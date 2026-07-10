@@ -27,6 +27,7 @@ export interface CalendarEventContent {
   startDate: string
   endDate?: string
   location?: string
+  locations?: string[]
   description?: string
   links: CalendarLink[]
   /** ipfs:// URIs. */
@@ -34,6 +35,7 @@ export interface CalendarEventContent {
   recurrence?: Recurrence
   author: string
   timestamp: string
+  tags?: string[]
 }
 
 /** Current state of an on-chain event, joined from the events + versions bigmaps. */
@@ -75,8 +77,10 @@ export interface CalendarFeedEvent {
   startDate: string
   endDate: string
   location: string
+  locations: string[]
   links: CalendarLink[]
   images: string[]
+  tags: string[]
   createdBy: string
   createdAt: string
   updatedAt: string

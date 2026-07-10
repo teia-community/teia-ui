@@ -26,6 +26,7 @@ export function downloadEventICS(event) {
         end: (isSeries ? event.seriesEnd : event.endDate) || undefined,
         description: event.description,
         location: event.location,
+        categories: event.tags?.length ? event.tags : undefined,
         url: event.links?.[0]?.url,
         recurrence: event.recurrence,
       },

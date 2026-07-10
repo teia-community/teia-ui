@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { Button } from '@atoms/button'
+import { localDayKey } from '@utils/datetime'
 import CalendarEventCard from './CalendarEventCard'
 import styles from '@style'
 
@@ -30,8 +31,8 @@ function eventsByDay(events) {
   const map = {}
   for (const ev of events) {
     if (!ev.startDate) continue
-    const start = ev.startDate.slice(0, 10)
-    const end = (ev.endDate || ev.startDate).slice(0, 10)
+    const start = localDayKey(ev.startDate)
+    const end = localDayKey(ev.endDate || ev.startDate)
     const cursor = new Date(`${start}T00:00:00`)
     const stop = new Date(`${end}T00:00:00`)
     for (let i = 0; i <= 31 && cursor <= stop; i++) {

@@ -4,9 +4,18 @@ import { recurrenceLabel } from '@data/calendar-chain'
 import ImageCarousel from './ImageCarousel'
 import styles from '@style'
 
+const ALL_DAY_RE = /^\d{4}-\d{2}-\d{2}$/
+
 /** Format a stored datetime-local / ISO string for display. */
 function formatDate(value) {
   if (!value) return ''
+  // All-day events are bare YYYY-MM-DD: parse as local midnight (not UTC) so
+  // negative offsets don't shift the day back, and show a date only, no time.
+  if (ALL_DAY_RE.test(value)) {
+    const date = new Date(`${value}T00:00:00`)
+    if (Number.isNaN(date.getTime())) return value
+    return date.toLocaleDateString(undefined, { dateStyle: 'medium' })
+  }
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
   return date.toLocaleString(undefined, {
@@ -39,8 +48,17 @@ export default function CalendarEventCard({
   onHide,
   onProposeEdit,
 }) {
-  const { title, description, startDate, endDate, location, links, images } =
-    event
+  const {
+    title,
+    description,
+    startDate,
+    endDate,
+    location,
+    locations,
+    tags,
+    links,
+    images,
+  } = event
   // Event data can come from untrusted sources (community IPFS docs): never
   // render a non-http(s)/mailto href (javascript: URLs execute on click).
   const safeLinks = (links || []).filter((link) =>
@@ -106,7 +124,20 @@ export default function CalendarEventCard({
               {recurrenceLabel(event.recurrence)}
             </p>
           )}
-          {location && <p className={styles.card_where}>{location}</p>}
+          {locations?.length > 0 ? (
+            <p className={styles.card_where}>{locations.join(' · ')}</p>
+          ) : (
+            location && <p className={styles.card_where}>{location}</p>
+          )}
+          {tags?.length > 0 && (
+            <p className={styles.card_tags}>
+              {tags.map((tag, i) => (
+                <span key={i} className={styles.card_tag}>
+                  {tag}
+                </span>
+              ))}
+            </p>
+          )}
         </div>
 
         <div className={styles.card_actions}>

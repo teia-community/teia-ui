@@ -3,6 +3,27 @@ import { Button } from '@atoms/button'
 import { blankEvent } from '@data/calendar/schema'
 import styles from '@style'
 
+const pad2 = (n) => String(n).padStart(2, '0')
+
+/**
+ * The date (`YYYY-MM-DD`) of the final occurrence of a recurring series, from
+ * its start date, frequency, interval and total number of events. The series
+ * only ever ends "after N times" now, so the end date is derived, not entered.
+ * Returns '' when the start isn't a plain date-shaped value.
+ */
+function seriesEndDate(startDate, freq, interval, count) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(startDate || ''))
+  if (!m) return ''
+  const steps = (Math.max(1, count) - 1) * Math.max(1, interval)
+  const dt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  if (freq === 'DAILY') dt.setDate(dt.getDate() + steps)
+  else if (freq === 'WEEKLY') dt.setDate(dt.getDate() + steps * 7)
+  else if (freq === 'MONTHLY') dt.setMonth(dt.getMonth() + steps)
+  else if (freq === 'YEARLY') dt.setFullYear(dt.getFullYear() + steps)
+  else return ''
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`
+}
+
 /**
  * Create/edit form for a calendar event. Supports a repeatable list of links
  * ({ label, url }) and a repeatable list of image URLs (shown as a carousel on
@@ -29,6 +50,11 @@ export default function EventForm({
   const [uploadingImages, setUploadingImages] = useState(false)
   const [selectedImages, setSelectedImages] = useState([])
   const [formError, setFormError] = useState(null)
+  // Bare YYYY-MM-DD start/end means an all-day event, derived once so
+  // editing an existing (or draft-restored) all-day event shows it checked.
+  const [allDay, setAllDay] = useState(() =>
+    /^\d{4}-\d{2}-\d{2}$/.test(values.startDate)
+  )
 
   useEffect(() => {
     onValuesChange?.(values)
@@ -45,6 +71,25 @@ export default function EventForm({
     } catch {
       // Not user-gesture / unsupported — typing still works.
     }
+  }
+
+  // Keep start/end in sync with the input type: truncate to a bare date going
+  // into all-day, restore a time going out so the shapes never mix.
+  const toggleAllDay = (on) => {
+    setAllDay(on)
+    setValues((v) => ({
+      ...v,
+      startDate: on
+        ? v.startDate.slice(0, 10)
+        : v.startDate
+        ? `${v.startDate}T00:00`
+        : v.startDate,
+      endDate: on
+        ? v.endDate.slice(0, 10)
+        : v.endDate
+        ? `${v.endDate}T00:00`
+        : v.endDate,
+    }))
   }
 
   // --- links --------------------------------------------------------------
@@ -74,7 +119,6 @@ export default function EventForm({
   // --- recurrence ---------------------------------------------------------
   const rec = values.recurrence
   const enabled = Boolean(rec)
-  const endMode = rec?.count != null ? 'count' : 'until'
   const UNIT = {
     DAILY: 'day',
     WEEKLY: 'week',
@@ -86,20 +130,13 @@ export default function EventForm({
   const toggleRepeat = (on) =>
     setValues((v) => ({
       ...v,
-      // End is required, so a fresh rule starts on the "until a date" mode.
-      recurrence: on ? { freq: 'WEEKLY', interval: 1, until: '' } : undefined,
+      // A repeating event ends "after N times"; its end is the derived series
+      // end, not a per-occurrence end, so drop any hand-entered endDate.
+      endDate: on ? '' : v.endDate,
+      recurrence: on ? { freq: 'WEEKLY', interval: 1, count: 1 } : undefined,
     }))
   const setRec = (patch) =>
     setValues((v) => ({ ...v, recurrence: { ...v.recurrence, ...patch } }))
-  const setEndMode = (mode) =>
-    setValues((v) => ({
-      ...v,
-      recurrence: {
-        ...v.recurrence,
-        until: mode === 'until' ? v.recurrence?.until || '' : undefined,
-        count: mode === 'count' ? v.recurrence?.count || 1 : undefined,
-      },
-    }))
 
   /** Plain-language summary shown under the repeat controls. */
   const repeatSummary = () => {
@@ -114,14 +151,29 @@ export default function EventForm({
             YEARLY: 'yearly',
           }[rec.freq]
         : `every ${n} ${plural(n, UNIT[rec.freq])}`
-    if (endMode === 'count' && rec.count) {
-      return `Repeats ${adverb} — ${rec.count} events`
-    }
-    if (endMode === 'until' && rec.until) {
-      return `Repeats ${adverb} until ${rec.until}`
-    }
-    return `Repeats ${adverb}`
+    const count = Math.max(1, Number(rec.count) || 1)
+    const times = `${count} ${count === 1 ? 'event' : 'events'}`
+    const end = seriesEndDate(values.startDate, rec.freq, n, count)
+    return end
+      ? `Repeats ${adverb} — ${times} (ends ${end})`
+      : `Repeats ${adverb} — ${times}`
   }
+
+  // While repeating, the End field is derived (last occurrence's date) and
+  // read-only, it mirrors the calculated series end, keeping the start's time
+  // of day for timed events so the shape matches the Start input.
+  const repInterval = Math.max(1, Number(rec?.interval) || 1)
+  const repCount = Math.max(1, Number(rec?.count) || 1)
+  const seriesEnd = enabled
+    ? seriesEndDate(values.startDate, rec.freq, repInterval, repCount)
+    : ''
+  const endFieldValue = !enabled
+    ? values.endDate
+    : seriesEnd
+    ? allDay
+      ? seriesEnd
+      : `${seriesEnd}T${values.startDate.slice(11, 16) || '00:00'}`
+    : ''
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -137,22 +189,28 @@ export default function EventForm({
       setFormError('End must be after start.')
       return
     }
-    if (values.recurrence) {
-      const r = values.recurrence
-      if (!r.until && !r.count) {
-        setFormError(
-          'Choose when the repeat ends — a date or a number of times.'
-        )
-        return
+    // Comma-separated, deduped, trimmed list (order preserved).
+    const parseList = (str) => {
+      const seen = new Set()
+      const list = []
+      for (const raw of (str || '').split(',')) {
+        const t = raw.trim()
+        if (t && !seen.has(t)) {
+          seen.add(t)
+          list.push(t)
+        }
       }
-      if (
-        r.until &&
-        values.startDate &&
-        r.until.slice(0, 10) < values.startDate.slice(0, 10)
-      ) {
-        setFormError('The repeat end date must be on or after the start.')
-        return
-      }
+      return list
+    }
+    const locations = parseList(values.location)
+    if (locations.length > 2) {
+      setFormError('Maximum 2 locations')
+      return
+    }
+    const tags = parseList(values.tags)
+    if (tags.length > 20) {
+      setFormError('Maximum 20 tags')
+      return
     }
     setSaving(true)
     try {
@@ -177,21 +235,34 @@ export default function EventForm({
         }
       }
 
+      // The series end is derived from start + count; it belongs to the
+      // recurrence rule (as `until`), not the per-occurrence `endDate`, which
+      // stays empty so occurrences don't each span the whole series.
+      const recInterval = Math.max(1, Number(values.recurrence?.interval) || 1)
+      const recCount = Math.max(1, Number(values.recurrence?.count) || 1)
+      const recUntil = values.recurrence?.freq
+        ? seriesEndDate(
+            values.startDate,
+            values.recurrence.freq,
+            recInterval,
+            recCount
+          )
+        : ''
+
       // Drop empty rows before saving.
       const cleaned = {
         ...values,
+        locations,
+        tags,
         links: values.links.filter((l) => l.url.trim()),
         images: images.filter((url) => url.trim()),
+        endDate: values.recurrence?.freq ? '' : values.endDate,
         recurrence: values.recurrence?.freq
           ? {
               freq: values.recurrence.freq,
-              interval: Math.max(1, Number(values.recurrence.interval) || 1),
-              ...(values.recurrence.until
-                ? { until: values.recurrence.until }
-                : {}),
-              ...(values.recurrence.count
-                ? { count: Math.max(1, Number(values.recurrence.count)) }
-                : {}),
+              interval: recInterval,
+              count: recCount,
+              ...(recUntil ? { until: recUntil } : {}),
             }
           : undefined,
       }
@@ -226,11 +297,46 @@ export default function EventForm({
         />
       </label>
 
+      {/* Consolidated date/time mode: All day / Set time are exclusive; Repeat
+          is an independent toggle that reveals the recurrence controls. */}
+      <div className={styles.mode_row}>
+        <button
+          type="button"
+          className={`${styles.mode_chip} ${
+            allDay ? styles.mode_chip_active : ''
+          }`}
+          aria-pressed={allDay}
+          onClick={() => toggleAllDay(true)}
+        >
+          All day
+        </button>
+        <button
+          type="button"
+          className={`${styles.mode_chip} ${
+            !allDay ? styles.mode_chip_active : ''
+          }`}
+          aria-pressed={!allDay}
+          onClick={() => toggleAllDay(false)}
+        >
+          Set time
+        </button>
+        <button
+          type="button"
+          className={`${styles.mode_chip} ${
+            enabled ? styles.mode_chip_active : ''
+          }`}
+          aria-pressed={enabled}
+          onClick={() => toggleRepeat(!enabled)}
+        >
+          {enabled ? '✓ Repeat' : 'Repeat'}
+        </button>
+      </div>
+
       <div className={styles.field_row}>
         <label className={styles.field}>
           <span>Starts</span>
           <input
-            type="datetime-local"
+            type={allDay ? 'date' : 'datetime-local'}
             required
             value={values.startDate}
             onChange={set('startDate')}
@@ -238,120 +344,83 @@ export default function EventForm({
           />
         </label>
         <label className={styles.field}>
-          <span>Ends (optional)</span>
+          <span>{enabled ? 'Ends (auto)' : 'Ends (optional)'}</span>
           <input
-            type="datetime-local"
-            value={values.endDate}
+            type={allDay ? 'date' : 'datetime-local'}
+            value={endFieldValue}
             onChange={set('endDate')}
-            onClick={openPicker}
+            onClick={enabled ? undefined : openPicker}
+            disabled={enabled}
           />
         </label>
       </div>
 
       {/* Recurrence — occurrences are generated from the Start date above. */}
-      <fieldset className={styles.group}>
-        <legend>Repeat</legend>
-        <div className={styles.repeat_toggle}>
-          <Button
-            shadow_box
-            fit
-            type="button"
-            onClick={() => toggleRepeat(!enabled)}
-          >
-            {enabled ? '✓ Repeating' : 'Repeat this event'}
-          </Button>
-        </div>
+      {enabled && (
+        <fieldset className={styles.group}>
+          <legend>Repeat</legend>
+          <div className={styles.repeat_line}>
+            <span>Every</span>
+            <input
+              type="number"
+              min="1"
+              value={rec.interval || 1}
+              onChange={(e) => setRec({ interval: Number(e.target.value) })}
+              aria-label="Repeat interval"
+            />
+            <select
+              value={rec.freq}
+              onChange={(e) => setRec({ freq: e.target.value })}
+              aria-label="Repeat unit"
+            >
+              <option value="DAILY">{plural(rec.interval || 1, 'day')}</option>
+              <option value="WEEKLY">
+                {plural(rec.interval || 1, 'week')}
+              </option>
+              <option value="MONTHLY">
+                {plural(rec.interval || 1, 'month')}
+              </option>
+              <option value="YEARLY">
+                {plural(rec.interval || 1, 'year')}
+              </option>
+            </select>
+          </div>
 
-        {enabled && (
-          <>
-            <div className={styles.repeat_line}>
-              <span>Every</span>
-              <input
-                type="number"
-                min="1"
-                value={rec.interval || 1}
-                onChange={(e) => setRec({ interval: Number(e.target.value) })}
-                aria-label="Repeat interval"
-              />
-              <select
-                value={rec.freq}
-                onChange={(e) => setRec({ freq: e.target.value })}
-                aria-label="Repeat unit"
-              >
-                <option value="DAILY">
-                  {plural(rec.interval || 1, 'day')}
-                </option>
-                <option value="WEEKLY">
-                  {plural(rec.interval || 1, 'week')}
-                </option>
-                <option value="MONTHLY">
-                  {plural(rec.interval || 1, 'month')}
-                </option>
-                <option value="YEARLY">
-                  {plural(rec.interval || 1, 'year')}
-                </option>
-              </select>
-            </div>
+          <div className={styles.repeat_line}>
+            <span>Ends after</span>
+            <input
+              type="number"
+              min="1"
+              value={rec.count || 1}
+              onChange={(e) => setRec({ count: Number(e.target.value) })}
+              aria-label="Repeat count"
+            />
+            <span>times</span>
+          </div>
 
-            <div className={styles.repeat_line}>
-              <span>Ends</span>
-              <label
-                className={`${styles.repeat_radio} ${
-                  endMode === 'until' ? styles.repeat_radio_active : ''
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={endMode === 'until'}
-                  onChange={() => setEndMode('until')}
-                />
-                <span>on</span>
-              </label>
-              <input
-                type="date"
-                value={rec.until || ''}
-                disabled={endMode !== 'until'}
-                min={(values.startDate || '').slice(0, 10)}
-                onChange={(e) => setRec({ until: e.target.value })}
-                aria-label="Repeat until date"
-              />
-              <label
-                className={`${styles.repeat_radio} ${
-                  endMode === 'count' ? styles.repeat_radio_active : ''
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={endMode === 'count'}
-                  onChange={() => setEndMode('count')}
-                />
-                <span>after</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={rec.count || 1}
-                disabled={endMode !== 'count'}
-                onChange={(e) => setRec({ count: Number(e.target.value) })}
-                aria-label="Repeat count"
-              />
-              <span>times</span>
-            </div>
-
-            {repeatSummary() && (
-              <p className={styles.repeat_summary}>{repeatSummary()}</p>
-            )}
-          </>
-        )}
-      </fieldset>
+          {repeatSummary() && (
+            <p className={styles.repeat_summary}>{repeatSummary()}</p>
+          )}
+        </fieldset>
+      )}
 
       <label className={styles.field}>
-        <span>Location (optional)</span>
+        <span>Location (optional, max 2)</span>
         <input
           type="text"
           value={values.location}
           onChange={set('location')}
-          placeholder="Where / online"
+          placeholder="Where / online (comma-separated, max 2)"
+        />
+      </label>
+
+      <label className={styles.field}>
+        <span>Tags (optional, max 20)</span>
+        <input
+          type="text"
+          value={values.tags || ''}
+          onChange={set('tags')}
+          placeholder="tag1, tag2, …"
         />
       </label>
 

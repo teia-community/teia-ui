@@ -224,6 +224,22 @@
   margin: 2px 0 0;
 }
 
+.card_tags {
+  margin: 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.card_tag {
+  display: inline-block;
+  font-size: var(--font-size-small);
+  line-height: 1.4;
+  padding: 0 6px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
 .card_actions {
   display: flex;
   flex-wrap: wrap;
@@ -388,11 +404,39 @@
   }
 }
 
-// Recurrence controls.
-.repeat_toggle {
-  margin-bottom: var(--spacing-half, 0.5rem);
+.mode_row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-half, 0.5rem);
+  margin-bottom: var(--spacing, 1rem);
 }
 
+.mode_chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-quarter, 0.25rem);
+  padding: var(--spacing-quarter, 0.25rem) var(--spacing, 1rem);
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-secondary);
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: -2px;
+  }
+}
+
+.mode_chip_active {
+  color: var(--text-color);
+  font-weight: 700;
+  border-color: var(--text-color);
+  background: var(--gray-15);
+}
+
+// Recurrence controls.
 .repeat_line {
   display: flex;
   align-items: center;
@@ -417,30 +461,6 @@
   input:disabled {
     opacity: 0.5;
   }
-}
-
-.repeat_radio {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-quarter, 0.25rem);
-  padding: 0.15rem var(--spacing-half, 0.5rem);
-  border: 1px solid transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  user-select: none;
-
-  input {
-    width: auto;
-    cursor: pointer;
-  }
-}
-
-// Selected end-mode: filled box + border + bold, so the choice is obvious.
-.repeat_radio_active {
-  color: var(--text-color);
-  font-weight: 700;
-  border-color: var(--text-color);
-  background: var(--gray-15);
 }
 
 .repeat_summary {

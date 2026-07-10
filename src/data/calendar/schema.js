@@ -26,6 +26,7 @@
  * @property {string}         startDate   ISO 8601 / `datetime-local` value
  * @property {string}         [endDate]
  * @property {string}         [location]
+ * @property {string}         [tags]      comma-separated tags (form state)
  * @property {CalendarLink[]} links       external links shown on the card
  * @property {string[]}       images      image URLs rendered in a carousel
  * @property {string}         [createdBy] wallet address that last wrote it
@@ -47,6 +48,7 @@ export function blankEvent() {
     startDate: '',
     endDate: '',
     location: '',
+    tags: '',
     links: [],
     images: [],
     createdBy: '',

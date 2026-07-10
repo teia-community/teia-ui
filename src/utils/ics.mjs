@@ -15,6 +15,7 @@
  * @property {string} [end]
  * @property {string} [description]
  * @property {string} [location]
+ * @property {string[]} [categories]
  * @property {string} [url]
  * @property {string} [dtstamp]
  * @property {{ freq: string, interval?: number, until?: string, count?: number }} [recurrence]
@@ -217,6 +218,7 @@ function buildEvent(event, feedDtstamp) {
     end,
     description,
     location,
+    categories,
     url,
     dtstamp,
     recurrence,
@@ -263,6 +265,9 @@ function buildEvent(event, feedDtstamp) {
   }
   if (location) {
     lines.push(`LOCATION:${escapeText(location)}`)
+  }
+  if (Array.isArray(categories) && categories.length > 0) {
+    lines.push(`CATEGORIES:${categories.map(escapeText).join(',')}`)
   }
   const safeUrl = sanitizeUrl(url)
   if (safeUrl) {
