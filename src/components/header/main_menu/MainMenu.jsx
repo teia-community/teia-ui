@@ -18,7 +18,6 @@ import { useAccountRoles } from '@data/roles'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
-import { Line } from '@atoms/line'
 import { ThemeSelection } from '@atoms/select'
 import { shallow } from 'zustand/shallow'
 
@@ -114,7 +113,73 @@ export const MainMenu = () => {
   const { isModerator, isMultisig } = useAccountRoles(address)
   const canModerate = isModerator || isMultisig
 
-  // TODO: Search doesn't really make sense anymore? Does it? (commented out for now)
+  // TODO: Search doesn't really make sense anymore? Does it? (commented out for now), will be reworked later on.
+  const sections = [
+    {
+      title: 'Account',
+      items: address
+        ? [
+            {
+              label: 'Profile',
+              route: `${currentName || 'tz/' + currentAddress}` || 'tz',
+              need_sync: !currentName || !currentAddress,
+            },
+            {
+              label: 'Notifications',
+              route: 'notifications',
+              need_sync: true,
+              badge: showNotificationsBadge,
+            },
+            { label: 'Edit Profile', route: 'subjkt', need_sync: true },
+            { label: 'Settings', route: 'settings' },
+            ...(canModerate
+              ? [{ label: 'Moderation', route: 'inbox/admin', need_sync: true }]
+              : []),
+          ]
+        : [
+            { label: 'Sign in', route: 'sync' },
+            // Settings are device-local, useful signed-out too.
+            { label: 'Settings', route: 'settings' },
+          ],
+    },
+    {
+      title: 'Create',
+      items: [
+        { label: 'Mint', route: 'mint', need_sync: true, primary: true },
+        { label: 'Collaborations', route: 'collaborate', need_sync: true },
+        { label: 'Register Copyright', route: 'copyright' },
+      ],
+    },
+    {
+      title: 'Explore',
+      items: [
+        { label: 'Search', route: 'search' },
+        { label: 'Activity', route: 'activity' },
+        { label: 'Text', route: 'text' },
+        { label: 'Calendar', route: 'calendar' },
+        { label: 'Copyright Marketplace', route: 'copyrightmarketplace' },
+      ],
+    },
+    {
+      title: 'Community & DAO',
+      items: [
+        { label: 'Public Channels', route: 'publicchannels' },
+        { label: 'Polls', route: 'polls' },
+        { label: 'DAO Governance', route: 'dao' },
+        { label: 'Donate', route: 'donate' },
+        { label: 'Bakers', route: 'bakers' },
+      ],
+    },
+    {
+      title: 'Learn',
+      items: [
+        { label: 'Wiki', route: 'wiki' },
+        { label: 'Getting Started', route: 'faq' },
+        { label: 'About', route: 'about' },
+      ],
+    },
+  ]
+
   return (
     <motion.div
       ref={menuRef}
@@ -125,107 +190,36 @@ export const MainMenu = () => {
       {...fadeIn()}
     >
       <nav className={`${styles.content}`}>
-        <div className={`${styles.menu_left}`}>
-          {/* <MenuItem route="search" /> */}
-          <MenuItem className={styles.menu_label} route="search" />
-          <MenuItem
-            className={styles.menu_label}
-            label="Activity"
-            route="activity"
-          />
-          <MenuItem className={styles.menu_label} route="text" />
-          <MenuItem className={styles.menu_label} route="calendar" />
-          <MenuItem className={styles.menu_label} route="about" />
-          <MenuItem className={styles.menu_label} label="Wiki" route="wiki" />
-          <MenuItem
-            className={styles.menu_label}
-            label="Getting Started"
-            route="faq"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Copyright Marketplace"
-            route="copyrightmarketplace"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Public Channels"
-            route="publicchannels"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Bakers"
-            route="bakers"
-          />
-        </div>
-        <Line className={styles.line} vertical />
-        <div className={styles.menu_right}>
-          <div className={styles.address}>{walletPreview(address)}</div>
-          <MenuItem
-            className={styles.menu_label}
-            label="Mint"
-            route="mint"
-            need_sync
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Profile"
-            route={`${currentName || 'tz/' + currentAddress}` || 'tz'}
-            need_sync={!currentName || !currentAddress}
-          />
-          <MenuItem
-            className={styles.menu_label}
-            need_sync
-            route="collaborate"
-          />
-          <MenuItem
-            className={styles.menu_label}
-            label="Notifications"
-            route="notifications"
-            need_sync
-            badge={showNotificationsBadge}
-          />
-          {canModerate && (
-            <MenuItem
-              className={styles.menu_label}
-              label="Moderation"
-              route="inbox/admin"
-              need_sync
-            />
-          )}
-
-          <MenuItem
-            className={styles.menu_label}
-            label="Edit Profile"
-            route="subjkt"
-            need_sync
-          />
-
-          <MenuItem
-            className={styles.menu_label}
-            label="DAO Governance"
-            route="dao"
-          />
-
-          <MenuItem
-            className={styles.menu_label}
-            label="Donate"
-            route="donate"
-          />
-
-          <MenuItem
-            className={styles.menu_label}
-            label="Copyright Register"
-            route="copyright"
-          />
-
-          <MenuItem className={styles.menu_label} label="Polls" route="polls" />
+        {sections.map((section) => (
+          <section key={section.title} className={styles.menu_section}>
+            <h2 className={styles.menu_section_title}>{section.title}</h2>
+            {section.title === 'Account' && address && (
+              <div className={styles.address}>{walletPreview(address)}</div>
+            )}
+            <ul className={styles.menu_section_list}>
+              {section.items.map((item) => (
+                <li key={item.label}>
+                  <MenuItem
+                    className={`${styles.menu_label} ${
+                      item.primary ? styles.menu_primary : ''
+                    }`}
+                    label={item.label}
+                    route={item.route}
+                    need_sync={item.need_sync}
+                    badge={item.badge}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+        <section className={styles.menu_section}>
+          <h2 className={styles.menu_section_title}>Preferences</h2>
           <div className={styles.state_buttons}>
-            {/* <Toggle box onToggle={toggleTheme} toggled={theme === 'dark'} /> */}
             <Toggle box label="ZEN" onToggle={setZen} toggled={zen} />
             <ThemeSelection className={styles.theme_selection} />
           </div>
-        </div>
+        </section>
       </nav>
       <Footer pin />
     </motion.div>

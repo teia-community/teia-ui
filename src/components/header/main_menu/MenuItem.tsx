@@ -24,19 +24,31 @@ export const MenuItem = ({
 
   const address = useUserStore((st) => st.address)
   const setCollapsed = useModalStore((st) => st.setCollapsed)
+  const locked = need_sync && !address
 
   return (
     <Button
-      className={`${need_sync && !address ? styles.disabled : ''} ${
+      className={`${locked ? styles.disabled : ''} ${
         className ? className : ''
       } `}
-      to={need_sync && !address ? '/sync' : `/${route}`}
+      to={locked ? '/sync' : `/${route}`}
       state={need_sync && address ? `/${route}` : null}
       onTo={() => setCollapsed(true)}
     >
       <span>
         {label}
-        {badge && <span className={menuStyles.menuBadge} />}
+        {badge && (
+          <>
+            <span className={menuStyles.menuBadge} aria-hidden="true" />
+            <span className={menuStyles.visually_hidden}> (unread)</span>
+          </>
+        )}
+        {locked && (
+          <span className={menuStyles.visually_hidden}>
+            {' '}
+            — sign in required
+          </span>
+        )}
       </span>
     </Button>
   )
