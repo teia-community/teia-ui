@@ -410,7 +410,7 @@ export default function EventForm({
           type="text"
           value={values.location}
           onChange={set('location')}
-          placeholder="Where / online (comma-separated, max 2)"
+          placeholder="My City, online"
         />
       </label>
 
