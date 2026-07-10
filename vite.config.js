@@ -1,10 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 import svgrPlugin from 'vite-plugin-svgr'
 import path from 'path'
 import eslintPlugin from 'vite-plugin-eslint'
 import { splitVendorChunkPlugin } from 'vite'
+import { fetchThetezosEvents } from './src/data/calendar/thetezos.mjs'
 import { copySync } from 'fs-extra'
 import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
 import mdPlugin from 'vite-plugin-markdown'
@@ -57,6 +58,35 @@ const copyPdfData = () => {
   }
 }
 
+/**
+ * Dev-only proxy that mirrors the Netlify function `functions/thetezos-events.mjs`
+ * so `npm start` (Vite, no functions) serves `/api/thetezos-events` too. The MEC
+ * token is read from `MEC_TOKEN` (`.env.local`) here in the dev server process —
+ * it is never exposed to the browser bundle.
+ */
+const thetezosDevApi = (token) => ({
+  name: 'thetezos-dev-api',
+  configureServer(server) {
+    server.middlewares.use('/api/thetezos-events', async (req, res) => {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
+      if (!token) {
+        res.statusCode = 500
+        res.end(JSON.stringify({ events: [], error: 'MEC_TOKEN missing in .env.local' }))
+        return
+      }
+      try {
+        const url = new URL(req.url, 'http://localhost')
+        const limit = Number(url.searchParams.get('limit')) || 100
+        const events = await fetchThetezosEvents(token, limit)
+        res.end(JSON.stringify({ events }))
+      } catch (e) {
+        res.statusCode = 502
+        res.end(JSON.stringify({ events: [], error: String(e?.message || e) }))
+      }
+    })
+  },
+})
+
 // Project based aliases
 const teiaAliases = {
   '@atoms': path.resolve(__dirname, 'src', 'atoms'),
@@ -77,6 +107,8 @@ const teiaAliases = {
 
 export default defineConfig(({ mode }) => {
   const prod = mode === 'production'
+  // Load all env vars (incl. non-VITE_ ones like MEC_TOKEN) for server-side use.
+  const env = loadEnv(mode, process.cwd(), '')
 
   let prod_plugs = []
 
@@ -90,6 +122,7 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     plugins: [
       ...prod_plugs,
+      ...(prod ? [] : [thetezosDevApi(env.MEC_TOKEN)]),
       react(),
       splitVendorChunkPlugin(),
       viteTsconfigPaths(),
