@@ -297,6 +297,16 @@ export default function EventForm({
         />
       </label>
 
+      <label className={styles.field}>
+        <span>Description</span>
+        <textarea
+          rows={4}
+          value={values.description}
+          onChange={set('description')}
+          placeholder="What's happening?"
+        />
+      </label>
+
       {/* Consolidated date/time mode: All day / Set time are exclusive; Repeat
           is an independent toggle that reveals the recurrence controls. */}
       <div className={styles.mode_row}>
@@ -421,16 +431,6 @@ export default function EventForm({
           value={values.tags || ''}
           onChange={set('tags')}
           placeholder="tag1, tag2, …"
-        />
-      </label>
-
-      <label className={styles.field}>
-        <span>Description</span>
-        <textarea
-          rows={4}
-          value={values.description}
-          onChange={set('description')}
-          placeholder="What's happening?"
         />
       </label>
 
