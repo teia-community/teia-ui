@@ -308,7 +308,10 @@ export default function MonthGrid({
                 return (
                   <span
                     key={sp.ev.id}
-                    className={styles.bar}
+                    className={[
+                      styles.bar,
+                      sp.ev.hidden ? styles.bar_hidden : '',
+                    ].join(' ')}
                     aria-hidden="true"
                     style={{
                       gridColumn: `${startCol} / ${endCol + 1}`,
@@ -316,7 +319,10 @@ export default function MonthGrid({
                       background: sp.color,
                     }}
                   >
-                    <span className={styles.bar_title}>{sp.ev.title}</span>
+                    <span className={styles.bar_title}>
+                      {sp.ev.title}
+                      {sp.ev.hidden ? ' · hidden' : ''}
+                    </span>
                   </span>
                 )
               })}

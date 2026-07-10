@@ -107,6 +107,7 @@
 }
 
 .bar {
+  position: relative;
   align-self: center;
   display: flex;
   align-items: center;
@@ -117,7 +118,24 @@
   pointer-events: none;
 }
 
+.bar_hidden {
+  opacity: 0.55;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.45) 0 3px,
+      rgba(0, 0, 0, 0) 3px 7px
+    );
+    pointer-events: none;
+  }
+}
+
 .bar_title {
+  position: relative;
   padding-inline: 6px;
   font-size: var(--font-size-small);
   line-height: 1;
