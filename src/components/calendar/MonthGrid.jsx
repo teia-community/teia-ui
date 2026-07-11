@@ -103,9 +103,11 @@ function layoutBars(events, year, month, startOffset, daysInMonth) {
     })
   }
 
-  // Longest-and-earliest first packs the wide multi-day bars into low lanes.
+  // Teia events are packed first
+  const isTeia = (sp) => sp.ev.source === 'chain'
   spans.sort(
     (a, b) =>
+      Number(isTeia(b)) - Number(isTeia(a)) ||
       a.startCell - b.startCell ||
       b.endCell - b.startCell - (a.endCell - a.startCell)
   )
@@ -227,7 +229,10 @@ export default function MonthGrid({
     if (e.target === dialogRef.current) closeDialog()
   }
 
-  const selectedEvents = (selected && byDay[selected]) || []
+  // Teia events first
+  const selectedEvents = [...((selected && byDay[selected]) || [])].sort(
+    (a, b) => Number(b.source === 'chain') - Number(a.source === 'chain')
+  )
   const selectedLabel = selected
     ? new Date(`${selected}T00:00:00`).toLocaleDateString(undefined, {
         dateStyle: 'full',

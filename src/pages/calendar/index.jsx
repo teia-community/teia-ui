@@ -85,6 +85,11 @@ export default function Calendar() {
       if (date && date < threshold) previous.push(ev)
       else upcoming.push(ev)
     }
+    // Float Teia (on-chain) events to the top of the upcoming list; the stable
+    // sort keeps chronological order within the Teia and non-Teia groups.
+    upcoming.sort(
+      (a, b) => Number(b.source === 'chain') - Number(a.source === 'chain')
+    )
     return { upcoming, previous }
   }, [events])
 
