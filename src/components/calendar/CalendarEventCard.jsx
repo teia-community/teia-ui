@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import useClipboard from 'react-use-clipboard'
 import { Button } from '@atoms/button'
 import { downloadEventICS } from '@utils/calendarDownload'
 import { recurrenceLabel } from '@data/calendar-chain'
@@ -5,6 +8,9 @@ import ImageCarousel from './ImageCarousel'
 import styles from '@style'
 
 const ALL_DAY_RE = /^\d{4}-\d{2}-\d{2}$/
+
+// Characters of the description shown in the compact card
+const DESCRIPTION_PREVIEW = 280
 
 /** Format a stored datetime-local / ISO string for display. */
 function formatDate(value) {
@@ -47,6 +53,8 @@ export default function CalendarEventCard({
   onEdit,
   onHide,
   onProposeEdit,
+  truncateDescription = false,
+  linkToEvent = false,
 }) {
   const {
     title,
@@ -59,6 +67,18 @@ export default function CalendarEventCard({
     links,
     images,
   } = event
+
+  // In the compact card (day popup) a very long description is clamped to its
+  // beginning with a "Read more" toggle.
+  const [showFullDescription, setShowFullDescription] = useState(false)
+  const isLongDescription =
+    truncateDescription &&
+    !!description &&
+    description.length > DESCRIPTION_PREVIEW
+  const shownDescription =
+    isLongDescription && !showFullDescription
+      ? `${description.slice(0, DESCRIPTION_PREVIEW).trimEnd()}…`
+      : description
   // Event data can come from untrusted sources (community IPFS docs): never
   // render a non-http(s)/mailto href (javascript: URLs execute on click).
   const safeLinks = (links || []).filter((link) =>
@@ -89,6 +109,20 @@ export default function CalendarEventCard({
       : '')
   const feedWebcal = feedIcs.replace(/^https?:\/\//, 'webcal://')
 
+  // Shareable teia.art URL for this event (chain series / WP occurrence).
+  const permalinkId = isChain
+    ? `chain-${event.eventId}`
+    : event.source === 'wp'
+    ? event.id
+    : null
+  const eventUrl =
+    permalinkId && typeof window !== 'undefined'
+      ? `${window.location.origin}/calendar/event/${permalinkId}`
+      : ''
+  const [linkCopied, copyLink] = useClipboard(eventUrl, {
+    successDuration: 2000,
+  })
+
   return (
     <article
       className={`${styles.card} ${
@@ -112,7 +146,16 @@ export default function CalendarEventCard({
             </span>
           )}
           <h2 className={styles.card_title}>
-            {title || 'Untitled event'}
+            {linkToEvent && permalinkId ? (
+              <Link
+                to={`/calendar/event/${permalinkId}`}
+                className={styles.card_title_link}
+              >
+                {title || 'Untitled event'}
+              </Link>
+            ) : (
+              title || 'Untitled event'
+            )}
             {isChain && event.hidden ? ' (hidden)' : ''}
           </h2>
           <p className={styles.card_when}>
@@ -144,6 +187,11 @@ export default function CalendarEventCard({
           <Button shadow_box fit onClick={() => downloadEventICS(event)}>
             Add to calendar
           </Button>
+          {eventUrl && (
+            <Button shadow_box fit onClick={copyLink}>
+              {linkCopied ? 'Link copied' : 'Copy link'}
+            </Button>
+          )}
           {isChain && feedWebcal && (
             <Button shadow_box fit href={feedWebcal}>
               Subscribe to Teia Calendar
@@ -174,7 +222,20 @@ export default function CalendarEventCard({
 
       <ImageCarousel images={images} />
 
-      {description && <p className={styles.card_description}>{description}</p>}
+      {description && (
+        <p className={styles.card_description}>
+          {shownDescription}
+          {isLongDescription && (
+            <button
+              type="button"
+              className={styles.card_description_toggle}
+              onClick={() => setShowFullDescription((v) => !v)}
+            >
+              {showFullDescription ? 'Show less' : 'Read more'}
+            </button>
+          )}
+        </p>
+      )}
 
       {safeLinks.length > 0 && (
         <ul className={styles.card_links}>

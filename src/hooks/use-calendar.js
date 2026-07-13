@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import useSWR from 'swr'
 import { fetchUpcomingEvents, fetchPastEvents } from '@data/calendar/wordpress'
-import { fetchChainCalendarEvents } from '@data/calendar-chain'
+import {
+  fetchChainCalendarEvents,
+  fetchChainEventById,
+} from '@data/calendar-chain'
 import { useUserStore } from '@context/userStore'
 import { useGateRoles } from '@data/roles'
 import { toInstant } from '@utils/datetime'
@@ -17,6 +20,8 @@ const SWR_KEY = 'calendar/events'
  */
 let wpCache = []
 let wpStarted = false
+// Flips true once both WP fetches have settled.
+let wpDone = false
 const wpSubscribers = new Set()
 
 // On-chain events, fetched once per SWR load and cached at module scope so the
@@ -53,6 +58,9 @@ function startWpLoad() {
     } catch {
       // Past events failing just means an emptier Previous Events accordion.
     }
+
+    wpDone = true
+    notifyWp()
   })()
 }
 
@@ -115,5 +123,55 @@ export function useCalendarEvents() {
     isLoading,
     /** Re-read the feed. */
     refresh: mutate,
+  }
+}
+
+/**
+ * Resolve a single calendar event by its display id, for the dedicated event
+ * URL. Chain events (`chain-<n>`) resolve standalone from the contract, so a
+ * cold/direct link works; an `::<iso>` occurrence suffix is normalized to the
+ * series. WordPress events (`wp-…`) are found in the in-memory feed.
+ *
+ * @param {string} id display id, e.g. `chain-12` or `wp-345-2026-07-01`
+ * @returns {{ event: object|null, isLoading: boolean, notFound: boolean, error: any }}
+ */
+export function useCalendarEvent(id) {
+  const address = useUserStore((st) => st.address)
+  const { data: roles } = useGateRoles(address)
+  const canModerate = Boolean(roles?.canModerate)
+
+  const isChain = typeof id === 'string' && id.startsWith('chain-')
+  const eventId = isChain ? id.slice('chain-'.length).split('::')[0] : null
+
+  // Chain events resolve on their own (cold-load friendly).
+  const chain = useSWR(
+    isChain && eventId
+      ? ['calendar/event', eventId, canModerate, address]
+      : null,
+    () =>
+      fetchChainEventById(eventId, {
+        includeHidden: canModerate,
+        viewerAddress: address,
+      })
+  )
+
+  // WP events live only in the in-memory feed
+  const feed = useCalendarEvents()
+
+  if (isChain) {
+    return {
+      event: chain.data ?? null,
+      isLoading: chain.isLoading,
+      notFound: !chain.isLoading && !chain.error && chain.data === null,
+      error: chain.error,
+    }
+  }
+
+  const event = feed.events.find((e) => e.id === id) ?? null
+  return {
+    event,
+    isLoading: feed.isLoading || !wpDone,
+    notFound: wpDone && !event,
+    error: feed.error,
   }
 }

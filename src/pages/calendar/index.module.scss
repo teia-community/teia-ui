@@ -6,6 +6,13 @@
   box-sizing: border-box;
 }
 
+.back {
+  display: inline-block;
+  margin: 1rem 0;
+  color: var(--text-color);
+  text-decoration: underline;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -60,6 +67,35 @@
 
 details[open] > .subscribe_toggle::after {
   content: ' ▴';
+}
+
+.ttc_toggle {
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  font-size: var(--font-size-small);
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  background: none;
+  color: var(--text-secondary);
+
+  &::before {
+    content: '○ ';
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+}
+
+.ttc_toggle_on {
+  color: var(--text-color);
+  border-color: var(--text-color);
+
+  &::before {
+    content: '● ';
+  }
 }
 
 .subscribe_panel {

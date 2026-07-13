@@ -22,19 +22,11 @@ import {
   docToDisplayEvent,
 } from '@data/calendar-chain'
 import { useUserProfiles } from '@data/roles'
-import { toUTC, toLocalInput, localDayKey } from '@utils/datetime'
+import { toUTC, toLocalInput } from '@utils/datetime'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
 import EventForm from '@components/calendar/EventForm'
 import MonthGrid from '@components/calendar/MonthGrid'
-import PreviousEvents from '@components/calendar/PreviousEvents'
 import styles from '@style'
-
-/** First day of the current month as a YYYY-MM-DD string (local time). */
-function currentMonthStart() {
-  const now = new Date()
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  return `${now.getFullYear()}-${m}-01`
-}
 
 /**
  * Calendar page — community events live on the teiaCalendar contract:
@@ -43,8 +35,25 @@ function currentMonthStart() {
  *  - everyone else views + subscribes, and gets a "get TEIA" prompt.
  * WordPress events are merged in read-only.
  */
+const SHOW_TTC_KEY = 'calendar:showTtc'
+
 export default function Calendar() {
-  const { events, isLoading, error } = useCalendarEvents()
+  const { events: allEvents, isLoading, error } = useCalendarEvents()
+
+  // Toggle for thetezos.com (TTC) events.
+  const [showTtc, setShowTtc] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.localStorage.getItem(SHOW_TTC_KEY) !== '0'
+  })
+  useEffect(() => {
+    window.localStorage.setItem(SHOW_TTC_KEY, showTtc ? '1' : '0')
+  }, [showTtc])
+
+  const events = useMemo(
+    () => (showTtc ? allEvents : allEvents.filter((e) => e.source !== 'wp')),
+    [allEvents, showTtc]
+  )
+
   const roles = useCalendarRoles()
   const { canModerate, canPropose } = roles
   const { data: proposals, mutate: refreshProposals } =
@@ -74,24 +83,6 @@ export default function Calendar() {
   const [opening, setOpening] = useState(false)
   // Keep form open when submitting
   const submittingRef = useRef(false)
-
-  // Split the date-sorted feed into upcoming vs the "Previous Events" accordion.
-  const { upcoming, previous } = useMemo(() => {
-    const threshold = currentMonthStart()
-    const upcoming = []
-    const previous = []
-    for (const ev of events) {
-      const date = localDayKey(ev.startDate)
-      if (date && date < threshold) previous.push(ev)
-      else upcoming.push(ev)
-    }
-    // Float Teia (on-chain) events to the top of the upcoming list; the stable
-    // sort keeps chronological order within the Teia and non-Teia groups.
-    upcoming.sort(
-      (a, b) => Number(b.source === 'chain') - Number(a.source === 'chain')
-    )
-    return { upcoming, previous }
-  }, [events])
 
   // Trying to fix DOM overlay on create form
   const modalRef = useRef(null)
@@ -276,6 +267,21 @@ export default function Calendar() {
         <header className={styles.header}>
           <h1 className={styles.headline}>Calendar</h1>
           <div className={styles.header_actions}>
+            <button
+              type="button"
+              className={`${styles.ttc_toggle} ${
+                showTtc ? styles.ttc_toggle_on : ''
+              }`}
+              aria-pressed={showTtc}
+              onClick={() => setShowTtc((v) => !v)}
+              title={
+                showTtc
+                  ? 'Hide thetezos.com events'
+                  : 'Show thetezos.com events'
+              }
+            >
+              thetezos.com events
+            </button>
             {ICS_URL && (
               <details className={styles.subscribe}>
                 <summary className={styles.subscribe_toggle}>Subscribe</summary>
@@ -389,28 +395,7 @@ export default function Calendar() {
           </p>
         )}
 
-        {isLoading ? (
-          <Loading message="Loading calendar" />
-        ) : events.length === 0 ? (
-          <p className={styles.empty}>No events yet.</p>
-        ) : (
-          <>
-            {upcoming.length === 0 ? (
-              <p className={styles.empty}>No upcoming events.</p>
-            ) : (
-              <div className={styles.list}>
-                {upcoming.map((event) => (
-                  <CalendarEventCard
-                    key={event.id}
-                    event={event}
-                    {...cardHandlers}
-                  />
-                ))}
-              </div>
-            )}
-            <PreviousEvents events={previous} {...cardHandlers} />
-          </>
-        )}
+        {isLoading && <Loading message="Loading calendar" />}
       </div>
     </Page>
   )

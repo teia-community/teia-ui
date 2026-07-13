@@ -27,6 +27,12 @@ const keyOf = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
 // Max event bars shown per day before collapsing the rest into a "+N" marker.
 const MAX_LANES = 4
 
+// Every week reserves this many lane rows regardless of how many events are
+// shown, so the grid height stays steady across months and source filters
+// (e.g. toggling the TTC calendar). Sized for the worst case: MAX_LANES bars
+// plus one "+N" overflow row.
+const GRID_LANE_ROWS = MAX_LANES + 1
+
 // Deterministic bar palette. Colors carry no meaning for now
 const BAR_COLORS = [
   '#4a90d9', // blue
@@ -204,11 +210,8 @@ export default function MonthGrid({
       rows.push({ wStart, weekSpans, lanes, overflow, hiddenByCell })
     }
 
-    const monthRows = rows.reduce(
-      (m, r) => Math.max(m, r.lanes + (r.overflow ? 1 : 0)),
-      2
-    )
-    return { weeks: rows, monthRows }
+    // Fixed so the grid height never changes with event count or filters.
+    return { weeks: rows, monthRows: GRID_LANE_ROWS }
     // cells is derived from the same inputs, so this list keys the memo.
   }, [events, year, month, startOffset, daysInMonth, cells.length])
 
@@ -375,6 +378,8 @@ export default function MonthGrid({
               key={event.id}
               event={event}
               roles={roles}
+              truncateDescription
+              linkToEvent
               onEdit={(ev) => {
                 closeDialog()
                 onEdit?.(ev)

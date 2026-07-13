@@ -10,6 +10,7 @@ import {
 } from '@pages/collaborate'
 import Text from '@pages/text'
 import Calendar from '@pages/calendar'
+import CalendarEvent from '@pages/calendar/event'
 import Community from '@pages/text/Community'
 import OfficialPosts from '@pages/text/OfficialPosts'
 import YourPosts from '@pages/text/YourPosts'
@@ -211,6 +212,7 @@ const router = createBrowserRouter(
         <Route path="create" element={<CreateCollaboration />} />
       </Route>
       <Route path="calendar" element={<Calendar />} />
+      <Route path="calendar/event/:id" element={<CalendarEvent />} />
       <Route path="text/*" element={<Text />}>
         <Route index element={<Community />} />
         <Route path="bulletin" element={<OfficialPosts />} />

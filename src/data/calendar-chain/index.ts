@@ -9,7 +9,11 @@ import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { fetchEvents } from './api'
 import { fetchEventContent } from './ipfs'
 import { expandOccurrences } from './recurrence.mjs'
-import type { CalendarEventContent, CalendarFeedEvent } from './types'
+import type {
+  CalendarEventContent,
+  CalendarFeedEvent,
+  ChainEvent,
+} from './types'
 
 export * from './types'
 export { fetchEvents, fetchProposals } from './api'
@@ -82,6 +86,74 @@ export function docToDisplayEvent(
 }
 
 /**
+ * Shared display fields for a chain event. Everything except id/startDate/
+ * endDate, which differ between the series entry and its expanded occurrences.
+ */
+function baseFeedEvent(e: ChainEvent, c: CalendarEventContent) {
+  const locations = c.locations?.length
+    ? c.locations
+    : c.location
+    ? [c.location]
+    : []
+  return {
+    eventId: e.id,
+    cid: e.cid,
+    hidden: e.hidden,
+    creator: e.creator || '',
+    modLocked: e.modLocked,
+    title: c.title || '',
+    description: c.description || '',
+    location: locations.join(', '),
+    locations,
+    links: safeLinks(c.links) as CalendarFeedEvent['links'],
+    images: Array.isArray(c.images) ? c.images.map(imageUrl) : [],
+    tags: c.tags ?? [],
+    createdBy: c.author || '',
+    createdAt: e.createdAt || '',
+    updatedAt: e.updatedAt || '',
+    source: 'chain' as const,
+    recurrence: c.recurrence,
+    seriesStart: c.startDate || '',
+    seriesEnd: c.endDate || '',
+  }
+}
+
+/**
+ * Fetch a single on-chain event as a series-level display entry (id
+ * `chain-<n>`), for the dedicated event URL.
+ * Return to be adjusted
+ */
+export async function fetchChainEventById(
+  eventId: number | string,
+  {
+    includeHidden = false,
+    viewerAddress,
+  }: { includeHidden?: boolean; viewerAddress?: string } = {}
+): Promise<CalendarFeedEvent | null> {
+  const idNum = Number(eventId)
+  if (!Number.isFinite(idNum)) return null
+  const e = (await fetchEvents()).find((ev) => ev.id === idNum)
+  if (!e) return null
+  const visible =
+    includeHidden ||
+    !e.hidden ||
+    (!e.modLocked && !!viewerAddress && e.creator === viewerAddress)
+  if (!visible) return null
+  let c: CalendarEventContent
+  try {
+    c = await fetchEventContent(e.cid)
+  } catch {
+    return null
+  }
+  return {
+    ...baseFeedEvent(e, c),
+    id: `chain-${e.id}`,
+    startDate: c.startDate || '',
+    endDate: c.endDate || '',
+  } as CalendarFeedEvent
+}
+
+/**
  * Fetch on-chain events, mapped onto the calendar UI shape. Recurring events are
  * expanded into one entry per occurrence (id `chain-<n>::<iso>`), all sharing
  * the same eventId/cid so edit/hide act on the whole series. An event whose IPFS
@@ -116,32 +188,7 @@ export async function fetchChainCalendarEvents({
     const r = docs[i]
     if (r.status !== 'fulfilled') return
     const c = r.value
-    const locations = c.locations?.length
-      ? c.locations
-      : c.location
-      ? [c.location]
-      : []
-    const base = {
-      eventId: e.id,
-      cid: e.cid,
-      hidden: e.hidden,
-      creator: e.creator || '',
-      modLocked: e.modLocked,
-      title: c.title || '',
-      description: c.description || '',
-      location: locations.join(', '),
-      locations,
-      links: safeLinks(c.links),
-      images: Array.isArray(c.images) ? c.images.map(imageUrl) : [],
-      tags: c.tags ?? [],
-      createdBy: c.author || '',
-      createdAt: e.createdAt || '',
-      updatedAt: e.updatedAt || '',
-      source: 'chain' as const,
-      recurrence: c.recurrence,
-      seriesStart: c.startDate || '',
-      seriesEnd: c.endDate || '',
-    }
+    const base = baseFeedEvent(e, c)
 
     if (c.recurrence?.freq) {
       for (const occ of expandOccurrences(
