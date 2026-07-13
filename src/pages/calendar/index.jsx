@@ -286,15 +286,35 @@ export default function Calendar() {
               <details className={styles.subscribe}>
                 <summary className={styles.subscribe_toggle}>Subscribe</summary>
                 <div className={styles.subscribe_panel}>
+                  <span className={styles.subscribe_label}>
+                    Teia events (on-chain)
+                  </span>
                   <Button shadow_box small href={webcal}>
                     Subscribe to calendar
                   </Button>
                   <Button shadow_box small secondary onClick={copy}>
                     {copied ? 'Copied!' : 'Copy feed URL'}
                   </Button>
+
+                  <span className={styles.subscribe_label}>
+                    thetezos.com events
+                  </span>
+                  <Button
+                    shadow_box
+                    small
+                    secondary
+                    href="https://thetezos.com/"
+                  >
+                    Subscribe on thetezos.com
+                  </Button>
+
                   <p className={styles.subscribe_hint}>
-                    Some 3rd Party Calendars can take up to a day to refresh
-                    subscribed calendars.
+                    We do display two separate feeds at the moment.
+                    <br />
+                    Subscribe to both to see all events.
+                    <br />
+                    Some apps can take up to a day to refresh a subscribed
+                    calendar.
                   </p>
                 </div>
               </details>
