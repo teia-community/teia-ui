@@ -45,7 +45,11 @@ export default function AgreementViewer(props: AgreementProps) {
     })
 
     const printWindow = window.open('', '_blank')
-    printWindow?.document.write(`
+    if (!printWindow) return
+    const doc = printWindow.document
+    // All dynamic values are inserted below via textContent/text nodes so attacker-controlled
+    // agreement text or address can never inject markup (stored XSS).
+    doc.write(`
       <html>
         <head>
           <title>Copyright Agreement</title>
@@ -65,15 +69,33 @@ export default function AgreementViewer(props: AgreementProps) {
         <body>
           <h1>Active Copyright Agreement</h1>
           <div class="timestamp">
-            Print Date: ${formattedDate} at ${formattedTime}
-            ${props.address ? `<br />Printed By: ${props.address}` : ''}
+            <span id="print-date"></span>
+            <span id="printed-by"></span>
           </div>
-          <pre>${printContent.innerText}</pre>
+          <pre id="agreement-body"></pre>
         </body>
       </html>
     `)
-    printWindow?.document.close()
-    printWindow?.focus()
+    doc.close()
+
+    const dateEl = doc.getElementById('print-date')
+    if (dateEl)
+      dateEl.textContent = `Print Date: ${formattedDate} at ${formattedTime}`
+
+    if (props.address) {
+      const printedByEl = doc.getElementById('printed-by')
+      if (printedByEl) {
+        printedByEl.appendChild(doc.createElement('br'))
+        printedByEl.appendChild(
+          doc.createTextNode(`Printed By: ${props.address}`)
+        )
+      }
+    }
+
+    const bodyEl = doc.getElementById('agreement-body')
+    if (bodyEl) bodyEl.textContent = printContent.innerText
+
+    printWindow.focus()
     setTimeout(() => {
       printWindow?.print()
       printWindow?.close()
