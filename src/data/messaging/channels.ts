@@ -131,10 +131,14 @@ export function useChannelList() {
         fetchAllEvents<ChannelCreatedEvent>(CONTRACT, 'channel_created'),
         fetchAllEvents<ChannelConfiguredEvent>(CONTRACT, 'channel_configured'),
         fetchAllEvents<ChannelUpdatedEvent>(CONTRACT, 'channel_updated'),
-        fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden'),
+        fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden_set'),
       ])
 
-      const hiddenIds = new Set(hidden.map((e) => e.payload.channel_id))
+      const hiddenIds = new Set<string>()
+      for (const e of hidden) {
+        if (e.payload.hidden) hiddenIds.add(e.payload.channel_id)
+        else hiddenIds.delete(e.payload.channel_id)
+      }
 
       const latestConfig: Record<string, ChannelConfiguredEvent> = {}
       for (const e of configured) {
@@ -197,12 +201,16 @@ export function useMyInbox(viewerAddress: string | undefined) {
             CONTRACT,
             'channel_admins_updated'
           ),
-          fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden'),
+          fetchAllEvents<ChannelHiddenEvent>(CONTRACT, 'channel_hidden_set'),
           fetchAllEvents<ChannelConfiguredEvent>(CONTRACT, 'channel_configured'),
           fetchAllEvents<ChannelUpdatedEvent>(CONTRACT, 'channel_updated'),
         ])
 
-      const hiddenIds = new Set(hidden.map((e) => e.payload.channel_id))
+      const hiddenIds = new Set<string>()
+      for (const e of hidden) {
+        if (e.payload.hidden) hiddenIds.add(e.payload.channel_id)
+        else hiddenIds.delete(e.payload.channel_id)
+      }
 
       const adminsByChannel: Record<string, Set<string>> = {}
       for (const e of created) {
