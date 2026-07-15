@@ -37,7 +37,8 @@ export interface ChannelAdminsUpdatedEvent {
 
 export interface ChannelHiddenEvent {
   channel_id: string
-  hidden_by: string
+  hidden: boolean
+  updated_by: string
 }
 
 export interface MessagePostedEvent {
