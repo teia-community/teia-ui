@@ -156,6 +156,7 @@ export const MainMenu = () => {
         { label: 'Search', route: 'search' },
         { label: 'Activity', route: 'activity' },
         { label: 'Text', route: 'text' },
+        { label: 'Calendar', route: 'calendar' },
         { label: 'Copyright Marketplace', route: 'copyrightmarketplace' },
       ],
     },
