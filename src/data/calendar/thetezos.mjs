@@ -35,10 +35,19 @@ function decodeEntities(input) {
     .replace(/&#0?39;|&apos;/g, "'")
 }
 
-/** Strip tags + decode entities to a single-line plain string. */
+/** Strip tags + decode entities to readable text, preserving paragraph and
+ *  line breaks (block boundaries → blank line, <br> → newline) so the calendar
+ *  card can render it as paragraphs instead of one collapsed blob. 
+ * to be adjusted with TTC API Update */
 function stripHtml(html) {
-  return decodeEntities(String(html || '').replace(/<[^>]*>/g, ' '))
-    .replace(/\s+/g, ' ')
+  const withBreaks = String(html || '')
+    .replace(/<\/(p|div|li|ul|ol|h[1-6]|blockquote|tr)>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]*>/g, ' ')
+  return decodeEntities(withBreaks)
+    .replace(/[^\S\n]+/g, ' ') // collapse spaces/tabs, keep newlines
+    .replace(/ *\n */g, '\n') // trim spaces around newlines
+    .replace(/\n{3,}/g, '\n\n') // cap blank runs at one blank line
     .trim()
 }
 

@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { Button } from '@atoms/button'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { blankEvent } from '@data/calendar/schema'
 import styles from '@style'
+
+// Load Editor only when the author opts into Markdown formatting.
+const MDEditor = lazy(() => import('@uiw/react-md-editor'))
 
 const pad2 = (n) => String(n).padStart(2, '0')
 
@@ -55,6 +59,9 @@ export default function EventForm({
   const [allDay, setAllDay] = useState(() =>
     /^\d{4}-\d{2}-\d{2}$/.test(values.startDate)
   )
+  const theme = useLocalSettings((st) => st.theme)
+  // Description  can be expand into a full Markdown editor
+  const [markdownMode, setMarkdownMode] = useState(false)
 
   useEffect(() => {
     onValuesChange?.(values)
@@ -297,15 +304,48 @@ export default function EventForm({
         />
       </label>
 
-      <label className={styles.field}>
-        <span>Description</span>
-        <textarea
-          rows={4}
-          value={values.description}
-          onChange={set('description')}
-          placeholder="What's happening?"
-        />
-      </label>
+      <div className={styles.field}>
+        <div className={styles.field_label_row}>
+          <span>Description</span>
+          <button
+            type="button"
+            className={styles.md_toggle}
+            aria-pressed={markdownMode}
+            onClick={() => setMarkdownMode((m) => !m)}
+          >
+            {markdownMode ? 'Plain text' : 'Format with Markdown'}
+          </button>
+        </div>
+        {markdownMode ? (
+          <div
+            className={styles.editor_wrapper}
+            data-color-mode={theme === 'dark' ? 'dark' : 'light'}
+          >
+            <Suspense
+              fallback={
+                <div className={styles.editor_loading}>Loading editor…</div>
+              }
+            >
+              <MDEditor
+                value={values.description}
+                onChange={(val) =>
+                  setValues((v) => ({ ...v, description: val ?? '' }))
+                }
+                preview="live"
+                height={280}
+                textareaProps={{ placeholder: "What's happening?" }}
+              />
+            </Suspense>
+          </div>
+        ) : (
+          <textarea
+            rows={4}
+            value={values.description}
+            onChange={set('description')}
+            placeholder="What's happening?"
+          />
+        )}
+      </div>
 
       {/* Consolidated date/time mode: All day / Set time are exclusive; Repeat
           is an independent toggle that reveals the recurrence controls. */}

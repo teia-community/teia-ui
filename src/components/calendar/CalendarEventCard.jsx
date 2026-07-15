@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 import { Button } from '@atoms/button'
+import { Markdown } from '@components/markdown'
 import { downloadEventICS } from '@utils/calendarDownload'
 import { recurrenceLabel } from '@data/calendar-chain'
 import ImageCarousel from './ImageCarousel'
@@ -223,8 +224,12 @@ export default function CalendarEventCard({
       <ImageCarousel images={images} />
 
       {description && (
-        <p className={styles.card_description}>
-          {shownDescription}
+        <div
+          className={`${styles.card_description}${
+            isChain ? '' : ` ${styles.card_description_plain}`
+          }`}
+        >
+          {isChain ? <Markdown>{shownDescription}</Markdown> : shownDescription}
           {isLongDescription && (
             <button
               type="button"
@@ -234,7 +239,7 @@ export default function CalendarEventCard({
               {showFullDescription ? 'Show less' : 'Read more'}
             </button>
           )}
-        </p>
+        </div>
       )}
 
       {safeLinks.length > 0 && (

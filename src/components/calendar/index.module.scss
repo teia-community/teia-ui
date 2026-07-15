@@ -327,7 +327,22 @@
 
 .card_description {
   margin: var(--spacing, 1rem) 0 0;
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// thetezos (wp) descriptions are plain text: honor their paragraph / line
+// breaks without markdown, and wrap long unbroken strings (e.g. URLs).
+// to be adjusted with TTC API Update
+.card_description_plain {
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .card_description_toggle {
@@ -438,6 +453,75 @@
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
+  }
+}
+
+.field_label_row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-half, 0.5rem);
+  margin-bottom: var(--spacing-quarter, 0.25rem);
+
+  span {
+    font-weight: 600;
+  }
+}
+
+.md_toggle {
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font: inherit;
+  font-size: var(--font-size-small);
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+}
+
+.editor_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 280px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--font-size);
+}
+
+// Theme the MDEditor to match the form's tokens (mirrors the text/wiki editors).
+.editor_wrapper {
+  :global(.w-md-editor) {
+    background-color: var(--background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+  }
+
+  :global(.w-md-editor-toolbar) {
+    background-color: var(--background-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  :global(.w-md-editor-content) {
+    background-color: var(--background-color) !important;
+  }
+
+  :global(.wmde-markdown) {
+    background-color: var(--background-color) !important;
+  }
+
+  // to be adjusted with TTC API Update
+  :global(.w-md-editor-text-input) {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 10px !important;
+    // Match the highlighted overlay's font metrics so the caret stays aligned.
+    font-size: inherit !important;
   }
 }
 
