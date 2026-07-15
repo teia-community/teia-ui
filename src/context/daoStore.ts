@@ -112,7 +112,10 @@ export const useDaoStore = create<DaoState>()(
           try {
             const contract = await Tezos.wallet.at(DAO_GOVERNANCE_CONTRACT)
 
-            const batch = contract.methodsObject.cancel_proposal(proposalId, returnEscrow)
+            const batch = contract.methodsObject.cancel_proposal({
+              proposal_id: proposalId,
+              return_escrow: returnEscrow,
+            })
             const opHash = await handleOp(batch, modalTitle)
             
             callback?.()
