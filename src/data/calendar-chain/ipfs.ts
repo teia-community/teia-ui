@@ -7,15 +7,38 @@ import {
   uploadMsgFileToIPFS,
   uploadMsgJsonToIPFS,
 } from '@data/messaging/ipfs'
-import type { CalendarEventContent, CalendarLink, Recurrence } from './types'
+import { eventColorHex } from './colors'
+import type {
+  CalendarChannelRef,
+  CalendarCollabRef,
+  CalendarEventContent,
+  CalendarLink,
+  Recurrence,
+} from './types'
 
 export const CALENDAR_SCHEMA_VERSION = 1
 
-/** Fetch and parse an event document from IPFS by its CID. */
-export async function fetchEventContent(
+// A CID is content-addressed — the same CID can never resolve to different
+// content — so documents are cached for the session (the set of calendar
+// events is small and bounded). Caching the promise means concurrent callers
+// (feed load, detail page, edit-open) share one in-flight request; a failed
+// fetch is evicted so a flaky gateway can be retried.
+const docCache = new Map<string, Promise<CalendarEventContent>>()
+
+/** Fetch and parse an event document from IPFS by its CID (session-cached). */
+export function fetchEventContent(
   cid: string
 ): Promise<CalendarEventContent> {
-  return fetchMsgIpfsJson<CalendarEventContent>(cid)
+  // Callers pass both `ipfs://<cid>` and bare CIDs; one cache entry for both.
+  const key = cid.replace('ipfs://', '')
+  const cached = docCache.get(key)
+  if (cached) return cached
+  const doc = fetchMsgIpfsJson<CalendarEventContent>(cid).catch((err) => {
+    docCache.delete(key)
+    throw err
+  })
+  docCache.set(key, doc)
+  return doc
 }
 
 export interface EventDocInput {
@@ -29,7 +52,10 @@ export interface EventDocInput {
   /** ipfs:// URIs (uploaded via {@link uploadEventImage}). */
   images: string[]
   recurrence?: Recurrence
+  color?: string
   tags?: string[]
+  channels?: CalendarChannelRef[]
+  collabs?: CalendarCollabRef[]
 }
 
 /** Build the IPFS event document (the content the CID points at). */
@@ -49,9 +75,14 @@ export function buildEventDocument(
     links: input.links ?? [],
     images: input.images ?? [],
     ...(input.recurrence?.freq ? { recurrence: input.recurrence } : {}),
+    ...(eventColorHex(input.color)
+      ? { color: eventColorHex(input.color) }
+      : {}),
     author,
     timestamp: new Date().toISOString(),
     ...(input.tags?.length ? { tags: input.tags } : {}),
+    ...(input.channels?.length ? { channels: input.channels } : {}),
+    ...(input.collabs?.length ? { collabs: input.collabs } : {}),
   }
 }
 

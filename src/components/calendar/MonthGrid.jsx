@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { Button } from '@atoms/button'
+import { eventColorHex } from '@data/calendar-chain/colors'
 import { localDayKey } from '@utils/datetime'
 import CalendarEventCard from './CalendarEventCard'
 import styles from '@style'
@@ -33,16 +34,12 @@ const MAX_LANES = 4
 // plus one "+N" overflow row.
 const GRID_LANE_ROWS = MAX_LANES + 1
 
-// Deterministic bar palette. Colors carry no meaning for now
+// Non-Teia colour code - to be adjusted
 const BAR_COLORS = [
-  '#4a90d9', // blue
-  '#9b7ede', // purple
-  '#4a9d7f', // green
-  '#d99a4a', // orange
-  '#3aa8a8', // teal
-  '#c96a9b', // pink
-  '#8a8f98', // gray
-  '#c95a5a', // red
+  'var(--gray-100)',
+  'var(--gray-80)',
+  'var(--gray-70)',
+  'var(--gray-60)',
 ]
 
 /** Stable color for an event: a recurring series shares one color (keyed on its
@@ -313,6 +310,7 @@ export default function MonthGrid({
               {weekSpans.map((sp) => {
                 const startCol = Math.max(sp.startCell, wStart) - wStart + 1
                 const endCol = Math.min(sp.endCell, wStart + 6) - wStart + 1
+                const accent = eventColorHex(sp.ev.color)
                 return (
                   <span
                     key={sp.ev.id}
@@ -325,6 +323,7 @@ export default function MonthGrid({
                       gridColumn: `${startCol} / ${endCol + 1}`,
                       gridRow: sp.lane + 2,
                       background: sp.color,
+                      ...(accent ? { borderLeft: `4px solid ${accent}` } : {}),
                     }}
                   >
                     <span className={styles.bar_title}>

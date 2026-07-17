@@ -21,6 +21,7 @@ import {
   showGetTeiaModal,
   docToDisplayEvent,
 } from '@data/calendar-chain'
+import { eventColorToken } from '@data/calendar-chain/colors'
 import { useUserProfiles } from '@data/roles'
 import { toUTC, toLocalInput } from '@utils/datetime'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
@@ -94,6 +95,8 @@ export default function Calendar() {
   useEffect(() => {
     if (!editing) return
     const modal = modalRef.current
+    // Whatever opened the modal gets focus back when it closes (WCAG 2.4.3).
+    const opener = document.activeElement
     const FOCUSABLE =
       'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
     modal?.querySelector(FOCUSABLE)?.focus()
@@ -126,6 +129,7 @@ export default function Calendar() {
     return () => {
       document.removeEventListener('keydown', onKeyDown)
       document.body.style.overflow = prevOverflow
+      if (opener instanceof HTMLElement) opener.focus()
     }
   }, [editing, closeForm])
 
@@ -162,10 +166,13 @@ export default function Calendar() {
             ? [doc.location]
             : []
           ).join(', '),
+          color: eventColorToken(doc.color) || '',
           tags: (doc.tags ?? []).join(', '),
           description: doc.description || '',
           links: Array.isArray(doc.links) ? doc.links : [],
           images: Array.isArray(doc.images) ? doc.images : [],
+          channels: Array.isArray(doc.channels) ? doc.channels : [],
+          collabs: Array.isArray(doc.collabs) ? doc.collabs : [],
           recurrence: doc.recurrence,
         },
         eventId: event.eventId,
@@ -190,10 +197,13 @@ export default function Calendar() {
       endDate: values.endDate ? toUTC(values.endDate) : undefined,
       locations: values.locations || [],
       description: values.description || undefined,
+      color: values.color || undefined,
       links: values.links || [],
       images: values.images || [],
       recurrence: values.recurrence,
       tags: values.tags || [],
+      channels: values.channels || [],
+      collabs: values.collabs || [],
     }
     try {
       if (eventId == null) {
@@ -205,6 +215,7 @@ export default function Calendar() {
         await updateEvent(eventId, input)
       }
       // Saved on-chain, drop the draft and close the form.
+      clearTimeout(draftTimer.current)
       useCalendarDraftStore.getState().clearDraft(draftKey(eventId))
       setEditing(null)
     } catch (e) {
@@ -217,15 +228,21 @@ export default function Calendar() {
   const handleEdit = (event) => startEditChain(event, false)
   const handleProposeEdit = (event) => startEditChain(event, true)
 
+  // Drafts land in localStorage via zustand persist; writing on every
+  // keystroke serializes the whole draft map each time, so batch it.
+  const draftTimer = useRef(null)
   const persistDraft = useCallback(
     (values) => {
       if (!editing) return
-      useCalendarDraftStore
-        .getState()
-        .setDraft(draftKey(editing.eventId), values)
+      const key = draftKey(editing.eventId)
+      clearTimeout(draftTimer.current)
+      draftTimer.current = setTimeout(() => {
+        useCalendarDraftStore.getState().setDraft(key, values)
+      }, 500)
     },
     [editing]
   )
+  useEffect(() => () => clearTimeout(draftTimer.current), [])
 
   const handleHide = async (event) => {
     setActionError(null)

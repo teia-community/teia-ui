@@ -1,13 +1,61 @@
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import useSWR from 'swr'
 import { Button } from '@atoms/button'
+import { Identicon } from '@atoms/identicons'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { useUserStore } from '@context/userStore'
 import { blankEvent } from '@data/calendar/schema'
+import { useChannelList } from '@data/messaging/channels'
+import { fetchGraphQL, getCollabsForAddress, searchCollabs } from '@data/api'
+import { walletPreview } from '@utils/string'
+import { msgIpfsToUrl } from '@data/messaging/ipfs'
+import { EVENT_COLORS } from '@data/calendar-chain/colors'
+import RelatedPicker from './RelatedPicker'
 import styles from '@style'
 
 // Load Editor only when the author opts into Markdown formatting.
 const MDEditor = lazy(() => import('@uiw/react-md-editor'))
 
 const pad2 = (n) => String(n).padStart(2, '0')
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1)
+
+// Optional form sections, revealed on demand via the "+ chips" row
+const OPTIONAL_SECTIONS = [
+  'location',
+  'tags',
+  'channels',
+  'collabs',
+  'links',
+  'images',
+]
+const SECTION_LABELS = {
+  location: 'Location',
+  tags: 'Tags',
+  channels: 'Channels',
+  collabs: 'Collabs',
+  links: 'Links',
+  images: 'Images',
+}
+
+/** Whether a section already holds content (edit / draft-restore auto-reveal). */
+function sectionHasContent(values, key) {
+  switch (key) {
+    case 'location':
+      return Boolean((values.location || '').trim())
+    case 'tags':
+      return Boolean((values.tags || '').trim())
+    case 'channels':
+      return (values.channels?.length || 0) > 0
+    case 'collabs':
+      return (values.collabs?.length || 0) > 0
+    case 'links':
+      return (values.links || []).some((l) => l.url?.trim() || l.label?.trim())
+    case 'images':
+      return (values.images || []).some((url) => url?.trim())
+    default:
+      return false
+  }
+}
 
 /**
  * The date (`YYYY-MM-DD`) of the final occurrence of a recurring series, from
@@ -63,6 +111,171 @@ export default function EventForm({
   // Description  can be expand into a full Markdown editor
   const [markdownMode, setMarkdownMode] = useState(false)
 
+  const [revealed, setRevealed] = useState(
+    () => new Set(OPTIONAL_SECTIONS.filter((k) => sectionHasContent(values, k)))
+  )
+  const sectionRefs = useRef({})
+  const chipRefs = useRef({})
+  const pendingFocus = useRef(null)
+  useEffect(() => {
+    const pending = pendingFocus.current
+    if (!pending) return
+    pendingFocus.current = null
+    if (pending.type === 'section') {
+      const section = sectionRefs.current[pending.key]
+      // fall back to its add-row action instead of the "Remove" control.
+      const target =
+        section?.querySelector('input, textarea, select') ||
+        [...(section?.querySelectorAll('button') || [])].find(
+          (b) => !(b.getAttribute('aria-label') || '').startsWith('Remove')
+        ) ||
+        section?.querySelector('button')
+      target?.focus()
+    } else {
+      const chip =
+        chipRefs.current[pending.key] ||
+        OPTIONAL_SECTIONS.map((k) => chipRefs.current[k]).find(Boolean)
+      chip?.focus()
+    }
+  }, [revealed])
+
+  const revealSection = (key) => {
+    pendingFocus.current = { type: 'section', key }
+    setRevealed((s) => new Set([...s, key]))
+  }
+
+  // "Remove" clears the section's values and returns its chip
+  const removeSection = (key) => {
+    pendingFocus.current = { type: 'chip', key }
+    setRevealed((s) => {
+      const next = new Set(s)
+      next.delete(key)
+      return next
+    })
+    setValues((v) => {
+      switch (key) {
+        case 'location':
+          return { ...v, location: '' }
+        case 'tags':
+          return { ...v, tags: '' }
+        case 'channels':
+          return { ...v, channels: [] }
+        case 'collabs':
+          return { ...v, collabs: [] }
+        case 'links':
+          return { ...v, links: [] }
+        case 'images':
+          return { ...v, images: [] }
+        default:
+          return v
+      }
+    })
+    if (key === 'images') setSelectedImages([])
+  }
+
+  // --- linked channels & collabs (both optional, multi-select) -------------
+  const userAddress = useUserStore((st) => st.address)
+  const { data: channelList } = useChannelList(revealed.has('channels'))
+  // Name distinct from the `openPicker` datetime helper below (native
+  // showPicker() trigger for the date/time inputs).
+  const [activePicker, setActivePicker] = useState(null) // 'channels' | 'collabs' | null
+  // Native focus-return is lost when React unmounts the closed <dialog>, so
+  // hand focus back to the opener button ourselves.
+  const pickerOpenerRefs = useRef({})
+  // (Button doesn't forward refs, so the refs sit on wrapper spans.)
+  const closePicker = (which) => {
+    setActivePicker(null)
+    pickerOpenerRefs.current[which]?.querySelector('button')?.focus()
+  }
+  const channelItems = (channelList || []).map((ch) => ({
+    key: String(ch.id),
+    id: ch.id,
+    name: ch.metadata?.name || `Channel #${ch.id}`,
+    meta: ch.metadata?.description || '',
+    image: ch.metadata?.image ? msgIpfsToUrl(ch.metadata.image) : undefined,
+  }))
+  const { data: collabResult } = useSWR(
+    userAddress && revealed.has('collabs')
+      ? ['calendar-link-collabs', userAddress]
+      : null,
+    () =>
+      fetchGraphQL(getCollabsForAddress, 'GetCollabs', { address: userAddress })
+  )
+  // Collabs, may be updated, the user can link any collab
+  const [collabQuery, setCollabQuery] = useState('')
+  const [collabSearchTerm, setCollabSearchTerm] = useState('')
+  useEffect(() => {
+    const t = setTimeout(() => setCollabSearchTerm(collabQuery.trim()), 300)
+    return () => clearTimeout(t)
+  }, [collabQuery])
+  const collabSearchActive = collabSearchTerm.length >= 2
+  const { data: collabSearchResult } = useSWR(
+    collabSearchActive ? ['calendar-collab-search', collabSearchTerm] : null,
+    () => {
+      // Escape LIKE wildcards so a typed % _ \ matches literally.
+      const esc = collabSearchTerm.replace(/[\\%_]/g, '\\$&')
+      return fetchGraphQL(searchCollabs, 'SearchCollabs', {
+        like: `%${esc}%`,
+        prefix: `${esc}%`,
+      })
+    }
+  )
+
+  const collabSearchPending =
+    collabQuery.trim().length >= 2 &&
+    (collabQuery.trim() !== collabSearchTerm ||
+      (collabSearchActive && !collabSearchResult))
+  const mapCollabRows = (rows) =>
+    (rows || []).map((c) => ({
+      key: c.contract_address,
+      address: c.contract_address,
+      name: c.contract_profile?.name || walletPreview(c.contract_address),
+      logo: c.contract_profile?.metadata?.data?.identicon || undefined,
+      meta: (c.shareholders || [])
+        .map(
+          (s) =>
+            s.shareholder_profile?.name || walletPreview(s.shareholder_address)
+        )
+        .slice(0, 4)
+        .join(', '),
+    }))
+  const ownCollabItems = mapCollabRows(collabResult?.data?.split_contracts)
+  const collabItems = collabSearchActive
+    ? mapCollabRows(collabSearchResult?.data?.split_contracts)
+    : ownCollabItems.filter((it) =>
+        it.name.toLowerCase().includes(collabQuery.trim().toLowerCase())
+      )
+  const collabLogos = useRef(new Map())
+  for (const it of [...ownCollabItems, ...collabItems]) {
+    if (it.logo) collabLogos.current.set(it.address, it.logo)
+  }
+  const selectedChannelKeys = new Set(
+    (values.channels || []).map((c) => String(c.id))
+  )
+  const selectedCollabKeys = new Set(
+    (values.collabs || []).map((c) => c.address)
+  )
+  const channelImageById = new Map(channelItems.map((it) => [it.key, it.image]))
+
+  const toggleChannel = (item, on) =>
+    setValues((v) => ({
+      ...v,
+      channels: on
+        ? v.channels.some((c) => String(c.id) === String(item.id))
+          ? v.channels
+          : [...v.channels, { id: item.id, name: item.name }]
+        : v.channels.filter((c) => String(c.id) !== String(item.id)),
+    }))
+  const toggleCollab = (item, on) =>
+    setValues((v) => ({
+      ...v,
+      collabs: on
+        ? v.collabs.some((c) => c.address === item.address)
+          ? v.collabs
+          : [...v.collabs, { address: item.address, name: item.name }]
+        : v.collabs.filter((c) => c.address !== item.address),
+    }))
+
   useEffect(() => {
     onValuesChange?.(values)
   }, [values, onValuesChange])
@@ -80,9 +293,9 @@ export default function EventForm({
     }
   }
 
-  // Keep start/end in sync with the input type: truncate to a bare date going
-  // into all-day, restore a time going out so the shapes never mix.
+  // All Day Toggle
   const toggleAllDay = (on) => {
+    if (on === allDay) return
     setAllDay(on)
     setValues((v) => ({
       ...v,
@@ -137,8 +350,6 @@ export default function EventForm({
   const toggleRepeat = (on) =>
     setValues((v) => ({
       ...v,
-      // A repeating event ends "after N times"; its end is the derived series
-      // end, not a per-occurrence end, so drop any hand-entered endDate.
       endDate: on ? '' : v.endDate,
       recurrence: on ? { freq: 'WEEKLY', interval: 1, count: 1 } : undefined,
     }))
@@ -282,7 +493,9 @@ export default function EventForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.form_top}>
-        <strong>{initial?.id ? 'Edit event' : 'New event'}</strong>
+        <h2 className={styles.form_title}>
+          {initial?.id ? 'Edit event' : 'New event'}
+        </h2>
         <Button
           className={styles.form_close}
           type="button"
@@ -306,7 +519,7 @@ export default function EventForm({
 
       <div className={styles.field}>
         <div className={styles.field_label_row}>
-          <span>Description</span>
+          <span>Description (optional)</span>
           <button
             type="button"
             className={styles.md_toggle}
@@ -454,87 +667,395 @@ export default function EventForm({
         </fieldset>
       )}
 
-      <label className={styles.field}>
-        <span>Location (optional, max 2)</span>
-        <input
-          type="text"
-          value={values.location}
-          onChange={set('location')}
-          placeholder="My City, online"
-        />
-      </label>
+      <div className={styles.field}>
+        <div className={styles.field_label_row}>
+          <span>Color</span>
+        </div>
+        <fieldset className={styles.color_swatches}>
+          <legend className={styles.visually_hidden}>Event color</legend>
+          {Object.entries(EVENT_COLORS).map(([name, hex]) => (
+            <label className={styles.color_option} key={name}>
+              <input
+                type="radio"
+                className={styles.color_input}
+                name="event-color"
+                value={name}
+                required
+                checked={values.color === name}
+                onChange={() => setValues((v) => ({ ...v, color: name }))}
+                aria-label={capitalize(name)}
+              />
+              <span
+                className={styles.color_swatch}
+                style={{ background: hex }}
+              />
+            </label>
+          ))}
+        </fieldset>
+        <p className={styles.color_selected}>
+          {values.color ? capitalize(values.color) : 'Pick a color'}
+        </p>
+      </div>
 
-      <label className={styles.field}>
-        <span>Tags (optional, max 20)</span>
-        <input
-          type="text"
-          value={values.tags || ''}
-          onChange={set('tags')}
-          placeholder="tag1, tag2, …"
-        />
-      </label>
+      {revealed.has('location') && (
+        <div
+          className={`${styles.field} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.location = el)}
+        >
+          <div className={styles.field_label_row}>
+            <span>Location (max 2)</span>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('location')}
+              aria-label="Remove location"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            type="text"
+            value={values.location}
+            onChange={set('location')}
+            placeholder="My City, online"
+            aria-label="Location"
+          />
+        </div>
+      )}
+
+      {revealed.has('tags') && (
+        <div
+          className={`${styles.field} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.tags = el)}
+        >
+          <div className={styles.field_label_row}>
+            <span>Tags (max 20)</span>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('tags')}
+              aria-label="Remove tags"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            type="text"
+            value={values.tags || ''}
+            onChange={set('tags')}
+            placeholder="tag1, tag2, …"
+            aria-label="Tags"
+          />
+        </div>
+      )}
+
+      {/* Linked channels */}
+      {revealed.has('channels') && (
+        <fieldset
+          className={`${styles.group} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.channels = el)}
+        >
+          <legend>Channels</legend>
+          <div className={styles.section_remove_row}>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('channels')}
+              aria-label="Remove linked channels"
+            >
+              Remove
+            </button>
+          </div>
+          <div className={styles.picker_openers}>
+            <span ref={(el) => (pickerOpenerRefs.current.channels = el)}>
+              <Button
+                shadow_box
+                small
+                secondary
+                type="button"
+                onClick={() => setActivePicker('channels')}
+              >
+                Link channels
+              </Button>
+            </span>
+          </div>
+
+          {values.channels.length > 0 && (
+            <ul className={styles.related_list}>
+              {values.channels.map((c) => {
+                const image = channelImageById.get(String(c.id))
+                return (
+                  <li className={styles.related_row} key={`channel-${c.id}`}>
+                    {image ? (
+                      <span className={styles.picker_thumb}>
+                        <img
+                          src={image}
+                          alt=""
+                          loading="lazy"
+                          onError={(e) =>
+                            (e.currentTarget.style.display = 'none')
+                          }
+                        />
+                      </span>
+                    ) : (
+                      <span
+                        className={styles.picker_thumb}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span className={styles.related_name}>{c.name}</span>
+                    <button
+                      type="button"
+                      className={styles.md_toggle}
+                      aria-label={`Unlink ${c.name}`}
+                      onClick={() =>
+                        setValues((v) => ({
+                          ...v,
+                          channels: v.channels.filter(
+                            (x) => String(x.id) !== String(c.id)
+                          ),
+                        }))
+                      }
+                    >
+                      ✕
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+
+          {activePicker === 'channels' && (
+            <RelatedPicker
+              title="Channels"
+              items={channelItems}
+              loading={!channelList}
+              error={undefined}
+              emptyMessage="No channels found."
+              selectedKeys={selectedChannelKeys}
+              onToggle={toggleChannel}
+              onClose={() => closePicker('channels')}
+            />
+          )}
+        </fieldset>
+      )}
+
+      {/* Linked collabs */}
+      {revealed.has('collabs') && (
+        <fieldset
+          className={`${styles.group} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.collabs = el)}
+        >
+          <legend>Collabs</legend>
+          <div className={styles.section_remove_row}>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('collabs')}
+              aria-label="Remove linked collabs"
+            >
+              Remove
+            </button>
+          </div>
+          <div className={styles.picker_openers}>
+            <span ref={(el) => (pickerOpenerRefs.current.collabs = el)}>
+              <Button
+                shadow_box
+                small
+                secondary
+                type="button"
+                onClick={() => {
+                  setCollabQuery('')
+                  setActivePicker('collabs')
+                }}
+              >
+                Link collabs
+              </Button>
+            </span>
+          </div>
+
+          {values.collabs.length > 0 && (
+            <ul className={styles.related_list}>
+              {values.collabs.map((c) => (
+                <li className={styles.related_row} key={`collab-${c.address}`}>
+                  <span className={styles.picker_thumb}>
+                    <Identicon
+                      address={c.address}
+                      logo={collabLogos.current.get(c.address)}
+                    />
+                  </span>
+                  <span className={styles.related_name}>{c.name}</span>
+                  <button
+                    type="button"
+                    className={styles.md_toggle}
+                    aria-label={`Unlink ${c.name}`}
+                    onClick={() =>
+                      setValues((v) => ({
+                        ...v,
+                        collabs: v.collabs.filter(
+                          (x) => x.address !== c.address
+                        ),
+                      }))
+                    }
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {activePicker === 'collabs' && (
+            <RelatedPicker
+              title="Collabs"
+              items={collabItems}
+              loading={
+                Boolean(userAddress) && !collabResult && !collabSearchActive
+              }
+              error={undefined}
+              emptyMessage={
+                collabSearchActive
+                  ? 'No collabs match.'
+                  : "You're not part of any collabs yet — type to search all collabs."
+              }
+              gateMessage={
+                !userAddress
+                  ? 'Connect your wallet to link collabs.'
+                  : undefined
+              }
+              query={collabQuery}
+              onQueryChange={setCollabQuery}
+              searching={collabSearchPending}
+              searchPlaceholder="Wallet, alias or collab name…"
+              selectedKeys={selectedCollabKeys}
+              onToggle={toggleCollab}
+              onClose={() => closePicker('collabs')}
+            />
+          )}
+        </fieldset>
+      )}
 
       {/* Links */}
-      <fieldset className={styles.group}>
-        <legend>Links</legend>
-        {values.links.map((link, i) => (
-          <div className={styles.repeat_row} key={i}>
-            <input
-              type="text"
-              value={link.label}
-              onChange={setLink(i, 'label')}
-              placeholder="Label"
-              aria-label={`Link ${i + 1} label`}
-            />
-            <input
-              type="url"
-              value={link.url}
-              onChange={setLink(i, 'url')}
-              placeholder="https://…"
-              aria-label={`Link ${i + 1} URL`}
-            />
-            <Button small secondary type="button" onClick={() => removeLink(i)}>
+      {revealed.has('links') && (
+        <fieldset
+          className={`${styles.group} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.links = el)}
+        >
+          <legend>Links</legend>
+          <div className={styles.section_remove_row}>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('links')}
+              aria-label="Remove links"
+            >
               Remove
-            </Button>
+            </button>
           </div>
-        ))}
-        <Button small secondary type="button" onClick={addLink}>
-          + Add link
-        </Button>
-      </fieldset>
+          {values.links.map((link, i) => (
+            <div className={styles.repeat_row} key={i}>
+              <input
+                type="text"
+                value={link.label}
+                onChange={setLink(i, 'label')}
+                placeholder="Label"
+                aria-label={`Link ${i + 1} label`}
+              />
+              <input
+                type="url"
+                value={link.url}
+                onChange={setLink(i, 'url')}
+                placeholder="https://…"
+                aria-label={`Link ${i + 1} URL`}
+              />
+              <Button
+                small
+                secondary
+                type="button"
+                onClick={() => removeLink(i)}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button small secondary type="button" onClick={addLink}>
+            + Add link
+          </Button>
+        </fieldset>
+      )}
 
       {/* Images (carousel) */}
-      <fieldset className={styles.group}>
-        <legend>Images (carousel)</legend>
-        {onUploadImage && (
-          <div className={styles.repeat_row}>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={setImageFiles}
-              aria-label="Upload event images"
-            />
-          </div>
-        )}
-        {values.images.map((url, i) => (
-          <div className={styles.repeat_row} key={i}>
-            <input
-              type="url"
-              value={url}
-              onChange={setImage(i)}
-              placeholder="https://…/image.png"
-              aria-label={`Image ${i + 1} URL`}
-            />
-            <Button shadow_box fit type="button" onClick={() => removeImage(i)}>
+      {revealed.has('images') && (
+        <fieldset
+          className={`${styles.group} ${styles.section_reveal}`}
+          ref={(el) => (sectionRefs.current.images = el)}
+        >
+          <legend>Images (carousel)</legend>
+          <div className={styles.section_remove_row}>
+            <button
+              type="button"
+              className={styles.md_toggle}
+              onClick={() => removeSection('images')}
+              aria-label="Remove images"
+            >
               Remove
-            </Button>
+            </button>
           </div>
-        ))}
-        <Button small secondary type="button" onClick={addImage}>
-          + Add image
-        </Button>
-      </fieldset>
+          {onUploadImage && (
+            <div className={styles.repeat_row}>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={setImageFiles}
+                aria-label="Upload event images"
+              />
+            </div>
+          )}
+          {values.images.map((url, i) => (
+            <div className={styles.repeat_row} key={i}>
+              <input
+                type="url"
+                value={url}
+                onChange={setImage(i)}
+                placeholder="https://…/image.png"
+                aria-label={`Image ${i + 1} URL`}
+              />
+              <Button
+                shadow_box
+                fit
+                type="button"
+                onClick={() => removeImage(i)}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button small secondary type="button" onClick={addImage}>
+            + Add image
+          </Button>
+        </fieldset>
+      )}
+
+      {/* Reveal chips for the optional sections that are still hidden. */}
+      {OPTIONAL_SECTIONS.some((k) => !revealed.has(k)) && (
+        <div className={styles.add_row}>
+          <span className={styles.add_row_label}>Add to your event:</span>
+          <div className={styles.add_row_chips}>
+            {OPTIONAL_SECTIONS.filter((k) => !revealed.has(k)).map((k) => (
+              <button
+                key={k}
+                type="button"
+                className={styles.mode_chip}
+                ref={(el) => (chipRefs.current[k] = el)}
+                onClick={() => revealSection(k)}
+              >
+                + {SECTION_LABELS[k]}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {formError && (
         <p className={styles.form_error} role="alert">

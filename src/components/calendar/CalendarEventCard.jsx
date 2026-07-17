@@ -5,6 +5,8 @@ import { Button } from '@atoms/button'
 import { Markdown } from '@components/markdown'
 import { downloadEventICS } from '@utils/calendarDownload'
 import { recurrenceLabel } from '@data/calendar-chain'
+import { eventColorHex } from '@data/calendar-chain/colors'
+import { PATH } from '@constants'
 import ImageCarousel from './ImageCarousel'
 import styles from '@style'
 
@@ -67,6 +69,8 @@ export default function CalendarEventCard({
     tags,
     links,
     images,
+    channels,
+    collabs,
   } = event
 
   // In the compact card (day popup) a very long description is clamped to its
@@ -123,16 +127,12 @@ export default function CalendarEventCard({
   const [linkCopied, copyLink] = useClipboard(eventUrl, {
     successDuration: 2000,
   })
+  const accent = eventColorHex(event.color)
 
   return (
     <article
-      className={`${styles.card} ${
-        sourceKind === 'teia'
-          ? styles.card_teia
-          : sourceKind === 'ttc'
-          ? styles.card_ttc
-          : ''
-      }`}
+      className={styles.card}
+      style={accent ? { borderLeft: `3px solid ${accent}` } : undefined}
     >
       <header className={styles.card_header}>
         <div>
@@ -181,6 +181,32 @@ export default function CalendarEventCard({
                 </span>
               ))}
             </p>
+          )}
+          {(channels?.length > 0 || collabs?.length > 0) && (
+            <div className={styles.card_related}>
+              {(channels || []).map((ch) => (
+                <Link
+                  key={`ch-${ch.id}`}
+                  to={`/inbox/channels/${ch.id}`}
+                  className={styles.card_related_link}
+                >
+                  # {ch.name || `Channel #${ch.id}`}
+                </Link>
+              ))}
+              {(collabs || []).map((co) => (
+                <Link
+                  key={`co-${co.address}`}
+                  to={
+                    co.name
+                      ? `/collab/${co.name}`
+                      : `${PATH.COLLAB}/${co.address}`
+                  }
+                  className={styles.card_related_link}
+                >
+                  ⚭ {co.name || co.address}
+                </Link>
+              ))}
+            </div>
           )}
         </div>
 

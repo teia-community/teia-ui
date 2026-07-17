@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import useSWR from 'swr'
 import { fetchUpcomingEvents, fetchPastEvents } from '@data/calendar/wordpress'
 import {
@@ -88,27 +88,34 @@ function combine() {
  * the WordPress `mec-events` feed (in-memory, read-only). Writes go on-chain via
  * `@data/calendar-chain`.
  */
-export function useCalendarEvents() {
+export function useCalendarEvents({ enabled = true } = {}) {
   // Moderators additionally see hidden on-chain events (so they can unhide).
   const address = useUserStore((st) => st.address)
   const { data: roles } = useGateRoles(address)
   const canModerate = Boolean(roles?.canModerate)
 
-  const { data, error, isLoading, mutate } = useSWR(SWR_KEY, async () => {
-    // A chain read failure just means no on-chain events, not a broken feed.
-    chainCache = await fetchChainCalendarEvents({
-      includeHidden: canModerate,
-      viewerAddress: address,
-    }).catch(() => [])
-    startWpLoad()
-    return combine()
-  })
+  const { data, error, isLoading, mutate } = useSWR(
+    enabled ? SWR_KEY : null,
+    async () => {
+      // A chain read failure just means no on-chain events, not a broken feed.
+      chainCache = await fetchChainCalendarEvents({
+        includeHidden: canModerate,
+        viewerAddress: address,
+      }).catch(() => [])
+      startWpLoad()
+      return combine()
+    }
+  )
 
   // Re-fetch when the viewer's address or moderator status resolves — both
   // change which hidden events are visible (own self-hidden / all).
+  const viewerKey = `${address ?? ''}:${canModerate}`
+  const prevViewerKey = useRef(viewerKey)
   useEffect(() => {
+    if (prevViewerKey.current === viewerKey) return
+    prevViewerKey.current = viewerKey
     mutate()
-  }, [canModerate, address, mutate])
+  }, [viewerKey, mutate])
 
   // Re-merge whenever a background WP page lands.
   useEffect(() => {
@@ -155,8 +162,8 @@ export function useCalendarEvent(id) {
       })
   )
 
-  // WP events live only in the in-memory feed
-  const feed = useCalendarEvents()
+  // WP events live only in the in-memory feed.
+  const feed = useCalendarEvents({ enabled: !isChain })
 
   if (isChain) {
     return {

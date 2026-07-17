@@ -41,52 +41,69 @@ async function getJson<T>(url: string): Promise<T> {
   return res.json()
 }
 
-/**
- * Read every event from the `events` bigmap, joined with its current/first
- * entry in the `versions` bigmap to recover editor/proposer/timestamps (the
- * event record itself only carries cid/hidden/version_count).
- */
+type RawVersionRow = {
+  key: { event_id: string; version: string }
+  value: RawVersionValue
+}
+
+function indexVersions(rows: RawVersionRow[]): Map<string, RawVersionValue> {
+  const versions = new Map<string, RawVersionValue>()
+  for (const row of rows) {
+    versions.set(`${row.key.event_id}:${row.key.version}`, row.value)
+  }
+  return versions
+}
+
+function mapEventRow(
+  row: { key: string; value: RawEventValue },
+  versions: Map<string, RawVersionValue>
+): ChainEvent {
+  const id = Number(row.key)
+  const versionCount = Number(row.value.version_count)
+  const current = versions.get(`${id}:${versionCount}`)
+  const first = versions.get(`${id}:1`)
+  return {
+    id,
+    cid: row.value.current_cid,
+    hidden: row.value.hidden,
+    versionCount,
+    creator: row.value.creator ?? null,
+    modLocked: Boolean(row.value.mod_locked),
+    editor: current?.editor ?? '',
+    proposer: current?.proposer ?? null,
+    createdAt: first?.ts ?? current?.ts ?? '',
+    updatedAt: current?.ts ?? first?.ts ?? '',
+  }
+}
+
+/** Read every event from the `events` bigmap, joined with its versions. */
 export async function fetchEvents(): Promise<ChainEvent[]> {
   const [eventRows, versionRows] = await Promise.all([
     getJson<{ key: string; value: RawEventValue }[]>(
       `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
     ),
-    getJson<
-      {
-        key: { event_id: string; version: string }
-        value: RawVersionValue
-      }[]
-    >(
+    getJson<RawVersionRow[]>(
       `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/versions/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
     ),
   ])
+  const versions = indexVersions(versionRows)
+  return eventRows.map((row) => mapEventRow(row, versions)).sort((a, b) => a.id - b.id)
+}
 
-  // Index versions by `${event_id}:${version}` for the join below.
-  const versions = new Map<string, RawVersionValue>()
-  for (const row of versionRows) {
-    versions.set(`${row.key.event_id}:${row.key.version}`, row.value)
-  }
-
-  return eventRows
-    .map((row) => {
-      const id = Number(row.key)
-      const versionCount = Number(row.value.version_count)
-      const current = versions.get(`${id}:${versionCount}`)
-      const first = versions.get(`${id}:1`)
-      return {
-        id,
-        cid: row.value.current_cid,
-        hidden: row.value.hidden,
-        versionCount,
-        creator: row.value.creator ?? null,
-        modLocked: Boolean(row.value.mod_locked),
-        editor: current?.editor ?? '',
-        proposer: current?.proposer ?? null,
-        createdAt: first?.ts ?? current?.ts ?? '',
-        updatedAt: current?.ts ?? first?.ts ?? '',
-      }
-    })
-    .sort((a, b) => a.id - b.id)
+/**
+ * Read a single event by id
+ */
+export async function fetchChainEvent(id: number): Promise<ChainEvent | null> {
+  const [eventRows, versionRows] = await Promise.all([
+    getJson<{ key: string; value: RawEventValue }[]>(
+      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&key=${id}&select=key,value`
+    ),
+    getJson<RawVersionRow[]>(
+      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/versions/keys?active=true&key.event_id=${id}&select=key,value&limit=${MAX_PAGE_SIZE}`
+    ),
+  ])
+  if (!eventRows.length) return null
+  return mapEventRow(eventRows[0], indexVersions(versionRows))
 }
 
 /** Read every community proposal from the `proposals` bigmap. */

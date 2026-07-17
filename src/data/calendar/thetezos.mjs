@@ -1,13 +1,13 @@
 /**
- * thetezos.com Modern Events Calendar (MEC) source — server-side only.
+ * thetezos.com Modern Events Calendar (MEC) source.
  *
- * The MEC REST API (`/wp-json/mec/v1.0/events`) requires a secret `mec-token`
- * header that browsers can't send (it isn't in the endpoint's CORS
- * `Access-Control-Allow-Headers`) and that must never ship in the client
- * bundle. So this module runs only server-side: the Netlify function
- * (`functions/thetezos-events.mjs`) in production, and the Vite dev middleware
- * (see vite.config.js) locally. Both hold the token in `MEC_TOKEN` env and
- * expose the normalized result at `/api/thetezos-events`.
+ * The MEC REST API (`/wp-json/mec/v1.0/events`) requires an API token, sent as
+ * the stock `mec-token` header (per MEC's docs; a custom Bearer-auth shim on
+ * their WordPress was wiped by an MEC update, so don't rely on one). Browsers
+ * additionally need `mec-token` in the API's CORS Access-Control-Allow-Headers
+ * — the TTC team maintains that on their side. Token in `VITE_MEC_TOKEN` (see
+ * wordpress.js); it is read-only and ships in the client bundle by agreement
+ * with the TTC team.
  *
  * Unlike the old `wp/v2/mec-events` endpoint, this one exposes the REAL event
  * start/end date+time per occurrence (recurring events are pre-expanded), so
@@ -128,6 +128,12 @@ export async function fetchThetezosEvents(token, { limit = 100, past = false } =
   // Past: only past occurrences (newest first). Upcoming: current + future,
   // including ongoing events that started before today.
   params.set(past ? 'show_only_past_events' : 'include_past_events', '1')
+  // TTC excludes /wp-json/mec/v1.0/ from their LiteSpeed cache (2026-07-17) —
+  // when this route WAS cached, LiteSpeed answered OPTIONS preflights itself
+  // without PHP's CORS headers, CORS-blocking every URL once its GET got
+  // cached. Stale pre-exclusion cache entries still shadow previously-used
+  // URL strings, so `v` keeps us on a key that never existed before the fix.
+  params.set('v', '1')
   const res = await fetch(`${MEC_API}?${params}`, {
     headers: { 'mec-token': token },
   })

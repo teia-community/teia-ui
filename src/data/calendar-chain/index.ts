@@ -6,10 +6,13 @@
 // (merged in src/hooks/use-calendar.js). Read-only until the write slice lands.
 
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
-import { fetchEvents } from './api'
+import { fetchChainEvent, fetchEvents } from './api'
+import { eventColorHex } from './colors'
 import { fetchEventContent } from './ipfs'
 import { expandOccurrences } from './recurrence.mjs'
 import type {
+  CalendarChannelRef,
+  CalendarCollabRef,
   CalendarEventContent,
   CalendarFeedEvent,
   ChainEvent,
@@ -39,6 +42,40 @@ function safeLinks(links: unknown): { label?: string; url: string }[] {
     .map((l) => ({ ...l, url: l.url.trim() }))
     .filter((l) => /^(https?:|mailto:)/i.test(l.url))
 }
+
+/**
+ * Channel/collab links come from community-controlled IPFS JSON: keep only
+ * well-formed refs (string id / KT1 address) so a malformed doc can't break the
+ * feed or point a link somewhere unexpected.
+ */
+function safeChannels(v: unknown): CalendarChannelRef[] {
+  if (!Array.isArray(v)) return []
+  return v
+    .filter((c) => c && typeof c.id === 'string')
+    .map((c) => ({
+      id: String(c.id),
+      name: typeof c.name === 'string' ? c.name : '',
+    }))
+}
+function safeCollabs(v: unknown): CalendarCollabRef[] {
+  if (!Array.isArray(v)) return []
+  return v
+    .filter(
+      (c) => c && typeof c.address === 'string' && /^KT1[0-9A-Za-z]+$/.test(c.address)
+    )
+    .map((c) => ({
+      address: String(c.address),
+      name: typeof c.name === 'string' ? c.name : '',
+    }))
+}
+
+/**
+ * The color comes from community-controlled IPFS JSON: keep it only when
+ * it's a strict `#rrggbb` hex or a known EVENT_COLORS token (earlier docs),
+ * so an invalid/hostile value never reaches the renderer's inline style.
+ */
+const safeColor = (raw: unknown): string | undefined =>
+  typeof raw === 'string' && eventColorHex(raw) ? raw : undefined
 
 /**
  * In-app occurrence window: ~6 months back to ~18 months ahead of today.
@@ -81,7 +118,10 @@ export function docToDisplayEvent(
     links: safeLinks(doc.links) as CalendarFeedEvent['links'],
     images: Array.isArray(doc.images) ? doc.images.map(imageUrl) : [],
     recurrence: doc.recurrence,
+    color: safeColor(doc.color),
     tags: doc.tags ?? [],
+    channels: safeChannels(doc.channels),
+    collabs: safeCollabs(doc.collabs),
   }
 }
 
@@ -107,7 +147,10 @@ function baseFeedEvent(e: ChainEvent, c: CalendarEventContent) {
     locations,
     links: safeLinks(c.links) as CalendarFeedEvent['links'],
     images: Array.isArray(c.images) ? c.images.map(imageUrl) : [],
+    color: safeColor(c.color),
     tags: c.tags ?? [],
+    channels: safeChannels(c.channels),
+    collabs: safeCollabs(c.collabs),
     createdBy: c.author || '',
     createdAt: e.createdAt || '',
     updatedAt: e.updatedAt || '',
@@ -132,7 +175,7 @@ export async function fetchChainEventById(
 ): Promise<CalendarFeedEvent | null> {
   const idNum = Number(eventId)
   if (!Number.isFinite(idNum)) return null
-  const e = (await fetchEvents()).find((ev) => ev.id === idNum)
+  const e = await fetchChainEvent(idNum)
   if (!e) return null
   const visible =
     includeHidden ||

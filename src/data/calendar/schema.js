@@ -26,6 +26,7 @@
  * @property {string}         startDate   ISO 8601 / `datetime-local` value
  * @property {string}         [endDate]
  * @property {string}         [location]
+ * @property {string}         [color]     named color token (see EVENT_COLORS)
  * @property {string}         [tags]      comma-separated tags (form state)
  * @property {CalendarLink[]} links       external links shown on the card
  * @property {string[]}       images      image URLs rendered in a carousel
@@ -48,9 +49,12 @@ export function blankEvent() {
     startDate: '',
     endDate: '',
     location: '',
+    color: '',
     tags: '',
     links: [],
     images: [],
+    channels: [],
+    collabs: [],
     createdBy: '',
     createdAt: '',
     updatedAt: '',

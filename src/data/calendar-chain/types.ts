@@ -10,6 +10,22 @@ export interface CalendarLink {
   url: string
 }
 
+/** A Teia channel linked to an event (id + display-name snapshot). */
+export interface CalendarChannelRef {
+  /** On-chain channel_id. */
+  id: string
+  /** Display name captured at link time, so rendering needs no extra fetch. */
+  name: string
+}
+
+/** A collab contract linked to an event (KT1 address + display-name snapshot). */
+export interface CalendarCollabRef {
+  /** Collab (split) contract KT1 address. */
+  address: string
+  /** Display name captured at link time. */
+  name: string
+}
+
 /** Simple recurrence rule (stored off-chain in the event document). */
 export interface Recurrence {
   freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY'
@@ -33,9 +49,12 @@ export interface CalendarEventContent {
   /** ipfs:// URIs. */
   images: string[]
   recurrence?: Recurrence
+  color?: string
   author: string
   timestamp: string
   tags?: string[]
+  channels?: CalendarChannelRef[]
+  collabs?: CalendarCollabRef[]
 }
 
 /** Current state of an on-chain event, joined from the events + versions bigmaps. */
@@ -80,7 +99,10 @@ export interface CalendarFeedEvent {
   locations: string[]
   links: CalendarLink[]
   images: string[]
+  color?: string
   tags: string[]
+  channels: CalendarChannelRef[]
+  collabs: CalendarCollabRef[]
   createdBy: string
   createdAt: string
   updatedAt: string
