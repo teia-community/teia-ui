@@ -68,6 +68,7 @@ export default function RelatedPicker({
       )
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- mousedown is only backdrop light-dismiss on a native modal <dialog>; keyboard users close via Escape or the Done button.
     <dialog
       ref={dialogRef}
       onClose={onClose}
