@@ -1,4 +1,4 @@
-export { default as AdminConsole } from './AdminConsole'
+export { default as ModerationConsole } from './ModerationConsole'
 export { default as ChannelsAdmin } from './ChannelsAdmin'
 export { default as CommentsAdmin } from './CommentsAdmin'
 export { default as RequireModerator } from './RequireModerator'

@@ -1,37 +1,28 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
 import classnames from 'classnames'
+import { MODERATOR_CONTRACT, DAO_TREASURY_CONTRACT } from '@constants'
 import { Page } from '@atoms/layout'
-import { Loading } from '@atoms/loading'
-import { PATH } from '@constants'
+import { ModeratorManagement } from '@components/moderators'
 import CommentsAdmin from './CommentsAdmin'
 import ChannelsAdmin from './ChannelsAdmin'
-import { useCanModerate } from './useCanModerate'
+import CalendarAdmin from './CalendarAdmin'
 import styles from '@style'
 
 const TABS = [
   { key: 'channels', label: 'Channels' },
   { key: 'poll', label: 'Poll comments' },
   { key: 'token', label: 'Token comments' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'moderators', label: 'Moderators' },
 ]
 
 /**
- * Unified moderation console for moderators + multisig users.
- * this is subject to change
+ * Single moderation console for moderators + multisig users — the one place to
+ * review channels, poll/token comments, calendar proposals and the moderator
+ * set. Access is enforced by the RequireModerator route wrapper.
  */
-export default function AdminConsole() {
-  const { canModerate, resolved } = useCanModerate()
+export default function ModerationConsole() {
   const [tab, setTab] = useState('channels')
-
-  if (!resolved) {
-    return (
-      <Page title="Moderation">
-        <Loading message="Checking permissions…" />
-      </Page>
-    )
-  }
-
-  if (!canModerate) return <Navigate to={PATH.FEED} replace />
 
   return (
     <Page title="Moderation">
@@ -60,6 +51,14 @@ export default function AdminConsole() {
           {tab === 'channels' && <ChannelsAdmin />}
           {tab === 'poll' && <CommentsAdmin kind="poll" />}
           {tab === 'token' && <CommentsAdmin kind="token" />}
+          {tab === 'calendar' && <CalendarAdmin />}
+          {tab === 'moderators' && (
+            <ModeratorManagement
+              contract={MODERATOR_CONTRACT}
+              multisig={DAO_TREASURY_CONTRACT}
+              title="Teia moderators"
+            />
+          )}
         </div>
       </div>
     </Page>

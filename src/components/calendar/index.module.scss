@@ -928,3 +928,30 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+.form_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: max(5vh, 96px) 16px 5vh;
+  box-sizing: border-box;
+}
+
+.form_modal {
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: min(720px, 92vw);
+  max-height: 90vh;
+  overflow-y: auto;
+
+  form {
+    border: none;
+    margin-bottom: 0;
+  }
+}
