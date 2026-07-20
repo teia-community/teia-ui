@@ -272,7 +272,7 @@ export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 // the client read-path. The .ics feed function (functions/calendar-feed.mjs)
 // keeps its own copy of this literal, since a Netlify function can't import
 // this TS module.
-export const CALENDAR_CONTRACT = 'KT1DEB8KZUADyNEM5h38EwG7Fpmp2C4DTFqs'
+export const CALENDAR_CONTRACT = 'KT1FxyjsMjNiske7KZQhRtcbTwWJQpv8bmLw'
 
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000

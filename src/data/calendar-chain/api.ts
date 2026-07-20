@@ -27,83 +27,51 @@ interface RawEventValue {
   mod_locked: boolean
 }
 
-interface RawVersionValue {
-  cid: string
-  editor: string
-  proposer: string | null
-  ts: string
-  version: string
-}
-
 async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
   return res.json()
 }
 
-type RawVersionRow = {
-  key: { event_id: string; version: string }
-  value: RawVersionValue
-}
-
-function indexVersions(rows: RawVersionRow[]): Map<string, RawVersionValue> {
-  const versions = new Map<string, RawVersionValue>()
-  for (const row of rows) {
-    versions.set(`${row.key.event_id}:${row.key.version}`, row.value)
-  }
-  return versions
-}
-
-function mapEventRow(
-  row: { key: string; value: RawEventValue },
-  versions: Map<string, RawVersionValue>
-): ChainEvent {
-  const id = Number(row.key)
-  const versionCount = Number(row.value.version_count)
-  const current = versions.get(`${id}:${versionCount}`)
-  const first = versions.get(`${id}:1`)
+// Version history is no longer stored on-chain: the contract emits a version
+// record (tag event_created / event_updated) on every mutation instead of
+// keeping a `versions` big_map. The calendar UI displays none of that per-
+// version metadata (editor/proposer/created/updated), so we read only the
+// `events` big_map and leave those fields empty. To surface a history/last-
+// edited-by view, replay the emitted events via TzKT's contract-events API
+// (see CALENDAR_CONTRACT_V2_MIGRATION.md, Option B).
+function mapEventRow(row: { key: string; value: RawEventValue }): ChainEvent {
   return {
-    id,
+    id: Number(row.key),
     cid: row.value.current_cid,
     hidden: row.value.hidden,
-    versionCount,
+    versionCount: Number(row.value.version_count),
     creator: row.value.creator ?? null,
     modLocked: Boolean(row.value.mod_locked),
-    editor: current?.editor ?? '',
-    proposer: current?.proposer ?? null,
-    createdAt: first?.ts ?? current?.ts ?? '',
-    updatedAt: current?.ts ?? first?.ts ?? '',
+    editor: '',
+    proposer: null,
+    createdAt: '',
+    updatedAt: '',
   }
 }
 
-/** Read every event from the `events` bigmap, joined with its versions. */
+/** Read every event from the `events` bigmap. */
 export async function fetchEvents(): Promise<ChainEvent[]> {
-  const [eventRows, versionRows] = await Promise.all([
-    getJson<{ key: string; value: RawEventValue }[]>(
-      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
-    ),
-    getJson<RawVersionRow[]>(
-      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/versions/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
-    ),
-  ])
-  const versions = indexVersions(versionRows)
-  return eventRows.map((row) => mapEventRow(row, versions)).sort((a, b) => a.id - b.id)
+  const eventRows = await getJson<{ key: string; value: RawEventValue }[]>(
+    `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&select=key,value&limit=${MAX_PAGE_SIZE}`
+  )
+  return eventRows.map(mapEventRow).sort((a, b) => a.id - b.id)
 }
 
 /**
  * Read a single event by id
  */
 export async function fetchChainEvent(id: number): Promise<ChainEvent | null> {
-  const [eventRows, versionRows] = await Promise.all([
-    getJson<{ key: string; value: RawEventValue }[]>(
-      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&key=${id}&select=key,value`
-    ),
-    getJson<RawVersionRow[]>(
-      `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/versions/keys?active=true&key.event_id=${id}&select=key,value&limit=${MAX_PAGE_SIZE}`
-    ),
-  ])
+  const eventRows = await getJson<{ key: string; value: RawEventValue }[]>(
+    `${TZKT_API}/v1/contracts/${CALENDAR_CONTRACT}/bigmaps/events/keys?active=true&key=${id}&select=key,value`
+  )
   if (!eventRows.length) return null
-  return mapEventRow(eventRows[0], indexVersions(versionRows))
+  return mapEventRow(eventRows[0])
 }
 
 /** Read every community proposal from the `proposals` bigmap. */
