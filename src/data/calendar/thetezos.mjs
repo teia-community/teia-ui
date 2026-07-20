@@ -96,6 +96,8 @@ function mapOccurrence(item) {
     // Unique per occurrence; `postId` is kept for de-duping against the old feed.
     id: `wp-${postId}-${startDay}`,
     postId,
+    // WordPress slug — the event's name-based, series-level key
+    slug: data.post?.post_name || '',
     title: stripHtml(data.title || data.post?.post_title || ''),
     description: stripHtml(data.post?.post_content || data.content || ''),
     startDate,

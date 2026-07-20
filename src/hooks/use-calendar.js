@@ -134,13 +134,41 @@ export function useCalendarEvents({ enabled = true } = {}) {
 }
 
 /**
+ * From the occurrences of one WP event (they share a slug), pick the one to
+ * feature on its detail page. If the whole series is past, the most recent, plus the
+ * remaining upcoming occurrences (date order) for an "upcoming dates" list.
+ */
+function pickSeries(occurrences) {
+  const now = Date.now()
+  const dated = occurrences
+    .map((e) => ({
+      e,
+      start: toInstant(e.startDate),
+      end: toInstant(e.endDate || e.startDate),
+    }))
+    .filter((x) => !Number.isNaN(x.start))
+    .sort((a, b) => a.start - b.start)
+  if (!dated.length) return { event: occurrences[0] ?? null, upcoming: [] }
+  const live = dated.filter(
+    (x) => (Number.isNaN(x.end) ? x.start : x.end) >= now
+  )
+  if (live.length) {
+    return { event: live[0].e, upcoming: live.slice(1).map((x) => x.e) }
+  }
+  // Whole series is in the past — feature the most recent, nothing upcoming.
+  return { event: dated[dated.length - 1].e, upcoming: [] }
+}
+
+/**
  * Resolve a single calendar event by its display id, for the dedicated event
  * URL. Chain events (`chain-<n>`) resolve standalone from the contract, so a
  * cold/direct link works; an `::<iso>` occurrence suffix is normalized to the
- * series. WordPress events (`wp-…`) are found in the in-memory feed.
+ * series. WordPress events resolve from the in-memory feed by their name (WP
+ * `slug`) — one page per series — featuring the current/next occurrence; an
+ * exact occurrence id (`wp-<postId>-<date>`) still resolves for older links.
  *
- * @param {string} id display id, e.g. `chain-12` or `wp-345-2026-07-01`
- * @returns {{ event: object|null, isLoading: boolean, notFound: boolean, error: any }}
+ * @param {string} id display id, e.g. `chain-12` or an event slug
+ * @returns {{ event: object|null, upcoming: object[], isLoading: boolean, notFound: boolean, error: any }}
  */
 export function useCalendarEvent(id) {
   const address = useUserStore((st) => st.address)
@@ -168,15 +196,28 @@ export function useCalendarEvent(id) {
   if (isChain) {
     return {
       event: chain.data ?? null,
+      upcoming: [],
       isLoading: chain.isLoading,
       notFound: !chain.isLoading && !chain.error && chain.data === null,
       error: chain.error,
     }
   }
 
-  const event = feed.events.find((e) => e.id === id) ?? null
+  // Prefer the slug (name) match
+  const bySlug = feed.events.filter((e) => e.slug && e.slug === id)
+  let occurrences = bySlug
+  if (!occurrences.length) {
+    const exact = feed.events.find((e) => e.id === id)
+    occurrences = exact
+      ? exact.slug
+        ? feed.events.filter((e) => e.slug === exact.slug)
+        : [exact]
+      : []
+  }
+  const { event, upcoming } = pickSeries(occurrences)
   return {
     event,
+    upcoming,
     isLoading: feed.isLoading || !wpDone,
     notFound: wpDone && !event,
     error: feed.error,

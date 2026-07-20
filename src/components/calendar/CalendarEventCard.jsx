@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import useClipboard from 'react-use-clipboard'
 import { Button } from '@atoms/button'
 import { Markdown } from '@components/markdown'
 import { downloadEventICS } from '@utils/calendarDownload'
@@ -115,18 +114,29 @@ export default function CalendarEventCard({
   const feedWebcal = feedIcs.replace(/^https?:\/\//, 'webcal://')
 
   // Shareable teia.art URL for this event (chain series / WP occurrence).
-  const permalinkId = isChain
-    ? `chain-${event.eventId}`
-    : event.source === 'wp'
-    ? event.id
-    : null
+  // Update WP link to resolve by slug
+  // Teia Events are resolved by chain id for now
+  const detailPath = isChain
+    ? `/calendar/event/chain-${event.eventId}`
+    : event.source === 'wp' && event.slug
+    ? `/calendar/event/${event.slug}`
+    : ''
   const eventUrl =
-    permalinkId && typeof window !== 'undefined'
-      ? `${window.location.origin}/calendar/event/${permalinkId}`
+    detailPath && typeof window !== 'undefined'
+      ? `${window.location.origin}${detailPath}`
       : ''
-  const [linkCopied, copyLink] = useClipboard(eventUrl, {
-    successDuration: 2000,
-  })
+  const [linkCopied, setLinkCopied] = useState(false)
+  // update  the async Clipboard API
+  const copyLink = async () => {
+    if (!eventUrl) return
+    try {
+      await navigator.clipboard.writeText(eventUrl)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    } catch {
+      // Clipboard unavailable (e.g. insecure context) — leave label unchanged.
+    }
+  }
   const accent = eventColorHex(event.color)
 
   return (
@@ -147,11 +157,8 @@ export default function CalendarEventCard({
             </span>
           )}
           <h2 className={styles.card_title}>
-            {linkToEvent && permalinkId ? (
-              <Link
-                to={`/calendar/event/${permalinkId}`}
-                className={styles.card_title_link}
-              >
+            {linkToEvent && detailPath ? (
+              <Link to={detailPath} className={styles.card_title_link}>
                 {title || 'Untitled event'}
               </Link>
             ) : (

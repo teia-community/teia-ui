@@ -223,3 +223,33 @@ details[open] > .subscribe_toggle::after {
   display: flex;
   gap: 8px;
 }
+
+.upcoming {
+  margin: var(--spacing, 1rem) 0 2rem;
+}
+
+.upcoming_title {
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-half, 0.5rem);
+}
+
+.upcoming_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-quarter, 0.25rem);
+
+  li {
+    padding: var(--spacing-quarter, 0.25rem) 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.upcoming_more {
+  color: var(--text-secondary);
+}
