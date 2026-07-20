@@ -1,31 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useMemo, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
 import { Page } from '@atoms/layout'
-import { useCalendarDraftStore, draftKey } from '@context/calendarDraftStore'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { useCalendarEvents } from '@hooks/use-calendar'
-import {
-  useCalendarRoles,
-  useCalendarProposals,
-  createEvent,
-  updateEvent,
-  setEventHidden,
-  proposeEvent,
-  proposeEdit,
-  approveProposal,
-  rejectProposal,
-  fetchEventContent,
-  uploadEventImage,
-  showGetTeiaModal,
-  docToDisplayEvent,
-} from '@data/calendar-chain'
-import { eventColorToken } from '@data/calendar-chain/colors'
-import { useUserProfiles } from '@data/roles'
-import { toUTC, toLocalInput } from '@utils/datetime'
-import CalendarEventCard from '@components/calendar/CalendarEventCard'
-import EventForm from '@components/calendar/EventForm'
+import { useCalendarRoles } from '@data/calendar-chain'
+import useChainEventEditor from '@components/calendar/useChainEventEditor'
 import MonthGrid from '@components/calendar/MonthGrid'
 import styles from '@style'
 
@@ -55,16 +35,7 @@ export default function Calendar() {
     [allEvents, showTtc]
   )
 
-  const roles = useCalendarRoles()
-  const { canModerate, canPropose } = roles
-  const { data: proposals, mutate: refreshProposals } =
-    useCalendarProposals(canModerate)
-  // Aliases for proposer addresses shown in the moderator queue.
-  const { data: proposerProfiles } = useUserProfiles(
-    (proposals ?? []).map((p) => p.proposer)
-  )
-  const proposerLabel = (address) =>
-    proposerProfiles?.[address]?.alias || `${address.slice(0, 8)}…`
+  const { canModerate } = useCalendarRoles()
 
   // Feed URL for the Subscribe block (served at /calendar.ics — see netlify.toml).
   const ICS_URL =
@@ -75,208 +46,16 @@ export default function Calendar() {
   const webcal = ICS_URL.replace(/^https?:\/\//, 'webcal://')
   const [copied, copy] = useClipboard(ICS_URL)
 
-  // Form state. `editing`:
-  //   null                                → closed
-  //   { values, eventId: null, propose }  → create (propose = !canModerate)
-  //   { values, eventId, propose }        → edit / propose-edit an existing event
-  const [editing, setEditing] = useState(null)
-  const [actionError, setActionError] = useState(null)
-  const [opening, setOpening] = useState(false)
-  // Keep form open when submitting
-  const submittingRef = useRef(false)
-
-  // Trying to fix DOM overlay on create form
-  const modalRef = useRef(null)
-  const closeForm = useCallback(() => {
-    if (submittingRef.current) return
-    setEditing(null)
-  }, [])
-
-  useEffect(() => {
-    if (!editing) return
-    const modal = modalRef.current
-    // Whatever opened the modal gets focus back when it closes (WCAG 2.4.3).
-    const opener = document.activeElement
-    const FOCUSABLE =
-      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    modal?.querySelector(FOCUSABLE)?.focus()
-
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-
-    const onKeyDown = (e) => {
-      if (submittingRef.current) return
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        closeForm()
-        return
-      }
-      if (e.key === 'Tab' && modal) {
-        const items = modal.querySelectorAll(FOCUSABLE)
-        if (!items.length) return
-        const first = items[0]
-        const last = items[items.length - 1]
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault()
-          last.focus()
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault()
-          first.focus()
-        }
-      }
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = prevOverflow
-      if (opener instanceof HTMLElement) opener.focus()
-    }
-  }, [editing, closeForm])
-
-  // --- opening the form ----------------------------------------------------
-
-  const startCreate = () => {
-    setActionError(null)
-    if (canModerate || canPropose) {
-      const draft = useCalendarDraftStore.getState().drafts[draftKey(null)]
-      setEditing({ values: draft || {}, eventId: null, propose: !canModerate })
-    } else {
-      showGetTeiaModal()
-    }
-  }
-
-  // Editing/proposing an edit needs the event's RAW IPFS doc so images stay as
-  // ipfs:// URIs (the display feed rewrites them to gateway URLs).
-  const startEditChain = async (event, propose) => {
-    setActionError(null)
-    setOpening(true)
-    try {
-      const doc = await fetchEventContent(event.cid)
-      const draft =
-        useCalendarDraftStore.getState().drafts[draftKey(event.eventId)]
-      setEditing({
-        values: draft || {
-          id: event.id,
-          title: doc.title || '',
-          startDate: toLocalInput(doc.startDate || ''),
-          endDate: toLocalInput(doc.endDate || ''),
-          location: (doc.locations?.length
-            ? doc.locations
-            : doc.location
-            ? [doc.location]
-            : []
-          ).join(', '),
-          color: eventColorToken(doc.color) || '',
-          tags: (doc.tags ?? []).join(', '),
-          description: doc.description || '',
-          links: Array.isArray(doc.links) ? doc.links : [],
-          images: Array.isArray(doc.images) ? doc.images : [],
-          channels: Array.isArray(doc.channels) ? doc.channels : [],
-          collabs: Array.isArray(doc.collabs) ? doc.collabs : [],
-          recurrence: doc.recurrence,
-        },
-        eventId: event.eventId,
-        propose,
-      })
-    } catch (e) {
-      setActionError(`Could not load event for editing: ${e.message}`)
-    } finally {
-      setOpening(false)
-    }
-  }
-
-  // --- write handlers (each on-chain action drives its own progress modal) ---
-
-  const handleSubmit = async (values) => {
-    setActionError(null)
-    submittingRef.current = true
-    const { eventId, propose } = editing
-    const input = {
-      title: values.title,
-      startDate: toUTC(values.startDate),
-      endDate: values.endDate ? toUTC(values.endDate) : undefined,
-      locations: values.locations || [],
-      description: values.description || undefined,
-      color: values.color || undefined,
-      links: values.links || [],
-      images: values.images || [],
-      recurrence: values.recurrence,
-      tags: values.tags || [],
-      channels: values.channels || [],
-      collabs: values.collabs || [],
-    }
-    try {
-      if (eventId == null) {
-        if (propose) await proposeEvent(input)
-        else await createEvent(input)
-      } else if (propose) {
-        await proposeEdit(eventId, input)
-      } else {
-        await updateEvent(eventId, input)
-      }
-      // Saved on-chain, drop the draft and close the form.
-      clearTimeout(draftTimer.current)
-      useCalendarDraftStore.getState().clearDraft(draftKey(eventId))
-      setEditing(null)
-    } catch (e) {
-      setActionError(e.message)
-    } finally {
-      submittingRef.current = false
-    }
-  }
-
-  const handleEdit = (event) => startEditChain(event, false)
-  const handleProposeEdit = (event) => startEditChain(event, true)
-
-  // Drafts land in localStorage via zustand persist; writing on every
-  // keystroke serializes the whole draft map each time, so batch it.
-  const draftTimer = useRef(null)
-  const persistDraft = useCallback(
-    (values) => {
-      if (!editing) return
-      const key = draftKey(editing.eventId)
-      clearTimeout(draftTimer.current)
-      draftTimer.current = setTimeout(() => {
-        useCalendarDraftStore.getState().setDraft(key, values)
-      }, 500)
-    },
-    [editing]
-  )
-  useEffect(() => () => clearTimeout(draftTimer.current), [])
-
-  const handleHide = async (event) => {
-    setActionError(null)
-    try {
-      await setEventHidden({ eventId: event.eventId, hidden: !event.hidden })
-    } catch (e) {
-      setActionError(e.message)
-    }
-  }
-
-  const handleApprove = async (id) => {
-    try {
-      await approveProposal(id)
-      refreshProposals()
-    } catch (e) {
-      setActionError(e.message)
-    }
-  }
-  const handleReject = async (id) => {
-    try {
-      await rejectProposal(id)
-      refreshProposals()
-    } catch (e) {
-      setActionError(e.message)
-    }
-  }
-
-  // Shared handlers passed to every card / grid / accordion.
-  const cardHandlers = {
-    roles,
-    onEdit: handleEdit,
-    onHide: handleHide,
-    onProposeEdit: handleProposeEdit,
-  }
+  // Create/edit/hide flow (form modal + moderator actions) lives in the hook,
+  // shared with the moderation console.
+  const {
+    cardHandlers,
+    startCreate,
+    opening,
+    actionError,
+    isEditing,
+    editorModal,
+  } = useChainEventEditor()
 
   return (
     <Page title="Teia Calendar">
@@ -336,7 +115,7 @@ export default function Calendar() {
                 </div>
               </details>
             )}
-            {!editing && (
+            {!isEditing && (
               <Button shadow_box fit onClick={startCreate} disabled={opening}>
                 {opening
                   ? 'Opening…'
@@ -348,80 +127,10 @@ export default function Calendar() {
           </div>
         </header>
 
-        {/* Moderator proposal queue */}
-        {canModerate && proposals?.length > 0 && (
-          <section className={styles.queue}>
-            <h2 className={styles.queue_title}>
-              Pending proposals ({proposals.length})
-            </h2>
-            {proposals.map((p) => (
-              <div key={p.id} className={styles.queue_item}>
-                <div className={styles.queue_head}>
-                  <span className={styles.queue_meta}>
-                    {p.isNewEvent ? 'New event' : `Edit of event #${p.eventId}`}{' '}
-                    · proposed by {proposerLabel(p.proposer)}
-                  </span>
-                  <div className={styles.queue_actions}>
-                    <Button shadow_box fit onClick={() => handleApprove(p.id)}>
-                      Approve
-                    </Button>
-                    <Button shadow_box fit onClick={() => handleReject(p.id)}>
-                      Reject
-                    </Button>
-                  </div>
-                </div>
-                {/* Full proposed content — moderators see what they approve. */}
-                {p.doc ? (
-                  <CalendarEventCard
-                    event={docToDisplayEvent(p.doc, `proposal-${p.id}`)}
-                  />
-                ) : (
-                  <p className={styles.queue_meta}>
-                    Couldn’t load the proposed content from IPFS (CID:{' '}
-                    {p.proposedCid}).
-                  </p>
-                )}
-              </div>
-            ))}
-          </section>
-        )}
-
         {/* Month grid: click a day to view its events in a popup. */}
         {!isLoading && <MonthGrid events={events} {...cardHandlers} />}
 
-        {/* Needs an overhaul */}
-        {editing &&
-          createPortal(
-            <div
-              className={styles.form_overlay}
-              role="presentation"
-              onMouseDown={(e) => {
-                if (e.target === e.currentTarget) closeForm()
-              }}
-            >
-              <div
-                ref={modalRef}
-                className={styles.form_modal}
-                role="dialog"
-                aria-modal="true"
-                aria-label={
-                  editing.eventId != null ? 'Edit event' : 'New event'
-                }
-              >
-                <EventForm
-                  key={editing.values.id || 'new'}
-                  initial={editing.values}
-                  onSubmit={handleSubmit}
-                  onValuesChange={persistDraft}
-                  onUploadImage={async (file) => ({
-                    url: await uploadEventImage(file),
-                  })}
-                  onCancel={closeForm}
-                />
-              </div>
-            </div>,
-            document.body
-          )}
+        {editorModal}
 
         {error && (
           <p className={styles.error}>Could not load events: {error.message}</p>

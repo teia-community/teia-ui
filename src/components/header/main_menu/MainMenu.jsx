@@ -14,7 +14,7 @@ import {
 } from '@data/messaging/channels'
 import { useMyPollNotifications } from '@data/messaging/poll-comments'
 import { useMyTokenNotifications } from '@data/messaging/token-comments'
-import { useAccountRoles } from '@data/roles'
+import { useGateRoles } from '@data/roles'
 
 import { MenuItem } from './MenuItem'
 import { Toggle } from '@atoms/toggles'
@@ -110,8 +110,9 @@ export const MainMenu = () => {
   const currentName = proxyName || userInfo?.name
   const currentAddress = proxyAddress || address
 
-  const { isModerator, isMultisig } = useAccountRoles(address)
-  const canModerate = isModerator || isMultisig
+  // One role-resolution path (mock-aware) shared with the moderation guard.
+  const { data: gateRoles } = useGateRoles(address)
+  const canModerate = Boolean(gateRoles?.canModerate)
 
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now), will be reworked later on.
   const sections = [
@@ -133,7 +134,7 @@ export const MainMenu = () => {
             { label: 'Edit Profile', route: 'subjkt', need_sync: true },
             { label: 'Settings', route: 'settings' },
             ...(canModerate
-              ? [{ label: 'Moderation', route: 'inbox/admin', need_sync: true }]
+              ? [{ label: 'Moderation', route: 'moderation', need_sync: true }]
               : []),
           ]
         : [
