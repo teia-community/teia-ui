@@ -92,6 +92,7 @@ export interface CalendarFeedEvent {
   /** True once a moderator/multisig hid it — the creator can no longer unhide. */
   modLocked: boolean
   title: string
+  slug: string
   description: string
   startDate: string
   endDate: string

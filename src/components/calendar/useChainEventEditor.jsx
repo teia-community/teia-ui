@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useCalendarDraftStore, draftKey } from '@context/calendarDraftStore'
 import {
@@ -13,6 +13,8 @@ import {
   showGetTeiaModal,
 } from '@data/calendar-chain'
 import { eventColorToken } from '@data/calendar-chain/colors'
+import { slugify } from '@data/wiki/links'
+import { useCalendarEvents } from '@hooks/use-calendar'
 import { toUTC, toLocalInput } from '@utils/datetime'
 import EventForm from './EventForm'
 import styles from '@style'
@@ -30,6 +32,17 @@ import styles from '@style'
 export default function useChainEventEditor({ onMutate } = {}) {
   const roles = useCalendarRoles()
   const { canModerate, canPropose } = roles
+
+  // Existing chain event slugs, to block a create/edit from taking a name
+  // that's already in use (slug -> owning eventId).
+  const { events: allEvents } = useCalendarEvents()
+  const takenSlugs = useMemo(() => {
+    const m = new Map()
+    for (const e of allEvents) {
+      if (e.source === 'chain' && e.slug) m.set(e.slug, e.eventId)
+    }
+    return m
+  }, [allEvents])
 
   // Form state. `editing`:
   //   null                                → closed
@@ -148,8 +161,19 @@ export default function useChainEventEditor({ onMutate } = {}) {
 
   const handleSubmit = async (values) => {
     setActionError(null)
-    submittingRef.current = true
     const { eventId, propose } = editing
+    const newSlug = slugify(values.title || '')
+    if (
+      newSlug &&
+      takenSlugs.has(newSlug) &&
+      takenSlugs.get(newSlug) !== eventId
+    ) {
+      setActionError(
+        `An event named "${values.title}" already exists — please choose a different name.`
+      )
+      return
+    }
+    submittingRef.current = true
     const input = {
       title: values.title,
       startDate: toUTC(values.startDate),
@@ -240,6 +264,8 @@ export default function useChainEventEditor({ onMutate } = {}) {
               initial={editing.values}
               onSubmit={handleSubmit}
               onValuesChange={persistDraft}
+              takenSlugs={takenSlugs}
+              currentEventId={editing.eventId}
               onUploadImage={async (file) => ({
                 url: await uploadEventImage(file),
               })}

@@ -6,6 +6,7 @@
 // (merged in src/hooks/use-calendar.js). Read-only until the write slice lands.
 
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
+import { slugify } from '@data/wiki/links'
 import { fetchChainEvent, fetchEvents } from './api'
 import { eventColorHex } from './colors'
 import { fetchEventContent } from './ipfs'
@@ -142,6 +143,7 @@ function baseFeedEvent(e: ChainEvent, c: CalendarEventContent) {
     creator: e.creator || '',
     modLocked: e.modLocked,
     title: c.title || '',
+    slug: slugify(c.title || ''),
     description: c.description || '',
     location: locations.join(', '),
     locations,
@@ -256,5 +258,17 @@ export async function fetchChainCalendarEvents({
       })
     }
   })
+
+  // Non-unique titles: the lowest eventId owns each slug; others fall back to chain-<id>.
+  const slugOwner = new Map() // slug -> min eventId
+  for (const ev of out) {
+    if (!ev.slug) continue
+    const cur = slugOwner.get(ev.slug)
+    if (cur === undefined || ev.eventId < cur) slugOwner.set(ev.slug, ev.eventId)
+  }
+  for (const ev of out) {
+    if (ev.slug && slugOwner.get(ev.slug) !== ev.eventId) ev.slug = ''
+  }
+
   return out
 }

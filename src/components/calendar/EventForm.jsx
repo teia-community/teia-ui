@@ -9,6 +9,7 @@ import { useChannelList } from '@data/messaging/channels'
 import { fetchGraphQL, getCollabsForAddress, searchCollabs } from '@data/api'
 import { walletPreview } from '@utils/string'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
+import { slugify } from '@data/wiki/links'
 import { EVENT_COLORS } from '@data/calendar-chain/colors'
 import RelatedPicker from './RelatedPicker'
 import styles from '@style'
@@ -88,6 +89,8 @@ function seriesEndDate(startDate, freq, interval, count) {
  *   onUploadImage?: (file: File) => Promise<{ url: string }>,
  *   onCancel: () => void,
  *   onValuesChange?: (values: any) => void,
+ *   takenSlugs?: Map<string, number>,
+ *   currentEventId?: number|null,
  * }} props
  */
 export default function EventForm({
@@ -96,6 +99,8 @@ export default function EventForm({
   onUploadImage,
   onCancel,
   onValuesChange,
+  takenSlugs,
+  currentEventId,
 }) {
   const [values, setValues] = useState(() => ({ ...blankEvent(), ...initial }))
   const [saving, setSaving] = useState(false)
@@ -393,6 +398,13 @@ export default function EventForm({
       : `${seriesEnd}T${values.startDate.slice(11, 16) || '00:00'}`
     : ''
 
+  // Live duplicate-name check
+  const titleSlug = slugify(values.title || '')
+  const titleTaken =
+    titleSlug &&
+    takenSlugs?.has(titleSlug) &&
+    takenSlugs.get(titleSlug) !== currentEventId
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     // Button's `disabled` prop is style-only, so guard re-entry here.
@@ -515,6 +527,12 @@ export default function EventForm({
           onChange={set('title')}
           placeholder="Event title"
         />
+        {titleTaken && (
+          <p className={styles.form_error} role="alert">
+            An event named "{values.title}" already exists — please choose a
+            different name.
+          </p>
+        )}
       </label>
 
       <div className={styles.field}>
@@ -1077,7 +1095,7 @@ export default function EventForm({
           shadow_box
           fit
           type="submit"
-          disabled={saving || uploadingImages}
+          disabled={saving || uploadingImages || titleTaken}
         >
           {uploadingImages
             ? 'Uploading images…'

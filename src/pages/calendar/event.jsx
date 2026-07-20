@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { Page } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { useCalendarEvent } from '@hooks/use-calendar'
@@ -34,6 +34,11 @@ function formatOccurrence(value) {
 export default function CalendarEvent() {
   const { id } = useParams()
   const { event, upcoming, isLoading, notFound } = useCalendarEvent(id)
+
+  // Canonicalize chain-<id> / stale URLs to the event's name slug.
+  if (event?.slug && id !== event.slug) {
+    return <Navigate to={`/calendar/event/${event.slug}`} replace />
+  }
 
   const shownUpcoming = upcoming.slice(0, MAX_UPCOMING)
   const extraUpcoming = upcoming.length - shownUpcoming.length

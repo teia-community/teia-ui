@@ -205,7 +205,16 @@ export function useCalendarEvent(id) {
 
   // Prefer the slug (name) match
   const bySlug = feed.events.filter((e) => e.slug && e.slug === id)
-  let occurrences = bySlug
+  // If a title collision ever lets a slug match more than
+  // one chain event, keep only the occurrences of the lowest eventId
+  const bySlugEventIds = [
+    ...new Set(bySlug.map((e) => e.eventId).filter((v) => v !== undefined)),
+  ]
+  const narrowedBySlug =
+    bySlugEventIds.length > 1
+      ? bySlug.filter((e) => e.eventId === Math.min(...bySlugEventIds))
+      : bySlug
+  let occurrences = narrowedBySlug
   if (!occurrences.length) {
     const exact = feed.events.find((e) => e.id === id)
     occurrences = exact

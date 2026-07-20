@@ -114,10 +114,10 @@ export default function CalendarEventCard({
   const feedWebcal = feedIcs.replace(/^https?:\/\//, 'webcal://')
 
   // Shareable teia.art URL for this event (chain series / WP occurrence).
-  // Update WP link to resolve by slug
-  // Teia Events are resolved by chain id for now
   const detailPath = isChain
-    ? `/calendar/event/chain-${event.eventId}`
+    ? event.slug
+      ? `/calendar/event/${event.slug}`
+      : `/calendar/event/chain-${event.eventId}`
     : event.source === 'wp' && event.slug
     ? `/calendar/event/${event.slug}`
     : ''
