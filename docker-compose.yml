@@ -9,8 +9,3 @@ services:
       - 0.0.0.0:8080:80
     env_file:
       - .env
-  tzproxy:
-    image: ghcr.io/marigold-dev/tzproxy:latest
-    restart: unless-stopped
-    volumes:
-      - ./docker/tzproxy.yaml:/tzproxy.yaml
