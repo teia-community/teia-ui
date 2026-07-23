@@ -104,14 +104,20 @@ export default function CalendarEventCard({
   // Check on feed source
   const sourceKind = isChain ? 'teia' : event.source === 'wp' ? 'ttc' : null
 
-  // Whole-calendar subscribe link (webcal:), the same feed as the header
-  // "Subscribe" dropdown — derived here so every card can offer it. To be adjusted.
+  // Whole-calendar subscribe links, the same feed as the header "Subscribe"
+  // dropdown — derived here so every card can offer them. Google Calendar has
+  // no webcal handler (notably on Android), so it gets an add-by-URL link.
   const feedIcs =
     import.meta.env.VITE_CALENDAR_ICS_URL ||
     (typeof window !== 'undefined'
       ? `${window.location.origin}/calendar.ics`
       : '')
   const feedWebcal = feedIcs.replace(/^https?:\/\//, 'webcal://')
+  const feedGoogle = feedIcs
+    ? `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
+        feedIcs
+      )}`
+    : ''
 
   // Shareable teia.art URL for this event (chain series / WP occurrence).
   const detailPath = isChain
@@ -227,9 +233,14 @@ export default function CalendarEventCard({
             </Button>
           )}
           {isChain && feedWebcal && (
-            <Button shadow_box fit href={feedWebcal}>
-              Subscribe to Teia Calendar
-            </Button>
+            <>
+              <Button shadow_box fit href={feedGoogle}>
+                Subscribe (Google Calendar)
+              </Button>
+              <Button shadow_box fit href={feedWebcal}>
+                Subscribe (Apple / Outlook)
+              </Button>
+            </>
           )}
           {isChain && canModerate && (
             <>

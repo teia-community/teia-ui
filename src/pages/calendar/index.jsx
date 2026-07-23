@@ -44,6 +44,10 @@ export default function Calendar() {
       ? `${window.location.origin}/calendar.ics`
       : '')
   const webcal = ICS_URL.replace(/^https?:\/\//, 'webcal://')
+  // Google Calendar, webcal handler
+  const googleCal = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
+    ICS_URL
+  )}`
   const [copied, copy] = useClipboard(ICS_URL)
 
   // Create/edit/hide flow (form modal + moderator actions) lives in the hook,
@@ -85,8 +89,11 @@ export default function Calendar() {
                   <span className={styles.subscribe_label}>
                     Teia events (on-chain)
                   </span>
+                  <Button shadow_box small href={googleCal}>
+                    Add to Google Calendar
+                  </Button>
                   <Button shadow_box small href={webcal}>
-                    Subscribe to calendar
+                    Add to Apple / Outlook
                   </Button>
                   <Button shadow_box small secondary onClick={copy}>
                     {copied ? 'Copied!' : 'Copy feed URL'}
