@@ -45,6 +45,15 @@ $letter-spacing: 0.015em;
 
   --text-color: var(--gray-80);
   --warning-color: #b8860b;
+
+  // Secondary-layer aliases (used by the calendar; resolve per theme via the
+  // ramp). --gray-60 keeps muted text at AA contrast on the core themes
+  // (#666 on #fff ≈ 5.7:1 light, #999 on #111 ≈ 6.3:1 dark), unlike the
+  // 0.5-alpha --secondary-color. --> To be adjusted
+  --text-secondary: var(--gray-60);
+  --font-size: var(--font-body);
+  --font-size-small: #{$font-small};
+  --error-color: var(--no-vote-color);
 }
 
 :root[data-theme='dark'] {

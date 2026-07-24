@@ -1,7 +1,5 @@
 /**
- * Admin/moderation read hooks for the moderation console
- * `/inbox/admin` this will be unified in another URL with a future commit
- *
+ * Admin/moderation read hooks for the moderation console at `/moderation`.
  */
 import useSWR from 'swr'
 import { bytesToString } from '@taquito/utils'

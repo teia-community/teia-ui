@@ -5,6 +5,10 @@
   [build.environment]
     NODE_OPTIONS = "--max-old-space-size=4096"
 
+  [functions]
+    directory = "functions"
+    node_bundler = "esbuild"
+
   [[redirects]]
     from = "/*"
     to = "/index.html"

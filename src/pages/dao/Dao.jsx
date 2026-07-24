@@ -10,7 +10,6 @@ import {
   useDaoRepresentatives,
   useDaoTokenBalance,
 } from '@data/swr'
-import { useCanModerate } from '@pages/admin'
 import LoadingDaoMessage from './LoadingDaoMessage'
 import styles from '@style'
 
@@ -33,27 +32,8 @@ const TABS = [
     to: 'stats',
   },
   {
-    title: 'Moderators',
-    to: 'moderators',
-  },
-  {
     title: 'Fees',
     to: 'fees',
-  },
-  {
-    title: 'Channels',
-    to: 'channels',
-    restricted: true,
-  },
-  {
-    title: 'Poll comments',
-    to: 'poll-comments',
-    restricted: true,
-  },
-  {
-    title: 'Token comments',
-    to: 'token-comments',
-    restricted: true,
   },
 ]
 
@@ -69,9 +49,6 @@ export default function DAO() {
   const userCommunity = representatives?.[userAddress]
   const [userTokenBalance] = useDaoTokenBalance(userAddress)
 
-  // Moderation tabs are only shown to moderators / multisig users for now.
-  const { canModerate } = useCanModerate()
-
   return (
     <Page title="Teia DAO">
       <div className={styles.container}>
@@ -85,10 +62,6 @@ export default function DAO() {
               tabs={TABS}
               filter={(tab) => {
                 if (userTokenBalance === 0 && !userCommunity && tab.private) {
-                  return null
-                }
-
-                if (tab.restricted && !canModerate) {
                   return null
                 }
 

@@ -48,6 +48,7 @@
     "build": "vite build",
     "build-dev": "vite --mode development build",
     "test": "vite test",
+    "test:ics": "node --test test/**/*",
     "screenshots": "playwright test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"./src/**/*.{js,jsx,scss}\"",
