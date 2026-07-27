@@ -18,8 +18,16 @@ function _M.getInfoForCID(cid)
     return res.header
 end
 
+local ATTR_ESCAPES = { ['"'] = '&quot;', ["'"] = '&#39;', ['<'] = '&lt;', ['>'] = '&gt;' }
+
 function _M.clean(input)
     return ngx.re.gsub(input, '"', '')
+end
+
+-- Attribute-context escaping for the meta tags. Deliberately separate from _M.clean:
+-- clean()'s output feeds getImgproxyURL's HMAC input, so it must stay byte-identical.
+function _M.escapeAttr(input)
+    return (ngx.re.gsub(input, "[\"'<>]", function(m) return ATTR_ESCAPES[m[0]] end, 'jo'))
 end
 
 function _M.fromhex(str)
@@ -73,7 +81,7 @@ function _M.findTokenDetails(search)
         body = '{"query":"query findTokenDetails {  token: tokens_by_pk(token_id: \\"'.. search .. '\\", fa2_address: \\"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton\\") { token_id name description display_uri artifact_uri artist_address mime_type teia_meta { preview_uri }}}"}',
     })
     -- ngx.log(ngx.ERR, "findTokenDetails: ", res.body)
-    data = cjson.decode(res.body)['data']['token']
+    local data = cjson.decode(res.body)['data']['token']
     local token = {}
     token['id'] = _M.clean(data['token_id'])
     token['name'] = (string.len(data['name']) > 0 and _M.clean(data['name']) or "OBJKT#" .. _M.clean(data['token_id']))
@@ -81,7 +89,7 @@ function _M.findTokenDetails(search)
     token['image'] = (data['display_uri'] ~= ngx.null and _M.clean(data['display_uri']) or _M.clean(data['artifact_uri']))
     token['artist_address'] = data['artist_address']
     token['mime_type'] = data['mime_type']
-    token['preview_uri'] = data['teia_meta']['preview_uri']
+    token['preview_uri'] = (data['teia_meta']['preview_uri'] ~= ngx.null and _M.clean(data['teia_meta']['preview_uri']) or ngx.null)
     token['type'] = 'token'
     return token
 end
@@ -95,6 +103,7 @@ function _M.injectOpenGraphTags(body, info)
 
     local url = ngx.var.scheme .. '://' .. ngx.var.host
     local source = ngx.re.sub(info['image'], 'ipfs://', '')
+    local image
 
     if info['type'] == 'profile' then
         local image_info = _M.getInfoForCID(source)
@@ -117,34 +126,34 @@ function _M.injectOpenGraphTags(body, info)
     end
 
     local openGraphTags = '' ..
-        '<meta name="description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
+        '<meta name="description" content="' .. _M.escapeAttr(info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
         '<meta property="og:type" content="website" />' ..
-        '<meta property="og:title" content="' .. info['name'] .. '" />' ..
-        '<meta property="og:description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
-        '<meta property="og:image" content="' .. info['image'] .. '" />' ..
-        '<meta property="og:url" content="' .. url .. ngx.var.request_uri .. '" />' ..
+        '<meta property="og:title" content="' .. _M.escapeAttr(info['name']) .. '" />' ..
+        '<meta property="og:description" content="' .. _M.escapeAttr(info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
+        '<meta property="og:image" content="' .. _M.escapeAttr(info['image']) .. '" />' ..
+        '<meta property="og:url" content="' .. _M.escapeAttr(url .. ngx.var.request_uri) .. '" />' ..
         '<meta name="twitter:card" content="summary_large_image" />' ..
         '<meta name="twitter:creator" content="@TeiaCommunity" />' ..
-        '<meta name="twitter:title" content="' .. info['name'] .. '" />' ..
-        '<meta name="twitter:description" content="' .. (info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
-        '<meta name="twitter:image" content="' .. info['image'] .. '" />' ..
+        '<meta name="twitter:title" content="' .. _M.escapeAttr(info['name']) .. '" />' ..
+        '<meta name="twitter:description" content="' .. _M.escapeAttr(info['mime_type'] == 'text/plain' and '' or info['description']) .. '" />' ..
+        '<meta name="twitter:image" content="' .. _M.escapeAttr(info['image']) .. '" />' ..
         '<meta property="fc:frame" content="vNext"/>' ..
-        '<meta property="fc:frame:image" content="' .. image .. '"/>' ..
+        '<meta property="fc:frame:image" content="' .. _M.escapeAttr(image) .. '"/>' ..
         '<meta property="fc:frame:image:aspect_ratio" content="1:1"/>'
 
     if info['type'] == 'token' then
         openGraphTags = openGraphTags ..
         '<meta name="fc:frame:button:1" content="Collect on Teia"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
-        '<meta name="fc:frame:button:1:target" content="' .. url .. ngx.var.request_uri .. '"/>' ..
+        '<meta name="fc:frame:button:1:target" content="' .. _M.escapeAttr(url .. ngx.var.request_uri) .. '"/>' ..
         '<meta name="fc:frame:button:2" content="Visit artist profile"/>' ..
         '<meta name="fc:frame:button:2:action" content="link"/>' ..
-        '<meta name="fc:frame:button:2:target" content="' .. url .. '/tz/' .. info['artist_address'] .. '"/>'
+        '<meta name="fc:frame:button:2:target" content="' .. _M.escapeAttr(url .. '/tz/' .. info['artist_address']) .. '"/>'
     else
         openGraphTags = openGraphTags ..
         '<meta name="fc:frame:button:1" content="Visit artist profile"/>' ..
         '<meta name="fc:frame:button:1:action" content="link"/>' ..
-        '<meta name="fc:frame:button:1:target" content="' .. url .. '/tz/' .. info['artist_address'] .. '"/>'
+        '<meta name="fc:frame:button:1:target" content="' .. _M.escapeAttr(url .. '/tz/' .. info['artist_address']) .. '"/>'
     end
     
     openGraphTags = ngx.re.gsub(openGraphTags, 'ipfs://', IPFS_GATEWAY)
