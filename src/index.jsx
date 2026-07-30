@@ -208,6 +208,10 @@ const router = createBrowserRouter(
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
+        <Route
+          path="collections"
+          element={<CreateCollaboration isCollection />}
+        />
       </Route>
       <Route path="text/*" element={<Text />}>
         <Route index element={<Community />} />

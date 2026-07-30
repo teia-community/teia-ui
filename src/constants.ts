@@ -278,6 +278,9 @@ export const CHANNELS_V2_CONTRACT = 'KT19ooSLPFxJQ5mx3kR4Qo2UY4KJDcdMdng9'
 export const CHANNEL_FEE = 100000
 export const CHANNEL_MESSAGE_FEE = 25000
 
+// Collections DAO fee percentage
+export const COLLECTIONS_DAO_FEE_PERCENT = 2
+
 export const BURN_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX'
 
 export const COVER_COMPRESSOR_OPTIONS = {
