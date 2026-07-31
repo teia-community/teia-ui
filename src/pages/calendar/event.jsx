@@ -4,6 +4,7 @@ import { Loading } from '@atoms/loading'
 import { useCalendarEvent } from '@hooks/use-calendar'
 import { isAllDay } from '@utils/datetime'
 import CalendarEventCard from '@components/calendar/CalendarEventCard'
+import useChainEventEditor from '@components/calendar/useChainEventEditor'
 import styles from '@style'
 
 // How many upcoming dates to list before collapsing the rest into a count.
@@ -33,7 +34,11 @@ function formatOccurrence(value) {
  */
 export default function CalendarEvent() {
   const { id } = useParams()
-  const { event, upcoming, isLoading, notFound } = useCalendarEvent(id)
+  const { event, upcoming, isLoading, notFound, refresh } = useCalendarEvent(id)
+
+  const { cardHandlers, actionError, editorModal } = useChainEventEditor({
+    onMutate: refresh,
+  })
 
   // Canonicalize chain-<id> / stale URLs to the event's name slug.
   if (event?.slug && id !== event.slug) {
@@ -56,7 +61,13 @@ export default function CalendarEvent() {
           <p className={styles.empty}>Event not found.</p>
         ) : (
           <>
-            <CalendarEventCard event={event} />
+            <CalendarEventCard event={event} {...cardHandlers} />
+
+            {actionError && (
+              <p className={styles.error} role="alert">
+                {actionError}
+              </p>
+            )}
 
             {upcoming.length > 0 && (
               <section className={styles.upcoming}>
@@ -75,6 +86,8 @@ export default function CalendarEvent() {
             )}
           </>
         )}
+
+        {editorModal}
       </div>
     </Page>
   )

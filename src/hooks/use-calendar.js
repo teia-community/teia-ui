@@ -168,7 +168,8 @@ function pickSeries(occurrences) {
  * exact occurrence id (`wp-<postId>-<date>`) still resolves for older links.
  *
  * @param {string} id display id, e.g. `chain-12` or an event slug
- * @returns {{ event: object|null, upcoming: object[], isLoading: boolean, notFound: boolean, error: any }}
+ *
+ * @returns {{ event: object|null, upcoming: object[], isLoading: boolean, notFound: boolean, error: any, refresh?: () => void }}
  */
 export function useCalendarEvent(id) {
   const address = useUserStore((st) => st.address)
@@ -200,6 +201,7 @@ export function useCalendarEvent(id) {
       isLoading: chain.isLoading,
       notFound: !chain.isLoading && !chain.error && chain.data === null,
       error: chain.error,
+      refresh: chain.mutate,
     }
   }
 

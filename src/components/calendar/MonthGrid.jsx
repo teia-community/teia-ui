@@ -383,7 +383,10 @@ export default function MonthGrid({
                 closeDialog()
                 onEdit?.(ev)
               }}
-              onHide={onHide}
+              onHide={(ev) => {
+                closeDialog()
+                onHide?.(ev)
+              }}
               onProposeEdit={(ev) => {
                 closeDialog()
                 onProposeEdit?.(ev)
