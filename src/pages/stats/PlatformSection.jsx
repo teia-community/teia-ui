@@ -1,5 +1,4 @@
 import { usePlatformTable } from '@data/platform-stats'
-import Chart from './Chart'
 import styles from '@style'
 
 const num = (v) => (typeof v === 'number' ? v.toLocaleString() : '—')
@@ -19,15 +18,6 @@ export default function PlatformSection() {
   if (isLoading) {
     return <div className={styles.card_empty}>Loading platform stats…</div>
   }
-
-  // null, not 0, recharts leaves a gap rather than drawing a drop to zero
-  // while the current year's market figures are still loading.
-  const chartData = rows.map((r) => ({
-    year: r.partial ? `${r.year} YTD` : String(r.year),
-    mints: r.mints,
-    artists: r.artists,
-    collectors: r.collectors ?? null,
-  }))
 
   return (
     <div className={styles.section}>
@@ -59,27 +49,6 @@ export default function PlatformSection() {
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className={styles.two_col}>
-        <Chart
-          title="Mints per year"
-          data={chartData}
-          xKey="year"
-          series={[
-            { key: 'mints', label: 'Mints', color: 'var(--text-color)' },
-          ]}
-        />
-        <Chart
-          title="Artists vs collectors per year"
-          data={chartData}
-          xKey="year"
-          stack={false}
-          series={[
-            { key: 'artists', label: 'Artists', color: 'var(--text-color)' },
-            { key: 'collectors', label: 'Collectors', color: 'var(--gray-60)' },
-          ]}
-        />
       </div>
     </div>
   )

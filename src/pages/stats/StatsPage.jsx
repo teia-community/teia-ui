@@ -14,7 +14,6 @@ import styles from '@style'
 
 const TABS = [
   { key: 'platform', label: 'Platform' },
-  { key: 'sales', label: 'Sales' },
   { key: 'overview', label: 'Messaging' },
   { key: 'channels', label: 'Channels & DMs' },
   { key: 'poll', label: 'Poll comments' },
@@ -80,8 +79,12 @@ export default function StatsPage() {
       </nav>
 
       <div className={styles.panel}>
-        {tab === 'platform' && <PlatformSection />}
-        {tab === 'sales' && <SalesSection />}
+        {tab === 'platform' && (
+          <>
+            <SalesSection />
+            <PlatformSection />
+          </>
+        )}
         {tab === 'overview' && <OverviewSection />}
         {tab === 'channels' && <ChannelStatsSection />}
         {tab === 'poll' && <PollStatsSection />}

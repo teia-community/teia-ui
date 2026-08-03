@@ -63,6 +63,10 @@
   gap: 1.25em;
 }
 
+.section + .section {
+  margin-top: 3em;
+}
+
 .privacy_note {
   margin: 0;
   padding: 0.6em 0.85em;
