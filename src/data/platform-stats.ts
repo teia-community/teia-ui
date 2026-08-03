@@ -23,7 +23,7 @@ const FIRST_YEAR = 2021
 /**
  * Teia teztok types
  */
-const TEIA_SALE_TYPES = '["TEIA_COLLECT", "HEN_COLLECT", "HEN_COLLECT_V2"]'
+export const TEIA_SALE_TYPES = ['TEIA_COLLECT', 'HEN_COLLECT', 'HEN_COLLECT_V2']
 
 interface MarketYear {
   collectors: number
@@ -106,7 +106,9 @@ function buildMarketQuery(years: number[]): string {
   const parts: string[] = []
   for (const y of years) {
     const { from, to } = yearBounds(y)
-    const where = `where: { implements: { _eq: "SALE" }, type: { _in: ${TEIA_SALE_TYPES} }, timestamp: { _gte: "${from}", _lt: "${to}" } }`
+    const where = `where: { implements: { _eq: "SALE" }, type: { _in: ${JSON.stringify(
+      TEIA_SALE_TYPES
+    )} }, timestamp: { _gte: "${from}", _lt: "${to}" } }`
     parts.push(
       `s${y}: events_aggregate(${where}) { aggregate { count sum { price } } }`
     )

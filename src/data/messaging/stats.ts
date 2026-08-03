@@ -123,7 +123,7 @@ interface MessagePostedPayload {
 // ---------------------------------------------------------------------------
 
 /** ISO week-start (Monday, UTC) for a timestamp, e.g. "2026-06-15". */
-function weekStartISO(timestamp: string): string {
+export function weekStartISO(timestamp: string): string {
   const d = new Date(timestamp)
   const day = d.getUTCDay()
   const offset = (day + 6) % 7 // days since Monday

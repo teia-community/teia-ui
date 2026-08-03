@@ -71,6 +71,31 @@
   font-size: 0.85em;
 }
 
+.filter_row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.chip {
+  @include resetButton();
+  border: 1px solid var(--border-color);
+  padding: 0.35em 0.8em;
+  color: var(--gray-60);
+  font: inherit;
+  font-size: 0.8em;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.chip_active {
+  color: var(--text-color);
+  border-color: var(--text-color);
+  font-weight: 600;
+}
+
 // --- Stat cards grid ---
 .stats_grid {
   display: grid;

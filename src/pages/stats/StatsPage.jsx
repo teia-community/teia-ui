@@ -9,10 +9,12 @@ import ChannelStatsSection from './ChannelStatsSection'
 import PollStatsSection from './PollStatsSection'
 import TokenStatsSection from './TokenStatsSection'
 import PlatformSection from './PlatformSection'
+import SalesSection from './SalesSection'
 import styles from '@style'
 
 const TABS = [
   { key: 'platform', label: 'Platform' },
+  { key: 'sales', label: 'Sales' },
   { key: 'overview', label: 'Messaging' },
   { key: 'channels', label: 'Channels & DMs' },
   { key: 'poll', label: 'Poll comments' },
@@ -79,6 +81,7 @@ export default function StatsPage() {
 
       <div className={styles.panel}>
         {tab === 'platform' && <PlatformSection />}
+        {tab === 'sales' && <SalesSection />}
         {tab === 'overview' && <OverviewSection />}
         {tab === 'channels' && <ChannelStatsSection />}
         {tab === 'poll' && <PollStatsSection />}
