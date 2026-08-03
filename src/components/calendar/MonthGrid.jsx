@@ -152,6 +152,9 @@ function layoutBars(events, year, month, startOffset, daysInMonth) {
  *   onEdit?: (event: any) => void,
  *   onHide?: (event: any) => void,
  *   onProposeEdit?: (event: any) => void,
+ *   horizon?: string,
+ *   extending?: boolean,
+ *   onExtendHorizon?: () => void,
  * }} props
  */
 export default function MonthGrid({
@@ -160,6 +163,9 @@ export default function MonthGrid({
   onEdit,
   onHide,
   onProposeEdit,
+  horizon,
+  extending,
+  onExtendHorizon,
 }) {
   const today = new Date()
   const [view, setView] = useState({
@@ -175,6 +181,9 @@ export default function MonthGrid({
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const startOffset = new Date(year, month, 1).getDay()
   const todayKey = keyOf(today.getFullYear(), today.getMonth(), today.getDate())
+
+  const pastHorizon =
+    Boolean(horizon) && keyOf(year, month, daysInMonth) > horizon
 
   // Leading blanks + day numbers, padded to whole weeks.
   const cells = [
@@ -353,6 +362,25 @@ export default function MonthGrid({
           )
         })}
       </div>
+
+      {pastHorizon && (
+        <p className={styles.horizon} role="status">
+          thetezos.com events are loaded through{' '}
+          {new Date(`${horizon}T00:00:00`).toLocaleDateString(undefined, {
+            month: 'long',
+            year: 'numeric',
+          })}
+          .{' '}
+          <Button
+            small
+            secondary
+            onClick={onExtendHorizon}
+            disabled={extending}
+          >
+            {extending ? 'Loading…' : 'Load more'}
+          </Button>
+        </p>
+      )}
 
       {/* Day popup — native <dialog> gives focus trap, Esc and backdrop. */}
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */}

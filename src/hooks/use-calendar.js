@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 import useSWR from 'swr'
 import { fetchUpcomingEvents, fetchPastEvents } from '@data/calendar/wordpress'
 import {
@@ -17,12 +17,40 @@ const SWR_KEY = 'calendar/events'
  * time more events arrive so the calendar fills in live. Both scopes (upcoming
  * and past) come from the MEC proxy with real dates; the upcoming feed paints
  * first, past events stream in behind it.
+ *
+ * The upcoming scope is bounded by an end date (see wordpress.js). We load half a year up front.
  */
+const HORIZON_MONTHS = 6
+
+/** `YYYY-MM-DD`, `months` from today. */
+function horizonDate(months) {
+  const d = new Date()
+  d.setMonth(d.getMonth() + months)
+  return d.toISOString().slice(0, 10)
+}
+
+// Upcoming and past are kept apart so extending the horizon can replace the upcoming window, past events already loaded aren't dropped.
+let wpUpcoming = []
+let wpPast = []
 let wpCache = []
 let wpStarted = false
 // Flips true once both WP fetches have settled.
 let wpDone = false
+let wpMonths = HORIZON_MONTHS
+let wpHorizon = ''
+let wpExtending = false
 const wpSubscribers = new Set()
+
+function mergeWp() {
+  const seen = new Set(wpUpcoming.map((e) => e.id))
+  wpCache = wpUpcoming.concat(wpPast.filter((e) => !seen.has(e.id)))
+}
+
+function subscribeWp(onChange) {
+  wpSubscribers.add(onChange)
+  return () => wpSubscribers.delete(onChange)
+}
+const horizonSnapshot = () => `${wpHorizon}:${wpExtending}`
 
 // On-chain events, fetched once per SWR load and cached at module scope so the
 // progressive WP re-merges below don't drop them.
@@ -39,22 +67,22 @@ function startWpLoad() {
   ;(async () => {
     // 1. Upcoming + ongoing events — the primary feed, fast first paint.
     try {
-      wpCache = await fetchUpcomingEvents()
+      const end = horizonDate(wpMonths)
+      wpUpcoming = await fetchUpcomingEvents(end)
+      wpHorizon = end
+      mergeWp()
       notifyWp()
     } catch {
-      // A failed feed just means fewer events, not a broken calendar.
+      // A failed feed just means fewer events, not a broken calendar. Leaving
+      // the horizon empty hides the "load more" prompt, which could not work.
     }
 
     // 2. Past events for the "Previous Events" accordion. Occurrence ids are
     // shared with the upcoming feed, so the recent-past overlap de-dupes on id.
     try {
-      const past = await fetchPastEvents()
-      const seen = new Set(wpCache.map((e) => e.id))
-      const fresh = past.filter((e) => !seen.has(e.id))
-      if (fresh.length) {
-        wpCache = wpCache.concat(fresh)
-        notifyWp()
-      }
+      wpPast = await fetchPastEvents()
+      mergeWp()
+      notifyWp()
     } catch {
       // Past events failing just means an emptier Previous Events accordion.
     }
@@ -62,6 +90,25 @@ function startWpLoad() {
     wpDone = true
     notifyWp()
   })()
+}
+
+export async function extendUpcomingHorizon() {
+  if (wpExtending || !wpHorizon) return
+  wpExtending = true
+  notifyWp()
+  const months = wpMonths + HORIZON_MONTHS
+  try {
+    const end = horizonDate(months)
+    wpUpcoming = await fetchUpcomingEvents(end)
+    wpMonths = months
+    wpHorizon = end
+    mergeWp()
+  } catch {
+    // Keep data we already loaded
+  } finally {
+    wpExtending = false
+    notifyWp()
+  }
 }
 
 /**
@@ -124,12 +171,17 @@ export function useCalendarEvents({ enabled = true } = {}) {
     return () => wpSubscribers.delete(onWp)
   }, [mutate])
 
+  useSyncExternalStore(subscribeWp, horizonSnapshot, horizonSnapshot)
+
   return {
     events: data ?? [],
     error,
     isLoading,
     /** Re-read the feed. */
     refresh: mutate,
+    horizon: wpHorizon,
+    extending: wpExtending,
+    extendHorizon: extendUpcomingHorizon,
   }
 }
 

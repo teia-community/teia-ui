@@ -19,7 +19,14 @@ import styles from '@style'
 const SHOW_TTC_KEY = 'calendar:showTtc'
 
 export default function Calendar() {
-  const { events: allEvents, isLoading, error } = useCalendarEvents()
+  const {
+    events: allEvents,
+    isLoading,
+    error,
+    horizon,
+    extending,
+    extendHorizon,
+  } = useCalendarEvents()
 
   // Toggle for thetezos.com (TTC) events.
   const [showTtc, setShowTtc] = useState(() => {
@@ -135,7 +142,16 @@ export default function Calendar() {
         </header>
 
         {/* Month grid: click a day to view its events in a popup. */}
-        {!isLoading && <MonthGrid events={events} {...cardHandlers} />}
+        {!isLoading && (
+          <MonthGrid
+            events={events}
+            {...cardHandlers}
+            /* Only offer to load more TTC events when they are being shown. */
+            horizon={showTtc ? horizon : ''}
+            extending={extending}
+            onExtendHorizon={extendHorizon}
+          />
+        )}
 
         {editorModal}
 

@@ -168,6 +168,17 @@
   }
 }
 
+.horizon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing, 1rem);
+  margin-top: var(--spacing, 1rem);
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+}
+
 .dialog_top {
   display: flex;
   align-items: center;

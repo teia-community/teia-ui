@@ -20,9 +20,12 @@ import { fetchThetezosEvents } from './thetezos.mjs'
 
 const TOKEN = import.meta.env.VITE_MEC_TOKEN
 
-/** Upcoming + ongoing events with real dates. */
-export function fetchUpcomingEvents(limit = 100) {
-  return fetchThetezosEvents(TOKEN, { limit, past: false })
+/**
+ * Upcoming + ongoing events with real dates, reaching up to `end`
+ * (`YYYY-MM-DD`).
+ */
+export function fetchUpcomingEvents(end, limit = 1000) {
+  return fetchThetezosEvents(TOKEN, { limit, past: false, end })
 }
 
 /** Past events with real dates (newest first; `limit` sets how far back). */

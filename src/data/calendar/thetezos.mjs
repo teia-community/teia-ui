@@ -26,7 +26,9 @@ const MEC_API = 'https://thetezos.com/wp-json/mec/v1.0/events'
 function decodeEntities(input) {
   return String(input)
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) =>
+      String.fromCodePoint(parseInt(n, 16))
+    )
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
@@ -119,14 +121,19 @@ function mapOccurrence(item) {
 /**
  * Fetch events from the MEC API and normalize them.
  * @param {string} token  the `mec-token` value
- * @param {{ limit?: number, past?: boolean }} [opts]
+ * @param {{ limit?: number, past?: boolean, end?: string }} [opts]
  *   `limit` — max occurrences (recurring events expand; for `past`, this also
  *   controls how far back the newest-first list reaches).
  *   `past` — true to fetch past occurrences instead of upcoming/ongoing.
+ *   `end` — `YYYY-MM-DD` horizon; occurrences after it are left out.
  * @returns {Promise<object[]>}
  */
-export async function fetchThetezosEvents(token, { limit = 100, past = false } = {}) {
+export async function fetchThetezosEvents(
+  token,
+  { limit = 100, past = false, end = '' } = {}
+) {
   const params = new URLSearchParams({ limit: String(limit) })
+  if (end) params.set('end_date', end)
   // Past: only past occurrences (newest first). Upcoming: current + future,
   // including ongoing events that started before today.
   params.set(past ? 'show_only_past_events' : 'include_past_events', '1')
@@ -142,9 +149,10 @@ export async function fetchThetezosEvents(token, { limit = 100, past = false } =
   if (!res.ok) throw new Error(`MEC ${res.status} ${res.statusText}`)
   const payload = await res.json()
   // Response shape: { events: { 'YYYY-MM-DD': [ { ID, data, date }, ... ] } }.
-  const groups = payload?.events && typeof payload.events === 'object'
-    ? Object.values(payload.events)
-    : []
+  const groups =
+    payload?.events && typeof payload.events === 'object'
+      ? Object.values(payload.events)
+      : []
   const out = []
   for (const items of groups) {
     for (const item of items || []) {
