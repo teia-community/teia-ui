@@ -163,6 +163,47 @@
   font-variant-numeric: tabular-nums;
 }
 
+// --- Per-year table ---
+.table_wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+
+  th,
+  td {
+    text-align: right;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid var(--border-color);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+    font-variant-numeric: normal;
+  }
+
+  th {
+    color: var(--gray-60);
+    font-weight: 600;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.ytd {
+  color: var(--gray-60);
+  font-size: 0.8em;
+}
+
 .muted {
   color: var(--gray-60);
 }
