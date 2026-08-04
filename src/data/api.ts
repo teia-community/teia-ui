@@ -94,6 +94,44 @@ export const getCollabsForAddress = `query GetCollabs($address: String!) {
   }
 }`
 
+/**
+ * Search all collabs by one user-typed term: collab name or participant alias
+ * (substring, `$like` = `%term%`) and collab/admin/shareholder address (prefix,
+ * `$prefix` = `term%`). Escape LIKE wildcards (`% _ \`) in the term first.
+ */
+export const searchCollabs = `query SearchCollabs($like: String!, $prefix: String!) {
+  split_contracts: teia_split_contracts(
+    limit: 20
+    order_by: { contract_address: asc }
+    where: {
+      _or: [
+        { contract_profile: { name: { _ilike: $like } } }
+        { contract_address: { _ilike: $prefix } }
+        { administrator_address: { _ilike: $prefix } }
+        { shareholders: { shareholder_address: { _ilike: $prefix } } }
+        { shareholders: { shareholder_profile: { name: { _ilike: $like } } } }
+      ]
+    }
+  ) {
+    contract_address
+    contract_profile {
+      name
+      metadata {
+        data
+      }
+    }
+    administrator_address
+    shareholders {
+      shareholder_address
+      shareholder_profile {
+        name
+      }
+      shares
+      holder_type
+    }
+  }
+}`
+
 export const getNameForAddress = `query GetNameForAddress($address: String!) {
   teia_users(where: {user_address: {_eq: $address}}) {
     name
