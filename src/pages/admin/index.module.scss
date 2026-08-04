@@ -218,6 +218,86 @@
   padding: 1em 0.75em;
 }
 
+// --- Calendar sub-views (Events | Proposals) + proposal status filter ---
+.segment {
+  display: flex;
+  gap: 0.25em;
+  margin-bottom: 1em;
+}
+
+.segment_btn {
+  @include resetButton();
+  cursor: pointer;
+  padding: 0.4em 0.9em;
+  color: var(--gray-60);
+  font: inherit;
+  border: 1px solid var(--border-color);
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.segment_active {
+  color: var(--text-color);
+  font-weight: 600;
+  border-color: var(--text-color);
+}
+
+.status_filter {
+  display: flex;
+  gap: 0.25em;
+  margin: 0.5em 0;
+}
+
+.status_btn {
+  @include resetButton();
+  cursor: pointer;
+  padding: 0.3em 0.75em;
+  color: var(--gray-60);
+  font: inherit;
+  font-size: 0.9em;
+  border: 1px solid var(--border-color);
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.status_active {
+  color: var(--text-color);
+  font-weight: 600;
+  border-color: var(--text-color);
+}
+
+// --- Calendar proposal queue ---
+// One proposal: header line (kind, proposer, actions) + the proposed event card.
+.queue_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.queue_head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.queue_meta {
+  color: var(--gray-60);
+  font-size: 0.85em;
+}
+
+.queue_actions {
+  display: flex;
+  gap: 8px;
+}
+
 // --- Ban list ---
 .ban_box {
   border: 1px solid var(--border-color);

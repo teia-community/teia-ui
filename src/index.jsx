@@ -9,6 +9,8 @@ import {
   CreateCollaboration,
 } from '@pages/collaborate'
 import Text from '@pages/text'
+import Calendar from '@pages/calendar'
+import CalendarEvent from '@pages/calendar/event'
 import Community from '@pages/text/Community'
 import OfficialPosts from '@pages/text/OfficialPosts'
 import YourPosts from '@pages/text/YourPosts'
@@ -20,7 +22,6 @@ import {
   DaoParameters,
   DaoProposals,
   SubmitDaoProposals,
-  DaoModerators,
   DaoFees,
 } from '@pages/dao/tabs'
 import {
@@ -91,12 +92,7 @@ import ChannelView from '@components/channels/ChannelView'
 import CreateChannel from '@components/channels/CreateChannel'
 import ChannelSettings from '@components/channels/ChannelSettings'
 import DmRedirect from '@components/channels/DmRedirect'
-import {
-  AdminConsole,
-  ChannelsAdmin,
-  CommentsAdmin,
-  RequireModerator,
-} from '@pages/admin'
+import { ModerationConsole, RequireModerator } from '@pages/admin'
 import { StatsPage } from '@pages/stats'
 
 import Sync from '@pages/sync'
@@ -209,6 +205,8 @@ const router = createBrowserRouter(
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
       </Route>
+      <Route path="calendar" element={<Calendar />} />
+      <Route path="calendar/event/:id" element={<CalendarEvent />} />
       <Route path="text/*" element={<Text />}>
         <Route index element={<Community />} />
         <Route path="bulletin" element={<OfficialPosts />} />
@@ -236,32 +234,7 @@ const router = createBrowserRouter(
         <Route path="proposals" element={<DaoProposals />} />
         <Route path="submit" element={<SubmitDaoProposals />} />
         <Route path="stats" element={<StatsPage />} />
-        <Route path="moderators" element={<DaoModerators />} />
         <Route path="fees" element={<DaoFees />} />
-        <Route
-          path="channels"
-          element={
-            <RequireModerator>
-              <ChannelsAdmin />
-            </RequireModerator>
-          }
-        />
-        <Route
-          path="poll-comments"
-          element={
-            <RequireModerator>
-              <CommentsAdmin kind="poll" />
-            </RequireModerator>
-          }
-        />
-        <Route
-          path="token-comments"
-          element={
-            <RequireModerator>
-              <CommentsAdmin kind="token" />
-            </RequireModerator>
-          }
-        />
         <Route path="*" element={<DaoParameters />} />
       </Route>
       <Route path="proposal/:id" element={<ProposalDisplay />} />
@@ -288,7 +261,14 @@ const router = createBrowserRouter(
       <Route path="inbox/channels/:id" element={<ChannelView />} />
       <Route path="inbox/channels/:id/settings" element={<ChannelSettings />} />
       <Route path="inbox/dm/:address" element={<DmRedirect />} />
-      <Route path="inbox/admin" element={<AdminConsole />} />
+      <Route
+        path="moderation"
+        element={
+          <RequireModerator>
+            <ModerationConsole />
+          </RequireModerator>
+        }
+      />
       <Route path="activity" element={<TeiaActivity />} />
       <Route path="tags/:tag" element={<Tags />} />
       <Route path="tz/:address/*" element={<Display />}>

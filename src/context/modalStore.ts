@@ -75,11 +75,21 @@ ${message || ''}`,
     showError(title, error) {
       const show = get().show
       console.error(error)
-      if (error instanceof Error) {
-        show(`${title} (Error)`, error.message)
-      }
       if (error instanceof ParametersInvalidBeaconError) {
         show(`${title} (${error.title})`, error.description)
+      } else if (error instanceof Error) {
+        show(`${title} (Error)`, error.message)
+      } else {
+        // Fallback: Beacon errors (e.g. AbortedBeaconError from a user-rejected
+        // wallet prompt) extend BeaconError, which does NOT extend Error, so
+        // neither branch above matches. Without this, showError would leave the
+        // progress modal stranded with no way to dismiss it.
+        const beaconError = error as { title?: string; description?: string }
+        show(
+          `${title} (${beaconError?.title ?? 'Error'})`,
+          beaconError?.description ??
+            (error == null ? 'Something went wrong.' : String(error))
+        )
       }
     },
     ask: (title, message) => {
