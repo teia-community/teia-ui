@@ -32,7 +32,7 @@ Blog: [blog.teia.art](https://blog.teia.art)
 
 Announcements and Updates: [Twitter](https://twitter.com/TeiaCommunity)
 
-Join the community: [discord](https://discord.com/invite/7pZrPCcgnG)
+Join the community: [discord](https://discord.teia.art)
 
 Report Harassment or Scams via the [Report Form](https://docs.google.com/forms/d/e/1FAIpQLSeuBmNJjTiROSbHXXiQ5e-ia6fFywHKZ7Dj4-7sZtyltGY3yA/viewform)
 
