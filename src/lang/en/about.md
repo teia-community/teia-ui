@@ -54,7 +54,7 @@ Mail: info@teia.art
 
 Principals office address: PO Box 852, Long Island Rd Majuro, Marshall Islands MH 96960
 
-Registration Number: 10020-23 (Registrated via [MIDAO Directory Services](https://www.midao.org/))
+Registration Number: 10020-23 (Registered via [MIDAO Directory Services](https://www.midao.org/))
 
 
   
