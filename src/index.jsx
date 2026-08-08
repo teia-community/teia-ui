@@ -204,6 +204,10 @@ const router = createBrowserRouter(
       <Route path="collaborate/*" element={<Collaborate />}>
         <Route index element={<CollabContractsOverview />} />
         <Route path="create" element={<CreateCollaboration />} />
+        <Route
+          path="collections"
+          element={<CreateCollaboration isCollection />}
+        />
       </Route>
       <Route path="calendar" element={<Calendar />} />
       <Route path="calendar/event/:id" element={<CalendarEvent />} />
