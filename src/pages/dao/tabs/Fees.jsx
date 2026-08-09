@@ -7,6 +7,9 @@ import {
   POLL_COMMENTS_CONTRACT,
   TOKEN_COMMENTS_CONTRACT,
   WIKI_CONTRACT,
+  CURATIONS_CONTRACT,
+  CURATION_CREATE_FEE,
+  CURATION_EDIT_FEE,
 } from '@constants'
 import { Line } from '@atoms/line'
 import { TezosAddressLink } from '@atoms/link'
@@ -36,6 +39,7 @@ const CONTRACTS = [
   { name: 'Poll comments', address: POLL_COMMENTS_CONTRACT },
   { name: 'Token comments', address: TOKEN_COMMENTS_CONTRACT },
   { name: 'Wiki', address: WIKI_CONTRACT },
+  { name: 'Curations', address: CURATIONS_CONTRACT },
 ]
 
 export default function DaoFees() {
@@ -87,6 +91,15 @@ export default function DaoFees() {
             mutez={wikiFees?.proposeEditFee}
             loading={loadingWikiFees}
           />
+          <FeeRow label="Moderator / multisig edits" mutez={0} />
+        </ul>
+      </section>
+
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>Curations</h1>
+        <ul className={styles.fee_list}>
+          <FeeRow label="Create a curation" mutez={CURATION_CREATE_FEE} />
+          <FeeRow label="Edit a curation" mutez={CURATION_EDIT_FEE} />
           <FeeRow label="Moderator / multisig edits" mutez={0} />
         </ul>
       </section>

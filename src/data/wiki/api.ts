@@ -2,10 +2,8 @@
 
 
 import { WIKI_CONTRACT } from '@constants'
+import { TZKT_API, MAX_PAGE_SIZE, getJson } from '@data/tzkt-bigmap'
 import type { WikiPage, WikiProposal, WikiVersion } from './types'
-
-const TZKT_API = import.meta.env.VITE_TZKT_API
-const MAX_PAGE_SIZE = 10000
 
 interface RawPageValue {
   current_cid: string
@@ -34,12 +32,6 @@ interface RawProposalValue {
   created_at: string
   resolved_by: string | null
   resolved_at: string | null
-}
-
-async function getJson<T>(url: string): Promise<T> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  return res.json()
 }
 
 /** Whether the contract is currently paused (all writes revert when true). */
