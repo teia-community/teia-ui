@@ -154,8 +154,52 @@
 .fee_row {
   display: flex;
   gap: 1rem;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--gray-20, #ddd);
+}
+
+.seg_btn {
+  background: none;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font: inherit;
+
+  & + & {
+    border-left: 1px solid var(--gray-20, #ddd);
+  }
+
+  &.seg_btn_active {
+    opacity: 1;
+    background: var(--text-color, #000);
+    color: var(--background-color, #fff);
+  }
+}
+
+.fee_field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fee_input {
+  width: 7rem;
+  font: inherit;
+  padding: 0.45rem 0.5rem;
+  background: transparent;
+  color: inherit;
+  border: 1px solid var(--gray-20, #ddd);
+}
+
+.fee_unit {
+  opacity: 0.6;
 }
 
 .tabs {
@@ -308,7 +352,7 @@
 }
 
 .tray_fee {
-  width: 90px;
+  width: 5.5rem;
 }
 
 .tray_actions {
