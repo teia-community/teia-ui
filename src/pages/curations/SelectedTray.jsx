@@ -24,15 +24,19 @@ export default function SelectedTray({
             <span className={styles.tray_name}>{token.name}</span>
 
             {perToken && (
-              <input
-                className={`${styles.textarea} ${styles.tray_fee}`}
-                type="number"
-                min="0"
-                step="0.1"
-                placeholder="fee ꜩ"
-                value={token.feeTez ?? ''}
-                onChange={(e) => onFeeChange(key, e.target.value)}
-              />
+              <div className={styles.fee_field}>
+                <input
+                  className={`${styles.fee_input} ${styles.tray_fee}`}
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="0.00"
+                  aria-label={`Fee for ${token.name}`}
+                  value={token.feeTez ?? ''}
+                  onChange={(e) => onFeeChange(key, e.target.value)}
+                />
+                <span className={styles.fee_unit}>ꜩ</span>
+              </div>
             )}
 
             <div className={styles.tray_actions}>

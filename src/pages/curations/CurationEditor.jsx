@@ -162,7 +162,10 @@ export default function CurationEditor() {
         coverImage: coverImage || undefined,
         layout: 'masonry',
         tokens,
-        fee: { mode: feeMode, global_mutez: tezToMutez(globalFeeTez) },
+        fee: {
+          mode: feeMode,
+          global_mutez: feeMode === 'global' ? tezToMutez(globalFeeTez) : 0,
+        },
         owner: isEdit ? curation.owner : address,
       }
 
@@ -271,41 +274,51 @@ export default function CurationEditor() {
           <div>
             <span className={styles.field_label}>Curation fee</span>
             <div className={styles.fee_row}>
-              <label>
-                <input
-                  type="radio"
-                  name="feeMode"
-                  checked={feeMode === 'global'}
-                  onChange={() => setFeeMode('global')}
-                />{' '}
-                Global
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="feeMode"
-                  checked={feeMode === 'per_token'}
-                  onChange={() => setFeeMode('per_token')}
-                />{' '}
-                Per token
-              </label>
-              <input
-                className={`${styles.textarea} ${styles.tray_fee}`}
-                type="number"
-                min="0"
-                step="0.1"
-                placeholder="ꜩ"
-                value={globalFeeTez}
-                onChange={(e) => setGlobalFeeTez(e.target.value)}
-              />
+              <div className={styles.seg} role="group" aria-label="Fee mode">
+                <button
+                  type="button"
+                  className={`${styles.seg_btn} ${
+                    feeMode === 'global' ? styles.seg_btn_active : ''
+                  }`}
+                  aria-pressed={feeMode === 'global'}
+                  onClick={() => setFeeMode('global')}
+                >
+                  Global
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.seg_btn} ${
+                    feeMode === 'per_token' ? styles.seg_btn_active : ''
+                  }`}
+                  aria-pressed={feeMode === 'per_token'}
+                  onClick={() => setFeeMode('per_token')}
+                >
+                  Per token
+                </button>
+              </div>
+              {feeMode === 'global' && (
+                <div className={styles.fee_field}>
+                  <input
+                    className={styles.fee_input}
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="0.00"
+                    aria-label="Curation fee"
+                    value={globalFeeTez}
+                    onChange={(e) => setGlobalFeeTez(e.target.value)}
+                  />
+                  <span className={styles.fee_unit}>ꜩ</span>
+                </div>
+              )}
               <span className={styles.card_meta}>
                 {feeMode === 'per_token'
-                  ? 'default fee; override per token above'
+                  ? 'set a fee on each token above'
                   : 'applies to every token'}
               </span>
             </div>
             <p className={styles.card_meta}>
-              Not charged yet — stored for a future buy-via-curation payout.
+              Selected Fees will be added on top of the normal sale
             </p>
           </div>
 
