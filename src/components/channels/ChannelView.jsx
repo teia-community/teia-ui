@@ -27,6 +27,7 @@ import MessageBubble from '@components/chat/MessageBubble'
 import PostForm from '@components/chat/PostForm'
 import AccessBadge from './AccessBadge'
 import AddUserModal from './AddUserModal'
+import ChannelInfoModal from './ChannelInfoModal'
 import styles from './index.module.scss'
 
 export default function ChannelView() {
@@ -46,6 +47,7 @@ export default function ChannelView() {
   const [replyTo, setReplyTo] = useState(null)
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [imageOpen, setImageOpen] = useState(false)
+  const [infoOpen, setInfoOpen] = useState(false)
   const {
     data: channel,
     isLoading: loadingChannel,
@@ -223,29 +225,29 @@ export default function ChannelView() {
           >
             ←
           </button>
-          <div className={styles.channelHeaderInfo}>
+          <button
+            type="button"
+            className={styles.channelHeaderInfo}
+            onClick={() => setInfoOpen(true)}
+            aria-haspopup="dialog"
+            title="About this chat"
+          >
             {channel.metadata?.image && (
-              <button
-                type="button"
-                className={styles.channelHeaderImageBtn}
-                onClick={() => setImageOpen(true)}
-              >
-                <img
-                  src={msgIpfsToUrl(channel.metadata.image)}
-                  alt=""
-                  className={styles.channelHeaderImage}
-                />
-              </button>
+              <img
+                src={msgIpfsToUrl(channel.metadata.image)}
+                alt=""
+                className={styles.channelHeaderImage}
+              />
             )}
-            <div className={styles.channelHeaderText}>
-              <div className={styles.channelHeaderNames}>{channelName}</div>
+            <span className={styles.channelHeaderText}>
+              <span className={styles.channelHeaderNames}>{channelName}</span>
               {channel.metadata?.description && (
-                <div className={styles.channelHeaderSub}>
+                <span className={styles.channelHeaderSub}>
                   {channel.metadata.description}
-                </div>
+                </span>
               )}
-            </div>
-          </div>
+            </span>
+          </button>
           {stackAddrs.length > 0 && (
             <div className={styles.walletStack}>
               {stackAddrs.map((addr, i) => (
@@ -260,11 +262,15 @@ export default function ChannelView() {
                 </Link>
               ))}
               {extraMemberCount > 0 && (
-                <div
+                <button
+                  type="button"
                   className={`${styles.walletStackItem} ${styles.walletStackMore}`}
+                  onClick={() => setInfoOpen(true)}
+                  aria-haspopup="dialog"
+                  title="Show all members"
                 >
                   +{extraMemberCount}
-                </div>
+                </button>
               )}
             </div>
           )}
@@ -293,6 +299,21 @@ export default function ChannelView() {
               refreshChannel()
               refreshMessages()
             }}
+          />
+        )}
+        {infoOpen && (
+          <ChannelInfoModal
+            channel={channel}
+            channelId={channelId}
+            members={allMembers}
+            admins={admins ?? []}
+            users={users}
+            canConfigure={Boolean(isCreator || isAdmin)}
+            onShowImage={() => {
+              setInfoOpen(false)
+              setImageOpen(true)
+            }}
+            onClose={() => setInfoOpen(false)}
           />
         )}
         {imageOpen && channel.metadata?.image && (
