@@ -181,21 +181,36 @@
 }
 
 .channelHeaderInfo {
+  appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 1;
   min-width: 0;
   overflow: hidden;
-}
 
-.channelHeaderImageBtn {
-  all: unset;
-  cursor: pointer;
-  flex-shrink: 0;
+  &:hover,
+  &:focus-visible {
+    .channelHeaderNames {
+      text-decoration: underline;
+    }
+
+    .channelHeaderSub {
+      opacity: 0.9;
+    }
+  }
 }
 
 .channelHeaderImage {
+  flex-shrink: 0;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -204,11 +219,13 @@
 }
 
 .channelHeaderText {
+  display: block;
   min-width: 0;
   flex: 1;
 }
 
 .channelHeaderNames {
+  display: block;
   font-size: $font-large;
   font-weight: 600;
   overflow: hidden;
@@ -217,6 +234,7 @@
 }
 
 .channelHeaderSub {
+  display: block;
   font-size: $font-xsmall;
   opacity: 0.6;
   overflow: hidden;
@@ -284,9 +302,13 @@
 }
 
 .walletStackMore {
+  appearance: none;
+  padding: 0;
+  font-family: inherit;
   font-size: $font-xsmall;
   font-weight: 600;
   background-color: var(--border-color);
+  cursor: pointer;
 }
 
 .channelHeaderActions {
@@ -364,6 +386,129 @@
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+}
+
+// Channel info modal
+.infoHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.infoImageBtn {
+  all: unset;
+  cursor: pointer;
+}
+
+.infoImage {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.infoTitle {
+  margin: 0;
+  font-size: $font-large;
+  overflow-wrap: anywhere;
+}
+
+.infoBadges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.infoKind {
+  font-size: $font-xsmall;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.infoDescription {
+  margin-top: 16px;
+  font-size: $font-small;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.infoSection {
+  margin-top: 20px;
+}
+
+.infoSectionTitle {
+  font-size: $font-xsmall;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.infoMemberList {
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.infoMember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover .infoMemberName {
+    text-decoration: underline;
+  }
+}
+
+.infoMemberAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  svg,
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.infoMemberName {
+  font-size: $font-small;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.infoMemberRole {
+  margin-left: auto;
+  font-size: $font-xsmall;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.infoMeta {
+  margin-top: 20px;
+  font-size: $font-xsmall;
+  opacity: 0.5;
+}
+
+.infoActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 // Wizard modal
