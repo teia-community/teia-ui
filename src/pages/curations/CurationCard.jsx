@@ -5,7 +5,7 @@ import {
   useCurationToken,
   pickerThumb,
 } from '@data/curations'
-import { msgIpfsToUrl } from '@data/messaging/ipfs'
+import CurationCover from './CurationCover'
 import styles from '@style'
 
 export default function CurationCard({ curation }) {
@@ -20,12 +20,12 @@ export default function CurationCard({ curation }) {
   const { data: firstToken } = useCurationToken(firstRef)
   const fallbackThumb = firstToken ? pickerThumb(firstToken) : ''
 
-  const coverUrl = cover ? msgIpfsToUrl(cover) : fallbackThumb
-
   return (
     <Link className={styles.card} to={`${PATH.CURATIONS}/${curation.id}`}>
-      {coverUrl ? (
-        <img className={styles.cover} src={coverUrl} alt={title} />
+      {cover ? (
+        <CurationCover className={styles.cover} uri={cover} alt={title} />
+      ) : fallbackThumb ? (
+        <img className={styles.cover} src={fallbackThumb} alt={title} />
       ) : (
         <div className={styles.cover}>
           {content ? `${tokenCount} token${tokenCount === 1 ? '' : 's'}` : '…'}

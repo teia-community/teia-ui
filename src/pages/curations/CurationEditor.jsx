@@ -18,11 +18,12 @@ import {
   MAX_FEE_TEZ,
   MAX_FEE_PERCENT,
 } from '@data/curations'
-import { uploadMsgFileToIPFS, msgIpfsToUrl } from '@data/messaging/ipfs'
+import { uploadMsgFileToIPFS } from '@data/messaging/ipfs'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import TokenPicker from './TokenPicker'
 import SelectedTray from './SelectedTray'
+import CurationCover from './CurationCover'
 import styles from '@style'
 
 const tezToMutez = (tez) => {
@@ -39,6 +40,11 @@ const percentToBps = (percent) => {
   return Math.min(Math.round(n * 100), MAX_FEE_PERCENT * 100)
 }
 const bpsToPercent = (bps) => (bps ? String(bps / 100) : '')
+
+/**
+ * Cover uploads hidden
+ */
+const COVER_UPLOAD_ENABLED = false
 
 export default function CurationEditor() {
   const { id } = useParams()
@@ -280,21 +286,25 @@ export default function CurationEditor() {
           <div>
             <span className={styles.field_label}>Cover image (optional)</span>
             {coverImage && (
-              <img
+              <CurationCover
                 className={styles.cover}
                 style={{ maxWidth: 200, aspectRatio: '1 / 1' }}
-                src={msgIpfsToUrl(coverImage)}
+                uri={coverImage}
                 alt="cover"
               />
             )}
-            <div className={styles.cover_actions}>
-              <Button onClick={() => coverFileRef.current?.click()}>
-                {coverImage ? 'Replace image' : 'Upload image'}
-              </Button>
-              {coverImage && (
-                <Button onClick={() => setCoverImage('')}>Remove</Button>
-              )}
-            </div>
+            {(COVER_UPLOAD_ENABLED || coverImage) && (
+              <div className={styles.cover_actions}>
+                {COVER_UPLOAD_ENABLED && (
+                  <Button onClick={() => coverFileRef.current?.click()}>
+                    {coverImage ? 'Replace image' : 'Upload image'}
+                  </Button>
+                )}
+                {coverImage && (
+                  <Button onClick={() => setCoverImage('')}>Remove</Button>
+                )}
+              </div>
+            )}
             <input
               ref={coverFileRef}
               className={styles.hidden_input}
@@ -304,10 +314,15 @@ export default function CurationEditor() {
             />
             {coverUploading && <Loading message="Uploading cover" />}
 
+            {coverChoices.length === 0 && (
+              <span className={styles.card_meta}>
+                Select tokens below to pick a cover.
+              </span>
+            )}
             {coverChoices.length > 0 && (
               <>
                 <span className={styles.card_meta}>
-                  Or use one of your selected tokens
+                  Use one of your selected tokens
                 </span>
                 <div className={styles.cover_options}>
                   {coverChoices.map((token) => (

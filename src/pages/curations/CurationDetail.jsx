@@ -16,8 +16,8 @@ import {
 import { useUserProfiles } from '@data/roles'
 import { useUserStore } from '@context/userStore'
 import { walletPreview } from '@utils/string'
-import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { HashToURL } from '@utils'
+import CurationCover from './CurationCover'
 import styles from '@style'
 
 export default function CurationDetail() {
@@ -66,11 +66,10 @@ export default function CurationDetail() {
   }
 
   const cover = content?.cover_image
-  const headerThumb = cover
-    ? msgIpfsToUrl(cover)
-    : tokens?.[0]?.display_uri
-    ? HashToURL(tokens[0].display_uri, 'CDN', { size: 'small' })
-    : ''
+  const headerThumb =
+    !cover && tokens?.[0]?.display_uri
+      ? HashToURL(tokens[0].display_uri, 'CDN', { size: 'small' })
+      : ''
 
   return (
     <Page title={content?.title || `Curation ${curation.id}`}>
@@ -78,12 +77,20 @@ export default function CurationDetail() {
         <div className={styles.detail_head}>
           <div className={styles.header}>
             <div className={styles.detail_title_group}>
-              {headerThumb && (
-                <img
+              {cover ? (
+                <CurationCover
                   className={styles.detail_cover}
-                  src={headerThumb}
+                  uri={cover}
                   alt={content?.title || `Curation ${curation.id}`}
                 />
+              ) : (
+                headerThumb && (
+                  <img
+                    className={styles.detail_cover}
+                    src={headerThumb}
+                    alt={content?.title || `Curation ${curation.id}`}
+                  />
+                )
               )}
               <h1>{content?.title || `Curation ${curation.id}`}</h1>
             </div>
