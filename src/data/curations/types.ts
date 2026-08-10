@@ -4,13 +4,17 @@ export interface CurationToken {
   fa2_address: string
   token_id: string
   fee_mutez?: number
+  fee_bps?: number
 }
 
 export type CurationLayout = 'masonry' | 'list'
+export type CurationFeeUnit = 'tez' | 'percent'
 
 export interface CurationFeeConfig {
   mode: 'global' | 'per_token'
+  unit?: CurationFeeUnit
   global_mutez: number
+  global_bps?: number
 }
 
 export interface CurationContent {

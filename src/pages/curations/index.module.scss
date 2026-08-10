@@ -202,6 +202,45 @@
   opacity: 0.6;
 }
 
+.hidden_input {
+  display: none;
+}
+
+.cover_actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cover_options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.cover_option {
+  width: 64px;
+  height: 64px;
+  border: 2px solid transparent;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--gray-10, #f2f2f2);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &.cover_option_active {
+    border-color: var(--secondary-color, #0a0);
+  }
+}
+
 .tabs {
   display: flex;
   gap: 0.5rem;

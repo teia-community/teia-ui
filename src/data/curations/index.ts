@@ -16,5 +16,8 @@ export {
   buildCurationDocument,
   uploadCurationContent,
   fetchCurationContent,
+  normalizeFee,
   CURATION_SCHEMA_VERSION,
+  MAX_FEE_TEZ,
+  MAX_FEE_PERCENT,
 } from './ipfs'

@@ -1,14 +1,21 @@
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { tokenKey, pickerThumb } from '@data/curations'
+import {
+  tokenKey,
+  pickerThumb,
+  MAX_FEE_TEZ,
+  MAX_FEE_PERCENT,
+} from '@data/curations'
 import styles from '@style'
 
 export default function SelectedTray({
   selected,
   perToken,
+  feeUnit = 'tez',
   onRemove,
   onMove,
   onFeeChange,
 }) {
+  const asPercent = feeUnit === 'percent'
   if (!selected.length) {
     return <p className={styles.empty}>No tokens selected yet.</p>
   }
@@ -29,13 +36,14 @@ export default function SelectedTray({
                   className={`${styles.fee_input} ${styles.tray_fee}`}
                   type="number"
                   min="0"
+                  max={asPercent ? MAX_FEE_PERCENT : MAX_FEE_TEZ}
                   step="0.1"
                   placeholder="0.00"
                   aria-label={`Fee for ${token.name}`}
-                  value={token.feeTez ?? ''}
+                  value={(asPercent ? token.feePercent : token.feeTez) ?? ''}
                   onChange={(e) => onFeeChange(key, e.target.value)}
                 />
-                <span className={styles.fee_unit}>ꜩ</span>
+                <span className={styles.fee_unit}>{asPercent ? '%' : 'ꜩ'}</span>
               </div>
             )}
 

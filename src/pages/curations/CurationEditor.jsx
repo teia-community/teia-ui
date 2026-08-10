@@ -13,6 +13,10 @@ import {
   createCuration,
   updateCuration,
   tokenKey,
+  pickerThumb,
+  normalizeFee,
+  MAX_FEE_TEZ,
+  MAX_FEE_PERCENT,
 } from '@data/curations'
 import { uploadMsgFileToIPFS, msgIpfsToUrl } from '@data/messaging/ipfs'
 import { useUserStore } from '@context/userStore'
@@ -23,9 +27,18 @@ import styles from '@style'
 
 const tezToMutez = (tez) => {
   const n = parseFloat(tez)
-  return Number.isFinite(n) && n > 0 ? Math.round(n * 1_000_000) : 0
+  if (!Number.isFinite(n) || n <= 0) return 0
+  return Math.min(Math.round(n * 1_000_000), MAX_FEE_TEZ * 1_000_000)
 }
 const mutezToTez = (mutez) => (mutez ? String(mutez / 1_000_000) : '')
+
+/** Percentages are stored as integer basis points: 2.5% -> 250. */
+const percentToBps = (percent) => {
+  const n = parseFloat(percent)
+  if (!Number.isFinite(n) || n <= 0) return 0
+  return Math.min(Math.round(n * 100), MAX_FEE_PERCENT * 100)
+}
+const bpsToPercent = (bps) => (bps ? String(bps / 100) : '')
 
 export default function CurationEditor() {
   const { id } = useParams()
@@ -48,18 +61,24 @@ export default function CurationEditor() {
   const [coverImage, setCoverImage] = useState('')
   const [coverUploading, setCoverUploading] = useState(false)
   const [feeMode, setFeeMode] = useState('global')
+  const [feeUnit, setFeeUnit] = useState('tez')
   const [globalFeeTez, setGlobalFeeTez] = useState('')
+  const [globalFeePercent, setGlobalFeePercent] = useState('')
   const [selected, setSelected] = useState([])
   const [submitting, setSubmitting] = useState(false)
 
+  const coverFileRef = useRef(null)
   const prefilled = useRef(false)
   useEffect(() => {
     if (!isEdit || prefilled.current || !content) return
     setTitle(content.title || '')
     setDescription(content.description || '')
     setCoverImage(content.cover_image || '')
-    setFeeMode(content.fee?.mode || 'global')
-    setGlobalFeeTez(mutezToTez(content.fee?.global_mutez))
+    const fee = normalizeFee(content.fee)
+    setFeeMode(fee.mode)
+    setFeeUnit(fee.unit)
+    setGlobalFeeTez(mutezToTez(fee.globalMutez))
+    setGlobalFeePercent(bpsToPercent(fee.globalBps))
 
     const byKey = new Map((existingTokens || []).map((t) => [tokenKey(t), t]))
     setSelected(
@@ -72,6 +91,7 @@ export default function CurationEditor() {
           display_uri: enriched?.display_uri,
           artist_address: enriched?.artist_address,
           feeTez: t.fee_mutez ? mutezToTez(t.fee_mutez) : undefined,
+          feePercent: t.fee_bps ? bpsToPercent(t.fee_bps) : undefined,
         }
       })
     )
@@ -100,6 +120,10 @@ export default function CurationEditor() {
     () => new Set(selected.map(tokenKey)),
     [selected]
   )
+  const coverChoices = useMemo(
+    () => selected.filter((t) => t.display_uri),
+    [selected]
+  )
 
   const toggleToken = useCallback((token) => {
     const key = tokenKey(token)
@@ -122,14 +146,19 @@ export default function CurationEditor() {
       return next
     })
   }, [])
-  const setTokenFee = useCallback((key, tez) => {
-    setSelected((prev) =>
-      prev.map((t) => (tokenKey(t) === key ? { ...t, feeTez: tez } : t))
-    )
-  }, [])
+  const setTokenFee = useCallback(
+    (key, value) => {
+      const field = feeUnit === 'percent' ? 'feePercent' : 'feeTez'
+      setSelected((prev) =>
+        prev.map((t) => (tokenKey(t) === key ? { ...t, [field]: value } : t))
+      )
+    },
+    [feeUnit]
+  )
 
   const onCoverFile = async (e) => {
     const file = e.target.files?.[0]
+    e.target.value = ''
     if (!file) return
     setCoverUploading(true)
     try {
@@ -148,12 +177,18 @@ export default function CurationEditor() {
     if (!title.trim() || submitting) return
     setSubmitting(true)
     try {
+      const perToken = feeMode === 'per_token'
+      const asPercent = feeUnit === 'percent'
       const tokens = selected.map((t) => {
-        const fee = feeMode === 'per_token' ? tezToMutez(t.feeTez) : 0
+        const base = { fa2_address: t.fa2_address, token_id: t.token_id }
+        if (!perToken) return base
+        const fee = asPercent
+          ? percentToBps(t.feePercent)
+          : tezToMutez(t.feeTez)
+        if (fee <= 0) return base
         return {
-          fa2_address: t.fa2_address,
-          token_id: t.token_id,
-          ...(feeMode === 'per_token' && fee > 0 ? { fee_mutez: fee } : {}),
+          ...base,
+          ...(asPercent ? { fee_bps: fee } : { fee_mutez: fee }),
         }
       })
       const input = {
@@ -164,7 +199,10 @@ export default function CurationEditor() {
         tokens,
         fee: {
           mode: feeMode,
-          global_mutez: feeMode === 'global' ? tezToMutez(globalFeeTez) : 0,
+          unit: feeUnit,
+          global_mutez: !perToken && !asPercent ? tezToMutez(globalFeeTez) : 0,
+          global_bps:
+            !perToken && asPercent ? percentToBps(globalFeePercent) : 0,
         },
         owner: isEdit ? curation.owner : address,
       }
@@ -249,8 +287,47 @@ export default function CurationEditor() {
                 alt="cover"
               />
             )}
-            <input type="file" accept="image/*" onChange={onCoverFile} />
+            <div className={styles.cover_actions}>
+              <Button onClick={() => coverFileRef.current?.click()}>
+                {coverImage ? 'Replace image' : 'Upload image'}
+              </Button>
+              {coverImage && (
+                <Button onClick={() => setCoverImage('')}>Remove</Button>
+              )}
+            </div>
+            <input
+              ref={coverFileRef}
+              className={styles.hidden_input}
+              type="file"
+              accept="image/*"
+              onChange={onCoverFile}
+            />
             {coverUploading && <Loading message="Uploading cover" />}
+
+            {coverChoices.length > 0 && (
+              <>
+                <span className={styles.card_meta}>
+                  Or use one of your selected tokens
+                </span>
+                <div className={styles.cover_options}>
+                  {coverChoices.map((token) => (
+                    <button
+                      key={tokenKey(token)}
+                      type="button"
+                      className={`${styles.cover_option} ${
+                        coverImage === token.display_uri
+                          ? styles.cover_option_active
+                          : ''
+                      }`}
+                      onClick={() => setCoverImage(token.display_uri)}
+                      title={token.name}
+                    >
+                      <img src={pickerThumb(token)} alt={token.name} />
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           <div>
@@ -265,6 +342,7 @@ export default function CurationEditor() {
             <SelectedTray
               selected={selected}
               perToken={feeMode === 'per_token'}
+              feeUnit={feeUnit}
               onRemove={removeToken}
               onMove={moveToken}
               onFeeChange={setTokenFee}
@@ -296,24 +374,57 @@ export default function CurationEditor() {
                   Per token
                 </button>
               </div>
+              <div className={styles.seg} role="group" aria-label="Fee unit">
+                <button
+                  type="button"
+                  className={`${styles.seg_btn} ${
+                    feeUnit === 'tez' ? styles.seg_btn_active : ''
+                  }`}
+                  aria-pressed={feeUnit === 'tez'}
+                  onClick={() => setFeeUnit('tez')}
+                >
+                  ꜩ
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.seg_btn} ${
+                    feeUnit === 'percent' ? styles.seg_btn_active : ''
+                  }`}
+                  aria-pressed={feeUnit === 'percent'}
+                  onClick={() => setFeeUnit('percent')}
+                >
+                  %
+                </button>
+              </div>
               {feeMode === 'global' && (
                 <div className={styles.fee_field}>
                   <input
                     className={styles.fee_input}
                     type="number"
                     min="0"
+                    max={feeUnit === 'percent' ? MAX_FEE_PERCENT : MAX_FEE_TEZ}
                     step="0.1"
                     placeholder="0.00"
                     aria-label="Curation fee"
-                    value={globalFeeTez}
-                    onChange={(e) => setGlobalFeeTez(e.target.value)}
+                    value={
+                      feeUnit === 'percent' ? globalFeePercent : globalFeeTez
+                    }
+                    onChange={(e) =>
+                      feeUnit === 'percent'
+                        ? setGlobalFeePercent(e.target.value)
+                        : setGlobalFeeTez(e.target.value)
+                    }
                   />
-                  <span className={styles.fee_unit}>ꜩ</span>
+                  <span className={styles.fee_unit}>
+                    {feeUnit === 'percent' ? '%' : 'ꜩ'}
+                  </span>
                 </div>
               )}
               <span className={styles.card_meta}>
                 {feeMode === 'per_token'
                   ? 'set a fee on each token above'
+                  : feeUnit === 'percent'
+                  ? 'share of the listing price of every token'
                   : 'applies to every token'}
               </span>
             </div>
