@@ -12,7 +12,7 @@ import {
   DAO_TREASURY_CONTRACT,
   MODERATOR_CONTRACT,
   DAO_TOKEN_CONTRACT,
-  WIKI_TOKEN_ID,
+  DAO_TOKEN_ID,
 } from '@constants'
 import { fetchGraphQL } from '@data/api'
 
@@ -56,7 +56,7 @@ export async function fetchTokenBalance(address: string): Promise<number> {
   const url = new URL(`${TZKT_API}/v1/tokens/balances`)
   url.searchParams.set('account', address)
   url.searchParams.set('token.contract', DAO_TOKEN_CONTRACT)
-  url.searchParams.set('token.tokenId', String(WIKI_TOKEN_ID))
+  url.searchParams.set('token.tokenId', String(DAO_TOKEN_ID))
   url.searchParams.set('select', 'balance')
 
   const res = await fetch(url.toString())
@@ -74,7 +74,7 @@ export async function fetchTokenHolders(): Promise<Set<string>> {
   for (let offset = 0; ; offset += LIMIT) {
     const url = new URL(`${TZKT_API}/v1/tokens/balances`)
     url.searchParams.set('token.contract', DAO_TOKEN_CONTRACT)
-    url.searchParams.set('token.tokenId', String(WIKI_TOKEN_ID))
+    url.searchParams.set('token.tokenId', String(DAO_TOKEN_ID))
     url.searchParams.set('balance.gt', '0')
     url.searchParams.set('select', 'account.address')
     url.searchParams.set('limit', String(LIMIT))
@@ -105,7 +105,7 @@ export async function fetchAccountsTokenBalances(
     const url = new URL(`${TZKT_API}/v1/tokens/balances`)
     url.searchParams.set('account.in', slice.join(','))
     url.searchParams.set('token.contract', DAO_TOKEN_CONTRACT)
-    url.searchParams.set('token.tokenId', String(WIKI_TOKEN_ID))
+    url.searchParams.set('token.tokenId', String(DAO_TOKEN_ID))
     url.searchParams.set('select', 'account,balance')
     url.searchParams.set('limit', '10000')
 

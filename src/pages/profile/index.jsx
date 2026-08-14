@@ -129,6 +129,7 @@ export default function Display() {
     { title: 'Activity', to: 'activity' },
     { title: 'Channels', to: 'channels' },
     { title: 'Comments', to: 'comments' },
+    { title: 'Curations', to: 'curations' },
     { title: 'Copyrights', to: 'copyrights' },
   ]
 

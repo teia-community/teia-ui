@@ -34,6 +34,12 @@ import {
   WikiProposals,
   WikiAdmin,
 } from '@pages/wiki'
+import {
+  CurationsHome,
+  CurationDetail,
+  CurationEditor,
+  CurationPlayer,
+} from '@pages/curations'
 import { TeiaPolls, PollDisplay } from '@pages/polls'
 import { Polls, CreatePolls, Discourse } from '@pages/polls/tabs'
 import { FAQ } from '@pages/faq'
@@ -84,6 +90,7 @@ import TextPosts from '@pages/profile/text-posts'
 import Activity from '@pages/profile/activity'
 import ProfileChannels from '@pages/profile/channels'
 import ProfileComments from '@pages/profile/comments'
+import ProfileCurations from '@pages/profile/curations'
 
 // Messaging
 import NotificationsCenter from '@pages/notifications'
@@ -133,6 +140,7 @@ const display_routes = (
     <Route exact path="activity" element={<Activity />} />
     <Route exact path="channels" element={<ProfileChannels />} />
     <Route exact path="comments" element={<ProfileComments />} />
+    <Route exact path="curations" element={<ProfileCurations />} />
     <Route exact path="copyrights" element={<CopyrightDisplay />} />
   </>
 )
@@ -140,145 +148,166 @@ const display_routes = (
 //TODO(mel): Check/Update site map / robot.txt
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
-      <Route path="/*" index element={<Home />} />
-      <Route path="admincopyright" element={<AdminCopyrightPage />} />
-      <Route path="feed/*" element={<Home />}>
-        <Route path="sales" element={<RecentSalesFeed />} />
-        <Route path="lists" element={<ListsFeed />} />
-
-        <Route
-          path="tezospride"
-          element={<TagFeed tag="tezospride" namespace="tezospride" />}
-        />
-
-        <Route path="iran" element={<IranFeed />} />
-        <Route path="tez4pal" element={<Tez4PalFeed />} />
-        <Route path="art4artists" element={<Art4ArtistsFeed />} />
-        <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
-        <Route path="quake-aid" element={<QuakeFeed />} />
-        <Route path="iran" element={<IranFeed />} />
-        <Route path="pakistan" element={<PakistanFeed />} />
-        <Route path="ukraine" element={<UkraineFeed />} />
-        <Route path="random" element={<RandomFeed />} />
-        <Route path="newobjkts" element={<NewObjktsFeed />} />
-        <Route path="glb" element={<GlbFeed />} />
-        <Route path="video" element={<VideoFeed />} />
-        <Route path="image" element={<ImageFeed />} />
-        <Route path="audio" element={<AudioFeed />} />
-        <Route path="html-svg" element={<HtmlSvgFeed />} />
-        <Route path="pdf" element={<PdfFeed />} />
-        <Route path="md" element={<MarkdownFeed />} />
-        <Route path="txt" element={<TextFeed />} />
-        <Route path="midi" element={<MidiFeed />} />
-
-        <Route path="gif" element={<GifFeed />} />
-        <Route path="friends/:address" element={<FriendsFeed />} />
-      </Route>
-      <Route path="search/*" element={<Home isSearch />} />
-
-      <Route path="kt/:address" element={<Display />}>
-        <Route index element={<CollabDisplay />} />
-      </Route>
-      <Route path="collab/:name" element={<Display />}>
-        <Route index element={<CollabDisplay />} />
-      </Route>
-      <Route exact path="about" element={<About />} />
-      <Route path="donate/*" element={<Donate />} />
-      <Route exact path="terms" element={<Terms />} />
-      <Route exact path="faq" element={<FAQ />} />
-      <Route exact path="codeofconduct" element={<CodeOfConduct />} />
-      <Route exact path="corevalues" element={<CoreValues />} />
-      <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
-      <Route path="sync" element={<Sync />} />
-      <Route exact path="mint/*" element={<Mint />}>
-        <Route index element={<MintForm />} />
-        <Route path="preview" element={<Preview />} />
-      </Route>
-      <Route exact path="copyright/*" element={<CopyrightPage />}>
-        <Route index element={<CopyrightForm />} />
-        <Route path="preview" element={<CopyrightPreview />} />
-        <Route path="create" element={<CopyrightCreate />} />
-      </Route>
-      <Route path="copyrightmarketplace" element={<CopyrightMarketplace />} />
-      <Route path="collaborate/*" element={<Collaborate />}>
-        <Route index element={<CollabContractsOverview />} />
-        <Route path="create" element={<CreateCollaboration />} />
-      </Route>
-      <Route path="calendar" element={<Calendar />} />
-      <Route path="calendar/event/:id" element={<CalendarEvent />} />
-      <Route path="text/*" element={<Text />}>
-        <Route index element={<Community />} />
-        <Route path="bulletin" element={<OfficialPosts />} />
-        <Route path="yourposts" element={<YourPosts />} />
-        <Route path="newpost" element={<NewPost />} />
-      </Route>
-      <Route path="objkt/:id/*" element={<ObjktDisplay />}>
-        <Route index element={<Info />} />
-        <Route path="listings" element={<Collectors />} />
-        <Route path="history" element={<History />} />
-        <Route path="comments" element={<Comments />} />
-        <Route path="swap" element={<Swap />} />
-        <Route path="burn" element={<Burn />} />
-        <Route path="transfer" element={<Transfer />} />
-        <Route path="copyright" element={<Copyright />} />
-        <Route path="baker" element={<Baker />} />
-      </Route>
-      <Route path="bakers" element={<BakersPage />} />
-      <Route path="baker/:address" element={<BakerPage />} />
-      <Route path="subjkt/*" element={<Subjkt />} />
-      <Route path="settings/*" element={<Settings />} />
-      <Route path="claim/*" element={<Claim />} />
-      <Route path="dao/*" element={<DAO />}>
-        <Route index element={<DaoParameters />} />
-        <Route path="proposals" element={<DaoProposals />} />
-        <Route path="submit" element={<SubmitDaoProposals />} />
-        <Route path="stats" element={<StatsPage />} />
-        <Route path="fees" element={<DaoFees />} />
-        <Route path="*" element={<DaoParameters />} />
-      </Route>
-      <Route path="proposal/:id" element={<ProposalDisplay />} />
-      <Route path="polls/*" element={<TeiaPolls />}>
-        <Route index element={<Polls />} />
-        <Route path="create" element={<CreatePolls />} />
-        <Route path="discourse" element={<Discourse />} />
-        <Route path="*" element={<Polls />} />
-      </Route>
-      <Route path="poll/:id" element={<PollDisplay />} />
-      <Route path="wiki/*" element={<WikiLayout />}>
-        <Route index element={<WikiHome />} />
-        <Route path="create" element={<WikiCreate />} />
-        <Route path="admin" element={<WikiAdmin />} />
-        <Route path="proposals" element={<WikiProposals />} />
-        <Route path=":id" element={<WikiPage />} />
-        <Route path=":id/edit" element={<WikiEdit />} />
-        <Route path=":id/history" element={<WikiHistory />} />
-      </Route>
-      <Route path="publicchannels" element={<ChannelList />} />
-      <Route path="notifications" element={<NotificationsCenter />} />
-      <Route path="inbox/channels" element={<ChannelList />} />
-      <Route path="inbox/channels/create" element={<CreateChannel />} />
-      <Route path="inbox/channels/:id" element={<ChannelView />} />
-      <Route path="inbox/channels/:id/settings" element={<ChannelSettings />} />
-      <Route path="inbox/dm/:address" element={<DmRedirect />} />
+    <>
+      {/* Testing two top level routes to open the music window in its own popup. */}
       <Route
-        path="moderation"
-        element={
-          <RequireModerator>
-            <ModerationConsole />
-          </RequireModerator>
-        }
+        path="curations/:id/play"
+        errorElement={<RootErrorBoundary />}
+        element={<CurationPlayer />}
       />
-      <Route path="activity" element={<TeiaActivity />} />
-      <Route path="tags/:tag" element={<Tags />} />
-      <Route path="tz/:address/*" element={<Display />}>
-        {display_routes}
-      </Route>
+      <Route path="*" errorElement={<RootErrorBoundary />} element={<App />}>
+        <Route path="/*" index element={<Home />} />
+        <Route path="admincopyright" element={<AdminCopyrightPage />} />
+        <Route path="feed/*" element={<Home />}>
+          <Route path="sales" element={<RecentSalesFeed />} />
+          <Route path="lists" element={<ListsFeed />} />
 
-      <Route path=":name/*" element={<Display />}>
-        {display_routes}
+          <Route
+            path="tezospride"
+            element={<TagFeed tag="tezospride" namespace="tezospride" />}
+          />
+
+          <Route path="iran" element={<IranFeed />} />
+          <Route path="tez4pal" element={<Tez4PalFeed />} />
+          <Route path="art4artists" element={<Art4ArtistsFeed />} />
+          <Route path="morocco-quake-aid" element={<MoroccoQuakeFeed />} />
+          <Route path="quake-aid" element={<QuakeFeed />} />
+          <Route path="iran" element={<IranFeed />} />
+          <Route path="pakistan" element={<PakistanFeed />} />
+          <Route path="ukraine" element={<UkraineFeed />} />
+          <Route path="random" element={<RandomFeed />} />
+          <Route path="newobjkts" element={<NewObjktsFeed />} />
+          <Route path="glb" element={<GlbFeed />} />
+          <Route path="video" element={<VideoFeed />} />
+          <Route path="image" element={<ImageFeed />} />
+          <Route path="audio" element={<AudioFeed />} />
+          <Route path="html-svg" element={<HtmlSvgFeed />} />
+          <Route path="pdf" element={<PdfFeed />} />
+          <Route path="md" element={<MarkdownFeed />} />
+          <Route path="txt" element={<TextFeed />} />
+          <Route path="midi" element={<MidiFeed />} />
+
+          <Route path="gif" element={<GifFeed />} />
+          <Route path="friends/:address" element={<FriendsFeed />} />
+        </Route>
+        <Route path="search/*" element={<Home isSearch />} />
+
+        <Route path="kt/:address" element={<Display />}>
+          <Route index element={<CollabDisplay />} />
+        </Route>
+        <Route path="collab/:name" element={<Display />}>
+          <Route index element={<CollabDisplay />} />
+        </Route>
+        <Route exact path="about" element={<About />} />
+        <Route path="donate/*" element={<Donate />} />
+        <Route exact path="terms" element={<Terms />} />
+        <Route exact path="faq" element={<FAQ />} />
+        <Route exact path="codeofconduct" element={<CodeOfConduct />} />
+        <Route exact path="corevalues" element={<CoreValues />} />
+        <Route exact path="privacypolicy" element={<PrivacyPolicy />} />
+        <Route path="sync" element={<Sync />} />
+        <Route exact path="mint/*" element={<Mint />}>
+          <Route index element={<MintForm />} />
+          <Route path="preview" element={<Preview />} />
+        </Route>
+        <Route exact path="copyright/*" element={<CopyrightPage />}>
+          <Route index element={<CopyrightForm />} />
+          <Route path="preview" element={<CopyrightPreview />} />
+          <Route path="create" element={<CopyrightCreate />} />
+        </Route>
+        <Route path="copyrightmarketplace" element={<CopyrightMarketplace />} />
+        <Route path="collaborate/*" element={<Collaborate />}>
+          <Route index element={<CollabContractsOverview />} />
+          <Route path="create" element={<CreateCollaboration />} />
+          <Route
+            path="collections"
+            element={<CreateCollaboration isCollection />}
+          />
+        </Route>
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="calendar/event/:id" element={<CalendarEvent />} />
+        <Route path="text/*" element={<Text />}>
+          <Route index element={<Community />} />
+          <Route path="bulletin" element={<OfficialPosts />} />
+          <Route path="yourposts" element={<YourPosts />} />
+          <Route path="newpost" element={<NewPost />} />
+        </Route>
+        <Route path="objkt/:id/*" element={<ObjktDisplay />}>
+          <Route index element={<Info />} />
+          <Route path="listings" element={<Collectors />} />
+          <Route path="history" element={<History />} />
+          <Route path="comments" element={<Comments />} />
+          <Route path="swap" element={<Swap />} />
+          <Route path="burn" element={<Burn />} />
+          <Route path="transfer" element={<Transfer />} />
+          <Route path="copyright" element={<Copyright />} />
+          <Route path="baker" element={<Baker />} />
+        </Route>
+        <Route path="bakers" element={<BakersPage />} />
+        <Route path="baker/:address" element={<BakerPage />} />
+        <Route path="subjkt/*" element={<Subjkt />} />
+        <Route path="settings/*" element={<Settings />} />
+        <Route path="claim/*" element={<Claim />} />
+        <Route path="dao/*" element={<DAO />}>
+          <Route index element={<DaoParameters />} />
+          <Route path="proposals" element={<DaoProposals />} />
+          <Route path="submit" element={<SubmitDaoProposals />} />
+          <Route path="stats" element={<StatsPage />} />
+          <Route path="fees" element={<DaoFees />} />
+          <Route path="*" element={<DaoParameters />} />
+        </Route>
+        <Route path="proposal/:id" element={<ProposalDisplay />} />
+        <Route path="polls/*" element={<TeiaPolls />}>
+          <Route index element={<Polls />} />
+          <Route path="create" element={<CreatePolls />} />
+          <Route path="discourse" element={<Discourse />} />
+          <Route path="*" element={<Polls />} />
+        </Route>
+        <Route path="poll/:id" element={<PollDisplay />} />
+        <Route path="wiki/*" element={<WikiLayout />}>
+          <Route index element={<WikiHome />} />
+          <Route path="create" element={<WikiCreate />} />
+          <Route path="admin" element={<WikiAdmin />} />
+          <Route path="proposals" element={<WikiProposals />} />
+          <Route path=":id" element={<WikiPage />} />
+          <Route path=":id/edit" element={<WikiEdit />} />
+          <Route path=":id/history" element={<WikiHistory />} />
+        </Route>
+        <Route path="curations">
+          <Route index element={<CurationsHome />} />
+          <Route path="create" element={<CurationEditor />} />
+          <Route path=":id" element={<CurationDetail />} />
+          <Route path=":id/edit" element={<CurationEditor />} />
+        </Route>
+        <Route path="publicchannels" element={<ChannelList />} />
+        <Route path="notifications" element={<NotificationsCenter />} />
+        <Route path="inbox/channels" element={<ChannelList />} />
+        <Route path="inbox/channels/create" element={<CreateChannel />} />
+        <Route path="inbox/channels/:id" element={<ChannelView />} />
+        <Route
+          path="inbox/channels/:id/settings"
+          element={<ChannelSettings />}
+        />
+        <Route path="inbox/dm/:address" element={<DmRedirect />} />
+        <Route
+          path="moderation"
+          element={
+            <RequireModerator>
+              <ModerationConsole />
+            </RequireModerator>
+          }
+        />
+        <Route path="activity" element={<TeiaActivity />} />
+        <Route path="tags/:tag" element={<Tags />} />
+        <Route path="tz/:address/*" element={<Display />}>
+          {display_routes}
+        </Route>
+
+        <Route path=":name/*" element={<Display />}>
+          {display_routes}
+        </Route>
       </Route>
-    </Route>
+    </>
   )
 )
 

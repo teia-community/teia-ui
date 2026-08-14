@@ -158,6 +158,7 @@ export const MainMenu = () => {
         { label: 'Activity', route: 'activity' },
         { label: 'Text', route: 'text' },
         { label: 'Calendar', route: 'calendar' },
+        { label: 'Curations', route: 'curations' },
         { label: 'Copyright Marketplace', route: 'copyrightmarketplace' },
       ],
     },

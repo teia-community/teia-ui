@@ -4,8 +4,14 @@ import { groupShareTotal } from '@utils/collab'
 import { Button } from '@atoms/button'
 import { Fragment } from 'react'
 import { useCollabStore } from '@context/collabStore'
+import { DAO_TREASURY_CONTRACT, COLLECTIONS_DAO_FEE_PERCENT } from '@constants'
 
-export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
+export const ReviewStage = ({
+  collaborators,
+  beneficiaries,
+  isCollection = false,
+  onEdit,
+}) => {
   const totalShares =
     groupShareTotal(collaborators) + groupShareTotal(beneficiaries)
 
@@ -44,6 +50,24 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
           isCore: participant.role === 'collaborator',
         })
     )
+
+    // Collections:
+    // - automatically add the Teia multisig as a hidden fee beneficiary
+    // - The share is COLLECTIONS_DAO_FEE_PERCENT% of the final split
+    if (isCollection) {
+      const scaledTotal = Object.values(participantData).reduce(
+        (sum, p) => sum + p.share,
+        0
+      )
+      const daoShare = Math.floor(
+        (scaledTotal * COLLECTIONS_DAO_FEE_PERCENT) /
+          (100 - COLLECTIONS_DAO_FEE_PERCENT)
+      )
+      participantData[DAO_TREASURY_CONTRACT] = {
+        share: daoShare,
+        isCore: false,
+      }
+    }
 
     // Call the core blockchain function to create the contract
     // await mockProxy(participantData)
@@ -133,6 +157,14 @@ export const ReviewStage = ({ collaborators, beneficiaries, onEdit }) => {
             </tbody>
           </table>
         </Fragment>
+      )}
+
+      {isCollection && (
+        <p className={`${styles.mt3} ${styles.muted}`}>
+          ⓘ The Teia multisig also receives a{' '}
+          <strong>{COLLECTIONS_DAO_FEE_PERCENT}%</strong> share of this
+          collection to help fund the Teia DAO.
+        </p>
       )}
 
       <div className={styles.mt3}>

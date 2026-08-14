@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 const TABS = [
   { title: 'Manage', to: '' },
   { title: 'Create', to: 'create' },
+  { title: 'Collections', to: 'collections' },
 ]
 
 const Collaborate = () => {

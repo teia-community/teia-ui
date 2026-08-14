@@ -11,10 +11,11 @@ import { mutate } from 'swr'
 import {
   WIKI_CONTRACT,
   DAO_TOKEN_CONTRACT,
-  WIKI_TOKEN_ID,
+  DAO_TOKEN_ID,
 } from '@constants'
 import { Tezos, useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { friendlyError as toFriendlyError } from '@data/contract-errors'
 import { buildPageDocument, uploadPageContent } from './ipfs'
 
 /** SWR cache key for the full wiki state (pages + proposals). */
@@ -24,36 +25,19 @@ function invalidateWiki() {
   mutate(WIKI_SWR_KEY)
 }
 
-function friendlyError(e: unknown): unknown {
-  const raw = JSON.stringify(e ?? '')
-  if (raw.includes('WIKI_NOT_AUTHORIZED')) {
-    return new Error('You are not authorized to perform this action.')
-  }
-  if (raw.includes('WIKI_NO_TOKENS')) {
-    return new Error('You must hold Teia (TEIA) tokens to submit a proposal.')
-  }
-  if (raw.includes('WIKI_PAGE_NOT_FOUND')) {
-    return new Error('That page no longer exists.')
-  }
-  if (raw.includes('WIKI_ALREADY_RESOLVED')) {
-    return new Error('This proposal has already been approved or rejected.')
-  }
-  if (raw.includes('WIKI_NO_PROPOSAL')) {
-    return new Error('That proposal does not exist.')
-  }
-  if (raw.includes('WIKI_INCORRECT_FEE')) {
-    return new Error(
-      'The attached fee does not match the current proposal fee.'
-    )
-  }
-  if (raw.includes('WIKI_PAUSED')) {
-    return new Error('The wiki is temporarily paused by governance.')
-  }
-  if (raw.includes('WIKI_EMPTY_CID')) {
-    return new Error('Title and content are required.')
-  }
-  return e
+const WIKI_ERRORS = {
+  WIKI_NOT_AUTHORIZED: 'You are not authorized to perform this action.',
+  WIKI_NO_TOKENS: 'You must hold Teia (TEIA) tokens to submit a proposal.',
+  WIKI_PAGE_NOT_FOUND: 'That page no longer exists.',
+  WIKI_ALREADY_RESOLVED: 'This proposal has already been approved or rejected.',
+  WIKI_NO_PROPOSAL: 'That proposal does not exist.',
+  WIKI_INCORRECT_FEE:
+    'The attached fee does not match the current proposal fee.',
+  WIKI_PAUSED: 'The wiki is temporarily paused by governance.',
+  WIKI_EMPTY_CID: 'Title and content are required.',
 }
+
+const friendlyError = (e: unknown) => toFriendlyError(e, WIKI_ERRORS)
 
 interface PageInput {
   title: string
@@ -250,4 +234,4 @@ export async function proposeNewPage(input: PageInput) {
 }
 
 // Re-exported so the token gate constants live in one place for callers.
-export { DAO_TOKEN_CONTRACT, WIKI_TOKEN_ID }
+export { DAO_TOKEN_CONTRACT, DAO_TOKEN_ID }

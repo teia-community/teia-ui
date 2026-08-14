@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Container } from '@atoms/layout'
+import { Button } from '@atoms/button'
 import styles from '@components/collab/index.module.scss'
 import { fetchGraphQL, getCollabsForAddress } from '@data/api'
 // import { Input } from '@atoms/input'
@@ -11,6 +12,7 @@ import { shallow } from 'zustand/shallow'
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const address = useUserStore((st) => st.address)
+  const sync = useUserStore((st) => st.sync)
 
   const [
     originatedContract,
@@ -85,6 +87,19 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const _onTimerComplete = () => {
     findOriginatedContractFromOpHash(originationOpHash)
     setCheckInterval(10)
+  }
+
+  if (!address) {
+    return (
+      <Container>
+        <p>Sync your wallet to manage your collaborations.</p>
+        <p>
+          <Button shadow_box onClick={() => sync()}>
+            Sync wallet
+          </Button>
+        </p>
+      </Container>
+    )
   }
 
   return (
