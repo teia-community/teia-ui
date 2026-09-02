@@ -47,6 +47,7 @@
     "serve": "vite preview",
     "build": "vite build",
     "build-dev": "vite --mode development build",
+    "build:stats-history": "node scripts/build-stats-history.mjs",
     "test": "vite test",
     "test:ics": "node --test test/**/*",
     "screenshots": "playwright test",

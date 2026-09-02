@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-03T13:49:15.781Z",
+  "note": "Teia + HEN sales only (objkt excluded). Performance cache — the UI live-queries any year missing here, so regenerating is optional.",
+  "years": {
+    "2021": {
+      "collectors": 53834,
+      "sales": 3821525,
+      "volumeMutez": 10766735927092
+    },
+    "2022": {
+      "collectors": 36258,
+      "sales": 1039649,
+      "volumeMutez": 2135337476503
+    },
+    "2023": {
+      "collectors": 10177,
+      "sales": 128726,
+      "volumeMutez": 543941201561
+    },
+    "2024": {
+      "collectors": 4580,
+      "sales": 46186,
+      "volumeMutez": 171055226477
+    },
+    "2025": {
+      "collectors": 3029,
+      "sales": 43662,
+      "volumeMutez": 296995983491
+    }
+  }
+}

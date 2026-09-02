@@ -63,12 +63,41 @@
   gap: 1.25em;
 }
 
+.section + .section {
+  margin-top: 3em;
+}
+
 .privacy_note {
   margin: 0;
   padding: 0.6em 0.85em;
   border: 1px solid var(--border-color);
   color: var(--gray-60);
   font-size: 0.85em;
+}
+
+.filter_row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.chip {
+  @include resetButton();
+  border: 1px solid var(--border-color);
+  padding: 0.35em 0.8em;
+  color: var(--gray-60);
+  font: inherit;
+  font-size: 0.8em;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.chip_active {
+  color: var(--text-color);
+  border-color: var(--text-color);
+  font-weight: 600;
 }
 
 // --- Stat cards grid ---
@@ -161,6 +190,47 @@
   flex-shrink: 0;
   font-size: 0.85em;
   font-variant-numeric: tabular-nums;
+}
+
+// --- Per-year table ---
+.table_wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+
+  th,
+  td {
+    text-align: right;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid var(--border-color);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+    font-variant-numeric: normal;
+  }
+
+  th {
+    color: var(--gray-60);
+    font-weight: 600;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.ytd {
+  color: var(--gray-60);
+  font-size: 0.8em;
 }
 
 .muted {
