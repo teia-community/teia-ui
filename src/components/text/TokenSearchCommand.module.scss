@@ -174,3 +174,12 @@
     border-radius: 2px;
   }
 }
+
+// Toolbar trigger: icon plus a visible "Embed Token" label.
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  font-size: 12px;
+}

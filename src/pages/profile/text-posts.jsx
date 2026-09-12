@@ -2,7 +2,7 @@ import { Link, useOutletContext } from 'react-router-dom'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
-import { useTextPostsByArtist } from '@data/swr'
+import { useTextPostsByArtist } from '@data/text'
 import { TextPostCard } from '@components/text/TextPostCard'
 import styles from './text-posts.module.scss'
 

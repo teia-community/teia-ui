@@ -6,6 +6,7 @@ import styles from '@style'
 
 const TABS = [
   { title: 'Community', to: '' },
+  { title: 'TEIA Members', to: 'members' },
   { title: 'Bulletin', to: 'bulletin' },
   { title: 'Your Posts', to: 'yourposts', private: true },
   { title: 'New Post', to: 'newpost', private: true },

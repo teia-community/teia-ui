@@ -205,13 +205,17 @@ function TokenSearchDropdown({ close, textApi }) {
 export const tokenSearchCommand = commands.group([], {
   name: 'teia-token',
   groupName: 'teia-token',
+  // The icon alone read as a generic image button, so it carries a label.
   icon: (
-    <svg viewBox="0 0 24 24" width="14" height="14">
-      <path
-        fill="currentColor"
-        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
-      />
-    </svg>
+    <span className={styles.trigger}>
+      <svg viewBox="0 0 24 24" width="14" height="14">
+        <path
+          fill="currentColor"
+          d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+        />
+      </svg>
+      Embed Token
+    </span>
   ),
   children: (props) => <TokenSearchDropdown {...props} />,
   buttonProps: { 'aria-label': 'Embed Teia Token', title: 'Embed Teia Token' },

@@ -83,6 +83,13 @@
   color: var(--secondary-color);
 }
 
+// Role emoji + author, kept together so .meta's 16px gap doesn't split them.
+.author {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .author_link {
   font-weight: 500;
   color: var(--secondary-color);

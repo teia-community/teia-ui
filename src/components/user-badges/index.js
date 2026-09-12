@@ -1,1 +1,6 @@
-export { default as RoleBadges, RoleBadgesView } from './RoleBadges'
+export {
+  default as RoleBadges,
+  RoleBadgesView,
+  RoleEmoji,
+  RoleLegend,
+} from './RoleBadges'
