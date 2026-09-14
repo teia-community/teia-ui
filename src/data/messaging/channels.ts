@@ -5,7 +5,7 @@
  * DMs (closed channels with kind='dm'), edit history, and hide/moderation.
  */
 import useSWR from 'swr'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { bytesToString } from '@taquito/utils'
 import { CHANNELS_V2_CONTRACT } from '@constants'
 import {
@@ -518,37 +518,55 @@ export function useMessageHistory(
 }
 
 // ---------------------------------------------------------------------------
-// Latest message IDs (for unread tracking)
+// Latest message per channel (for unread tracking and activity sorting)
 // ---------------------------------------------------------------------------
 
-export function useChannelLatestMessageIds(channelIds: string[]) {
-  const key =
-    channelIds.length > 0
-      ? `msg:channel-latest:${CONTRACT}:${channelIds.slice().sort().join(',')}`
-      : null
-
-  return useSWR<Record<string, number>>(
-    key,
+/**
+ * Latest message id + timestamp for every channel, from one shared fetch of
+ * all message_posted events (cached under a single contract-wide SWR key).
+ */
+export function useChannelLatestActivity(enabled = true) {
+  return useSWR<Record<string, { messageId: number; timestamp: string }>>(
+    enabled ? `msg:channel-latest:${CONTRACT}` : null,
     async () => {
       const events = await fetchAllEvents<MessagePostedEvent>(
         CONTRACT,
         'message_posted'
       )
 
-      const wanted = new Set(channelIds)
-      const latest: Record<string, number> = {}
+      const latest: Record<string, { messageId: number; timestamp: string }> =
+        {}
       for (const e of events) {
         const cid = e.payload.channel_id
-        if (!wanted.has(cid)) continue
         const mid = parseInt(e.payload.message_id, 10)
-        if (!latest[cid] || mid > latest[cid]) {
-          latest[cid] = mid
+        if (!latest[cid] || mid > latest[cid].messageId) {
+          latest[cid] = {
+            messageId: mid,
+            timestamp: e.payload.timestamp ?? e.timestamp,
+          }
         }
       }
       return latest
     },
     { revalidateOnFocus: false, dedupingInterval: 15_000 }
   )
+}
+
+export function useChannelLatestMessageIds(channelIds: string[]) {
+  const swr = useChannelLatestActivity(channelIds.length > 0)
+  const idsKey = channelIds.slice().sort().join(',')
+
+  const data = useMemo(() => {
+    if (!swr.data) return undefined
+    const wanted = new Set(idsKey.split(','))
+    const latest: Record<string, number> = {}
+    for (const [cid, v] of Object.entries(swr.data)) {
+      if (wanted.has(cid)) latest[cid] = v.messageId
+    }
+    return latest
+  }, [swr.data, idsKey])
+
+  return { ...swr, data }
 }
 
 // ---------------------------------------------------------------------------

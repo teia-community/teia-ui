@@ -5,13 +5,16 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
-import { useChannelList } from '@data/messaging/channels'
+import {
+  useChannelList,
+  useChannelLatestActivity,
+} from '@data/messaging/channels'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import AccessBadge from './AccessBadge'
 import CreateChannelModal from './CreateChannelModal'
 import styles from './index.module.scss'
 
-function ChannelCard({ ch }) {
+function ChannelCard({ ch, lastActivity }) {
   return (
     <Link to={`/inbox/channels/${ch.id}`} className={styles.channelCard}>
       {ch.metadata?.image ? (
@@ -30,7 +33,9 @@ function ChannelCard({ ch }) {
           <span className={styles.channelName}>
             {ch.metadata?.name || `Channel #${ch.id}`}
           </span>
-          <span className={styles.cardTime}>{getTimeAgo(ch.createdAt)}</span>
+          <span className={styles.cardTime}>
+            {getTimeAgo(lastActivity ?? ch.createdAt)}
+          </span>
         </div>
         {ch.metadata?.description && (
           <div className={styles.channelDesc}>{ch.metadata.description}</div>
@@ -47,11 +52,16 @@ function ChannelCard({ ch }) {
 
 export default function ChannelList() {
   const { data: channels, isLoading } = useChannelList()
+  const { data: latestActivity } = useChannelLatestActivity()
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  const openChannels = channels?.filter(
-    (ch) => ch.accessMode === 'unrestricted'
-  )
+  const openChannels = channels
+    ?.filter((ch) => ch.accessMode === 'unrestricted')
+    .sort((a, b) => {
+      const ta = latestActivity?.[a.id]?.timestamp ?? a.createdAt
+      const tb = latestActivity?.[b.id]?.timestamp ?? b.createdAt
+      return new Date(tb) - new Date(ta)
+    })
 
   return (
     <Page title="Public Channels">
@@ -67,7 +77,11 @@ export default function ChannelList() {
 
         <div className={styles.list}>
           {openChannels?.map((ch) => (
-            <ChannelCard key={ch.id} ch={ch} />
+            <ChannelCard
+              key={ch.id}
+              ch={ch}
+              lastActivity={latestActivity?.[ch.id]?.timestamp}
+            />
           ))}
           {!isLoading && openChannels?.length === 0 && (
             <div style={{ padding: 20, textAlign: 'center', opacity: 0.6 }}>
