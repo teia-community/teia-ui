@@ -876,13 +876,20 @@ export async function fetchAgreementText() {
   }
 }
 
-export function useDaoTokenHolders(limit = 10) {
-  const { data, mutate, error } = useSWR(
-    [`/dao/token-holders/${limit}`, limit],
-    async () => {
+export function useDaoTokenHolders(pageSize = 10) {
+  const getKey = (pageIndex, previousPageData) => {
+    if (previousPageData && previousPageData.length < pageSize) return null
+    return ['/dao/token-holders', pageSize, pageIndex]
+  }
+
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    async (_ns, limit, pageIndex) => {
       const url = `${
         import.meta.env.VITE_TZKT_API
-      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&sort.desc=balance&limit=${limit}`
+      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&account.ne=${DAO_TREASURY_CONTRACT}&balance.gt=0&sort.desc=balance&select=account,balance,transfersCount&limit=${limit}&offset=${
+        pageIndex * limit
+      }`
 
       try {
         const res = await fetch(url)
@@ -894,21 +901,24 @@ export function useDaoTokenHolders(limit = 10) {
           alias: holder.account.alias,
           balance: parseInt(holder.balance) / DAO_TOKEN_DECIMALS,
           transfersCount: holder.transfersCount,
-          firstTime: holder.firstTime,
-          lastTime: holder.lastTime,
         }))
       } catch (err) {
         console.error('Failed to fetch token holders:', err)
         throw err
       }
     },
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-    }
+    { revalidateFirstPage: false, revalidateOnFocus: false }
   )
 
-  return { data, mutate, error, isLoading: !data && !error }
+  return {
+    holders: data ? data.flat() : [],
+    error,
+    isLoading: !data && !error,
+    isLoadingMore:
+      isValidating && data && typeof data[size - 1] === 'undefined',
+    isReachingEnd: error || (data && data[data.length - 1]?.length < pageSize),
+    loadMore: () => setSize(size + 1),
+  }
 }
 
 export function useFountainDonations(contractAddress, limit = 10000) {
