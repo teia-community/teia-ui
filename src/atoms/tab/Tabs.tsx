@@ -10,6 +10,8 @@ export interface TabOptions {
   restricted?: boolean
   /**only relevant when user is the owner*/
   private?: boolean
+  /**small count indicator after the title*/
+  count?: number
 }
 
 interface TabsProps {
@@ -48,6 +50,9 @@ export const Tabs = ({
                 to={tab?.to}
               >
                 {tab.title}
+                {tab.count != null && (
+                  <span className={styles.count}>{tab.count}</span>
+                )}
               </Button>
             )
           }

@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { NavLink, Outlet } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
 import useActivityFilter from '@hooks/use-activity-filter'
+import useAutoLoadMore from '@hooks/use-auto-load-more'
 import { useGlobalActivity } from '@data/swr'
 import { useSocialActivity } from '@data/messaging/useSocialActivity'
 import { useUserProfiles } from '@data/roles'
@@ -15,24 +17,31 @@ import {
 import {
   ActivityList,
   ActivityFilters,
+  ActivityControls,
   SocialActivityRow,
 } from '@components/activity'
 import activityStyles from '@components/activity/index.module.scss'
 import styles from './teia-activity-feed.module.scss'
 
-// Drop the "buy" filer, not needed here.
-const FEED_FILTERS = ACTIVITY_FILTERS.filter((f) => f.key !== 'buy')
+const FEED_FILTERS = ACTIVITY_FILTERS.filter(
+  (f) => !['buy', 'transfer'].includes(f.key)
+)
 
 const VIEWS = [
-  { key: 'trades', label: 'Trades' },
   { key: 'social', label: 'Social' },
+  { key: 'trades', label: 'Trades' },
+  { key: 'text', label: 'Text' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'copyright', label: 'Copyright' },
+  { key: 'wiki', label: 'Wiki' },
 ]
 
 /** Trade activity (sales/mints/listings/transfers) — the original feed. */
-function TradesFeed() {
+export function TradesFeed() {
   const { walletBlockMap } = useSettings()
   const type = useActivityFilter()
   const market = useActivityFilter()
+  const [sort, setSort] = useState('newest')
   const { matches: matchesType } = type
   const { matches: matchesMarket } = market
   const {
@@ -42,7 +51,7 @@ function TradesFeed() {
     isLoadingMore,
     isReachingEnd,
     loadMore,
-  } = useGlobalActivity()
+  } = useGlobalActivity(type.active, sort)
 
   const rows = useMemo(
     () =>
@@ -62,6 +71,14 @@ function TradesFeed() {
     [events, walletBlockMap, matchesType, matchesMarket]
   )
 
+  useAutoLoadMore({
+    rowCount: rows.length,
+    isLoadingInitial,
+    isReachingEnd,
+    isLoadingMore,
+    loadMore,
+  })
+
   if (error) {
     return (
       <div className={styles.empty}>
@@ -76,16 +93,18 @@ function TradesFeed() {
 
   return (
     <>
-      <ActivityFilters
-        active={type.active}
-        onToggle={type.toggle}
-        filters={FEED_FILTERS}
-      />
-      <ActivityFilters
-        active={market.active}
-        onToggle={market.toggle}
-        filters={MARKET_FILTERS}
-      />
+      <ActivityControls sort={sort} onSortChange={setSort}>
+        <ActivityFilters
+          active={type.active}
+          onToggle={type.toggle}
+          filters={FEED_FILTERS}
+        />
+        <ActivityFilters
+          active={market.active}
+          onToggle={market.toggle}
+          filters={MARKET_FILTERS}
+        />
+      </ActivityControls>
 
       <ActivityList
         rows={rows}
@@ -106,8 +125,9 @@ function TradesFeed() {
  * Social activity: public channel posts + poll/token comments.
  * Mounted only when the Social view is active, so its hooks don't fetch up front.
  */
-function SocialFeed() {
+export function SocialFeed() {
   const kind = useActivityFilter()
+  const [sort, setSort] = useState('newest')
   const { matches } = kind
   const {
     items,
@@ -116,7 +136,7 @@ function SocialFeed() {
     isLoadingMore,
     isReachingEnd,
     loadMore,
-  } = useSocialActivity()
+  } = useSocialActivity(sort)
 
   const senders = useMemo(
     () => [...new Set(items.map((i) => i.sender))],
@@ -143,11 +163,13 @@ function SocialFeed() {
 
   return (
     <>
-      <ActivityFilters
-        active={kind.active}
-        onToggle={kind.toggle}
-        filters={SOCIAL_FILTERS}
-      />
+      <ActivityControls sort={sort} onSortChange={setSort}>
+        <ActivityFilters
+          active={kind.active}
+          onToggle={kind.toggle}
+          filters={SOCIAL_FILTERS}
+        />
+      </ActivityControls>
 
       {rows.length === 0 ? (
         <div className={styles.empty}>
@@ -189,29 +211,26 @@ function SocialFeed() {
 }
 
 /**
- * Global Activity Tab — a Trades / Social view switch over the platform feed.
+ * Global Activity layout, each feed is a route now
  */
 export function GlobalActivityFeed() {
-  const [view, setView] = useState('trades')
-
   return (
     <div className={styles.feed}>
       <div className={styles.view_toggle}>
         {VIEWS.map((v) => (
-          <button
+          <NavLink
             key={v.key}
-            type="button"
-            className={`${styles.view_chip} ${
-              view === v.key ? styles.view_chip_active : ''
-            }`}
-            onClick={() => setView(v.key)}
+            to={`/activity/${v.key}`}
+            className={({ isActive }) =>
+              `${styles.view_chip} ${isActive ? styles.view_chip_active : ''}`
+            }
           >
             {v.label}
-          </button>
+          </NavLink>
         ))}
       </div>
 
-      {view === 'trades' ? <TradesFeed /> : <SocialFeed />}
+      <Outlet />
     </div>
   )
 }

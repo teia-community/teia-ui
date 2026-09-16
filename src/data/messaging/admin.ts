@@ -96,10 +96,14 @@ interface CommentRow {
   token_id?: string
 }
 
-/** Fetch one page of recent comments (newest first), normalized to AdminComment. */
+/** Fetch one page of comments (newest first by default), as AdminComment. */
 export async function fetchRecentCommentsPage(
   kind: CommentKind,
-  { limit = RECENT_LIMIT, offset = 0 }: { limit?: number; offset?: number } = {}
+  {
+    limit = RECENT_LIMIT,
+    offset = 0,
+    sort = 'desc',
+  }: { limit?: number; offset?: number; sort?: 'asc' | 'desc' } = {}
 ): Promise<AdminComment[]> {
   const contract = commentContractFor(kind)
   if (!contract) return []
@@ -109,7 +113,7 @@ export async function fetchRecentCommentsPage(
     contract,
     'comment_posted',
     {},
-    { limit, offset, sort: 'desc' }
+    { limit, offset, sort }
   )
 
   const ids = posted.map((e) => e.payload.comment_id)
@@ -179,7 +183,12 @@ interface MessageRow {
 export async function fetchRecentChannelMessagesPage({
   limit = RECENT_LIMIT,
   offset = 0,
-}: { limit?: number; offset?: number } = {}): Promise<AdminMessage[]> {
+  sort = 'desc',
+}: {
+  limit?: number
+  offset?: number
+  sort?: 'asc' | 'desc'
+} = {}): Promise<AdminMessage[]> {
   const contract = CHANNELS_V2_CONTRACT
   if (!contract) return []
 
@@ -187,7 +196,7 @@ export async function fetchRecentChannelMessagesPage({
     contract,
     'message_posted',
     {},
-    { limit, offset, sort: 'desc' }
+    { limit, offset, sort }
   )
 
   const ids = posted.map((e) => e.payload.message_id)

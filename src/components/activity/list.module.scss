@@ -21,6 +21,12 @@
   }
 }
 
+@media (max-width: 600px) {
+  .head {
+    display: none;
+  }
+}
+
 .more {
   display: flex;
   justify-content: center;

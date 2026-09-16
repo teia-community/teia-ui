@@ -13,7 +13,7 @@ import styles from './index.module.scss'
 
 const POST_FEE_LABEL = '0.025 XTZ'
 
-function buildTree(comments) {
+export function buildTree(comments) {
   const visible = []
   const hiddenIds = new Set()
   for (const c of comments) {
