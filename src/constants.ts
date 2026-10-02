@@ -218,6 +218,14 @@ export const DONATION_REASSIGNMENTS = [
     toAlias: 'Tezos Foundation',
     amount: 25481.22,
   },
+  {
+    // Tezos Foundation donation sent via Ryan Tanaka
+    // tx: opWSdr51LGJFehfYFybWVgbxsaUtqPDy4gzcL5eZTuM6LrGN9mZ
+    from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
+    to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
+    toAlias: 'Tezos Foundation',
+    amount: 19648.66,
+  },
 ]
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'
 export const DISTRIBUTION_MAPPING_IPFS_PATH =
