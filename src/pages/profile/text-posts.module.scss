@@ -1,8 +1,21 @@
+@use '@styles/layout' as *;
+
+// Same side padding the other profile feeds get from .feed_container, so the
+// posts sit inside the page margins instead of running edge to edge.
 .posts_list {
   display: flex;
   flex-direction: column;
   gap: var(--spacing);
   width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 15px;
+  @include respond-to('tablet') {
+    padding: 0 40px;
+  }
+  @include respond-to('desktop') {
+    padding: 0 60px;
+  }
 }
 
 .empty {

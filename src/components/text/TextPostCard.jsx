@@ -4,6 +4,7 @@ import { PATH, MARKETPLACE_CONTRACT_TEIA } from '@constants'
 import { HashToURL } from '@utils'
 import { useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { RoleEmoji } from '@components/user-badges'
 import styles from './TextPostCard.module.scss'
 
 // Format date to readable string
@@ -132,16 +133,19 @@ export function TextPostCard({ nft, showBurn = false }) {
               <p className={styles.excerpt}>{getExcerpt(description)}</p>
             </Link>
             <div className={styles.meta}>
-              <Link
-                to={
-                  artist_profile?.name
-                    ? `/${artist_profile.name}`
-                    : `${PATH.ISSUER}/${artist_address}`
-                }
-                className={styles.author_link}
-              >
-                {authorName}
-              </Link>
+              <span className={styles.author}>
+                <RoleEmoji address={artist_address} />
+                <Link
+                  to={
+                    artist_profile?.name
+                      ? `/${artist_profile.name}`
+                      : `${PATH.ISSUER}/${artist_address}`
+                  }
+                  className={styles.author_link}
+                >
+                  {authorName}
+                </Link>
+              </span>
               <span className={styles.date}>{formatDate(minted_at)}</span>
             </div>
           </div>

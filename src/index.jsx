@@ -12,6 +12,7 @@ import Text from '@pages/text'
 import Calendar from '@pages/calendar'
 import CalendarEvent from '@pages/calendar/event'
 import Community from '@pages/text/Community'
+import MemberPosts from '@pages/text/MemberPosts'
 import OfficialPosts from '@pages/text/OfficialPosts'
 import YourPosts from '@pages/text/YourPosts'
 import NewPost from '@pages/text/NewPost'
@@ -225,6 +226,7 @@ const router = createBrowserRouter(
         <Route path="calendar/event/:id" element={<CalendarEvent />} />
         <Route path="text/*" element={<Text />}>
           <Route index element={<Community />} />
+          <Route path="members" element={<MemberPosts />} />
           <Route path="bulletin" element={<OfficialPosts />} />
           <Route path="yourposts" element={<YourPosts />} />
           <Route path="newpost" element={<NewPost />} />

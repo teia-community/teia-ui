@@ -1,7 +1,8 @@
-import { useOfficialTextPosts } from '@data/swr'
+import { useOfficialTextPosts } from '@data/text'
 import { Container } from '@atoms/layout'
 import { Loading } from '@atoms/loading'
 import { TextPostCard } from '../../components/text/TextPostCard'
+import { RoleLegend } from '@components/user-badges'
 import styles from '@style'
 
 export default function OfficialPosts() {
@@ -34,6 +35,7 @@ export default function OfficialPosts() {
       <p className={styles.description}>
         Official updates from TEIA's core members and moderators on community
         events and developments.
+        <RoleLegend className={styles.legend} />
       </p>
       <div className={styles.posts_list}>
         {posts.map((nft) => (
