@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { Button } from '@atoms/button'
-import { HashToURL } from '@utils'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { ClausesDescriptions } from '../form/CustomCopyrightForm'
+import { copyrightThumbnail, retryThumbnail } from '../../shared/thumbnail'
 import styles from './index.module.scss'
 
 export function CopyrightPreview() {
@@ -39,16 +39,10 @@ export function CopyrightPreview() {
             {customLicenseData.tokens.map((token, index) => (
               <div key={index} className={styles.tokenCard}>
                 {token.contractAddress !== 'external' &&
-                token.metadata?.displayUri ? (
+                copyrightThumbnail(token.metadata) ? (
                   <img
-                    src={HashToURL(token.metadata.displayUri, 'IPFS')}
-                    alt={token.metadata.name}
-                    className={styles.tokenImage}
-                  />
-                ) : token.contractAddress !== 'external' &&
-                  token.metadata?.thumbnailUri ? (
-                  <img
-                    src={HashToURL(token.metadata.thumbnailUri, 'IPFS')}
+                    src={copyrightThumbnail(token.metadata)}
+                    onError={retryThumbnail}
                     alt={token.metadata.name}
                     className={styles.tokenImage}
                   />

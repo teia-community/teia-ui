@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router'
 import { fetchUserCopyrights, fetchCreatorAliases, fetchTokensMetadataBatch } from '@data/swr'
-import { HashToURL } from '@utils'
 import { Loading } from '@atoms/loading'
+import { copyrightThumbnail, retryThumbnail } from '../shared/thumbnail'
 import type { CopyrightEntry } from '../shared/CopyrightTypes'
 import ClausesPreview from '../shared/ClausesPreview'
 import RegisteredWorks from '../shared/RegisteredWorks'
@@ -43,10 +43,7 @@ export default function CopyrightDisplay() {
       coverNfts.forEach((nft) => {
         const md = coverMeta.get(`${nft.contract}:${nft.token_id}`)
         if (!md) return
-        const src =
-          (md.thumbnailUri && HashToURL(md.thumbnailUri, 'IPFS')) ||
-          (md.displayUri && HashToURL(md.displayUri, 'IPFS')) ||
-          (md.artifactUri && HashToURL(md.artifactUri, 'IPFS'))
+        const src = copyrightThumbnail(md)
         if (src) thumbMap[`${nft.contract}:${nft.token_id}`] = src
       })
       setThumbnails(thumbMap)
@@ -112,7 +109,7 @@ export default function CopyrightDisplay() {
                       const cover = entry.value.related_tezos_nfts[0]
                       const src = thumbnails[`${cover.contract}:${cover.token_id}`]
                       return src ? (
-                        <img src={src} alt="" className={styles.thumbImg} />
+                        <img src={src} alt="" className={styles.thumbImg} onError={retryThumbnail} />
                       ) : (
                         <div className={styles.thumbPlaceholder} />
                       )

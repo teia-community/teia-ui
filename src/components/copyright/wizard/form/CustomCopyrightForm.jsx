@@ -10,8 +10,8 @@ import { InfoModal } from '@atoms/modal'
 import { useFormContext } from 'react-hook-form'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
-import { HashToURL } from '@utils'
 import { fetchTokenMetadataForCopyrightSearch } from '@data/swr'
+import { copyrightThumbnail, retryThumbnail } from '../../shared/thumbnail'
 
 const initialClauses = {
   reproduce: false,
@@ -1100,10 +1100,13 @@ Any modification to this Agreement's terms requires explicit consent from both t
                 marginTop: '15px',
               }}
             >
-              <img
-                src={HashToURL(currentToken.metadata.displayUri, 'IPFS')}
-                alt={currentToken.metadata.name}
-              />
+              {copyrightThumbnail(currentToken.metadata) && (
+                <img
+                  src={copyrightThumbnail(currentToken.metadata)}
+                  onError={retryThumbnail}
+                  alt={currentToken.metadata.name}
+                />
+              )}
               <div>
                 <h4>Title: {currentToken.metadata.name}</h4>
                 <h4>Creator(s): {currentToken.metadata.creators}</h4>
@@ -1232,17 +1235,19 @@ Any modification to this Agreement's terms requires explicit consent from both t
                     textAlign: 'center',
                   }}
                 >
-                  {token.contractAddress !== 'external' && (
-                    <img
-                      src={HashToURL(token.metadata.displayUri, 'IPFS')}
-                      alt={token.metadata.name}
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        borderRadius: '4px',
-                      }}
-                    />
-                  )}
+                  {token.contractAddress !== 'external' &&
+                    copyrightThumbnail(token.metadata) && (
+                      <img
+                        src={copyrightThumbnail(token.metadata)}
+                        onError={retryThumbnail}
+                        alt={token.metadata.name}
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: '4px',
+                        }}
+                      />
+                    )}
                   <div style={{ marginTop: '10px' }}>
                     <h4
                       style={{

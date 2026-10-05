@@ -10,12 +10,17 @@ function getAgreementText(): Promise<string> {
     cachedAgreementText = (async () => {
       const ipfsUri = await fetchAgreementText()
       if (!ipfsUri) return '[No agreement URI found]'
-      const url = HashToURL(ipfsUri, 'IPFS')
+      // Teia's CDN: the public ipfs.io gateway answers 403.
+      const url = HashToURL(ipfsUri, 'CDN')
       const res = await fetch(url)
       if (!res.ok) throw new Error('Failed to fetch from IPFS')
       const json = await res.json()
       return json.document_text || '[No document_text found]'
     })()
+    // Let the next viewer try again instead of keeping a failed fetch.
+    cachedAgreementText.catch(() => {
+      cachedAgreementText = null
+    })
   }
   return cachedAgreementText
 }
