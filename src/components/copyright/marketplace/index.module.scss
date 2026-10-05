@@ -8,8 +8,9 @@
 
 .listItemHeader {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   padding: 0.75rem;
   width: 100%;
   text-align: left;
@@ -40,8 +41,17 @@
   white-space: nowrap;
 }
 
+// The nine clause badges wrap inside the row. On phones they take a line of
+// their own under the name; from tablet up they share the row and shrink.
 .listItemBadges {
-  flex-shrink: 0;
+  order: 3;
+  flex: 1 1 100%;
+  min-width: 0;
+
+  @include respond-to('tablet') {
+    order: 0;
+    flex: 0 1 auto;
+  }
 }
 
 .listItemToggle {

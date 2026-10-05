@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { useUserStore } from '@context/userStore'
 import { Button } from '@atoms/button'
-import { HashToURL } from '@utils'
 import { HEN_CONTRACT_FA2 } from '@constants'
+import { copyrightThumbnail, retryThumbnail } from '../../shared/thumbnail'
 import styles from './index.module.scss'
 
 export function CopyrightCreate() {
@@ -91,9 +91,10 @@ export function CopyrightCreate() {
             {customLicenseData.tokens.map((token, index) => (
               <div key={index} className={styles.tokenCard}>
                 {token.contractAddress !== 'external' &&
-                  token.metadata?.displayUri && (
+                  copyrightThumbnail(token.metadata) && (
                     <img
-                      src={HashToURL(token.metadata.displayUri, 'IPFS')}
+                      src={copyrightThumbnail(token.metadata)}
+                      onError={retryThumbnail}
                       alt={token.metadata.name}
                       className={styles.tokenImage}
                     />

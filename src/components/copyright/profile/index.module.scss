@@ -1,30 +1,27 @@
 @use '@styles/layout' as *;
 
 // Profile tab - bento grid
+// Same side spacing as the other profile tabs (see profile/comments).
 .container {
   width: 100%;
-  padding: 1.25rem 20px 0;
-
-  @include respond-to('tablet') {
-    padding: 1.25rem 50px 0;
-  }
-
-  @include respond-to('desktop') {
-    padding: 1.25rem 75px 0;
-  }
+  max-width: var(--max-width-internal);
+  margin: 0 auto;
+  padding: 1.25rem 1rem 0;
 }
 
+// minmax(0, 1fr): a long title or address must not widen its column past
+// the screen (a plain 1fr grows to fit its content).
 .bento {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
 
   @include respond-to('tablet') {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   @include respond-to('desktop') {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

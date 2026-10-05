@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { HashToURL } from '@utils'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { fetchTokenMetadataForCopyrightSearch } from '@data/swr'
 import type { NFTMetadata } from './CopyrightTypes'
+import { copyrightThumbnail, retryThumbnail } from './thumbnail'
 import styles from './index.module.scss'
 
 interface TokenCardProps {
@@ -28,10 +28,7 @@ export default function TokenCard({ contract, tokenId, metadata, managed }: Toke
       .catch(() => setMeta({}))
   }, [contract, tokenId, metadata, managed])
 
-  const imageSrc =
-    (meta.thumbnailUri && HashToURL(meta.thumbnailUri, 'IPFS')) ||
-    (meta.displayUri && HashToURL(meta.displayUri, 'IPFS')) ||
-    (meta.artifactUri && HashToURL(meta.artifactUri, 'IPFS'))
+  const imageSrc = copyrightThumbnail(meta)
 
   const isHen = contract === HEN_CONTRACT_FA2
   const link = isHen
@@ -41,7 +38,7 @@ export default function TokenCard({ contract, tokenId, metadata, managed }: Toke
   return (
     <div className={styles.tokenCard}>
       {imageSrc ? (
-        <img src={imageSrc} alt={meta.name || 'Artwork'} className={styles.tokenThumb} />
+        <img src={imageSrc} alt={meta.name || 'Artwork'} className={styles.tokenThumb} onError={retryThumbnail} />
       ) : (
         <div className={styles.tokenThumb} />
       )}
