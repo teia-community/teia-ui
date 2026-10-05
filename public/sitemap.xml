@@ -1,17 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Section pages of teia.art. OBJKT and profile pages are listed in the
+     generated sitemap that robots.txt also points to. The wiki entries are a
+     snapshot (October 2026): wiki pages live on-chain, so add new ones here
+     when they are published. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>https://teia.art</loc>
-    </url>
-    <url>
-        <loc>https://teia.art/hdao</loc>
-    </url>
-    <url>
-        <loc>https://teia.art/random</loc>
-    </url>
-    <url>
-        <loc>https://teia.art/about</loc>
-    </url>
-    <url>
-        <loc>https://teia.art/mint</loc>
-    </url>
+    <url><loc>https://teia.art</loc></url>
+    <url><loc>https://teia.art/about</loc></url>
+    <url><loc>https://teia.art/faq</loc></url>
+    <url><loc>https://teia.art/codeofconduct</loc></url>
+    <url><loc>https://teia.art/corevalues</loc></url>
+    <url><loc>https://teia.art/terms</loc></url>
+    <url><loc>https://teia.art/privacypolicy</loc></url>
+    <url><loc>https://teia.art/dao</loc></url>
+    <url><loc>https://teia.art/polls</loc></url>
+    <url><loc>https://teia.art/calendar</loc></url>
+    <url><loc>https://teia.art/text</loc></url>
+    <url><loc>https://teia.art/text/bulletin</loc></url>
+    <url><loc>https://teia.art/publicchannels</loc></url>
+    <url><loc>https://teia.art/curations</loc></url>
+    <url><loc>https://teia.art/copyrightmarketplace</loc></url>
+    <url><loc>https://teia.art/bakers</loc></url>
+    <url><loc>https://teia.art/wiki</loc></url>
+    <url><loc>https://teia.art/wiki/teia-wiki-guide-to-getting-started</loc></url>
+    <url><loc>https://teia.art/wiki/history-of-teia-and-hic-et-nunc</loc></url>
+    <url><loc>https://teia.art/wiki/art-projects-on-tezos</loc></url>
+    <url><loc>https://teia.art/wiki/community-projects-on-tezos</loc></url>
+    <url><loc>https://teia.art/wiki/tezos-art-communities-and-organizations</loc></url>
+    <url><loc>https://teia.art/wiki/teia-community-rules-and-values</loc></url>
+    <url><loc>https://teia.art/wiki/code-of-conduct</loc></url>
+    <url><loc>https://teia.art/wiki/core-values</loc></url>
+    <url><loc>https://teia.art/wiki/reporting-and-moderation-guidelines</loc></url>
+    <url><loc>https://teia.art/wiki/terms-and-conditions</loc></url>
+    <url><loc>https://teia.art/wiki/teia-dao-and-governance</loc></url>
+    <url><loc>https://teia.art/wiki/fees-and-contract-info</loc></url>
+    <url><loc>https://teia.art/wiki/multisig-features-core-team-and-moderators</loc></url>
+    <url><loc>https://teia.art/wiki/teia-dao-core-team</loc></url>
+    <url><loc>https://teia.art/wiki/teia-events</loc></url>
+    <url><loc>https://teia.art/wiki/tezos-foundation-grant-events</loc></url>
 </urlset>

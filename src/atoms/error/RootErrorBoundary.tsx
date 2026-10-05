@@ -30,7 +30,7 @@ export function RootErrorBoundary({
     msg = status_to_string.default
   }
   return (
-    <Page title="Error">
+    <Page title="Error" noindex>
       <div className={styles.container}>
         <div className={styles.msg_box}>
           <h1>{title || (error?.cause as string) || msg}</h1>
