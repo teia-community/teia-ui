@@ -64,10 +64,11 @@ export function TokenLink({ fa2, id, className, children }) {
   }
 }
 
+// Defaults to Teia's CDN: the public ipfs.io gateway answers 403.
 export function IpfsLink({ cid, type, className, children }) {
   return (
     <DefaultLink
-      href={CIDToURL(cid, type ?? 'IPFS')}
+      href={CIDToURL(cid, type ?? 'CDN')}
       className={`${styles.ipfs_link} ${className ?? ''}`}
     >
       {children ?? cid}
