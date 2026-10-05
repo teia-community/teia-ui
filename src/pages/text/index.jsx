@@ -15,7 +15,10 @@ export default function Text() {
   const address = useUserStore((st) => st.address)
 
   return (
-    <Page title="Teia Text">
+    <Page
+      title="Teia Text"
+      description="Writing minted on Teia: text and markdown posts published as tokens by the community, plus the official bulletin."
+    >
       <div className={styles.container}>
         <h1 className={styles.headline}>Text</h1>
         <Tabs

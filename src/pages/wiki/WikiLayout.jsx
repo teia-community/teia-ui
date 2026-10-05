@@ -5,9 +5,23 @@ import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { useUserStore } from '@context/userStore'
 import { PATH } from '@constants'
-import { useWiki, useWikiRoles, buildTree, showGetTeiaModal } from '@data/wiki'
+import {
+  useWiki,
+  useWikiRoles,
+  useWikiPageContent,
+  buildTree,
+  resolvePageId,
+  showGetTeiaModal,
+} from '@data/wiki'
+import { summarize } from '@utils/page-meta.mjs'
 import { WikiSidebar } from '@components/wiki'
 import styles from '@style'
+
+const WIKI_DESCRIPTION =
+  "The Teia Wiki: community-written pages on Teia's history, governance, rules and events, and on art and community projects on Tezos."
+
+// Wiki routes that are tools rather than reading pages.
+const TOOL_ROUTES = ['create', 'admin', 'proposals']
 
 /**
  * Wiki shell: loads the full page/proposal state once and shares it with the
@@ -41,6 +55,21 @@ export default function WikiLayout() {
     }
   }, [data, canModerate, sortBy])
 
+  // Title and description for the page being read. The layout owns the <Page>,
+  // so it resolves them here rather than in the nested route.
+  const [seg, sub] = pathname.slice(PATH.WIKI.length + 1).split('/')
+  const isTool = TOOL_ROUTES.includes(seg) || Boolean(sub)
+  const pageId = seg && !isTool ? resolvePageId(data, seg) : undefined
+  const current =
+    pageId !== undefined
+      ? data?.pages.find((p) => p.id === pageId && !p.hidden)
+      : undefined
+  const { data: doc } = useWikiPageContent(current?.cid)
+  const pageTitle = current ? data.meta[pageId]?.title : undefined
+  const description = current
+    ? summarize(doc?.content) || WIKI_DESCRIPTION
+    : WIKI_DESCRIPTION
+
   const outletContext = {
     wiki: data,
     roles,
@@ -52,7 +81,11 @@ export default function WikiLayout() {
   }
 
   return (
-    <Page title="Teia Wiki">
+    <Page
+      title={pageTitle ? `${pageTitle} - Teia Wiki` : 'Teia Wiki'}
+      description={description}
+      noindex={isTool}
+    >
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headline}>Teia Wiki</h1>

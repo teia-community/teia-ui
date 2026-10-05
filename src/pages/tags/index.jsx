@@ -7,7 +7,11 @@ export const Tags = () => {
   const { tag } = useParams()
 
   return (
-    <Page feed title={`Tag ${tag}`}>
+    <Page
+      feed
+      title={`Tag ${tag}`}
+      description={`Artworks tagged ${tag} on Teia, the community-run art marketplace on Tezos.`}
+    >
       <TagFeed tag={tag} namespace={`tag_${tag}`} />
     </Page>
   )

@@ -2,13 +2,17 @@ import classnames from 'classnames'
 import { FeedbackComponent } from '@components/feedback'
 import styles from '@style'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTitle } from '@hooks/use-title'
+import { usePageMeta } from '@hooks/use-title'
 import { Footer } from '@components/footer'
 
 import { containerVariants } from '@utils/motion'
 
 interface PageProps {
   title?: string
+  /** Shown in search results and link previews for this page. */
+  description?: string
+  /** Keep this page out of search results (errors, editors, admin). */
+  noindex?: boolean
   children?: JSX.Element | JSX.Element[]
   feed?: boolean
   className?: string
@@ -17,6 +21,8 @@ interface PageProps {
 
 export const Page = ({
   title,
+  description,
+  noindex,
   children,
   feed,
   className /*, top*/,
@@ -32,7 +38,7 @@ export const Page = ({
   //   setFooterVisible(y > 50)
   // }, [y])
 
-  useTitle(title)
+  usePageMeta({ title, description, noindex })
 
   return (
     <>

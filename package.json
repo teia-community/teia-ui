@@ -46,6 +46,7 @@
     "start": "vite",
     "serve": "vite preview",
     "build": "vite build",
+    "postbuild": "node scripts/wiki-sitemap.mjs",
     "build-dev": "vite --mode development build",
     "test": "vite test",
     "test:ics": "node --test test/**/*",
