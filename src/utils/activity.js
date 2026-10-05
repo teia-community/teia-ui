@@ -52,15 +52,55 @@ export function marketplaceForType(type) {
   }
 }
 
+/** Wallet-to-wallet only. */
+const TRANSFER_COND = {
+  type: { _eq: 'FA2_TRANSFER' },
+  from_address: { _nlike: 'KT1%' },
+  to_address: { _nlike: 'KT1%' },
+}
+
 /**
- * Event `type` values fetched for the activity feed. SALE is matched on
- * `implements` (its `type` is null) so it is not listed here.
+ * Server-side `events_bool_exp` conditions for the profile activity feed
  */
-export const ACTIVITY_EVENT_TYPES = [
-  ...MINT_TYPES,
-  ...LISTING_TYPES,
-  'FA2_TRANSFER',
-]
+export function userActivityConds(address, active = []) {
+  const conds = {
+    sale: {
+      implements: { _eq: 'SALE' },
+      seller_address: { _eq: address },
+    },
+    buy: {
+      implements: { _eq: 'SALE' },
+      buyer_address: { _eq: address },
+    },
+    list: {
+      type: { _in: LISTING_TYPES },
+      seller_address: { _eq: address },
+    },
+    create: {
+      type: { _in: MINT_TYPES },
+      artist_address: { _eq: address },
+    },
+    transfer: {
+      ...TRANSFER_COND,
+      _or: [
+        { from_address: { _eq: address } },
+        { to_address: { _eq: address } },
+      ],
+    },
+  }
+  const keys = active.length ? active : Object.keys(conds)
+  return keys.map((key) => conds[key]).filter(Boolean)
+}
+
+export function globalActivityConds(active = []) {
+  const conds = {
+    sale: { implements: { _eq: 'SALE' } },
+    list: { type: { _in: TEIA_LISTING_TYPES } },
+    create: { type: { _in: MINT_TYPES } },
+  }
+  const keys = active.length ? active : Object.keys(conds)
+  return keys.map((key) => conds[key]).filter(Boolean)
+}
 
 /** Filter chips exposed in the UI, in display order. */
 export const ACTIVITY_FILTERS = [

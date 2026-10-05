@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useMemo } from 'react'
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 
@@ -18,6 +19,7 @@ import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { NFT } from '@types'
+import { useTokenCommentCount } from '@data/messaging/token-comments'
 
 type ObjktDisplayContext = {
   nft: NFT
@@ -28,7 +30,7 @@ export const useObjktDisplayContext = () => {
   return useOutletContext<ObjktDisplayContext>()
 }
 
-const TABS = [
+const BASE_TABS = [
   {
     title: 'Info',
     to: '',
@@ -103,8 +105,8 @@ export const ObjktDisplay = () => {
           )
         }
 
-        const isNSFW = (nsfwMap.get(objkt.token_id) === 1)
-        const isPhotosensitive = (photosensitiveMap.get(objkt.token_id) === 1)
+        const isNSFW = nsfwMap.get(objkt.token_id) === 1
+        const isPhotosensitive = photosensitiveMap.get(objkt.token_id) === 1
         if (
           isNSFW ||
           objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
@@ -120,7 +122,7 @@ export const ObjktDisplay = () => {
           objkt.isPhotosensitive = true
         }
 
-        if(isNSFW || isPhotosensitive) {
+        if (isNSFW || isPhotosensitive) {
           objkt.isModerated = true
         }
 
@@ -134,6 +136,21 @@ export const ObjktDisplay = () => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
     }
+  )
+
+  // Comment count for the Comments tab badge (same visibility rules as the tab)
+  const { data: commentCount = 0 } = useTokenCommentCount(
+    nft?.fa2_address,
+    nft?.token_id != null ? String(nft.token_id) : undefined
+  )
+  const tabs = useMemo(
+    () =>
+      BASE_TABS.map((tab) =>
+        tab.to === 'comments'
+          ? { ...tab, count: commentCount > 0 ? commentCount : undefined }
+          : tab
+      ),
+    [commentCount]
   )
 
   const loading = !nft && !error
@@ -204,7 +221,7 @@ export const ObjktDisplay = () => {
           <ItemInfo nft={nft} />
         </div>
         <Tabs
-          tabs={TABS}
+          tabs={tabs}
           className={styles.profile_tabs}
           filter={(tab: TabOptions) => {
             // the baker tab is opt-in via local settings (default off)

@@ -24,6 +24,8 @@ import {
 
 const PAGE_SIZE = RECENT_LIMIT
 
+export type ActivitySort = 'newest' | 'oldest'
+
 export type SocialActivityKind = 'channel' | 'poll_comment' | 'token_comment'
 
 export interface SocialActivityItem {
@@ -41,18 +43,29 @@ export interface SocialActivityItem {
 /** One paginated source (one messaging contract / event tag). */
 function useInfiniteSource<T>(
   ns: string,
-  fetchPage: (opts: { limit: number; offset: number }) => Promise<T[]>
+  sort: ActivitySort,
+  fetchPage: (opts: {
+    limit: number
+    offset: number
+    sort: 'asc' | 'desc'
+  }) => Promise<T[]>
 ) {
+  const dir = sort === 'oldest' ? 'asc' : 'desc'
+
   const getKey = (pageIndex: number, previous: T[] | null) => {
     if (previous && previous.length === 0) return null
-    return [ns, pageIndex]
+    return [ns, sort, pageIndex]
   }
 
   const { data, error, size, setSize, isValidating } = useSWRInfinite(
     getKey,
     // SWR v1 spreads array-key parts as separate fetcher args.
-    (_ns: string, pageIndex: number) =>
-      fetchPage({ limit: PAGE_SIZE, offset: pageIndex * PAGE_SIZE }),
+    (_ns: string, _sort: ActivitySort, pageIndex: number) =>
+      fetchPage({
+        limit: PAGE_SIZE,
+        offset: pageIndex * PAGE_SIZE,
+        sort: dir,
+      }),
     { revalidateFirstPage: false, revalidateOnFocus: false }
   )
 
@@ -75,15 +88,16 @@ function useInfiniteSource<T>(
   }
 }
 
-export function useSocialActivity() {
+export function useSocialActivity(sort: ActivitySort = 'newest') {
   const channels = useInfiniteSource<AdminMessage>(
     'social:channels',
+    sort,
     fetchRecentChannelMessagesPage
   )
-  const polls = useInfiniteSource<AdminComment>('social:poll', (opts) =>
+  const polls = useInfiniteSource<AdminComment>('social:poll', sort, (opts) =>
     fetchRecentCommentsPage('poll', opts)
   )
-  const tokens = useInfiniteSource<AdminComment>('social:token', (opts) =>
+  const tokens = useInfiniteSource<AdminComment>('social:token', sort, (opts) =>
     fetchRecentCommentsPage('token', opts)
   )
 
@@ -129,9 +143,11 @@ export function useSocialActivity() {
     })
   }
 
-  items.sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  )
+  items.sort((a, b) => {
+    const delta =
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    return sort === 'oldest' ? delta : -delta
+  })
 
   const loadMore = () => {
     if (!channels.reachingEnd) channels.setSize(channels.size + 1)

@@ -14,6 +14,7 @@ import { Tabs } from '@atoms/tab'
 import Button from '@atoms/button/Button'
 import { Warning } from './warning'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { useUserCommentCount } from '@data/messaging/token-comments'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
@@ -109,6 +110,9 @@ export default function Display() {
     return underReviewMap.get(user.address) === 1
   }, [user?.address, underReviewMap])
 
+  // Exact comment count for the Comments tab badge (hidden excluded)
+  const { data: commentCount = 0 } = useUserCommentCount(user?.address)
+
   if (error) {
     throw error
   }
@@ -128,7 +132,11 @@ export default function Display() {
     { title: 'Text', to: 'text' },
     { title: 'Activity', to: 'activity' },
     { title: 'Channels', to: 'channels' },
-    { title: 'Comments', to: 'comments' },
+    {
+      title: 'Comments',
+      to: 'comments',
+      count: commentCount > 0 ? commentCount : undefined,
+    },
     { title: 'Copyrights', to: 'copyrights' },
     { title: 'Curations', to: 'curations' },
   ]

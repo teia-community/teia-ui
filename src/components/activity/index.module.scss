@@ -162,6 +162,37 @@ $social-grid: 104px minmax(120px, 1fr) minmax(180px, 3fr) minmax(120px, 1fr)
   padding: 1.2rem 0;
 }
 
+.action_head,
+.action_row {
+  display: grid;
+  grid-template-columns: 110px 200px minmax(0, 1fr) 100px;
+  align-items: center;
+  gap: 1rem;
+  min-width: 560px;
+}
+
+.action_head {
+  padding: 0 0 0.6rem;
+  color: var(--secondary-color);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.action_row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.action_target {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .badge_channel {
   background: var(--gray-60);
 }
@@ -170,4 +201,93 @@ $social-grid: 104px minmax(120px, 1fr) minmax(180px, 3fr) minmax(120px, 1fr)
 }
 .badge_token {
   background: var(--gray-90);
+}
+
+// Mobile styling
+@media (max-width: 600px) {
+  .social_head,
+  .action_head {
+    display: none;
+  }
+
+  .badge {
+    min-width: 0;
+  }
+
+  .row,
+  .social_row,
+  .action_row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.4rem 0.6rem;
+    min-width: 0;
+    padding: 0.8rem 0;
+  }
+
+  .row {
+    grid-template-areas:
+      'badge amount time'
+      'item item item'
+      'from to price';
+  }
+
+  .social_row {
+    grid-template-areas:
+      'badge from time'
+      'content content content'
+      'target target target';
+  }
+
+  .action_row {
+    grid-template-areas:
+      'badge from time'
+      'target target target';
+  }
+
+  .event {
+    grid-area: badge;
+  }
+  .item {
+    grid-area: item;
+  }
+  .from {
+    grid-area: from;
+  }
+  .to {
+    grid-area: to;
+  }
+  .amount {
+    grid-area: amount;
+  }
+  .price {
+    grid-area: price;
+  }
+  .time {
+    grid-area: time;
+  }
+  .social_content {
+    grid-area: content;
+    white-space: normal;
+  }
+  .social_target,
+  .action_target {
+    grid-area: target;
+  }
+
+  .amount,
+  .from,
+  .to {
+    text-align: left;
+  }
+
+  .row .to:not(:empty) {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    &::before {
+      content: '→';
+      flex-shrink: 0;
+      color: var(--secondary-color);
+    }
+  }
 }
