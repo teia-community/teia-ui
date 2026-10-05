@@ -49,3 +49,63 @@
   position: absolute;
   pointer-events: none;
 }
+
+// List view. The column template lives here as a custom property because the
+// header below and the rows (in the feed-item module) sit in two different CSS
+// modules and still have to line up.
+.list_view {
+  --list-columns: minmax(0, 1fr) 84px;
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @include respond-to('tablet') {
+    --list-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) 90px 84px;
+  }
+
+  @include respond-to('desktop') {
+    --list-columns: minmax(0, 2.4fr) minmax(0, 1.2fr) 100px 90px 84px 110px;
+  }
+}
+
+.list_header {
+  display: grid;
+  grid-template-columns: var(--list-columns);
+  gap: 12px;
+  align-items: center;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--gray-15);
+  font-size: $font-xsmall;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-50);
+
+  // Artist, Format, Editions and Minted drop out on narrow screens, matching
+  // the cells in the row itself.
+  span:nth-child(2),
+  span:nth-child(3),
+  span:nth-child(4),
+  span:nth-child(6) {
+    display: none;
+  }
+
+  span:nth-child(4),
+  span:nth-child(5) {
+    text-align: right;
+  }
+
+  @include respond-to('tablet') {
+    span:nth-child(2),
+    span:nth-child(4) {
+      display: block;
+    }
+  }
+
+  @include respond-to('desktop') {
+    span:nth-child(3),
+    span:nth-child(6) {
+      display: block;
+    }
+  }
+}

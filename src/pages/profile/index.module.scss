@@ -193,6 +193,13 @@
   text-decoration: underline;
 }
 
+// Filter tabs above the profile feeds. Was a Container, whose 40px bottom
+// margin left an awkward gap before the feed toolbar.
+.filters_bar {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
 span[data-tooltip].top {
   &:before,
   &:after {
