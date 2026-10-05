@@ -49,6 +49,7 @@ function TextComments({ sort }) {
     isReachingEnd,
     isLoadingMore,
     loadMore,
+    resetKey: `text-comments:${sort}`,
   })
 
   if (error) {
@@ -66,7 +67,16 @@ function TextComments({ sort }) {
   if (items.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>No comments on text posts yet.</p>
+        <p>
+          {isReachingEnd
+            ? 'No comments on text posts yet.'
+            : 'No comments on text posts among the latest comments.'}
+        </p>
+        {!isReachingEnd && (
+          <Button shadow_box onClick={loadMore} disabled={isLoadingMore}>
+            {isLoadingMore ? 'Loading…' : 'Load more'}
+          </Button>
+        )}
       </div>
     )
   }
@@ -145,6 +155,7 @@ export function TextActivityFeed() {
     isReachingEnd,
     isLoadingMore,
     loadMore,
+    resetKey: `text:${type.active}:${market.active}:${sort}`,
   })
 
   if (error) {

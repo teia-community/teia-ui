@@ -77,6 +77,7 @@ export function TradesFeed() {
     isReachingEnd,
     isLoadingMore,
     loadMore,
+    resetKey: `trades:${type.active}:${market.active}:${sort}`,
   })
 
   if (error) {

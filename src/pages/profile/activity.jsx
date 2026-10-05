@@ -46,6 +46,7 @@ export default function Activity() {
     isReachingEnd,
     isLoadingMore,
     loadMore,
+    resetKey: `profile:${address}:${type.active}:${market.active}`,
   })
 
   if (error) {

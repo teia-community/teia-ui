@@ -154,10 +154,14 @@ function useCalendarTitles() {
     async () => {
       const events = await fetchEvents()
       const docs = await Promise.allSettled(
-        events.map((e) => fetchEventContent(e.cid))
+        events.map((e) =>
+          e.hidden ? Promise.resolve(null) : fetchEventContent(e.cid)
+        )
       )
       const titles = {}
       events.forEach((e, i) => {
+        // Hidden events keep their number only: moderators took them down.
+        if (e.hidden) return
         if (docs[i].status === 'fulfilled' && docs[i].value?.title) {
           titles[e.id] = docs[i].value.title
         }
@@ -193,7 +197,9 @@ export function WikiActivityFeed() {
   const targetOf = useCallback(
     (id) => {
       const meta = wiki?.meta?.[id]
-      if (!meta) return null
+      const page = wiki?.pages?.find((p) => p.id === id)
+      // Hidden pages keep their number only: moderators took them down.
+      if (!meta || !page || page.hidden) return null
       return { label: meta.title, to: `/wiki/${meta.slug || id}` }
     },
     [wiki]
