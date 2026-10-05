@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Section pages of teia.art. OBJKT and profile pages are listed in the
      generated sitemap that robots.txt also points to. The wiki entries are a
-     snapshot (October 2026): wiki pages live on-chain, so add new ones here
-     when they are published. -->
+     fallback snapshot (October 2026): `npm run build` replaces them with the
+     pages currently on the wiki contract (scripts/wiki-sitemap.mjs). -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url><loc>https://teia.art</loc></url>
     <url><loc>https://teia.art/about</loc></url>
