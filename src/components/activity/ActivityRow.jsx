@@ -4,8 +4,21 @@ import { BURN_ADDRESS } from '@constants'
 import { getTimeAgo } from '@utils/time'
 import { formatTez, marketplaceForType } from '@utils/activity'
 import { UserLink } from '@components/user-link'
+import { useLocalSettings } from '@context/localSettingsStore'
 import { ActivityBadge } from './ActivityBadge'
 import styles from './index.module.scss'
+
+const IMGPROXY = import.meta.env.VITE_IMGPROXY
+
+/**
+ * Small preview for the row: the imgproxy thumbnail (`teia_meta.preview_uri`)
+ * when the viewer has imgproxy on, else the CDN copy of the display image.
+ */
+function thumbnailOf(token, useImgproxy) {
+  const preview = token.teia_meta?.preview_uri
+  if (useImgproxy && IMGPROXY && preview) return `${IMGPROXY}${preview}`
+  return HashToURL(token.display_uri || token.thumbnail_uri, 'CDN')
+}
 
 /** Resolve the participant ({ address, name }) for an event attribute. */
 function participant(event, attr) {
@@ -19,7 +32,8 @@ function participant(event, attr) {
 
 export function ActivityRow({ event, meta }) {
   const token = event.token || {}
-  const thumb = HashToURL(token.display_uri || token.thumbnail_uri, 'CDN')
+  const imgproxy = useLocalSettings((st) => st.imgproxy)
+  const thumb = thumbnailOf(token, imgproxy)
   const from = participant(event, meta.fromAttr)
   // Listings target a marketplace (derived from the event type), not a wallet.
   const market =

@@ -19,8 +19,7 @@ import { TabOptions, Tabs } from '@atoms/tab/Tabs'
 import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { NFT } from '@types'
-import { useTokenComments } from '@data/messaging/token-comments'
-import { buildTree } from '@components/token-comments/TokenComments'
+import { useTokenCommentCount } from '@data/messaging/token-comments'
 
 type ObjktDisplayContext = {
   nft: NFT
@@ -106,8 +105,8 @@ export const ObjktDisplay = () => {
           )
         }
 
-        const isNSFW = (nsfwMap.get(objkt.token_id) === 1)
-        const isPhotosensitive = (photosensitiveMap.get(objkt.token_id) === 1)
+        const isNSFW = nsfwMap.get(objkt.token_id) === 1
+        const isPhotosensitive = photosensitiveMap.get(objkt.token_id) === 1
         if (
           isNSFW ||
           objkt.teia_meta?.content_rating === METADATA_CONTENT_RATING_MATURE
@@ -123,7 +122,7 @@ export const ObjktDisplay = () => {
           objkt.isPhotosensitive = true
         }
 
-        if(isNSFW || isPhotosensitive) {
+        if (isNSFW || isPhotosensitive) {
           objkt.isModerated = true
         }
 
@@ -140,13 +139,9 @@ export const ObjktDisplay = () => {
   )
 
   // Comment count for the Comments tab badge (same visibility rules as the tab)
-  const { data: comments } = useTokenComments(
+  const { data: commentCount = 0 } = useTokenCommentCount(
     nft?.fa2_address,
     nft?.token_id != null ? String(nft.token_id) : undefined
-  )
-  const commentCount = useMemo(
-    () => Object.keys(buildTree(comments ?? []).byId).length,
-    [comments]
   )
   const tabs = useMemo(
     () =>

@@ -1154,6 +1154,9 @@ const ActivityEventFieldsFragment = gql`
       display_uri
       thumbnail_uri
       mime_type
+      teia_meta {
+        preview_uri
+      }
       artist_address
       artist_profile {
         name
