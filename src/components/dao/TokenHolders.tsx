@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDaoTokenHolders } from '@data/swr'
 import { DAO_TOKEN_CONTRACT } from '@constants'
 import styles from './TokenHolders.module.css'
@@ -10,14 +10,12 @@ interface TokenHoldersProps {
 }
 
 const TokenHolders: React.FC<TokenHoldersProps> = ({
-  limit: initialLimit = 10,
+  limit = 10,
   title = 'Top Token Holders',
   showRank = true
 }) => {
-  const [displayLimit, setDisplayLimit] = useState(initialLimit)
-  const { data: allHolders, error, isLoading } = useDaoTokenHolders(1000)
-
-  const holders = allHolders ? allHolders.slice(0, displayLimit) : []
+  const { holders, error, isLoading, isLoadingMore, isReachingEnd, loadMore } =
+    useDaoTokenHolders(limit)
 
   if (isLoading) {
     return (
@@ -53,35 +51,14 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
     }).format(balance)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  }
-
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
-
-  const handleLoadMore = () => {
-    setDisplayLimit((prev) => prev + initialLimit)
-  }
-
-  const hasMore = allHolders && allHolders.length > displayLimit
 
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>{title}</h3>
       <div className={styles.holdersTable}>
-        <div className={styles.tableHeader}>
-          {showRank && <div className={styles.rank}>Rank</div>}
-          <div className={styles.holder}>Holder</div>
-          <div className={styles.balance}>Balance (TEIA)</div>
-          <div className={styles.transfers}>Transfers</div>
-          <div className={styles.lastActive}>Last Active</div>
-        </div>
         <div className={styles.tableBody}>
           {holders.map((holder, index) => (
             <div key={holder.address} className={styles.row}>
@@ -105,7 +82,7 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
                 </div>
                 <div className={styles.transfers}>
                   <a
-                    href={`${import.meta.env.VITE_TZKT_API}/v1/operations/transactions?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
+                    href={`${import.meta.env.VITE_TZKT_API}/v1/tokens/transfers?anyof.from.to=${holder.address}&token.contract=${DAO_TOKEN_CONTRACT}&token.tokenId=0`}
                     target="_blank"
                     rel="noopener noreferrer"
                     title="View token transfer transactions (API data)"
@@ -118,11 +95,11 @@ const TokenHolders: React.FC<TokenHoldersProps> = ({
           ))}
         </div>
       </div>
-      {hasMore && (
+      {!isReachingEnd && (
         <button
           className={styles.loadMoreButton}
-          onClick={handleLoadMore}
-          disabled={isLoading}
+          onClick={loadMore}
+          disabled={isLoadingMore}
         >
           Load More
         </button>

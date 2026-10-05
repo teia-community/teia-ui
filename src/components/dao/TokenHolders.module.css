@@ -25,10 +25,6 @@
   width: 100%;
 }
 
-.tableHeader {
-  display: none;
-}
-
 .tableBody {
   display: flex;
   flex-direction: column;
@@ -90,12 +86,6 @@
 }
 
 .transfers {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-align: right;
-}
-
-.lastActive {
   font-size: 0.75rem;
   color: var(--text-secondary);
   text-align: right;
