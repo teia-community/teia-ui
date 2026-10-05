@@ -166,6 +166,7 @@ export const MainMenu = () => {
       title: 'Community & DAO',
       items: [
         { label: 'Public Channels', route: 'publicchannels' },
+        { label: 'Projects', route: 'projects' },
         { label: 'Polls', route: 'polls' },
         { label: 'DAO Governance', route: 'dao' },
         { label: 'Donate', route: 'donate' },
