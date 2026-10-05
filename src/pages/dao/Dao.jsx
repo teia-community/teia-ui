@@ -50,7 +50,10 @@ export default function DAO() {
   const [userTokenBalance] = useDaoTokenBalance(userAddress)
 
   return (
-    <Page title="Teia DAO">
+    <Page
+      title="Teia DAO"
+      description="The Teia DAO: governance parameters, proposals, statistics and fees for the community that runs teia.art, read from its contracts on Tezos."
+    >
       <div className={styles.container}>
         <h1 className={styles.headline}>Teia DAO</h1>
 

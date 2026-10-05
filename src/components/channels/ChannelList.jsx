@@ -64,7 +64,10 @@ export default function ChannelList() {
     })
 
   return (
-    <Page title="Public Channels">
+    <Page
+      title="Public Channels"
+      description="Public channels on Teia: open, on-chain chatrooms run by the community on the Tezos blockchain."
+    >
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.headline}>Public Channels</h2>

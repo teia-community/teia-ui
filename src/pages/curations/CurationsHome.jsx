@@ -31,7 +31,10 @@ export default function CurationsHome() {
   const { data: roles } = useCurationRoles(address)
 
   return (
-    <Page title="Curations">
+    <Page
+      title="Curations"
+      description="Curations on Teia: on-chain collections of artworks put together by members of the community."
+    >
       <Container>
         <div className={styles.header}>
           <h1>Curations</h1>
