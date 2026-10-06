@@ -19,6 +19,8 @@ import MetadataOverlay, {
 } from './AudioCoverMetadataOverlay'
 import { useUserStore } from '@context/userStore'
 import { shallow } from 'zustand/shallow'
+import { TagSuggestions } from '@components/tag-suggestions'
+import { appendTag } from '@utils/tag-suggestions.mjs'
 
 const FieldError = memo(({ error, text }) => {
   const classes = classNames({
@@ -33,7 +35,7 @@ const FieldError = memo(({ error, text }) => {
  */
 export const FormFields = ({ value, field, error, register, control }) => {
   const name = field.name
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
   const [address, userInfo] = useUserStore(
     (st) => [st.address, st.userInfo],
     shallow
@@ -52,18 +54,34 @@ export const FormFields = ({ value, field, error, register, control }) => {
     case 'text':
     case 'number':
       return (
-        <Input
-          className={styles.field}
-          name={name}
-          type={field.type}
-          label={field.label}
-          defaultValue={field.defaultValue}
-          placeholder={field.placeholder}
-          {...register(name, field.rules)}
-        >
-          <Line />
-          {error && <FieldError text error={error.message} />}
-        </Input>
+        <>
+          <Input
+            className={styles.field}
+            name={name}
+            type={field.type}
+            label={field.label}
+            defaultValue={field.defaultValue}
+            placeholder={field.placeholder}
+            // Tags is controlled so a suggested tag added with setValue shows
+            // up in the field; the input keeps its own state otherwise.
+            {...(name === 'tags' ? { value: watch('tags') ?? '' } : {})}
+            {...register(name, field.rules)}
+          >
+            <Line />
+            {error && <FieldError text error={error.message} />}
+          </Input>
+          {name === 'tags' && (
+            <TagSuggestions
+              text={watch('description')}
+              value={watch('tags')}
+              onAdd={(tag) =>
+                setValue('tags', appendTag(watch('tags'), tag), {
+                  shouldDirty: true,
+                })
+              }
+            />
+          )}
+        </>
       )
     case 'textarea':
       return (
