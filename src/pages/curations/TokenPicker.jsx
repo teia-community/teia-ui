@@ -20,7 +20,19 @@ const TABS = [
 
 const PAGE_SIZE = 48
 
-export default function TokenPicker({ selectedKeys, onToggle }) {
+/**
+ * @param {object} props
+ * @param {Set<string>} props.selectedKeys
+ * @param {(token: object) => void} props.onToggle
+ * @param {boolean} [props.showCollected] include the "My collection" tab.
+ *   Copyright registration needs works you created, so it hides it.
+ */
+export default function TokenPicker({
+  selectedKeys,
+  onToggle,
+  showCollected = true,
+}) {
+  const tabs = showCollected ? TABS : TABS.filter((t) => t.id !== 'collected')
   const address = useUserStore((st) => st.address)
   const [tab, setTab] = useState('created')
   const [tokens, setTokens] = useState([])
@@ -83,7 +95,7 @@ export default function TokenPicker({ selectedKeys, onToggle }) {
   return (
     <div>
       <div className={styles.tabs}>
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button
             type="button"
             key={t.id}
