@@ -25,6 +25,9 @@ import {
   extensionFromMimetype,
 } from '@utils/mint'
 import { tokenSearchCommand } from '../../components/text/TokenSearchCommand'
+import { TagSuggestions } from '@components/tag-suggestions'
+import { appendTag } from '@utils/tag-suggestions.mjs'
+import { recordRecentTags } from '@utils/recent-tags'
 import styles from './index.module.scss'
 
 const MDEditor = lazy(() => import('@uiw/react-md-editor'))
@@ -284,6 +287,10 @@ export default function NewPost() {
       // Clear draft from localStorage
       localStorage.removeItem(DRAFT_KEY)
 
+      // Remember what the user typed (not the automatic "text" tag) so their
+      // own words come back in future suggestions.
+      recordRecentTags(tags)
+
       // Reset form and navigate to created posts
       setTitle('')
       setContent('')
@@ -387,6 +394,11 @@ export default function NewPost() {
           placeholder="Comma separated, e.g.: art, thoughts, tutorial"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
+        />
+        <TagSuggestions
+          text={content}
+          value={tags}
+          onAdd={(tag) => setTags((current) => appendTag(current, tag))}
         />
         <small className={styles.hint}>
           The "text" tag will be added automatically
