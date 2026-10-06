@@ -6,7 +6,7 @@ import { useUserStore } from '@context/userStore'
 import { useMintStore } from '@context/mintStore'
 import {
   SWAP_TEIA_FEE_DISCLOSURE,
-  maybeWarnLowSwapPrice,
+  SWAP_ZERO_PRICE_GAS_NOTICE,
   clampSwapAmountOnBlur,
   clampSwapPriceOnBlur,
 } from '@utils/postMintSwap'
@@ -31,8 +31,9 @@ export function PostMintSwapFields({
       show(`Please enter an OBJKT quantity to swap (current value: ${amount})`)
       return
     }
-    if (price == null || price < 0) {
-      show(`Please enter a price for the swap (current value: ${price})`)
+    // A blank price must not silently become a free listing now that 0 is allowed.
+    if (price === '' || price == null || price < 0) {
+      show(`Please enter a price for the swap (0 ꜩ is allowed)`)
       return
     }
     // Same scale as Swap tab (`nft.royalties_total / 1000`) and mint_OBJKT (`royalties * 10`).
@@ -77,14 +78,13 @@ export function PostMintSwapFields({
         initial={0}
         onChange={(v) => setPrice(v === '' ? '' : v)}
         onBlur={() => {
-          setPrice((prev) => {
-            const val = clampSwapPriceOnBlur(prev)
-            maybeWarnLowSwapPrice(show, val)
-            return val
-          })
+          setPrice((prev) => clampSwapPriceOnBlur(prev))
         }}
         disabled={progress}
       />
+      {price !== '' && Number(price) === 0 && (
+        <p style={{ fontSize: '0.9em' }}>{SWAP_ZERO_PRICE_GAS_NOTICE}</p>
+      )}
       <Button
         shadow_box
         onClick={handleSubmit}

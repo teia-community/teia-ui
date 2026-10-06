@@ -7,20 +7,12 @@ export const SWAP_TEIA_FEE_DISCLOSURE =
 export const POST_MINT_SUSTAIN_TEIA =
   'Please help sustain Teia, swap your new OBJKT on Teia:'
 
-const PRICE_MAX = 1e6
-const LOW_PRICE_WARN_THRESHOLD = 0.1
+export const SWAP_ZERO_PRICE_GAS_NOTICE =
+  'Listing for 0 ꜩ makes this OBJKT free to collect, but Tezos network ' +
+  'fees still apply: you pay them to list it, and collectors pay them to ' +
+  'collect it.'
 
-/**
- * @param {(title: string, message?: string) => void} showModal
- * @param {number} value
- */
-export function maybeWarnLowSwapPrice(showModal, value) {
-  if (value <= LOW_PRICE_WARN_THRESHOLD) {
-    showModal(
-      `Price is really low (${value}ꜩ), for giveaways checkout hicetdono (dono.xtz.tools)`
-    )
-  }
-}
+const PRICE_MAX = 1e6
 
 /**
  * @param {unknown} raw
