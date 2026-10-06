@@ -11,6 +11,8 @@ import { useFormContext } from 'react-hook-form'
 import { HEN_CONTRACT_FA2 } from '@constants'
 import { useCopyrightStore } from '@context/copyrightStore'
 import { fetchTokenMetadataForCopyrightSearch } from '@data/swr'
+import TokenPicker from '@pages/curations/TokenPicker'
+import { tokenKey } from '@data/curations'
 import { copyrightThumbnail, retryThumbnail } from '../../shared/thumbnail'
 
 const initialClauses = {
@@ -190,6 +192,39 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
   const [currentExternalToken, setCurrentExternalToken] = useState(null)
   const [fetchingToken, setFetchingToken] = useState(false)
 
+  /** Adds a verified work to the agreement and refreshes the document text. */
+  const addTokenToAgreement = (token) => {
+    const updatedTokens = [...tokens, token]
+    const newDocumentText = generateDocumentText(updatedTokens)
+    setTokens(updatedTokens)
+    setCurrentToken(null)
+    setSearchTokenQuery('')
+    setContractAddress('')
+    setTokenId('')
+    setDocumentText(newDocumentText)
+    setGeneratedDocument(newDocumentText)
+    useCopyrightStore.setState((prevState) => ({
+      customLicenseData: {
+        ...prevState.customLicenseData,
+        clauses,
+        documentText: newDocumentText,
+        tokens: updatedTokens,
+      },
+    }))
+  }
+
+  // Works already in the agreement are ticked in the picker grid.
+  const addedTokenKeys = new Set(
+    tokens
+      .filter((token) => token.contractAddress !== 'external')
+      .map((token) =>
+        tokenKey({
+          fa2_address: token.contractAddress,
+          token_id: token.tokenId,
+        })
+      )
+  )
+
   const handleSearchTokenSubmit = async (e) => {
     e.preventDefault()
     setFetchingToken(true)
@@ -267,6 +302,21 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
       }
     }
 
+    await verifyAndPreviewToken(token, inputMode === 'contract')
+  }
+
+  /**
+   * Shared by every way of choosing a work (URL, contract + token id, or
+   * picking one of your own OBJKTs): rejects duplicates, looks the token up
+   * and refuses anything the connected wallet did not create.
+   */
+  const verifyAndPreviewToken = async (
+    token,
+    allowFallback,
+    addDirectly = false
+  ) => {
+    setFetchingToken(true)
+    setCurrentToken(null)
     const isDuplicate = tokens.some(
       (addedToken) =>
         addedToken.contractAddress === token.contractAddress &&
@@ -294,10 +344,12 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
           return
         }
 
-        setCurrentToken({ ...token, metadata: tokenData.metadata })
+        const verified = { ...token, metadata: tokenData.metadata }
+        if (addDirectly) addTokenToAgreement(verified)
+        else setCurrentToken(verified)
       } else {
         // No metadata found, handle based on input mode
-        if (inputMode === 'contract') {
+        if (allowFallback) {
           // For contract + token ID mode, always add the token even if no metadata
           const fallbackToken = {
             contractAddress: token.contractAddress,
@@ -321,7 +373,7 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     } catch (err) {
       console.error(err)
 
-      if (inputMode === 'contract') {
+      if (allowFallback) {
         // For contract + token ID mode, always add the token even if fetch fails
         const fallbackToken = {
           contractAddress: token.contractAddress,
@@ -344,7 +396,9 @@ function CustomCopyrightForm({ onChange, value, defaultValue }) {
     }
 
     setFetchingToken(false)
+    setFetchingToken(false)
   }
+
   const extractTokenFromString = (url) => {
     try {
       const match = url.match(/(KT1\w+)?\/(\d+)/)
@@ -978,312 +1032,347 @@ Any modification to this Agreement's terms requires explicit consent from both t
           </p>
           <br />
 
-          <div style={{ marginBottom: '1em', display: 'flex', gap: '10px' }}>
-            <button
-              type="button"
-              onClick={() => {
-                setInputMode('url')
-                // Clear inputs when switching modes
-                setSearchTokenQuery('')
-                setContractAddress('')
-                setTokenId('')
-              }}
-              style={{
-                border: '1px solid var(--border-color)',
-                padding: '10px 15px',
-                backgroundColor:
-                  inputMode === 'url'
-                    ? 'var(--background-color)'
-                    : 'transparent',
-                color:
-                  inputMode === 'url' ? 'var(--text-color)' : 'var(--gray-50)',
-                cursor: 'pointer',
-              }}
-            >
-              URL Input
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setInputMode('contract')
-                // Clear inputs when switching modes
-                setSearchTokenQuery('')
-                setContractAddress('')
-                setTokenId('')
-              }}
-              style={{
-                border: '1px solid var(--border-color)',
-                padding: '10px 15px',
-                backgroundColor:
-                  inputMode === 'contract'
-                    ? 'var(--background-color)'
-                    : 'transparent',
-                color:
-                  inputMode === 'contract'
-                    ? 'var(--text-color)'
-                    : 'var(--gray-50)',
-                cursor: 'pointer',
-              }}
-            >
-              Contract + Token ID
-            </button>
+          <div className={styles.disclaimer}>
+            <strong>Notice.</strong> A registration is a declaration executed
+            under your wallet address. Register only works of which you are the
+            author or the rights holder. Submitting an agreement in respect of a
+            work you did not create is not merely an infringement of the rights
+            holder's copyright: it purports to grant a licence over a work you
+            have no authority to license, and constitutes a knowing false
+            representation of title. Depending on the jurisdiction, such conduct
+            may attract civil liability, including statutory damages, costs and
+            the opposing party's legal fees, and may fall within provisions
+            governing fraud or the execution of a false instrument. Each
+            registration is recorded permanently on the Tezos blockchain and is
+            attributable to the wallet that signed it.
           </div>
+          <br />
 
-          {inputMode === 'url' ? (
-            <>
-              <h4>Enter Token URL</h4>
-              <Input
-                type="text"
-                value={searchTokenQuery}
-                onChange={handleSearchTokenInputChange}
-                placeholder="Enter a Tezos Token URL or External URL"
-                className={styles.field}
-              />
-              {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
-                <p style={{ color: 'var(--warning-color)', marginTop: '5px' }}>
-                  ⚠️ Warning: The above input does not follow a standard URL/URI
-                  scheme. (Non-standard inputs are still allowed, this is just a
-                  reminder.)
-                </p>
-              )}
-            </>
-          ) : (
-            <>
-              <h4>Enter Contract Address</h4>
-              <Input
-                type="text"
-                value={contractAddress}
-                onChange={(e) =>
-                  setContractAddress(e?.target?.value || e || '')
-                }
-                placeholder="Enter contract address (e.g., KT1...)"
-                className={styles.field}
-              />
-              <h4 style={{ marginTop: '1em' }}>Enter Token ID</h4>
-              <Input
-                type="text"
-                value={tokenId}
-                onChange={(e) => setTokenId(e?.target?.value || e || '')}
-                placeholder="Enter token ID (e.g., 123456)"
-                className={styles.field}
-              />
-            </>
-          )}
-
-          <button
-            onClick={handleSearchTokenSubmit}
-            style={{
-              border: '1px solid #ccc',
-              padding: '15px',
-              marginTop: '15px',
-            }}
-          >
-            Search Token
-          </button>
-        </div>
-
-        {fetchingToken && <div className="loading-spinner"></div>}
-
-        {currentToken && (
-          <div
-            className="token-preview"
-            style={{ marginTop: '1em', borderTop: '1px solid white' }}
-          >
-            <br />
-            <h3>Token Found:</h3>
-            <div
-              className="token-list"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '15px',
-                marginTop: '15px',
-              }}
-            >
-              {copyrightThumbnail(currentToken.metadata) && (
-                <img
-                  src={copyrightThumbnail(currentToken.metadata)}
-                  onError={retryThumbnail}
-                  alt={currentToken.metadata.name}
-                />
-              )}
-              <div>
-                <h4>Title: {currentToken.metadata.name}</h4>
-                <h4>Creator(s): {currentToken.metadata.creators}</h4>
-                <h4>Mint Date: (?) {currentToken.metadata.mintDate}</h4>
-                <br />
-                <p>{currentToken.metadata.description}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                const updatedTokens = [...tokens, currentToken]
-                const newDocumentText = generateDocumentText(updatedTokens)
-                setTokens(updatedTokens)
-                setCurrentToken(null)
-                setSearchTokenQuery('')
-                setContractAddress('')
-                setTokenId('')
-                setDocumentText(newDocumentText)
-                setGeneratedDocument(newDocumentText)
-                useCopyrightStore.setState((prevState) => ({
-                  customLicenseData: {
-                    ...prevState.customLicenseData,
-                    clauses,
-                    documentText: newDocumentText,
-                    tokens: updatedTokens,
-                  },
-                }))
-              }}
-              style={{
-                border: '1px solid #ccc',
-                padding: '15px',
-                marginTop: '15px',
-              }}
-            >
-              ➕ Add Token to Copyright Agreement
-            </button>
-          </div>
-        )}
-        {currentExternalToken && (
-          <div className="token-preview">
-            <br />
-            <h3>External Reference Found:</h3>
-            <div
-              className="token-list"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '15px',
-                marginTop: '15px',
-              }}
-            >
+          <div className={styles.searchLayout}>
+            <div className={styles.searchMain}>
               <div
-                style={{
-                  border: '1px solid var(--border-color)',
-                  padding: '15px',
-                }}
+                style={{ marginBottom: '1em', display: 'flex', gap: '10px' }}
               >
-                <h4>Title/Link:</h4>
-                <p>{currentExternalToken.metadata.name}</p>
-                <br />
-                <p style={{ color: 'var(--warning-color)' }}>
-                  {currentExternalToken.metadata.description}
-                </p>
-                <br />
-                <p>
-                  <strong>Type:</strong> External / Manual Entry
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                const updatedTokens = [...tokens, currentExternalToken]
-                const newDocumentText = generateDocumentText(updatedTokens)
-                setTokens(updatedTokens)
-                setCurrentExternalToken(null)
-                setSearchTokenQuery('')
-                setContractAddress('')
-                setTokenId('')
-                setDocumentText(newDocumentText)
-                setGeneratedDocument(newDocumentText)
-                useCopyrightStore.setState((prevState) => ({
-                  customLicenseData: {
-                    ...prevState.customLicenseData,
-                    clauses,
-                    documentText: newDocumentText,
-                    tokens: updatedTokens,
-                  },
-                }))
-              }}
-              style={{
-                border: '1px solid #ccc',
-                padding: '15px',
-                marginTop: '15px',
-              }}
-            >
-              ➕ Add External Reference to Copyright Agreement
-            </button>
-          </div>
-        )}
-        {tokens.length > 0 && (
-          <div
-            className="token-list"
-            style={{ marginTop: '1em', borderTop: '1px solid white' }}
-          >
-            <br />
-            <h3>Selected Works To Apply Copyright Agreement:</h3>
-            <div
-              className="token-list"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '15px',
-                marginTop: '15px',
-              }}
-            >
-              {tokens.map((token, index) => (
-                <div
-                  key={index}
-                  className="token-preview"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputMode('mine')
+                    setSearchTokenQuery('')
+                    setContractAddress('')
+                    setTokenId('')
+                  }}
                   style={{
-                    width: '220px',
-                    border: '1px solid #ddd',
-                    padding: '10px',
-                    boxSizing: 'border-box',
-                    textAlign: 'center',
+                    border: '1px solid var(--border-color)',
+                    padding: '10px 15px',
+                    backgroundColor:
+                      inputMode === 'mine'
+                        ? 'var(--background-color)'
+                        : 'transparent',
+                    color:
+                      inputMode === 'mine'
+                        ? 'var(--text-color)'
+                        : 'var(--gray-50)',
+                    cursor: 'pointer',
                   }}
                 >
-                  {token.contractAddress !== 'external' &&
-                    copyrightThumbnail(token.metadata) && (
+                  Browse my wallet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputMode('url')
+                    // Clear inputs when switching modes
+                    setSearchTokenQuery('')
+                    setContractAddress('')
+                    setTokenId('')
+                  }}
+                  style={{
+                    border: '1px solid var(--border-color)',
+                    padding: '10px 15px',
+                    backgroundColor:
+                      inputMode === 'url'
+                        ? 'var(--background-color)'
+                        : 'transparent',
+                    color:
+                      inputMode === 'url'
+                        ? 'var(--text-color)'
+                        : 'var(--gray-50)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  URL Input
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputMode('contract')
+                    // Clear inputs when switching modes
+                    setSearchTokenQuery('')
+                    setContractAddress('')
+                    setTokenId('')
+                  }}
+                  style={{
+                    border: '1px solid var(--border-color)',
+                    padding: '10px 15px',
+                    backgroundColor:
+                      inputMode === 'contract'
+                        ? 'var(--background-color)'
+                        : 'transparent',
+                    color:
+                      inputMode === 'contract'
+                        ? 'var(--text-color)'
+                        : 'var(--gray-50)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Contract + Token ID
+                </button>
+              </div>
+
+              {inputMode === 'mine' ? (
+                <>
+                  <h4>Pick a work</h4>
+                  <p className={styles.pickerHint}>
+                    Your own creations, or a search across Teia. Only works you
+                    created can be registered: the wallet must match the
+                    creator.
+                  </p>
+                  <div
+                    className={fetchingToken ? styles.pickerBusy : undefined}
+                  >
+                    <TokenPicker
+                      showCollected={false}
+                      selectedKeys={addedTokenKeys}
+                      onToggle={(token) =>
+                        verifyAndPreviewToken(
+                          {
+                            contractAddress: token.fa2_address,
+                            tokenId: String(token.token_id),
+                          },
+                          false,
+                          true
+                        )
+                      }
+                    />
+                  </div>
+                </>
+              ) : inputMode === 'url' ? (
+                <>
+                  <h4>Enter Token URL</h4>
+                  <Input
+                    type="text"
+                    value={searchTokenQuery}
+                    onChange={handleSearchTokenInputChange}
+                    placeholder="Enter a Tezos Token URL or External URL"
+                    className={styles.field}
+                  />
+                  {!isValidUrl(searchTokenQuery) && searchTokenQuery && (
+                    <p
+                      style={{
+                        color: 'var(--warning-color)',
+                        marginTop: '5px',
+                      }}
+                    >
+                      ⚠️ Warning: The above input does not follow a standard
+                      URL/URI scheme. (Non-standard inputs are still allowed,
+                      this is just a reminder.)
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h4>Enter Contract Address</h4>
+                  <Input
+                    type="text"
+                    value={contractAddress}
+                    onChange={(e) =>
+                      setContractAddress(e?.target?.value || e || '')
+                    }
+                    placeholder="Enter contract address (e.g., KT1...)"
+                    className={styles.field}
+                  />
+                  <h4 style={{ marginTop: '1em' }}>Enter Token ID</h4>
+                  <Input
+                    type="text"
+                    value={tokenId}
+                    onChange={(e) => setTokenId(e?.target?.value || e || '')}
+                    placeholder="Enter token ID (e.g., 123456)"
+                    className={styles.field}
+                  />
+                </>
+              )}
+
+              {inputMode !== 'mine' && (
+                <button
+                  onClick={handleSearchTokenSubmit}
+                  style={{
+                    border: '1px solid #ccc',
+                    padding: '15px',
+                    marginTop: '15px',
+                  }}
+                >
+                  Search Token
+                </button>
+              )}
+            </div>
+
+            <aside className={styles.searchAside}>
+              {fetchingToken && <div className="loading-spinner"></div>}
+
+              {currentToken && (
+                <div
+                  className="token-preview"
+                  style={{ marginTop: '1em', borderTop: '1px solid white' }}
+                >
+                  <br />
+                  <h3>Token Found:</h3>
+                  <div className={styles.previewCard}>
+                    {copyrightThumbnail(currentToken.metadata) && (
                       <img
-                        src={copyrightThumbnail(token.metadata)}
+                        className={styles.previewThumb}
+                        src={copyrightThumbnail(currentToken.metadata)}
                         onError={retryThumbnail}
-                        alt={token.metadata.name}
-                        style={{
-                          width: '100%',
-                          height: 'auto',
-                          borderRadius: '4px',
-                        }}
+                        alt={currentToken.metadata.name}
                       />
                     )}
-                  <div style={{ marginTop: '10px' }}>
-                    <h4
-                      style={{
-                        fontSize: '14px',
-                        margin: '6px 0',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {token.metadata.name}
-                    </h4>
-                    <div className={styles.verifiedStatus}>
-                      {token.contractAddress === HEN_CONTRACT_FA2 ? (
-                        <>☑️✅ TEIA + Tezos Verified</>
-                      ) : token.contractAddress.startsWith('KT1') ? (
-                        <>✅ Tezos Verified</>
-                      ) : (
-                        <>⚠️ External Link</>
+                    <div className={styles.previewInfo}>
+                      <h4 className={styles.previewTitle}>
+                        {currentToken.metadata.name}
+                      </h4>
+                      <p className={styles.previewMeta}>
+                        Creator(s): {currentToken.metadata.creators}
+                      </p>
+                      <p className={styles.previewMeta}>
+                        Mint date: {currentToken.metadata.mintDate || '(?)'}
+                      </p>
+                      {currentToken.metadata.description && (
+                        <p className={styles.previewDescription}>
+                          {currentToken.metadata.description}
+                        </p>
                       )}
                     </div>
-                    <br />
-                    <button
-                      onClick={(e) => handleRemoveToken(index, e)}
+                  </div>
+                  <button
+                    onClick={() => addTokenToAgreement(currentToken)}
+                    style={{
+                      border: '1px solid #ccc',
+                      padding: '15px',
+                      marginTop: '15px',
+                    }}
+                  >
+                    ➕ Add Token to Copyright Agreement
+                  </button>
+                </div>
+              )}
+              {currentExternalToken && (
+                <div className="token-preview">
+                  <br />
+                  <h3>External Reference Found:</h3>
+                  <div
+                    className="token-list"
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '15px',
+                      marginTop: '15px',
+                    }}
+                  >
+                    <div
                       style={{
-                        border: '1px solid #ccc',
+                        border: '1px solid var(--border-color)',
                         padding: '15px',
-                        marginTop: '15px',
                       }}
                     >
-                      Remove
-                    </button>
+                      <h4>Title/Link:</h4>
+                      <p>{currentExternalToken.metadata.name}</p>
+                      <br />
+                      <p style={{ color: 'var(--warning-color)' }}>
+                        {currentExternalToken.metadata.description}
+                      </p>
+                      <br />
+                      <p>
+                        <strong>Type:</strong> External / Manual Entry
+                      </p>
+                    </div>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      const updatedTokens = [...tokens, currentExternalToken]
+                      const newDocumentText =
+                        generateDocumentText(updatedTokens)
+                      setTokens(updatedTokens)
+                      setCurrentExternalToken(null)
+                      setSearchTokenQuery('')
+                      setContractAddress('')
+                      setTokenId('')
+                      setDocumentText(newDocumentText)
+                      setGeneratedDocument(newDocumentText)
+                      useCopyrightStore.setState((prevState) => ({
+                        customLicenseData: {
+                          ...prevState.customLicenseData,
+                          clauses,
+                          documentText: newDocumentText,
+                          tokens: updatedTokens,
+                        },
+                      }))
+                    }}
+                    style={{
+                      border: '1px solid #ccc',
+                      padding: '15px',
+                      marginTop: '15px',
+                    }}
+                  >
+                    ➕ Add External Reference to Copyright Agreement
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+              {tokens.length > 0 && (
+                <div className={styles.addedPanel}>
+                  <h4 className={styles.addedTitle}>
+                    Added to this agreement ({tokens.length})
+                  </h4>
+                  <ul className={styles.addedList}>
+                    {tokens.map((token, index) => (
+                      <li key={index} className={styles.addedItem}>
+                        {token.contractAddress !== 'external' &&
+                          copyrightThumbnail(token.metadata) && (
+                            <img
+                              className={styles.addedThumb}
+                              src={copyrightThumbnail(token.metadata)}
+                              onError={retryThumbnail}
+                              alt=""
+                            />
+                          )}
+                        <span className={styles.addedInfo}>
+                          <span className={styles.addedName}>
+                            {token.metadata.name}
+                          </span>
+                          <span className={styles.addedStatus}>
+                            {token.contractAddress === HEN_CONTRACT_FA2 ? (
+                              <>☑️✅ TEIA + Tezos Verified</>
+                            ) : token.contractAddress.startsWith('KT1') ? (
+                              <>✅ Tezos Verified</>
+                            ) : (
+                              <>⚠️ External Link</>
+                            )}
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.addedRemove}
+                          onClick={(e) => handleRemoveToken(index, e)}
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </aside>
           </div>
-        )}
+        </div>
       </div>
       <div
         style={{
