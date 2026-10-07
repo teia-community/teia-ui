@@ -21,6 +21,7 @@ import {
   SocialActivityRow,
 } from '@components/activity'
 import activityStyles from '@components/activity/index.module.scss'
+import { useEmbeddedTokenNames } from '@components/activity/useEmbeddedTokenNames'
 import styles from './teia-activity-feed.module.scss'
 
 const FEED_FILTERS = ACTIVITY_FILTERS.filter(
@@ -31,9 +32,13 @@ const VIEWS = [
   { key: 'social', label: 'Social' },
   { key: 'trades', label: 'Trades' },
   { key: 'text', label: 'Text' },
+  { key: 'curations', label: 'Curations' },
   { key: 'calendar', label: 'Calendar' },
   { key: 'copyright', label: 'Copyright' },
   { key: 'wiki', label: 'Wiki' },
+  { key: 'polls', label: 'Polls' },
+  { key: 'donations', label: 'Donations' },
+  { key: 'fountain', label: 'Fountain' },
 ]
 
 /** Trade activity (sales/mints/listings/transfers) — the original feed. */
@@ -149,6 +154,7 @@ export function SocialFeed() {
     () => items.filter((i) => matches(i.kind)),
     [items, matches]
   )
+  const tokenNames = useEmbeddedTokenNames(rows)
 
   if (error) {
     return (
@@ -194,6 +200,7 @@ export function SocialFeed() {
                 key={item.id}
                 item={item}
                 senderName={profiles[item.sender]?.alias}
+                tokenNames={tokenNames}
               />
             ))}
           </div>
