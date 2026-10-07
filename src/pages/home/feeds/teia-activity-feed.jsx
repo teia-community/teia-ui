@@ -226,9 +226,8 @@ export function GlobalActivityFeed() {
   return (
     <div className={styles.feed}>
       <p className={styles.notice}>
-        Want a heads-up when a feed moves? Pick the ones to watch in{' '}
-        <Link to="/settings">settings</Link> and they will light the
-        notifications dot.
+        Feed notifications are off by default. Go to your{' '}
+        <Link to="/settings">settings</Link> to turn them on, if interested.
       </p>
       <div className={styles.view_toggle}>
         {VIEWS.map((v) => (
