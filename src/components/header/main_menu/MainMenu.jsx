@@ -14,6 +14,7 @@ import {
 } from '@data/messaging/channels'
 import { useMyPollNotifications } from '@data/messaging/poll-comments'
 import { useMyTokenNotifications } from '@data/messaging/token-comments'
+import { useFeedNotifications } from '@data/feed-notifications'
 import { useGateRoles } from '@data/roles'
 
 import { MenuItem } from './MenuItem'
@@ -102,6 +103,12 @@ export const MainMenu = () => {
     tokenMap
   )
 
+  // Activity feeds are addressed to nobody, so watching one needs no wallet.
+  // Its dot rides on Activity rather than Notifications, which only appears
+  // once signed in and would hide the dot from exactly those viewers.
+  const { total: feedUnread } = useFeedNotifications()
+  const showActivityBadge = feedUnread > 0
+
   // Unread is surfaced in one place only: the aggregate badge on the
   // Notifications menu item (and the /notifications page). The
   // per-section dots were removed to keep the menu clean.
@@ -155,7 +162,7 @@ export const MainMenu = () => {
       title: 'Explore',
       items: [
         { label: 'Search', route: 'search' },
-        { label: 'Activity', route: 'activity' },
+        { label: 'Activity', route: 'activity', badge: showActivityBadge },
         { label: 'Text', route: 'text' },
         { label: 'Curations', route: 'curations' },
         { label: 'Calendar', route: 'calendar' },

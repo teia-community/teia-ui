@@ -7,6 +7,8 @@ import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { POLLS_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
+import { getTimeAgo } from '@utils/time'
+import useActivityFilter from '@hooks/use-activity-filter'
 import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import {
@@ -14,52 +16,63 @@ import {
   useUnreadChannels,
   useUnreadItems,
 } from '@context/chatReadStore'
-import {
-  useMyInbox,
-  useChannelLatestMessageIds,
-} from '@data/messaging/channels'
+import { useMyInbox, useChannelLatestActivity } from '@data/messaging/channels'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
-import { useMyPollNotifications } from '@data/messaging/poll-comments'
-import { useMyTokenNotifications } from '@data/messaging/token-comments'
+import { useMyPollNotificationActivity } from '@data/messaging/poll-comments'
+import { useMyTokenNotificationActivity } from '@data/messaging/token-comments'
+import { toLatestIds } from '@data/messaging/notification-activity'
 import { useUsers, useObjktsByIds, useStorage, usePolls } from '@data/swr'
 import { walletPreview } from '@utils/string'
-import AccessBadge from '@components/channels/AccessBadge'
+import { ActivityBadge, ActivityFilters } from '@components/activity'
 import CreateChannelModal from '@components/channels/CreateChannelModal'
 import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from './index.module.scss'
 
-function TokenRow({ tokenId, token, unread }) {
-  const cover = token?.display_uri
-    ? HashToURL(token.display_uri, 'CDN', { size: 'small' })
-    : token?.thumbnail_uri
-    ? HashToURL(token.thumbnail_uri, 'CDN', { size: 'small' })
-    : null
+const NOTIFICATION_FILTERS = [
+  { key: 'dm', label: 'DMs' },
+  { key: 'channel', label: 'Channels' },
+  { key: 'poll', label: 'Polls' },
+  { key: 'token', label: 'Artwork' },
+]
+
+const KIND_META = {
+  dm: { label: 'DM', color: 'channel', sub: 'Direct message' },
+  channel: { label: 'Channel', color: 'channel', sub: 'New message' },
+  poll: { label: 'Poll', color: 'poll', sub: 'Comment on your poll' },
+  token: { label: 'Artwork', color: 'token', sub: 'Comment on your artwork' },
+}
+
+/** One notification, whatever it came from. */
+function NotificationRow({ item }) {
+  const meta = KIND_META[item.kind]
 
   return (
     <Link
-      to={`/objkt/${tokenId}/comments`}
-      className={`${styles.row} ${unread ? '' : styles.read}`}
+      to={item.to}
+      className={`${styles.row} ${item.unread ? styles.unread : styles.read}`}
     >
-      {unread && <span className={styles.unreadDot} />}
-      {cover ? (
-        <img src={cover} alt="" className={styles.thumb} loading="lazy" />
-      ) : (
-        <div className={styles.thumbFallback}>#{tokenId}</div>
-      )}
+      <span className={styles.dotCell}>
+        {item.unread && <span className={styles.unreadDot} />}
+      </span>
+      <ActivityBadge color={meta.color} label={meta.label} />
+      {item.thumb}
       <div className={styles.rowBody}>
-        <span className={styles.rowTitle}>
-          {token?.name || `OBJKT #${tokenId}`}
-        </span>
-        <span className={styles.rowSub}>Comment on your artwork</span>
+        <span className={styles.rowTitle}>{item.title}</span>
+        <span className={styles.rowSub}>{meta.sub}</span>
       </div>
+      <span className={styles.rowTime}>
+        {item.timestamp ? getTimeAgo(item.timestamp) : ''}
+      </span>
     </Link>
   )
 }
 
 /**
- * Aggregated notifications center. Lists every notification across DMs/channels,
- * poll comments, and token comments.
- * Both read and unread.
+ * Aggregated notifications centre: one list, newest first, across DMs,
+ * channels, poll comments and comments on your artwork.
+ *
+ * The sources are separate contracts whose ids cannot be compared with one
+ * another, so rows are ordered by the timestamp each scan already carries.
  */
 export default function NotificationsCenter() {
   const address = useUserStore((st) => st.address)
@@ -68,16 +81,30 @@ export default function NotificationsCenter() {
 
   const [showCreateChannel, setShowCreateChannel] = useState(false)
   const [showCreateDm, setShowCreateDm] = useState(false)
+  const [unreadOnly, setUnreadOnly] = useState(false)
+  const kind = useActivityFilter()
 
   // --- Channels / DMs ---
   const { data: inbox, isLoading: loadingInbox } = useMyInbox(notifAddress)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
-  const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
+  const { data: channelActivity } = useChannelLatestActivity(
+    inboxIds.length > 0
+  )
+  const latestIds = useMemo(() => {
+    if (!channelActivity) return undefined
+    const wanted = new Set(inboxIds)
+    return Object.fromEntries(
+      Object.entries(channelActivity)
+        .filter(([cid]) => wanted.has(cid))
+        .map(([cid, v]) => [cid, v.messageId])
+    )
+  }, [channelActivity, inboxIds])
   const { unread: unreadChannels } = useUnreadChannels(notifAddress, latestIds)
 
   // --- Poll comments ---
-  const { data: pollMap } = useMyPollNotifications(notifAddress)
-  const { unread: unreadPolls, total: unreadPollCount } = useUnreadItems(
+  const { data: pollActivity } = useMyPollNotificationActivity(notifAddress)
+  const pollMap = useMemo(() => toLatestIds(pollActivity), [pollActivity])
+  const { unread: unreadPolls } = useUnreadItems(
     notifAddress,
     'poll-comments',
     pollMap
@@ -86,8 +113,9 @@ export default function NotificationsCenter() {
   const [polls] = usePolls(pollsStorage)
 
   // --- Token comments ---
-  const { data: tokenMap } = useMyTokenNotifications(notifAddress)
-  const { unread: unreadTokens, total: unreadTokenCount } = useUnreadItems(
+  const { data: tokenActivity } = useMyTokenNotificationActivity(notifAddress)
+  const tokenMap = useMemo(() => toLatestIds(tokenActivity), [tokenActivity])
+  const { unread: unreadTokens } = useUnreadItems(
     notifAddress,
     'token-comments',
     tokenMap
@@ -106,84 +134,120 @@ export default function NotificationsCenter() {
   }, [inbox, address])
   const [users] = useUsers(peerAddresses)
 
-  // DMs, most-recent first, with an unread flag.
-  const dmItems = useMemo(() => {
-    return (inbox ?? [])
-      .filter((ch) => ch.metadata.kind === 'dm')
-      .map((ch) => {
-        const peer = (ch.metadata.participants ?? []).find((a) => a !== address)
-        const title =
-          users?.[peer]?.alias ||
-          (peer ? walletPreview(peer) : ch.metadata.name || 'DM')
-        return {
-          key: `dm:${ch.id}`,
-          to: `/inbox/channels/${ch.id}`,
-          latest: latestIds?.[ch.id] ?? 0,
-          unread: Boolean(unreadChannels[ch.id]),
-          peer,
-          peerLogo: users?.[peer]?.logo,
-          title,
-        }
-      })
-      .sort((a, b) => b.latest - a.latest)
-  }, [inbox, unreadChannels, latestIds, users, address])
-
-  // Channels I'm in, most-recent first, with an unread flag.
-  const channelItems = useMemo(() => {
-    return (inbox ?? [])
-      .filter((ch) => ch.metadata.kind !== 'dm')
-      .map((ch) => ({
-        key: `channel:${ch.id}`,
-        to: `/inbox/channels/${ch.id}`,
-        latest: latestIds?.[ch.id] ?? 0,
-        unread: Boolean(unreadChannels[ch.id]),
-        channelImage: ch.metadata?.image,
-        accessMode: ch.accessMode,
-        title: ch.metadata.name || `Channel #${ch.id}`,
-      }))
-      .sort((a, b) => b.latest - a.latest)
-  }, [inbox, unreadChannels, latestIds])
-
-  const unreadDmCount = useMemo(
-    () => dmItems.filter((i) => i.unread).length,
-    [dmItems]
-  )
-  const unreadChannelCount = useMemo(
-    () => channelItems.filter((i) => i.unread).length,
-    [channelItems]
-  )
-
-  // All polls / tokens with activity, most-recent first (maxId is monotonic).
-  const pollEntries = useMemo(() => {
-    return Object.entries(pollMap ?? {})
-      .sort((a, b) => b[1] - a[1])
-      .map(([pollId]) => ({ pollId, unread: Boolean(unreadPolls[pollId]) }))
-  }, [pollMap, unreadPolls])
-
-  const tokenEntries = useMemo(() => {
-    return Object.entries(tokenMap ?? {})
-      .sort((a, b) => b[1] - a[1])
-      .map(([tokenKey]) => ({
-        tokenKey,
-        tokenId: tokenKey.slice(tokenKey.indexOf(':') + 1),
-        unread: Boolean(unreadTokens[tokenKey]),
-      }))
-  }, [tokenMap, unreadTokens])
-
-  // Resolve every token's info in one batched query (avoids N+1).
   const tokenIds = useMemo(
-    () => tokenEntries.map((t) => t.tokenId),
-    [tokenEntries]
+    () =>
+      Object.keys(tokenActivity ?? {}).map((k) => k.slice(k.indexOf(':') + 1)),
+    [tokenActivity]
   )
   const tokens = useObjktsByIds(tokenIds)
 
-  const itemCount =
-    dmItems.length +
-    channelItems.length +
-    pollEntries.length +
-    tokenEntries.length
-  const unreadCount =
-    unreadDmCount + unreadChannelCount + unreadPollCount + unreadTokenCount
+  // Every source, flattened into rows that can be sorted against each other.
+  const items = useMemo(() => {
+    const rows = []
+
+    for (const ch of inbox ?? []) {
+      const activity = channelActivity?.[ch.id]
+      const isDm = ch.metadata.kind === 'dm'
+      const peer = isDm
+        ? (ch.metadata.participants ?? []).find((a) => a !== address)
+        : undefined
+
+      rows.push({
+        key: `${isDm ? 'dm' : 'channel'}:${ch.id}`,
+        kind: isDm ? 'dm' : 'channel',
+        to: `/inbox/channels/${ch.id}`,
+        timestamp: activity?.timestamp ?? null,
+        unread: Boolean(unreadChannels[ch.id]),
+        title: isDm
+          ? users?.[peer]?.alias ||
+            (peer ? walletPreview(peer) : ch.metadata.name || 'DM')
+          : ch.metadata.name || `Channel #${ch.id}`,
+        thumb: isDm ? (
+          <Identicon
+            address={peer}
+            logo={users?.[peer]?.logo}
+            className={styles.thumb}
+          />
+        ) : ch.metadata?.image ? (
+          <img
+            src={msgIpfsToUrl(ch.metadata.image)}
+            alt=""
+            className={styles.thumb}
+          />
+        ) : (
+          <div className={styles.thumbFallback}>#</div>
+        ),
+      })
+    }
+
+    for (const [pollId, activity] of Object.entries(pollActivity ?? {})) {
+      const question = polls?.[pollId]?.question
+      rows.push({
+        key: `poll:${pollId}`,
+        kind: 'poll',
+        to: `/poll/${pollId}`,
+        timestamp: activity.timestamp,
+        unread: Boolean(unreadPolls[pollId]),
+        title: question ? bytesToString(question) : `Poll #${pollId}`,
+        thumb: <div className={styles.thumbFallback}>#{pollId}</div>,
+      })
+    }
+
+    for (const [tokenKey, activity] of Object.entries(tokenActivity ?? {})) {
+      const tokenId = tokenKey.slice(tokenKey.indexOf(':') + 1)
+      const token = tokens[tokenId]
+      const cover = token?.display_uri
+        ? HashToURL(token.display_uri, 'CDN', { size: 'small' })
+        : token?.thumbnail_uri
+        ? HashToURL(token.thumbnail_uri, 'CDN', { size: 'small' })
+        : null
+
+      rows.push({
+        key: `token:${tokenKey}`,
+        kind: 'token',
+        to: `/objkt/${tokenId}/comments`,
+        timestamp: activity.timestamp,
+        unread: Boolean(unreadTokens[tokenKey]),
+        title: token?.name || `OBJKT #${tokenId}`,
+        thumb: cover ? (
+          <img src={cover} alt="" className={styles.thumb} loading="lazy" />
+        ) : (
+          <div className={styles.thumbFallback}>#{tokenId}</div>
+        ),
+      })
+    }
+
+    // Anything without a timestamp yet sorts last rather than jumping to the
+    // top, so a slow source cannot push fresh rows down the page.
+    return rows.sort((a, b) => {
+      if (!a.timestamp) return 1
+      if (!b.timestamp) return -1
+      return new Date(b.timestamp) - new Date(a.timestamp)
+    })
+  }, [
+    inbox,
+    channelActivity,
+    unreadChannels,
+    users,
+    address,
+    pollActivity,
+    unreadPolls,
+    polls,
+    tokenActivity,
+    unreadTokens,
+    tokens,
+  ])
+
+  const unreadCount = useMemo(
+    () => items.filter((i) => i.unread).length,
+    [items]
+  )
+
+  const visible = useMemo(
+    () =>
+      items.filter((i) => kind.matches(i.kind) && (!unreadOnly || i.unread)),
+    [items, kind, unreadOnly]
+  )
 
   // Mark every notification as read
   const markRead = useChatReadStore((st) => st.markRead)
@@ -222,35 +286,43 @@ export default function NotificationsCenter() {
             <span className={styles.totalBadge}>{unreadCount}</span>
           )}
           <div className={styles.headerActions}>
-            {messageNotifications && unreadCount > 0 && (
-              <Button shadow_box onClick={handleMarkAllRead}>
-                Mark all as read
-              </Button>
-            )}
-            <Button shadow_box onClick={() => setShowCreateChannel(true)}>
-              Create Channel
+            <Button
+              shadow_box
+              onClick={handleMarkAllRead}
+              disabled={unreadCount === 0}
+            >
+              Mark all as read
             </Button>
-            <Button shadow_box onClick={() => setShowCreateDm(true)}>
-              New DM
-            </Button>
-            <Link to="/inbox/channels" className={styles.browseLink}>
-              Browse all channels
-            </Link>
           </div>
         </div>
 
-        <p className={styles.infoNote}>
-          Read/unread status is stored on this device only. If you open Teia in
-          another browser or on another computer, items may appear unread again
-          — your messages and comments themselves are safe and stored on-chain.
-        </p>
+        <div className={styles.secondaryActions}>
+          <button type="button" onClick={() => setShowCreateChannel(true)}>
+            Create channel
+          </button>
+          <button type="button" onClick={() => setShowCreateDm(true)}>
+            New DM
+          </button>
+          <Link to="/inbox/channels">Browse all channels</Link>
+        </div>
 
-        <p className={styles.infoNote}>
-          Messages, direct messages and comments are currently stored
-          unencrypted on the Tezos blockchain. That means their contents are
-          publicly readable on-chain by anyone. Treat them as public and
-          don&apos;t share anything private or sensitive.
-        </p>
+        <details className={styles.infoNote}>
+          <summary>
+            Read status is kept on this device, and messages are public on-chain
+          </summary>
+          <p>
+            Read/unread status is stored on this device only. If you open Teia
+            in another browser or on another computer, items may appear unread
+            again — your messages and comments themselves are safe and stored
+            on-chain.
+          </p>
+          <p>
+            Messages, direct messages and comments are currently stored
+            unencrypted on the Tezos blockchain. That means their contents are
+            publicly readable on-chain by anyone. Treat them as public and
+            don&apos;t share anything private or sensitive.
+          </p>
+        </details>
 
         {!messageNotifications && (
           <div className={styles.empty}>
@@ -258,134 +330,44 @@ export default function NotificationsCenter() {
           </div>
         )}
 
-        {messageNotifications && loadingInbox && itemCount === 0 && <Loading />}
+        {messageNotifications && (
+          <>
+            <div className={styles.controls}>
+              <ActivityFilters
+                active={kind.active}
+                onToggle={kind.toggle}
+                filters={NOTIFICATION_FILTERS}
+              />
+              <button
+                type="button"
+                className={`${styles.unreadToggle} ${
+                  unreadOnly ? styles.unreadToggleActive : ''
+                }`}
+                onClick={() => setUnreadOnly((on) => !on)}
+              >
+                Unread only
+              </button>
+            </div>
 
-        {messageNotifications && itemCount === 0 && !loadingInbox && (
-          <div className={styles.empty}>You have no notifications yet.</div>
+            {loadingInbox && items.length === 0 && <Loading />}
+
+            {items.length === 0 && !loadingInbox && (
+              <div className={styles.empty}>You have no notifications yet.</div>
+            )}
+
+            {items.length > 0 && visible.length === 0 && (
+              <div className={styles.empty}>
+                Nothing here with those filters.
+              </div>
+            )}
+
+            <div className={styles.list}>
+              {visible.map((item) => (
+                <NotificationRow key={item.key} item={item} />
+              ))}
+            </div>
+          </>
         )}
-
-        <div className={styles.sections}>
-          {messageNotifications && dmItems.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                Direct Messages
-                {unreadDmCount > 0 && ` · ${unreadDmCount} new`}
-              </h3>
-              <div className={styles.list}>
-                {dmItems.map((item) => (
-                  <Link
-                    key={item.key}
-                    to={item.to}
-                    className={`${styles.row} ${
-                      item.unread ? '' : styles.read
-                    }`}
-                  >
-                    {item.unread && <span className={styles.unreadDot} />}
-                    <Identicon
-                      address={item.peer}
-                      logo={item.peerLogo}
-                      className={styles.thumb}
-                    />
-                    <div className={styles.rowBody}>
-                      <span className={styles.rowTitle}>{item.title}</span>
-                      <span className={styles.rowSub}>Direct message</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {messageNotifications && channelItems.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                Channels
-                {unreadChannelCount > 0 && ` · ${unreadChannelCount} new`}
-              </h3>
-              <div className={styles.list}>
-                {channelItems.map((item) => (
-                  <Link
-                    key={item.key}
-                    to={item.to}
-                    className={`${styles.row} ${
-                      item.unread ? '' : styles.read
-                    }`}
-                  >
-                    {item.unread && <span className={styles.unreadDot} />}
-                    {item.channelImage ? (
-                      <img
-                        src={msgIpfsToUrl(item.channelImage)}
-                        alt=""
-                        className={styles.thumb}
-                      />
-                    ) : (
-                      <div className={styles.thumbFallback}>#</div>
-                    )}
-                    <div className={styles.rowBody}>
-                      <span className={styles.rowTitle}>{item.title}</span>
-                      <div className={styles.rowMeta}>
-                        <AccessBadge mode={item.accessMode} />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {messageNotifications && pollEntries.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                Poll comments
-                {unreadPollCount > 0 && ` · ${unreadPollCount} new`}
-              </h3>
-              <div className={styles.list}>
-                {pollEntries.map(({ pollId, unread }) => {
-                  const question = polls?.[pollId]?.question
-                  return (
-                    <Link
-                      key={`poll:${pollId}`}
-                      to={`/poll/${pollId}`}
-                      className={`${styles.row} ${unread ? '' : styles.read}`}
-                    >
-                      {unread && <span className={styles.unreadDot} />}
-                      <div className={styles.thumbFallback}>#{pollId}</div>
-                      <div className={styles.rowBody}>
-                        <span className={styles.rowTitle}>
-                          {question
-                            ? bytesToString(question)
-                            : `Poll #${pollId}`}
-                        </span>
-                        <span className={styles.rowSub}>
-                          Comment on your poll
-                        </span>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            </section>
-          )}
-
-          {messageNotifications && tokenEntries.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                Artwork comments
-                {unreadTokenCount > 0 && ` · ${unreadTokenCount} new`}
-              </h3>
-              <div className={styles.list}>
-                {tokenEntries.map(({ tokenKey, tokenId, unread }) => (
-                  <TokenRow
-                    key={`token:${tokenKey}`}
-                    tokenId={tokenId}
-                    token={tokens[tokenId]}
-                    unread={unread}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
       </div>
 
       <CreateChannelModal

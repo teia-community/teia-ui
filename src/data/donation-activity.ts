@@ -63,27 +63,35 @@ interface DonationPage {
   full: boolean
 }
 
+/**
+ * The indexer query that selects donations to one contract, shared so that
+ * anything else asking "what counts as a donation" asks the same question.
+ *
+ * Marketplace fees reach the treasury as internal operations, and they
+ * outnumber donations roughly 100 to 1. Asking the indexer for top-level
+ * operations only is the same cut as dropping KT1 senders below -- an
+ * internal transfer is always sent by a contract -- but it is made before the
+ * page is filled, so a page of 50 is 50 candidate donations rather than 50 fee
+ * transfers. The payout wallets post daily, so they go too.
+ */
+export function donationQuery(contract: string): URL {
+  const url = new URL(`${TZKT_API}/v1/operations/transactions`)
+  url.searchParams.set('target', contract)
+  url.searchParams.set('amount.gt', '0')
+  url.searchParams.set('status', 'applied')
+  url.searchParams.set('initiator.null', 'true')
+  if (DONATION_EXCLUDED_ADDRESSES.length > 0) {
+    url.searchParams.set('sender.ni', DONATION_EXCLUDED_ADDRESSES.join(','))
+  }
+  return url
+}
+
 async function fetchDonationPage(
   contract: string,
   offset: number,
   sort: 'asc' | 'desc'
 ): Promise<DonationPage> {
-  const url = new URL(`${TZKT_API}/v1/operations/transactions`)
-  url.searchParams.set('target', contract)
-  url.searchParams.set('amount.gt', '0')
-  url.searchParams.set('status', 'applied')
-  // Marketplace fees reach the treasury as internal operations, and they
-  // outnumber donations roughly 100 to 1. Asking the indexer for top-level
-  // operations only is the same cut as dropping KT1 senders below -- an
-  // internal transfer is always sent by a contract -- but it is made before
-  // the page is filled, so a page of 50 is 50 candidate donations rather
-  // than 50 fee transfers.
-  url.searchParams.set('initiator.null', 'true')
-  // The payout wallets post daily, so excluding them here too keeps a page
-  // of 50 close to 50 donations.
-  if (DONATION_EXCLUDED_ADDRESSES.length > 0) {
-    url.searchParams.set('sender.ni', DONATION_EXCLUDED_ADDRESSES.join(','))
-  }
+  const url = donationQuery(contract)
   url.searchParams.set(`sort.${sort}`, 'id')
   url.searchParams.set('limit', String(PAGE_SIZE))
   url.searchParams.set('select', 'id,hash,timestamp,amount,sender')

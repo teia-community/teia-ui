@@ -121,6 +121,23 @@ export type FeedType = (typeof FEED_LIST)[number]
 
 export const DEFAULT_START_FEED: FeedType = 'New OBJKTs'
 
+// The tabs on /activity, in the order they are shown. Shared so the settings
+// page offers a notification toggle for exactly the feeds that exist.
+export const ACTIVITY_FEEDS = [
+  { key: 'social', label: 'Social' },
+  { key: 'trades', label: 'Trades' },
+  { key: 'text', label: 'Text' },
+  { key: 'curations', label: 'Curations' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'copyright', label: 'Copyright' },
+  { key: 'wiki', label: 'Wiki' },
+  { key: 'polls', label: 'Polls' },
+  { key: 'donations', label: 'Donations' },
+  { key: 'fountain', label: 'Fountain' },
+] as const
+
+export type ActivityFeedKey = (typeof ACTIVITY_FEEDS)[number]['key']
+
 //- Mint stuff
 
 export const ALLOWED_COVER_MIMETYPES = [

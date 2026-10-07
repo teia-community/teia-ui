@@ -1,0 +1,17 @@
+.explainer {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+}
+
+.bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.count {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+}

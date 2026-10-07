@@ -52,42 +52,77 @@
 }
 
 .infoNote {
-  margin: 0 0 2em;
-  padding: 0.85em 1em;
+  margin: 0 0 1.5em;
+  padding: 0.6em 1em;
   border-radius: 8px;
-  background-color: var(--gray-05);
+  background-color: var(--gray-5);
   border: 1px solid var(--gray-10);
   font-size: $font-small;
   line-height: 1.45;
   opacity: 0.85;
-}
 
-.sections {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5em 2em;
-  align-items: start;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
+  summary {
+    cursor: pointer;
   }
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+  p {
+    margin: 0.8em 0 0;
   }
 }
 
-.section {
-  margin-bottom: 0;
-  min-width: 0;
-}
-
-.sectionTitle {
-  margin: 0 0 0.6em;
+.secondaryActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+  margin: 0 0 1.2em;
   font-size: $font-small;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.6;
+
+  button,
+  a {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  margin-bottom: 1em;
+}
+
+.unreadToggle {
+  appearance: none;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--gray-10);
+  border-radius: 999px;
+  padding: 0.3em 0.9em;
+  color: inherit;
+  font-size: $font-small;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.unreadToggleActive {
+  opacity: 1;
+  border-color: currentColor;
+  font-weight: bold;
 }
 
 .list {
@@ -99,11 +134,10 @@
 }
 
 .row {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 0.85em;
-  padding: 0.85em 1em 0.85em 1.75em;
+  padding: 0.75em 1em;
   text-decoration: none;
   color: inherit;
   transition: background-color 0.15s ease;
@@ -113,23 +147,38 @@
   }
 
   &:hover {
-    background-color: var(--gray-05);
+    background-color: var(--gray-5);
   }
+}
+
+.dotCell {
+  flex: 0 0 8px;
+  display: flex;
+  align-items: center;
 }
 
 .read {
-  opacity: 0.55;
-
   .rowTitle {
     font-weight: normal;
+    opacity: 0.7;
   }
 }
 
+.unread {
+  .rowTitle {
+    font-weight: bold;
+  }
+}
+
+.rowTime {
+  margin-left: auto;
+  padding-left: 0.75em;
+  font-size: $font-small;
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
 .unreadDot {
-  position: absolute;
-  left: 0.7em;
-  top: 50%;
-  transform: translateY(-50%);
   width: 8px;
   height: 8px;
   border-radius: 50%;
