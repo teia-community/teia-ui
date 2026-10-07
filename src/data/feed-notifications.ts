@@ -4,6 +4,11 @@
 // single newest row of each -- enough to compare against what they have seen.
 // Nothing is switched on by default, so a viewer who never opens the settings
 // costs no requests at all.
+//
+// Your own activity never counts. Listing a work or posting a comment is not
+// news to the person who did it, so the viewer's address is excluded in the
+// query rather than after the fact -- the newest row has to be somebody
+// else's, or the feed has nothing to report.
 
 import useSWR from 'swr'
 import { request, gql } from 'graphql-request'
@@ -31,21 +36,55 @@ const TZKT_API = import.meta.env.VITE_TZKT_API
 const GRAPHQL_API = import.meta.env.VITE_TEIA_GRAPHQL_API
 
 /** Newest event timestamp from the token indexer, for a feed's own filter. */
+// Enough recent rows to step over a run of the viewer's own activity. Asking
+// the indexer to exclude them instead turns a 180ms query into one that does
+// not come back, because the four address columns cannot all be indexed for a
+// negated match -- so the exclusion happens here, over a handful of rows.
+const NEWEST_EVENT_SCAN = 10
+
 const NEWEST_EVENT_QUERY = gql`
-  query NewestActivity($where: events_bool_exp!) {
-    events(where: $where, order_by: [{ level: desc }, { opid: desc }], limit: 1) {
+  query NewestActivity($where: events_bool_exp!, $limit: Int!) {
+    events(
+      where: $where
+      order_by: [{ level: desc }, { opid: desc }]
+      limit: $limit
+    ) {
       timestamp
+      seller_address
+      buyer_address
+      from_address
+      to_address
     }
   }
 `
 
+interface IndexedEvent {
+  timestamp: string
+  seller_address: string | null
+  buyer_address: string | null
+  from_address: string | null
+  to_address: string | null
+}
+
+/** Every role a viewer can hold in a trade event. */
+function isMine(event: IndexedEvent, address: string): boolean {
+  return (
+    event.seller_address === address ||
+    event.buyer_address === address ||
+    event.from_address === address ||
+    event.to_address === address
+  )
+}
+
 async function newestIndexedEvent(
-  tokenWhere: Record<string, unknown>
+  tokenWhere: Record<string, unknown>,
+  viewer?: string
 ): Promise<string | null> {
-  const data = await request<{ events: { timestamp: string }[] }>(
+  const data = await request<{ events: IndexedEvent[] }>(
     GRAPHQL_API,
     NEWEST_EVENT_QUERY,
     {
+      limit: viewer ? NEWEST_EVENT_SCAN : 1,
       where: {
         token: { metadata_status: { _eq: 'processed' }, ...tokenWhere },
         fa2_address: { _eq: HEN_CONTRACT_FA2 },
@@ -53,16 +92,33 @@ async function newestIndexedEvent(
       },
     }
   )
-  return data.events[0]?.timestamp ?? null
+
+  // If every recent row is the viewer's own, report nothing rather than
+  // guessing: a quiet dot is better than one that fires at your own work.
+  const newest = viewer
+    ? data.events.find((event) => !isMine(event, viewer))
+    : data.events[0]
+  return newest?.timestamp ?? null
 }
 
-/** Newest applied call to one or more contracts. */
-async function newestCall(targets: string | string[]): Promise<string | null> {
+/** Newest applied call to one or more contracts, ignoring the viewer's own. */
+async function newestCall(
+  targets: string | string[],
+  viewer?: string
+): Promise<string | null> {
   const url = new URL(`${TZKT_API}/v1/operations/transactions`)
   if (Array.isArray(targets)) {
     url.searchParams.set('target.in', targets.join(','))
   } else {
     url.searchParams.set('target', targets)
+  }
+  if (viewer) {
+    // A call the viewer made reaches the contract either directly or through
+    // another contract, so both the signer and the originator have to be
+    // ruled out. `initiator.ne` keeps the direct calls, whose initiator is
+    // null, so the two together drop only what the viewer set in motion.
+    url.searchParams.set('sender.ne', viewer)
+    url.searchParams.set('initiator.ne', viewer)
   }
   url.searchParams.set('status', 'applied')
   url.searchParams.set('sort.desc', 'id')
@@ -75,8 +131,13 @@ async function newestCall(targets: string | string[]): Promise<string | null> {
 }
 
 /** Newest donation to one contract, under the rules the feed itself uses. */
-async function newestDonation(contract: string): Promise<string | null> {
+async function newestDonation(
+  contract: string,
+  viewer?: string
+): Promise<string | null> {
   const url = donationQuery(contract)
+  // Donations are top-level only, so there is no initiator to rule out.
+  if (viewer) url.searchParams.set('sender.ne', viewer)
   url.searchParams.set('sort.desc', 'id')
   url.searchParams.set('limit', '1')
   url.searchParams.set('select', 'timestamp')
@@ -95,23 +156,28 @@ async function newestDonation(contract: string): Promise<string | null> {
  * because fee transfers would otherwise mark the feed new every few minutes,
  * so those reuse the feed's own query.
  */
-const PROBES: Record<ActivityFeedKey, () => Promise<string | null>> = {
-  social: () =>
-    newestCall([
-      CHANNELS_V2_CONTRACT,
-      POLL_COMMENTS_CONTRACT,
-      TOKEN_COMMENTS_CONTRACT,
-    ]),
-  trades: () => newestIndexedEvent({}),
-  text: () =>
-    newestIndexedEvent({ mime_type: { _in: ['text/plain', 'text/markdown'] } }),
-  curations: () => newestCall(CURATIONS_CONTRACT),
-  calendar: () => newestCall(CALENDAR_CONTRACT),
-  copyright: () => newestCall(COPYRIGHT_CONTRACT),
-  wiki: () => newestCall(WIKI_CONTRACT),
-  polls: () => newestCall(POLLS_CONTRACT),
-  donations: () => newestDonation(DAO_TREASURY_CONTRACT),
-  fountain: () => newestDonation(TEIA_FOUNTAIN_CONTRACT),
+const PROBES: Record<
+  ActivityFeedKey,
+  (viewer?: string) => Promise<string | null>
+> = {
+  social: (viewer) =>
+    newestCall(
+      [CHANNELS_V2_CONTRACT, POLL_COMMENTS_CONTRACT, TOKEN_COMMENTS_CONTRACT],
+      viewer
+    ),
+  trades: (viewer) => newestIndexedEvent({}, viewer),
+  text: (viewer) =>
+    newestIndexedEvent(
+      { mime_type: { _in: ['text/plain', 'text/markdown'] } },
+      viewer
+    ),
+  curations: (viewer) => newestCall(CURATIONS_CONTRACT, viewer),
+  calendar: (viewer) => newestCall(CALENDAR_CONTRACT, viewer),
+  copyright: (viewer) => newestCall(COPYRIGHT_CONTRACT, viewer),
+  wiki: (viewer) => newestCall(WIKI_CONTRACT, viewer),
+  polls: (viewer) => newestCall(POLLS_CONTRACT, viewer),
+  donations: (viewer) => newestDonation(DAO_TREASURY_CONTRACT, viewer),
+  fountain: (viewer) => newestDonation(TEIA_FOUNTAIN_CONTRACT, viewer),
 }
 
 export const ACTIVITY_FEED_KEYS = ACTIVITY_FEEDS.map((f) => f.key)
@@ -123,7 +189,7 @@ export const ACTIVITY_FEED_KEYS = ACTIVITY_FEEDS.map((f) => f.key)
  * worth a standing cost, and the dot is there to catch them up next time they
  * arrive rather than to interrupt them.
  */
-export function useFeedNotifications(): {
+export function useFeedNotifications(viewerAddress?: string): {
   unreadFeeds: ActivityFeedKey[]
   total: number
 } {
@@ -133,12 +199,14 @@ export function useFeedNotifications(): {
   const enabled = ACTIVITY_FEED_KEYS.filter((key) => feedNotifications[key])
 
   const { data } = useSWR(
-    enabled.length > 0 ? ['feed-notifications', enabled.join(',')] : null,
+    enabled.length > 0
+      ? ['feed-notifications', enabled.join(','), viewerAddress ?? 'anon']
+      : null,
     async () => {
       const results = await Promise.all(
         enabled.map(async (key) => {
           try {
-            return [key, await PROBES[key]()] as const
+            return [key, await PROBES[key](viewerAddress)] as const
           } catch {
             // A feed that cannot be reached simply has nothing new to say.
             return [key, null] as const

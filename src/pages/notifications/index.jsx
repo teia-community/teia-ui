@@ -87,8 +87,10 @@ export default function NotificationsCenter() {
   // --- Channels / DMs ---
   const { data: inbox, isLoading: loadingInbox } = useMyInbox(notifAddress)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
+  // Scoped to the viewer: a channel you posted in is not news to you.
   const { data: channelActivity } = useChannelLatestActivity(
-    inboxIds.length > 0
+    inboxIds.length > 0,
+    notifAddress
   )
   const latestIds = useMemo(() => {
     if (!channelActivity) return undefined

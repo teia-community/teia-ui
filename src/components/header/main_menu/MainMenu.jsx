@@ -87,7 +87,8 @@ export const MainMenu = () => {
 
   const { data: inbox } = useMyInbox(address)
   const inboxIds = useMemo(() => (inbox ?? []).map((c) => c.id), [inbox])
-  const { data: latestIds } = useChannelLatestMessageIds(inboxIds)
+  // Scoped to the viewer so your own message does not light your own badge.
+  const { data: latestIds } = useChannelLatestMessageIds(inboxIds, address)
   const { total: channelUnread } = useUnreadChannels(notifAddress, latestIds)
 
   const { data: pollMap } = useMyPollNotifications(notifAddress)
@@ -106,7 +107,7 @@ export const MainMenu = () => {
   // Activity feeds are addressed to nobody, so watching one needs no wallet.
   // Its dot rides on Activity rather than Notifications, which only appears
   // once signed in and would hide the dot from exactly those viewers.
-  const { total: feedUnread } = useFeedNotifications()
+  const { total: feedUnread } = useFeedNotifications(address)
   const showActivityBadge = feedUnread > 0
 
   // Unread is surfaced in one place only: the aggregate badge on the
