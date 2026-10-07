@@ -5,7 +5,12 @@
  * (fa2_address, token_id). Each comment carries both, so events are
  * filtered with both keys and the SWR cache key includes both.
  */
+import { useMemo } from 'react'
 import useSWR from 'swr'
+import {
+  toLatestIds,
+  type NotificationActivity,
+} from './notification-activity'
 import { bytesToString } from '@taquito/utils'
 import { TOKEN_COMMENTS_CONTRACT } from '@constants'
 import { fetchAllEvents, fetchBigMapValue, fetchBigMapValuesBulk } from './api'
@@ -326,8 +331,10 @@ export function useCommentHistory(
  * tokens the viewer created (excluding their own comments). Compared against
  * read state to compute unread token comments in the notifications center.
  */
-export function useMyTokenNotifications(viewerAddress: string | undefined) {
-  return useSWR<Record<string, number>>(
+export function useMyTokenNotificationActivity(
+  viewerAddress: string | undefined
+) {
+  return useSWR<Record<string, NotificationActivity>>(
     viewerAddress && CONTRACT
       ? `msg:token-notify-map:${CONTRACT}:${viewerAddress}`
       : null,
@@ -364,7 +371,7 @@ export function useMyTokenNotifications(viewerAddress: string | undefined) {
         myTokenKeys.add(`${t.fa2_address}:${t.token_id}`)
       }
 
-      const maxByToken: Record<string, number> = {}
+      const maxByToken: Record<string, NotificationActivity> = {}
       for (const e of posted) {
         if (e.payload.sender === viewerAddress) continue
         const cid = parseInt(e.payload.comment_id, 10)
@@ -372,14 +379,30 @@ export function useMyTokenNotifications(viewerAddress: string | undefined) {
         const isOnMyToken = myTokenKeys.has(tokenKey)
         const isReplyToMe =
           e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
-        if ((isOnMyToken || isReplyToMe) && cid > (maxByToken[tokenKey] ?? 0)) {
-          maxByToken[tokenKey] = cid
+        if (
+          (isOnMyToken || isReplyToMe) &&
+          cid > (maxByToken[tokenKey]?.id ?? 0)
+        ) {
+          maxByToken[tokenKey] = {
+            id: cid,
+            timestamp: e.payload.timestamp ?? e.timestamp,
+          }
         }
       }
       return maxByToken
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
+}
+
+/**
+ * Just the comment ids, for the unread comparison. Shares a cache key with
+ * useMyTokenNotificationActivity, so asking for both costs one scan.
+ */
+export function useMyTokenNotifications(viewerAddress: string | undefined) {
+  const swr = useMyTokenNotificationActivity(viewerAddress)
+  const data = useMemo(() => toLatestIds(swr.data), [swr.data])
+  return { ...swr, data }
 }
 
 /**

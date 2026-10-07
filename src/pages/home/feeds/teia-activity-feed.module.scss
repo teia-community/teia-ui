@@ -17,6 +17,16 @@
   font-weight: 700;
 }
 
+.notice {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+
+  a {
+    text-decoration: underline;
+  }
+}
+
 .view_toggle {
   display: flex;
   flex-wrap: wrap;

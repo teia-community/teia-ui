@@ -2,7 +2,12 @@
  * SWR hooks for poll_comments data via TzKT events and bigmap reads.
  *
  */
+import { useMemo } from 'react'
 import useSWR from 'swr'
+import {
+  toLatestIds,
+  type NotificationActivity,
+} from './notification-activity'
 import { bytesToString } from '@taquito/utils'
 import { POLL_COMMENTS_CONTRACT, POLLS_CONTRACT } from '@constants'
 import {
@@ -220,8 +225,10 @@ export function useAllPollCommentCounts() {
  * comments. Compared against read state to compute unread poll comments in
  * the notifications center.
  */
-export function useMyPollNotifications(viewerAddress: string | undefined) {
-  return useSWR<Record<string, number>>(
+export function useMyPollNotificationActivity(
+  viewerAddress: string | undefined
+) {
+  return useSWR<Record<string, NotificationActivity>>(
     viewerAddress && CONTRACT
       ? `msg:poll-notify-map:${CONTRACT}:${viewerAddress}`
       : null,
@@ -261,7 +268,7 @@ export function useMyPollNotifications(viewerAddress: string | undefined) {
         pollKeys.map((k) => (typeof k === 'object' ? k.key : String(k)))
       )
 
-      const maxByPoll: Record<string, number> = {}
+      const maxByPoll: Record<string, NotificationActivity> = {}
       for (const e of posted) {
         if (e.payload.sender === viewerAddress) continue
         const cid = parseInt(e.payload.comment_id, 10)
@@ -269,14 +276,27 @@ export function useMyPollNotifications(viewerAddress: string | undefined) {
         const isOnMyPoll = myPollIds.has(pollId)
         const isReplyToMe =
           e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
-        if ((isOnMyPoll || isReplyToMe) && cid > (maxByPoll[pollId] ?? 0)) {
-          maxByPoll[pollId] = cid
+        if ((isOnMyPoll || isReplyToMe) && cid > (maxByPoll[pollId]?.id ?? 0)) {
+          maxByPoll[pollId] = {
+            id: cid,
+            timestamp: e.payload.timestamp ?? e.timestamp,
+          }
         }
       }
       return maxByPoll
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
+}
+
+/**
+ * Just the comment ids, for the unread comparison. Shares a cache key with
+ * useMyPollNotificationActivity, so asking for both costs one scan.
+ */
+export function useMyPollNotifications(viewerAddress: string | undefined) {
+  const swr = useMyPollNotificationActivity(viewerAddress)
+  const data = useMemo(() => toLatestIds(swr.data), [swr.data])
+  return { ...swr, data }
 }
 
 /**

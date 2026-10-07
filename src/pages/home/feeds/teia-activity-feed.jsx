@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import useSettings from '@hooks/use-settings'
@@ -22,24 +22,15 @@ import {
 } from '@components/activity'
 import activityStyles from '@components/activity/index.module.scss'
 import { useEmbeddedTokenNames } from '@components/activity/useEmbeddedTokenNames'
+import { ACTIVITY_FEEDS } from '@constants'
+import { useFeedReadStore } from '@context/feedReadStore'
 import styles from './teia-activity-feed.module.scss'
 
 const FEED_FILTERS = ACTIVITY_FILTERS.filter(
   (f) => !['buy', 'transfer'].includes(f.key)
 )
 
-const VIEWS = [
-  { key: 'social', label: 'Social' },
-  { key: 'trades', label: 'Trades' },
-  { key: 'text', label: 'Text' },
-  { key: 'curations', label: 'Curations' },
-  { key: 'calendar', label: 'Calendar' },
-  { key: 'copyright', label: 'Copyright' },
-  { key: 'wiki', label: 'Wiki' },
-  { key: 'polls', label: 'Polls' },
-  { key: 'donations', label: 'Donations' },
-  { key: 'fountain', label: 'Fountain' },
-]
+const VIEWS = ACTIVITY_FEEDS
 
 /** Trade activity (sales/mints/listings/transfers) — the original feed. */
 export function TradesFeed() {
@@ -222,8 +213,23 @@ export function SocialFeed() {
  * Global Activity layout, each feed is a route now
  */
 export function GlobalActivityFeed() {
+  const { pathname } = useLocation()
+  const markSeen = useFeedReadStore((st) => st.markSeen)
+
+  // Looking at a feed is what marks it read, whether or not its dot was lit.
+  const current = VIEWS.find((v) => pathname.startsWith(`/activity/${v.key}`))
+  const currentKey = current?.key
+  useEffect(() => {
+    if (currentKey) markSeen(currentKey)
+  }, [currentKey, markSeen])
+
   return (
     <div className={styles.feed}>
+      <p className={styles.notice}>
+        Want a heads-up when a feed moves? Pick the ones to watch in{' '}
+        <Link to="/settings">settings</Link> and they will light the
+        notifications dot.
+      </p>
       <div className={styles.view_toggle}>
         {VIEWS.map((v) => (
           <NavLink
