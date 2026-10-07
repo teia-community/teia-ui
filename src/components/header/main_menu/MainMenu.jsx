@@ -110,9 +110,9 @@ export const MainMenu = () => {
   const { total: feedUnread } = useFeedNotifications(address)
   const showActivityBadge = feedUnread > 0
 
-  // Unread is surfaced in one place only: the aggregate badge on the
-  // Notifications menu item (and the /notifications page). The
-  // per-section dots were removed to keep the menu clean.
+  // Everything addressed to the viewer aggregates into this one badge on the
+  // Notifications menu item (and the /notifications page). The per-section
+  // dots were removed to keep the menu clean.
   const showNotificationsBadge = channelUnread + pollUnread + tokenUnread > 0
 
   const currentName = proxyName || userInfo?.name

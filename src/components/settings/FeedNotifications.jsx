@@ -9,7 +9,7 @@ import styles from './FeedNotifications.module.scss'
 const SAVED_MESSAGE_MS = 2500
 
 /**
- * Picks which activity feeds light the notifications dot.
+ * Picks which activity feeds light the dot on the Activity menu item.
  *
  * Switching a feed on marks it read first, so the dot answers "anything since
  * you asked?" rather than lighting up for everything that already happened.
@@ -56,10 +56,10 @@ export default function FeedNotifications() {
         <strong>Activity feed notifications</strong>
       </p>
       <p className={styles.explainer}>
-        Pick the feeds worth a dot on the Notifications menu. Teia checks them
-        once when the site loads, and opening a feed marks it read. These
-        choices are saved in this browser only, so another device — or this one
-        after you clear its data — starts again with everything off.
+        Pick the feeds worth a dot on the Activity menu. Teia checks them once
+        when the site loads, and opening a feed marks it read. These choices are
+        saved in this browser only, so another device — or this one after you
+        clear its data — starts again with everything off.
       </p>
 
       <div className={styles.bulk}>
