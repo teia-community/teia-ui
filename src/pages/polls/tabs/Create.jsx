@@ -4,11 +4,13 @@ import { useUserStore } from '@context/userStore'
 import { usePollsStore } from '@context/pollsStore'
 import { Button, IncrementButtons } from '@atoms/button'
 import { Line } from '@atoms/line'
-import { SimpleInput } from '@atoms/input'
+import { SimpleInput, Textarea } from '@atoms/input'
 import { Select } from '@atoms/select'
-import { IpfsUploader } from '@components/upload'
 import { useStorage, useDaoTokenBalance, usePolls } from '@data/swr'
 import styles from '@style'
+
+/** Descriptions are stored on chain, so they are kept short. */
+const MAX_DESCRIPTION_LENGTH = 1500
 
 export default function CreatePolls() {
   // Get all the required polls information
@@ -38,7 +40,7 @@ export default function CreatePolls() {
 function PollForm({ callback }) {
   // Set the component state
   const [question, setQuestion] = useState('')
-  const [descriptionIpfsCid, setDescriptionIpfsCid] = useState('')
+  const [description, setDescription] = useState('')
   const [voteWeightMethod, setVoteWeightMethod] = useState('equal')
   const [votePeriod, setVotePeriod] = useState('')
   const [options, setOptions] = useState(['', '', ''])
@@ -84,7 +86,7 @@ function PollForm({ callback }) {
 
     createPoll(
       question,
-      descriptionIpfsCid,
+      description.trim(),
       voteWeightMethod,
       votePeriod,
       cleanOptions,
@@ -108,15 +110,22 @@ function PollForm({ callback }) {
           <Line />
         </SimpleInput>
 
-        <IpfsUploader
+        <Textarea
           label="Poll description (optional)"
-          placeholder="Select the file with the poll description"
-          value={descriptionIpfsCid}
-          onChange={setDescriptionIpfsCid}
+          placeholder="Explain the poll: background, what each option means, anything voters should read first"
+          name="poll-description"
+          maxlength={MAX_DESCRIPTION_LENGTH}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           className={styles.poll_form_field}
         >
+          <p className={styles.poll_form_hint}>
+            Stored with the poll on the Tezos blockchain, so it is readable
+            straight away. {description.trim().length}/{MAX_DESCRIPTION_LENGTH}{' '}
+            characters; longer descriptions cost slightly more to publish.
+          </p>
           <Line />
-        </IpfsUploader>
+        </Textarea>
 
         <Select
           label="Method to use to calculate the vote weight"
