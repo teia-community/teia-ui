@@ -203,17 +203,20 @@ export function useFeedNotifications(viewerAddress?: string): {
       ? ['feed-notifications', enabled.join(','), viewerAddress ?? 'anon']
       : null,
     async () => {
-      const results = await Promise.all(
-        enabled.map(async (key) => {
-          try {
-            return [key, await PROBES[key](viewerAddress)] as const
-          } catch {
-            // A feed that cannot be reached simply has nothing new to say.
-            return [key, null] as const
-          }
-        })
-      )
-      return Object.fromEntries(results) as Record<string, string | null>
+      // One at a time, not all at once. A dot nobody is waiting for is not
+      // worth a burst of requests: firing ten together lands on the indexer's
+      // rate limit alongside whatever the page is already loading, and the
+      // feed the viewer actually came to read is what fails.
+      const results: Record<string, string | null> = {}
+      for (const key of enabled) {
+        try {
+          results[key] = await PROBES[key](viewerAddress)
+        } catch {
+          // A feed that cannot be reached simply has nothing new to say.
+          results[key] = null
+        }
+      }
+      return results
     },
     {
       revalidateOnFocus: false,

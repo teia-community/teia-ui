@@ -24,6 +24,8 @@ import activityStyles from '@components/activity/index.module.scss'
 import { useEmbeddedTokenNames } from '@components/activity/useEmbeddedTokenNames'
 import { ACTIVITY_FEEDS } from '@constants'
 import { useFeedReadStore } from '@context/feedReadStore'
+import { useFeedNotifications } from '@data/feed-notifications'
+import { useUserStore } from '@context/userStore'
 import styles from './teia-activity-feed.module.scss'
 
 const FEED_FILTERS = ACTIVITY_FILTERS.filter(
@@ -215,6 +217,12 @@ export function SocialFeed() {
 export function GlobalActivityFeed() {
   const { pathname } = useLocation()
   const markSeen = useFeedReadStore((st) => st.markSeen)
+  const address = useUserStore((st) => st.address)
+
+  // Same check the menu dot reads, so the tabs say which feed moved while the
+  // menu says only that something did. Sharing the cache key means naming the
+  // feeds costs nothing beyond the check already made.
+  const { unreadFeeds } = useFeedNotifications(address)
 
   // Looking at a feed is what marks it read, whether or not its dot was lit.
   const current = VIEWS.find((v) => pathname.startsWith(`/activity/${v.key}`))
@@ -239,6 +247,12 @@ export function GlobalActivityFeed() {
             }
           >
             {v.label}
+            {unreadFeeds.includes(v.key) && (
+              <>
+                <span className={styles.tab_dot} aria-hidden="true" />
+                <span className={styles.visually_hidden}> (unread)</span>
+              </>
+            )}
           </NavLink>
         ))}
       </div>

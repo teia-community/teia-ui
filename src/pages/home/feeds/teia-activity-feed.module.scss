@@ -53,6 +53,29 @@
   }
 }
 
+.tab_dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  margin-left: 3px;
+  position: relative;
+  top: -0.45em;
+}
+
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .view_chip_active {
   color: var(--text-color);
   border-bottom-color: var(--text-color);
