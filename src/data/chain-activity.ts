@@ -1,4 +1,4 @@
-// Platform activity for the calendar and wiki contracts.
+// Platform activity for the calendar, wiki and curation contracts.
 // Testing a new way to read chain data
 
 import useSWRInfinite from 'swr/infinite'
@@ -20,8 +20,8 @@ export interface ChainActivityConfig {
   /** SWR namespace, e.g. 'calendar' | 'wiki'. */
   ns: string
   contract: string
-  /** Payload field prefix: 'event' (calendar) or 'page' (wiki). */
-  itemPrefix: 'event' | 'page'
+  /** Payload field prefix: 'event', 'page' or 'curation'. */
+  itemPrefix: 'event' | 'page' | 'curation'
 }
 
 export interface ChainActivityItem {

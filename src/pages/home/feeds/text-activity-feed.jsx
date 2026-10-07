@@ -19,6 +19,7 @@ import {
   SocialActivityRow,
 } from '@components/activity'
 import activityStyles from '@components/activity/index.module.scss'
+import { useEmbeddedTokenNames } from '@components/activity/useEmbeddedTokenNames'
 import styles from './teia-activity-feed.module.scss'
 
 // Mint / listing / sale of text posts
@@ -42,6 +43,7 @@ function TextComments({ sort }) {
     [items]
   )
   const { data: profiles = {} } = useUserProfiles(senders)
+  const tokenNames = useEmbeddedTokenNames(items)
 
   useAutoLoadMore({
     rowCount: items.length,
@@ -96,6 +98,7 @@ function TextComments({ sort }) {
             key={item.id}
             item={item}
             senderName={profiles[item.sender]?.alias}
+            tokenNames={tokenNames}
           />
         ))}
       </div>
