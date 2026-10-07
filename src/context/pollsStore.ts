@@ -16,7 +16,7 @@ interface PollsState {
   /** Votes in an existing poll */
   votePoll: (pollId: string, option: number, maxCheckpoints: number | null, callback?: any) => OperationReturn
   /** Creates a new poll */
-  createPoll: (question: string, descriptionIpfsPath: string, voteWeightMethod: string, votePeriod: string, options: string[], callback?: any) => OperationReturn
+  createPoll: (question: string, description: string, voteWeightMethod: string, votePeriod: string, options: string[], callback?: any) => OperationReturn
 }
 
 export const usePollsStore = create<PollsState>()(
@@ -49,7 +49,7 @@ export const usePollsStore = create<PollsState>()(
             showError(modalTitle, e)
           }
         },
-        createPoll: async (question, descriptionIpfsPath, voteWeightMethod, votePeriod, options, callback) => {
+        createPoll: async (question, description, voteWeightMethod, votePeriod, options, callback) => {
           const handleOp = useUserStore.getState().handleOp
           const show = useModalStore.getState().show
           const showError = useModalStore.getState().showError
@@ -80,9 +80,10 @@ export const usePollsStore = create<PollsState>()(
 
             const parameters = {
               question: stringToBytes(question),
-              description: descriptionIpfsPath === ''
-                ? stringToBytes('')
-                : stringToBytes(`ipfs://${descriptionIpfsPath}`),
+              // Stored as text, not an ipfs:// pointer: a pointer meant the
+              // description could only be read if the upload had propagated,
+              // and descriptions are short enough to live on chain.
+              description: stringToBytes(description),
               options: MichelsonMap.fromLiteral(
                 Object.fromEntries(
                   options.map((option, index) => [index, stringToBytes(option)])

@@ -100,3 +100,31 @@
   text-align: left;
   margin-bottom: 15em;
 }
+
+// Poll description: the text itself, not just a link to the file it lives in.
+.poll_description {
+  margin: 1em 0;
+}
+
+.poll_description_label {
+  margin: 0 0 0.3em;
+  font-weight: bold;
+}
+
+.poll_description_source {
+  font-weight: normal;
+  opacity: 0.7;
+}
+
+.poll_description_text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.poll_form_hint {
+  margin: 0.4em 0 0;
+  font-size: $font-xsmall;
+  opacity: 0.7;
+}
