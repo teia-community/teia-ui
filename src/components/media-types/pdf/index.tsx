@@ -1,18 +1,22 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import styles from '@style'
-import { Document, Page } from 'react-pdf/dist/esm/entry.vite'
-import 'react-pdf/dist/esm/Page/TextLayer.css'
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import { Document, Page, pdfjs } from 'react-pdf'
+import pdfWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url'
+import 'react-pdf/dist/Page/TextLayer.css'
+import 'react-pdf/dist/Page/AnnotationLayer.css'
 
 import { ImageComponent } from '../image'
 import { Button } from '@atoms/button'
 import { MediaTypeProps } from '@types'
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-// pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js'
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl
+
 const options = {
   cMapUrl: 'cmaps/',
   cMapPacked: true,
   standardFontDataUrl: 'standard_fonts/',
+  // Never let pdf.js eval() code derived from PDF contents
+  isEvalSupported: false,
 }
 
 export const PdfComponent = memo(function ({
@@ -141,7 +145,6 @@ export const PdfComponent = memo(function ({
           onPassword={onPassword}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
-          title={`PDF object ${nft.token_id}`}
           options={options}
         >
           {renderedPageNumber && renderedPageNumber !== pageNumber && (
