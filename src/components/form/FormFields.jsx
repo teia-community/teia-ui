@@ -40,6 +40,9 @@ export const FormFields = ({ value, field, error, register, control }) => {
     (st) => [st.address, st.userInfo],
     shallow
   )
+  // Bumped when a suggested tag is added, to remount the tags input so it
+  // shows the new value. The field is otherwise left uncontrolled.
+  const [tagsRevision, setTagsRevision] = useState(0)
   const [showVisualizer, setShowVisualizer] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
   const visualizerRef = useRef(null)
@@ -56,15 +59,22 @@ export const FormFields = ({ value, field, error, register, control }) => {
       return (
         <>
           <Input
+            // Tags carries a `setValueAs` rule that strips separators as it
+            // normalises, so feeding the stored value back into the box would
+            // delete a comma the moment it is typed. The input stays
+            // uncontrolled and is remounted when a suggestion is added, which
+            // is the only time the value changes from outside.
+            key={name === 'tags' ? `tags-${tagsRevision}` : undefined}
             className={styles.field}
             name={name}
             type={field.type}
             label={field.label}
-            defaultValue={field.defaultValue}
+            defaultValue={
+              name === 'tags'
+                ? watch('tags') ?? field.defaultValue
+                : field.defaultValue
+            }
             placeholder={field.placeholder}
-            // Tags is controlled so a suggested tag added with setValue shows
-            // up in the field; the input keeps its own state otherwise.
-            {...(name === 'tags' ? { value: watch('tags') ?? '' } : {})}
             {...register(name, field.rules)}
           >
             <Line />
@@ -74,11 +84,12 @@ export const FormFields = ({ value, field, error, register, control }) => {
             <TagSuggestions
               text={watch('description')}
               value={watch('tags')}
-              onAdd={(tag) =>
+              onAdd={(tag) => {
                 setValue('tags', appendTag(watch('tags'), tag), {
                   shouldDirty: true,
                 })
-              }
+                setTagsRevision((n) => n + 1)
+              }}
             />
           )}
         </>

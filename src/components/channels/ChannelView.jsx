@@ -24,6 +24,8 @@ import { computeProofForAddress } from '@utils/merkle'
 import { useUserStore } from '@context/userStore'
 import { useChatReadStore } from '@context/chatReadStore'
 import MessageBubble from '@components/chat/MessageBubble'
+import ChannelIntro from '@components/chat/ChannelIntro'
+import { introRepeatsFirstMessage } from '@utils/channel-intro.mjs'
 import PostForm from '@components/chat/PostForm'
 import AccessBadge from './AccessBadge'
 import AddUserModal from './AddUserModal'
@@ -335,6 +337,26 @@ export default function ChannelView() {
         )}
 
         <div className={styles.messages}>
+          <ChannelIntro
+            name={channelName}
+            // Creators often pasted the description in as the first message,
+            // back when a new room opened empty. Only skipped when the whole
+            // history is loaded, so the oldest message really is the first.
+            description={
+              !hasMore &&
+              introRepeatsFirstMessage(
+                channel.metadata?.description,
+                messages?.[0]?.content
+              )
+                ? undefined
+                : channel.metadata?.description
+            }
+            image={
+              channel.metadata?.image
+                ? msgIpfsToUrl(channel.metadata.image)
+                : undefined
+            }
+          />
           {hasMore && (
             <div style={{ textAlign: 'center', padding: 8 }}>
               <Button shadow_box onClick={loadMore}>

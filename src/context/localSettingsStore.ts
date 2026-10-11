@@ -5,7 +5,8 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 // import { useModalStore } from './modalStore'
-import { FEED_LIST, DEFAULT_START_FEED } from '@constants'
+import { FEED_LIST, DEFAULT_START_FEED, ACTIVITY_FEEDS } from '@constants'
+import type { ActivityFeedKey } from '@constants'
 
 type ViewMode = 'single' | 'masonry'
 
@@ -39,8 +40,12 @@ interface LocalSettingsState {
   getRpcNode: () => RPC_NODES | string
   customRpcNode: string
   messageNotifications: boolean
+  /** Activity feeds the viewer wants an unread dot for. Absent means off. */
+  feedNotifications: Record<string, boolean>
   setCustomRpcNode: (v: string) => void
   setMessageNotifications: (v: boolean) => void
+  setFeedNotification: (feed: ActivityFeedKey, on: boolean) => void
+  setAllFeedNotifications: (on: boolean) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setShowBakerOnProfile: (v: boolean) => void
@@ -82,6 +87,8 @@ const defaultValues = {
   imgproxy: true,
   has_seen_banner: false,
   messageNotifications: true,
+  // Nothing is watched until the viewer asks for it.
+  feedNotifications: {} as Record<string, boolean>,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -92,6 +99,16 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setHasSeenBanner: (has_seen_banner) => set({ has_seen_banner }),
         setMessageNotifications: (messageNotifications) =>
           set({ messageNotifications }),
+        setFeedNotification: (feed, on) =>
+          set((state) => ({
+            feedNotifications: { ...state.feedNotifications, [feed]: on },
+          })),
+        setAllFeedNotifications: (on) =>
+          set({
+            feedNotifications: on
+              ? Object.fromEntries(ACTIVITY_FEEDS.map((f) => [f.key, true]))
+              : {},
+          }),
         setTilted: (tilted) => set({ tilted }),
         setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>

@@ -127,8 +127,14 @@ import TextActivityFeed from '@pages/home/feeds/text-activity-feed'
 import {
   CalendarActivityFeed,
   CopyrightActivityFeed,
+  CurationsActivityFeed,
   WikiActivityFeed,
 } from '@pages/home/feeds/chain-activity-feed'
+import PollsActivityFeed from '@pages/home/feeds/poll-activity-feed'
+import {
+  DonationsActivityFeed,
+  FountainActivityFeed,
+} from '@pages/home/feeds/donation-activity-feed'
 import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
@@ -306,9 +312,13 @@ const router = createBrowserRouter(
           <Route path="trades" element={<TradesFeed />} />
           <Route path="social" element={<SocialFeed />} />
           <Route path="text" element={<TextActivityFeed />} />
+          <Route path="curations" element={<CurationsActivityFeed />} />
           <Route path="calendar" element={<CalendarActivityFeed />} />
           <Route path="copyright" element={<CopyrightActivityFeed />} />
           <Route path="wiki" element={<WikiActivityFeed />} />
+          <Route path="polls" element={<PollsActivityFeed />} />
+          <Route path="donations" element={<DonationsActivityFeed />} />
+          <Route path="fountain" element={<FountainActivityFeed />} />
         </Route>
         <Route path="tags/:tag" element={<Tags />} />
         <Route path="tz/:address/*" element={<Display />}>

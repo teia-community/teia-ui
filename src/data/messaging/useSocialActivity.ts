@@ -38,6 +38,8 @@ export interface SocialActivityItem {
   to: string
   /** Short human label for the link target. */
   targetLabel: string
+  /** OBJKTs posted with the message; a post can be nothing but these. */
+  embeds?: { fa2: string; tokenId: string }[]
 }
 
 /** One paginated source (one messaging contract / event tag). */
@@ -114,6 +116,7 @@ export function useSocialActivity(sort: ActivitySort = 'newest') {
       timestamp: m.timestamp,
       to: `/inbox/channels/${m.channelId}`,
       targetLabel: `#${m.channelId}`,
+      embeds: m.embeds,
     })
   }
 

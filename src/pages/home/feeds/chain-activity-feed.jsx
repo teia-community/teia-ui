@@ -2,7 +2,11 @@ import { useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
-import { CALENDAR_CONTRACT, WIKI_CONTRACT } from '@constants'
+import {
+  CALENDAR_CONTRACT,
+  WIKI_CONTRACT,
+  CURATIONS_CONTRACT,
+} from '@constants'
 import useActivityFilter from '@hooks/use-activity-filter'
 import {
   useChainActivity,
@@ -11,6 +15,7 @@ import {
 } from '@data/chain-activity'
 import { useUserProfiles } from '@data/roles'
 import { useWiki } from '@data/wiki'
+import { useCurationsInfinite } from '@data/curations'
 import { fetchEvents, fetchEventContent } from '@data/calendar-chain'
 import {
   ActivityFilters,
@@ -44,6 +49,14 @@ const WIKI = {
   itemTo: (id) => `/wiki/${id}`,
 }
 
+const CURATIONS = {
+  ns: 'curations',
+  contract: CURATIONS_CONTRACT,
+  itemPrefix: 'curation',
+  itemLabel: 'Curation',
+  itemTo: (id) => `/curations/${id}`,
+}
+
 function present(item, config, targetOf) {
   const meta =
     item.action === 'hidden'
@@ -67,7 +80,12 @@ function present(item, config, targetOf) {
   return { ...meta, to, targetLabel }
 }
 
-function ChainFeed({ config, targetOf, loadingMessage }) {
+/**
+ * @param {object} props
+ * @param {object[]} [props.filters] chips to offer; defaults to every action.
+ *   Curations have no proposal flow, so they pass a shorter list.
+ */
+function ChainFeed({ config, targetOf, loadingMessage, filters }) {
   const action = useActivityFilter()
   const [sort, setSort] = useState('newest')
   const {
@@ -103,7 +121,7 @@ function ChainFeed({ config, targetOf, loadingMessage }) {
         <ActivityFilters
           active={action.active}
           onToggle={action.toggle}
-          filters={CHAIN_ACTIVITY_FILTERS}
+          filters={filters ?? CHAIN_ACTIVITY_FILTERS}
         />
       </ActivityControls>
 
@@ -210,6 +228,32 @@ export function WikiActivityFeed() {
       config={WIKI}
       targetOf={targetOf}
       loadingMessage="Loading wiki activity"
+    />
+  )
+}
+
+export function CurationsActivityFeed() {
+  const { curations } = useCurationsInfinite()
+  const targetOf = useCallback(
+    (id) => {
+      const curation = curations?.find((c) => String(c.id) === String(id))
+      // A curation's title lives in its IPFS document, which would be a fetch
+      // per row, so rows link by number. Hidden or moderated ones keep the
+      // number without a link.
+      if (!curation || curation.hidden || curation.moderated) return null
+      return { label: `Curation #${id}`, to: `/curations/${id}` }
+    },
+    [curations]
+  )
+
+  return (
+    <ChainFeed
+      config={CURATIONS}
+      targetOf={targetOf}
+      filters={CHAIN_ACTIVITY_FILTERS.filter((f) =>
+        ['created', 'updated', 'hidden'].includes(f.key)
+      )}
+      loadingMessage="Loading curation activity"
     />
   )
 }

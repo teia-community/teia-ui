@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useSWR from 'swr'
 import { Link } from 'react-router-dom'
 import { bytesToString } from '@taquito/utils'
 import { PATH, POLLS_CONTRACT, DAO_TOKEN_DECIMALS } from '@constants'
@@ -17,6 +18,8 @@ import {
 } from '@data/swr'
 import { useAllPollCommentCounts } from '@data/messaging/poll-comments'
 import { getWordDate } from '@utils/time'
+import { HashToURL } from '@utils'
+import { parsePollDescription } from '@utils/poll-description.mjs'
 import styles from '@style'
 
 export default function Poll({ pollId }) {
@@ -88,11 +91,47 @@ export default function Poll({ pollId }) {
   )
 }
 
+/**
+ * Poll descriptions live in a text file on IPFS, pointed at by the contract.
+ * Reading one should not mean leaving the page, so the text is fetched and
+ * shown in place, with the IPFS link kept for the raw file.
+ */
+function usePollDescriptionText(cid) {
+  return useSWR(
+    cid ? ['poll-description', cid] : null,
+    async () => {
+      const response = await fetch(HashToURL(`ipfs://${cid}`, 'CDN'))
+      if (!response.ok) throw new Error(`IPFS error: ${response.status}`)
+      return (await response.text()).trim()
+    },
+    { revalidateOnFocus: false, errorRetryCount: 2, errorRetryInterval: 5000 }
+  )
+}
+
+function PollDescriptionText({ cid }) {
+  const { data, error, isLoading } = usePollDescriptionText(cid)
+
+  if (isLoading) {
+    return <p className={styles.poll_description_text}>Loading description…</p>
+  }
+
+  if (error || !data) {
+    return (
+      <p className={styles.poll_description_text}>
+        The description could not be loaded. Read it on{' '}
+        <IpfsLink cid={cid}>IPFS</IpfsLink>.
+      </p>
+    )
+  }
+
+  return <p className={styles.poll_description_text}>{data}</p>
+}
+
 function PollDescription({ poll, aliases, commentCount }) {
-  // Try to extract an ipfs cid from the poll description
-  const description =
+  // Older polls point at a text file on IPFS; newer ones carry the text.
+  const parsed = parsePollDescription(
     poll.description !== '' ? bytesToString(poll.description) : ''
-  const cid = description.split('//')[1]
+  )
 
   // We are replaying our discourse system.
 
@@ -112,10 +151,22 @@ function PollDescription({ poll, aliases, commentCount }) {
         <p>Voting period ends on {getWordDate(poll.voteExpirationTime)}.</p>
       )}
 
-      {description !== '' && (
-        <p>
-          Description: {cid ? <IpfsLink cid={cid}>IPFS</IpfsLink> : description}
-        </p>
+      {parsed.kind !== 'none' && (
+        <div className={styles.poll_description}>
+          <p className={styles.poll_description_label}>
+            Description{' '}
+            {parsed.kind === 'ipfs' && (
+              <span className={styles.poll_description_source}>
+                (<IpfsLink cid={parsed.cid}>IPFS</IpfsLink>)
+              </span>
+            )}
+          </p>
+          {parsed.kind === 'ipfs' ? (
+            <PollDescriptionText cid={parsed.cid} />
+          ) : (
+            <p className={styles.poll_description_text}>{parsed.text}</p>
+          )}
+        </div>
       )}
 
       <p>

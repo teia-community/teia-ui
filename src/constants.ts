@@ -121,6 +121,23 @@ export type FeedType = (typeof FEED_LIST)[number]
 
 export const DEFAULT_START_FEED: FeedType = 'New OBJKTs'
 
+// The tabs on /activity, in the order they are shown. Shared so the settings
+// page offers a notification toggle for exactly the feeds that exist.
+export const ACTIVITY_FEEDS = [
+  { key: 'social', label: 'Social' },
+  { key: 'trades', label: 'Trades' },
+  { key: 'text', label: 'Text' },
+  { key: 'curations', label: 'Curations' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'copyright', label: 'Copyright' },
+  { key: 'wiki', label: 'Wiki' },
+  { key: 'polls', label: 'Polls' },
+  { key: 'donations', label: 'Donations' },
+  { key: 'fountain', label: 'Fountain' },
+] as const
+
+export type ActivityFeedKey = (typeof ACTIVITY_FEEDS)[number]['key']
+
 //- Mint stuff
 
 export const ALLOWED_COVER_MIMETYPES = [
@@ -205,14 +222,16 @@ export const QUIPUSWAP_TEIA_URL = `https://quipuswap.com/swap/tez-${DAO_TOKEN_CO
 export const DONATION_EXCLUDED_ADDRESSES = [
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
   'tz1gnuBF9TbBcgHPV2mUE96tBrW7PxqRmx1h', // Baking Benjamins Payouts
+  'tz1UVUZVDUgCmFRP3cruqNEWED39imGApA5p', // Tezberry Pie Payouts (fountain staking rewards)
 ]
 
 // Donations that were sent via a middleman and should be reassigned to the actual donor.
-// Each entry moves `amount` tez and 1 donation count from `from` to `to`.
+// Totals move `amount` tez and 1 donation count from `from` to `to`; a feed that
+// lists single transfers reassigns the one operation named by `ophash`.
 export const DONATION_REASSIGNMENTS = [
   {
     // Tezos Foundation donation sent via Ryan Tanaka
-    // tx: ooKskSzgUPDq32uo757BuEGzhNF6Ks8nSRGFst8iQgtHi2z2hPz
+    ophash: 'ooKskSzgUPDq32uo757BuEGzhNF6Ks8nSRGFst8iQgtHi2z2hPz',
     from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
     to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
     toAlias: 'Tezos Foundation',
@@ -220,7 +239,7 @@ export const DONATION_REASSIGNMENTS = [
   },
   {
     // Tezos Foundation donation sent via Ryan Tanaka
-    // tx: opWSdr51LGJFehfYFybWVgbxsaUtqPDy4gzcL5eZTuM6LrGN9mZ
+    ophash: 'opWSdr51LGJFehfYFybWVgbxsaUtqPDy4gzcL5eZTuM6LrGN9mZ',
     from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
     to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
     toAlias: 'Tezos Foundation',

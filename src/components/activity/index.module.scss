@@ -291,3 +291,9 @@ $social-grid: 104px minmax(120px, 1fr) minmax(180px, 3fr) minmax(120px, 1fr)
     }
   }
 }
+
+// A row described by what it carries (a shared OBJKT) rather than by text.
+.social_content_muted {
+  opacity: 0.75;
+  font-style: italic;
+}

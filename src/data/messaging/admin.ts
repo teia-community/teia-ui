@@ -10,7 +10,7 @@ import {
 } from '@constants'
 import { fetchEventsPage, fetchBigMapValuesBulk } from './api'
 import { fetchMsgIpfsJson } from './ipfs'
-import type { ChannelAccessMode } from './channel-types'
+import type { ChannelAccessMode, TokenEmbed } from './channel-types'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
@@ -40,25 +40,36 @@ function accessModeFromMichelson(
 }
 
 /** Decode a comment/message `content` field (raw JSON or ipfs:// pointer). */
+/**
+ * A message payload carries its text and any OBJKTs posted with it. Both are
+ * returned: a post can be nothing but an embed, and dropping those left the
+ * activity feed describing it as empty.
+ */
 async function decodeContent(
   hex: string | null | undefined,
   expectedType: string
-): Promise<string> {
+): Promise<{ content: string; embeds: TokenEmbed[] }> {
   const raw = decodeBytes(hex)
   try {
     if (raw.startsWith('ipfs://')) {
-      const json = await fetchMsgIpfsJson<{ type?: string; content?: string }>(
-        raw
-      )
-      if (json.type === expectedType) return json.content ?? ''
+      const json = await fetchMsgIpfsJson<{
+        type?: string
+        content?: string
+        embeds?: TokenEmbed[]
+      }>(raw)
+      if (json.type === expectedType) {
+        return { content: json.content ?? '', embeds: json.embeds ?? [] }
+      }
     } else if (raw) {
       const json = JSON.parse(raw)
-      if (json.type === expectedType) return json.content ?? ''
+      if (json.type === expectedType) {
+        return { content: json.content ?? '', embeds: json.embeds ?? [] }
+      }
     }
   } catch {
     // fall through to raw
   }
-  return raw
+  return { content: raw, embeds: [] }
 }
 
 // ---------------------------------------------------------------------------
@@ -124,7 +135,7 @@ export async function fetchRecentCommentsPage(
       .filter((e) => rows.has(e.payload.comment_id))
       .map(async (e) => {
         const row = rows.get(e.payload.comment_id)!
-        const content = await decodeContent(row.content, type)
+        const { content } = await decodeContent(row.content, type)
         return {
           id: e.payload.comment_id,
           kind,
@@ -159,6 +170,8 @@ export interface AdminMessage {
   channelId: string
   sender: string
   content: string
+  /** OBJKTs posted with the message; a post can be nothing but these. */
+  embeds: TokenEmbed[]
   hidden: boolean
   timestamp: string
   /** Access mode of the channel. */
@@ -215,13 +228,17 @@ export async function fetchRecentChannelMessagesPage({
       .filter((e) => rows.has(e.payload.message_id))
       .map(async (e) => {
         const row = rows.get(e.payload.message_id)!
-        const content = await decodeContent(row.content, 'teia-channel-message')
+        const { content, embeds } = await decodeContent(
+          row.content,
+          'teia-channel-message'
+        )
         const channelRow = channelRows.get(e.payload.channel_id)
         return {
           id: e.payload.message_id,
           channelId: e.payload.channel_id,
           sender: row.sender ?? e.payload.sender,
           content,
+          embeds,
           hidden: Boolean(row.hidden),
           timestamp: row.timestamp ?? e.payload.timestamp,
           channelAccessMode: accessModeFromMichelson(channelRow?.access_mode),
