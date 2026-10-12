@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import useSWR from 'swr'
 import { Button } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
@@ -12,10 +12,8 @@ import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { slugify } from '@data/wiki/links'
 import { EVENT_COLORS } from '@data/calendar-chain/colors'
 import RelatedPicker from './RelatedPicker'
+import MDEditor from '@components/md-editor'
 import styles from '@style'
-
-// Load Editor only when the author opts into Markdown formatting.
-const MDEditor = lazy(() => import('@uiw/react-md-editor'))
 
 const pad2 = (n) => String(n).padStart(2, '0')
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1)
