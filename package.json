@@ -49,6 +49,7 @@
     "build": "vite build",
     "postbuild": "node scripts/wiki-sitemap.mjs",
     "build-dev": "vite --mode development build",
+    "build:stats-history": "node scripts/build-stats-history.mjs",
     "test": "vite test",
     "test:ics": "node --test test/**/*",
     "screenshots": "playwright test",

@@ -15,12 +15,13 @@ export default function TimeSeriesChart({
   series = [],
   height = 220,
   emptyHint = 'No data yet.',
+  stack,
 }) {
   if (data.length === 0) {
     return <div className={styles.chart_empty}>{emptyHint}</div>
   }
 
-  const stacked = series.length > 1
+  const stacked = stack ?? series.length > 1
 
   return (
     <div className={styles.chart_body}>
