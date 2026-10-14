@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import { request } from 'graphql-request'
 import { ResponsiveMasonry } from '@components/responsive-masonry'
 import { FeedItem } from '@components/feed-item'
+import { FeedListItem } from '@components/feed-item/FeedListItem'
 import { Container } from '@atoms/layout'
 import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
@@ -58,12 +59,36 @@ function MasonryView({ tokens }) {
   )
 }
 /**
+ * List view feed: one dense row per token, so more of them fit on a screen.
+ * @param {Object} feedProps - The options for the feed item
+ * @param {[import("@types").NFT]} feedProps.tokens - The nfts to render
+ * @returns {React.ReactElement} The feed
+ */
+function ListView({ tokens }) {
+  return (
+    <div className={`${styles.list_view} no-fool`}>
+      <div className={styles.list_header} aria-hidden="true">
+        <span>OBJKT</span>
+        <span>Artist</span>
+        <span>Format</span>
+        <span>Editions</span>
+        <span>Price</span>
+        <span>Minted</span>
+      </div>
+      {tokens.map((token) => (
+        <FeedListItem key={token.key || token.token_id} nft={token} />
+      ))}
+    </div>
+  )
+}
+
+/**
  * @typedef {import("@types").NFT} NFT
  */
 
 // TODO (mel): Avoid pop drilling feeds_menu, once the context will be cleaner we could maybe introduce smaller contexts, one could be the "profile" context
 /**
- * Main feed component that can be either in Single or Masonry mode.
+ * Main feed component that can be in Single, Masonry or List mode.
  * @param {Object} tkProps - The props
  * @param {[import("graphql-request").gql]} tkProps.query - The graphql query
  * @param {number} tkProps.itemsPerLoad - Batch size
@@ -228,11 +253,9 @@ function TokenCollection({
           }}
           hasMore={limit < tokens.length}
         >
-          {viewMode === 'single' ? (
-            <SingleView tokens={limitedTokens} />
-          ) : (
-            <MasonryView tokens={limitedTokens} />
-          )}
+          {viewMode === 'single' && <SingleView tokens={limitedTokens} />}
+          {viewMode === 'masonry' && <MasonryView tokens={limitedTokens} />}
+          {viewMode === 'list' && <ListView tokens={limitedTokens} />}
         </InfiniteScroll>
       </IconCache.Provider>
     </div>

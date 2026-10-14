@@ -8,7 +8,10 @@ import {
 import { FEED_LIST, DEFAULT_START_FEED, ACTIVITY_FEEDS } from '@constants'
 import type { ActivityFeedKey } from '@constants'
 
-type ViewMode = 'single' | 'masonry'
+type ViewMode = 'single' | 'masonry' | 'list'
+
+// Order the 'v' shortcut cycles through.
+const VIEW_MODES: ViewMode[] = ['single', 'masonry', 'list']
 
 export type Theme = 'dark' | 'light' | 'kawaii' | 'aqua' | 'coffee' | 'midnight'
 
@@ -113,7 +116,10 @@ export const useLocalSettings = create<LocalSettingsState>()(
         setImgproxy: (imgproxy) => set({ imgproxy }),
         toggleViewMode: () =>
           set((state) => ({
-            viewMode: state.viewMode === 'single' ? 'masonry' : 'single',
+            viewMode:
+              VIEW_MODES[
+                (VIEW_MODES.indexOf(state.viewMode) + 1) % VIEW_MODES.length
+              ],
           })),
         toggleZen: () => set((state) => ({ zen: !state.zen })),
         setZen: (zen) => set({ zen }),
