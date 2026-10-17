@@ -118,6 +118,11 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
         output: {
+          // Emit .mjs assets (the pdf.js worker, imported via ?url) as .js
+          assetFileNames: (assetInfo) =>
+            assetInfo.name?.endsWith('.mjs')
+              ? 'assets/[name]-[hash].js'
+              : 'assets/[name]-[hash][extname]',
           // manualChunks: processChunks,
           manualChunks: {
             contracts: [
