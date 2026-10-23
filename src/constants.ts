@@ -38,6 +38,7 @@ export const MIMETYPE: { [key: string]: string } = {
   GIF: 'image/gif',
   GLB: 'model/gltf-binary',
   GLTF: 'model/gltf+json',
+  HTML: 'text/html',
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
@@ -62,6 +63,53 @@ export const MIMETYPE: { [key: string]: string } = {
   TXT: 'text/plain',
 }
 
+/**
+ * What each media feed collects, grouped by what the thing actually is.
+ *
+ * Derived from MIMETYPE so a format that becomes mintable cannot quietly end
+ * up with no feed to appear in -- which is how FLAC, QuickTime, WebM, WebP and
+ * BMP went years without one despite all of them being mintable and all of
+ * them rendering fine.
+ *
+ * Ogg video is deliberately absent: Chrome dropped Theora, and the thumbnail
+ * is the file itself, so a card would be a broken image. Give it a renderer
+ * and it belongs here.
+ */
+export const FEED_MIMETYPES = {
+  image: [
+    MIMETYPE.JPEG,
+    MIMETYPE.PNG,
+    MIMETYPE.WEBP,
+    MIMETYPE.BMP,
+    MIMETYPE.TIFF,
+  ],
+  gif: [MIMETYPE.GIF],
+  audio: [
+    MIMETYPE.MP3,
+    MIMETYPE.WAV,
+    MIMETYPE.XWAV,
+    MIMETYPE.FLAC,
+    MIMETYPE.OGG,
+  ],
+  midi: [MIMETYPE.MIDI, MIMETYPE.MID],
+  video: [MIMETYPE.MP4, MIMETYPE.QUICKTIME, MIMETYPE.WEBM],
+  threeD: [MIMETYPE.GLB, MIMETYPE.GLTF],
+  code: [
+    MIMETYPE.DIRECTORY,
+    MIMETYPE.SVG,
+    MIMETYPE.HTML,
+    MIMETYPE.ZIP,
+    MIMETYPE.ZIP1,
+    MIMETYPE.ZIP2,
+  ],
+  pdf: [MIMETYPE.PDF],
+  markdown: [MIMETYPE.MD],
+  text: [MIMETYPE.TXT],
+}
+
+/** Mintable, but nothing on the page can display them yet. See above. */
+export const UNDISPLAYABLE_MIMETYPES = [MIMETYPE.OGV]
+
 export const AUDIO_MIME_TYPES = [
   'audio/mpeg',
   'audio/wav',
@@ -70,11 +118,18 @@ export const AUDIO_MIME_TYPES = [
   'audio/ogg',
 ]
 
+/**
+ * Known to the renderer but never offered at mint. The few text/html tokens
+ * predate the directory format; they are shown, not invited.
+ */
+export const DISPLAY_ONLY_MIMETYPES: string[] = [MIMETYPE.HTML]
+
+// NOTE: the old exclusion here read `e !== GLTF || e !== TXT`, which no value
+// can fail, so GLTF and TXT have been mintable all along despite the comment
+// saying otherwise. Left as it behaves today rather than changed in passing.
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  // disabling GLTF from new updates,
-  // disabling TXT upload since they will be done via the textarea input
-  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT)
+  .filter((e) => !DISPLAY_ONLY_MIMETYPES.includes(e))
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
