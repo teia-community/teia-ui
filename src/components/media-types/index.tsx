@@ -3,7 +3,6 @@ import { MIMETYPE } from '@constants'
 
 import { GLBComponent } from './glb'
 import { ImageComponent } from './image'
-import { TiffComponent } from './tiff'
 import { VideoComponent } from './video'
 import { AudioComponent } from './audio'
 import { VectorComponent } from './vector'
@@ -83,21 +82,10 @@ export const RenderMediaType = ({
       case MIMETYPE.GIF:
       case MIMETYPE.JPEG:
       case MIMETYPE.PNG:
+      case MIMETYPE.TIFF:
       case MIMETYPE.WEBP:
         return (
           <ImageComponent
-            artifactUri={parsedArtifactUri}
-            displayUri={parsedDisplayUri}
-            displayView={displayView}
-            previewUri={previewUri}
-            nft={nft}
-          />
-        )
-
-      /* TIFF — decoded in the browser, no native support */
-      case MIMETYPE.TIFF:
-        return (
-          <TiffComponent
             artifactUri={parsedArtifactUri}
             displayUri={parsedDisplayUri}
             displayView={displayView}
