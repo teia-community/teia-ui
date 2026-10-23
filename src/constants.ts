@@ -62,6 +62,47 @@ export const MIMETYPE: { [key: string]: string } = {
   TXT: 'text/plain',
 }
 
+/**
+ * What each media feed collects, grouped by what the thing actually is.
+ *
+ * Derived from MIMETYPE so a format that becomes mintable cannot quietly end
+ * up with no feed to appear in -- which is how FLAC, QuickTime, WebM, WebP and
+ * BMP went years without one despite all of them being mintable and all of
+ * them rendering fine.
+ *
+ * Three mintable formats are deliberately absent, because no browser can draw
+ * them and their thumbnails are the file itself, so a card would be a broken
+ * image: TIFF, Ogg video, and the handful of text/html tokens that predate the
+ * directory format. Give them a renderer and they belong here.
+ */
+export const FEED_MIMETYPES = {
+  image: [MIMETYPE.JPEG, MIMETYPE.PNG, MIMETYPE.WEBP, MIMETYPE.BMP],
+  gif: [MIMETYPE.GIF],
+  audio: [
+    MIMETYPE.MP3,
+    MIMETYPE.WAV,
+    MIMETYPE.XWAV,
+    MIMETYPE.FLAC,
+    MIMETYPE.OGG,
+  ],
+  midi: [MIMETYPE.MIDI, MIMETYPE.MID],
+  video: [MIMETYPE.MP4, MIMETYPE.QUICKTIME, MIMETYPE.WEBM],
+  threeD: [MIMETYPE.GLB, MIMETYPE.GLTF],
+  code: [
+    MIMETYPE.DIRECTORY,
+    MIMETYPE.SVG,
+    MIMETYPE.ZIP,
+    MIMETYPE.ZIP1,
+    MIMETYPE.ZIP2,
+  ],
+  pdf: [MIMETYPE.PDF],
+  markdown: [MIMETYPE.MD],
+  text: [MIMETYPE.TXT],
+}
+
+/** Mintable, but nothing on the page can display them yet. See above. */
+export const UNDISPLAYABLE_MIMETYPES = [MIMETYPE.TIFF, MIMETYPE.OGV]
+
 export const AUDIO_MIME_TYPES = [
   'audio/mpeg',
   'audio/wav',
