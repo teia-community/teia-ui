@@ -4,8 +4,12 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY . .
+# `npm ci; npm run build` hid a failed install: the build carried on without
+# node_modules and died as "vite: not found", which reads as a broken build
+# rather than a broken lockfile.
 RUN : \
-    && npm ci; npm run build \
+    && npm ci \
+    && npm run build \
     && echo "add_header x-teia-commit-hash $(git rev-parse HEAD);" > /header.conf
 
 FROM openresty/openresty:alpine
