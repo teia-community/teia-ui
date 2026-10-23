@@ -71,12 +71,18 @@ export const MIMETYPE: { [key: string]: string } = {
  * BMP went years without one despite all of them being mintable and all of
  * them rendering fine.
  *
- * TIFF and Ogg video are deliberately absent: no browser decodes either, and
- * the thumbnail is the file itself, so a card would be a broken image. Give
- * them a renderer and they belong here.
+ * Ogg video is deliberately absent: Chrome dropped Theora, and the thumbnail
+ * is the file itself, so a card would be a broken image. Give it a renderer
+ * and it belongs here.
  */
 export const FEED_MIMETYPES = {
-  image: [MIMETYPE.JPEG, MIMETYPE.PNG, MIMETYPE.WEBP, MIMETYPE.BMP],
+  image: [
+    MIMETYPE.JPEG,
+    MIMETYPE.PNG,
+    MIMETYPE.WEBP,
+    MIMETYPE.BMP,
+    MIMETYPE.TIFF,
+  ],
   gif: [MIMETYPE.GIF],
   audio: [
     MIMETYPE.MP3,
@@ -102,7 +108,7 @@ export const FEED_MIMETYPES = {
 }
 
 /** Mintable, but nothing on the page can display them yet. See above. */
-export const UNDISPLAYABLE_MIMETYPES = [MIMETYPE.TIFF, MIMETYPE.OGV]
+export const UNDISPLAYABLE_MIMETYPES = [MIMETYPE.OGV]
 
 export const AUDIO_MIME_TYPES = [
   'audio/mpeg',
