@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Button } from '@atoms/button'
 import { useTreasuryTokens } from '@data/treasury-tokens'
 import { useDaoMembers } from '@data/multisig'
+import { uploadFileToIPFSProxy } from '@data/ipfs'
 import {
   proposeTezTransfer,
   proposeTokenTransfer,
@@ -16,18 +18,62 @@ import {
 } from '@utils/multisig-proposals.mjs'
 import { validAddress } from '@utils/collab'
 import { walletPreview } from '@utils/string'
+import { HashToURL } from '@utils'
 import { TezRateControls, useTezRate } from './TezRate'
 import { formatConverted } from '@data/tez-quote'
 import styles from './NewMultisigProposal.module.scss'
 
+/**
+ * The kinds of proposal, in the order the multisig interface lists them and
+ * with the summaries and warnings the core team already reads there.
+ */
 const KINDS = [
-  { key: 'tez', label: 'Send tez' },
-  { key: 'token', label: 'Send a token' },
-  { key: 'text', label: 'Written proposal' },
-  { key: 'add', label: 'Add a member' },
-  { key: 'remove', label: 'Remove a member' },
-  { key: 'quorum', label: 'Votes needed' },
-  { key: 'expiry', label: 'Time to vote' },
+  {
+    key: 'tez',
+    label: 'Transfer tez',
+    summary: 'Transfer tez from the treasury to one or more Tezos addresses.',
+  },
+  {
+    key: 'token',
+    label: 'Transfer token',
+    summary:
+      'Transfer FA2 token editions from the treasury to one or more Tezos addresses.',
+  },
+  {
+    key: 'text',
+    label: 'Text',
+    summary:
+      'Approve a text or decision. No on-chain effect — the text is archived on IPFS and signals an off-chain action.',
+  },
+  {
+    key: 'add',
+    label: 'Add user',
+    summary: 'Add a new member to the multisig.',
+    warning:
+      'The minimum vote threshold is not updated, so adding a member makes proposals easier to approve.',
+  },
+  {
+    key: 'remove',
+    label: 'Remove user',
+    summary: 'Remove one of the current multisig members.',
+    warning:
+      'The minimum vote threshold is not updated, so removing a member can make proposals harder to approve.',
+  },
+  {
+    key: 'quorum',
+    label: 'Minimum votes',
+    summary:
+      'Change the minimum number of positive votes required to approve proposals.',
+    warning:
+      'Affects all active proposals at execution. Lowering it may make some immediately executable.',
+  },
+  {
+    key: 'expiry',
+    label: 'Expiration time',
+    summary: 'Change the proposals expiration time, in days.',
+    warning:
+      'Affects all active and expired proposals at execution. Raising it can revive expired proposals; lowering it can expire active ones.',
+  },
 ]
 
 const TEZ = { symbol: 'ꜩ', decimals: 6 }
@@ -35,18 +81,19 @@ const TRANSFERS = new Set(['tez', 'token'])
 const emptyRow = () => ({ amount: '', destination: '' })
 
 /**
- * Propose something to the core team.
+ * Raise a proposal with the core team.
  *
- * Everything the multisig can be asked to do is here, so that raising a
- * proposal is one place rather than one per kind. Amounts are typed in the
- * token — 3,100 USDt, not 3,100,000,000 — and the figure that will reach the
- * contract is shown underneath, so the conversion is visible rather than
- * something to get wrong in your head.
+ * These are the multisig interface's own proposals, in its order and its
+ * words, because the people using it already know that one. What is different
+ * is the amount: 3,100 USDt is typed as 3,100, and the figure that reaches
+ * the contract is shown beside it.
  */
 export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   const [kind, setKind] = useState('tez')
   const [rows, setRows] = useState([emptyRow()])
-  const [text, setText] = useState('')
+  const [file, setFile] = useState(null)
+  const [ipfsPath, setIpfsPath] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [tokenKey, setTokenKey] = useState('')
   const [address, setAddress] = useState('')
   const [member, setMember] = useState('')
@@ -57,6 +104,7 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   const { members } = useDaoMembers()
   const tezRate = useTezRate()
 
+  const option = KINDS.find((k) => k.key === kind)
   const current = useMemo(() => members.filter((m) => m.isCurrent), [members])
 
   const token = useMemo(
@@ -76,6 +124,7 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   )
 
   const total = parsed.reduce((sum, r) => sum + (r.raw ?? 0), 0)
+  const typedAny = rows.some((row) => row.amount.trim() !== '')
   const overBalance =
     kind === 'token' && token ? total > token.rawBalance : false
 
@@ -85,7 +134,7 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   const ready = (() => {
     switch (kind) {
       case 'text':
-        return text.trim().length > 0
+        return ipfsPath !== ''
       case 'add':
         return (
           validAddress(address.trim()) &&
@@ -112,12 +161,30 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   const setRow = (index, patch) =>
     setRows(rows.map((row, i) => (i === index ? { ...row, ...patch } : row)))
 
+  async function upload() {
+    if (!file || uploading) return
+    setUploading(true)
+    try {
+      const cid = await uploadFileToIPFSProxy(
+        { path: file.name, blob: file, size: file.size },
+        'Text proposal'
+      )
+      if (cid) setIpfsPath(cid)
+    } catch {
+      // The upload reports its own failure through the modal.
+    } finally {
+      setUploading(false)
+    }
+  }
+
   async function submit() {
     if (!ready || submitting) return
     setSubmitting(true)
     try {
       if (kind === 'text') {
-        await proposeText(text.trim())
+        await proposeText(`ipfs://${ipfsPath}`)
+        setFile(null)
+        setIpfsPath('')
       } else if (kind === 'add') {
         await proposeAddUser(address.trim())
         setAddress('')
@@ -143,7 +210,6 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
         )
         setRows([emptyRow()])
       }
-      setText('')
     } catch {
       // The action layer has already told the user what went wrong.
     } finally {
@@ -154,205 +220,250 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   return (
     <div className={styles.form}>
       <div className={styles.kinds}>
-        {KINDS.map((option) => (
+        {KINDS.map((o) => (
           <button
             type="button"
-            key={option.key}
+            key={o.key}
             className={`${styles.kind} ${
-              kind === option.key ? styles.kind_active : ''
+              kind === o.key ? styles.kind_active : ''
             }`}
-            onClick={() => setKind(option.key)}
+            onClick={() => setKind(o.key)}
           >
-            {option.label}
+            {o.label}
           </button>
         ))}
       </div>
 
-      {kind === 'token' && (
-        <label className={styles.field}>
-          <span>Token</span>
-          <select
-            value={tokenKey}
-            onChange={(e) => setTokenKey(e.target.value)}
-          >
-            <option value="">Choose a token the treasury holds</option>
-            {tokens.map((t) => (
-              <option
-                key={`${t.contract}:${t.tokenId}`}
-                value={`${t.contract}:${t.tokenId}`}
-              >
-                {t.symbol} — {formatTokenAmount(t.rawBalance, t)} available
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
+      <p className={styles.summary}>{option.summary}</p>
+      {option.warning && <p className={styles.caution}>{option.warning}</p>}
 
-      {kind === 'text' && (
-        <label className={styles.field}>
-          <span>Link to the written proposal</span>
-          <input
-            type="text"
-            value={text}
-            placeholder="ipfs://…"
-            onChange={(e) => setText(e.target.value)}
-          />
-        </label>
-      )}
-
-      {kind === 'add' && (
-        <>
-          <label className={styles.field_wide}>
-            <span>Address to add</span>
-            <input
-              type="text"
-              value={address}
-              placeholder="tz1…"
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </label>
-          <p className={styles.summary}>
-            They join once the proposal is executed and they accept the
-            membership.
-          </p>
-          {address.trim() !== '' && !validAddress(address.trim()) && (
-            <p className={styles.warn}>That is not a Tezos address.</p>
-          )}
-          {current.some((m) => m.address === address.trim()) && (
-            <p className={styles.warn}>They are already on the core team.</p>
-          )}
-        </>
-      )}
-
-      {kind === 'remove' && (
-        <label className={styles.field}>
-          <span>Member to remove</span>
-          <select value={member} onChange={(e) => setMember(e.target.value)}>
-            <option value="">Choose a member</option>
-            {current.map((m) => (
-              <option key={m.address} value={m.address}>
-                {m.alias || walletPreview(m.address)}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-
-      {(kind === 'quorum' || kind === 'expiry') && (
-        <>
+      <div className={styles.fields}>
+        {kind === 'token' && (
           <label className={styles.field}>
-            <span>{kind === 'quorum' ? 'Votes in favour' : 'Days'}</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={count}
-              placeholder={String(
-                kind === 'quorum' ? quorum ?? '' : expirationDays ?? ''
-              )}
-              onChange={(e) => setCount(e.target.value)}
-            />
+            <span className={styles.label}>Token</span>
+            <select
+              value={tokenKey}
+              onChange={(e) => setTokenKey(e.target.value)}
+            >
+              <option value="">Choose a token the treasury holds</option>
+              {tokens.map((t) => (
+                <option
+                  key={`${t.contract}:${t.tokenId}`}
+                  value={`${t.contract}:${t.tokenId}`}
+                >
+                  {t.symbol} — {formatTokenAmount(t.rawBalance, t)} available
+                </option>
+              ))}
+            </select>
           </label>
-          <p className={styles.summary}>
-            {kind === 'quorum'
-              ? `A proposal now needs ${quorum} of ${memberCount} members in favour.`
-              : `A proposal now expires ${expirationDays} days after it is raised.`}
-          </p>
-          {count.trim() !== '' && whole == null && (
-            <p className={styles.warn}>Use a whole number.</p>
-          )}
-          {kind === 'quorum' && whole > memberCount && (
-            <p className={styles.warn}>
-              The core team only has {memberCount} members.
-            </p>
-          )}
-        </>
-      )}
+        )}
 
-      {TRANSFERS.has(kind) && (
-        <>
-          {rows.map((row, index) => {
+        {kind === 'text' && (
+          <>
+            <label className={styles.field}>
+              <span className={styles.label}>
+                File with the text to approve
+              </span>
+              <input
+                type="file"
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] ?? null)
+                  setIpfsPath('')
+                }}
+              />
+            </label>
+            {file && (
+              <div className={styles.field}>
+                <button
+                  type="button"
+                  className={styles.act}
+                  disabled={uploading || ipfsPath !== ''}
+                  onClick={upload}
+                >
+                  {ipfsPath
+                    ? 'uploaded'
+                    : uploading
+                    ? 'uploading…'
+                    : 'upload to IPFS'}
+                </button>
+                {ipfsPath && (
+                  <a
+                    href={HashToURL(`ipfs://${ipfsPath}`)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {ipfsPath}
+                  </a>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {kind === 'add' && (
+          <>
+            <label className={styles.field}>
+              <span className={styles.label}>Address to add</span>
+              <input
+                type="text"
+                className={styles.wide}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </label>
+            {address.trim() !== '' && !validAddress(address.trim()) && (
+              <p className={styles.warn}>That is not a Tezos address.</p>
+            )}
+            {current.some((m) => m.address === address.trim()) && (
+              <p className={styles.warn}>They are already on the core team.</p>
+            )}
+          </>
+        )}
+
+        {kind === 'remove' && (
+          <label className={styles.field}>
+            <span className={styles.label}>Member to remove</span>
+            <select value={member} onChange={(e) => setMember(e.target.value)}>
+              <option value="">Choose a member</option>
+              {current.map((m) => (
+                <option key={m.address} value={m.address}>
+                  {m.alias || walletPreview(m.address)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        {(kind === 'quorum' || kind === 'expiry') && (
+          <>
+            <label className={styles.field}>
+              <span className={styles.label}>
+                {kind === 'quorum'
+                  ? `Votes in favour, now ${quorum} of ${memberCount}`
+                  : `Days, now ${expirationDays}`}
+              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={count}
+                onChange={(e) => setCount(e.target.value)}
+              />
+            </label>
+            {count.trim() !== '' && whole == null && (
+              <p className={styles.warn}>Use a whole number.</p>
+            )}
+            {kind === 'quorum' && whole > memberCount && (
+              <p className={styles.warn}>
+                The core team only has {memberCount} members.
+              </p>
+            )}
+          </>
+        )}
+
+        {TRANSFERS.has(kind) &&
+          rows.map((row, index) => {
             const entry = parsed[index]
             const invalid = row.amount.trim() !== '' && entry.raw == null
             return (
-              <div className={styles.row} key={index}>
+              <fieldset className={styles.destination} key={index}>
+                <legend>
+                  Destination {index + 1}
+                  {rows.length > 1 && (
+                    <button
+                      type="button"
+                      className={styles.link}
+                      onClick={() =>
+                        setRows(rows.filter((_, i) => i !== index))
+                      }
+                    >
+                      remove
+                    </button>
+                  )}
+                </legend>
                 <label className={styles.field}>
-                  <span>Amount</span>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={row.amount}
-                    placeholder={kind === 'token' ? '3100' : '100'}
-                    onChange={(e) => setRow(index, { amount: e.target.value })}
-                  />
-                  <small>{unit.symbol}</small>
+                  <span className={styles.label}>Amount</span>
+                  <span className={styles.with_unit}>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={row.amount}
+                      onChange={(e) =>
+                        setRow(index, { amount: e.target.value })
+                      }
+                    />
+                    {/* The unit is unknown until a token is chosen. */}
+                    {(kind !== 'token' || token) && (
+                      <small>{unit.symbol}</small>
+                    )}
+                  </span>
                 </label>
-                <label className={styles.field_wide}>
-                  <span>To</span>
+                <label className={styles.field}>
+                  <span className={styles.label}>To</span>
                   <input
                     type="text"
+                    className={styles.wide}
                     value={row.destination}
-                    placeholder="tz1…"
                     onChange={(e) =>
                       setRow(index, { destination: e.target.value })
                     }
                   />
                 </label>
-                {rows.length > 1 && (
-                  <button
-                    type="button"
-                    className={styles.remove}
-                    onClick={() => setRows(rows.filter((_, i) => i !== index))}
-                  >
-                    Remove
-                  </button>
-                )}
                 {invalid && (
                   <p className={styles.warn}>
                     That amount cannot be sent exactly. Use a plain number.
                   </p>
                 )}
-              </div>
+              </fieldset>
             )
           })}
+      </div>
 
+      {TRANSFERS.has(kind) && (
+        <>
           <button
             type="button"
-            className={styles.add}
+            className={styles.link}
             onClick={() => setRows([...rows, emptyRow()])}
           >
             Add another destination
           </button>
 
-          <p className={styles.summary}>
-            {kind === 'token' ? (
-              token ? (
-                <>
-                  Sends {formatTokenAmount(total, token)} in total
-                  <small> — {total.toLocaleString()} base units on-chain</small>
-                </>
+          {/* Nothing typed yet is a blank budget, not a transfer of zero. */}
+          {typedAny && (
+            <p className={styles.total}>
+              {kind === 'token' ? (
+                token ? (
+                  <>
+                    Sends {formatTokenAmount(total, token)} in total
+                    <small>
+                      {' '}
+                      — {total.toLocaleString()} base units on-chain
+                    </small>
+                  </>
+                ) : (
+                  'Choose a token to continue.'
+                )
               ) : (
-                'Choose a token to continue.'
-              )
-            ) : (
-              <>
-                Sends {formatTokenAmount(total, TEZ)} in total
-                {tezRate.rate != null && (
-                  <small>
-                    {' '}
-                    ≈{' '}
-                    {formatConverted(
-                      total / 1000000,
-                      tezRate.rate,
-                      tezRate.currency
-                    )}
-                  </small>
-                )}
-              </>
-            )}
-          </p>
+                <>
+                  Sends {formatTokenAmount(total, TEZ)} in total
+                  {tezRate.rate != null && (
+                    <small>
+                      {' '}
+                      ≈{' '}
+                      {formatConverted(
+                        total / 1000000,
+                        tezRate.rate,
+                        tezRate.currency
+                      )}
+                    </small>
+                  )}
+                </>
+              )}
+            </p>
+          )}
 
           {/* Only tez needs a rate: a stablecoin is already money. */}
-          {kind === 'tez' && <TezRateControls />}
+          {kind === 'tez' && typedAny && <TezRateControls />}
 
           {overBalance && (
             <p className={styles.warn}>
@@ -364,14 +475,9 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
       )}
 
       <div className={styles.actions}>
-        <button
-          type="button"
-          className={styles.submit}
-          onClick={submit}
-          disabled={!ready || submitting}
-        >
-          {submitting ? 'Submitting…' : 'Submit proposal'}
-        </button>
+        <Button shadow_box onClick={submit} disabled={!ready || submitting}>
+          {submitting ? 'Submitting…' : 'Send proposal'}
+        </Button>
       </div>
     </div>
   )

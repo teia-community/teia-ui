@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { DAO_GOVERNANCE_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
@@ -42,8 +42,12 @@ const TAB_LABELS = {
 const HOLDERS_TAB = 'holders'
 
 export default function DaoProposals() {
-  // Set the component state
-  const [selectedStatus, setSelectedStatus] = useState('toVote')
+  // The open sub-tab lives in the address, so a view can be linked to.
+  const { view } = useParams()
+  const navigate = useNavigate()
+  const selectedStatus =
+    view && (view === HOLDERS_TAB || view in TAB_LABELS) ? view : 'toVote'
+  const setSelectedStatus = (next) => navigate(`/dao/proposals/${next}`)
 
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)

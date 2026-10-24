@@ -23,6 +23,8 @@ import {
   summariseVotes,
 } from '@utils/multisig-proposals.mjs'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 /** The multisig has dozens of proposals and members, not thousands. */
 const PAGE = 1000
@@ -65,11 +67,7 @@ export interface DaoProposal {
   silentLabel: string
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  return res.json()
-}
+const fetchJson = tzktFetch
 
 /** The bigmap pointers move if the contract is ever redeployed. */
 async function bigmapPointers() {

@@ -8,6 +8,8 @@
 
 import useSWR from 'swr'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 export interface TokenInfo {
@@ -42,10 +44,9 @@ async function fetchTokens(keys: string[]): Promise<Record<string, TokenInfo>> {
         url.searchParams.set('select', 'tokenId,metadata')
         url.searchParams.set('limit', '100')
 
-        const res = await fetch(url.toString())
-        if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-        const rows: { tokenId: string; metadata?: Record<string, any> }[] =
-          await res.json()
+        const rows = await tzktFetch<
+          { tokenId: string; metadata?: Record<string, any> }[]
+        >(url.toString())
 
         for (const row of rows) {
           const decimals = Number(row.metadata?.decimals)

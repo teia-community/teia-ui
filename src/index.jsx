@@ -263,10 +263,12 @@ const router = createBrowserRouter(
         <Route path="dao/*" element={<DAO />}>
           <Route index element={<DaoParameters />} />
           <Route path="proposals" element={<DaoProposals />} />
+          <Route path="proposals/:view" element={<DaoProposals />} />
           <Route path="submit" element={<SubmitDaoProposals />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="fees" element={<DaoFees />} />
           <Route path="multisig" element={<DaoMultisigProposals />} />
+          <Route path="multisig/:view" element={<DaoMultisigProposals />} />
           <Route path="*" element={<DaoParameters />} />
         </Route>
         <Route path="proposal/:id" element={<ProposalDisplay />} />

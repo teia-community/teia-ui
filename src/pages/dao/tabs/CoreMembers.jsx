@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
+import { HashToURL } from '@utils'
 import { getWordDate } from '@utils/time'
 import { MEMBER_SORTS, sortMembers, memberName } from '@utils/dao-members.mjs'
 import { useDaoMembers } from '@data/multisig'
@@ -44,11 +45,30 @@ function VotingRecord({ member, proposals }) {
         <div className={styles.record_row} key={entry.proposalId}>
           <span>
             #{entry.proposalId}
-            {entry.proposal?.text ? ` · ${entry.proposal.text}` : ''}
+            {entry.proposal?.text && (
+              <>
+                {' · '}
+                <a
+                  href={HashToURL(entry.proposal.text)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  read the text
+                </a>
+              </>
+            )}
           </span>
           <span>{entry.proposal?.kind ?? '—'}</span>
-          <span>{entry.inFavour ? 'In favour' : 'Against'}</span>
-          <span>
+          <span
+            className={entry.inFavour ? styles.vote_for : styles.vote_against}
+          >
+            {entry.inFavour ? 'In favour' : 'Against'}
+          </span>
+          <span
+            className={
+              entry.proposal?.executed ? styles.outcome_done : styles.outcome_no
+            }
+          >
             {entry.proposal
               ? entry.proposal.executed
                 ? 'Executed'
@@ -61,9 +81,15 @@ function VotingRecord({ member, proposals }) {
   )
 }
 
-function MemberRow({ member, proposals, open, onToggle }) {
+function MemberRow({ member, proposals, open, onToggle, voteCount }) {
+  // How much of the voting they have taken part in, while they were there.
+  const share = voteCount > 0 ? Math.min(member.votesCast / voteCount, 1) : 0
   return (
-    <div className={styles.member}>
+    <div
+      className={`${styles.member} ${
+        member.isCurrent ? '' : styles.member_past
+      }`}
+    >
       <button
         type="button"
         className={styles.member_row}
@@ -82,7 +108,18 @@ function MemberRow({ member, proposals, open, onToggle }) {
           {member.joined ? getWordDate(member.joined) : 'unknown'}
           {member.left && <small>left {getWordDate(member.left)}</small>}
         </span>
-        <span className={styles.member_stat}>{member.votesCast} votes</span>
+        <span className={styles.member_stat}>
+          {member.votesCast} votes
+          <span
+            className={styles.turnout}
+            title={`${member.votesCast} of ${voteCount} proposals`}
+          >
+            <span
+              className={styles.turnout_fill}
+              style={{ width: `${share * 100}%` }}
+            />
+          </span>
+        </span>
       </button>
       {open && <VotingRecord member={member} proposals={proposals} />}
     </div>
@@ -120,12 +157,15 @@ export function CoreMembers() {
     return <Loading message="Loading core members" />
   }
 
+  const voteCount = Object.keys(proposals).length
+
   const renderGroup = (list) =>
     list.map((member) => (
       <MemberRow
         key={member.address}
         member={member}
         proposals={proposals}
+        voteCount={voteCount}
         open={openAddress === member.address}
         onToggle={() =>
           setOpenAddress(openAddress === member.address ? null : member.address)

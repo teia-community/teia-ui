@@ -12,6 +12,7 @@ import { Tezos } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { readFeeAction } from '@utils/fee-governance.mjs'
 import { FEE_CONTRACTS, type FeeGovernance } from './teia-fees'
+import { tzktFetch } from './tzkt'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
@@ -51,11 +52,7 @@ interface RawProposal {
   }
 }
 
-async function keys<T>(url: string): Promise<T[]> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  return res.json()
-}
+const keys = <T,>(url: string) => tzktFetch<T[]>(url)
 
 async function fetchFeeProposals(address: string | null) {
   const perContract = await Promise.all(

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
 import { walletPreview } from '@utils/string'
@@ -233,7 +234,10 @@ export default function MultisigProposals() {
     )
     return (address) => names.get(address) || null
   }, [members])
-  const [status, setStatus] = useState('active')
+  // The open sub-tab lives in the address, so a view can be linked to.
+  const { view } = useParams()
+  const navigate = useNavigate()
+  const status = VIEWS.some((v) => v.key === view) ? view : 'active'
   const [shown, setShown] = useState(PAGE)
 
   const grouped = useMemo(() => {
@@ -284,7 +288,7 @@ export default function MultisigProposals() {
               status === option.key ? styles.proposal_tab_active : ''
             }`}
             onClick={() => {
-              setStatus(option.key)
+              navigate(`/dao/multisig/${option.key}`)
               setShown(PAGE)
             }}
           >

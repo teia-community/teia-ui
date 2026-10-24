@@ -5,6 +5,7 @@
 // so the interface hides the controls but the contract is what enforces it.
 
 import { mutate } from 'swr'
+import { stringToBytes } from '@taquito/utils'
 import { Tezos } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { DAO_TREASURY_CONTRACT } from '@constants'
@@ -83,11 +84,14 @@ export function executeProposal(proposalId: string) {
   )
 }
 
-/** Put a written proposal to the core team. */
+/**
+ * Put a written proposal to the core team. The contract stores the link as
+ * bytes, which is how the multisig interface has always written it.
+ */
 export function proposeText(ipfsUri: string) {
   return run(
     'New text proposal',
-    (c) => c.methodsObject.text_proposal(ipfsUri),
+    (c) => c.methodsObject.text_proposal(stringToBytes(ipfsUri)),
     'Proposal submitted. It now needs votes from the core team.'
   )
 }

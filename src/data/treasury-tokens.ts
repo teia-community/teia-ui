@@ -4,6 +4,8 @@
 import useSWR from 'swr'
 import { DAO_TREASURY_CONTRACT } from '@constants'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 export interface TreasuryToken {
@@ -25,16 +27,16 @@ export function useTreasuryTokens() {
       url.searchParams.set('limit', '200')
       url.searchParams.set('select', 'token,balance')
 
-      const res = await fetch(url.toString())
-      if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-      const rows: {
-        token: {
-          contract: { address: string }
-          tokenId: string
-          metadata?: Record<string, any>
-        }
-        balance: string
-      }[] = await res.json()
+      const rows = await tzktFetch<
+        {
+          token: {
+            contract: { address: string }
+            tokenId: string
+            metadata?: Record<string, any>
+          }
+          balance: string
+        }[]
+      >(url.toString())
 
       return rows
         .map((row) => {

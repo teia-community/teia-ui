@@ -7,6 +7,8 @@
 
 import useSWR from 'swr'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 /** The currencies the indexer quotes. */
@@ -35,9 +37,9 @@ export function useTezQuote() {
   const { data, error } = useSWR<TezQuote>(
     'tez:quote',
     async () => {
-      const res = await fetch(`${TZKT_API}/v1/quotes/last`)
-      if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-      const row = await res.json()
+      const row = await tzktFetch<
+        Record<string, number> & { timestamp?: string }
+      >(`${TZKT_API}/v1/quotes/last`)
       const rates: Record<string, number> = {}
       for (const { key } of CURRENCIES) {
         const value = Number(row?.[key])

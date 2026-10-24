@@ -22,6 +22,8 @@ import {
   MARKETPLACE_CONTRACT_TEIA,
 } from '@constants'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 export type FeeUnit = 'mutez' | 'permille'
@@ -166,10 +168,8 @@ export const FEE_CONTRACTS: {
   },
 ]
 
-async function fetchStorage(address: string): Promise<Record<string, any>> {
-  const res = await fetch(`${TZKT_API}/v1/contracts/${address}/storage`)
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  return res.json()
+function fetchStorage(address: string): Promise<Record<string, any>> {
+  return tzktFetch(`${TZKT_API}/v1/contracts/${address}/storage`)
 }
 
 /** Every fee on Teia, as the contracts currently hold them. */

@@ -1,13 +1,7 @@
 @import '@styles/variables.scss';
 
-.new_bar {
-  margin: 1em 0;
-}
-
 .form {
-  margin: 1em 0;
-  padding: 1em;
-  border: 1px solid var(--gray-10);
+  margin: 1em 0 2em;
   font-size: $font-small;
 }
 
@@ -15,7 +9,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0 1.2rem;
-  margin-bottom: 1em;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -41,60 +34,87 @@
   border-bottom-color: var(--text-color);
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.75em;
-  margin-bottom: 0.75em;
+.summary {
+  margin: 1em 0 0;
+  max-width: 70ch;
+  line-height: 1.5;
+  opacity: 0.8;
 }
 
-.field,
-.field_wide {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
+.caution {
+  margin: 0.5em 0 0;
+  max-width: 70ch;
+  line-height: 1.5;
+  color: var(--no-vote-color);
+}
 
-  span {
-    opacity: 0.7;
-    white-space: nowrap;
-  }
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin: 1.5em 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3em;
 
   input,
   select {
     background: none;
     border: 1px solid var(--gray-10);
     color: inherit;
-    padding: 0.3em 0.5em;
+    padding: 0.4em 0.5em;
     font: inherit;
+    max-width: 100%;
+  }
+
+  input[type='file'] {
+    border: none;
+    padding-left: 0;
   }
 
   small {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 }
 
-.field input {
-  width: 9em;
+.with_unit {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
-.field_wide {
-  flex: 1;
-  min-width: 18em;
+.label {
+  opacity: 0.6;
+}
 
-  input {
-    flex: 1;
-    min-width: 0;
+.wide {
+  width: 24em;
+}
+
+.destination {
+  border: 1px solid var(--border-color);
+  padding: 0.75em 1em 1em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+
+  legend {
+    padding: 0 0.4em;
+    opacity: 0.6;
   }
 }
 
-.add,
-.remove,
-.cancel {
+.link {
   appearance: none;
   background: none;
   border: none;
   padding: 0;
+  margin-left: 0.8em;
   color: inherit;
   cursor: pointer;
   text-decoration: underline;
@@ -106,8 +126,8 @@
   }
 }
 
-.summary {
-  margin: 0.75em 0;
+.total {
+  margin: 1em 0 0;
 
   small {
     opacity: 0.55;
@@ -115,11 +135,11 @@
 }
 
 .warn {
-  margin: 0.4em 0;
+  margin: 0;
   color: var(--no-vote-color);
 }
 
-.submit {
+.act {
   appearance: none;
   background: none;
   border: 1px solid var(--gray-10);
@@ -139,8 +159,5 @@
 }
 
 .actions {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  margin-top: 1em;
+  margin-top: 1.5em;
 }
