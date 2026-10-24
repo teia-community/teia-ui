@@ -129,6 +129,13 @@ export default function DaoProposals() {
         included.
       </p>
       <p className={styles.dao_intro}>
+        Teia is incorporated as Teia DAO LLC, a non-profit limited liability
+        company registered in the Republic of the Marshall Islands. TEIA token
+        holders are its operating members, holding the standing that
+        shareholders hold in a conventional company, and a DAO proposal is how
+        that membership exercises it.
+      </p>
+      <p className={styles.dao_intro}>
         The core team handles day-to-day operations &mdash; budgets, grants,
         events, and the work of keeping teia.art running &mdash; through its own
         multisig, within the mandate the DAO sets here. Those decisions are
