@@ -431,3 +431,67 @@
 .voted {
   opacity: 0.7;
 }
+
+// --- Parameters tab ---
+
+.kv {
+  list-style: none;
+  margin: 1em 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+}
+
+.kv_row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.6em 1em;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.kv_label {
+  opacity: 0.7;
+}
+
+.kv_value {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.donate {
+  margin-top: 1em;
+}
+
+.aside {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2em;
+  margin: 2em 0;
+  font-size: $font-small;
+  opacity: 0.75;
+}
+
+.aside_title {
+  font-size: $font-small;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4em;
+}
+
+.aside_text {
+  margin: 0 0 1em;
+  line-height: 1.5;
+}
+
+.aside_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  line-height: 1.8;
+}

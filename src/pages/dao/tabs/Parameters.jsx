@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import {
   DAO_GOVERNANCE_CONTRACT,
   DAO_TOKEN_CONTRACT,
@@ -20,11 +21,45 @@ import {
   useDaoCommunityVotes,
   useDaoUsersAliases,
 } from '@data/swr'
+import { useMultisigProposals } from '@data/multisig'
+import { useTeiaFees } from '@data/teia-fees'
+import { useDaoToken } from '@data/dao-token'
 import LoadingDaoMessage from '../LoadingDaoMessage'
-import styles from '@style'
-import TeiaTokenMetadata from './TeiaDAOMetadataTzkt'
 import DonateInput from '@atoms/button/DonateButton'
 import TokenHolders from '@components/dao/TokenHolders'
+import styles from '@style'
+
+const number = (value, digits = 0) =>
+  Number.isFinite(value)
+    ? value.toLocaleString(undefined, { maximumFractionDigits: digits })
+    : '—'
+
+/** What a contract charges, as one figure or the span of its fees. */
+function feeRange(group) {
+  const values = group.fees.map((fee) => fee.value).filter((v) => v != null)
+  if (values.length === 0) return '—'
+  const show = (value) =>
+    group.fees[0].unit === 'permille'
+      ? `${value / 10}%`
+      : `${number(value / 1_000_000, 6)} ꜩ`
+  const low = Math.min(...values)
+  const high = Math.max(...values)
+  return low === high ? show(low) : `${show(low)} – ${show(high)}`
+}
+
+/** A bordered label/value table, as the fees are listed. */
+function Rows({ children }) {
+  return <ul className={styles.kv}>{children}</ul>
+}
+
+function Row({ label, children }) {
+  return (
+    <li className={styles.kv_row}>
+      <span className={styles.kv_label}>{label}</span>
+      <span className={styles.kv_value}>{children}</span>
+    </li>
+  )
+}
 
 export default function DaoParameters() {
   // Get all the required DAO information
@@ -35,6 +70,11 @@ export default function DaoParameters() {
   const [daoMemberCount] = useDaoMemberCount(0)
   const [daoBalance] = useBalance(DAO_TREASURY_CONTRACT)
   const [daoTokenBalance] = useDaoTokenBalance(DAO_TREASURY_CONTRACT)
+
+  // The core team's own contract, and what Teia charges.
+  const multisig = useMultisigProposals()
+  const { groups } = useTeiaFees()
+  const { token } = useDaoToken()
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
@@ -61,286 +101,248 @@ export default function DaoParameters() {
     ? DAO_TOKEN_DECIMALS
     : Math.pow(DAO_TOKEN_DECIMALS, 0.5)
 
-  // Calculate the number of times that the user has voted
-  const numberOfTimesVoted = userVotes ? Object.keys(userVotes).length : 0
-  const numberOfTimesVotedAsRepresentative = userCommunityVotes
+  const all = Object.values(proposals)
+  const count = (key) => all.filter((p) => p.status[key]).length
+  const votesCast = userVotes ? Object.keys(userVotes).length : 0
+  const votesAsRepresentative = userCommunityVotes
     ? Object.keys(userCommunityVotes).length
     : 0
+  const submitted = all.filter((p) => p.issuer === userAddress).length
+  const escrow = gp.escrow_amount / DAO_TOKEN_DECIMALS
+  const minimum = gp.min_amount / DAO_TOKEN_DECIMALS
+
+  const byStatus = (status) =>
+    multisig.proposals.filter((p) => p.status === status).length
+  const marketplaceFee = groups
+    .find((group) => group.key === 'marketplace')
+    ?.fees.find((fee) => fee.unit === 'permille')
 
   return (
     <>
+      <section className={styles.section}>
+        <Rows>
+          <Row label="TEIA holders">{number(daoMemberCount)}</Row>
+          <Row label="Treasury">
+            {number(daoBalance)} {'ꜩ'} · {number(daoTokenBalance)} TEIA
+          </Row>
+          <Row label="DAO proposals">
+            {number(all.length)} · {count('open')} open
+          </Row>
+          <Row label="Core team">
+            {number(multisig.memberCount)} members · {multisig.quorum ?? '—'}{' '}
+            votes to pass
+          </Row>
+          <Row label="Multisig proposals">
+            {number(multisig.proposals.length)} · {byStatus('active')} active
+          </Row>
+          <Row label="Marketplace fee">
+            {marketplaceFee ? `${marketplaceFee.value / 10}%` : '—'}
+          </Row>
+        </Rows>
+      </section>
+
       {userAddress && (
         <>
-          <section className={styles.section}>
-            <h1 className={styles.section_title}>User Information</h1>
-            <p>Your activities with the TEIA DAO is listed here.</p>
-            <ul className={styles.parameters_list}>
-              <li>Address: {<TeiaUserLink address={userAddress} shorten />}</li>
-              {userCommunity && <li>Representative for {userCommunity}.</li>}
-              <li>
-                DAO Token Balance: {Math.round(userTokenBalance * 10) / 10} TEIA
-              </li>
-              <li>
-                Submitted Proposals:{' '}
-                {Object.values(proposals).reduce(
-                  (acc, proposal) =>
-                    acc + (proposal.issuer === userAddress ? 1 : 0),
-                  0
-                )}
-              </li>
-              <li>
-                Voted in {numberOfTimesVoted} Proposal
-                {numberOfTimesVoted === 1 ? '' : 's'}.
-              </li>
-              {userCommunity && (
-                <li>
-                  Voted in {numberOfTimesVotedAsRepresentative} Proposal
-                  {numberOfTimesVotedAsRepresentative === 1 ? '' : 's'} as
-                  community representative.
-                </li>
-              )}
-            </ul>
-          </section>
-
           <Line />
+          <section className={styles.section}>
+            <h1 className={styles.section_title}>You</h1>
+            <Rows>
+              <Row label="Address">
+                <TeiaUserLink address={userAddress} shorten />
+              </Row>
+              <Row label="TEIA held">{number(userTokenBalance, 1)}</Row>
+              <Row label="Proposals submitted">{submitted}</Row>
+              <Row label="Proposals voted on">{votesCast}</Row>
+              {userCommunity && (
+                <Row label={`Representative for ${userCommunity}`}>
+                  {votesAsRepresentative} voted on
+                </Row>
+              )}
+            </Rows>
+          </section>
         </>
       )}
 
+      <Line />
+
       <section className={styles.section}>
-        <h1 className={styles.section_title}>DAO Information</h1>
-        <p>
-          Community-wide statistics and usage activities of the TEIA DAO. To
-          learn more about the the ideas and philosophies behind the DAO, visit
-          the{' '}
-          <a
-            href="https://blog.teia.art/blog/dao-test-launch"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            official blog post
-          </a>{' '}
-          after the DAO's first launch. For detailed information on governance
-          processes, check out the{' '}
-          <a
-            href="https://github.com/teia-community/teia-docs/wiki/Governance-on-Teia"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Governance on Teia Documentation
-          </a>
-          .
+        <h1 className={styles.section_title}>Governance</h1>
+        <p className={styles.dao_intro}>
+          Changed only by a DAO vote. Proposals are under{' '}
+          <Link to="/dao/proposals">DAO Proposals</Link>.
         </p>
-        <p>
-          The information for the DAO is sourced from tzkt.io and
-          cross-referenced with TEIA's own indexer, both pulling from Tezos'
-          on-chain data.
+        <Rows>
+          <Row label="Vote method">
+            {gp.vote_method.linear ? 'Linear weight' : 'Quadratic weight'}
+          </Row>
+          <Row label="Quorum">
+            {number(daoStorage.quorum / voteScaling)} weighted votes
+          </Row>
+          <Row label="Supermajority">{gp.supermajority}% in favour</Row>
+          <Row label="Voting period">{gp.vote_period} days</Row>
+          <Row label="Waiting period">{gp.wait_period} days</Row>
+          <Row label="Escrow to propose">
+            {escrow > 0 ? `${number(escrow, 2)} TEIA` : 'None'}
+          </Row>
+          <Row label="Minimum to vote">
+            {/* A hundredth of a token is no threshold worth printing. */}
+            {minimum >= 0.01 ? `${number(minimum, 2)} TEIA` : 'Any amount'}
+          </Row>
+          <Row label="Proposals executed">{count('executed')}</Row>
+          <Row label="Proposals rejected">
+            {count('rejected')} · {count('cancelled')} cancelled
+          </Row>
+        </Rows>
+      </section>
+
+      <Line />
+
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>Core team multisig</h1>
+        <p className={styles.dao_intro}>
+          Day-to-day operations, within the mandate the DAO sets.{' '}
+          <Link to="/dao/multisig">Multisig Proposals</Link>.
         </p>
-        <ul className={styles.parameters_list}>
-          <li>
-            Members:{' '}
+        <Rows>
+          <Row label="Members">{number(multisig.memberCount)}</Row>
+          <Row label="Votes to pass">{multisig.quorum ?? '—'}</Row>
+          <Row label="Time to vote">{multisig.expirationDays ?? '—'} days</Row>
+          <Row label="Active proposals">{byStatus('active')}</Row>
+          <Row label="Executed">
+            {byStatus('executed')} · {byStatus('expired')} expired
+          </Row>
+          <Row label="Contract">
+            <TezosAddressLink address={DAO_TREASURY_CONTRACT} shorten />
+          </Row>
+        </Rows>
+      </section>
+
+      <Line />
+
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>Fees</h1>
+        <p className={styles.dao_intro}>
+          All of it goes to the treasury. Every fee is listed under{' '}
+          <Link to="/dao/fees">Fees</Link>.
+        </p>
+        <Rows>
+          {groups.map((group) => (
+            <Row key={group.key} label={group.name}>
+              {feeRange(group)}
+            </Row>
+          ))}
+        </Rows>
+      </section>
+
+      <Line />
+
+      <section className={styles.section}>
+        <h1 className={styles.section_title}>TEIA token</h1>
+        <Rows>
+          <Row label="Holders">
             <TzktLink link={`${DAO_TOKEN_CONTRACT}/tokens/0/holders`}>
-              {daoMemberCount} (Click for List of Existing Members)
+              {number(daoMemberCount)}
             </TzktLink>
-          </li>
-          <li>Total Number of Proposals: {Object.keys(proposals).length}</li>
-          <li>
-            Open Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.open ? 1 : 0),
-              0
-            )}
-          </li>
-          <li>
-            Executed Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.executed ? 1 : 0),
-              0
-            )}
-          </li>
-          <li>
-            Rejected Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.rejected ? 1 : 0),
-              0
-            )}
-          </li>
-          <li>
-            Cancelled Proposals:{' '}
-            {Object.values(proposals).reduce(
-              (acc, proposal) => acc + (proposal.status.cancelled ? 1 : 0),
-              0
-            )}
-          </li>
-          <li>
-            Treasury Balance ({DAO_TREASURY_CONTRACT}): {Math.round(daoBalance)}{' '}
-            tez and {Math.round(daoTokenBalance * 10) / 10} TEIA tokens
-          </li>
-        </ul>
-        <br />
-        <DonateInput destinationAddress={daoStorage.treasury} />
-        <br />
-        <TeiaTokenMetadata />
-        <p>
-          <a href={QUIPUSWAP_TEIA_URL} target="_blank" rel="noreferrer">
-            Convert XTZ to TEIA on Quipuswap (Decentralized Exchange)
-          </a>
-        </p>
+          </Row>
+          <Row label="Total supply">{number(token?.supply)} TEIA</Row>
+          <Row label="Transfers">{number(token?.transfers)}</Row>
+          <Row label="Contract">
+            <TezosAddressLink address={daoStorage.token} shorten />
+          </Row>
+          <Row label="Buy or sell">
+            <a href={QUIPUSWAP_TEIA_URL} target="_blank" rel="noreferrer">
+              Quipuswap
+            </a>
+          </Row>
+        </Rows>
+        <div className={styles.donate}>
+          <DonateInput destinationAddress={daoStorage.treasury} />
+        </div>
       </section>
 
       <Line />
 
-      <TokenHolders limit={10} title="Top 10 Token Holders" />
-
-      <Line />
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Community Representatives</h1>
-        <p>
-          Community Representatives are for voting members who are interested in
-          delegating their votes to other members of the community - people may
-          want to entrust their voting power to someone who is more active in
-          the DAO proposal process to represent them, for example. Otherwise,
-          the DAO defaults to direct participation based on the number of TEIA
-          tokens each wallet holds.
-        </p>
-        <p>
-          For more information, read the{' '}
-          <a
-            href="https://github.com/teia-community/teia-docs/wiki/Governance-on-Teia"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Governance on Teia Documentation
-          </a>{' '}
-          for more details.
-        </p>
-        <h4>Currently Active Community Representatives</h4>
-        <ul className={styles.parameters_list}>
-          {Object.entries(representatives).map(
-            ([representative, community]) => (
-              <li key={community}>
-                {`${community}: `}
-                <TeiaUserLink
-                  address={representative}
-                  alias={usersAliases?.[representative]}
-                  shorten
-                />
-              </li>
-            )
-          )}
-        </ul>
-      </section>
+      <TokenHolders limit={10} title="Top 10 token holders" />
 
       <Line />
 
       <section className={styles.section}>
-        <h1 className={styles.section_title}>
-          Current DAO Governance Parameters
-        </h1>
-        <p>
-          How the current governance model works in terms of voting, timing, and
-          weighting of each vote. These parameters can change at any time -
-          however, to change these parameters it must be done so by the approval
-          of the DAO itself.
-        </p>
-        <ul className={styles.parameters_list}>
-          <li>
-            Vote Method:{' '}
-            {gp.vote_method.linear ? 'linear weight' : 'quadratic weight'}
-          </li>
-          <li>
-            Required Quorum: {daoStorage.quorum / voteScaling} weighted votes
-          </li>
-          <li>
-            Percentage for Supermajority: {gp.supermajority}% positive votes
-          </li>
-          <li>
-            Representatives Vote Share: {gp.representatives_share}% of the
-            quorum
-          </li>
-          <li>
-            Representative Max Vote Share: {gp.representative_max_share}% of the
-            quorum
-          </li>
-          <li>Proposal Voting Period: {gp.vote_period} Days</li>
-          <li>Proposal Waiting Period: {gp.wait_period} Days</li>
-          <li>
-            Number of Tokens to Escrow to Submit a Proposal:{' '}
-            {gp.escrow_amount / DAO_TOKEN_DECIMALS} TEIA tokens
-          </li>
-          <li>
-            Minimum Number of Tokens Required to Vote on a Proposal:{' '}
-            {gp.min_amount / DAO_TOKEN_DECIMALS} TEIA tokens
-          </li>
-        </ul>
-        <p>
-          Currently TEIA's marketplace contract is handled by{' '}
-          <a
-            href="https://core-team-multisig.onrender.com/proposals"
-            target="_blank"
-          >
-            TEIA's Core Team Multisig
-          </a>{' '}
-          for teia.art's day-to-day activities. TEIA token holders are legally
-          defined as "operating members" of TEIA DAO LLC, which gives them
-          ultimate authority over the actions and functions of the community,
-          expressed through the voting and proposal mechanisms of the DAO
-          itself.
-        </p>
-      </section>
-
-      <Line />
-
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Smart Contracts</h1>
-        <p>
-          The current set of smart contracts that keep the DAO running on a
-          technical level. These contracts may be replaced or updated on
-          occasion for adjustments or improvements, but can only be done through
-          the approval of the DAO's proposal process.
-        </p>
-        <ul className={styles.parameters_list}>
-          <li>
-            DAO Governance:{' '}
+        <h1 className={styles.section_title}>Contracts</h1>
+        <Rows>
+          <Row label="Governance">
             <TezosAddressLink address={DAO_GOVERNANCE_CONTRACT} shorten />
-          </li>
-          <li>
-            DAO Token: <TezosAddressLink address={daoStorage.token} shorten />
-          </li>
-          <li>
-            DAO Treasury:{' '}
+          </Row>
+          <Row label="Token">
+            <TezosAddressLink address={daoStorage.token} shorten />
+          </Row>
+          <Row label="DAO treasury">
             <TezosAddressLink address={daoStorage.treasury} shorten />
-          </li>
-          <li>
-            DAO Guardians:{' '}
+          </Row>
+          <Row label="Core team multisig">
+            <TezosAddressLink address={DAO_TREASURY_CONTRACT} shorten />
+          </Row>
+          <Row label="Guardians">
             <TezosAddressLink address={daoStorage.guardians} shorten />
-          </li>
-          <li>
-            DAO Administrator:{' '}
+          </Row>
+          <Row label="Administrator">
             <TezosAddressLink address={daoStorage.administrator} shorten />
-          </li>
-          <li>
-            Community Representatives:{' '}
+          </Row>
+          <Row label="Representatives">
             <TezosAddressLink address={daoStorage.representatives} shorten />
-          </li>
-        </ul>
+          </Row>
+        </Rows>
       </section>
 
       <Line />
 
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Polls</h1>
-        <p>
-          TEIA's polling system is a community tool that any TEIA member can use
-          for any purpose - it is often used for feature requests, testing
-          interest or getting feedback for ideas (artistic or technical),
-          measuring community sentiment around certain issues, or just for fun.
-        </p>
-        <p>
-          TEIA's polling system can be found <a href="/polls">here.</a> (The DAO
-          is typically reserved for issues that affect core administration,
-          budgeting, and existential issues that require the full participation
-          of the community itself.)
-        </p>
+      <section className={styles.aside}>
+        <div>
+          <h2 className={styles.aside_title}>Community representatives</h2>
+          <p className={styles.aside_text}>
+            A holder can entrust their vote to a representative instead of
+            voting themselves.
+          </p>
+          <ul className={styles.aside_list}>
+            {Object.entries(representatives).map(
+              ([representative, community]) => (
+                <li key={community}>
+                  {`${community}: `}
+                  <TeiaUserLink
+                    address={representative}
+                    alias={usersAliases?.[representative]}
+                    shorten
+                  />
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+
+        <div>
+          <h2 className={styles.aside_title}>Polls</h2>
+          <p className={styles.aside_text}>
+            Feature requests, feedback and community sentiment, outside the DAO
+            process. <Link to="/polls">Teia polls</Link>.
+          </p>
+          <h2 className={styles.aside_title}>Reading</h2>
+          <p className={styles.aside_text}>
+            <a
+              href="https://github.com/teia-community/teia-docs/wiki/Governance-on-Teia"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Governance on Teia
+            </a>
+            {' · '}
+            <a
+              href="https://blog.teia.art/blog/dao-test-launch"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              The DAO launch
+            </a>
+          </p>
+        </div>
       </section>
     </>
   )
