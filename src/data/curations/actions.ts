@@ -14,6 +14,7 @@ import {
   CURATION_EDIT_FEE,
 } from '@constants'
 import { Tezos, useUserStore } from '@context/userStore'
+import { getContractFee } from '@data/contract-fees'
 import { useModalStore } from '@context/modalStore'
 import { buildCurationDocument, uploadCurationContent } from './ipfs'
 import type {
@@ -117,15 +118,20 @@ export async function createCuration(input: CurationInput) {
   try {
     const address = useUserStore.getState().address ?? ''
     const { cid, doc } = await buildAndUpload({ ...input, owner: address })
+    const createFee = await getContractFee(
+      CURATIONS_CONTRACT,
+      'create_fee',
+      CURATION_CREATE_FEE
+    )
     step(
       'Create Curation',
-      `Waiting for wallet confirmation (${feeLabel(CURATION_CREATE_FEE)} fee)`,
+      `Waiting for wallet confirmation (${feeLabel(createFee)} fee)`,
       false
     )
     const contract = await Tezos.wallet.at(CURATIONS_CONTRACT)
     const op = await contract.methodsObject
       .create_curation(cid)
-      .send({ amount: CURATION_CREATE_FEE, mutez: true })
+      .send({ amount: createFee, mutez: true })
     step('Create Curation', 'Awaiting confirmation...')
     await op.confirmation()
     invalidateAfterWrite(cid, doc, address)
@@ -143,15 +149,20 @@ export async function updateCuration(curationId: number, input: CurationInput) {
   step('Update Curation', 'Uploading to IPFS', true)
   try {
     const { cid, doc } = await buildAndUpload(input)
+    const editFee = await getContractFee(
+      CURATIONS_CONTRACT,
+      'edit_fee',
+      CURATION_EDIT_FEE
+    )
     step(
       'Update Curation',
-      `Waiting for wallet confirmation (${feeLabel(CURATION_EDIT_FEE)} fee)`,
+      `Waiting for wallet confirmation (${feeLabel(editFee)} fee)`,
       false
     )
     const contract = await Tezos.wallet.at(CURATIONS_CONTRACT)
     const op = await contract.methodsObject
       .update_curation({ curation_id: curationId, cid })
-      .send({ amount: CURATION_EDIT_FEE, mutez: true })
+      .send({ amount: editFee, mutez: true })
     step('Update Curation', 'Awaiting confirmation...')
     await op.confirmation()
     invalidateAfterWrite(cid, doc, input.owner, curationId)
@@ -234,9 +245,19 @@ export async function setCurationModerated({
 export async function migrateCurations(cids: string[]) {
   const { step, show, showError } = useModalStore.getState()
   const title = 'Migrate Curations'
-  const total = CURATION_CREATE_FEE * cids.length
-  step(title, `Waiting for wallet confirmation (${feeLabel(total)} total)`, true)
+  step(title, 'Reading the current fee', true)
   try {
+    const createFee = await getContractFee(
+      CURATIONS_CONTRACT,
+      'create_fee',
+      CURATION_CREATE_FEE
+    )
+    const total = createFee * cids.length
+    step(
+      title,
+      `Waiting for wallet confirmation (${feeLabel(total)} total)`,
+      true
+    )
     const address = useUserStore.getState().address ?? ''
     const contract = await Tezos.wallet.at(CURATIONS_CONTRACT)
     const op = await Tezos.wallet
@@ -245,7 +266,7 @@ export async function migrateCurations(cids: string[]) {
           kind: OpKind.TRANSACTION as const,
           ...contract.methodsObject
             .create_curation(cid)
-            .toTransferParams({ amount: CURATION_CREATE_FEE, mutez: true }),
+            .toTransferParams({ amount: createFee, mutez: true }),
         }))
       )
       .send()

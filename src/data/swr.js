@@ -21,6 +21,7 @@ import {
 import laggy from '@utils/swr-laggy-middleware'
 import { useModerators } from '@data/roles'
 import { userActivityConds, globalActivityConds } from '@utils/activity'
+import { donationQuery } from '@data/donation-activity'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -946,33 +947,86 @@ export function useFountainDonations(contractAddress, limit = 10000) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
+/** Plenty for a contract whose donations number in the dozens. */
+const DONATION_PAGE_SIZE = 1000
+const DONATION_MAX_PAGES = 20
+
+/**
+ * Every transfer that counts as a donation to one contract, using the same
+ * query the donations timeline uses so the two can never disagree about what
+ * a donation is.
+ */
+async function fetchDonationTransfers(contract, excludeAddresses = []) {
+  const excluded = new Set(excludeAddresses)
+  const rows = []
+
+  for (let page = 0; page < DONATION_MAX_PAGES; page += 1) {
+    const url = donationQuery(contract)
+    url.searchParams.set('sort.desc', 'id')
+    url.searchParams.set('limit', String(DONATION_PAGE_SIZE))
+    url.searchParams.set('select', 'sender,amount,timestamp')
+    if (page > 0) {
+      url.searchParams.set('offset', String(page * DONATION_PAGE_SIZE))
+    }
+
+    const res = await fetch(url.toString())
+    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
+    const batch = await res.json()
+    rows.push(...batch)
+    if (batch.length < DONATION_PAGE_SIZE) break
+  }
+
+  // The query already drops contracts and the payout wallets; this honours
+  // whatever extra exclusions the caller asked for.
+  return rows.filter((row) => {
+    const address = row.sender?.address
+    return Boolean(address) && !excluded.has(address)
+  })
+}
+
+/**
+ * Who has given the most to the DAO treasury, totalled from the chain.
+ *
+ * This used to come from a separate donations service, which stopped sending
+ * CORS headers and took the page down with it. The same answer is two hundred
+ * milliseconds away in the indexer, and the fountain list has always been
+ * built this way, so there is no service left to go quiet.
+ */
 export function useTopDonors(excludeAddresses = []) {
   const { data, mutate, error } = useSWR(
     [`/top-donators`, excludeAddresses.join(',')],
     async () => {
-      // Fetch all donors
-      const url = `${
-        import.meta.env.VITE_TEIA_DONATION_API
-      }/top-donators?limit=1000`
+      const rows = await fetchDonationTransfers(
+        DAO_TREASURY_CONTRACT,
+        excludeAddresses
+      )
 
-      try {
-        const res = await fetch(url)
-        if (!res.ok)
-          throw new Error(`Top donators API error: ${res.statusText}`)
-        const result = await res.json()
-
-        // Filter out excluded addresses & KT1 addresses
-        const excludeSet = new Set(excludeAddresses)
-        return result.donators.filter((donor) => {
-          const address = donor.donator_address
-          if (address?.startsWith('KT1')) return false
-          if (excludeSet.has(address)) return false
-          return true
-        })
-      } catch (err) {
-        console.error('Failed to fetch top donators:', err)
-        throw err
+      const byDonor = new Map()
+      for (const row of rows) {
+        const address = row.sender?.address
+        if (!address) continue
+        const donor = byDonor.get(address) || {
+          donator_address: address,
+          donator_alias: row.sender.alias || null,
+          total_donated_tez: 0,
+          transaction_count: 0,
+          first_donation: row.timestamp,
+          last_donation: row.timestamp,
+        }
+        donor.total_donated_tez += row.amount / 1000000
+        donor.transaction_count += 1
+        if (row.timestamp < donor.first_donation) {
+          donor.first_donation = row.timestamp
+        }
+        if (row.timestamp > donor.last_donation) {
+          donor.last_donation = row.timestamp
+        }
+        byDonor.set(address, donor)
       }
+
+      return [...byDonor.values()].sort(
+        (a, b) => b.total_donated_tez - a.total_donated_tez
+      )
     },
     {
       revalidateIfStale: false,

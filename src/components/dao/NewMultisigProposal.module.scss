@@ -1,0 +1,163 @@
+@import '@styles/variables.scss';
+
+.form {
+  margin: 1em 0 2em;
+  font-size: $font-small;
+}
+
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kind {
+  appearance: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.4rem 0;
+  color: var(--secondary-color);
+  font: inherit;
+  font-weight: 600;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.kind_active {
+  color: var(--text-color);
+  border-bottom-color: var(--text-color);
+}
+
+.summary {
+  margin: 1em 0 0;
+  max-width: 70ch;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.caution {
+  margin: 0.5em 0 0;
+  max-width: 70ch;
+  line-height: 1.5;
+  color: var(--no-vote-color);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin: 1.5em 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3em;
+
+  input,
+  select {
+    background: none;
+    border: 1px solid var(--gray-10);
+    color: inherit;
+    padding: 0.4em 0.5em;
+    font: inherit;
+    max-width: 100%;
+  }
+
+  input[type='file'] {
+    border: none;
+    padding-left: 0;
+  }
+
+  small {
+    opacity: 0.6;
+  }
+}
+
+.with_unit {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.label {
+  opacity: 0.6;
+}
+
+.wide {
+  width: 24em;
+}
+
+.destination {
+  border: 1px solid var(--border-color);
+  padding: 0.75em 1em 1em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+
+  legend {
+    padding: 0 0.4em;
+    opacity: 0.6;
+  }
+}
+
+.link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.8em;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.total {
+  margin: 1em 0 0;
+
+  small {
+    opacity: 0.55;
+  }
+}
+
+.warn {
+  margin: 0;
+  color: var(--no-vote-color);
+}
+
+.act {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--gray-10);
+  color: inherit;
+  padding: 0.25em 0.8em;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: currentColor;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.actions {
+  margin-top: 1.5em;
+}

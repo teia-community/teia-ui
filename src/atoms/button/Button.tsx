@@ -125,6 +125,8 @@ const Button = ({
       style={style}
       aria-label={alt}
       onClick={onClick}
+      // Without this a disabled button is only greyed out: it still clicks.
+      disabled={disabled}
       className={classes}
       {...props}
     >

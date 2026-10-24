@@ -16,6 +16,8 @@ import {
 } from '@constants'
 import { fetchGraphQL } from '@data/api'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 export interface AccountRoles {
@@ -33,21 +35,13 @@ export interface AccountRoles {
 
 /** Multisig users — DAO treasury storage `users` set. */
 export async function fetchMultisigUsers(): Promise<string[]> {
-  const res = await fetch(
-    `${TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=users`
-  )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const data = await res.json()
+  const data = await tzktFetch(`${TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=users`)
   return Array.isArray(data) ? data : []
 }
 
 /** Standalone moderators — moderator contract storage `moderators` set. */
 export async function fetchModerators(): Promise<string[]> {
-  const res = await fetch(
-    `${TZKT_API}/v1/contracts/${MODERATOR_CONTRACT}/storage?path=moderators`
-  )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const data = await res.json()
+  const data = await tzktFetch(`${TZKT_API}/v1/contracts/${MODERATOR_CONTRACT}/storage?path=moderators`)
   return Array.isArray(data) ? data : []
 }
 
@@ -59,9 +53,7 @@ export async function fetchTokenBalance(address: string): Promise<number> {
   url.searchParams.set('token.tokenId', String(WIKI_TOKEN_ID))
   url.searchParams.set('select', 'balance')
 
-  const res = await fetch(url.toString())
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const rows: string[] = await res.json()
+  const rows = await tzktFetch<string[]>(url.toString())
   return rows.reduce((sum, b) => sum + Number(b || 0), 0)
 }
 
@@ -80,9 +72,7 @@ export async function fetchTokenHolders(): Promise<Set<string>> {
     url.searchParams.set('limit', String(LIMIT))
     url.searchParams.set('offset', String(offset))
 
-    const res = await fetch(url.toString())
-    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-    const rows: string[] = await res.json()
+    const rows = await tzktFetch<string[]>(url.toString())
     for (const addr of rows) if (addr) holders.add(addr)
     if (rows.length < LIMIT) break
   }
@@ -109,10 +99,9 @@ export async function fetchAccountsTokenBalances(
     url.searchParams.set('select', 'account,balance')
     url.searchParams.set('limit', '10000')
 
-    const res = await fetch(url.toString())
-    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-    const rows: { account: { address: string }; balance: string }[] =
-      await res.json()
+    const rows = await tzktFetch<
+      { account: { address: string }; balance: string }[]
+    >(url.toString())
     for (const row of rows) {
       const addr = row.account?.address
       if (addr) out.set(addr, (out.get(addr) || 0) + Number(row.balance || 0))

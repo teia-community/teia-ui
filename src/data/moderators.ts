@@ -9,6 +9,8 @@ import useSWR, { mutate } from 'swr'
 import { Tezos } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 
+import { tzktFetch } from './tzkt'
+
 const TZKT_API = import.meta.env.VITE_TZKT_API
 
 export type ModeratorAction =
@@ -42,11 +44,9 @@ export interface ModeratorVote {
 
 /** The current moderator set (storage `moderators`). */
 export async function fetchModeratorSet(contract: string): Promise<string[]> {
-  const res = await fetch(
+  const data = await tzktFetch(
     `${TZKT_API}/v1/contracts/${contract}/storage?path=moderators`
   )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const data = await res.json()
   return Array.isArray(data) ? data : []
 }
 
@@ -66,11 +66,9 @@ interface RawProposal {
 export async function fetchModeratorProposals(
   contract: string
 ): Promise<ModeratorProposal[]> {
-  const res = await fetch(
+  const rows = await tzktFetch<RawProposal[]>(
     `${TZKT_API}/v1/contracts/${contract}/bigmaps/proposals/keys?limit=200&active=true`
   )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const rows: RawProposal[] = await res.json()
   return rows
     .map((r) => {
       const action = Object.keys(r.value.action)[0] as ModeratorAction
@@ -95,12 +93,11 @@ export async function fetchModeratorVotes(
   address?: string
 ): Promise<ModeratorVote[]> {
   const filter = address ? `&key.address=${address}` : ''
-  const res = await fetch(
+  const rows = await tzktFetch<
+    { key: { nat: string; address: string }; value: boolean }[]
+  >(
     `${TZKT_API}/v1/contracts/${contract}/bigmaps/votes/keys?limit=1000&active=true${filter}`
   )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const rows: { key: { nat: string; address: string }; value: boolean }[] =
-    await res.json()
   return rows.map((r) => ({
     proposalId: Number(r.key.nat),
     voter: r.key.address,
@@ -112,11 +109,11 @@ export async function fetchModeratorVotes(
 export async function fetchMultisigExpiration(
   multisig: string
 ): Promise<number> {
-  const res = await fetch(
-    `${TZKT_API}/v1/contracts/${multisig}/storage?path=expiration_time`
+  return Number(
+    await tzktFetch(
+      `${TZKT_API}/v1/contracts/${multisig}/storage?path=expiration_time`
+    )
   )
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  return Number(await res.json())
 }
 
 // ---------------------------------------------------------------------------

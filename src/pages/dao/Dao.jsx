@@ -19,7 +19,7 @@ const TABS = [
     to: '',
   },
   {
-    title: 'Proposals',
+    title: 'DAO Proposals',
     to: 'proposals',
   },
   {
@@ -34,6 +34,10 @@ const TABS = [
   {
     title: 'Fees',
     to: 'fees',
+  },
+  {
+    title: 'Multisig Proposals',
+    to: 'multisig',
   },
 ]
 

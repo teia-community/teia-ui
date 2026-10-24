@@ -250,6 +250,9 @@ export const MOROCCO_QUAKE_FUNDING_CONTRACT =
 export const POLLS_CONTRACT = 'KT1SUExZfkmxf2fafrVgYjZGEKDete2siWoU'
 export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
+
+/** Tether on Tezos, which the treasury holds alongside tez. */
+export const USDT_CONTRACT = 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 
