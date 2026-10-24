@@ -151,7 +151,9 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
       default:
         return (
           parsed.length > 0 &&
-          parsed.every((r) => r.raw != null && r.raw > 0 && r.destination) &&
+          parsed.every(
+            (r) => r.raw != null && r.raw > 0 && validAddress(r.destination)
+          ) &&
           (kind !== 'token' || Boolean(token)) &&
           !overBalance
         )
@@ -303,7 +305,9 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
         {kind === 'add' && (
           <>
             <label className={styles.field}>
-              <span className={styles.label}>Address to add</span>
+              <span className={styles.label}>
+                Address to add — a Tezos wallet (tz1…)
+              </span>
               <input
                 type="text"
                 className={styles.wide}
@@ -398,7 +402,9 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
                   </span>
                 </label>
                 <label className={styles.field}>
-                  <span className={styles.label}>To</span>
+                  <span className={styles.label}>
+                    To — a Tezos address, a wallet (tz1…) or a contract (KT1…)
+                  </span>
                   <input
                     type="text"
                     className={styles.wide}
@@ -408,6 +414,10 @@ export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
                     }
                   />
                 </label>
+                {entry.destination !== '' &&
+                  !validAddress(entry.destination) && (
+                    <p className={styles.warn}>That is not a Tezos address.</p>
+                  )}
                 {invalid && (
                   <p className={styles.warn}>
                     That amount cannot be sent exactly. Use a plain number.
