@@ -14,6 +14,7 @@ import {
   CHANNEL_MESSAGE_FEE,
 } from '@constants'
 import { Tezos, useUserStore } from '@context/userStore'
+import { getContractFee } from '@data/contract-fees'
 import { useModalStore } from '@context/modalStore'
 import { computeMerkleRoot } from '@utils/merkle'
 import { fetchEventsPage, fetchTransactionsByOpHash } from './api'
@@ -179,6 +180,7 @@ export async function createChannel({
       merkleUriBytes = stringToBytes(listUri)
     }
 
+    const channelFee = await getContractFee(CONTRACT, 'channel_fee', CHANNEL_FEE)
     step('Create Channel', 'Waiting for wallet confirmation', false)
 
     const contract = await Tezos.wallet.at(CONTRACT)
@@ -190,7 +192,7 @@ export async function createChannel({
         merkle_uri: merkleUriBytes,
         admins,
       })
-      .send({ amount: CHANNEL_FEE, mutez: true })
+      .send({ amount: channelFee, mutez: true })
 
     step('Create Channel', 'Awaiting confirmation...')
     await op.confirmation()
@@ -233,6 +235,7 @@ export async function createDmChannel({
     })
     const metadataBytes = stringToBytes(metadataIpfsUri)
 
+    const channelFee = await getContractFee(CONTRACT, 'channel_fee', CHANNEL_FEE)
     step('Start DM', 'Waiting for wallet confirmation', false)
 
     const contract = await Tezos.wallet.at(CONTRACT)
@@ -244,7 +247,7 @@ export async function createDmChannel({
         merkle_uri: null,
         admins: [recipient],
       })
-      .send({ amount: CHANNEL_FEE, mutez: true })
+      .send({ amount: channelFee, mutez: true })
 
     step('Start DM', 'Awaiting confirmation...')
     await op.confirmation()
@@ -578,6 +581,7 @@ export async function postMessage({
     )
     const contentBytes = stringToBytes(ipfsUri)
 
+    const postFee = await getContractFee(CONTRACT, 'post_fee', CHANNEL_MESSAGE_FEE)
     step('Post Message', 'Waiting for wallet confirmation', false)
 
     const contract = await Tezos.wallet.at(CONTRACT)
@@ -588,7 +592,7 @@ export async function postMessage({
         proof: proof || null,
         parent_id: parentId ? parseInt(parentId) : null,
       })
-      .send({ amount: CHANNEL_MESSAGE_FEE, mutez: true })
+      .send({ amount: postFee, mutez: true })
 
     step('Post Message', 'Awaiting confirmation...')
     await op.confirmation()
