@@ -111,7 +111,11 @@ function useMultisigQuery() {
         await bigmapPointers()
 
       const [storage, acceptances, proposalRows, voteRows] = await Promise.all([
-        fetchJson<{ users: string[]; expiration_time: string }>(
+        fetchJson<{
+          users: string[]
+          expiration_time: string
+          minimum_votes: string
+        }>(
           `${TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage`
         ),
         fetchJson<
