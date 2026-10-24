@@ -5,6 +5,7 @@ import {
   DAO_TOKEN_DECIMALS,
   DAO_TREASURY_CONTRACT,
   QUIPUSWAP_TEIA_URL,
+  USDT_CONTRACT,
 } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
@@ -24,6 +25,8 @@ import {
 import { useMultisigProposals } from '@data/multisig'
 import { useTeiaFees } from '@data/teia-fees'
 import { useDaoToken } from '@data/dao-token'
+import { useTreasuryTokens } from '@data/treasury-tokens'
+import { formatTokenAmount } from '@utils/multisig-proposals.mjs'
 import LoadingDaoMessage from '../LoadingDaoMessage'
 import DonateInput from '@atoms/button/DonateButton'
 import TokenHolders from '@components/dao/TokenHolders'
@@ -75,6 +78,7 @@ export default function DaoParameters() {
   const multisig = useMultisigProposals()
   const { groups } = useTeiaFees()
   const { token } = useDaoToken()
+  const { tokens } = useTreasuryTokens()
 
   // Get all the required user information
   const userAddress = useUserStore((st) => st.address)
@@ -111,6 +115,9 @@ export default function DaoParameters() {
   const escrow = gp.escrow_amount / DAO_TOKEN_DECIMALS
   const minimum = gp.min_amount / DAO_TOKEN_DECIMALS
 
+  // The treasury is not only tez: it is paid and it pays in USDt as well.
+  const usdt = tokens.find((t) => t.contract === USDT_CONTRACT)
+
   const byStatus = (status) =>
     multisig.proposals.filter((p) => p.status === status).length
   const marketplaceFee = groups
@@ -123,7 +130,9 @@ export default function DaoParameters() {
         <Rows>
           <Row label="TEIA holders">{number(daoMemberCount)}</Row>
           <Row label="Treasury">
-            {number(daoBalance)} {'ꜩ'} · {number(daoTokenBalance)} TEIA
+            {number(daoBalance)} {'ꜩ'}
+            {usdt && ` · ${formatTokenAmount(usdt.rawBalance, usdt)}`} ·{' '}
+            {number(daoTokenBalance)} TEIA
           </Row>
           <Row label="DAO proposals">
             {number(all.length)} · {count('open')} open
