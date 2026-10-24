@@ -49,6 +49,14 @@ export interface DaoProposal {
   positiveVotes: number
   text: string | null
   user: string | null
+  mutezTransfers: { amount: string; destination: string }[] | null
+  tokenTransfers: {
+    fa2: string
+    tokenId: string
+    distribution: { amount: string; destination: string }[]
+  } | null
+  minimumVotes: string | null
+  expirationTime: string | null
   status: 'active' | 'executed' | 'expired'
   expiresAt: string | null
   inFavour: number
@@ -154,6 +162,16 @@ function useMultisigQuery() {
           positiveVotes: Number(row.value?.positive_votes ?? 0),
           text: decodeText(row.value?.text),
           user: (row.value?.user as string) ?? null,
+          mutezTransfers: (row.value?.mutez_transfers as DaoProposal['mutezTransfers']) ?? null,
+          tokenTransfers: row.value?.token_transfers
+            ? {
+                fa2: String(row.value.token_transfers.fa2 ?? ''),
+                tokenId: String(row.value.token_transfers.token_id ?? ''),
+                distribution: row.value.token_transfers.distribution ?? [],
+              }
+            : null,
+          minimumVotes: (row.value?.minimum_votes as string) ?? null,
+          expirationTime: (row.value?.expiration_time as string) ?? null,
         }
         const status = proposalStatus(base, expirationDays)
         const tally = summariseVotes(

@@ -346,3 +346,64 @@
   margin-bottom: 1em;
   max-width: 70ch;
 }
+
+.proposal_body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 1em;
+  margin-top: 0.4em;
+  padding-left: calc(56px + 48px + 1.5em);
+
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
+}
+
+.quorum {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  min-width: 190px;
+}
+
+.quorum_track {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--gray-15);
+  overflow: hidden;
+}
+
+.quorum_fill {
+  height: 100%;
+  border-radius: 3px;
+  background-color: var(--yes-vote-color);
+  transition: width 0.2s ease;
+}
+
+.quorum_label {
+  font-size: $font-small;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.vote_against {
+  color: var(--no-vote-color);
+}
+
+.proposal_detail {
+  margin: 0.4em 0 0;
+  padding-left: calc(56px + 48px + 1.5em + 1.2em);
+  font-size: $font-small;
+  opacity: 0.6;
+
+  li {
+    list-style: disc;
+  }
+
+  @media (max-width: 700px) {
+    padding-left: 1.2em;
+  }
+}

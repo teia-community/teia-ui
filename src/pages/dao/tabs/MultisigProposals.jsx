@@ -7,8 +7,10 @@ import {
   PROPOSAL_STATUSES,
   kindLabel,
   timeUntil,
+  describeProposal,
+  quorumProgress,
 } from '@utils/multisig-proposals.mjs'
-import { useMultisigProposals } from '@data/multisig'
+import { useMultisigProposals, useDaoMembers } from '@data/multisig'
 import { DAO_TREASURY_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
 import styles from './index.module.scss'
@@ -21,38 +23,32 @@ function textProposalLink(text) {
   return HashToURL(text)
 }
 
-/** What a proposal does, in a line, from the fields the contract keeps. */
-function describe(proposal) {
-  if (proposal.text) {
-    const href = textProposalLink(proposal.text)
-    if (!href) return proposal.text
-    return (
-      <a href={href} target="_blank" rel="noreferrer">
-        Text proposal
-      </a>
-    )
-  }
-  switch (proposal.rawKind) {
-    case 'add_user':
-      return `Add ${walletPreview(proposal.user || '')} to the multisig`
-    case 'remove_user':
-      return `Remove ${walletPreview(proposal.user || '')} from the multisig`
-    case 'transfer_mutez':
-      return 'Transfer tez from the treasury'
-    case 'transfer_token':
-      return 'Transfer tokens from the treasury'
-    case 'minimum_votes':
-      return 'Change the number of votes a proposal needs'
-    case 'expiration_time':
-      return 'Change how long proposals stay open'
-    case 'lambda_function':
-      return 'Run a lambda on the treasury contract'
-    default:
-      return proposal.kind
-  }
+/** How close a proposal is to the votes it needs. */
+function QuorumMeter({ inFavour, quorum }) {
+  const share = quorumProgress(inFavour, quorum)
+  return (
+    <div
+      className={styles.quorum}
+      role="img"
+      aria-label={`${inFavour} of ${quorum} votes needed`}
+    >
+      <div className={styles.quorum_track}>
+        <div
+          className={styles.quorum_fill}
+          style={{ width: `${share * 100}%` }}
+        />
+      </div>
+      <span className={styles.quorum_label}>
+        {inFavour}/{quorum} in favour
+      </span>
+    </div>
+  )
 }
 
-function ProposalRow({ proposal }) {
+function ProposalRow({ proposal, quorum, aliasOf }) {
+  const href = textProposalLink(proposal.text)
+  const summary = describeProposal(proposal, { aliasOf })
+
   return (
     <div className={styles.proposal}>
       <div className={styles.proposal_head}>
@@ -60,23 +56,61 @@ function ProposalRow({ proposal }) {
           {kindLabel(proposal.rawKind)}
         </span>
         <span className={styles.proposal_id}>#{proposal.id}</span>
-        <span className={styles.proposal_desc}>{describe(proposal)}</span>
+        <span className={styles.proposal_desc}>
+          {href ? (
+            <a href={href} target="_blank" rel="noreferrer">
+              {summary}
+            </a>
+          ) : (
+            summary
+          )}
+        </span>
         <span className={styles.proposal_when}>
           {proposal.status === 'active' && proposal.expiresAt
             ? `expires ${timeUntil(proposal.expiresAt)}`
             : getWordDate(proposal.timestamp)}
         </span>
       </div>
-      <div className={styles.proposal_votes}>
-        <span>{proposal.inFavour} in favour</span>
-        <span>{proposal.against} against</span>
-        <span>
-          {proposal.silent} {proposal.silentLabel}
-        </span>
-        <span className={styles.proposal_issuer}>
-          proposed by {walletPreview(proposal.issuer)}
-        </span>
+
+      <div className={styles.proposal_body}>
+        <QuorumMeter inFavour={proposal.inFavour} quorum={quorum} />
+        <div className={styles.proposal_votes}>
+          <span className={styles.vote_against}>
+            {proposal.against} against
+          </span>
+          <span>
+            {proposal.silent} {proposal.silentLabel}
+          </span>
+          <span className={styles.proposal_issuer}>
+            proposed by{' '}
+            {aliasOf(proposal.issuer) || walletPreview(proposal.issuer)}
+          </span>
+        </div>
       </div>
+
+      {proposal.mutezTransfers?.length > 1 && (
+        <ul className={styles.proposal_detail}>
+          {proposal.mutezTransfers.map((t, i) => (
+            <li key={`${t.destination}-${i}`}>
+              {(Number(t.amount) / 1000000).toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}{' '}
+              ꜩ to {walletPreview(t.destination)}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {proposal.tokenTransfers?.distribution?.length > 1 && (
+        <ul className={styles.proposal_detail}>
+          {proposal.tokenTransfers.distribution.map((t, i) => (
+            <li key={`${t.destination}-${i}`}>
+              {Number(t.amount).toLocaleString()} to{' '}
+              {walletPreview(t.destination)}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -85,6 +119,16 @@ function ProposalRow({ proposal }) {
 export default function MultisigProposals() {
   const { proposals, memberCount, quorum, expirationDays, error, isLoading } =
     useMultisigProposals()
+  const { members } = useDaoMembers()
+
+  // Members past and present, so a proposal that removed someone can still
+  // name them.
+  const aliasOf = useMemo(() => {
+    const names = new Map(
+      members.filter((m) => m.alias).map((m) => [m.address, m.alias])
+    )
+    return (address) => names.get(address) || null
+  }, [members])
   const [status, setStatus] = useState('active')
   const [shown, setShown] = useState(PAGE)
 
@@ -157,7 +201,12 @@ export default function MultisigProposals() {
         </p>
       ) : (
         visible.map((proposal) => (
-          <ProposalRow key={proposal.id} proposal={proposal} />
+          <ProposalRow
+            key={proposal.id}
+            proposal={proposal}
+            quorum={quorum}
+            aliasOf={aliasOf}
+          />
         ))
       )}
 

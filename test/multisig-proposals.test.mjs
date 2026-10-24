@@ -6,6 +6,8 @@ import {
   summariseVotes,
   kindLabel,
   timeUntil,
+  describeProposal,
+  quorumProgress,
 } from '../src/utils/multisig-proposals.mjs'
 
 const NOW = Date.parse('2026-10-24T00:00:00Z')
@@ -77,4 +79,55 @@ test('a deadline already passed does not read as the future', () => {
   const base = Date.parse('2026-10-24T00:00:00Z')
   assert.equal(timeUntil('2026-10-23T00:00:00Z', base), 'any moment')
   assert.equal(timeUntil('nonsense', base), null)
+})
+
+test('a tez transfer says how much and where it goes', () => {
+  const one = describeProposal({
+    rawKind: 'transfer_mutez',
+    mutezTransfers: [{ amount: '1436000000', destination: 'tz1gpVD4ftf9GG' }],
+  })
+  assert.match(one, /^Transfer 1,436 ꜩ to tz1gp…/)
+
+  const many = describeProposal({
+    rawKind: 'transfer_mutez',
+    mutezTransfers: [
+      { amount: '1436000000', destination: 'a' },
+      { amount: '482000000', destination: 'b' },
+    ],
+  })
+  assert.equal(many, 'Transfer 1,918 ꜩ across 2 destinations')
+})
+
+test('a token transfer keeps the raw amount, decimals being unknown', () => {
+  const text = describeProposal({
+    rawKind: 'transfer_token',
+    tokenTransfers: {
+      tokenId: '2',
+      distribution: [{ amount: '450000', destination: 'tz1WJpBDRGfa21' }],
+    },
+  })
+  assert.match(text, /^Transfer 450,000 of token #2 to tz1WJ…/)
+})
+
+test('membership proposals name the member when an alias is known', () => {
+  const p = { rawKind: 'remove_user', user: 'tz1M7n1Fpvf' }
+  assert.equal(
+    describeProposal(p, { aliasOf: () => 'Kelly Richardson' }),
+    'Remove Kelly Richardson from the multisig'
+  )
+  assert.match(describeProposal(p), /^Remove tz1M7…/)
+})
+
+test('a transfer with nothing recorded still describes itself', () => {
+  assert.equal(
+    describeProposal({ rawKind: 'transfer_mutez', mutezTransfers: [] }),
+    'Transfer tez from the treasury'
+  )
+})
+
+test('quorum progress is a share of the votes needed, clamped', () => {
+  assert.equal(quorumProgress(0, 10), 0)
+  assert.equal(quorumProgress(8, 10), 0.8)
+  assert.equal(quorumProgress(12, 10), 1)
+  assert.equal(quorumProgress(5, 0), 0)
 })

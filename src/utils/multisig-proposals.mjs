@@ -96,3 +96,82 @@ export function summariseVotes(votes = [], memberCount = 0, status = 'active') {
     silentLabel: status === 'active' ? 'pending' : 'abstain',
   }
 }
+
+/** Tez, written the way the rest of the site writes it. */
+function formatTez(mutez) {
+  return `${(mutez / 1000000).toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+  })} ꜩ`
+}
+
+function formatCount(n) {
+  return n.toLocaleString()
+}
+
+function shortAddress(address) {
+  if (!address) return 'an address'
+  return `${address.slice(0, 5)}…${address.slice(-5)}`
+}
+
+/** "to tz1ab…cdef" for one, "across 7 destinations" for several. */
+function destinations(list) {
+  if (list.length === 1) return `to ${shortAddress(list[0].destination)}`
+  return `across ${list.length} destinations`
+}
+
+/**
+ * What a proposal actually does, spelled out.
+ *
+ * The contract keeps the amounts and destinations, so a transfer proposal can
+ * say how much and to whom rather than only that it is a transfer.
+ */
+export function describeProposal(proposal, { aliasOf } = {}) {
+  const name = (address) =>
+    (aliasOf && aliasOf(address)) || shortAddress(address)
+
+  switch (proposal.rawKind) {
+    case 'transfer_mutez': {
+      const list = proposal.mutezTransfers ?? []
+      if (list.length === 0) return 'Transfer tez from the treasury'
+      const total = list.reduce((sum, t) => sum + Number(t.amount || 0), 0)
+      return `Transfer ${formatTez(total)} ${destinations(list)}`
+    }
+    case 'transfer_token': {
+      const transfer = proposal.tokenTransfers
+      const list = transfer?.distribution ?? []
+      if (list.length === 0) return 'Transfer tokens from the treasury'
+      const total = list.reduce((sum, t) => sum + Number(t.amount || 0), 0)
+      // The contract does not record the token's decimals, so the raw
+      // on-chain amount is shown rather than a guessed one.
+      return `Transfer ${formatCount(total)} of token #${
+        transfer.tokenId
+      } ${destinations(list)}`
+    }
+    case 'add_user':
+      return `Add ${name(proposal.user)} to the multisig`
+    case 'remove_user':
+      return `Remove ${name(proposal.user)} from the multisig`
+    case 'minimum_votes':
+      return `Change the votes a proposal needs to ${proposal.minimumVotes}`
+    case 'expiration_time':
+      return `Change how long proposals stay open to ${proposal.expirationTime} days`
+    case 'lambda_function':
+      return 'Run a lambda on the treasury contract'
+    case 'text':
+      return 'Text proposal'
+    default:
+      return proposal.kind
+  }
+}
+
+/**
+ * How far a proposal has come towards the votes it needs.
+ *
+ * One measure on one track: the share of the quorum already in favour. Votes
+ * against do not move a proposal towards passing, so they are reported beside
+ * the bar rather than drawn on it, where they would read as progress.
+ */
+export function quorumProgress(inFavour, quorum) {
+  if (!Number.isFinite(quorum) || quorum <= 0) return 0
+  return Math.max(0, Math.min(1, inFavour / quorum))
+}
