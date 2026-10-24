@@ -35,6 +35,10 @@ const TABS = [
     title: 'Fees',
     to: 'fees',
   },
+  {
+    title: 'Core Members',
+    to: 'members',
+  },
 ]
 
 export default function DAO() {
