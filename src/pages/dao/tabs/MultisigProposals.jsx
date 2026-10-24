@@ -11,11 +11,15 @@ import {
   quorumProgress,
 } from '@utils/multisig-proposals.mjs'
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
+import { CoreMembers } from './CoreMembers'
 import { DAO_TREASURY_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
 import styles from './index.module.scss'
 
 const PAGE = 15
+
+/** The sub-tabs: the three proposal states, then the people who vote on them. */
+const VIEWS = [...PROPOSAL_STATUSES, { key: 'members', label: 'Core members' }]
 
 /** Text proposals store an ipfs link to the written proposal. */
 function textProposalLink(text) {
@@ -158,11 +162,12 @@ export default function MultisigProposals() {
       <p className={styles.proposal_intro}>
         The core team multisig is the contract through which Teia conducts its
         day-to-day operations: approving budgets, awarding grants, funding
-        events, and settling the operational matters involved in keeping
-        teia.art running. Each proposal is signed on-chain by the core team, and
-        requires {quorum} of {memberCount} members in favour to be executed.
-        Proposals that do not reach that threshold within {expirationDays} days
-        expire and can no longer be voted on or executed.
+        events, setting the marketplace fees, and settling the operational
+        matters involved in keeping teia.art running. Each proposal is signed
+        on-chain by the core team, and requires {quorum} of {memberCount}{' '}
+        members in favour to be executed. Proposals that do not reach that
+        threshold within {expirationDays} days expire and can no longer be voted
+        on or executed.
       </p>
       <p className={styles.proposal_intro}>
         These decisions operate within the mandate set by the DAO. Where the two
@@ -171,7 +176,7 @@ export default function MultisigProposals() {
       </p>
 
       <div className={styles.proposal_tabs}>
-        {PROPOSAL_STATUSES.map((option) => (
+        {VIEWS.map((option) => (
           <button
             type="button"
             key={option.key}
@@ -184,10 +189,16 @@ export default function MultisigProposals() {
             }}
           >
             {option.label}
-            <small>{grouped[option.key]?.length ?? 0}</small>
+            <small>
+              {option.key === 'members'
+                ? memberCount
+                : grouped[option.key]?.length ?? 0}
+            </small>
           </button>
         ))}
       </div>
+
+      {status === 'members' && <CoreMembers />}
 
       {status === 'expired' && list.length > 0 && (
         <p className={styles.member_empty}>
@@ -195,11 +206,12 @@ export default function MultisigProposals() {
         </p>
       )}
 
-      {list.length === 0 ? (
+      {status !== 'members' && list.length === 0 ? (
         <p className={styles.member_empty}>
           No {status} proposals at the moment.
         </p>
       ) : (
+        status !== 'members' &&
         visible.map((proposal) => (
           <ProposalRow
             key={proposal.id}
@@ -210,7 +222,7 @@ export default function MultisigProposals() {
         ))
       )}
 
-      {shown < list.length && (
+      {status !== 'members' && shown < list.length && (
         <div className={styles.proposal_more}>
           <Button shadow_box onClick={() => setShown(shown + PAGE)}>
             Show {Math.min(PAGE, list.length - shown)} more

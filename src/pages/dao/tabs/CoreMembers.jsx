@@ -89,8 +89,8 @@ function MemberRow({ member, proposals, open, onToggle }) {
   )
 }
 
-/** DAO page tab: the multisig's core members, past and present. */
-export default function CoreMembers() {
+/** The multisig's members, past and present. Shown inside the multisig tab. */
+export function CoreMembers() {
   const { members, proposals, error, isLoading } = useDaoMembers()
   const [sort, setSort] = useState('name')
   const [openAddress, setOpenAddress] = useState(null)
@@ -135,12 +135,6 @@ export default function CoreMembers() {
 
   return (
     <div className={styles.members}>
-      <p className={styles.member_empty}>
-        The Teia multisig signs on behalf of the DAO. Membership, join dates and
-        every vote below are read from the contract. Open a member to see how
-        they voted.
-      </p>
-
       <ActivityControls
         sort={sort}
         onSortChange={setSort}
@@ -164,3 +158,5 @@ export default function CoreMembers() {
     </div>
   )
 }
+
+export default CoreMembers

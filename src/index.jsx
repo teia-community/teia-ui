@@ -23,7 +23,6 @@ import {
   DaoProposals,
   SubmitDaoProposals,
   DaoFees,
-  DaoCoreMembers,
   DaoMultisigProposals,
 } from '@pages/dao/tabs'
 import {
@@ -267,7 +266,6 @@ const router = createBrowserRouter(
           <Route path="submit" element={<SubmitDaoProposals />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="fees" element={<DaoFees />} />
-          <Route path="members" element={<DaoCoreMembers />} />
           <Route path="multisig" element={<DaoMultisigProposals />} />
           <Route path="*" element={<DaoParameters />} />
         </Route>

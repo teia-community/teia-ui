@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { DAO_GOVERNANCE_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
-import { Select } from '@atoms/select'
 import {
   useStorage,
   useDaoGovernanceParameters,
@@ -11,6 +10,7 @@ import {
   useDaoUserVotes,
   useDaoCommunityVotes,
 } from '@data/swr'
+import TokenHolders from '@components/dao/TokenHolders'
 import LoadingDaoMessage from '../LoadingDaoMessage'
 import Proposal from '../Proposal'
 import styles from '@style'
@@ -25,6 +25,21 @@ const PROPOSAL_STATUS_OPTIONS = {
   rejected: 'Rejected proposals',
   cancelled: 'Cancelled proposals',
 }
+
+/** Short labels for the tab row; the long ones belong in the group intro. */
+const TAB_LABELS = {
+  toVote: 'To vote',
+  voted: 'Voted',
+  toEvaluate: 'To evaluate',
+  approved: 'Approved',
+  toExecute: 'To execute',
+  executed: 'Executed',
+  rejected: 'Rejected',
+  cancelled: 'Cancelled',
+}
+
+/** Not a proposal status: the electorate that decides them. */
+const HOLDERS_TAB = 'holders'
 
 export default function DaoProposals() {
   // Set the component state
@@ -116,25 +131,39 @@ export default function DaoProposals() {
         listed under Multisig Proposals.
       </p>
 
-      <Select
-        alt="proposal group selection"
-        value={{
-          value: selectedStatus,
-          label: `${PROPOSAL_STATUS_OPTIONS[selectedStatus]} (${proposalIdsByStatus[selectedStatus].length})`,
-        }}
-        onChange={(e) => setSelectedStatus(e.value)}
-        options={statusToSelect.map((status) => ({
-          value: status,
-          label: `${PROPOSAL_STATUS_OPTIONS[status]} (${proposalIdsByStatus[status].length})`,
-        }))}
-      >
-        <Line />
-      </Select>
+      <div className={styles.proposal_tabs}>
+        {statusToSelect.map((status) => (
+          <button
+            type="button"
+            key={status}
+            className={`${styles.proposal_tab} ${
+              selectedStatus === status ? styles.proposal_tab_active : ''
+            }`}
+            onClick={() => setSelectedStatus(status)}
+          >
+            {TAB_LABELS[status]}
+            <small>{proposalIdsByStatus[status].length}</small>
+          </button>
+        ))}
+        <button
+          type="button"
+          className={`${styles.proposal_tab} ${
+            selectedStatus === HOLDERS_TAB ? styles.proposal_tab_active : ''
+          }`}
+          onClick={() => setSelectedStatus(HOLDERS_TAB)}
+        >
+          Token holders
+        </button>
+      </div>
 
-      <ProposalGroup
-        status={selectedStatus}
-        proposalIds={proposalIdsByStatus[selectedStatus]}
-      />
+      {selectedStatus === HOLDERS_TAB ? (
+        <TokenHolders limit={50} title="TEIA token holders" />
+      ) : (
+        <ProposalGroup
+          status={selectedStatus}
+          proposalIds={proposalIdsByStatus[selectedStatus]}
+        />
+      )}
     </section>
   )
 }

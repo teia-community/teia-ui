@@ -39,10 +39,6 @@ const TABS = [
     title: 'Multisig Proposals',
     to: 'multisig',
   },
-  {
-    title: 'Core Members',
-    to: 'members',
-  },
 ]
 
 export default function DAO() {
