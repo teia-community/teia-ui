@@ -8,13 +8,14 @@ import {
   kindLabel,
   timeUntil,
   describeProposal,
-  quorumProgress,
   formatTokenAmount,
 } from '@utils/multisig-proposals.mjs'
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
 import { useTokenInfo } from '@data/token-metadata'
 import { TezRateControls, useTezRate } from '@components/dao/TezRate'
 import NewMultisigProposal from '@components/dao/NewMultisigProposal'
+import QuorumMeter from '@components/dao/QuorumMeter'
+import FeeGovernance from '@components/dao/FeeGovernance'
 import { voteProposal, executeProposal } from '@data/multisig-actions'
 import { useUserStore } from '@context/userStore'
 import { formatConverted } from '@data/tez-quote'
@@ -29,6 +30,7 @@ const PAGE = 15
 /** The sub-tabs: the three proposal states, then the people who vote on them. */
 const VIEWS = [
   ...PROPOSAL_STATUSES,
+  { key: 'fees', label: 'Fee changes' },
   { key: 'members', label: 'Core members' },
   { key: 'moderators', label: 'Moderators' },
 ]
@@ -40,28 +42,6 @@ const PROPOSAL_VIEWS = new Set(PROPOSAL_STATUSES.map((view) => view.key))
 function textProposalLink(text) {
   if (!text?.startsWith('ipfs://')) return null
   return HashToURL(text)
-}
-
-/** How close a proposal is to the votes it needs. */
-function QuorumMeter({ inFavour, quorum }) {
-  const share = quorumProgress(inFavour, quorum)
-  return (
-    <div
-      className={styles.quorum}
-      role="img"
-      aria-label={`${inFavour} of ${quorum} votes needed`}
-    >
-      <div className={styles.quorum_track}>
-        <div
-          className={styles.quorum_fill}
-          style={{ width: `${share * 100}%` }}
-        />
-      </div>
-      <span className={styles.quorum_label}>
-        {inFavour}/{quorum} in favour
-      </span>
-    </div>
-  )
 }
 
 function ProposalRow({
@@ -319,6 +299,8 @@ export default function MultisigProposals() {
           </button>
         ))}
       </div>
+
+      {status === 'fees' && <FeeGovernance quorum={quorum} canAct={canAct} />}
 
       {status === 'members' && <CoreMembers />}
 

@@ -325,35 +325,6 @@
   }
 }
 
-.quorum {
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
-  min-width: 190px;
-}
-
-.quorum_track {
-  position: relative;
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background-color: var(--gray-15);
-  overflow: hidden;
-}
-
-.quorum_fill {
-  height: 100%;
-  border-radius: 3px;
-  background-color: var(--yes-vote-color);
-  transition: width 0.2s ease;
-}
-
-.quorum_label {
-  font-size: $font-small;
-  opacity: 0.8;
-  white-space: nowrap;
-}
-
 .vote_against {
   color: var(--no-vote-color);
 }

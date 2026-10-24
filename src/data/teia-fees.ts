@@ -28,9 +28,19 @@ export type FeeUnit = 'mutez' | 'permille'
 
 export interface Fee {
   label: string
+  /** The storage field, which also names the entrypoint that changes it. */
+  field: string
   /** Raw on-chain value; `unit` says how to read it. */
   value: number | null
   unit: FeeUnit
+}
+
+/** Where a contract keeps its own fee proposals, and how they are voted on. */
+export interface FeeGovernance {
+  proposalsPath: string
+  votesPath: string
+  voteEntrypoint: string
+  executeEntrypoint: string
 }
 
 export interface FeeGroup {
@@ -39,16 +49,35 @@ export interface FeeGroup {
   address: string
   /** How this contract's fees get changed. */
   governedBy: 'contract-vote' | 'multisig-proposal'
+  /** Null where the fee does not change through the contract's own vote. */
+  gov: FeeGovernance | null
   fees: Fee[]
   recipient: string | null
 }
 
+/** The older contracts call their proposal book `proposals`. */
+const OWN_VOTE: FeeGovernance = {
+  proposalsPath: 'proposals',
+  votesPath: 'votes',
+  voteEntrypoint: 'vote_proposal',
+  executeEntrypoint: 'execute_proposal',
+}
+
+/** The newer ones keep a separate governance book beside their content. */
+const GOV_VOTE: FeeGovernance = {
+  proposalsPath: 'gov_proposals',
+  votesPath: 'gov_votes',
+  voteEntrypoint: 'vote_governance_proposal',
+  executeEntrypoint: 'execute_governance_proposal',
+}
+
 /** Storage field -> what to call it, in the order a reader wants them. */
-const GROUPS: {
+export const FEE_CONTRACTS: {
   key: string
   name: string
   address: string
   governedBy: FeeGroup['governedBy']
+  gov?: FeeGovernance
   fields: [string, string, FeeUnit?][]
 }[] = [
   {
@@ -63,6 +92,7 @@ const GROUPS: {
     name: 'Channels & DMs',
     address: CHANNELS_V2_CONTRACT,
     governedBy: 'contract-vote',
+    gov: OWN_VOTE,
     fields: [
       ['channel_fee', 'Create a channel or DM'],
       ['post_fee', 'Post a message'],
@@ -75,6 +105,7 @@ const GROUPS: {
     name: 'Poll comments',
     address: POLL_COMMENTS_CONTRACT,
     governedBy: 'contract-vote',
+    gov: OWN_VOTE,
     fields: [
       ['post_fee', 'Post a comment'],
       ['edit_fee', 'Edit a comment'],
@@ -86,6 +117,7 @@ const GROUPS: {
     name: 'Artwork comments',
     address: TOKEN_COMMENTS_CONTRACT,
     governedBy: 'contract-vote',
+    gov: OWN_VOTE,
     fields: [
       ['post_fee', 'Post a comment'],
       ['edit_fee', 'Edit a comment'],
@@ -97,6 +129,7 @@ const GROUPS: {
     name: 'Curations',
     address: CURATIONS_CONTRACT,
     governedBy: 'contract-vote',
+    gov: GOV_VOTE,
     fields: [
       ['create_fee', 'Create a curation'],
       ['edit_fee', 'Edit a curation'],
@@ -107,6 +140,7 @@ const GROUPS: {
     name: 'Calendar',
     address: CALENDAR_CONTRACT,
     governedBy: 'contract-vote',
+    gov: GOV_VOTE,
     fields: [
       ['propose_event_fee', 'Propose an event'],
       ['propose_edit_fee', 'Propose an edit'],
@@ -117,6 +151,7 @@ const GROUPS: {
     name: 'Wiki',
     address: WIKI_CONTRACT,
     governedBy: 'contract-vote',
+    gov: GOV_VOTE,
     fields: [
       ['propose_page_fee', 'Propose a page'],
       ['propose_edit_fee', 'Propose an edit'],
@@ -143,21 +178,23 @@ export function useTeiaFees() {
     'teia:fees',
     async () => {
       const storages = await Promise.all(
-        GROUPS.map((group) =>
+        FEE_CONTRACTS.map((group) =>
           fetchStorage(group.address).catch(() => null)
         )
       )
 
-      return GROUPS.map((group, index): FeeGroup => {
+      return FEE_CONTRACTS.map((group, index): FeeGroup => {
         const storage = storages[index]
         return {
           key: group.key,
           name: group.name,
           address: group.address,
           governedBy: group.governedBy,
+          gov: group.gov ?? null,
           recipient: storage?.fee_recipient ?? null,
           fees: group.fields.map(([field, label, unit]) => ({
             label,
+            field,
             // A contract that could not be read shows nothing rather than
             // a zero, which would read as "free".
             value: storage?.[field] == null ? null : Number(storage[field]),

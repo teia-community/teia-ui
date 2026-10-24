@@ -1,0 +1,204 @@
+@import '@styles/variables.scss';
+
+.wrap {
+  margin-top: 0.5em;
+}
+
+.intro {
+  font-size: $font-small;
+  line-height: 1.5;
+  opacity: 0.8;
+  max-width: 70ch;
+  margin-bottom: 1.5em;
+}
+
+.heading {
+  margin: 1.75em 0 0.5em;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  small {
+    margin-left: 0.5em;
+    opacity: 0.6;
+    letter-spacing: 0;
+  }
+}
+
+.empty {
+  padding: 0.5em 0;
+  font-size: $font-small;
+  opacity: 0.7;
+}
+
+.group {
+  margin: 1.25em 0;
+}
+
+.group_name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75em;
+  font-size: $font-small;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+
+  small {
+    letter-spacing: 0;
+    text-transform: none;
+  }
+}
+
+.fees {
+  list-style: none;
+  margin: 0.4em 0 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+}
+
+.fee {
+  padding: 0.75em 1em;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.fee_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1em;
+}
+
+.fee_value {
+  flex: 1;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.fee_form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: 0.75em;
+  font-size: $font-small;
+
+  input {
+    width: 9em;
+    background: none;
+    border: 1px solid var(--gray-10);
+    color: inherit;
+    padding: 0.3em 0.5em;
+    font: inherit;
+  }
+}
+
+.unit,
+.hint {
+  opacity: 0.6;
+}
+
+.warn {
+  color: var(--no-vote-color);
+}
+
+.link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  font-size: $font-small;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.proposal {
+  border-top: 1px solid var(--gray-10);
+  padding: 0.75em 0.25em;
+
+  &:last-of-type {
+    border-bottom: 1px solid var(--gray-10);
+  }
+}
+
+.proposal_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75em;
+}
+
+.proposal_where {
+  font-size: $font-small;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  min-width: 10em;
+}
+
+.proposal_what {
+  flex: 1;
+  font-weight: bold;
+}
+
+.proposal_when {
+  font-size: $font-small;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.proposal_body,
+.proposal_actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 1em;
+  margin-top: 0.4em;
+  font-size: $font-small;
+}
+
+.proposal_body {
+  opacity: 0.8;
+}
+
+.against {
+  color: var(--no-vote-color);
+}
+
+.issuer {
+  opacity: 0.8;
+}
+
+.act {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--gray-10);
+  color: inherit;
+  padding: 0.25em 0.8em;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: currentColor;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.voted {
+  opacity: 0.7;
+}
