@@ -14,6 +14,9 @@ import {
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
 import { useTokenInfo } from '@data/token-metadata'
 import { TezRateControls, useTezRate } from '@components/dao/TezRate'
+import NewMultisigProposal from '@components/dao/NewMultisigProposal'
+import { voteProposal, executeProposal } from '@data/multisig-actions'
+import { useUserStore } from '@context/userStore'
 import { formatConverted } from '@data/tez-quote'
 import { CoreMembers } from './CoreMembers'
 import ModeratorManagement from '@components/moderators/ModeratorManagement'
@@ -61,7 +64,29 @@ function QuorumMeter({ inFavour, quorum }) {
   )
 }
 
-function ProposalRow({ proposal, quorum, aliasOf, tokenInfo, tezRate }) {
+function ProposalRow({
+  proposal,
+  quorum,
+  aliasOf,
+  tokenInfo,
+  tezRate,
+  viewerVote,
+  canAct,
+}) {
+  const [busy, setBusy] = useState(false)
+
+  async function act(fn) {
+    if (busy) return
+    setBusy(true)
+    try {
+      await fn()
+    } catch {
+      // Already reported by the action layer.
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const href = textProposalLink(proposal.text)
   const summary = describeProposal(proposal, { aliasOf, tokenInfo })
 
@@ -120,6 +145,45 @@ function ProposalRow({ proposal, quorum, aliasOf, tokenInfo, tezRate }) {
         </div>
       </div>
 
+      {proposal.status === 'active' && canAct && (
+        <div className={styles.proposal_actions}>
+          {viewerVote == null ? (
+            <>
+              <button
+                type="button"
+                className={styles.act}
+                disabled={busy}
+                onClick={() => act(() => voteProposal(proposal.id, true))}
+              >
+                Vote in favour
+              </button>
+              <button
+                type="button"
+                className={styles.act}
+                disabled={busy}
+                onClick={() => act(() => voteProposal(proposal.id, false))}
+              >
+                Vote against
+              </button>
+            </>
+          ) : (
+            <span className={styles.voted}>
+              You voted {viewerVote ? 'in favour' : 'against'}
+            </span>
+          )}
+          {proposal.inFavour >= quorum && (
+            <button
+              type="button"
+              className={styles.act}
+              disabled={busy}
+              onClick={() => act(() => executeProposal(proposal.id))}
+            >
+              Execute
+            </button>
+          )}
+        </div>
+      )}
+
       {proposal.mutezTransfers?.length > 1 && (
         <ul className={styles.proposal_detail}>
           {proposal.mutezTransfers.map((t, i) => (
@@ -168,6 +232,21 @@ export default function MultisigProposals() {
   )
   const tokenInfo = useTokenInfo(tokenKeys)
   const tezRate = useTezRate()
+  const address = useUserStore((st) => st.address)
+
+  // The contract rejects a non-member's vote anyway; this only decides
+  // whether showing the controls would be a lie.
+  const canAct = useMemo(
+    () =>
+      Boolean(
+        address && members.some((m) => m.isCurrent && m.address === address)
+      ),
+    [address, members]
+  )
+  const viewerVotes = useMemo(() => {
+    const mine = members.find((m) => m.address === address)
+    return new Map((mine?.votes ?? []).map((v) => [v.proposalId, v.inFavour]))
+  }, [members, address])
 
   // Members past and present, so a proposal that removed someone can still
   // name them.
@@ -264,6 +343,8 @@ export default function MultisigProposals() {
         </p>
       )}
 
+      {status === 'active' && canAct && <NewMultisigProposal />}
+
       {PROPOSAL_VIEWS.has(status) && <TezRateControls />}
 
       {PROPOSAL_VIEWS.has(status) && list.length === 0 ? (
@@ -280,6 +361,8 @@ export default function MultisigProposals() {
             aliasOf={aliasOf}
             tokenInfo={tokenInfo}
             tezRate={tezRate}
+            viewerVote={viewerVotes.get(proposal.id) ?? null}
+            canAct={canAct}
           />
         ))
       )}

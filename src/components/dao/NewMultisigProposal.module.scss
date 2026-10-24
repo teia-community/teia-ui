@@ -1,0 +1,127 @@
+@import '@styles/variables.scss';
+
+.new_bar {
+  margin: 1em 0;
+}
+
+.form {
+  margin: 1em 0;
+  padding: 1em;
+  border: 1px solid var(--gray-10);
+  font-size: $font-small;
+}
+
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.2rem;
+  margin-bottom: 1em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kind {
+  appearance: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.4rem 0;
+  color: var(--secondary-color);
+  font: inherit;
+  font-weight: 600;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.kind_active {
+  color: var(--text-color);
+  border-bottom-color: var(--text-color);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.field,
+.field_wide {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  span {
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  input,
+  select {
+    background: none;
+    border: 1px solid var(--gray-10);
+    color: inherit;
+    padding: 0.3em 0.5em;
+    font: inherit;
+  }
+
+  small {
+    opacity: 0.7;
+  }
+}
+
+.field input {
+  width: 9em;
+}
+
+.field_wide {
+  flex: 1;
+  min-width: 18em;
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.add,
+.remove,
+.cancel {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.summary {
+  margin: 0.75em 0;
+
+  small {
+    opacity: 0.55;
+  }
+}
+
+.warn {
+  margin: 0.4em 0;
+  color: var(--no-vote-color);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-top: 1em;
+}

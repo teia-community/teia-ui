@@ -384,3 +384,40 @@
   opacity: 0.55;
   white-space: nowrap;
 }
+
+.proposal_actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+  margin-top: 0.5em;
+  padding-left: calc(56px + 48px + 1.5em);
+  font-size: $font-small;
+
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
+}
+
+.act {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--gray-10);
+  color: inherit;
+  padding: 0.25em 0.8em;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: currentColor;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.voted {
+  opacity: 0.7;
+}
