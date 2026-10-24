@@ -4,7 +4,7 @@ import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import { MEMBER_SORTS, sortMembers, memberName } from '@utils/dao-members.mjs'
-import { useDaoMembers } from '@data/dao-members'
+import { useDaoMembers } from '@data/multisig'
 import { ActivityControls } from '@components/activity'
 import styles from './index.module.scss'
 

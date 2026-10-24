@@ -225,3 +225,124 @@
     white-space: nowrap;
   }
 }
+
+// --- Multisig proposals tab ---
+
+.proposal_intro {
+  font-size: $font-small;
+  line-height: 1.5;
+  opacity: 0.8;
+  margin-bottom: 1em;
+  max-width: 70ch;
+}
+
+.proposal_tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.4rem;
+  margin: 1.5em 0 1em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.proposal_tab {
+  appearance: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.4rem 0;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  font-weight: 600;
+
+  small {
+    margin-left: 0.4em;
+    opacity: 0.6;
+    font-weight: normal;
+  }
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.proposal_tab_active {
+  color: var(--text-color);
+  border-bottom-color: var(--text-color);
+}
+
+.proposal {
+  border-top: 1px solid var(--gray-10);
+  padding: 0.75em 0.25em;
+
+  &:last-of-type {
+    border-bottom: 1px solid var(--gray-10);
+  }
+}
+
+.proposal_head {
+  display: grid;
+  grid-template-columns: 56px 48px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.75em;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 56px 48px minmax(0, 1fr);
+    row-gap: 0.2em;
+  }
+}
+
+.proposal_kind {
+  font-size: $font-small;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.proposal_id {
+  font-size: $font-small;
+  opacity: 0.5;
+}
+
+.proposal_desc {
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proposal_when {
+  font-size: $font-small;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.proposal_votes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1em;
+  margin-top: 0.25em;
+  padding-left: calc(56px + 48px + 1.5em);
+  font-size: $font-small;
+  opacity: 0.7;
+
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
+}
+
+.proposal_issuer {
+  opacity: 0.8;
+}
+
+.proposal_more {
+  margin: 1em 0;
+}
+
+.dao_intro {
+  font-size: $font-small;
+  line-height: 1.5;
+  opacity: 0.8;
+  margin-bottom: 1em;
+  max-width: 70ch;
+}

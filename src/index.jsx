@@ -24,6 +24,7 @@ import {
   SubmitDaoProposals,
   DaoFees,
   DaoCoreMembers,
+  DaoMultisigProposals,
 } from '@pages/dao/tabs'
 import {
   WikiLayout,
@@ -267,6 +268,7 @@ const router = createBrowserRouter(
           <Route path="stats" element={<StatsPage />} />
           <Route path="fees" element={<DaoFees />} />
           <Route path="members" element={<DaoCoreMembers />} />
+          <Route path="multisig" element={<DaoMultisigProposals />} />
           <Route path="*" element={<DaoParameters />} />
         </Route>
         <Route path="proposal/:id" element={<ProposalDisplay />} />

@@ -17,6 +17,11 @@ import {
   tallyVotes,
   withActivity,
 } from '@utils/dao-members.mjs'
+import {
+  proposalStatus,
+  expiresAt,
+  summariseVotes,
+} from '@utils/multisig-proposals.mjs'
 
 const TZKT_API = import.meta.env.VITE_TZKT_API
 /** The multisig has dozens of proposals and members, not thousands. */
@@ -37,12 +42,19 @@ export interface DaoMember {
 export interface DaoProposal {
   id: string
   kind: string
+  rawKind: string
   issuer: string
   timestamp: string
   executed: boolean
   positiveVotes: number
   text: string | null
   user: string | null
+  status: 'active' | 'executed' | 'expired'
+  expiresAt: string | null
+  inFavour: number
+  against: number
+  silent: number
+  silentLabel: string
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -77,8 +89,7 @@ function decodeText(value: unknown): string | null {
 /** A proposal's kind arrives as a one-key object, eg `{ transfer_mutez: {} }`. */
 function proposalKind(value: Record<string, unknown>): string {
   const kind = value?.kind as Record<string, unknown> | undefined
-  const name = kind ? Object.keys(kind)[0] : undefined
-  return name ? name.replace(/_/g, ' ') : 'proposal'
+  return (kind ? Object.keys(kind)[0] : '') || 'proposal'
 }
 
 /**
@@ -86,16 +97,16 @@ function proposalKind(value: Record<string, unknown>): string {
  * dozen members, under a hundred proposals -- so they are fetched together
  * rather than per member as the page is browsed.
  */
-export function useDaoMembers() {
-  const { data, error, isValidating } = useSWR(
-    'dao:members',
+function useMultisigQuery() {
+  return useSWR(
+    'multisig:state',
     async () => {
       const { votes: votesPtr, proposals: proposalsPtr } =
         await bigmapPointers()
 
-      const [users, acceptances, proposalRows, voteRows] = await Promise.all([
-        fetchJson<string[]>(
-          `${TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage?path=users`
+      const [storage, acceptances, proposalRows, voteRows] = await Promise.all([
+        fetchJson<{ users: string[]; expiration_time: string }>(
+          `${TZKT_API}/v1/contracts/${DAO_TREASURY_CONTRACT}/storage`
         ),
         fetchJson<
           { sender: { address: string; alias?: string }; timestamp: string }[]
@@ -118,20 +129,50 @@ export function useDaoMembers() {
           : Promise.resolve([]),
       ])
 
-      const proposals: DaoProposal[] = proposalRows.map((row) => ({
-        id: row.key,
-        kind: proposalKind(row.value),
-        issuer: String(row.value?.issuer ?? ''),
-        timestamp: String(row.value?.timestamp ?? ''),
-        executed: Boolean(row.value?.executed),
-        positiveVotes: Number(row.value?.positive_votes ?? 0),
-        text: decodeText(row.value?.text),
-        user: (row.value?.user as string) ?? null,
-      }))
+      const users = storage.users ?? []
+      const expirationDays = Number(storage.expiration_time)
+
+      // Votes are grouped per proposal as well as per member: the members tab
+      // asks "how did they vote", this asks "who voted on this".
+      const votesByProposal = new Map<
+        string,
+        { address: string; inFavour: boolean }[]
+      >()
+      for (const row of voteRows) {
+        const list = votesByProposal.get(row.key.nat) ?? []
+        list.push({ address: row.key.address, inFavour: Boolean(row.value) })
+        votesByProposal.set(row.key.nat, list)
+      }
+
+      const proposals: DaoProposal[] = proposalRows.map((row) => {
+        const base = {
+          id: row.key,
+          rawKind: proposalKind(row.value),
+          issuer: String(row.value?.issuer ?? ''),
+          timestamp: String(row.value?.timestamp ?? ''),
+          executed: Boolean(row.value?.executed),
+          positiveVotes: Number(row.value?.positive_votes ?? 0),
+          text: decodeText(row.value?.text),
+          user: (row.value?.user as string) ?? null,
+        }
+        const status = proposalStatus(base, expirationDays)
+        const tally = summariseVotes(
+          votesByProposal.get(base.id) ?? [],
+          users.length,
+          status
+        )
+        return {
+          ...base,
+          kind: base.rawKind.replace(/_/g, ' '),
+          status,
+          expiresAt: expiresAt(base, expirationDays),
+          ...tally,
+        }
+      })
 
       // A member leaves when a remove_user proposal naming them is executed.
       const removals = proposals
-        .filter((p) => p.kind === 'remove user' && p.executed && p.user)
+        .filter((p) => p.rawKind === 'remove_user' && p.executed && p.user)
         .map((p) => ({ user: p.user as string, timestamp: p.timestamp }))
 
       const members = buildMembers({
@@ -157,14 +198,39 @@ export function useDaoMembers() {
       return {
         members: withActivity(members, { tallies, tokens }) as DaoMember[],
         proposals: Object.fromEntries(proposals.map((p) => [p.id, p])),
+        proposalList: proposals.sort((a, b) => Number(b.id) - Number(a.id)),
+        memberCount: users.length,
+        quorum: Number(storage.minimum_votes ?? 0),
+        expirationDays,
       }
     },
     { revalidateOnFocus: false, dedupingInterval: 60_000 }
   )
+}
 
+/** The multisig's membership, past and present, with each member's votes. */
+export function useDaoMembers() {
+  const { data, error, isValidating } = useMultisigQuery()
   return {
     members: data?.members ?? [],
     proposals: data?.proposals ?? {},
+    error,
+    isLoading: !data && !error,
+    isValidating,
+  }
+}
+
+/**
+ * The multisig's proposals, newest first. Shares a cache entry with
+ * useDaoMembers, so opening both tabs costs one read of the contract.
+ */
+export function useMultisigProposals() {
+  const { data, error, isValidating } = useMultisigQuery()
+  return {
+    proposals: data?.proposalList ?? [],
+    memberCount: data?.memberCount ?? 0,
+    quorum: data?.quorum ?? 0,
+    expirationDays: data?.expirationDays ?? 0,
     error,
     isLoading: !data && !error,
     isValidating,

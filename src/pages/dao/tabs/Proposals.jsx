@@ -103,6 +103,19 @@ export default function DaoProposals() {
     <section className={styles.section}>
       <h1 className={styles.section_title}>Teia DAO proposals</h1>
 
+      <p className={styles.dao_intro}>
+        A DAO proposal is a vote of the whole organisation, weighted by TEIA
+        tokens and open to every holder. It is the highest authority in Teia:
+        its outcome binds every part of the organisation, the core team multisig
+        included.
+      </p>
+      <p className={styles.dao_intro}>
+        The core team handles day-to-day operations &mdash; budgets, grants,
+        events, and the work of keeping teia.art running &mdash; through its own
+        multisig, within the mandate the DAO sets here. Those decisions are
+        listed under Multisig Proposals.
+      </p>
+
       <Select
         alt="proposal group selection"
         value={{
