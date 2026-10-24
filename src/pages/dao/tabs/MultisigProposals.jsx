@@ -13,26 +13,23 @@ import {
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
 import { useTokenInfo } from '@data/token-metadata'
 import { TezRateControls, useTezRate } from '@components/dao/TezRate'
-import NewMultisigProposal from '@components/dao/NewMultisigProposal'
 import QuorumMeter from '@components/dao/QuorumMeter'
-import FeeGovernance from '@components/dao/FeeGovernance'
+import ProposeAndVote from '@components/dao/ProposeAndVote'
 import { voteProposal, executeProposal } from '@data/multisig-actions'
 import { useUserStore } from '@context/userStore'
 import { formatConverted } from '@data/tez-quote'
 import { CoreMembers } from './CoreMembers'
-import ModeratorManagement from '@components/moderators/ModeratorManagement'
-import { DAO_TREASURY_CONTRACT, MODERATOR_CONTRACT } from '@constants'
+import { DAO_TREASURY_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
 import styles from './index.module.scss'
 
 const PAGE = 15
 
-/** The sub-tabs: the three proposal states, then the people who vote on them. */
+/** The sub-tabs: the proposal states, then acting, then who acts. */
 const VIEWS = [
   ...PROPOSAL_STATUSES,
-  { key: 'fees', label: 'Fee changes' },
+  { key: 'propose', label: 'Propose & vote' },
   { key: 'members', label: 'Core members' },
-  { key: 'moderators', label: 'Moderators' },
 ]
 
 /** Views that list proposals; the others render their own thing. */
@@ -300,24 +297,16 @@ export default function MultisigProposals() {
         ))}
       </div>
 
-      {status === 'fees' && <FeeGovernance quorum={quorum} canAct={canAct} />}
+      {status === 'propose' && (
+        <ProposeAndVote
+          quorum={quorum}
+          memberCount={memberCount}
+          expirationDays={expirationDays}
+          canAct={canAct}
+        />
+      )}
 
       {status === 'members' && <CoreMembers />}
-
-      {status === 'moderators' && (
-        <>
-          <p className={styles.member_empty}>
-            Moderators act on reported content. They are appointed and removed
-            by the core team, through a vote in the moderator contract rather
-            than a multisig proposal.
-          </p>
-          <ModeratorManagement
-            contract={MODERATOR_CONTRACT}
-            multisig={DAO_TREASURY_CONTRACT}
-            title="Teia moderators"
-          />
-        </>
-      )}
 
       {status === 'expired' && list.length > 0 && (
         <p className={styles.member_empty}>
@@ -325,9 +314,10 @@ export default function MultisigProposals() {
         </p>
       )}
 
-      {status === 'active' && canAct && <NewMultisigProposal />}
-
-      {PROPOSAL_VIEWS.has(status) && <TezRateControls />}
+      {/* The rate only matters where tez is being moved. */}
+      {visible.some((p) => p.rawKind === 'transfer_mutez') && (
+        <TezRateControls />
+      )}
 
       {PROPOSAL_VIEWS.has(status) && list.length === 0 ? (
         <p className={styles.member_empty}>

@@ -137,3 +137,39 @@ export function proposeTokenTransfer(
     'Proposal submitted. It now needs votes from the core team.'
   )
 }
+
+/** Propose adding someone to the core team. */
+export function proposeAddUser(address: string) {
+  return run(
+    'New member proposal',
+    (c) => c.methodsObject.add_user_proposal(address),
+    'Proposal submitted. It now needs votes from the core team.'
+  )
+}
+
+/** Propose removing someone from the core team. */
+export function proposeRemoveUser(address: string) {
+  return run(
+    'Remove member proposal',
+    (c) => c.methodsObject.remove_user_proposal(address),
+    'Proposal submitted. It now needs votes from the core team.'
+  )
+}
+
+/** Propose changing how many votes in favour a proposal needs. */
+export function proposeMinimumVotes(votes: number) {
+  return run(
+    'Minimum votes proposal',
+    (c) => c.methodsObject.minimum_votes_proposal(votes),
+    'Proposal submitted. It now needs votes from the core team.'
+  )
+}
+
+/** Propose changing how long a proposal stays open, in days. */
+export function proposeExpirationTime(days: number) {
+  return run(
+    'Expiration time proposal',
+    (c) => c.methodsObject.expiration_time_proposal(days),
+    'Proposal submitted. It now needs votes from the core team.'
+  )
+}

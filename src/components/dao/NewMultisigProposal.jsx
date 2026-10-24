@@ -1,16 +1,22 @@
 import { useMemo, useState } from 'react'
-import { Button } from '@atoms/button'
 import { useTreasuryTokens } from '@data/treasury-tokens'
+import { useDaoMembers } from '@data/multisig'
 import {
   proposeTezTransfer,
   proposeTokenTransfer,
   proposeText,
+  proposeAddUser,
+  proposeRemoveUser,
+  proposeMinimumVotes,
+  proposeExpirationTime,
 } from '@data/multisig-actions'
 import {
   formatTokenAmount,
   toSmallestUnit,
 } from '@utils/multisig-proposals.mjs'
-import { useTezRate } from './TezRate'
+import { validAddress } from '@utils/collab'
+import { walletPreview } from '@utils/string'
+import { TezRateControls, useTezRate } from './TezRate'
 import { formatConverted } from '@data/tez-quote'
 import styles from './NewMultisigProposal.module.scss'
 
@@ -18,28 +24,40 @@ const KINDS = [
   { key: 'tez', label: 'Send tez' },
   { key: 'token', label: 'Send a token' },
   { key: 'text', label: 'Written proposal' },
+  { key: 'add', label: 'Add a member' },
+  { key: 'remove', label: 'Remove a member' },
+  { key: 'quorum', label: 'Votes needed' },
+  { key: 'expiry', label: 'Time to vote' },
 ]
 
 const TEZ = { symbol: 'ꜩ', decimals: 6 }
+const TRANSFERS = new Set(['tez', 'token'])
 const emptyRow = () => ({ amount: '', destination: '' })
 
 /**
  * Propose something to the core team.
  *
- * Amounts are typed in the token — 3,100 USDt, not 3,100,000,000 — and the
- * figure that will reach the contract is shown underneath, so the conversion
- * is visible rather than something to get wrong in your head.
+ * Everything the multisig can be asked to do is here, so that raising a
+ * proposal is one place rather than one per kind. Amounts are typed in the
+ * token — 3,100 USDt, not 3,100,000,000 — and the figure that will reach the
+ * contract is shown underneath, so the conversion is visible rather than
+ * something to get wrong in your head.
  */
-export function NewMultisigProposal() {
-  const [open, setOpen] = useState(false)
+export function NewMultisigProposal({ quorum, memberCount, expirationDays }) {
   const [kind, setKind] = useState('tez')
   const [rows, setRows] = useState([emptyRow()])
   const [text, setText] = useState('')
   const [tokenKey, setTokenKey] = useState('')
+  const [address, setAddress] = useState('')
+  const [member, setMember] = useState('')
+  const [count, setCount] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const { tokens } = useTreasuryTokens()
+  const { members } = useDaoMembers()
   const tezRate = useTezRate()
+
+  const current = useMemo(() => members.filter((m) => m.isCurrent), [members])
 
   const token = useMemo(
     () => tokens.find((t) => `${t.contract}:${t.tokenId}` === tokenKey),
@@ -61,13 +79,35 @@ export function NewMultisigProposal() {
   const overBalance =
     kind === 'token' && token ? total > token.rawBalance : false
 
-  const ready =
-    kind === 'text'
-      ? text.trim().length > 0
-      : parsed.length > 0 &&
-        parsed.every((r) => r.raw != null && r.raw > 0 && r.destination) &&
-        (kind !== 'token' || Boolean(token)) &&
-        !overBalance
+  // A count has to be a whole number: half a vote is not a thing.
+  const whole = /^\d+$/.test(count.trim()) ? Number(count.trim()) : null
+
+  const ready = (() => {
+    switch (kind) {
+      case 'text':
+        return text.trim().length > 0
+      case 'add':
+        return (
+          validAddress(address.trim()) &&
+          !current.some((m) => m.address === address.trim())
+        )
+      case 'remove':
+        return Boolean(member)
+      case 'quorum':
+        return (
+          whole != null && whole > 0 && whole <= memberCount && whole !== quorum
+        )
+      case 'expiry':
+        return whole != null && whole > 0 && whole !== expirationDays
+      default:
+        return (
+          parsed.length > 0 &&
+          parsed.every((r) => r.raw != null && r.raw > 0 && r.destination) &&
+          (kind !== 'token' || Boolean(token)) &&
+          !overBalance
+        )
+    }
+  })()
 
   const setRow = (index, patch) =>
     setRows(rows.map((row, i) => (i === index ? { ...row, ...patch } : row)))
@@ -78,35 +118,37 @@ export function NewMultisigProposal() {
     try {
       if (kind === 'text') {
         await proposeText(text.trim())
+      } else if (kind === 'add') {
+        await proposeAddUser(address.trim())
+        setAddress('')
+      } else if (kind === 'remove') {
+        await proposeRemoveUser(member)
+        setMember('')
+      } else if (kind === 'quorum') {
+        await proposeMinimumVotes(whole)
+        setCount('')
+      } else if (kind === 'expiry') {
+        await proposeExpirationTime(whole)
+        setCount('')
       } else if (kind === 'token') {
         await proposeTokenTransfer(
           token.contract,
           token.tokenId,
           parsed.map((r) => ({ amount: r.raw, destination: r.destination }))
         )
+        setRows([emptyRow()])
       } else {
         await proposeTezTransfer(
           parsed.map((r) => ({ amount: r.raw, destination: r.destination }))
         )
+        setRows([emptyRow()])
       }
-      setRows([emptyRow()])
       setText('')
-      setOpen(false)
     } catch {
       // The action layer has already told the user what went wrong.
     } finally {
       setSubmitting(false)
     }
-  }
-
-  if (!open) {
-    return (
-      <div className={styles.new_bar}>
-        <Button shadow_box onClick={() => setOpen(true)}>
-          New proposal
-        </Button>
-      </div>
-    )
   }
 
   return (
@@ -146,7 +188,7 @@ export function NewMultisigProposal() {
         </label>
       )}
 
-      {kind === 'text' ? (
+      {kind === 'text' && (
         <label className={styles.field}>
           <span>Link to the written proposal</span>
           <input
@@ -156,7 +198,77 @@ export function NewMultisigProposal() {
             onChange={(e) => setText(e.target.value)}
           />
         </label>
-      ) : (
+      )}
+
+      {kind === 'add' && (
+        <>
+          <label className={styles.field_wide}>
+            <span>Address to add</span>
+            <input
+              type="text"
+              value={address}
+              placeholder="tz1…"
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </label>
+          <p className={styles.summary}>
+            They join once the proposal is executed and they accept the
+            membership.
+          </p>
+          {address.trim() !== '' && !validAddress(address.trim()) && (
+            <p className={styles.warn}>That is not a Tezos address.</p>
+          )}
+          {current.some((m) => m.address === address.trim()) && (
+            <p className={styles.warn}>They are already on the core team.</p>
+          )}
+        </>
+      )}
+
+      {kind === 'remove' && (
+        <label className={styles.field}>
+          <span>Member to remove</span>
+          <select value={member} onChange={(e) => setMember(e.target.value)}>
+            <option value="">Choose a member</option>
+            {current.map((m) => (
+              <option key={m.address} value={m.address}>
+                {m.alias || walletPreview(m.address)}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      {(kind === 'quorum' || kind === 'expiry') && (
+        <>
+          <label className={styles.field}>
+            <span>{kind === 'quorum' ? 'Votes in favour' : 'Days'}</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={count}
+              placeholder={String(
+                kind === 'quorum' ? quorum ?? '' : expirationDays ?? ''
+              )}
+              onChange={(e) => setCount(e.target.value)}
+            />
+          </label>
+          <p className={styles.summary}>
+            {kind === 'quorum'
+              ? `A proposal now needs ${quorum} of ${memberCount} members in favour.`
+              : `A proposal now expires ${expirationDays} days after it is raised.`}
+          </p>
+          {count.trim() !== '' && whole == null && (
+            <p className={styles.warn}>Use a whole number.</p>
+          )}
+          {kind === 'quorum' && whole > memberCount && (
+            <p className={styles.warn}>
+              The core team only has {memberCount} members.
+            </p>
+          )}
+        </>
+      )}
+
+      {TRANSFERS.has(kind) && (
         <>
           {rows.map((row, index) => {
             const entry = parsed[index]
@@ -239,6 +351,9 @@ export function NewMultisigProposal() {
             )}
           </p>
 
+          {/* Only tez needs a rate: a stablecoin is already money. */}
+          {kind === 'tez' && <TezRateControls />}
+
           {overBalance && (
             <p className={styles.warn}>
               That is more than the treasury holds (
@@ -249,15 +364,13 @@ export function NewMultisigProposal() {
       )}
 
       <div className={styles.actions}>
-        <Button shadow_box onClick={submit} disabled={!ready || submitting}>
-          {submitting ? 'Submitting…' : 'Submit proposal'}
-        </Button>
         <button
           type="button"
-          className={styles.cancel}
-          onClick={() => setOpen(false)}
+          className={styles.submit}
+          onClick={submit}
+          disabled={!ready || submitting}
         >
-          Cancel
+          {submitting ? 'Submitting…' : 'Submit proposal'}
         </button>
       </div>
     </div>

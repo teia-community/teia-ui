@@ -119,6 +119,25 @@
   color: var(--no-vote-color);
 }
 
+.submit {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--gray-10);
+  color: inherit;
+  padding: 0.25em 0.8em;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: currentColor;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
 .actions {
   display: flex;
   align-items: center;
