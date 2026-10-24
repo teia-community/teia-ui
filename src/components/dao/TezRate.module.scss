@@ -1,0 +1,56 @@
+@import '@styles/variables.scss';
+
+.rate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em 1.25em;
+  margin: 1em 0;
+  padding: 0.75em 0;
+  border-top: 1px solid var(--gray-10);
+  border-bottom: 1px solid var(--gray-10);
+  font-size: $font-small;
+}
+
+.rate_field {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  input {
+    width: 9em;
+    background: none;
+    border: 1px solid var(--gray-10);
+    color: inherit;
+    padding: 0.2em 0.4em;
+    font: inherit;
+  }
+
+  select {
+    background: none;
+    border: 1px solid var(--gray-10);
+    color: inherit;
+    padding: 0.2em 0.4em;
+    font: inherit;
+  }
+}
+
+.rate_reset {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.rate_note {
+  opacity: 0.55;
+}

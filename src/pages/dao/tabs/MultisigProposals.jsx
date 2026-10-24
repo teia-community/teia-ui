@@ -9,8 +9,12 @@ import {
   timeUntil,
   describeProposal,
   quorumProgress,
+  formatTokenAmount,
 } from '@utils/multisig-proposals.mjs'
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
+import { useTokenInfo } from '@data/token-metadata'
+import { TezRateControls, useTezRate } from '@components/dao/TezRate'
+import { formatConverted } from '@data/tez-quote'
 import { CoreMembers } from './CoreMembers'
 import ModeratorManagement from '@components/moderators/ModeratorManagement'
 import { DAO_TREASURY_CONTRACT, MODERATOR_CONTRACT } from '@constants'
@@ -57,9 +61,22 @@ function QuorumMeter({ inFavour, quorum }) {
   )
 }
 
-function ProposalRow({ proposal, quorum, aliasOf }) {
+function ProposalRow({ proposal, quorum, aliasOf, tokenInfo, tezRate }) {
   const href = textProposalLink(proposal.text)
-  const summary = describeProposal(proposal, { aliasOf })
+  const summary = describeProposal(proposal, { aliasOf, tokenInfo })
+
+  // Only tez converts; a stablecoin is already money and the rate is for tez.
+  const tezTotal =
+    proposal.rawKind === 'transfer_mutez'
+      ? (proposal.mutezTransfers ?? []).reduce(
+          (sum, t) => sum + Number(t.amount || 0),
+          0
+        ) / 1000000
+      : null
+  const converted =
+    tezTotal != null && tezRate.rate != null
+      ? formatConverted(tezTotal, tezRate.rate, tezRate.currency)
+      : null
 
   return (
     <div className={styles.proposal}>
@@ -77,6 +94,9 @@ function ProposalRow({ proposal, quorum, aliasOf }) {
             summary
           )}
         </span>
+        {converted && (
+          <span className={styles.proposal_converted}>≈ {converted}</span>
+        )}
         <span className={styles.proposal_when}>
           {proposal.status === 'active' && proposal.expiresAt
             ? `expires ${timeUntil(proposal.expiresAt)}`
@@ -117,8 +137,14 @@ function ProposalRow({ proposal, quorum, aliasOf }) {
         <ul className={styles.proposal_detail}>
           {proposal.tokenTransfers.distribution.map((t, i) => (
             <li key={`${t.destination}-${i}`}>
-              {Number(t.amount).toLocaleString()} to{' '}
-              {walletPreview(t.destination)}
+              {formatTokenAmount(
+                t.amount,
+                tokenInfo(
+                  proposal.tokenTransfers.fa2,
+                  proposal.tokenTransfers.tokenId
+                )
+              )}{' '}
+              to {walletPreview(t.destination)}
             </li>
           ))}
         </ul>
@@ -132,6 +158,16 @@ export default function MultisigProposals() {
   const { proposals, memberCount, quorum, expirationDays, error, isLoading } =
     useMultisigProposals()
   const { members } = useDaoMembers()
+
+  const tokenKeys = useMemo(
+    () =>
+      proposals
+        .filter((p) => p.tokenTransfers?.fa2)
+        .map((p) => `${p.tokenTransfers.fa2}:${p.tokenTransfers.tokenId}`),
+    [proposals]
+  )
+  const tokenInfo = useTokenInfo(tokenKeys)
+  const tezRate = useTezRate()
 
   // Members past and present, so a proposal that removed someone can still
   // name them.
@@ -228,6 +264,8 @@ export default function MultisigProposals() {
         </p>
       )}
 
+      {PROPOSAL_VIEWS.has(status) && <TezRateControls />}
+
       {PROPOSAL_VIEWS.has(status) && list.length === 0 ? (
         <p className={styles.member_empty}>
           No {status} proposals at the moment.
@@ -240,6 +278,8 @@ export default function MultisigProposals() {
             proposal={proposal}
             quorum={quorum}
             aliasOf={aliasOf}
+            tokenInfo={tokenInfo}
+            tezRate={tezRate}
           />
         ))
       )}

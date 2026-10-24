@@ -30,11 +30,6 @@ function FeeRow({ fee }) {
   )
 }
 
-const GOVERNANCE_NOTE = {
-  'contract-vote': 'Changed by a vote of the core team inside this contract.',
-  'multisig-proposal': 'Changed by a core team multisig proposal.',
-}
-
 export default function DaoFees() {
   const { groups, error, isLoading } = useTeiaFees()
 
@@ -79,7 +74,6 @@ export default function DaoFees() {
             ))}
           </ul>
           <p className={styles.fee_note}>
-            {GOVERNANCE_NOTE[group.governedBy]}{' '}
             <TezosAddressLink address={group.address} shorten />
             {group.recipient && group.recipient !== DAO_TREASURY_CONTRACT && (
               <>

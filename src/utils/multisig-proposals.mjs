@@ -104,10 +104,6 @@ function formatTez(mutez) {
   })} ꜩ`
 }
 
-function formatCount(n) {
-  return n.toLocaleString()
-}
-
 function shortAddress(address) {
   if (!address) return 'an address'
   return `${address.slice(0, 5)}…${address.slice(-5)}`
@@ -125,7 +121,7 @@ function destinations(list) {
  * The contract keeps the amounts and destinations, so a transfer proposal can
  * say how much and to whom rather than only that it is a transfer.
  */
-export function describeProposal(proposal, { aliasOf } = {}) {
+export function describeProposal(proposal, { aliasOf, tokenInfo } = {}) {
   const name = (address) =>
     (aliasOf && aliasOf(address)) || shortAddress(address)
 
@@ -141,11 +137,9 @@ export function describeProposal(proposal, { aliasOf } = {}) {
       const list = transfer?.distribution ?? []
       if (list.length === 0) return 'Transfer tokens from the treasury'
       const total = list.reduce((sum, t) => sum + Number(t.amount || 0), 0)
-      // The contract does not record the token's decimals, so the raw
-      // on-chain amount is shown rather than a guessed one.
-      return `Transfer ${formatCount(total)} of token #${
-        transfer.tokenId
-      } ${destinations(list)}`
+      // The contract stores the smallest unit; the token says how to read it.
+      const token = tokenInfo?.(transfer.fa2, transfer.tokenId)
+      return `Transfer ${formatTokenAmount(total, token)} ${destinations(list)}`
     }
     case 'add_user':
       return `Add ${name(proposal.user)} to the multisig`
@@ -174,4 +168,38 @@ export function describeProposal(proposal, { aliasOf } = {}) {
 export function quorumProgress(inFavour, quorum) {
   if (!Number.isFinite(quorum) || quorum <= 0) return 0
   return Math.max(0, Math.min(1, inFavour / quorum))
+}
+
+/**
+ * A token amount written the way a person would say it.
+ *
+ * Amounts are stored in the token's smallest unit, so 3,100 USDt arrives as
+ * 3,100,000,000. Shown raw it is unreadable and easy to misjudge by a factor
+ * of a million, which is the mistake this exists to stop.
+ */
+export function formatTokenAmount(raw, { symbol, decimals } = {}) {
+  const value = Number(raw)
+  if (!Number.isFinite(value)) return String(raw ?? '')
+  const places = Number.isFinite(decimals) ? decimals : 0
+  const amount = places > 0 ? value / Math.pow(10, places) : value
+  const text = amount.toLocaleString(undefined, {
+    maximumFractionDigits: Math.min(places, 6),
+  })
+  return symbol ? `${text} ${symbol}` : text
+}
+
+/** The reverse: what a person typed, in the units the contract expects. */
+export function toSmallestUnit(input, decimals) {
+  const text = String(input ?? '')
+    .replace(/,/g, '')
+    .trim()
+  // Number('') is 0, which would quietly become a zero transfer.
+  if (text === '') return null
+  const amount = Number(text)
+  if (!Number.isFinite(amount) || amount < 0) return null
+  const places = Number.isFinite(decimals) ? decimals : 0
+  // Rounded rather than truncated, and via a string to avoid the float error
+  // that turns 0.07 into 69999.99999 at six places.
+  const scaled = Math.round(amount * Math.pow(10, places))
+  return Number.isSafeInteger(scaled) ? scaled : null
 }

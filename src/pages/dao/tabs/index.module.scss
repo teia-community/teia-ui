@@ -248,7 +248,7 @@
 
 .proposal_head {
   display: grid;
-  grid-template-columns: 56px 48px minmax(0, 1fr) auto;
+  grid-template-columns: 56px 48px minmax(0, 1fr) auto auto;
   align-items: baseline;
   gap: 0.75em;
 
@@ -377,4 +377,10 @@
   margin-top: 0.4em;
   font-size: $font-small;
   opacity: 0.6;
+}
+
+.proposal_converted {
+  font-size: $font-small;
+  opacity: 0.55;
+  white-space: nowrap;
 }

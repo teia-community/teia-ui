@@ -42,10 +42,16 @@ interface LocalSettingsState {
   messageNotifications: boolean
   /** Activity feeds the viewer wants an unread dot for. Absent means off. */
   feedNotifications: Record<string, boolean>
+  /** Currency treasury amounts are shown in beside tez. */
+  fiatCurrency: string
+  /** A rate set by hand, or null to follow the published one. */
+  tezRateOverride: number | null
   setCustomRpcNode: (v: string) => void
   setMessageNotifications: (v: boolean) => void
   setFeedNotification: (feed: ActivityFeedKey, on: boolean) => void
   setAllFeedNotifications: (on: boolean) => void
+  setFiatCurrency: (currency: string) => void
+  setTezRateOverride: (rate: number | null) => void
   setNsfwFriendly: (v: boolean) => void
   setPhotosensitiveFriendly: (v: boolean) => void
   setShowBakerOnProfile: (v: boolean) => void
@@ -89,6 +95,8 @@ const defaultValues = {
   messageNotifications: true,
   // Nothing is watched until the viewer asks for it.
   feedNotifications: {} as Record<string, boolean>,
+  fiatCurrency: 'usd',
+  tezRateOverride: null as number | null,
 }
 // TODO: replace all the "set" methods with one that merges the state with the provided partial object
 export const useLocalSettings = create<LocalSettingsState>()(
@@ -103,6 +111,8 @@ export const useLocalSettings = create<LocalSettingsState>()(
           set((state) => ({
             feedNotifications: { ...state.feedNotifications, [feed]: on },
           })),
+        setFiatCurrency: (fiatCurrency) => set({ fiatCurrency }),
+        setTezRateOverride: (tezRateOverride) => set({ tezRateOverride }),
         setAllFeedNotifications: (on) =>
           set({
             feedNotifications: on

@@ -8,6 +8,8 @@ import {
   timeUntil,
   describeProposal,
   quorumProgress,
+  formatTokenAmount,
+  toSmallestUnit,
 } from '../src/utils/multisig-proposals.mjs'
 
 const NOW = Date.parse('2026-10-24T00:00:00Z')
@@ -98,15 +100,31 @@ test('a tez transfer says how much and where it goes', () => {
   assert.equal(many, 'Transfer 1,918 ꜩ across 2 destinations')
 })
 
-test('a token transfer keeps the raw amount, decimals being unknown', () => {
+test('a token transfer is written in the token, not its smallest unit', () => {
+  const proposal = {
+    rawKind: 'transfer_token',
+    tokenTransfers: {
+      fa2: 'KT1Tether',
+      tokenId: '0',
+      distribution: [{ amount: '3100000000', destination: 'tz1WJpBDRGfa21' }],
+    },
+  }
+  const text = describeProposal(proposal, {
+    tokenInfo: () => ({ symbol: 'USDt', decimals: 6 }),
+  })
+  assert.match(text, /^Transfer 3,100 USDt to tz1WJ…/)
+})
+
+test('a token with no metadata shows its raw figure, not a guessed one', () => {
   const text = describeProposal({
     rawKind: 'transfer_token',
     tokenTransfers: {
-      tokenId: '2',
+      fa2: 'KT1Unknown',
+      tokenId: '7',
       distribution: [{ amount: '450000', destination: 'tz1WJpBDRGfa21' }],
     },
   })
-  assert.match(text, /^Transfer 450,000 of token #2 to tz1WJ…/)
+  assert.match(text, /^Transfer 450,000 to tz1WJ…/)
 })
 
 test('membership proposals name the member when an alias is known', () => {
@@ -130,4 +148,44 @@ test('quorum progress is a share of the votes needed, clamped', () => {
   assert.equal(quorumProgress(8, 10), 0.8)
   assert.equal(quorumProgress(12, 10), 1)
   assert.equal(quorumProgress(5, 0), 0)
+})
+
+test('token amounts read as a person would say them', () => {
+  const usdt = { symbol: 'USDt', decimals: 6 }
+  assert.equal(formatTokenAmount('3100000000', usdt), '3,100 USDt')
+  assert.equal(formatTokenAmount('1100000000', usdt), '1,100 USDt')
+  assert.equal(formatTokenAmount('500000', usdt), '0.5 USDt')
+  // 18 decimals is the case that breaks a hardcoded divisor.
+  assert.equal(
+    formatTokenAmount('2500000000000000000', { symbol: 'WETH.e', decimals: 18 }),
+    '2.5 WETH.e'
+  )
+  // A token with no decimals is shown whole, not divided by a guess.
+  assert.equal(formatTokenAmount('42', { symbol: 'UP', decimals: 0 }), '42 UP')
+})
+
+test('an unreadable token amount is shown rather than invented', () => {
+  assert.equal(formatTokenAmount(undefined, { symbol: 'X' }), '')
+  assert.equal(formatTokenAmount('abc', { symbol: 'X' }), 'abc')
+})
+
+test('what a person types converts to the units the contract wants', () => {
+  assert.equal(toSmallestUnit('3100', 6), 3100000000)
+  assert.equal(toSmallestUnit('3,100', 6), 3100000000)
+  assert.equal(toSmallestUnit('0.5', 6), 500000)
+  assert.equal(toSmallestUnit('42', 0), 42)
+})
+
+test('the float that would make 0.07 into 69999.99 is rounded away', () => {
+  assert.equal(toSmallestUnit('0.07', 6), 70000)
+  assert.equal(toSmallestUnit('1.1', 6), 1100000)
+  assert.equal(toSmallestUnit('0.000001', 6), 1)
+})
+
+test('an amount that cannot be converted exactly is refused, not guessed', () => {
+  assert.equal(toSmallestUnit('', 6), null)
+  assert.equal(toSmallestUnit('abc', 6), null)
+  assert.equal(toSmallestUnit('-5', 6), null)
+  // Beyond what a JS integer holds exactly, so the contract must not be sent it.
+  assert.equal(toSmallestUnit('1000000000000', 18), null)
 })
