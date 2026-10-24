@@ -12,14 +12,22 @@ import {
 } from '@utils/multisig-proposals.mjs'
 import { useMultisigProposals, useDaoMembers } from '@data/multisig'
 import { CoreMembers } from './CoreMembers'
-import { DAO_TREASURY_CONTRACT } from '@constants'
+import ModeratorManagement from '@components/moderators/ModeratorManagement'
+import { DAO_TREASURY_CONTRACT, MODERATOR_CONTRACT } from '@constants'
 import { HashToURL } from '@utils'
 import styles from './index.module.scss'
 
 const PAGE = 15
 
 /** The sub-tabs: the three proposal states, then the people who vote on them. */
-const VIEWS = [...PROPOSAL_STATUSES, { key: 'members', label: 'Core members' }]
+const VIEWS = [
+  ...PROPOSAL_STATUSES,
+  { key: 'members', label: 'Core members' },
+  { key: 'moderators', label: 'Moderators' },
+]
+
+/** Views that list proposals; the others render their own thing. */
+const PROPOSAL_VIEWS = new Set(PROPOSAL_STATUSES.map((view) => view.key))
 
 /** Text proposals store an ipfs link to the written proposal. */
 function textProposalLink(text) {
@@ -189,16 +197,30 @@ export default function MultisigProposals() {
             }}
           >
             {option.label}
-            <small>
-              {option.key === 'members'
-                ? memberCount
-                : grouped[option.key]?.length ?? 0}
-            </small>
+            {option.key === 'members' && <small>{memberCount}</small>}
+            {PROPOSAL_VIEWS.has(option.key) && (
+              <small>{grouped[option.key]?.length ?? 0}</small>
+            )}
           </button>
         ))}
       </div>
 
       {status === 'members' && <CoreMembers />}
+
+      {status === 'moderators' && (
+        <>
+          <p className={styles.member_empty}>
+            Moderators act on reported content. They are appointed and removed
+            by the core team, through a vote in the moderator contract rather
+            than a multisig proposal.
+          </p>
+          <ModeratorManagement
+            contract={MODERATOR_CONTRACT}
+            multisig={DAO_TREASURY_CONTRACT}
+            title="Teia moderators"
+          />
+        </>
+      )}
 
       {status === 'expired' && list.length > 0 && (
         <p className={styles.member_empty}>
@@ -206,12 +228,12 @@ export default function MultisigProposals() {
         </p>
       )}
 
-      {status !== 'members' && list.length === 0 ? (
+      {PROPOSAL_VIEWS.has(status) && list.length === 0 ? (
         <p className={styles.member_empty}>
           No {status} proposals at the moment.
         </p>
       ) : (
-        status !== 'members' &&
+        PROPOSAL_VIEWS.has(status) &&
         visible.map((proposal) => (
           <ProposalRow
             key={proposal.id}
@@ -222,7 +244,7 @@ export default function MultisigProposals() {
         ))
       )}
 
-      {status !== 'members' && shown < list.length && (
+      {PROPOSAL_VIEWS.has(status) && shown < list.length && (
         <div className={styles.proposal_more}>
           <Button shadow_box onClick={() => setShown(shown + PAGE)}>
             Show {Math.min(PAGE, list.length - shown)} more
