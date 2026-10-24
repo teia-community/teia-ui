@@ -128,42 +128,6 @@
   }
 }
 
-.member_sorts {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5em;
-  margin-bottom: 0.5em;
-}
-
-.member_sorts_label {
-  font-size: $font-small;
-  opacity: 0.6;
-  margin-right: 0.25em;
-}
-
-.member_sort {
-  appearance: none;
-  cursor: pointer;
-  background: none;
-  border: 1px solid var(--gray-10);
-  border-radius: 999px;
-  padding: 0.3em 0.9em;
-  color: inherit;
-  font-size: $font-small;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-
-.member_sort_active {
-  opacity: 1;
-  border-color: currentColor;
-  font-weight: bold;
-}
-
 .member {
   border-top: 1px solid var(--gray-10);
 

@@ -5,6 +5,7 @@ import { walletPreview } from '@utils/string'
 import { getWordDate } from '@utils/time'
 import { MEMBER_SORTS, sortMembers, memberName } from '@utils/dao-members.mjs'
 import { useDaoMembers } from '@data/dao-members'
+import { ActivityControls } from '@components/activity'
 import styles from './index.module.scss'
 
 function formatTokens(amount) {
@@ -140,21 +141,12 @@ export default function CoreMembers() {
         they voted.
       </p>
 
-      <div className={styles.member_sorts}>
-        <span className={styles.member_sorts_label}>Sort by</span>
-        {MEMBER_SORTS.map((option) => (
-          <button
-            type="button"
-            key={option.key}
-            className={`${styles.member_sort} ${
-              sort === option.key ? styles.member_sort_active : ''
-            }`}
-            onClick={() => setSort(option.key)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <ActivityControls
+        sort={sort}
+        onSortChange={setSort}
+        options={MEMBER_SORTS}
+        ariaLabel="Sort core members"
+      />
 
       <h2 className={styles.member_heading}>
         Core members <small>{current.length}</small>

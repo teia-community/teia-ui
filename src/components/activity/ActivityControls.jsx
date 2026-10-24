@@ -5,7 +5,17 @@ export const SORT_OPTIONS = [
   { key: 'oldest', label: 'Oldest first' },
 ]
 
-export function ActivityControls({ sort, onSortChange, children }) {
+/**
+ * The site's sort control. `options` lets a page sort by something other than
+ * time without inventing its own control.
+ */
+export function ActivityControls({
+  sort,
+  onSortChange,
+  options = SORT_OPTIONS,
+  ariaLabel = 'Sort activity',
+  children,
+}) {
   return (
     <div className={styles.controls}>
       <div className={styles.controls_filters}>{children}</div>
@@ -16,9 +26,9 @@ export function ActivityControls({ sort, onSortChange, children }) {
           className={styles.sort_select}
           value={sort}
           onChange={(e) => onSortChange(e.target.value)}
-          aria-label="Sort activity"
+          aria-label={ariaLabel}
         >
-          {SORT_OPTIONS.map((o) => (
+          {options.map((o) => (
             <option key={o.key} value={o.key}>
               {o.label}
             </option>
