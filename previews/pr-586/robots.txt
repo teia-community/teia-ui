@@ -1,0 +1,7 @@
+Sitemap: https://backup.teia.art/sitemap.php
+Sitemap: https://teia.art/sitemap.xml
+User-Agent: *
+Disallow: /settings
+Disallow: /subjkt
+Disallow: /sync
+Disallow: /feed/lists
