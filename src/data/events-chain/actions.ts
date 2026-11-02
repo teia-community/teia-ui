@@ -11,6 +11,7 @@ import { mutate } from 'swr'
 import { EVENTS_CONTRACT } from '@constants'
 import { Tezos, useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
+import { TESTNET_WALLET } from '@data/registries'
 import { buildEventDocument, uploadEventContent } from './ipfs'
 import type { EventDocInput } from './ipfs'
 
@@ -77,6 +78,11 @@ async function send(
   const { step, show, showError } = useModalStore.getState()
   step(title, uploads ? 'Uploading to IPFS' : 'Waiting for wallet', true)
   try {
+    if (TESTNET_WALLET) {
+      throw new Error(
+        'Events live on mainnet: event writes are off in shadownet test mode.'
+      )
+    }
     const { arg, amount = 0 } = await prepare()
     if (uploads) step(title, 'Waiting for wallet confirmation', false)
     const contract = await Tezos.wallet.at(EVENTS_CONTRACT)

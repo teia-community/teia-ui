@@ -2,7 +2,8 @@
 // and the moderator views.
 
 import useSWR from 'swr'
-import { useRegistryRoles } from '@data/registries'
+import { useUserStore } from '@context/userStore'
+import { useGateRoles } from '@data/roles'
 import {
   EVENTS_MOD_SWR_KEY,
   EVENTS_SWR_KEY,
@@ -30,8 +31,29 @@ export function useChainEvents() {
   }
 }
 
+export interface EventRoles {
+  address?: string
+  /** Moderator or multisig member — can create/edit/hide + approve/reject. */
+  canModerate: boolean
+  /** Holds TEIA — can propose new events. */
+  canPropose: boolean
+  isConnected: boolean
+  /** Roles are still resolving for a connected wallet. */
+  loading: boolean
+}
+
 /** Current account's capabilities on the events registry. */
-export const useEventRoles = useRegistryRoles
+export function useEventRoles(): EventRoles {
+  const address = useUserStore((st) => st.address)
+  const { data } = useGateRoles(address)
+  return {
+    address,
+    canModerate: Boolean(data?.canModerate),
+    canPropose: Boolean(data?.isTokenHolder),
+    isConnected: Boolean(address),
+    loading: Boolean(address) && !data,
+  }
+}
 
 export interface EventProposalListItem extends EventProposal {
   /** Proposed title, resolved from the proposal's IPFS document. */
