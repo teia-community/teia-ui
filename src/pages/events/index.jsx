@@ -5,6 +5,19 @@ import { Loading } from '@atoms/loading'
 import EventEditorDialog from '@components/events/EventEditorDialog'
 import Tour, { TourLink } from '@components/tour'
 import { useEvents } from '@hooks/use-events'
+import { useModalStore } from '@context/modalStore'
+import { REGISTRIES_ENABLED } from '@data/registries'
+import {
+  approveEventProposal,
+  createEvent,
+  proposeEvent,
+  rejectEventProposal,
+  setEventHidden,
+  updateEvent,
+  useEventProposals,
+  useEventRoles,
+  useModeratableEvents,
+} from '@data/events-chain'
 import styles from './index.module.scss'
 
 function getBannerTextColor(hex) {
@@ -41,9 +54,57 @@ export default function Events() {
   const { events, error, isLoading } = useEvents()
   const [params, setParams] = useSearchParams()
 
+  // On-chain registry (shadownet test mode): moderators also get hidden
+  // events and the proposal queue.
+  const roles = useEventRoles()
+  const canModerate = REGISTRIES_ENABLED && roles.canModerate
+  const { data: modEvents } = useModeratableEvents(canModerate)
+  const { data: proposals } = useEventProposals(canModerate)
+  const pending = (proposals ?? []).filter((p) => p.status === 'pending')
+
   useEffect(() => {
-    setLocalEvents(events)
-  }, [events])
+    setLocalEvents((canModerate && modEvents) || events)
+  }, [events, modEvents, canModerate])
+
+  const addEvent = () => {
+    if (REGISTRIES_ENABLED && !roles.canModerate && !roles.canPropose) {
+      useModalStore
+        .getState()
+        .show(
+          'Add event',
+          roles.isConnected
+            ? 'Proposing an event requires holding TEIA tokens.'
+            : 'Sync your wallet to propose an event.'
+        )
+      return
+    }
+    setEditingEvent({})
+  }
+
+  // Moderators publish directly; token holders submit a proposal.
+  const saveOnChain = async (event) => {
+    const { eventId } = editingEvent
+    const input = {
+      title: event.title,
+      subtitle: event.subtitle,
+      description: event.description,
+      link: event.link,
+      screenshot: event.screenshot,
+      bannerColor: event.bannerColor,
+    }
+    // The editor is a top-layer <dialog>: close it so the wallet feedback
+    // modal is visible, and reopen it with the draft if the call fails.
+    setEditingEvent(null)
+    try {
+      if (eventId != null) await updateEvent(eventId, input)
+      else if (roles.canModerate) await createEvent(input)
+      else await proposeEvent(input)
+    } catch {
+      setEditingEvent({ ...event, eventId })
+    }
+  }
+  // Failures are surfaced by the action's own modal.
+  const quiet = (action) => () => action().catch(() => {})
 
   useEffect(() => {
     if (!selectedEvent) return undefined
@@ -66,6 +127,7 @@ export default function Events() {
   }, [selectedEvent])
 
   const saveEvent = (event) => {
+    if (REGISTRIES_ENABLED) return saveOnChain(event)
     setLocalEvents((current) => {
       const existing = current.findIndex((item) => item.id === event.id)
       if (existing === -1) return [...current, event]
@@ -87,11 +149,7 @@ export default function Events() {
           <div className={styles.header_top}>
             <h1 className={styles.headline}>Events</h1>
             <div className={styles.header_actions}>
-              <button
-                type="button"
-                data-tour="add-event"
-                onClick={() => setEditingEvent({})}
-              >
+              <button type="button" data-tour="add-event" onClick={addEvent}>
                 + Add event
               </button>
               <TourLink name="events" title="How to add an event" />
@@ -101,6 +159,37 @@ export default function Events() {
             Teia community events, initiatives, and announcements.
           </p>
         </header>
+
+        {pending.length > 0 && (
+          <div className={styles.event_list}>
+            {pending.map((p) => (
+              <article className={styles.event_card} key={p.id}>
+                <div className={styles.card_copy}>
+                  <h2>Proposal: {p.title}</h2>
+                  <p className={styles.subtitle}>{p.doc?.subtitle}</p>
+                  <p>{p.doc?.description}</p>
+                  <p>
+                    {p.doc?.link} · proposed by {p.proposer}
+                  </p>
+                  <div className={styles.header_actions}>
+                    <button
+                      type="button"
+                      onClick={quiet(() => approveEventProposal(p.id))}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      onClick={quiet(() => rejectEventProposal(p.id))}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
 
         {!isLoading && !error && (
           <div className={styles.event_list}>
@@ -114,6 +203,28 @@ export default function Events() {
                     <a href={event.link} target="_blank" rel="noreferrer">
                       Visit event site ↗
                     </a>
+                    {canModerate && (
+                      <div className={styles.header_actions}>
+                        {event.hidden && <span>Hidden</span>}
+                        <button
+                          type="button"
+                          onClick={() => setEditingEvent(event)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={quiet(() =>
+                            setEventHidden({
+                              eventId: event.eventId,
+                              hidden: !event.hidden,
+                            })
+                          )}
+                        >
+                          {event.hidden ? 'Unhide' : 'Hide'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <button
                     type="button"
