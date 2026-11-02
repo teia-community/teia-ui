@@ -9,6 +9,15 @@ import { Loading } from '@atoms/loading'
 import { Checkbox } from '@atoms/input'
 import { getUser } from '@data/api'
 import { useArtistExtras, useArtistPreviews } from '@data/artists'
+import {
+  claimHandle,
+  releaseHandle,
+  setProfile,
+  useChainProfile,
+  useHandleStatus,
+} from '@data/profiles'
+import { REGISTRIES_ENABLED } from '@data/registries'
+import { useUserStore } from '@context/userStore'
 import ArtistCard, {
   CARD_FIELDS,
   DEFAULT_SHOW,
@@ -33,17 +42,37 @@ const CONFIGURE_TOUR = [
   },
 ]
 
+const HANDLE_STATUS = {
+  invalid: 'Use 1-32 lowercase letters, numbers, "_" or "-"',
+  taken: 'Already taken',
+  blocked: 'Reserved',
+  available: 'Available',
+}
+
 /**
  * "Customize my card": pick which profile fields show on your artist card,
- * with a live preview. Saves a local draft for now; the on-chain write goes
- * through the subjkt registry (see pages/config/Subjkt.tsx) as `card.show`.
+ * with a live preview. Saves a local draft; in shadownet test mode the owner
+ * can also save it to the on-chain profile registry (see @data/profiles) and
+ * claim a handle there.
  */
 export default function ConfigureArtistCard() {
   const { name } = useParams()
-  const { data: user, error } = useSWR(['configure-artist', name], () =>
-    getUser(name, 'name')
+  // `name` is a SUBJKT name, or a wallet address (which may have no SUBJKT).
+  const byAddress = /^(tz|KT)1/.test(name)
+  const { data: user, error } = useSWR(['configure-artist', name], async () =>
+    byAddress
+      ? (await getUser(name)) ?? { user_address: name }
+      : getUser(name, 'name')
   )
   const address = user?.user_address
+  const { profile, isLoading: profileLoading } = useChainProfile(
+    REGISTRIES_ENABLED ? address : undefined
+  )
+  const isOwner = useUserStore(
+    (st) => Boolean(address) && st.address === address
+  )
+  const [handleInput, setHandleInput] = useState('')
+  const handleStatus = useHandleStatus(handleInput)
   const { data: extras } = useArtistExtras(address ? [address] : [], true)
   const { data: tokens } = useArtistPreviews(address)
 
@@ -78,12 +107,14 @@ export default function ConfigureArtistCard() {
     since: Boolean(ex.since),
   }
   useEffect(() => {
-    if (!address) return
+    if (!address || profileLoading) return
     const draft = readDraft(address)
-    const card = user.metadata?.data?.card
+    const card = profile?.content?.card ?? user.metadata?.data?.card
     setShow(draft?.show ?? card?.show ?? DEFAULT_SHOW)
     setTagInput((draft?.tags ?? card?.tags ?? []).join(', '))
-  }, [address, user])
+    // Re-seeding on every profile refetch would discard unsaved edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, user, profileLoading])
 
   if (error) return <Page title="Customize card">User not found.</Page>
   if (!user || !show) return <Loading message="Loading profile" />
@@ -113,6 +144,28 @@ export default function ConfigureArtistCard() {
     localStorage.setItem(draftKey(address), JSON.stringify({ show, tags }))
     setSaved(true)
   }
+  // The rest of the document carries over from the existing on-chain profile,
+  // or from SUBJKT metadata the first time.
+  const saveOnChain = async () => {
+    if (!isOwner) return
+    const previous = profile?.content ?? {
+      name: user.name,
+      description: user.metadata?.data?.description,
+      identicon: user.metadata?.data?.identicon,
+    }
+    try {
+      await setProfile({ ...previous, card: { show, tags } })
+      // The on-chain card is now the source of truth.
+      localStorage.removeItem(draftKey(address))
+    } catch {
+      // surfaced via modal
+    }
+  }
+  const claim = () =>
+    handleStatus === 'available' &&
+    claimHandle(handleInput)
+      .then(() => setHandleInput(''))
+      .catch(() => {})
 
   return (
     <Page title="Customize card">
@@ -160,14 +213,67 @@ export default function ConfigureArtistCard() {
                 <Button shadow_box onClick={saveDraft}>
                   {saved ? 'Saved' : 'Save draft'}
                 </Button>
-                <Button shadow_box disabled title="On-chain save coming next">
-                  Save on-chain
-                </Button>
+                {REGISTRIES_ENABLED ? (
+                  <Button
+                    shadow_box
+                    disabled={!isOwner}
+                    title={isOwner ? '' : 'Sync the wallet that owns this card'}
+                    onClick={saveOnChain}
+                  >
+                    Save on-chain
+                  </Button>
+                ) : (
+                  <Button shadow_box disabled title="On-chain save coming next">
+                    Save on-chain
+                  </Button>
+                )}
               </div>
               <p className={styles.note}>
                 Draft is stored in this browser only. Saving on-chain will write
-                it to your subjkt metadata.
+                it to your{' '}
+                {REGISTRIES_ENABLED ? 'Teia profile' : 'subjkt metadata'}.
               </p>
+              {REGISTRIES_ENABLED && isOwner && profile && (
+                <label className={styles.configure_tags}>
+                  <span>
+                    Handle{profile.handle ? `: @${profile.handle}` : ' (none)'}
+                  </span>
+                  <input
+                    className={styles.tag_input}
+                    value={handleInput}
+                    onChange={(e) => setHandleInput(e.target.value)}
+                    placeholder="e.g. my-name"
+                  />
+                  {handleStatus && (
+                    <span
+                      className={
+                        handleStatus === 'available'
+                          ? undefined
+                          : styles.configure_error
+                      }
+                    >
+                      {HANDLE_STATUS[handleStatus]}
+                    </span>
+                  )}
+                  <div className={styles.configure_actions}>
+                    <Button
+                      shadow_box
+                      disabled={handleStatus !== 'available'}
+                      onClick={claim}
+                    >
+                      Claim handle
+                    </Button>
+                    {profile.handle && (
+                      <Button
+                        shadow_box
+                        onClick={() => releaseHandle().catch(() => {})}
+                      >
+                        Release handle
+                      </Button>
+                    )}
+                  </div>
+                </label>
+              )}
             </div>
             <div data-tour="preview" className={styles.configure_preview}>
               <ArtistCard

@@ -283,6 +283,13 @@ export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 // this TS module.
 export const CALENDAR_CONTRACT = 'KT1FxyjsMjNiske7KZQhRtcbTwWJQpv8bmLw'
 
+// teiaEvents (the /events showcase registry) and teiaProfiles (artist cards /
+// profiles). SHADOWNET addresses: neither contract is on mainnet yet, so both
+// features are only on in shadownet test mode (see src/data/registries.ts and
+// .env.shadownet). Replace both at mainnet origination.
+export const EVENTS_CONTRACT = 'KT1Bea1TMrFTfkYnudFUbFbUYTEupRBQniVU'
+export const PROFILES_CONTRACT = 'KT1Hi6rLip8UVGhcFmtyjzyJUq7HoEAHp2Yr'
+
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000
 
