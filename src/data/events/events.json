@@ -80,24 +80,6 @@
       "link": "https://midsummerparty2026-gallery.teia.art/",
       "screenshot": "/events/midsummerparty2026.png",
       "bannerColor": "#080010"
-    },
-    {
-      "id": "tezos",
-      "title": "Tezos",
-      "subtitle": "Tezos ecosystem",
-      "description": "The official Tezos website.",
-      "link": "https://tezos.com/",
-      "screenshot": "/events/tezos.png",
-      "bannerColor": "#202020"
-    },
-    {
-      "id": "teia",
-      "title": "Teia",
-      "subtitle": "Community-owned NFT marketplace",
-      "description": "The open, community-owned Tezos NFT marketplace.",
-      "link": "https://teia.art/",
-      "screenshot": "/events/teia.png",
-      "bannerColor": "#101010"
     }
   ]
 }
