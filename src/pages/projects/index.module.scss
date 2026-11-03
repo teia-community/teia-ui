@@ -1,0 +1,81 @@
+.projects {
+  width: 100%;
+  padding: 16px 0 48px;
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+
+  h1 {
+    font-size: 24px;
+    margin: 20px 0 16px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 12px;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 12px 0 8px;
+  }
+  p {
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 4px;
+  }
+  ul,
+  ol {
+    padding-left: 24px;
+  }
+  li {
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0;
+
+  a {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+  }
+  a[aria-current='page'] {
+    color: var(--background-color);
+    background: var(--text-color);
+    border-color: var(--text-color);
+  }
+}
+.projects .cards {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+.card,
+.empty {
+  border: 1px solid var(--border-color);
+  padding: 20px;
+}
+.meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+  margin-top: 28px;
+}
+.description {
+  white-space: pre-line;
+}
