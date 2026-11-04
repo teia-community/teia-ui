@@ -1,5 +1,6 @@
 @import '@styles/layout.scss';
 @import '@styles/mixins.scss';
+@import '@styles/variables.scss';
 
 // .html {
 //   @include embedObjktViewSizes;
@@ -14,6 +15,17 @@
     outline: 2px solid var(--text-color);
     outline-offset: 2px;
     border-radius: 2px;
+  }
+}
+
+// Cover image shown in feeds and grids, matching the image media type.
+.cover {
+  .image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    max-height: $max-token-height;
+    margin: 0 auto;
   }
 }
 
