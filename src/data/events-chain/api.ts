@@ -2,11 +2,11 @@
 // (mirrors src/data/calendar-chain/api.ts).
 
 import { EVENTS_CONTRACT } from '@constants'
-import { REGISTRY_TZKT_API } from '@data/registries'
 import type { ChainEventRecord, EventProposal } from './types'
 
 const MAX_PAGE_SIZE = 10000
-const BIGMAPS = `${REGISTRY_TZKT_API}/v1/contracts/${EVENTS_CONTRACT}/bigmaps`
+const TZKT_API = import.meta.env.VITE_TZKT_API
+const BIGMAPS = `${TZKT_API}/v1/contracts/${EVENTS_CONTRACT}/bigmaps`
 const PROPOSAL_STATUS = ['pending', 'approved', 'rejected'] as const
 
 interface RawEventValue {

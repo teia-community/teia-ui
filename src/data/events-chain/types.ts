@@ -34,8 +34,7 @@ export interface ChainEventRecord {
 
 /**
  * An on-chain event mapped onto the shape the events page and header dropdown
- * render (see src/data/events/api.js `mapEvent`), plus the on-chain refs the
- * write actions need.
+ * render, plus the on-chain refs the write actions need.
  */
 export interface ShowcaseEvent {
   /** String form of the on-chain event id. */

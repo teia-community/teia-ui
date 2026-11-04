@@ -2,9 +2,8 @@
 // events dropdown.
 //
 // Reads the teiaEvents contract's `events` bigmap via TzKT, fetches each
-// event's IPFS document, and maps it onto the shape the events UI already
-// renders (see src/data/events/api.js), so swapping the mocked feed for this
-// one needs no UI changes.
+// event's IPFS document, and maps it onto the shape the events UI renders
+// (title, subtitle, description, link, screenshot, bannerColor).
 
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { fetchEventRecord, fetchEventRecords } from './api'

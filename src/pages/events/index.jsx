@@ -6,7 +6,6 @@ import EventEditorDialog from '@components/events/EventEditorDialog'
 import Tour, { TourLink } from '@components/tour'
 import { useEvents } from '@hooks/use-events'
 import { useModalStore } from '@context/modalStore'
-import { REGISTRIES_ENABLED } from '@data/registries'
 import {
   approveEventProposal,
   createEvent,
@@ -43,31 +42,26 @@ const EVENTS_TOUR = [
 ]
 
 /**
- * Events page backed by the normalized GET /events feed. The request is
- * currently mocked in the data layer while the backend endpoint is developed.
+ * Events page backed by the on-chain teiaEvents registry: moderators publish
+ * directly, TEIA holders submit proposals.
  */
 export default function Events() {
   const [editingEvent, setEditingEvent] = useState(null)
   const [selectedEvent, setSelectedEvent] = useState(null)
-  const [localEvents, setLocalEvents] = useState([])
   const dialogRef = useRef(null)
   const { events, error, isLoading } = useEvents()
   const [params, setParams] = useSearchParams()
 
-  // On-chain registry (shadownet test mode): moderators also get hidden
-  // events and the proposal queue.
+  // Moderators also get hidden events and the proposal queue.
   const roles = useEventRoles()
-  const canModerate = REGISTRIES_ENABLED && roles.canModerate
+  const { canModerate } = roles
   const { data: modEvents } = useModeratableEvents(canModerate)
   const { data: proposals } = useEventProposals(canModerate)
   const pending = (proposals ?? []).filter((p) => p.status === 'pending')
-
-  useEffect(() => {
-    setLocalEvents((canModerate && modEvents) || events)
-  }, [events, modEvents, canModerate])
+  const shownEvents = (canModerate && modEvents) || events
 
   const addEvent = () => {
-    if (REGISTRIES_ENABLED && !roles.canModerate && !roles.canPropose) {
+    if (!roles.canModerate && !roles.canPropose) {
       useModalStore
         .getState()
         .show(
@@ -127,18 +121,12 @@ export default function Events() {
   }, [selectedEvent])
 
   const saveEvent = (event) => {
-    if (REGISTRIES_ENABLED) return saveOnChain(event)
-    setLocalEvents((current) => {
-      const existing = current.findIndex((item) => item.id === event.id)
-      if (existing === -1) return [...current, event]
-      return current.map((item, index) => (index === existing ? event : item))
-    })
-    setEditingEvent(null)
     // Submitting finishes the add-event tour.
     if (params.get('tour') === 'events') {
       params.delete('tour')
       setParams(params)
     }
+    return saveOnChain(event)
   }
 
   return (
@@ -193,7 +181,7 @@ export default function Events() {
 
         {!isLoading && !error && (
           <div className={styles.event_list}>
-            {localEvents.map((event) => (
+            {shownEvents.map((event) => (
               <article className={styles.event_card} key={event.id}>
                 <div className={styles.card_content}>
                   <div className={styles.card_copy}>

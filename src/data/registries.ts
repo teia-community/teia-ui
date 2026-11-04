@@ -1,12 +1,11 @@
-// Network config for the teiaEvents / teiaProfiles registries
-// (src/data/events-chain, src/data/profiles).
+// Shadownet test mode for the teiaProfiles registry (src/data/profiles).
 //
-// Neither contract is on mainnet yet, so both features are off unless the app
-// runs in shadownet test mode (see .env.shadownet). In that mode the
-// registries are read from shadownet TzKT and roles are resolved against the
-// shadownet multisig / moderator / token contracts, while the rest of the app
-// keeps reading mainnet. At mainnet launch this module goes away: the data
-// layers switch to VITE_TZKT_API and useGateRoles.
+// The profiles contract is not on mainnet yet, so profiles are off unless the
+// app runs in shadownet test mode (see .env.shadownet). In that mode profiles
+// are read from shadownet TzKT and roles are resolved against the shadownet
+// multisig / moderator / token contracts, while the rest of the app (events
+// included) keeps reading mainnet. At mainnet launch this module goes away:
+// the profiles layer switches to VITE_TZKT_API and useGateRoles.
 
 import useSWR from 'swr'
 import { useUserStore } from '@context/userStore'
@@ -16,6 +15,8 @@ const env = import.meta.env
 export const REGISTRY_TZKT_API: string | undefined =
   env.VITE_REGISTRIES_TZKT_API
 export const REGISTRIES_ENABLED = Boolean(REGISTRY_TZKT_API)
+/** The wallet (and so every write) is on shadownet — see userStore. */
+export const TESTNET_WALLET = Boolean(env.VITE_REGISTRIES_RPC)
 
 async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url)
@@ -47,7 +48,7 @@ export interface RegistryRoles {
   address?: string
   /** Moderator or multisig member on the registries' network. */
   canModerate: boolean
-  /** Holds TEIA on the registries' network — can propose events. */
+  /** Holds TEIA on the registries' network. */
   canPropose: boolean
   isConnected: boolean
   /** Roles are still resolving for a connected wallet. */
