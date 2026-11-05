@@ -616,7 +616,7 @@ export default function ArtistCard({
         <div className={styles.info}>
           <Link
             className={styles.name}
-            to={`/${encodeURIComponent(artist.name)}`}
+            to={artist.href ?? `/${encodeURIComponent(artist.name)}`}
           >
             {artist.name}
           </Link>

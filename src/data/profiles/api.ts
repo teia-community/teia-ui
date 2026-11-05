@@ -1,4 +1,4 @@
-// Read the on-chain profile registry from its bigmaps via TzKT.
+// Read the on-chain profile card registry from its bigmap via TzKT.
 
 import { PROFILES_CONTRACT } from '@constants'
 import { REGISTRY_TZKT_API } from '@data/registries'
@@ -10,8 +10,7 @@ const ADDRESS_BATCH = 100
 
 interface RawProfileValue {
   current_cid: string
-  handle: string | null
-  moderated: boolean
+  hidden: boolean
   version_count: string
 }
 
@@ -26,8 +25,7 @@ async function getJson<T>(url: string): Promise<T> {
 const toProfile = (row: Row): ChainProfile => ({
   address: row.key,
   cid: row.value.current_cid,
-  handle: row.value.handle ?? null,
-  moderated: row.value.moderated,
+  hidden: row.value.hidden,
   versionCount: Number(row.value.version_count),
 })
 
@@ -60,39 +58,4 @@ export async function fetchProfile(
   address: string
 ): Promise<ChainProfile | null> {
   return (await fetchProfiles([address])).get(address) ?? null
-}
-
-/**
- * A single bigmap key. TzKT answers 204 for a key that never existed and
- * still returns removed keys (with `active: false`), so both mean "absent".
- */
-async function fetchActiveKey<V>(
-  bigmap: string,
-  key: string
-): Promise<{ value: V } | null> {
-  const res = await fetch(
-    `${BIGMAPS}/${bigmap}/keys/${encodeURIComponent(key)}`
-  )
-  if (res.status === 204 || res.status === 404) return null
-  if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
-  const body = await res.json()
-  return body?.active ? body : null
-}
-
-/** The address currently holding a handle, or null if it is unclaimed. */
-export async function fetchHandleOwner(handle: string): Promise<string | null> {
-  return (await fetchActiveKey<string>('handles', handle))?.value ?? null
-}
-
-/** Whether a handle is blocked (reserved route name or moderator-blocked). */
-export async function fetchHandleBlocked(handle: string): Promise<boolean> {
-  return (await fetchActiveKey<unknown>('blocked_handles', handle)) !== null
-}
-
-/** Resolve a handle to its owner's profile (profile pages by handle). */
-export async function fetchProfileByHandle(
-  handle: string
-): Promise<ChainProfile | null> {
-  const owner = await fetchHandleOwner(handle)
-  return owner ? fetchProfile(owner) : null
 }

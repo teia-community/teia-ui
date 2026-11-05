@@ -5,7 +5,7 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Checkbox, Input } from '@atoms/input'
 import { useArtistsPage, useArtistExtras } from '@data/artists'
-import { useChainProfiles } from '@data/profiles'
+import { profileAvatarUrl, useChainProfiles } from '@data/profiles'
 import { REGISTRIES_ENABLED } from '@data/registries'
 import { useUserStore } from '@context/userStore'
 import ArtistCard, { FILETYPES, DEFAULT_SHOW, readDraft } from './ArtistCard'
@@ -180,12 +180,26 @@ export default function ArtistsPage() {
   const { data: extras } = useArtistExtras(
     data?.artists.map((a) => a.address) ?? []
   )
-  // On-chain card config (shadownet test mode) wins over SUBJKT metadata.
+  // Shadownet test mode: an artist's on-chain profile card replaces their
+  // name, bio, avatar and card settings; no SUBJKT card config, no drafts.
   const { data: profiles } = useChainProfiles(
     REGISTRIES_ENABLED ? data?.artists.map((a) => a.address) ?? [] : []
   )
+  const withCard = (artist) => {
+    const content = profiles?.[artist.address]?.content
+    if (!content) return artist
+    return {
+      ...artist,
+      name: content.name || artist.name,
+      description: content.description,
+      identicon: profileAvatarUrl(content.identicon),
+      href: `/tz/${artist.address}`,
+    }
+  }
   const cardOf = (artist) =>
-    profiles?.[artist.address]?.content?.card ?? artist.card
+    REGISTRIES_ENABLED
+      ? profiles?.[artist.address]?.content?.card
+      : readDraft(artist.address) ?? artist.card
   const address = useUserStore((st) => st.address)
   const activeCount =
     filters.types.length +
@@ -361,18 +375,10 @@ export default function ArtistsPage() {
               {data.artists.map((artist) => (
                 <ArtistCard
                   key={artist.address}
-                  artist={artist}
+                  artist={withCard(artist)}
                   extras={extras?.[artist.address]}
-                  show={
-                    readDraft(artist.address)?.show ??
-                    cardOf(artist)?.show ??
-                    DEFAULT_SHOW
-                  }
-                  tags={
-                    readDraft(artist.address)?.tags ??
-                    cardOf(artist)?.tags ??
-                    []
-                  }
+                  show={cardOf(artist)?.show ?? DEFAULT_SHOW}
+                  tags={cardOf(artist)?.tags ?? []}
                   hazardFilters={hazardFilters}
                   marketFilter={marketFilter}
                 />

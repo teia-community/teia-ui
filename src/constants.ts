@@ -288,7 +288,7 @@ export const EVENTS_CONTRACT = 'KT1KDXXwq8bHKr5f1cM6E66tzxYNuZ2x913o'
 // teiaProfiles (artist cards / profiles). SHADOWNET address: not on mainnet
 // yet, so profiles are only on in shadownet test mode (see
 // src/data/registries.ts and .env.shadownet). Replace at mainnet origination.
-export const PROFILES_CONTRACT = 'KT1Hi6rLip8UVGhcFmtyjzyJUq7HoEAHp2Yr'
+export const PROFILES_CONTRACT = 'KT1B7pLf5ozwns1LupcQ51fqxuYiRZuPta1a'
 
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000
