@@ -487,7 +487,7 @@ function Carousel({ tokens, filters }) {
 }
 
 // Everything an artist can choose to show on their card, in display order.
-// Stored on-chain as subjkt metadata `card.show`; see configure.jsx.
+// Stored in the on-chain profile card as `card.show`; see configure.jsx.
 export const CARD_FIELDS = [
   { key: 'bio', label: 'Bio' },
   { key: 'roles', label: 'Role badges' },
@@ -517,17 +517,6 @@ export function parseTags(input) {
         .map((t) => t.slice(0, MAX_TAG_LENGTH))
     ),
   ].slice(0, MAX_TAGS)
-}
-
-// Local draft of an artist's card config until the on-chain write lands.
-export const draftKey = (address) => `artist-card:${address}`
-export function readDraft(address) {
-  try {
-    const raw = localStorage.getItem(draftKey(address))
-    return raw ? JSON.parse(raw) : null
-  } catch {
-    return null
-  }
 }
 
 function useBluesky(address, enabled) {

@@ -3,7 +3,8 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Checkbox } from '@atoms/input'
 import { useArtistsPage, useArtistExtras } from '@data/artists'
-import ArtistCard, { DEFAULT_SHOW, readDraft } from '@pages/artists/ArtistCard'
+import ArtistCard, { DEFAULT_SHOW } from '@pages/artists/ArtistCard'
+import useProfileCards from '@pages/artists/useProfileCards'
 import useSettings from '@hooks/use-settings'
 import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
@@ -31,6 +32,7 @@ export default function ArtistsSearchResults({ term, filters, boolExp }) {
   const { data: extras } = useArtistExtras(
     data?.artists.map((a) => a.address) ?? []
   )
+  const { artistOf, cardOf } = useProfileCards(data?.artists)
 
   // Primary/secondary split needs a column compare Hasura can't do server-side.
   const marketFilter = (token) => {
@@ -112,14 +114,10 @@ export default function ArtistsSearchResults({ term, filters, boolExp }) {
           {data.artists.map((artist) => (
             <ArtistCard
               key={artist.address}
-              artist={artist}
+              artist={artistOf(artist)}
               extras={extras?.[artist.address]}
-              show={
-                readDraft(artist.address)?.show ??
-                artist.card?.show ??
-                DEFAULT_SHOW
-              }
-              tags={readDraft(artist.address)?.tags ?? artist.card?.tags ?? []}
+              show={cardOf(artist)?.show ?? DEFAULT_SHOW}
+              tags={cardOf(artist)?.tags ?? []}
               hazardFilters={hazardFilters}
               marketFilter={marketFilter}
             />

@@ -127,11 +127,7 @@ interface UserState {
 // Wallet / Tezos setup
 // ---------------------------------------------------------------------------
 
-// Shadownet test mode (.env.shadownet): the wallet and every write use the
-// testnet RPC instead of the user's selected mainnet node.
-const TESTNET_RPC: string | undefined = import.meta.env.VITE_REGISTRIES_RPC
-const getRpc = () =>
-  String(TESTNET_RPC || useLocalSettings.getState().getRpcNode())
+const getRpc = () => String(useLocalSettings.getState().getRpcNode())
 const normalize = (url: string) => String(url).replace(/\/$/, '')
 
 // const rpcClient = new CancellableRpcClient(useLocalSettings.getState().rpcNode)
@@ -144,7 +140,7 @@ const wallet = new BeaconWallet({
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
   // Beacon no longer accepts `network` on requestPermissions — set it here (DAppClientOptions).
   network: {
-    type: TESTNET_RPC ? NetworkType.SHADOWNET : NetworkType.MAINNET,
+    type: NetworkType.MAINNET,
     rpcUrl: getRpc(), // shared read with Tezos init — can't drift
   },
 })
@@ -304,9 +300,7 @@ export const useUserStore = create<UserState>()(
 
         sync: async (opts) => {
           const rpcUrl = normalize(
-            TESTNET_RPC ||
-              opts?.rpcNode ||
-              useLocalSettings.getState().getRpcNode()
+            opts?.rpcNode || useLocalSettings.getState().getRpcNode()
           )
 
           let activeAccount = await wallet.client.getActiveAccount()

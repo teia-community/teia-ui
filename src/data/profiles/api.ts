@@ -1,10 +1,10 @@
 // Read the on-chain profile card registry from its bigmap via TzKT.
 
 import { PROFILES_CONTRACT } from '@constants'
-import { REGISTRY_TZKT_API } from '@data/registries'
 import type { ChainProfile } from './types'
 
-const BIGMAPS = `${REGISTRY_TZKT_API}/v1/contracts/${PROFILES_CONTRACT}/bigmaps`
+const TZKT_API = import.meta.env.VITE_TZKT_API
+const BIGMAPS = `${TZKT_API}/v1/contracts/${PROFILES_CONTRACT}/bigmaps`
 // Keeps the `key.in` query string well under URL length limits.
 const ADDRESS_BATCH = 100
 

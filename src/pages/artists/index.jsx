@@ -5,10 +5,9 @@ import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
 import { Checkbox, Input } from '@atoms/input'
 import { useArtistsPage, useArtistExtras } from '@data/artists'
-import { profileAvatarUrl, useChainProfiles } from '@data/profiles'
-import { REGISTRIES_ENABLED } from '@data/registries'
+import useProfileCards from './useProfileCards'
 import { useUserStore } from '@context/userStore'
-import ArtistCard, { FILETYPES, DEFAULT_SHOW, readDraft } from './ArtistCard'
+import ArtistCard, { FILETYPES, DEFAULT_SHOW } from './ArtistCard'
 import useSettings from '@hooks/use-settings'
 import {
   METADATA_ACCESSIBILITY_HAZARDS_PHOTOSENS,
@@ -180,26 +179,7 @@ export default function ArtistsPage() {
   const { data: extras } = useArtistExtras(
     data?.artists.map((a) => a.address) ?? []
   )
-  // Shadownet test mode: an artist's on-chain profile card replaces their
-  // name, bio, avatar and card settings; no SUBJKT card config, no drafts.
-  const { data: profiles } = useChainProfiles(
-    REGISTRIES_ENABLED ? data?.artists.map((a) => a.address) ?? [] : []
-  )
-  const withCard = (artist) => {
-    const content = profiles?.[artist.address]?.content
-    if (!content) return artist
-    return {
-      ...artist,
-      name: content.name || artist.name,
-      description: content.description,
-      identicon: profileAvatarUrl(content.identicon),
-      href: `/tz/${artist.address}`,
-    }
-  }
-  const cardOf = (artist) =>
-    REGISTRIES_ENABLED
-      ? profiles?.[artist.address]?.content?.card
-      : readDraft(artist.address) ?? artist.card
+  const { artistOf, cardOf } = useProfileCards(data?.artists)
   const address = useUserStore((st) => st.address)
   const activeCount =
     filters.types.length +
@@ -300,14 +280,13 @@ export default function ArtistsPage() {
                 Artists by most recent mint, with their latest creations.
               </p>
             </div>
-            {/* TODO: link to the connected wallet's subjkt once the on-chain save exists */}
             <div className={styles.header_actions}>
               <span data-tour="customize">
                 <Button
                   shadow_box
                   small
                   to={`/artist-directory/configure/${
-                    (REGISTRIES_ENABLED && address) || 'malicioussheep'
+                    address || 'malicioussheep'
                   }${touring ? '?tour=customize' : ''}`}
                 >
                   Customize my card
@@ -375,7 +354,7 @@ export default function ArtistsPage() {
               {data.artists.map((artist) => (
                 <ArtistCard
                   key={artist.address}
-                  artist={withCard(artist)}
+                  artist={artistOf(artist)}
                   extras={extras?.[artist.address]}
                   show={cardOf(artist)?.show ?? DEFAULT_SHOW}
                   tags={cardOf(artist)?.tags ?? []}
