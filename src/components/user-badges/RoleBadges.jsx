@@ -11,10 +11,13 @@ const BADGES = [
 /**
  * Presentational badges for a precomputed `AccountRoles` object. Use this in
  * list contexts where roles are resolved in bulk, to avoid a hook call per row.
- * Renders nothing when no roles apply.
+ * Renders nothing when no roles apply. A multisig member who is also a
+ * moderator shows only the Multisig badge.
  */
 export function RoleBadgesView({ roles, className, tourTarget }) {
-  const active = BADGES.filter(({ key }) => roles?.[key])
+  const active = BADGES.filter(
+    ({ key }) => roles?.[key] && !(key === 'isModerator' && roles.isMultisig)
+  )
   if (active.length === 0) return null
   return (
     <span
