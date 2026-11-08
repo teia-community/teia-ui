@@ -1,10 +1,9 @@
-// On-chain profile registry write layer.
+// On-chain profile card write layer.
 //
 // Access, enforced on-chain:
-//  - anyone, for their own profile: set_profile, claim_handle, release_handle
-//    (set_profile and claim_handle attach their fee from get_fees, 0 by
-//    default)
-//  - moderators / multisig users: set_profile_moderated, set_handle_blocked
+//  - anyone, for their own card: set_profile (attaches profile_fee from
+//    get_fees, 0 by default)
+//  - moderators / multisig users: set_profile_hidden
 
 import { mutate } from 'swr'
 import { PROFILES_CONTRACT } from '@constants'
@@ -16,18 +15,9 @@ import type { ProfileDocInput } from './ipfs'
 /** SWR key for one address's profile (see ./hooks.ts). */
 export const profileKey = (address: string) => `profiles/one/${address}`
 
-/** A handle is 1-32 characters from a-z, 0-9, "_" and "-" (as on-chain). */
-export const HANDLE_PATTERN = /^[a-z0-9_-]{1,32}$/
-export const isValidHandle = (handle: string) => HANDLE_PATTERN.test(handle)
-
 const ERRORS: Record<string, string> = {
   PRF_NOT_AUTHORIZED: 'You are not authorized to perform this action.',
-  PRF_PROFILE_NOT_FOUND: 'Save your profile first, then claim a handle.',
-  PRF_INVALID_HANDLE:
-    'A handle is 1 to 32 characters: lowercase letters, numbers, "_" and "-".',
-  PRF_HANDLE_TAKEN: 'That handle is already taken.',
-  PRF_HANDLE_BLOCKED: 'That handle is reserved and cannot be claimed.',
-  PRF_NO_HANDLE: 'You have no handle to release.',
+  PRF_PROFILE_NOT_FOUND: 'That wallet has no profile card.',
   PRF_INCORRECT_FEE: 'The attached fee does not match the current fee.',
   PRF_PAUSED: 'Profiles are temporarily paused by governance.',
   PRF_EMPTY_CID: 'The profile could not be saved (empty content).',
@@ -39,21 +29,18 @@ function friendlyError(e: unknown): unknown {
   return code ? new Error(ERRORS[code]) : e
 }
 
-/** Read the current per-action fees (mutez) from the get_fees view. */
-async function getFees(): Promise<{ profileFee: number; handleFee: number }> {
+/** Read the current profile fee (mutez) from the get_fees view. */
+async function getProfileFee(): Promise<number> {
   try {
     const viewCaller = useUserStore.getState().address ?? ''
     const contract = await Tezos.contract.at(PROFILES_CONTRACT)
     const fees = await contract.contractViews
       .get_fees()
       .executeView({ viewCaller })
-    return {
-      profileFee: Number(fees.profile_fee ?? 0),
-      handleFee: Number(fees.handle_fee ?? 0),
-    }
+    return Number(fees.profile_fee ?? 0)
   } catch {
     // View unreachable: assume free (the contract still validates the amount).
-    return { profileFee: 0, handleFee: 0 }
+    return 0
   }
 }
 
@@ -95,84 +82,37 @@ async function send(
 
 const self = () => useUserStore.getState().address
 
-// --- Own profile ---
+// --- Own card ---
 
-/** Create or update the connected account's profile. */
+/** Create or update the connected account's profile card. */
 export function setProfile(input: ProfileDocInput) {
   return send(
-    'Save Profile',
-    'Profile saved',
+    'Save Profile Card',
+    'Profile card saved',
     'set_profile',
     self(),
     async () => {
       const arg = await uploadProfileContent(buildProfileDocument(input))
-      return { arg, amount: (await getFees()).profileFee }
+      return { arg, amount: await getProfileFee() }
     },
     true
   )
 }
 
-/** Claim a handle for the connected account (releases any previous one). */
-export function claimHandle(handle: string) {
-  return send(
-    'Claim Handle',
-    `You are now @${handle}`,
-    'claim_handle',
-    self(),
-    async () => {
-      if (!isValidHandle(handle)) throw new Error(ERRORS.PRF_INVALID_HANDLE)
-      return { arg: handle, amount: (await getFees()).handleFee }
-    }
-  )
-}
-
-/** Give up the connected account's handle. */
-export function releaseHandle() {
-  return send(
-    'Release Handle',
-    'Handle released',
-    'release_handle',
-    self(),
-    async () => ({})
-  )
-}
-
 // --- Moderator / multisig actions (no fee) ---
 
-export function setProfileModerated({
+export function setProfileHidden({
   address,
-  moderated,
+  hidden,
 }: {
   address: string
-  moderated: boolean
+  hidden: boolean
 }) {
   return send(
-    moderated ? 'Moderate Profile' : 'Restore Profile',
-    moderated ? 'Profile hidden from public views' : 'Profile restored',
-    'set_profile_moderated',
+    hidden ? 'Hide Profile Card' : 'Unhide Profile Card',
+    hidden ? 'Profile card hidden' : 'Profile card restored',
+    'set_profile_hidden',
     address,
-    async () => ({ arg: { address, moderated } })
-  )
-}
-
-/**
- * Block or unblock a handle. Blocking a claimed handle also releases it from
- * its owner; pass that owner as `owner` so their cached profile refreshes.
- */
-export function setHandleBlocked({
-  handle,
-  blocked,
-  owner,
-}: {
-  handle: string
-  blocked: boolean
-  owner?: string
-}) {
-  return send(
-    blocked ? 'Block Handle' : 'Unblock Handle',
-    blocked ? `@${handle} blocked` : `@${handle} unblocked`,
-    'set_handle_blocked',
-    owner,
-    async () => ({ arg: { handle, blocked } })
+    async () => ({ arg: { address, hidden } })
   )
 }

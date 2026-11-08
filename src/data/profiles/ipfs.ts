@@ -5,6 +5,7 @@
 
 import {
   fetchMsgIpfsJson,
+  msgIpfsToUrl,
   uploadMsgFileToIPFS,
   uploadMsgJsonToIPFS,
 } from '@data/messaging/ipfs'
@@ -60,6 +61,14 @@ export async function uploadProfileContent(
   doc: ProfileContent
 ): Promise<string> {
   return uploadMsgJsonToIPFS(doc as unknown as Record<string, unknown>)
+}
+
+/**
+ * Display URL for a card avatar. Avatars are pinned on the MSG proxy, which
+ * the app's default CDN gateway does not serve, so resolve them there.
+ */
+export function profileAvatarUrl(uri?: string): string | undefined {
+  return uri?.startsWith('ipfs://') ? msgIpfsToUrl(uri) : uri
 }
 
 /** Upload an avatar image to IPFS, returning its `ipfs://` URI. */

@@ -1,9 +1,9 @@
-// On-chain profile types.
+// On-chain profile card types.
 //
-// The teiaProfiles contract stores one profile per address. Each record holds
-// only current_cid / handle / moderated / version_count; the display name,
-// description, avatar and artist card configuration live off-chain in the
-// IPFS profile document (ProfileContent).
+// The teiaProfiles contract stores one profile card per wallet. Each record
+// holds only current_cid / hidden / version_count; the card's name, bio,
+// avatar and display settings live off-chain in the IPFS document
+// (ProfileContent).
 
 /** What an artist chose to show on their card (see pages/artists/ArtistCard). */
 export interface ProfileCard {
@@ -13,14 +13,12 @@ export interface ProfileCard {
   tags: string[]
 }
 
-/**
- * The JSON document stored on IPFS for each profile version. `description`
- * and `identicon` carry the same meaning as in SUBJKT metadata.
- */
+/** The JSON document stored on IPFS for each profile card version. */
 export interface ProfileContent {
   schema_version: number
-  /** Free-form display name (not unique — the unique name is the handle). */
+  /** Display name (free-form, not unique). */
   name?: string
+  /** Bio. */
   description?: string
   /** ipfs:// URI of the avatar. */
   identicon?: string
@@ -32,10 +30,8 @@ export interface ProfileContent {
 export interface ChainProfile {
   address: string
   cid: string
-  /** Unique on-chain handle, or null if none is claimed. */
-  handle: string | null
-  /** Flagged by a moderator: hide from public views. */
-  moderated: boolean
+  /** Banned by a moderator / multisig user: hide from public views. */
+  hidden: boolean
   versionCount: number
 }
 

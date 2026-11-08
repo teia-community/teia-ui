@@ -1,13 +1,8 @@
 // SWR hooks for on-chain profiles.
 
 import useSWR from 'swr'
-import {
-  fetchHandleBlocked,
-  fetchHandleOwner,
-  fetchProfile,
-  fetchProfiles,
-} from './api'
-import { isValidHandle, profileKey } from './actions'
+import { fetchProfile, fetchProfiles } from './api'
+import { profileKey } from './actions'
 import { fetchProfileContent } from './ipfs'
 import type { ChainProfile, ResolvedProfile } from './types'
 
@@ -20,8 +15,9 @@ async function resolve(profile: ChainProfile): Promise<ResolvedProfile> {
 }
 
 /**
- * One address's on-chain profile with its document. `profile` is null when
- * the address has none (fall back to SUBJKT metadata).
+ * One wallet's on-chain profile card with its document (hidden ones
+ * included, for the owner and moderators). `profile` is null when the wallet
+ * has no card.
  */
 export function useChainProfile(address?: string) {
   const { data, error, mutate } = useSWR<ResolvedProfile | null>(
@@ -41,44 +37,20 @@ export function useChainProfile(address?: string) {
 }
 
 /**
- * Profiles for a page of addresses (artist directory), keyed by address. One
- * TzKT request for the records plus one IPFS fetch per profile found.
- * Moderated profiles are left out.
+ * Profile cards for a page of addresses (artist directory), keyed by address.
+ * One TzKT request for the records plus one IPFS fetch per card found.
+ * Hidden cards are left out.
  */
 export function useChainProfiles(addresses: string[]) {
   return useSWR<Record<string, ResolvedProfile>>(
     addresses.length ? ['profiles/many', addresses.join(',')] : null,
     async () => {
       const found = [...(await fetchProfiles(addresses)).values()].filter(
-        (p) => !p.moderated
+        (p) => !p.hidden
       )
       const resolved = await Promise.all(found.map(resolve))
       return Object.fromEntries(resolved.map((p) => [p.address, p]))
     },
     SWR_OPTIONS
   )
-}
-
-export type HandleStatus = 'invalid' | 'taken' | 'blocked' | 'available'
-
-/**
- * Whether a handle can be claimed, for live feedback in a form. `undefined`
- * while checking; pass a debounced value.
- */
-export function useHandleStatus(handle: string): HandleStatus | undefined {
-  const valid = isValidHandle(handle)
-  const { data } = useSWR<HandleStatus>(
-    valid ? ['profiles/handle', handle] : null,
-    async () => {
-      const [owner, blocked] = await Promise.all([
-        fetchHandleOwner(handle),
-        fetchHandleBlocked(handle),
-      ])
-      if (blocked) return 'blocked'
-      return owner ? 'taken' : 'available'
-    },
-    SWR_OPTIONS
-  )
-  if (!handle) return undefined
-  return valid ? data : 'invalid'
 }

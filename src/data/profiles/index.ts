@@ -1,5 +1,5 @@
-// On-chain profiles (teiaProfiles): the source for artist cards, and the
-// intended successor to SUBJKT metadata.
+// On-chain profile cards (teiaProfiles): one card per wallet, shown in the
+// artist directory.
 
 export * from './types'
 export * from './api'
