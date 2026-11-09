@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Page, Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Loading } from '@atoms/loading'
-import { PATH, CURATION_CREATE_FEE } from '@constants'
+import { PATH, CURATION_CREATE_FEE, CURATIONS_CONTRACT } from '@constants'
+import { useContractFee } from '@data/contract-fees'
 import {
   useV1Migration,
   useCurationContent,
@@ -14,7 +15,7 @@ import styles from '@style'
 
 const tez = (mutez) => `${mutez / 1_000_000} ꜩ`
 
-function MigrateRow({ curation, checked, onToggle }) {
+function MigrateRow({ curation, checked, onToggle, createFee }) {
   const { data: content } = useCurationContent(curation.cid)
   const title = content?.title || `Curation ${curation.id}`
   const migrated = curation.migratedTo != null
@@ -38,7 +39,7 @@ function MigrateRow({ curation, checked, onToggle }) {
           migrated → #{curation.migratedTo}
         </Link>
       ) : (
-        <span className={styles.card_meta}>{tez(CURATION_CREATE_FEE)}</span>
+        <span className={styles.card_meta}>{tez(createFee)}</span>
       )}
     </label>
   )
@@ -49,6 +50,11 @@ function MigrateRow({ curation, checked, onToggle }) {
  * curations are excluded server-side; already-migrated ones are shown as links.
  */
 export default function CurationsMigrate() {
+  const createFee = useContractFee(
+    CURATIONS_CONTRACT,
+    'create_fee',
+    CURATION_CREATE_FEE
+  )
   const address = useUserStore((st) => st.address)
   const { curations, pending, error, isLoading, mutate } =
     useV1Migration(address)
@@ -87,9 +93,9 @@ export default function CurationsMigrate() {
         </div>
         <p className={styles.detail_desc}>
           Curations created on the old contract are no longer listed. Re-create
-          them on the new contract to keep them: each one costs{' '}
-          {tez(CURATION_CREATE_FEE)}, you sign once for all selected, and the
-          content is reused as-is. Hidden curations are not migrated.
+          them on the new contract to keep them: each one costs {tez(createFee)}
+          , you sign once for all selected, and the content is reused as-is.
+          Hidden curations are not migrated.
         </p>
 
         {!address ? (
@@ -111,6 +117,7 @@ export default function CurationsMigrate() {
                   curation={c}
                   checked={selected.has(c.cid)}
                   onToggle={toggle}
+                  createFee={createFee}
                 />
               ))}
             </div>
@@ -123,7 +130,7 @@ export default function CurationsMigrate() {
                 {submitting
                   ? 'Migrating…'
                   : `Migrate ${chosen.length} selected (${tez(
-                      CURATION_CREATE_FEE * chosen.length
+                      createFee * chosen.length
                     )})`}
               </Button>
               {pendingCids.length > 0 && (

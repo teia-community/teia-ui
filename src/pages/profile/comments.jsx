@@ -3,6 +3,8 @@ import { Link, useOutletContext } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserComments } from '@data/messaging/token-comments'
 import { useUserProfiles } from '@data/roles'
+import { useObjktsByIds } from '@data/swr'
+import { HashToURL } from '@utils'
 import { walletPreview } from '@utils/string'
 import { getTimeAgo } from '@utils/time'
 import { Identicon } from '@atoms/identicons'
@@ -18,6 +20,11 @@ const TOUR = [
   { target: 'comments', text: 'Comments this user has written on OBJKTs.' },
 ]
 
+const tokenThumb = (token) => {
+  const uri = token?.display_uri || token?.thumbnail_uri
+  return uri ? HashToURL(uri, 'CDN', { size: 'small' }) : null
+}
+
 export default function ProfileComments() {
   const { address } = useOutletContext()
   const { data: comments, isLoading } = useUserComments(address)
@@ -28,6 +35,12 @@ export default function ProfileComments() {
     [comments]
   )
   const { data: profiles = {} } = useUserProfiles(senderAddrs)
+
+  const tokenIds = useMemo(
+    () => (comments ?? []).map((c) => c.tokenId),
+    [comments]
+  )
+  const tokens = useObjktsByIds(tokenIds)
 
   if (isLoading) return <Loading message="Loading comments" />
 
@@ -74,32 +87,53 @@ export default function ProfileComments() {
       </div>
 
       {groupByToken && grouped ? (
-        Object.values(grouped).map((group) => (
-          <div
-            key={`${group.fa2Address}:${group.tokenId}`}
-            className={styles.tokenGroup}
-          >
-            <Link
-              to={`/objkt/${group.tokenId}/comments`}
-              className={styles.tokenLink}
+        Object.values(grouped).map((group) => {
+          const token = tokens?.[group.tokenId]
+          const thumb = tokenThumb(token)
+          return (
+            <div
+              key={`${group.fa2Address}:${group.tokenId}`}
+              className={styles.tokenGroup}
             >
-              <span className={styles.objktText}>OBJKT</span>#{group.tokenId}
-              <span className={styles.tokenLinkCount}>
-                {group.comments.length}{' '}
-                {group.comments.length === 1 ? 'comment' : 'comments'}
-              </span>
-            </Link>
-            <div className={styles.commentList} data-tour="comments">
-              {group.comments.map((c) => (
-                <ProfileCommentItem
-                  key={c.id}
-                  comment={c}
-                  profiles={profiles}
-                />
-              ))}
+              <Link
+                to={`/objkt/${group.tokenId}/comments`}
+                className={styles.tokenLink}
+              >
+                {thumb ? (
+                  <img
+                    src={thumb}
+                    alt=""
+                    loading="lazy"
+                    className={styles.tokenThumb}
+                  />
+                ) : (
+                  <span className={styles.tokenThumb} />
+                )}
+                <span className={styles.tokenTitle}>
+                  <span className={styles.tokenName}>
+                    {token?.name || `OBJKT #${group.tokenId}`}
+                  </span>
+                  <span className={styles.tokenMeta}>
+                    #{group.tokenId} · {group.comments.length}{' '}
+                    {group.comments.length === 1 ? 'comment' : 'comments'}
+                  </span>
+                </span>
+              </Link>
+              <div
+                className={`${styles.commentList} ${styles.groupComments}`}
+                data-tour="comments"
+              >
+                {group.comments.map((c) => (
+                  <ProfileCommentItem
+                    key={c.id}
+                    comment={c}
+                    profiles={profiles}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          )
+        })
       ) : (
         <div className={styles.commentList} data-tour="comments">
           {visibleComments.map((c) => (
@@ -107,6 +141,7 @@ export default function ProfileComments() {
               key={c.id}
               comment={c}
               profiles={profiles}
+              tokenName={tokens?.[c.tokenId]?.name}
               showTokenLink
             />
           ))}
@@ -116,7 +151,12 @@ export default function ProfileComments() {
   )
 }
 
-function ProfileCommentItem({ comment, profiles, showTokenLink = false }) {
+function ProfileCommentItem({
+  comment,
+  profiles,
+  tokenName,
+  showTokenLink = false,
+}) {
   const alias = profiles[comment.sender]?.alias || walletPreview(comment.sender)
   const logo = profiles[comment.sender]?.logo
   const isEdited = comment.version > 1
@@ -145,9 +185,15 @@ function ProfileCommentItem({ comment, profiles, showTokenLink = false }) {
             <Link
               to={`/objkt/${comment.tokenId}/comments`}
               className={styles.inlineTokenLink}
+              title={`OBJKT #${comment.tokenId}`}
             >
-              on <span className={styles.objktText}>OBJKT</span>#
-              {comment.tokenId}
+              on{' '}
+              {tokenName || (
+                <>
+                  <span className={styles.objktText}>OBJKT</span>#
+                  {comment.tokenId}
+                </>
+              )}
             </Link>
           )}
         </div>

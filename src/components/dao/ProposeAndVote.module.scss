@@ -1,0 +1,21 @@
+@import '@styles/variables.scss';
+
+.wrap {
+  margin-top: 0.5em;
+}
+
+.intro,
+.note {
+  font-size: $font-small;
+  line-height: 1.5;
+  opacity: 0.8;
+  max-width: 70ch;
+  margin-bottom: 1em;
+}
+
+.heading {
+  margin: 1.5em 0 0.5em;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

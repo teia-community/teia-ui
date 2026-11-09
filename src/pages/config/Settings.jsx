@@ -10,6 +10,7 @@ import { Line } from '@atoms/line'
 import { useEffect, useState } from 'react'
 import { BANNER_URL } from '@constants'
 import JSON5 from 'json5'
+import FeedNotifications from '@components/settings/FeedNotifications'
 
 export const Settings = () => {
   const [bannerEnabled, setBannerEnabled] = useState(false)
@@ -181,6 +182,8 @@ export const Settings = () => {
             onCheck={setMessageNotifications}
             label={'Show unread message indicators'}
           />
+          <Line />
+          <FeedNotifications />
           <Line />
           <p>
             <strong>Baker</strong>

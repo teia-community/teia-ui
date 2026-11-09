@@ -5,7 +5,12 @@
  * (fa2_address, token_id). Each comment carries both, so events are
  * filtered with both keys and the SWR cache key includes both.
  */
+import { useMemo } from 'react'
 import useSWR from 'swr'
+import {
+  toLatestIds,
+  type NotificationActivity,
+} from './notification-activity'
 import { bytesToString } from '@taquito/utils'
 import { TOKEN_COMMENTS_CONTRACT } from '@constants'
 import { fetchAllEvents, fetchBigMapValue, fetchBigMapValuesBulk } from './api'
@@ -73,6 +78,98 @@ async function parseComment(
     isIpfs,
     version: parseInt(row.version ?? '1') || 1,
   }
+}
+
+/** What a count needs: id, parent and hidden flag, no comment text. */
+interface CommentFlags {
+  id: string
+  parentId: string | null
+  hidden: boolean
+}
+
+/**
+ * Comment flags for the comments matching `params` (oldest first), read from
+ * the events and the comments bigmap only: no IPFS reads, so a count stays
+ * one or two TzKT requests however many comments there are.
+ */
+async function fetchCommentFlags(
+  params: Record<string, string>
+): Promise<CommentFlags[]> {
+  const posted = await fetchAllEvents<TokenCommentPostedEvent>(
+    CONTRACT,
+    'comment_posted',
+    params
+  )
+  const rows = await fetchBigMapValuesBulk<TokenCommentBigmapRow>(
+    CONTRACT,
+    'comments',
+    posted.map((e) => e.payload.comment_id)
+  )
+  const flags: CommentFlags[] = []
+  for (const e of posted) {
+    const row = rows.get(e.payload.comment_id)
+    if (row) {
+      flags.push({
+        id: e.payload.comment_id,
+        parentId: row.parent_id,
+        hidden: Boolean(row.hidden),
+      })
+    }
+  }
+  return flags
+}
+
+/**
+ * How many comments a token's thread shows: the same rule as buildTree in
+ * TokenComments.jsx (hidden comments and replies under them are left out).
+ */
+export function countVisibleComments(comments: CommentFlags[]): number {
+  const hiddenIds = new Set<string>()
+  for (const c of comments) if (c.hidden) hiddenIds.add(c.id)
+  let visible = 0
+  for (const c of comments) {
+    if (c.hidden) continue
+    if (c.parentId && hiddenIds.has(c.parentId)) {
+      hiddenIds.add(c.id)
+      continue
+    }
+    visible += 1
+  }
+  return visible
+}
+
+/** Visible comment count for a token, for the Comments tab badge. */
+export function useTokenCommentCount(
+  fa2Address: string | undefined,
+  tokenId: string | undefined
+) {
+  const enabled = Boolean(fa2Address) && Boolean(tokenId) && Boolean(CONTRACT)
+  return useSWR<number>(
+    enabled
+      ? `msg:token-comment-count:${CONTRACT}:${fa2Address}:${tokenId}`
+      : null,
+    async () =>
+      countVisibleComments(
+        await fetchCommentFlags({
+          'payload.fa2_address': fa2Address as string,
+          'payload.token_id': tokenId as string,
+        })
+      ),
+    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+  )
+}
+
+/** Count of an address's comments that are not hidden, for the profile badge. */
+export function useUserCommentCount(address: string | undefined) {
+  const enabled = Boolean(address) && Boolean(CONTRACT)
+  return useSWR<number>(
+    enabled ? `msg:user-comment-count:${CONTRACT}:${address}` : null,
+    async () =>
+      (await fetchCommentFlags({ 'payload.sender': address as string })).filter(
+        (c) => !c.hidden
+      ).length,
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
 }
 
 /**
@@ -234,8 +331,10 @@ export function useCommentHistory(
  * tokens the viewer created (excluding their own comments). Compared against
  * read state to compute unread token comments in the notifications center.
  */
-export function useMyTokenNotifications(viewerAddress: string | undefined) {
-  return useSWR<Record<string, number>>(
+export function useMyTokenNotificationActivity(
+  viewerAddress: string | undefined
+) {
+  return useSWR<Record<string, NotificationActivity>>(
     viewerAddress && CONTRACT
       ? `msg:token-notify-map:${CONTRACT}:${viewerAddress}`
       : null,
@@ -272,7 +371,7 @@ export function useMyTokenNotifications(viewerAddress: string | undefined) {
         myTokenKeys.add(`${t.fa2_address}:${t.token_id}`)
       }
 
-      const maxByToken: Record<string, number> = {}
+      const maxByToken: Record<string, NotificationActivity> = {}
       for (const e of posted) {
         if (e.payload.sender === viewerAddress) continue
         const cid = parseInt(e.payload.comment_id, 10)
@@ -280,14 +379,30 @@ export function useMyTokenNotifications(viewerAddress: string | undefined) {
         const isOnMyToken = myTokenKeys.has(tokenKey)
         const isReplyToMe =
           e.payload.parent_id && myCommentIds.has(e.payload.parent_id)
-        if ((isOnMyToken || isReplyToMe) && cid > (maxByToken[tokenKey] ?? 0)) {
-          maxByToken[tokenKey] = cid
+        if (
+          (isOnMyToken || isReplyToMe) &&
+          cid > (maxByToken[tokenKey]?.id ?? 0)
+        ) {
+          maxByToken[tokenKey] = {
+            id: cid,
+            timestamp: e.payload.timestamp ?? e.timestamp,
+          }
         }
       }
       return maxByToken
     },
     { revalidateOnFocus: false, dedupingInterval: 30_000 }
   )
+}
+
+/**
+ * Just the comment ids, for the unread comparison. Shares a cache key with
+ * useMyTokenNotificationActivity, so asking for both costs one scan.
+ */
+export function useMyTokenNotifications(viewerAddress: string | undefined) {
+  const swr = useMyTokenNotificationActivity(viewerAddress)
+  const data = useMemo(() => toLatestIds(swr.data), [swr.data])
+  return { ...swr, data }
 }
 
 /**

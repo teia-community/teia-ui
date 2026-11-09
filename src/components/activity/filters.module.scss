@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin-bottom: 1rem;
 
   // Primary & Secondary Sales row
@@ -12,16 +12,17 @@
 }
 
 .chip {
-  padding: 0.35rem 0.85rem;
+  padding: 0.2rem 0.7rem;
   border: 1px solid var(--border-color);
   border-radius: 0;
   background: transparent;
-  color: var(--text-color);
+  color: var(--secondary-color);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   transition: background 200ms ease;
 
   &:hover {
+    color: var(--text-color);
     background: var(--border-color);
   }
 }
@@ -30,4 +31,76 @@
   background: var(--text-color);
   color: var(--background-color);
   border-color: var(--text-color);
+}
+
+.controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.controls_filters {
+  flex: 1;
+  min-width: 0;
+
+  > .filters {
+    margin-bottom: 0;
+  }
+
+  > .filters + .filters {
+    margin-top: 0.4rem;
+  }
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  color: var(--secondary-color);
+  font-size: 0.78rem;
+}
+
+.sort_label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sort_select {
+  appearance: none;
+  padding: 0.2rem 1.4rem 0.2rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 0.65rem center, right 0.4rem center;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+
+  &:hover {
+    border-color: var(--text-color);
+  }
+
+  option {
+    background: var(--background-color);
+    color: var(--text-color);
+  }
+}
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .sort {
+    justify-content: center;
+  }
 }

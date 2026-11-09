@@ -19,6 +19,8 @@ import MetadataOverlay, {
 } from './AudioCoverMetadataOverlay'
 import { useUserStore } from '@context/userStore'
 import { shallow } from 'zustand/shallow'
+import { TagSuggestions } from '@components/tag-suggestions'
+import { appendTag } from '@utils/tag-suggestions.mjs'
 
 const FieldError = memo(({ error, text }) => {
   const classes = classNames({
@@ -33,11 +35,14 @@ const FieldError = memo(({ error, text }) => {
  */
 export const FormFields = ({ value, field, error, register, control }) => {
   const name = field.name
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
   const [address, userInfo] = useUserStore(
     (st) => [st.address, st.userInfo],
     shallow
   )
+  // Bumped when a suggested tag is added, to remount the tags input so it
+  // shows the new value. The field is otherwise left uncontrolled.
+  const [tagsRevision, setTagsRevision] = useState(0)
   const [showVisualizer, setShowVisualizer] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
   const visualizerRef = useRef(null)
@@ -52,18 +57,42 @@ export const FormFields = ({ value, field, error, register, control }) => {
     case 'text':
     case 'number':
       return (
-        <Input
-          className={styles.field}
-          name={name}
-          type={field.type}
-          label={field.label}
-          defaultValue={field.defaultValue}
-          placeholder={field.placeholder}
-          {...register(name, field.rules)}
-        >
-          <Line />
-          {error && <FieldError text error={error.message} />}
-        </Input>
+        <>
+          <Input
+            // Tags carries a `setValueAs` rule that strips separators as it
+            // normalises, so feeding the stored value back into the box would
+            // delete a comma the moment it is typed. The input stays
+            // uncontrolled and is remounted when a suggestion is added, which
+            // is the only time the value changes from outside.
+            key={name === 'tags' ? `tags-${tagsRevision}` : undefined}
+            className={styles.field}
+            name={name}
+            type={field.type}
+            label={field.label}
+            defaultValue={
+              name === 'tags'
+                ? watch('tags') ?? field.defaultValue
+                : field.defaultValue
+            }
+            placeholder={field.placeholder}
+            {...register(name, field.rules)}
+          >
+            <Line />
+            {error && <FieldError text error={error.message} />}
+          </Input>
+          {name === 'tags' && (
+            <TagSuggestions
+              text={watch('description')}
+              value={watch('tags')}
+              onAdd={(tag) => {
+                setValue('tags', appendTag(watch('tags'), tag), {
+                  shouldDirty: true,
+                })
+                setTagsRevision((n) => n + 1)
+              }}
+            />
+          )}
+        </>
       )
     case 'textarea':
       return (

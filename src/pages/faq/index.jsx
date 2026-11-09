@@ -26,7 +26,11 @@ export const FAQ = () => {
   }
 
   return (
-    <Page title="faq" large>
+    <Page
+      title="faq"
+      description="Getting started with the Teia community: answers to common questions about wallets, minting, collecting and selling art on Teia."
+      large
+    >
       <div className={styles.faq__outer__container}>
         <h1 className={styles.faq__title}>
           Getting Started with the TEIA Community

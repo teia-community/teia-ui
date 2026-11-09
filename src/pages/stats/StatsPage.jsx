@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import classnames from 'classnames'
+import SalesSection from './SalesSection'
+import MintsSection from './MintsSection'
+import MarketplaceSection from './MarketplaceSection'
 import OverviewSection from './OverviewSection'
 import ChannelStatsSection from './ChannelStatsSection'
 import PollStatsSection from './PollStatsSection'
@@ -7,19 +10,25 @@ import TokenStatsSection from './TokenStatsSection'
 import styles from '@style'
 
 const TABS = [
-  { key: 'overview', label: 'Overview' },
+  { key: 'sales', label: 'Sales' },
+  { key: 'mints', label: 'Minting' },
+  { key: 'marketplace', label: 'Marketplace' },
+  { key: 'messaging', label: 'Messaging' },
   { key: 'channels', label: 'Channels & DMs' },
   { key: 'poll', label: 'Poll comments' },
   { key: 'token', label: 'Token comments' },
 ]
 
 export default function StatsPage() {
-  const [tab, setTab] = useState('overview')
+  // The open tab lives in the address, so a view can be linked to.
+  const { view } = useParams()
+  const navigate = useNavigate()
+  const tab = TABS.some((t) => t.key === view) ? view : 'sales'
 
   return (
     <div className={styles.stats}>
       <header className={styles.header}>
-        <h2 className={styles.title}>Messaging stats</h2>
+        <h2 className={styles.title}>Teia stats</h2>
       </header>
 
       <nav className={styles.tabs}>
@@ -30,7 +39,7 @@ export default function StatsPage() {
             className={classnames(styles.tab, {
               [styles.tab_active]: tab === t.key,
             })}
-            onClick={() => setTab(t.key)}
+            onClick={() => navigate(`/dao/stats/${t.key}`)}
           >
             {t.label}
           </button>
@@ -38,7 +47,10 @@ export default function StatsPage() {
       </nav>
 
       <div className={styles.panel}>
-        {tab === 'overview' && <OverviewSection />}
+        {tab === 'sales' && <SalesSection />}
+        {tab === 'mints' && <MintsSection />}
+        {tab === 'marketplace' && <MarketplaceSection />}
+        {tab === 'messaging' && <OverviewSection />}
         {tab === 'channels' && <ChannelStatsSection />}
         {tab === 'poll' && <PollStatsSection />}
         {tab === 'token' && <TokenStatsSection />}

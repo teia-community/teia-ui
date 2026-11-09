@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { useUserActivity } from '@data/swr'
 import useActivityFilter from '@hooks/use-activity-filter'
+import useAutoLoadMore from '@hooks/use-auto-load-more'
 import { resolveActivityEvent, MARKET_FILTERS } from '@utils/activity'
 import { ActivityList, ActivityFilters } from '@components/activity'
 import Tour from '@components/tour'
@@ -31,7 +32,7 @@ export default function Activity() {
     isLoadingMore,
     isReachingEnd,
     loadMore,
-  } = useUserActivity(address)
+  } = useUserActivity(address, type.active)
 
   const rows = useMemo(
     () =>
@@ -47,6 +48,15 @@ export default function Activity() {
         ),
     [events, address, matchesType, matchesMarket]
   )
+
+  useAutoLoadMore({
+    rowCount: rows.length,
+    isLoadingInitial,
+    isReachingEnd,
+    isLoadingMore,
+    loadMore,
+    resetKey: `profile:${address}:${type.active}:${market.active}`,
+  })
 
   if (error) {
     return (

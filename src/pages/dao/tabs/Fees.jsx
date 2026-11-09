@@ -1,109 +1,89 @@
-import {
-  CHANNEL_FEE,
-  CHANNEL_MESSAGE_FEE,
-  POLL_MESSAGE_FEE,
-  TOKEN_MESSAGE_FEE,
-  CHANNELS_V2_CONTRACT,
-  POLL_COMMENTS_CONTRACT,
-  TOKEN_COMMENTS_CONTRACT,
-  WIKI_CONTRACT,
-} from '@constants'
+import { Loading } from '@atoms/loading'
 import { Line } from '@atoms/line'
 import { TezosAddressLink } from '@atoms/link'
-import { useWikiFees } from '@data/wiki/fees'
+import { DAO_TREASURY_CONTRACT } from '@constants'
+import { useTeiaFees } from '@data/teia-fees'
 import styles from '@style'
 
-function FeeRow({ label, mutez, loading }) {
-  const isFree = mutez === 0
+function formatFee(fee) {
+  if (fee.value == null) return '—'
+  if (fee.unit === 'permille') {
+    return `${(fee.value / 10).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    })}%`
+  }
+  if (fee.value === 0) return 'Free'
+  return `${(fee.value / 1_000_000).toLocaleString(undefined, {
+    maximumFractionDigits: 6,
+  })} tez`
+}
+
+function FeeRow({ fee }) {
+  const isFree = fee.unit === 'mutez' && fee.value === 0
   return (
     <li className={styles.fee_row}>
-      <span className={styles.fee_label}>{label}</span>
+      <span className={styles.fee_label}>{fee.label}</span>
       <span className={`${styles.fee_value} ${isFree ? styles.fee_free : ''}`}>
-        {loading
-          ? 'loading…'
-          : mutez == null
-          ? '—'
-          : isFree
-          ? 'Free'
-          : `${mutez / 1_000_000} tez`}
+        {formatFee(fee)}
       </span>
     </li>
   )
 }
 
-const CONTRACTS = [
-  { name: 'Channels', address: CHANNELS_V2_CONTRACT },
-  { name: 'Poll comments', address: POLL_COMMENTS_CONTRACT },
-  { name: 'Token comments', address: TOKEN_COMMENTS_CONTRACT },
-  { name: 'Wiki', address: WIKI_CONTRACT },
-]
-
 export default function DaoFees() {
-  const { data: wikiFees, isLoading: loadingWikiFees } = useWikiFees()
+  const { groups, error, isLoading } = useTeiaFees()
+
+  if (error) {
+    return (
+      <section className={styles.section}>
+        <p>Error loading fees: {error.message}</p>
+      </section>
+    )
+  }
 
   return (
     <>
       <section className={styles.section}>
         <h1 className={styles.section_title}>Fees on Teia</h1>
-        <p>
-          This page lists every fee currently applied, so the community can see
-          exactly what is charged and where.
+        <p className={styles.dao_intro}>
+          Every fee Teia charges is listed here, read from the contract that
+          charges it, so this page shows what is actually in force rather than
+          what was last written down.
         </p>
-        <p>
-          These amounts do not include the standard Tezos network (gas) fee.
+        <p className={styles.dao_intro}>
+          All of it goes to the DAO treasury, and the core team sets it: most
+          contracts carry their own vote for their own fees, while the
+          marketplace fee changes through a multisig proposal. Amounts exclude
+          the Tezos network fee, which Teia does not receive.
+        </p>
+        <p className={styles.dao_intro}>
+          Treasury: <TezosAddressLink address={DAO_TREASURY_CONTRACT} shorten />
         </p>
       </section>
 
       <Line />
 
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Messaging (Channels & DMs)</h1>
-        <ul className={styles.fee_list}>
-          <FeeRow label="Channel creation" mutez={CHANNEL_FEE} />
-          <FeeRow label="DM creation" mutez={CHANNEL_FEE} />
-          <FeeRow label="Message" mutez={CHANNEL_MESSAGE_FEE} />
-          <FeeRow label="Message edit" mutez={0} />
-        </ul>
-      </section>
+      {isLoading && <Loading message="Reading fees from the contracts" />}
 
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Comments</h1>
-        <ul className={styles.fee_list}>
-          <FeeRow label="Poll comment" mutez={POLL_MESSAGE_FEE} />
-          <FeeRow label="Token (artwork) comment" mutez={TOKEN_MESSAGE_FEE} />
-        </ul>
-      </section>
-
-      <section className={styles.section}>
-        <h1 className={styles.section_title}>Wiki</h1>
-        <ul className={styles.fee_list}>
-          <FeeRow
-            label="Propose a new page"
-            mutez={wikiFees?.proposePageFee}
-            loading={loadingWikiFees}
-          />
-          <FeeRow
-            label="Propose an edit"
-            mutez={wikiFees?.proposeEditFee}
-            loading={loadingWikiFees}
-          />
-          <FeeRow label="Moderator / multisig edits" mutez={0} />
-        </ul>
-      </section>
-
-      <Line />
-
-      <div className={styles.contracts_box}>
-        <h2 className={styles.contracts_box_title}>Contracts</h2>
-        <ul className={styles.contracts_list}>
-          {CONTRACTS.map(({ name, address }) => (
-            <li key={address} className={styles.contract_row}>
-              <span className={styles.contract_name}>{name}</span>
-              <TezosAddressLink address={address} shorten />
-            </li>
-          ))}
-        </ul>
-      </div>
+      {groups.map((group) => (
+        <section className={styles.section} key={group.key}>
+          <h1 className={styles.section_title}>{group.name}</h1>
+          <ul className={styles.fee_list}>
+            {group.fees.map((fee) => (
+              <FeeRow key={fee.label} fee={fee} />
+            ))}
+          </ul>
+          <p className={styles.fee_note}>
+            <TezosAddressLink address={group.address} shorten />
+            {group.recipient && group.recipient !== DAO_TREASURY_CONTRACT && (
+              <>
+                {' · '}fees go to{' '}
+                <TezosAddressLink address={group.recipient} shorten />
+              </>
+            )}
+          </p>
+        </section>
+      ))}
     </>
   )
 }

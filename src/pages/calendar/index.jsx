@@ -128,7 +128,10 @@ export default function Calendar() {
   } = useChainEventEditor()
 
   return (
-    <Page title="Teia Calendar">
+    <Page
+      title="Teia Calendar"
+      description="The Teia community calendar: exhibitions, mint events and meetups, kept on the Tezos blockchain."
+    >
       <Tour name="calendar" steps={CALENDAR_TOUR} />
       <Tour name="dayview" steps={DAY_VIEW_TOUR} />
       <div className={styles.container}>

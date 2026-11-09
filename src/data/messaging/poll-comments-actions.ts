@@ -9,6 +9,7 @@
 import { stringToBytes } from '@taquito/utils'
 import { mutate } from 'swr'
 import { POLL_COMMENTS_CONTRACT, POLL_MESSAGE_FEE } from '@constants'
+import { getContractFee } from '@data/contract-fees'
 import { Tezos, useUserStore } from '@context/userStore'
 import { useModalStore } from '@context/modalStore'
 import { uploadMsgJsonToIPFS } from './ipfs'
@@ -75,6 +76,7 @@ export async function postComment({
 
     const contentBytes = await buildContentBytes(payload)
 
+    const postFee = await getContractFee(CONTRACT, 'post_fee', POLL_MESSAGE_FEE)
     step('Post Comment', 'Waiting for wallet confirmation', false)
 
     const contract = await Tezos.wallet.at(CONTRACT)
@@ -84,7 +86,7 @@ export async function postComment({
         content: contentBytes,
         parent_id: parentId ? parseInt(parentId) : null,
       })
-      .send({ amount: POLL_MESSAGE_FEE, mutez: true })
+      .send({ amount: postFee, mutez: true })
 
     step('Post Comment', 'Awaiting confirmation...')
     await op.confirmation()

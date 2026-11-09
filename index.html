@@ -45,21 +45,54 @@
     <meta property="og:title" content="teia" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://teia.art" />
-    <meta property="og:image" content="/teia_avatar.png" />
+    <meta property="og:image" content="https://teia.art/teia_avatar.png" />
     <meta property="og:description" content="decentralized digital assets" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@TeiaCommunity" />
     <meta name="twitter:title" content="teia" />
     <meta name="twitter:description" content="decentralized digital assets" />
-    <meta name="twitter:image" content="/teia_avatar.png" />
+    <meta name="twitter:image" content="https://teia.art/teia_avatar.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Who runs this site, for search engines. Keep it after the tags above:
+         docker/lua/previews.lua rewrites the head on OBJKT and profile pages. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Teia",
+        "alternateName": "teia.art",
+        "url": "https://teia.art",
+        "logo": "https://teia.art/teia_avatar.png",
+        "description": "Teia is an open-source NFT marketplace dApp powered by the Tezos blockchain; teia.art is a fork of former tezos NFT marketplace hic et nunc and is developed and maintained by the Teia Community of artists, collectors, and hackers.",
+        "sameAs": [
+          "https://github.com/teia-community",
+          "https://docs.teia.art",
+          "https://blog.teia.art",
+          "https://twitter.com/TeiaCommunity"
+        ]
+      }
+    </script>
     <title>teia</title>
   </head>
 
   <body>
-    <noscript aria-hidden="true"
-      >You need to enable JavaScript to run this app.</noscript
-    >
+    <noscript>
+      <h1>Teia</h1>
+      <p>
+        Teia is an open-source NFT marketplace dApp powered by the Tezos
+        blockchain; teia.art is a fork of former tezos NFT marketplace hic et
+        nunc and is developed and maintained by the Teia Community of artists,
+        collectors, and hackers.
+      </p>
+      <p>
+        This site is an app and needs JavaScript to run. To read about Teia
+        without it, see the <a href="https://docs.teia.art">documentation</a>,
+        the <a href="https://blog.teia.art">blog</a> and the
+        <a href="https://github.com/teia-community">source code</a>. With
+        JavaScript on: <a href="/about">about</a>, <a href="/wiki">wiki</a>,
+        <a href="/faq">FAQ</a>.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/node_polyfill.js"></script>
     <script type="module" src="/src/index.jsx"></script>

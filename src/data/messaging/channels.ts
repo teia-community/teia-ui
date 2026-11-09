@@ -525,9 +525,22 @@ export function useMessageHistory(
  * Latest message id + timestamp for every channel, from one shared fetch of
  * all message_posted events (cached under a single contract-wide SWR key).
  */
-export function useChannelLatestActivity(enabled = true) {
+/**
+ * The latest message in each channel.
+ *
+ * With a `viewerAddress`, the viewer's own messages are skipped, which is what
+ * a notification wants: posting in a channel should not leave it looking
+ * unread to the person who posted. Channel lists pass no viewer, because there
+ * "last activity" means the last message from anyone.
+ */
+export function useChannelLatestActivity(
+  enabled = true,
+  viewerAddress?: string
+) {
   return useSWR<Record<string, { messageId: number; timestamp: string }>>(
-    enabled ? `msg:channel-latest:${CONTRACT}` : null,
+    enabled
+      ? `msg:channel-latest:${CONTRACT}:${viewerAddress ?? 'all'}`
+      : null,
     async () => {
       const events = await fetchAllEvents<MessagePostedEvent>(
         CONTRACT,
@@ -537,6 +550,7 @@ export function useChannelLatestActivity(enabled = true) {
       const latest: Record<string, { messageId: number; timestamp: string }> =
         {}
       for (const e of events) {
+        if (viewerAddress && e.payload.sender === viewerAddress) continue
         const cid = e.payload.channel_id
         const mid = parseInt(e.payload.message_id, 10)
         if (!latest[cid] || mid > latest[cid].messageId) {
@@ -552,8 +566,11 @@ export function useChannelLatestActivity(enabled = true) {
   )
 }
 
-export function useChannelLatestMessageIds(channelIds: string[]) {
-  const swr = useChannelLatestActivity(channelIds.length > 0)
+export function useChannelLatestMessageIds(
+  channelIds: string[],
+  viewerAddress?: string
+) {
+  const swr = useChannelLatestActivity(channelIds.length > 0, viewerAddress)
   const idsKey = channelIds.slice().sort().join(',')
 
   const data = useMemo(() => {

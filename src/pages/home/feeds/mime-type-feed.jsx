@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import uniqBy from 'lodash/uniqBy'
 import { BaseTokenFieldsFragment } from '@data/api'
-import { HEN_CONTRACT_FA2 } from '@constants'
+import { HEN_CONTRACT_FA2, FEED_MIMETYPES } from '@constants'
 import TokenCollection from '@atoms/token-collection'
 
 function MimeTypeFeed({ label, namespace, mimeTypes }) {
@@ -35,7 +35,7 @@ export function GlbFeed() {
     <MimeTypeFeed
       label="3D OBJKTs"
       namespace="glb-feed"
-      mimeTypes={['model/gltf-binary']}
+      mimeTypes={FEED_MIMETYPES.threeD}
     />
   )
 }
@@ -45,13 +45,7 @@ export function AudioFeed() {
     <MimeTypeFeed
       label="Audio OBJKTs"
       namespace="audio-feed"
-      mimeTypes={[
-        'audio/ogg',
-        'audio/wav',
-        'audio/mpeg',
-        'audio/vorbis',
-        'audio/mp4',
-      ]}
+      mimeTypes={FEED_MIMETYPES.audio}
     />
   )
 }
@@ -61,7 +55,7 @@ export function MidiFeed() {
     <MimeTypeFeed
       label="Midi OBJKTs"
       namespace="midi-feed"
-      mimeTypes={['audio/mid', 'audio/midi']}
+      mimeTypes={FEED_MIMETYPES.midi}
     />
   )
 }
@@ -70,7 +64,7 @@ export function VideoFeed() {
     <MimeTypeFeed
       label="Video OBJKTs"
       namespace="video-feed"
-      mimeTypes={['video/mp4']}
+      mimeTypes={FEED_MIMETYPES.video}
     />
   )
 }
@@ -80,7 +74,7 @@ export function PdfFeed() {
     <MimeTypeFeed
       label="PDF OBJKTs"
       namespace="pdf-feed"
-      mimeTypes={['application/pdf']}
+      mimeTypes={FEED_MIMETYPES.pdf}
     />
   )
 }
@@ -90,7 +84,7 @@ export function MarkdownFeed() {
     <MimeTypeFeed
       label="Markdown OBJKTs"
       namespace="md-feed"
-      mimeTypes={['text/markdown']}
+      mimeTypes={FEED_MIMETYPES.markdown}
     />
   )
 }
@@ -100,7 +94,7 @@ export function TextFeed() {
     <MimeTypeFeed
       label="Text OBJKTs"
       namespace="txt-feed"
-      mimeTypes={['text/plain']}
+      mimeTypes={FEED_MIMETYPES.text}
     />
   )
 }
@@ -110,7 +104,7 @@ export function ImageFeed() {
     <MimeTypeFeed
       label="Image OBJKTs"
       namespace="image-feed"
-      mimeTypes={['image/jpeg', 'image/png', 'image/jpg']}
+      mimeTypes={FEED_MIMETYPES.image}
     />
   )
 }
@@ -120,7 +114,7 @@ export function HtmlSvgFeed() {
     <MimeTypeFeed
       label="Interactive OBJKTs (HTML or SVG)"
       namespace="html-svg-feed"
-      mimeTypes={['application/x-directory', 'image/svg+xml']}
+      mimeTypes={FEED_MIMETYPES.code}
     />
   )
 }
@@ -130,7 +124,7 @@ export function GifFeed() {
     <MimeTypeFeed
       label="GIF OBJKTs"
       namespace="gif-feed"
-      mimeTypes={['image/gif']}
+      mimeTypes={FEED_MIMETYPES.gif}
     />
   )
 }
