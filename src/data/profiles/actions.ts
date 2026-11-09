@@ -14,6 +14,8 @@ import type { ProfileDocInput } from './ipfs'
 
 /** SWR key for one address's profile (see ./hooks.ts). */
 export const profileKey = (address: string) => `profiles/one/${address}`
+/** SWR key for every card, hidden included (moderation console). */
+export const PROFILES_MOD_SWR_KEY = 'profiles/mod-all'
 
 const ERRORS: Record<string, string> = {
   PRF_NOT_AUTHORIZED: 'You are not authorized to perform this action.',
@@ -71,6 +73,7 @@ async function send(
     step(title, 'Awaiting confirmation...')
     await op.confirmation()
     if (affected) mutate(profileKey(affected))
+    mutate(PROFILES_MOD_SWR_KEY)
     show(title, done)
     return op.opHash
   } catch (e) {

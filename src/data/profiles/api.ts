@@ -53,6 +53,17 @@ export async function fetchProfiles(
   return new Map(pages.flat().map((row) => [row.key, toProfile(row)]))
 }
 
+/**
+ * Every profile card, hidden ones included, most recently updated first — for
+ * the moderation console.
+ */
+export async function fetchAllProfiles(): Promise<ChainProfile[]> {
+  const rows = await getJson<Row[]>(
+    `${BIGMAPS}/profiles/keys?active=true&sort.desc=lastLevel&select=key,value&limit=1000`
+  )
+  return rows.map(toProfile)
+}
+
 /** Read a single address's profile, or null if it has none. */
 export async function fetchProfile(
   address: string

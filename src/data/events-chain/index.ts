@@ -23,7 +23,7 @@ const DEFAULT_BANNER_COLOR = '#f0f0f0'
  * and an iframe src: keep only http(s) URLs (drops javascript: and other
  * active schemes).
  */
-function safeLink(link: unknown): string {
+export function safeLink(link: unknown): string {
   try {
     const url = new URL(String(link))
     return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : ''
@@ -33,7 +33,7 @@ function safeLink(link: unknown): string {
 }
 
 /** Resolve a screenshot reference to a display URL (empty if unusable). */
-function screenshotUrl(ref: unknown): string {
+export function screenshotUrl(ref: unknown): string {
   const value = String(ref ?? '')
   if (value.startsWith('ipfs://')) return msgIpfsToUrl(value)
   // Site-relative paths (the bundled /events/*.png screenshots).
