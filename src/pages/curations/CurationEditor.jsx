@@ -4,7 +4,13 @@ import { Page, Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
 import { Loading } from '@atoms/loading'
-import { PATH, CURATION_CREATE_FEE, CURATION_EDIT_FEE } from '@constants'
+import {
+  PATH,
+  CURATION_CREATE_FEE,
+  CURATION_EDIT_FEE,
+  CURATIONS_CONTRACT,
+} from '@constants'
+import { useContractFee } from '@data/contract-fees'
 import {
   useCuration,
   useCurationContent,
@@ -375,9 +381,13 @@ export default function CurationEditor() {
 
   const isOwner = isEdit && address === curation?.owner
   const canEdit = isEdit ? isOwner : roles?.canCreate
-  const platformFee = mutezToTez(
+  // Quoted from the contract, so the figure shown is the one charged.
+  const liveFee = useContractFee(
+    CURATIONS_CONTRACT,
+    isEdit ? 'edit_fee' : 'create_fee',
     isEdit ? CURATION_EDIT_FEE : CURATION_CREATE_FEE
   )
+  const platformFee = mutezToTez(liveFee)
 
   const onSubmit = async () => {
     if (!title.trim() || submitting) return

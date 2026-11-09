@@ -24,6 +24,7 @@ import {
   DaoProposals,
   SubmitDaoProposals,
   DaoFees,
+  DaoMultisigProposals,
 } from '@pages/dao/tabs'
 import {
   WikiLayout,
@@ -112,6 +113,7 @@ import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
   RouterProvider,
 } from 'react-router-dom'
@@ -124,6 +126,19 @@ import MintForm from '@components/form/MintForm'
 import { ListsFeed } from '@pages/home/feeds/lists-feed'
 import { MidiFeed } from '@pages/home/feeds/mime-type-feed'
 import TeiaActivity from '@pages/activity'
+import { TradesFeed, SocialFeed } from '@pages/home/feeds/teia-activity-feed'
+import TextActivityFeed from '@pages/home/feeds/text-activity-feed'
+import {
+  CalendarActivityFeed,
+  CopyrightActivityFeed,
+  CurationsActivityFeed,
+  WikiActivityFeed,
+} from '@pages/home/feeds/chain-activity-feed'
+import PollsActivityFeed from '@pages/home/feeds/poll-activity-feed'
+import {
+  DonationsActivityFeed,
+  FountainActivityFeed,
+} from '@pages/home/feeds/donation-activity-feed'
 import CopyrightForm from '@components/copyright/wizard/form/CopyrightForm'
 import CopyrightPage from '@pages/copyright'
 import { CopyrightPreview } from '@components/copyright/wizard/preview'
@@ -257,9 +272,13 @@ const router = createBrowserRouter(
         <Route path="dao/*" element={<DAO />}>
           <Route index element={<DaoParameters />} />
           <Route path="proposals" element={<DaoProposals />} />
+          <Route path="proposals/:view" element={<DaoProposals />} />
           <Route path="submit" element={<SubmitDaoProposals />} />
           <Route path="stats" element={<StatsPage />} />
+          <Route path="stats/:view" element={<StatsPage />} />
           <Route path="fees" element={<DaoFees />} />
+          <Route path="multisig" element={<DaoMultisigProposals />} />
+          <Route path="multisig/:view" element={<DaoMultisigProposals />} />
           <Route path="*" element={<DaoParameters />} />
         </Route>
         <Route path="proposal/:id" element={<ProposalDisplay />} />
@@ -302,7 +321,19 @@ const router = createBrowserRouter(
             </RequireModerator>
           }
         />
-        <Route path="activity" element={<TeiaActivity />} />
+        <Route path="activity" element={<TeiaActivity />}>
+          <Route index element={<Navigate to="social" replace />} />
+          <Route path="trades" element={<TradesFeed />} />
+          <Route path="social" element={<SocialFeed />} />
+          <Route path="text" element={<TextActivityFeed />} />
+          <Route path="curations" element={<CurationsActivityFeed />} />
+          <Route path="calendar" element={<CalendarActivityFeed />} />
+          <Route path="copyright" element={<CopyrightActivityFeed />} />
+          <Route path="wiki" element={<WikiActivityFeed />} />
+          <Route path="polls" element={<PollsActivityFeed />} />
+          <Route path="donations" element={<DonationsActivityFeed />} />
+          <Route path="fountain" element={<FountainActivityFeed />} />
+        </Route>
         <Route path="tags/:tag" element={<Tags />} />
         <Route path="tz/:address/*" element={<Display />}>
           {display_routes}

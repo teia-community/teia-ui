@@ -29,6 +29,7 @@ import { prepareDirectory, prepareFile } from '@data/ipfs'
 import { fetchMintedTokenIdWithRetry } from '@data/tzktMint'
 import { PostMintSwapFields } from '@components/post-mint/PostMintSwapFields'
 import { POST_MINT_SUSTAIN_TEIA } from '@utils/postMintSwap'
+import { recordRecentTags } from '@utils/recent-tags'
 
 interface SelectField {
   label?: string
@@ -325,6 +326,10 @@ export const useMintStore = create<MintState>()(
           if (!opHash) {
             return
           }
+
+          // Remember the tags on this device so the suggest button can offer
+          // them back later. Never leaves the browser.
+          recordRecentTags(tags || '')
 
           const proxyMint = Boolean(proxyAddress)
           if (proxyMint) {

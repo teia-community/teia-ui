@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { DAO_GOVERNANCE_CONTRACT } from '@constants'
 import { useUserStore } from '@context/userStore'
 import { Line } from '@atoms/line'
-import { Select } from '@atoms/select'
 import {
   useStorage,
   useDaoGovernanceParameters,
@@ -11,6 +10,7 @@ import {
   useDaoUserVotes,
   useDaoCommunityVotes,
 } from '@data/swr'
+import TokenHolders from '@components/dao/TokenHolders'
 import LoadingDaoMessage from '../LoadingDaoMessage'
 import Proposal from '../Proposal'
 import styles from '@style'
@@ -26,9 +26,28 @@ const PROPOSAL_STATUS_OPTIONS = {
   cancelled: 'Cancelled proposals',
 }
 
+/** Short labels for the tab row; the long ones belong in the group intro. */
+const TAB_LABELS = {
+  toVote: 'To vote',
+  voted: 'Voted',
+  toEvaluate: 'To evaluate',
+  approved: 'Approved',
+  toExecute: 'To execute',
+  executed: 'Executed',
+  rejected: 'Rejected',
+  cancelled: 'Cancelled',
+}
+
+/** Not a proposal status: the electorate that decides them. */
+const HOLDERS_TAB = 'holders'
+
 export default function DaoProposals() {
-  // Set the component state
-  const [selectedStatus, setSelectedStatus] = useState('toVote')
+  // The open sub-tab lives in the address, so a view can be linked to.
+  const { view } = useParams()
+  const navigate = useNavigate()
+  const selectedStatus =
+    view && (view === HOLDERS_TAB || view in TAB_LABELS) ? view : 'toVote'
+  const setSelectedStatus = (next) => navigate(`/dao/proposals/${next}`)
 
   // Get all the required DAO information
   const [daoStorage] = useStorage(DAO_GOVERNANCE_CONTRACT)
@@ -103,25 +122,59 @@ export default function DaoProposals() {
     <section className={styles.section}>
       <h1 className={styles.section_title}>Teia DAO proposals</h1>
 
-      <Select
-        alt="proposal group selection"
-        value={{
-          value: selectedStatus,
-          label: `${PROPOSAL_STATUS_OPTIONS[selectedStatus]} (${proposalIdsByStatus[selectedStatus].length})`,
-        }}
-        onChange={(e) => setSelectedStatus(e.value)}
-        options={statusToSelect.map((status) => ({
-          value: status,
-          label: `${PROPOSAL_STATUS_OPTIONS[status]} (${proposalIdsByStatus[status].length})`,
-        }))}
-      >
-        <Line />
-      </Select>
+      <p className={styles.dao_intro}>
+        A DAO proposal is a vote of the whole organisation, weighted by TEIA
+        tokens and open to every holder. It is the highest authority in Teia:
+        its outcome binds every part of the organisation, the core team multisig
+        included.
+      </p>
+      <p className={styles.dao_intro}>
+        Teia is incorporated as Teia DAO LLC, a non-profit limited liability
+        company registered in the Republic of the Marshall Islands. TEIA token
+        holders are its operating members, holding the standing that
+        shareholders hold in a conventional company, and a DAO proposal is how
+        that membership exercises it.
+      </p>
+      <p className={styles.dao_intro}>
+        The core team handles day-to-day operations &mdash; budgets, grants,
+        events, and the work of keeping teia.art running &mdash; through its own
+        multisig, within the mandate the DAO sets here. Those decisions are
+        listed under Multisig Proposals.
+      </p>
 
-      <ProposalGroup
-        status={selectedStatus}
-        proposalIds={proposalIdsByStatus[selectedStatus]}
-      />
+      <div className={styles.proposal_tabs}>
+        {statusToSelect.map((status) => (
+          <button
+            type="button"
+            key={status}
+            className={`${styles.proposal_tab} ${
+              selectedStatus === status ? styles.proposal_tab_active : ''
+            }`}
+            onClick={() => setSelectedStatus(status)}
+          >
+            {TAB_LABELS[status]}
+            <small>{proposalIdsByStatus[status].length}</small>
+          </button>
+        ))}
+        <button
+          type="button"
+          className={`${styles.proposal_tab} ${
+            selectedStatus === HOLDERS_TAB ? styles.proposal_tab_active : ''
+          }`}
+          onClick={() => setSelectedStatus(HOLDERS_TAB)}
+        >
+          Token holders
+        </button>
+      </div>
+
+      {selectedStatus === HOLDERS_TAB ? (
+        <TokenHolders limit={50} title="TEIA token holders" />
+      ) : (
+        <ProposalGroup
+          status={selectedStatus}
+          proposalIds={proposalIdsByStatus[selectedStatus]}
+        />
+      )}
     </section>
   )
 }

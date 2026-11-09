@@ -27,7 +27,10 @@ export default function TeiaPolls() {
   const [polls] = usePolls(pollsStorage)
 
   return (
-    <Page title="Teia Polls">
+    <Page
+      title="Teia Polls"
+      description="Teia community polls: questions put to TEIA token holders, with the votes counted on the Tezos blockchain."
+    >
       <div className={styles.container}>
         <h1 className={styles.headline}>Teia Community Polls</h1>
 

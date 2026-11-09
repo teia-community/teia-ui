@@ -24,6 +24,12 @@
   }
 }
 
+.count {
+  margin-left: 6px;
+  font-size: 0.75em;
+  color: var(--gray-60);
+}
+
 .tabs {
   display: flex;
   align-self: flex-start;

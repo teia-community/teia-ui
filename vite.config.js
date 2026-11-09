@@ -27,14 +27,12 @@ const commitHash = child_process
 const copyPdfData = () => {
   const prod = process.env.NODE_ENV === 'production'
   const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'))
-  const pdfWorkerPath = path.join(pdfjsDistPath, 'build', 'pdf.worker.min.js')
   const cMapsDir = path.join(pdfjsDistPath, 'cmaps')
   const standardFontsDir = path.join(pdfjsDistPath, 'standard_fonts')
 
+  // The worker itself is bundled via `pdf.worker.min.mjs?url` in the PDF
+  // component; only cMaps and standard fonts need copying.
   const copy_data = (root = '') => {
-    copySync(pdfWorkerPath, `${root}pdf.worker.min.js`, {
-      overwrite: true,
-    })
     copySync(cMapsDir, `${root}cmaps/`, {
       overwrite: true,
     })
@@ -120,10 +118,15 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [rollupNodePolyFill()],
         output: {
+          // Emit .mjs assets (the pdf.js worker, imported via ?url) as .js
+          assetFileNames: (assetInfo) =>
+            assetInfo.name?.endsWith('.mjs')
+              ? 'assets/[name]-[hash].js'
+              : 'assets/[name]-[hash][extname]',
           // manualChunks: processChunks,
           manualChunks: {
             contracts: [
-              '@taquito/beacon-wallet',
+              '@tezos-x/octez.connect-dapp',
               '@taquito/michelson-encoder',
               '@stablelib/ed25519',
               '@stablelib/nacl',
@@ -153,13 +156,23 @@ export default defineConfig(({ mode }) => {
       esbuildOptions: {},
     },
     resolve: {
-      alias: {
-        'readable-stream': 'vite-compatible-readable-stream',
-        stream: 'vite-compatible-readable-stream',
-        path: require.resolve('path-browserify'),
-        util: 'rollup-plugin-node-polyfills/polyfills/util',
-        ...teiaAliases,
-      },
+      alias: [
+        // react-pdf imports the modern pdf.js build, which relies on APIs
+        // like Promise.withResolvers that older browsers lack. The legacy
+        // build ships the polyfills (the worker URL in the PDF component
+        // points at the legacy worker for the same reason).
+        {
+          find: /^pdfjs-dist$/,
+          replacement: 'pdfjs-dist/legacy/build/pdf.mjs',
+        },
+        ...Object.entries({
+          'readable-stream': 'vite-compatible-readable-stream',
+          stream: 'vite-compatible-readable-stream',
+          path: require.resolve('path-browserify'),
+          util: 'rollup-plugin-node-polyfills/polyfills/util',
+          ...teiaAliases,
+        }).map(([find, replacement]) => ({ find, replacement })),
+      ],
     },
   }
 })

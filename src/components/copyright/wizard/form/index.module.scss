@@ -1,3 +1,5 @@
+@import '@styles/variables.scss';
+
 .text_field_error {
   position: absolute;
   right: 0;
@@ -60,4 +62,180 @@
 .verifiedStatus {
   border: 1px dashed var(--text-color);
   padding: 5px;
+}
+
+// Token picker in the Token Search step.
+.pickerHint {
+  margin: 0 0 0.75em;
+  font-size: $font-small;
+  opacity: 0.7;
+}
+
+.pickerBusy {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+// "Token Found" preview: a sized thumbnail beside the details, instead of the
+// unbounded image that pushed everything off screen.
+.previewCard {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-top: 15px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.previewThumb {
+  flex-shrink: 0;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  background-color: var(--gray-10);
+}
+
+.previewInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.previewTitle {
+  margin: 0;
+}
+
+.previewMeta {
+  margin: 0;
+  font-size: $font-small;
+  opacity: 0.7;
+  word-break: break-all;
+}
+
+.previewDescription {
+  margin: 6px 0 0;
+  font-size: $font-small;
+  line-height: 1.45;
+  opacity: 0.85;
+  max-height: 7em;
+  overflow-y: auto;
+}
+
+// Token Search: picker on the left, the found work beside it rather than far
+// below, so choosing and checking a work do not need scrolling between them.
+.searchLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.searchMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.searchAside {
+  flex-shrink: 0;
+  width: 340px;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+}
+
+// Works already added, beside the picker, so a mis-click can be undone without
+// scrolling down to the full list.
+.addedPanel {
+  margin-top: 16px;
+  border: 1px solid var(--border-color);
+  padding: 12px;
+}
+
+.addedTitle {
+  margin: 0 0 8px;
+  font-size: $font-small;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+.addedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addedItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.addedThumb {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  background-color: var(--gray-10);
+}
+
+.addedInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.addedName {
+  font-size: $font-small;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// The verification badge the removed bottom list used to carry.
+.addedStatus {
+  font-size: $font-xsmall;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.addedRemove {
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: $font-xsmall;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--border-color);
+  }
+}
+
+// Standing notice in the Token Search step: registering someone else's work
+// fabricates a licence, which is a step beyond infringement.
+.disclaimer {
+  border: 1px solid var(--warning-color, var(--border-color));
+  border-left-width: 3px;
+  padding: 12px 14px;
+  font-size: $font-small;
+  line-height: 1.5;
+  opacity: 0.9;
 }

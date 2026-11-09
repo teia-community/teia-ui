@@ -38,6 +38,7 @@ export const MIMETYPE: { [key: string]: string } = {
   GIF: 'image/gif',
   GLB: 'model/gltf-binary',
   GLTF: 'model/gltf+json',
+  HTML: 'text/html',
   DIRECTORY: 'application/x-directory',
   JPEG: 'image/jpeg',
   MD: 'text/markdown',
@@ -62,6 +63,53 @@ export const MIMETYPE: { [key: string]: string } = {
   TXT: 'text/plain',
 }
 
+/**
+ * What each media feed collects, grouped by what the thing actually is.
+ *
+ * Derived from MIMETYPE so a format that becomes mintable cannot quietly end
+ * up with no feed to appear in -- which is how FLAC, QuickTime, WebM, WebP and
+ * BMP went years without one despite all of them being mintable and all of
+ * them rendering fine.
+ *
+ * Ogg video is deliberately absent: Chrome dropped Theora, and the thumbnail
+ * is the file itself, so a card would be a broken image. Give it a renderer
+ * and it belongs here.
+ */
+export const FEED_MIMETYPES = {
+  image: [
+    MIMETYPE.JPEG,
+    MIMETYPE.PNG,
+    MIMETYPE.WEBP,
+    MIMETYPE.BMP,
+    MIMETYPE.TIFF,
+  ],
+  gif: [MIMETYPE.GIF],
+  audio: [
+    MIMETYPE.MP3,
+    MIMETYPE.WAV,
+    MIMETYPE.XWAV,
+    MIMETYPE.FLAC,
+    MIMETYPE.OGG,
+  ],
+  midi: [MIMETYPE.MIDI, MIMETYPE.MID],
+  video: [MIMETYPE.MP4, MIMETYPE.QUICKTIME, MIMETYPE.WEBM],
+  threeD: [MIMETYPE.GLB, MIMETYPE.GLTF],
+  code: [
+    MIMETYPE.DIRECTORY,
+    MIMETYPE.SVG,
+    MIMETYPE.HTML,
+    MIMETYPE.ZIP,
+    MIMETYPE.ZIP1,
+    MIMETYPE.ZIP2,
+  ],
+  pdf: [MIMETYPE.PDF],
+  markdown: [MIMETYPE.MD],
+  text: [MIMETYPE.TXT],
+}
+
+/** Mintable, but nothing on the page can display them yet. See above. */
+export const UNDISPLAYABLE_MIMETYPES = [MIMETYPE.OGV]
+
 export const AUDIO_MIME_TYPES = [
   'audio/mpeg',
   'audio/wav',
@@ -70,11 +118,18 @@ export const AUDIO_MIME_TYPES = [
   'audio/ogg',
 ]
 
+/**
+ * Known to the renderer but never offered at mint. The few text/html tokens
+ * predate the directory format; they are shown, not invited.
+ */
+export const DISPLAY_ONLY_MIMETYPES: string[] = [MIMETYPE.HTML]
+
+// NOTE: the old exclusion here read `e !== GLTF || e !== TXT`, which no value
+// can fail, so GLTF and TXT have been mintable all along despite the comment
+// saying otherwise. Left as it behaves today rather than changed in passing.
 export const ALLOWED_MIMETYPES = Object.keys(MIMETYPE)
   .map((k) => MIMETYPE[k])
-  // disabling GLTF from new updates,
-  // disabling TXT upload since they will be done via the textarea input
-  .filter((e) => e !== MIMETYPE.GLTF || e !== MIMETYPE.TXT)
+  .filter((e) => !DISPLAY_ONLY_MIMETYPES.includes(e))
 
 export const ALLOWED_FILETYPES_LABEL = Object.entries(MIMETYPE)
   .filter((e) => ALLOWED_MIMETYPES.includes(e[1]))
@@ -120,6 +175,23 @@ export const FEED_LIST = [
 export type FeedType = (typeof FEED_LIST)[number]
 
 export const DEFAULT_START_FEED: FeedType = 'New OBJKTs'
+
+// The tabs on /activity, in the order they are shown. Shared so the settings
+// page offers a notification toggle for exactly the feeds that exist.
+export const ACTIVITY_FEEDS = [
+  { key: 'social', label: 'Social' },
+  { key: 'trades', label: 'Trades' },
+  { key: 'text', label: 'Text' },
+  { key: 'curations', label: 'Curations' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'copyright', label: 'Copyright' },
+  { key: 'wiki', label: 'Wiki' },
+  { key: 'polls', label: 'Polls' },
+  { key: 'donations', label: 'Donations' },
+  { key: 'fountain', label: 'Fountain' },
+] as const
+
+export type ActivityFeedKey = (typeof ACTIVITY_FEEDS)[number]['key']
 
 //- Mint stuff
 
@@ -178,6 +250,9 @@ export const MOROCCO_QUAKE_FUNDING_CONTRACT =
 export const POLLS_CONTRACT = 'KT1SUExZfkmxf2fafrVgYjZGEKDete2siWoU'
 export const DAO_GOVERNANCE_CONTRACT = 'KT1GHX73W5BcjbYRSZSrUJcnZE3Uw92VYF66'
 export const DAO_TREASURY_CONTRACT = 'KT1J9FYz29RBQi1oGLw8uXyACrzXzV1dHuvb'
+
+/** Tether on Tezos, which the treasury holds alongside tez. */
+export const USDT_CONTRACT = 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o'
 export const TEIA_FOUNTAIN_CONTRACT = 'KT1EsvmkijLKPQmcJMbjDeKRXdwky1LWvwpG'
 export const DAO_TOKEN_CONTRACT = 'KT1QrtA753MSv8VGxkDrKKyJniG5JtuHHbtV'
 
@@ -205,18 +280,28 @@ export const QUIPUSWAP_TEIA_URL = `https://quipuswap.com/swap/tez-${DAO_TOKEN_CO
 export const DONATION_EXCLUDED_ADDRESSES = [
   'tz1cyUSeLA9Zpf2yGncQFFFNpMBgkrvgz7KQ', // Zir0h's bakery payouts
   'tz1gnuBF9TbBcgHPV2mUE96tBrW7PxqRmx1h', // Baking Benjamins Payouts
+  'tz1UVUZVDUgCmFRP3cruqNEWED39imGApA5p', // Tezberry Pie Payouts (fountain staking rewards)
 ]
 
 // Donations that were sent via a middleman and should be reassigned to the actual donor.
-// Each entry moves `amount` tez and 1 donation count from `from` to `to`.
+// Totals move `amount` tez and 1 donation count from `from` to `to`; a feed that
+// lists single transfers reassigns the one operation named by `ophash`.
 export const DONATION_REASSIGNMENTS = [
   {
     // Tezos Foundation donation sent via Ryan Tanaka
-    // tx: ooKskSzgUPDq32uo757BuEGzhNF6Ks8nSRGFst8iQgtHi2z2hPz
+    ophash: 'ooKskSzgUPDq32uo757BuEGzhNF6Ks8nSRGFst8iQgtHi2z2hPz',
     from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
     to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
     toAlias: 'Tezos Foundation',
     amount: 25481.22,
+  },
+  {
+    // Tezos Foundation donation sent via Ryan Tanaka
+    ophash: 'opWSdr51LGJFehfYFybWVgbxsaUtqPDy4gzcL5eZTuM6LrGN9mZ',
+    from: 'tz1ZVzMVj6EjRoDNFMCguG7nGdqmD7aau9kS',
+    to: 'tz1Sb4KVyoe4zVpwdFH5R1U822hUWqGEMDWE',
+    toAlias: 'Tezos Foundation',
+    amount: 19648.66,
   },
 ]
 export const DAO_TOKEN_CLAIM_CONTRACT = 'KT1NrfV4e2qWqFrnrKyPTJth5wq2KP9VyBei'

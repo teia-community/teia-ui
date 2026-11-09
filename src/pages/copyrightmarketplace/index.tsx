@@ -117,7 +117,10 @@ export default function CopyrightMarketplace() {
   const hasMore = entries.length < totalCount
 
   return (
-    <Page title="Copyright Registry">
+    <Page
+      title="Copyright Registry"
+      description="Browse copyright registrations on the Teia Copyright smart contract. Artists can register their works, define licensing clauses, and establish on-chain proof of authorship."
+    >
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>Copyright Marketplace</h1>

@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Button } from '@atoms/button'
 import { Input } from '@atoms/input'
@@ -11,9 +11,8 @@ import {
   createEditProposal,
   slugify,
 } from '@data/wiki'
+import MDEditor from '@components/md-editor'
 import styles from '@style'
-
-const MDEditor = lazy(() => import('@uiw/react-md-editor'))
 
 const AUDIO_EXTENSIONS = /\.(mp3|wav|ogg|flac|aac|m4a|opus|webm)(\?|$)/i
 const previewComponents = {

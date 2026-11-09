@@ -20,11 +20,8 @@ import {
 } from '@data/api'
 import laggy from '@utils/swr-laggy-middleware'
 import { useModerators } from '@data/roles'
-import {
-  ACTIVITY_EVENT_TYPES,
-  MINT_TYPES,
-  TEIA_LISTING_TYPES,
-} from '@utils/activity'
+import { userActivityConds, globalActivityConds } from '@utils/activity'
+import { donationQuery } from '@data/donation-activity'
 
 function reorderBigmapData(data, subKey, decode = false) {
   const bigmapData = data ? {} : undefined
@@ -876,13 +873,20 @@ export async function fetchAgreementText() {
   }
 }
 
-export function useDaoTokenHolders(limit = 10) {
-  const { data, mutate, error } = useSWR(
-    [`/dao/token-holders/${limit}`, limit],
-    async () => {
+export function useDaoTokenHolders(pageSize = 10) {
+  const getKey = (pageIndex, previousPageData) => {
+    if (previousPageData && previousPageData.length < pageSize) return null
+    return ['/dao/token-holders', pageSize, pageIndex]
+  }
+
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    async (_ns, limit, pageIndex) => {
       const url = `${
         import.meta.env.VITE_TZKT_API
-      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&sort.desc=balance&limit=${limit}`
+      }/v1/tokens/balances?token.contract.eq=${DAO_TOKEN_CONTRACT}&token.tokenId.eq=0&account.ne=${DAO_TREASURY_CONTRACT}&balance.gt=0&sort.desc=balance&select=account,balance,transfersCount&limit=${limit}&offset=${
+        pageIndex * limit
+      }`
 
       try {
         const res = await fetch(url)
@@ -894,21 +898,24 @@ export function useDaoTokenHolders(limit = 10) {
           alias: holder.account.alias,
           balance: parseInt(holder.balance) / DAO_TOKEN_DECIMALS,
           transfersCount: holder.transfersCount,
-          firstTime: holder.firstTime,
-          lastTime: holder.lastTime,
         }))
       } catch (err) {
         console.error('Failed to fetch token holders:', err)
         throw err
       }
     },
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-    }
+    { revalidateFirstPage: false, revalidateOnFocus: false }
   )
 
-  return { data, mutate, error, isLoading: !data && !error }
+  return {
+    holders: data ? data.flat() : [],
+    error,
+    isLoading: !data && !error,
+    isLoadingMore:
+      isValidating && data && typeof data[size - 1] === 'undefined',
+    isReachingEnd: error || (data && data[data.length - 1]?.length < pageSize),
+    loadMore: () => setSize(size + 1),
+  }
 }
 
 export function useFountainDonations(contractAddress, limit = 10000) {
@@ -940,33 +947,86 @@ export function useFountainDonations(contractAddress, limit = 10000) {
   return { data, mutate, error, isLoading: !data && !error }
 }
 
+/** Plenty for a contract whose donations number in the dozens. */
+const DONATION_PAGE_SIZE = 1000
+const DONATION_MAX_PAGES = 20
+
+/**
+ * Every transfer that counts as a donation to one contract, using the same
+ * query the donations timeline uses so the two can never disagree about what
+ * a donation is.
+ */
+async function fetchDonationTransfers(contract, excludeAddresses = []) {
+  const excluded = new Set(excludeAddresses)
+  const rows = []
+
+  for (let page = 0; page < DONATION_MAX_PAGES; page += 1) {
+    const url = donationQuery(contract)
+    url.searchParams.set('sort.desc', 'id')
+    url.searchParams.set('limit', String(DONATION_PAGE_SIZE))
+    url.searchParams.set('select', 'sender,amount,timestamp')
+    if (page > 0) {
+      url.searchParams.set('offset', String(page * DONATION_PAGE_SIZE))
+    }
+
+    const res = await fetch(url.toString())
+    if (!res.ok) throw new Error(`TzKT error: ${res.status}`)
+    const batch = await res.json()
+    rows.push(...batch)
+    if (batch.length < DONATION_PAGE_SIZE) break
+  }
+
+  // The query already drops contracts and the payout wallets; this honours
+  // whatever extra exclusions the caller asked for.
+  return rows.filter((row) => {
+    const address = row.sender?.address
+    return Boolean(address) && !excluded.has(address)
+  })
+}
+
+/**
+ * Who has given the most to the DAO treasury, totalled from the chain.
+ *
+ * This used to come from a separate donations service, which stopped sending
+ * CORS headers and took the page down with it. The same answer is two hundred
+ * milliseconds away in the indexer, and the fountain list has always been
+ * built this way, so there is no service left to go quiet.
+ */
 export function useTopDonors(excludeAddresses = []) {
   const { data, mutate, error } = useSWR(
     [`/top-donators`, excludeAddresses.join(',')],
     async () => {
-      // Fetch all donors
-      const url = `${
-        import.meta.env.VITE_TEIA_DONATION_API
-      }/top-donators?limit=1000`
+      const rows = await fetchDonationTransfers(
+        DAO_TREASURY_CONTRACT,
+        excludeAddresses
+      )
 
-      try {
-        const res = await fetch(url)
-        if (!res.ok)
-          throw new Error(`Top donators API error: ${res.statusText}`)
-        const result = await res.json()
-
-        // Filter out excluded addresses & KT1 addresses
-        const excludeSet = new Set(excludeAddresses)
-        return result.donators.filter((donor) => {
-          const address = donor.donator_address
-          if (address?.startsWith('KT1')) return false
-          if (excludeSet.has(address)) return false
-          return true
-        })
-      } catch (err) {
-        console.error('Failed to fetch top donators:', err)
-        throw err
+      const byDonor = new Map()
+      for (const row of rows) {
+        const address = row.sender?.address
+        if (!address) continue
+        const donor = byDonor.get(address) || {
+          donator_address: address,
+          donator_alias: row.sender.alias || null,
+          total_donated_tez: 0,
+          transaction_count: 0,
+          first_donation: row.timestamp,
+          last_donation: row.timestamp,
+        }
+        donor.total_donated_tez += row.amount / 1000000
+        donor.transaction_count += 1
+        if (row.timestamp < donor.first_donation) {
+          donor.first_donation = row.timestamp
+        }
+        if (row.timestamp > donor.last_donation) {
+          donor.last_donation = row.timestamp
+        }
+        byDonor.set(address, donor)
       }
+
+      return [...byDonor.values()].sort(
+        (a, b) => b.total_donated_tez - a.total_donated_tez
+      )
     },
     {
       revalidateIfStale: false,
@@ -1114,86 +1174,63 @@ export function useOfficialTextPosts(limit = 100) {
   )
 }
 
-const USER_ACTIVITY_QUERY = gql`
-  query UserActivity(
-    $address: String!
-    $types: [String!]!
-    $mintTypes: [String!]!
-    $limit: Int!
-    $offset: Int!
-  ) {
-    events(
-      where: {
-        _or: [
-          {
-            # Trades, listings and transfers the user is a direct party to.
-            _and: [
-              {
-                _or: [
-                  { seller_address: { _eq: $address } }
-                  { buyer_address: { _eq: $address } }
-                  { from_address: { _eq: $address } }
-                  { to_address: { _eq: $address } }
-                ]
-              }
-              {
-                _or: [
-                  { implements: { _eq: "SALE" } }
-                  { type: { _in: $types } }
-                ]
-              }
-            ]
-          }
-          {
-            # Mints — the user is identified by artist_address, not by any of
-            # the trade/transfer address fields (which are null on a mint).
-            _and: [
-              { artist_address: { _eq: $address } }
-              { type: { _in: $mintTypes } }
-            ]
-          }
-        ]
+/** Used by every activity feed query. */
+const ActivityEventFieldsFragment = gql`
+  fragment activityEventFields on events {
+    id
+    timestamp
+    ophash
+    implements
+    type
+    price
+    amount
+    editions
+    seller_address
+    seller_profile {
+      name
+    }
+    buyer_address
+    buyer_profile {
+      name
+    }
+    from_address
+    from_profile {
+      name
+    }
+    to_address
+    to_profile {
+      name
+    }
+    token {
+      token_id
+      fa2_address
+      name
+      display_uri
+      thumbnail_uri
+      mime_type
+      teia_meta {
+        preview_uri
       }
+      artist_address
+      artist_profile {
+        name
+      }
+    }
+  }
+`
+
+const USER_ACTIVITY_QUERY = gql`
+  ${ActivityEventFieldsFragment}
+  query UserActivity($conds: [events_bool_exp!]!, $limit: Int!, $offset: Int!) {
+    events(
+      # One condition per event kind (see userActivityConds): the active
+      # filter chips are pushed into the query so pages stay full.
+      where: { _or: $conds }
       order_by: [{ level: desc }, { opid: desc }]
       limit: $limit
       offset: $offset
     ) {
-      id
-      timestamp
-      ophash
-      implements
-      type
-      price
-      amount
-      editions
-      seller_address
-      seller_profile {
-        name
-      }
-      buyer_address
-      buyer_profile {
-        name
-      }
-      from_address
-      from_profile {
-        name
-      }
-      to_address
-      to_profile {
-        name
-      }
-      token {
-        token_id
-        fa2_address
-        name
-        display_uri
-        thumbnail_uri
-        mime_type
-        artist_address
-        artist_profile {
-          name
-        }
-      }
+      ...activityEventFields
     }
   }
 `
@@ -1206,24 +1243,102 @@ const ACTIVITY_PAGE_SIZE = 50
  * Note: events are pre-filtered to the relevant types here; category resolution
  * and chip filtering happen client-side in the Activity tab.
  */
-export function useUserActivity(address) {
+export function useUserActivity(address, activeTypes = []) {
+  const filterKey = activeTypes.length
+    ? [...activeTypes].sort().join(',')
+    : 'all'
+  const conds = userActivityConds(address, activeTypes)
+
   const getKey = (pageIndex, previousPageData) => {
     if (!address) return null
     if (previousPageData && previousPageData.length === 0) return null
-    return ['user-activity', address, pageIndex]
+    return ['user-activity', address, filterKey, pageIndex]
   }
 
   const { data, error, size, setSize, isValidating } = useSWRInfinite(
     getKey,
     // SWR v1 spreads array-key parts as separate fetcher args.
-    async (_ns, addr, pageIndex) => {
+    async (_ns, _addr, _filters, pageIndex) => {
       const res = await request(
         import.meta.env.VITE_TEIA_GRAPHQL_API,
         USER_ACTIVITY_QUERY,
         {
-          address: addr,
-          types: ACTIVITY_EVENT_TYPES,
-          mintTypes: MINT_TYPES,
+          conds,
+          limit: ACTIVITY_PAGE_SIZE,
+          offset: pageIndex * ACTIVITY_PAGE_SIZE,
+        }
+      )
+      return res.events || []
+    },
+    { revalidateFirstPage: false, revalidateOnFocus: false }
+  )
+
+  const events = data ? data.flat() : []
+  const isLoadingInitial = !data && !error
+  const isLoadingMore =
+    isValidating && data && typeof data[size - 1] === 'undefined'
+  const isReachingEnd =
+    error || (data && data[data.length - 1]?.length < ACTIVITY_PAGE_SIZE)
+
+  return {
+    events,
+    error,
+    isLoadingInitial,
+    isLoadingMore,
+    isReachingEnd,
+    loadMore: () => setSize(size + 1),
+  }
+}
+
+const TEXT_ACTIVITY_QUERY = gql`
+  ${ActivityEventFieldsFragment}
+  query TextActivity(
+    $conds: [events_bool_exp!]!
+    $limit: Int!
+    $offset: Int!
+    $order: order_by!
+  ) {
+    events(
+      where: {
+        token: {
+          metadata_status: { _eq: "processed" }
+          mime_type: { _in: ["text/plain", "text/markdown"] }
+        }
+        fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
+        _or: $conds
+      }
+      order_by: [{ level: $order }, { opid: $order }]
+      limit: $limit
+      offset: $offset
+    ) {
+      ...activityEventFields
+    }
+  }
+`
+
+//Platform-wide activity for text posts
+export function useTextActivity(activeTypes = [], sort = 'newest') {
+  const filterKey = activeTypes.length
+    ? [...activeTypes].sort().join(',')
+    : 'all'
+  const conds = globalActivityConds(activeTypes)
+  const order = sort === 'oldest' ? 'asc' : 'desc'
+
+  const getKey = (pageIndex, previousPageData) => {
+    if (previousPageData && previousPageData.length === 0) return null
+    return ['text-activity', filterKey, sort, pageIndex]
+  }
+
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    // SWR v1 spreads array-key parts as separate fetcher args.
+    async (_ns, _filters, _sort, pageIndex) => {
+      const res = await request(
+        import.meta.env.VITE_TEIA_GRAPHQL_API,
+        TEXT_ACTIVITY_QUERY,
+        {
+          conds,
+          order,
           limit: ACTIVITY_PAGE_SIZE,
           offset: pageIndex * ACTIVITY_PAGE_SIZE,
         }
@@ -1251,81 +1366,56 @@ export function useUserActivity(address) {
 }
 
 const GLOBAL_ACTIVITY_QUERY = gql`
-  query GlobalActivity($types: [String!]!, $limit: Int!, $offset: Int!) {
+  ${ActivityEventFieldsFragment}
+  query GlobalActivity(
+    $conds: [events_bool_exp!]!
+    $limit: Int!
+    $offset: Int!
+    $order: order_by!
+  ) {
     events(
+      # One condition per event kind (see globalActivityConds): the active
+      # filter chips are pushed into the query so pages stay full.
       where: {
         token: { metadata_status: { _eq: "processed" } }
         fa2_address: { _eq: "${HEN_CONTRACT_FA2}" }
-        _or: [
-          { implements: { _eq: "SALE" } }
-          { type: { _in: $types } }
-        ]
+        _or: $conds
       }
-      order_by: [{ level: desc }, { opid: desc }]
+      order_by: [{ level: $order }, { opid: $order }]
       limit: $limit
       offset: $offset
     ) {
-      id
-      timestamp
-      ophash
-      implements
-      type
-      price
-      amount
-      editions
-      seller_address
-      seller_profile {
-        name
-      }
-      buyer_address
-      buyer_profile {
-        name
-      }
-      from_address
-      from_profile {
-        name
-      }
-      to_address
-      to_profile {
-        name
-      }
-      token {
-        token_id
-        fa2_address
-        name
-        display_uri
-        thumbnail_uri
-        mime_type
-        artist_address
-        artist_profile {
-          name
-        }
-      }
+      ...activityEventFields
     }
   }
 `
 
-const GLOBAL_FEED_TYPES = [...MINT_TYPES, ...TEIA_LISTING_TYPES]
-
 /**
- * Platform-wide Teia/HEN activity feed (sales, listings, mints), newest first,
- * with "load more" paging. Not scoped to any address.
+ * Platform-wide Teia/HEN activity feed (sales, listings, mints), with
+ * "load more" paging. Not scoped to any address.
  */
-export function useGlobalActivity() {
+export function useGlobalActivity(activeTypes = [], sort = 'newest') {
+  const filterKey = activeTypes.length
+    ? [...activeTypes].sort().join(',')
+    : 'all'
+  const conds = globalActivityConds(activeTypes)
+  const order = sort === 'oldest' ? 'asc' : 'desc'
+
   const getKey = (pageIndex, previousPageData) => {
     if (previousPageData && previousPageData.length === 0) return null
-    return ['global-activity', pageIndex]
+    return ['global-activity', filterKey, sort, pageIndex]
   }
 
   const { data, error, size, setSize, isValidating } = useSWRInfinite(
     getKey,
     // SWR v1 spreads array-key parts as separate fetcher args.
-    async (_ns, pageIndex) => {
+    async (_ns, _filters, _sort, pageIndex) => {
       const res = await request(
         import.meta.env.VITE_TEIA_GRAPHQL_API,
         GLOBAL_ACTIVITY_QUERY,
         {
-          types: GLOBAL_FEED_TYPES,
+          conds,
+          order,
           limit: ACTIVITY_PAGE_SIZE,
           offset: pageIndex * ACTIVITY_PAGE_SIZE,
         }

@@ -11,9 +11,27 @@
   color: var(--secondary-color);
 }
 
+.section_heading {
+  margin: 2.5rem 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.notice {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+
+  a {
+    text-decoration: underline;
+  }
+}
+
 .view_toggle {
   display: flex;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0 1.4rem;
+  margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-color);
 
   @media (max-width: 600px) {
@@ -24,16 +42,15 @@
 .view_chip {
   appearance: none;
   cursor: pointer;
-  padding: 0.6rem 1.25rem;
+  text-decoration: none;
+  padding: 0.4rem 0;
   margin-bottom: -1px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
-  text-align: center;
   color: var(--secondary-color);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  border-radius: 0;
 
   &:hover {
     color: var(--text-color);
@@ -41,7 +58,31 @@
 
   @media (max-width: 600px) {
     flex: 1;
+    text-align: center;
   }
+}
+
+.tab_dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  margin-left: 3px;
+  position: relative;
+  top: -0.45em;
+}
+
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .view_chip_active {
