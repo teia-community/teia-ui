@@ -7,13 +7,10 @@ import Tour, { TourLink } from '@components/tour'
 import { useEvents } from '@hooks/use-events'
 import { useModalStore } from '@context/modalStore'
 import {
-  approveEventProposal,
   createEvent,
   proposeEvent,
-  rejectEventProposal,
   setEventHidden,
   updateEvent,
-  useEventProposals,
   useEventRoles,
   useModeratableEvents,
 } from '@data/events-chain'
@@ -52,12 +49,10 @@ export default function Events() {
   const { events, error, isLoading } = useEvents()
   const [params, setParams] = useSearchParams()
 
-  // Moderators also get hidden events and the proposal queue.
+  // Moderators also get hidden events; proposals are reviewed in /moderation.
   const roles = useEventRoles()
   const { canModerate } = roles
   const { data: modEvents } = useModeratableEvents(canModerate)
-  const { data: proposals } = useEventProposals(canModerate)
-  const pending = (proposals ?? []).filter((p) => p.status === 'pending')
   const shownEvents = (canModerate && modEvents) || events
 
   const addEvent = () => {
@@ -147,37 +142,6 @@ export default function Events() {
             Teia community events, initiatives, and announcements.
           </p>
         </header>
-
-        {pending.length > 0 && (
-          <div className={styles.event_list}>
-            {pending.map((p) => (
-              <article className={styles.event_card} key={p.id}>
-                <div className={styles.card_copy}>
-                  <h2>Proposal: {p.title}</h2>
-                  <p className={styles.subtitle}>{p.doc?.subtitle}</p>
-                  <p>{p.doc?.description}</p>
-                  <p>
-                    {p.doc?.link} · proposed by {p.proposer}
-                  </p>
-                  <div className={styles.header_actions}>
-                    <button
-                      type="button"
-                      onClick={quiet(() => approveEventProposal(p.id))}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      type="button"
-                      onClick={quiet(() => rejectEventProposal(p.id))}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
 
         {!isLoading && !error && (
           <div className={styles.event_list}>

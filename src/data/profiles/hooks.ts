@@ -1,8 +1,8 @@
 // SWR hooks for on-chain profiles.
 
 import useSWR from 'swr'
-import { fetchProfile, fetchProfiles } from './api'
-import { profileKey } from './actions'
+import { fetchAllProfiles, fetchProfile, fetchProfiles } from './api'
+import { PROFILES_MOD_SWR_KEY, profileKey } from './actions'
 import { fetchProfileContent } from './ipfs'
 import type { ChainProfile, ResolvedProfile } from './types'
 
@@ -51,6 +51,18 @@ export function useChainProfiles(addresses: string[]) {
       const resolved = await Promise.all(found.map(resolve))
       return Object.fromEntries(resolved.map((p) => [p.address, p]))
     },
+    SWR_OPTIONS
+  )
+}
+
+/**
+ * Every profile card including hidden ones, newest first, for the moderation
+ * console. Only fetches when `enabled` (viewer can moderate).
+ */
+export function useModeratableProfiles(enabled: boolean) {
+  return useSWR<ResolvedProfile[]>(
+    enabled ? PROFILES_MOD_SWR_KEY : null,
+    async () => Promise.all((await fetchAllProfiles()).map(resolve)),
     SWR_OPTIONS
   )
 }
