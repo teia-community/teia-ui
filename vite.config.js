@@ -126,7 +126,7 @@ export default defineConfig(({ mode }) => {
           // manualChunks: processChunks,
           manualChunks: {
             contracts: [
-              '@tezos-x/octez.connect-dapp',
+              '@taquito/beacon-wallet',
               '@taquito/michelson-encoder',
               '@stablelib/ed25519',
               '@stablelib/nacl',

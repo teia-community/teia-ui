@@ -1,4 +1,4 @@
-import { ParametersInvalidBeaconError } from '@tezos-x/octez.connect-dapp'
+import { ParametersInvalidBeaconError } from '@ecadlabs/beacon-core'
 import type { ReactNode } from 'react'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
