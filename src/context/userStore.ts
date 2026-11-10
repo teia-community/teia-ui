@@ -192,6 +192,16 @@ const applyAccount = async (
   return address
 }
 
+/** Resolves once the persisted store has loaded, including any async migration. */
+const waitForHydration = () =>
+  new Promise<void>((resolve) => {
+    if (useUserStore.persist.hasHydrated()) return resolve()
+    const unsubscribe = useUserStore.persist.onFinishHydration(() => {
+      unsubscribe()
+      resolve()
+    })
+  })
+
 // ---------------------------------------------------------------------------
 // Socials helper
 // ---------------------------------------------------------------------------
@@ -347,6 +357,10 @@ export const useUserStore = create<UserState>()(
         setAccount: async () => {
           // Tezos being defined is a proxy check for wallet readiness
           if (Tezos === undefined) return
+
+          // Header calls this on mount, which can be before a version migration
+          // has cleared the Beacon account; reading it then restores the old session.
+          await waitForHydration()
 
           const current = await wallet.client.getActiveAccount()
 
@@ -697,6 +711,13 @@ export const useUserStore = create<UserState>()(
           // the same reason as unsync: it tears down transports and can race with
           // setAccount() or an early sync() call on the next page load.
           try {
+            // The DAppClient restores the stored active account asynchronously
+            // after construction. Clearing before that finishes is undone by the
+            // restore, so wait for it (bounded, so hydration can never hang).
+            await Promise.race([
+              wallet.client.getActiveAccount(),
+              new Promise((resolve) => setTimeout(resolve, 5000)),
+            ])
             await wallet.client.clearActiveAccount()
           } catch (e) {
             console.warn('Migration: failed to clear Beacon account:', e)
