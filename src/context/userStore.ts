@@ -1,4 +1,5 @@
-import { BeaconEvent, NetworkType } from '@tezos-x/octez.connect-dapp'
+import { BeaconWallet } from '@taquito/beacon-wallet'
+import { BeaconEvent } from '@ecadlabs/beacon-dapp'
 import {
   OpKind,
   MichelCodecPacker,
@@ -17,6 +18,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware'
 import { useLocalSettings } from './localSettingsStore'
+import { NetworkType } from '@ecadlabs/beacon-types'
 import { getUser, getTokenInformationOnCollect, GetUserMetadata } from '@data/api'
 import type { RPC_NODES } from './localSettingsStore'
 import {
@@ -37,7 +39,6 @@ import {
   packData,
 } from '@utils/swap'
 import { useModalStore } from './modalStore'
-import { OctezConnectWallet } from './octezConnectWallet'
 // import teiaSwapLambda from '@components/collab/lambdas/teiaMarketplaceSwap.json'
 import teiaCancelSwapLambda from '@components/collab/lambdas/teiaMarketplaceCancelSwap.json'
 import type { Listing, NFT, SubjktInfo, Tx } from '@types'
@@ -133,7 +134,7 @@ const normalize = (url: string) => String(url).replace(/\/$/, '')
 export const Tezos = new TezosToolkit(getRpc())
 const Packer = new MichelCodecPacker()
 
-const wallet = new OctezConnectWallet({
+const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
   iconUrl: 'https://teia.art/icons/android-chrome-512x512.png',
@@ -690,7 +691,7 @@ export const useUserStore = create<UserState>()(
         // Bump this version whenever a Beacon/Taquito upgrade changes the
         // localStorage format. All persisted state is discarded and the user
         // will be asked to reconnect — better than a broken unsync button.
-        version: 4,
+        version: 5,
         migrate: async () => {
           // clearActiveAccount is local-only and fast. Skipping disconnect() for
           // the same reason as unsync: it tears down transports and can race with
