@@ -134,6 +134,31 @@ const normalize = (url: string) => String(url).replace(/\/$/, '')
 export const Tezos = new TezosToolkit(getRpc())
 const Packer = new MichelCodecPacker()
 
+// Version of the persisted user store. Bumping it logs everyone out and wipes
+// all wallet storage (see resetWalletStorage), e.g. after a Beacon/Taquito
+// upgrade changes the storage format or a stored session must not be trusted.
+const STORE_VERSION = 6
+
+/**
+ * Removes all Beacon and WalletConnect storage (keys, peers, accounts) when the
+ * persisted store is not at STORE_VERSION, so the wallet starts from scratch.
+ * Must run before the BeaconWallet below is created: the DAppClient reads its
+ * seed, peers and active account from storage once and keeps them in memory.
+ */
+const resetWalletStorage = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem('user') ?? 'null')
+    if (stored?.version === STORE_VERSION) return
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith('beacon:') || key.startsWith('wc@2:'))
+      .forEach((key) => localStorage.removeItem(key))
+  } catch (e) {
+    console.warn('Failed to reset wallet storage:', e)
+  }
+}
+
+resetWalletStorage()
+
 const wallet = new BeaconWallet({
   name: 'teia.art',
   appUrl: 'https://teia.art',
@@ -358,8 +383,8 @@ export const useUserStore = create<UserState>()(
           // Tezos being defined is a proxy check for wallet readiness
           if (Tezos === undefined) return
 
-          // Header calls this on mount, which can be before a version migration
-          // has cleared the Beacon account; reading it then restores the old session.
+          // Header calls this on mount, before the store may have hydrated; an
+          // address set now could be overwritten by the stored state.
           await waitForHydration()
 
           const current = await wallet.client.getActiveAccount()
@@ -702,28 +727,10 @@ export const useUserStore = create<UserState>()(
       }),
       {
         name: 'user',
-        // Bump this version whenever a Beacon/Taquito upgrade changes the
-        // localStorage format. All persisted state is discarded and the user
-        // will be asked to reconnect — better than a broken unsync button.
-        version: 5,
-        migrate: async () => {
-          // clearActiveAccount is local-only and fast. Skipping disconnect() for
-          // the same reason as unsync: it tears down transports and can race with
-          // setAccount() or an early sync() call on the next page load.
-          try {
-            // The DAppClient restores the stored active account asynchronously
-            // after construction. Clearing before that finishes is undone by the
-            // restore, so wait for it (bounded, so hydration can never hang).
-            await Promise.race([
-              wallet.client.getActiveAccount(),
-              new Promise((resolve) => setTimeout(resolve, 5000)),
-            ])
-            await wallet.client.clearActiveAccount()
-          } catch (e) {
-            console.warn('Migration: failed to clear Beacon account:', e)
-          }
-          return {} as UserState
-        },
+        version: STORE_VERSION,
+        // Discard all persisted state from older versions. The wallet side was
+        // already wiped by resetWalletStorage before the BeaconWallet started.
+        migrate: () => ({}) as UserState,
         storage: createJSONStorage(() => localStorage),
         onRehydrateStorage: () => (state) => {
           if (!state?.address) return
