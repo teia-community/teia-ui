@@ -1,7 +1,6 @@
 import get from 'lodash/get'
 import isNumber from 'lodash/isNumber'
 import { Container } from '@atoms/layout'
-import { formatRoyalties } from '@utils'
 import { getTimeAgo } from '@utils/time'
 import styles from '@style'
 import { BURN_ADDRESS } from '@constants'
@@ -243,10 +242,6 @@ export const History = () => {
 
           return null
         })}
-
-        <div className={styles.history__royalties}>
-          {formatRoyalties(nft)} Royalties
-        </div>
       </div>
     </Container>
   )

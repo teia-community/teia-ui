@@ -368,6 +368,11 @@ export const TEIA_MULTISIG_BLOG_TAG = 'teiamultisigblog'
 // this TS module.
 export const CALENDAR_CONTRACT = 'KT1FxyjsMjNiske7KZQhRtcbTwWJQpv8bmLw'
 
+// teiaEvents, the /events showcase registry (mainnet).
+export const EVENTS_CONTRACT = 'KT1KDXXwq8bHKr5f1cM6E66tzxYNuZ2x913o'
+// teiaProfiles, one profile card per wallet (artist cards, mainnet).
+export const PROFILES_CONTRACT = 'KT18nPHDu7AiyPmmJcH66HscH3vNZsE8dJ9d'
+
 export const POLL_COMMENTS_CONTRACT = 'KT1FrjJUWKXpJ9nQaNJcwjqCkjMsCcYU5y9o'
 export const POLL_MESSAGE_FEE = 25000
 

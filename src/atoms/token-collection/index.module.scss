@@ -49,3 +49,11 @@
   position: absolute;
   pointer-events: none;
 }
+
+// Virtual rows are absolutely positioned; keep the tile centered like
+// `.single_view` did for direct children.
+.single_row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

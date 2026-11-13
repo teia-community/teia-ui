@@ -8,11 +8,21 @@ import {
   FILTER_NOT_FOR_SALE,
 } from '@constants'
 import TokenCollection from '@atoms/token-collection'
-import Filters from './filters'
+import Filters, { FILTERS_TEXT, VIEW_MODE_STEP } from './filters'
+import Tour from '@components/tour'
 
 import { useOutletContext } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
 import { orderBy } from 'lodash'
+
+const TOUR = [
+  {
+    target: 'filters',
+    text: `Everything this user minted, newest first. ${FILTERS_TEXT}`,
+    align: 'right',
+  },
+  VIEW_MODE_STEP,
+]
 
 export default function Creations() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
@@ -31,6 +41,7 @@ export default function Creations() {
 
   return (
     <>
+      <Tour name="creations" steps={TOUR} />
       <Filters
         filter={filter}
         onChange={setFilter}

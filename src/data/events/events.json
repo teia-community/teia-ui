@@ -1,0 +1,85 @@
+{
+  "events": [
+    {
+      "id": "byob-mx-teia",
+      "title": "BYOB mx TEIA",
+      "subtitle": "Digital art exhibition + NFT drop",
+      "description": "Bring Your Own Beamer, organised by Psychofuturist and supported by Teia.",
+      "link": "https://byob.teia.art/",
+      "screenshot": "/events/byob.png",
+      "bannerColor": "#f0f0e8"
+    },
+    {
+      "id": "cind-tezos-2026",
+      "title": "Cind Tezos 2026",
+      "subtitle": "2026 gallery",
+      "description": "A community event gallery on Tezos.",
+      "link": "https://cindtezos2026-gallery.teia.art/",
+      "screenshot": "/events/cindtezos2026.png",
+      "bannerColor": "#081008"
+    },
+    {
+      "id": "tezos-pride-2026",
+      "title": "Tezos Pride 2026",
+      "subtitle": "2026 gallery",
+      "description": "Celebrating and supporting the 2SLGBTQ+ community in the Tezos ecosystem.",
+      "link": "https://tezospride2026-gallery.teia.art/",
+      "screenshot": "/events/tezospride2026.png",
+      "bannerColor": "#100818"
+    },
+    {
+      "id": "voices-of-iran",
+      "title": "Voices of Iran",
+      "subtitle": "Community gallery",
+      "description": "A gallery for voices and artists from Iran.",
+      "link": "https://voicesofiran-gallery.teia.art/",
+      "screenshot": "/events/voicesofiran.png",
+      "bannerColor": "#101008"
+    },
+    {
+      "id": "art4life",
+      "title": "Art4Life",
+      "subtitle": "Community gallery",
+      "description": "A Tezos community art gallery.",
+      "link": "https://art4life-gallery.teia.art/",
+      "screenshot": "/events/art4life.png",
+      "bannerColor": "#202020"
+    },
+    {
+      "id": "tezcon-2026",
+      "title": "TezCon 2026 Gallery",
+      "subtitle": "TezCon 2026",
+      "description": "Gallery for the TezCon 2026 event.",
+      "link": "https://tezcon2026-gallery.teia.art/",
+      "screenshot": "/events/tezcon2026.png",
+      "bannerColor": "#e8e0d8"
+    },
+    {
+      "id": "computational-jewelry",
+      "title": "Computational Jewelry",
+      "subtitle": "Community gallery",
+      "description": "A gallery exploring computational jewelry and digital art.",
+      "link": "https://computationaljewelry-gallery.teia.art/",
+      "screenshot": "/events/computationaljewelry.png",
+      "bannerColor": "#d8b8f8"
+    },
+    {
+      "id": "cycles",
+      "title": "Cycles",
+      "subtitle": "Interactive gallery",
+      "description": "An interactive Teia event experience.",
+      "link": "https://cycles.teia.art/",
+      "screenshot": "/events/cycles.png",
+      "bannerColor": "#080808"
+    },
+    {
+      "id": "midsummer-party-2026",
+      "title": "Midsummer Party 2026",
+      "subtitle": "2026 gallery",
+      "description": "Gallery for the Midsummer Party 2026 event.",
+      "link": "https://midsummerparty2026-gallery.teia.art/",
+      "screenshot": "/events/midsummerparty2026.png",
+      "bannerColor": "#080010"
+    }
+  ]
+}

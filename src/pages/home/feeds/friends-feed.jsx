@@ -68,12 +68,17 @@ export function FriendsFeed() {
         swrParams={[param.address]}
         query={gql`
           ${BaseTokenFieldsFragment}
-          query frensGallery($wallets: [String!], $limit: Int!) {
+          query frensGallery(
+            $wallets: [String!]
+            $limit: Int!
+            $filters: tokens_bool_exp!
+          ) {
             tokens(
               where: {
                 editions: { _gt: 0 }
                 artist_address: { _in: $wallets }
                 metadata_status: { _eq: "processed" }
+                _and: [$filters]
               }
               order_by: { minted_at: desc }
               limit: $limit

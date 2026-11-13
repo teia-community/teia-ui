@@ -328,3 +328,35 @@
     border-bottom: 1px solid var(--border-color);
   }
 }
+
+// --- Events proposal preview ---
+.event_proposal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  flex-wrap: wrap;
+
+  p {
+    margin: 0.4em 0;
+  }
+
+  img {
+    width: 240px;
+    max-width: 100%;
+    border: 1px solid var(--border-color);
+  }
+}
+
+// --- Profile cards: avatar + name ---
+.profile_cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+
+  img {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}

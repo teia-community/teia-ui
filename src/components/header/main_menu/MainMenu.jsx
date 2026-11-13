@@ -163,7 +163,9 @@ export const MainMenu = () => {
       title: 'Explore',
       items: [
         { label: 'Search', route: 'search' },
+        { label: 'Artist Directory', route: 'artist-directory' },
         { label: 'Activity', route: 'activity', badge: showActivityBadge },
+        { label: 'Events', route: 'events' },
         { label: 'Text', route: 'text' },
         { label: 'Curations', route: 'curations' },
         { label: 'Calendar', route: 'calendar' },

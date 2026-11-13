@@ -1,0 +1,301 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.dialog {
+  background: transparent;
+  border: 0;
+  color: var(--text-color);
+  font-family: var(--text-font);
+  height: 100%;
+  max-height: none;
+  max-width: none;
+  margin: 0;
+  padding: 20px;
+  width: 100%;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 70%);
+  backdrop-filter: blur(8px);
+}
+
+.dialog_panel {
+  background: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  margin: auto;
+  max-width: 680px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.dialog_expanded .dialog_panel {
+  height: calc(100vh - 40px);
+  max-width: none;
+}
+
+.dialog_header {
+  align-items: flex-start;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.dialog_title {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.dialog_header > button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+}
+
+.dialog_summary {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.display_title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.display_subtitle,
+.display_description {
+  font-size: $font-small;
+  line-height: 1.35;
+  margin: 0.35rem 0 0;
+  white-space: pre-line;
+}
+
+.display_subtitle {
+  opacity: 0.75;
+}
+
+.dialog_form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field span,
+.color_field span {
+  font-size: $font-small;
+  font-weight: bold;
+  line-height: 1.25;
+}
+
+.field input,
+.field textarea {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font: inherit;
+  padding: 0.65rem;
+  width: 100%;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--text-color);
+  outline: 2px solid var(--text-color);
+  outline-offset: 1px;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.link_mode {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.switcher {
+  display: flex;
+}
+
+.switcher button {
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: $font-small;
+  padding: 0.25rem 0.6rem;
+}
+
+.switcher button + button {
+  border-left: 0;
+}
+
+.switcher_active {
+  background: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--background-color) !important;
+}
+
+.link_preview {
+  color: var(--text-secondary);
+  font-size: $font-small;
+  font-weight: normal !important;
+  overflow-wrap: anywhere;
+}
+
+.link_warning {
+  color: var(--error-color, crimson);
+  font-size: $font-small;
+  font-weight: normal !important;
+}
+
+.helper,
+.preview_status,
+.preview_error {
+  color: var(--text-secondary);
+  font-size: $font-small;
+  margin: 0;
+}
+
+.dialog_actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.dialog_actions button,
+.details_toggle {
+  background: var(--background-color);
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  cursor: pointer;
+  font: inherit;
+  padding: 0.65rem 0.9rem;
+  transition: var(--body-transition);
+}
+
+.dialog_actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.color_field {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.color_field input {
+  border: 0;
+  cursor: pointer;
+  height: 2.5rem;
+  padding: 0;
+  width: 3.5rem;
+}
+
+// Expanded view: mobile-first, sidebar stacked on top and collapsed.
+.expanded_layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar {
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+}
+
+.sidebar_header {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.sidebar_body {
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: auto;
+  padding: 0 1rem 1rem;
+}
+
+.sidebar_footer {
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.preview_pane {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.iframe {
+  background: white;
+  border: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.preview_status,
+.preview_error {
+  padding: 0.5rem 1rem;
+}
+
+@include respond-to('tablet') {
+  .expanded_layout {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    border-bottom: 0;
+    border-right: 1px solid var(--border-color);
+    flex: 0 0 320px;
+  }
+
+  .sidebar_body {
+    display: flex;
+    flex: 1 1 auto;
+  }
+
+  .details_toggle {
+    display: none;
+  }
+}

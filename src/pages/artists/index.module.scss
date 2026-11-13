@@ -1,0 +1,537 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.header_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.heading {
+  margin: 0;
+}
+
+.subheading {
+  margin: 0 0 0.5rem;
+  opacity: 0.6;
+  font-size: var(--font-size-small, 0.85rem);
+}
+
+// Doubled class beats the Input atom's own `.container label input` rules.
+.search.search {
+  width: 100%;
+  max-width: 520px;
+  margin: 0.5rem auto;
+  position: relative;
+
+  // Input atom always renders a label; placeholder does the job here.
+  label p {
+    display: none;
+  }
+
+  label input {
+    width: 100%;
+    // Right padding clears the Filters/Clear controls.
+    padding: 0.6rem 7rem 0.6rem 0.9rem;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    text-align: center;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--border-color);
+    }
+  }
+}
+
+.search_actions {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: var(--font-size-small, 0.8rem);
+    white-space: nowrap;
+  }
+}
+
+.filters {
+  max-width: 720px;
+  margin: 0.5rem auto;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter_row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter_label {
+  width: 5.5rem;
+  flex-shrink: 0;
+  opacity: 0.6;
+  font-size: var(--font-size-small, 0.8rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip,
+.chip_active {
+  cursor: pointer;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--font-size-small, 0.8rem);
+}
+
+.chip_active {
+  border-color: var(--text-color);
+  background: var(--text-color);
+  color: var(--background-color);
+}
+
+.tag_input {
+  flex: 1;
+  min-width: 10rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-color);
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.identicon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.info {
+  min-width: 0;
+}
+
+.name {
+  font-weight: bold;
+  text-decoration: none;
+  color: inherit;
+  word-break: break-word;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.description {
+  margin: 0.25rem 0 0;
+  opacity: 0.7;
+  font-size: var(--font-size-small, 0.85rem);
+  line-height: 1.4;
+  // Always two lines tall so every card is the same height.
+  min-height: 2.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.slide {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: var(--gray-10, rgba(0, 0, 0, 0.04));
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  // Fixed so cards with and without nav arrows stay the same height.
+  height: 28px;
+  font-size: var(--font-size-small, 0.8rem);
+  opacity: 0.7;
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+  }
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.placeholder_strip {
+  position: relative;
+}
+
+.blank {
+  aspect-ratio: 1;
+  background: var(--gray-10, rgba(0, 0, 0, 0.04));
+}
+
+.placeholder_label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  font-size: var(--font-size-small, 0.85rem);
+}
+
+.hidden_tile {
+  aspect-ratio: 1;
+  background: var(--gray-10, rgba(0, 0, 0, 0.04));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+
+  // shadow_box buttons default to full width; keep this one content-sized.
+  button {
+    width: auto;
+    font-size: var(--font-size-small, 0.8rem);
+    text-align: center;
+  }
+}
+
+.hover_wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+// Animated original (GIF, video, 3D model), shown over the still frame while
+// hovered.
+.hover_live {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: transparent;
+  pointer-events: none;
+
+  model-viewer {
+    width: 100%;
+    height: 100%;
+    // Global media-type styles set min-height: 55vh on model-viewer.
+    min-height: 0;
+    margin: 0;
+    background: transparent;
+  }
+}
+
+// 3D model renders transparent, so hide the cover behind it.
+.model_live {
+  background: var(--background-color);
+}
+
+// Live audio scope drawn over the cover while hovered.
+.scope {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.scope_mute {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hover_badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+// Text post excerpt: title + first lines, clipped to the square with a fade.
+.text_tile {
+  aspect-ratio: 1;
+  overflow: hidden;
+  padding: 0.5rem;
+  background: var(--gray-10, rgba(0, 0, 0, 0.04));
+  color: var(--text-color);
+  font-size: 0.65rem;
+  line-height: 1.3;
+  word-break: break-word;
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+
+  strong {
+    display: block;
+    margin-bottom: 0.25em;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.75;
+  }
+}
+
+.loading {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty {
+  margin: 0;
+  opacity: 0.5;
+  font-size: var(--font-size-small, 0.85rem);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.pageInfo {
+  font-size: var(--font-size-small, 0.8rem);
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) {
+  .toggles {
+    gap: 2.5rem;
+  }
+}
+
+.hint {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-small, 0.85rem);
+  background: #fff;
+  color: #000;
+  transition: height 0.2s ease-out;
+
+  span {
+    position: relative;
+  }
+}
+
+.hint_progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #ccc;
+  transition: width 0.15s ease-out;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.badges {
+  display: inline-flex;
+  margin: 0 0 0 0.5rem;
+  vertical-align: middle;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.25rem;
+  font-size: var(--font-size-small, 0.8rem);
+  opacity: 0.8;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.link_icon {
+  width: 14px;
+  height: 14px;
+  fill: var(--text-color);
+  vertical-align: middle;
+}
+
+.configure {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.configure_options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.configure_field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.configure_warn {
+  font-size: var(--font-size-small, 0.75rem);
+  opacity: 0.5;
+  white-space: nowrap;
+}
+
+.configure_tags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: var(--font-size-small, 0.8rem);
+  opacity: 0.8;
+}
+
+.configure_error {
+  color: var(--error-color, #d33);
+  opacity: 1;
+}
+
+.configure_actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.configure_preview {
+  max-width: 600px;
+}
+
+.note {
+  margin: 0.5rem 0 0;
+  opacity: 0.5;
+  font-size: var(--font-size-small, 0.8rem);
+}
+
+@media (max-width: 768px) {
+  .configure {
+    grid-template-columns: 1fr;
+  }
+}
+
+.header_actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

@@ -6,7 +6,16 @@ import { useChannelList } from '@data/messaging/channels'
 import { msgIpfsToUrl } from '@data/messaging/ipfs'
 import { useUserStore } from '@context/userStore'
 import AccessBadge from '@components/channels/AccessBadge'
+import Tour from '@components/tour'
 import styles from './channels.module.scss'
+
+const TOUR = [
+  { target: 'create', text: 'Start a channel of your own.' },
+  {
+    target: 'channels',
+    text: 'Channels this user created. Click one to open it.',
+  },
+]
 
 export default function ProfileChannels() {
   const { address } = useOutletContext()
@@ -25,9 +34,10 @@ export default function ProfileChannels() {
   if (!userChannels || userChannels.length === 0) {
     return (
       <div className={styles.empty}>
+        <Tour name="channels" steps={TOUR} />
         <p>No channels yet.</p>
         {isOwnProfile && (
-          <Link to="/inbox/channels/create">
+          <Link to="/inbox/channels/create" data-tour="create">
             <Button shadow_box>Create a Channel</Button>
           </Link>
         )}
@@ -36,7 +46,8 @@ export default function ProfileChannels() {
   }
 
   return (
-    <div className={styles.grid}>
+    <div className={styles.grid} data-tour="channels">
+      <Tour name="channels" steps={TOUR} />
       {userChannels.map((ch) => (
         <Link
           key={ch.id}

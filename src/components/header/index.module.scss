@@ -72,6 +72,20 @@
   grid-area: Logo;
 }
 
+// Wraps the logo so the "?" can sit beside it without shifting it off-centre.
+.logo_area {
+  grid-area: Logo;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.logo_help {
+  position: absolute;
+  left: 100%;
+  margin-left: 6px;
+}
+
 .sync_label {
   font-size: $font-xsmall;
   word-break: break-all;

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import styles from '@style'
 import { Line } from '@atoms/line'
 import Button from '@atoms/button/Button'
+import { TourLink } from '@components/tour'
 export interface TabOptions {
   title: string
   to?: string
@@ -10,6 +11,8 @@ export interface TabOptions {
   restricted?: boolean
   /**only relevant when user is the owner*/
   private?: boolean
+  /**name of a tour (see components/tour) opened by a "?" on the tab */
+  tour?: string
   /**small count indicator after the title*/
   count?: number
 }
@@ -19,6 +22,8 @@ interface TabsProps {
   className?: string
   /**A method to filter out the tabs */
   filter?: (tabs: TabOptions) => TabOptions | null
+  /**`data-tour` target for the row of tabs (see components/tour) */
+  tourTarget?: string
 }
 
 /**
@@ -28,6 +33,7 @@ export const Tabs = ({
   tabs,
   className,
   filter /*onClickprops = {}*/,
+  tourTarget,
 }: TabsProps) => {
   const filtered_tabs = useMemo(
     () => (filter ? tabs.map(filter).filter((v) => v !== null) : tabs),
@@ -36,10 +42,10 @@ export const Tabs = ({
 
   return (
     <div className={`${styles.container} ${className ? className : ''}`}>
-      <div className={styles.tabs}>
+      <div className={styles.tabs} data-tour={tourTarget}>
         {filtered_tabs.map((tab, index) => {
           if (tab) {
-            return (
+            const button = (
               <Button
                 alt={`tab_${tab.title}`}
                 preventScrollReset
@@ -54,6 +60,19 @@ export const Tabs = ({
                   <span className={styles.count}>{tab.count}</span>
                 )}
               </Button>
+            )
+            if (!tab.tour) return button
+            return (
+              <span key={tab.title} className={styles.tab_wrap}>
+                {button}
+                <span className={styles.tab_tour}>
+                  <TourLink
+                    name={tab.tour}
+                    path={tab.to || '.'}
+                    title={`How ${tab.title} works`}
+                  />
+                </span>
+              </span>
             )
           }
           return null

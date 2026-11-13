@@ -52,6 +52,24 @@ function subscribeWp(onChange) {
 }
 const horizonSnapshot = () => `${wpHorizon}:${wpExtending}`
 
+// MOCK: hardcoded Teia official event to preview the `teia_event` logo marker.
+const MOCK_EVENTS = [
+  {
+    id: 'mock-teia-official',
+    title: 'Teia Community Call',
+    description: 'Mock Teia official event.',
+    startDate: '2026-10-13T18:00',
+    endDate: '2026-10-13T19:00',
+    location: 'Online',
+    links: [],
+    images: [],
+    tags: [],
+    source: 'mock',
+    readOnly: true,
+    teia_event: true,
+  },
+]
+
 // On-chain events, fetched once per SWR load and cached at module scope so the
 // progressive WP re-merges below don't drop them.
 let chainCache = []
@@ -117,6 +135,7 @@ export async function extendUpcomingHorizon() {
  */
 function combine() {
   const map = new Map()
+  for (const ev of MOCK_EVENTS) map.set(ev.id, ev)
   for (const ev of chainCache) map.set(ev.id, ev)
   for (const ev of wpCache) map.set(ev.id, ev)
   return [...map.values()].sort((a, b) => {

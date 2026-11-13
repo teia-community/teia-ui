@@ -13,6 +13,7 @@ import { EventIcon } from '@icons'
 import { MainMenu } from './main_menu/MainMenu'
 import { EventBanner } from '@components/banners'
 import RotatingLogo from '@atoms/logo'
+import { HelpLink } from '@components/tour'
 
 // TODO (mel): Remove this sample data and decide how/where to fetch it.
 import { sample_events } from './sample_events'
@@ -78,6 +79,8 @@ export const Header = () => {
   const isWide = useMedia('(min-width: 600px)')
 
   const [logoSeed, setLogoSeed] = useState()
+  // Clicking the logo more than twice reveals a "?" linking to the logo site.
+  const [logoClicks, setLogoClicks] = useState(0)
   /** the header is a bit larger just on home */
   const [onHome, setOnHome] = useState()
 
@@ -183,20 +186,32 @@ export const Header = () => {
               </DropDown>
             </DropdownButton>
           </div>
-          <Button
-            alt="teia logo"
-            to={!onHome ? '/' : null}
-            onTo={() => {
-              setCollapsed(true)
-              setOnHome(onHome)
-            }}
-            onClick={() => {
-              setLogoSeed(Math.random() * 100)
-            }}
-          >
-            {/* <p className={styles.logo}>TEIA</p> */}
-            <RotatingLogo seed={logoSeed} className={styles.logo} />
-          </Button>
+          <div className={styles.logo_area}>
+            <Button
+              alt="teia logo"
+              to={!onHome ? '/' : null}
+              onTo={() => {
+                setCollapsed(true)
+                setOnHome(onHome)
+                setLogoClicks((n) => n + 1)
+              }}
+              onClick={() => {
+                setLogoSeed(Math.random() * 100)
+                setLogoClicks((n) => n + 1)
+              }}
+            >
+              {/* <p className={styles.logo}>TEIA</p> */}
+              <RotatingLogo seed={logoSeed} className={styles.logo} />
+            </Button>
+            {logoClicks > 2 && (
+              <span className={styles.logo_help}>
+                <HelpLink
+                  href="https://logo.teia.art/"
+                  title="About the Teia logo"
+                />
+              </span>
+            )}
+          </div>
           <div className={styles.right}>
             {!collapsed && (
               <>
@@ -251,6 +266,7 @@ export const Header = () => {
             <Button
               alt={`${collapsed ? 'show' : 'hide'} menu`}
               onClick={toggleMenu}
+              data-tour="menu"
               secondary
             >
               <Menu isOpen={!collapsed} />

@@ -1,12 +1,13 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@atoms/button'
 import { eventColorHex } from '@data/calendar-chain/colors'
 import { localDayKey } from '@utils/datetime'
 import CalendarEventCard from './CalendarEventCard'
 import styles from '@style'
+import tourStyles from '@components/tour/index.module.scss'
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTHS = [
+export const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+export const MONTHS = [
   'January',
   'February',
   'March',
@@ -22,7 +23,7 @@ const MONTHS = [
 ]
 
 const pad = (n) => String(n).padStart(2, '0')
-const keyOf = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
+export const keyOf = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`
 
 // Visual Calendar update for testing purpose
 // Max event bars shown per day before collapsing the rest into a "+N" marker.
@@ -34,28 +35,15 @@ const MAX_LANES = 4
 // plus one "+N" overflow row.
 const GRID_LANE_ROWS = MAX_LANES + 1
 
-// Non-Teia colour code - to be adjusted
-const BAR_COLORS = [
-  'var(--gray-100)',
-  'var(--gray-80)',
-  'var(--gray-70)',
-  'var(--gray-60)',
-]
-
-/** Stable color for an event: a recurring series shares one color (keyed on its
- *  on-chain eventId); WordPress events fall back to their unique id. */
-function colorFor(ev) {
-  const seed = ev.eventId != null ? `chain-${ev.eventId}` : ev.id || ev.title
-  let h = 0
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
-  return BAR_COLORS[h % BAR_COLORS.length]
-}
+// Bar shade by duration: light for single-day, dark for multi-day.
+const SINGLE_DAY_COLOR = 'var(--gray-60)'
+const MULTI_DAY_COLOR = 'var(--gray-100)'
 
 /**
  * Bucket events by day key (YYYY-MM-DD). Multi-day events (endDate after
  * startDate) appear on every day they span, capped at 31 days.
  */
-function eventsByDay(events) {
+export function eventsByDay(events) {
   const map = {}
   for (const ev of events) {
     if (!ev.startDate) continue
@@ -79,6 +67,12 @@ function eventsByDay(events) {
 
 const DAY_MS = 86400000
 
+// Hover devices expand bars on hover (CSS); touch expands on a first tap.
+const HAS_HOVER =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(hover: hover)')
+    : { matches: false }
+
 function layoutBars(events, year, month, startOffset, daysInMonth) {
   const firstMs = new Date(year, month, 1).getTime()
   const lastMs = new Date(year, month, daysInMonth).getTime()
@@ -94,20 +88,27 @@ function layoutBars(events, year, month, startOffset, daysInMonth) {
     if (Number.isNaN(sMs)) continue
     if (Number.isNaN(eMs) || eMs < sMs) eMs = sMs
     if (eMs < firstMs || sMs > lastMs) continue // not visible this month
-    // Clamp the span to the month, then map to grid cell indices.
-    const startDay = Math.round((Math.max(sMs, firstMs) - firstMs) / DAY_MS) + 1
-    const endDay = Math.round((Math.min(eMs, lastMs) - firstMs) / DAY_MS) + 1
-    spans.push({
-      ev,
-      startCell: startOffset + startDay - 1,
-      endCell: startOffset + endDay - 1,
-      lane: 0,
-      color: colorFor(ev),
-    })
+    const cellOf = (ms) => startOffset + Math.round((ms - firstMs) / DAY_MS)
+    const push = (ms, cap) =>
+      spans.push({
+        ev,
+        startCell: cellOf(ms),
+        endCell: cellOf(ms),
+        lane: 0,
+        color: cap ? MULTI_DAY_COLOR : SINGLE_DAY_COLOR,
+        cap,
+      })
+    // Multi-day events only mark their start and end days, leaving the days
+    // between free for other events (the day popup still lists them).
+    if (sMs === eMs) push(sMs, null)
+    else {
+      if (sMs >= firstMs) push(sMs, 'start')
+      if (eMs <= lastMs) push(eMs, 'end')
+    }
   }
 
   // Teia events are packed first
-  const isTeia = (sp) => sp.ev.source === 'chain'
+  const isTeia = (sp) => sp.ev.source === 'chain' || !!sp.ev.teia_event
   spans.sort(
     (a, b) =>
       Number(isTeia(b)) - Number(isTeia(a)) ||
@@ -174,6 +175,28 @@ export default function MonthGrid({
   })
   const [selected, setSelected] = useState(null)
   const dialogRef = useRef(null)
+  // Event a bar click targets: the day popup scrolls to and highlights it.
+  const [focusId, setFocusId] = useState(null)
+
+  useEffect(() => {
+    if (!selected || !focusId) return
+    dialogRef.current
+      ?.querySelector(`[data-event-id="${CSS.escape(focusId)}"]`)
+      ?.scrollIntoView({ block: 'start' })
+  }, [selected, focusId])
+
+  // Bar expanded by a click to reveal its "?" trigger, keyed `${ev.id}-${cap}`.
+  const [openBar, setOpenBar] = useState(null)
+
+  // Any press outside the expanded bar collapses it.
+  useEffect(() => {
+    if (!openBar) return
+    const onDown = (e) => {
+      if (!e.target.closest?.(`.${styles.bar_open}`)) setOpenBar(null)
+    }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [openBar])
 
   const byDay = useMemo(() => eventsByDay(events), [events])
 
@@ -221,14 +244,18 @@ export default function MonthGrid({
     // cells is derived from the same inputs, so this list keys the memo.
   }, [events, year, month, startOffset, daysInMonth, cells.length])
 
-  const step = (delta) =>
+  const step = (delta) => {
+    setOpenBar(null)
     setView(({ year, month }) => {
       const d = new Date(year, month + delta, 1)
       return { year: d.getFullYear(), month: d.getMonth() }
     })
+  }
 
-  const openDay = (key) => {
+  const openDay = (key, eventId = null) => {
+    setOpenBar(null)
     setSelected(key)
+    setFocusId(eventId)
     dialogRef.current?.showModal()
   }
   const closeDialog = () => dialogRef.current?.close()
@@ -240,7 +267,9 @@ export default function MonthGrid({
 
   // Teia events first
   const selectedEvents = [...((selected && byDay[selected]) || [])].sort(
-    (a, b) => Number(b.source === 'chain') - Number(a.source === 'chain')
+    (a, b) =>
+      Number(b.source === 'chain' || !!b.teia_event) -
+      Number(a.source === 'chain' || !!a.teia_event)
   )
   const selectedLabel = selected
     ? new Date(`${selected}T00:00:00`).toLocaleDateString(undefined, {
@@ -306,6 +335,8 @@ export default function MonthGrid({
                     className={classes}
                     style={gridPos}
                     disabled={!count}
+                    // Tour target; the tour spotlights the first match.
+                    data-tour={count ? 'day' : undefined}
                     onClick={() => openDay(key)}
                     aria-label={`${MONTHS[month]} ${day}, ${count} event${
                       count === 1 ? '' : 's'
@@ -320,25 +351,66 @@ export default function MonthGrid({
                 const startCol = Math.max(sp.startCell, wStart) - wStart + 1
                 const endCol = Math.min(sp.endCell, wStart + 6) - wStart + 1
                 const accent = eventColorHex(sp.ev.color)
+                // Bars are single-cell, so the start cell is the bar's day.
+                const dayKey = keyOf(
+                  year,
+                  month,
+                  sp.startCell - startOffset + 1
+                )
+                const barKey = `${sp.ev.id}-${sp.cap}`
+                const isOpen = openBar === barKey
                 return (
+                  // Hover (or a first tap on touch) expands the bar to show its
+                  // "?", which opens the day popup at this event; clicking the
+                  // bar itself opens the day popup as usual. Keyboard users
+                  // reach the same events via the day buttons.
+                  // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                   <span
-                    key={sp.ev.id}
+                    key={barKey}
+                    data-tour="bar"
+                    onClick={() =>
+                      isOpen || HAS_HOVER.matches
+                        ? openDay(dayKey)
+                        : setOpenBar(barKey)
+                    }
                     className={[
                       styles.bar,
                       sp.ev.hidden ? styles.bar_hidden : '',
+                      sp.cap === 'start' ? styles.bar_start : '',
+                      sp.cap === 'end' ? styles.bar_end : '',
+                      isOpen ? styles.bar_open : '',
                     ].join(' ')}
-                    aria-hidden="true"
+                    aria-hidden={!isOpen}
                     style={{
                       gridColumn: `${startCol} / ${endCol + 1}`,
                       gridRow: sp.lane + 2,
-                      background: sp.color,
+                      '--bar-bg': sp.color,
                       ...(accent ? { borderLeft: `4px solid ${accent}` } : {}),
                     }}
                   >
                     <span className={styles.bar_title}>
+                      {sp.ev.teia_event && (
+                        <img
+                          src="/teia-frame.svg"
+                          alt=""
+                          className={styles.teia_mark}
+                        />
+                      )}
                       {sp.ev.title}
                       {sp.ev.hidden ? ' · hidden' : ''}
                     </span>
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      className={`${tourStyles.help} ${tourStyles.blink} ${styles.bar_help}`}
+                      aria-label={`Show ${sp.ev.title}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        openDay(dayKey, sp.ev.id)
+                      }}
+                    >
+                      ?
+                    </button>
                   </span>
                 )
               })}
@@ -388,7 +460,10 @@ export default function MonthGrid({
         ref={dialogRef}
         className={styles.dialog}
         onClick={onDialogClick}
-        onClose={() => setSelected(null)}
+        onClose={() => {
+          setSelected(null)
+          setFocusId(null)
+        }}
         aria-label={`Events on ${selectedLabel}`}
       >
         <div className={styles.dialog_top}>
@@ -401,25 +476,30 @@ export default function MonthGrid({
           <p className={styles.empty}>No events this day.</p>
         ) : (
           selectedEvents.map((event) => (
-            <CalendarEventCard
+            <div
               key={event.id}
-              event={event}
-              roles={roles}
-              truncateDescription
-              linkToEvent
-              onEdit={(ev) => {
-                closeDialog()
-                onEdit?.(ev)
-              }}
-              onHide={(ev) => {
-                closeDialog()
-                onHide?.(ev)
-              }}
-              onProposeEdit={(ev) => {
-                closeDialog()
-                onProposeEdit?.(ev)
-              }}
-            />
+              data-event-id={event.id}
+              className={event.id === focusId ? styles.dialog_focus : ''}
+            >
+              <CalendarEventCard
+                event={event}
+                roles={roles}
+                truncateDescription
+                linkToEvent
+                onEdit={(ev) => {
+                  closeDialog()
+                  onEdit?.(ev)
+                }}
+                onHide={(ev) => {
+                  closeDialog()
+                  onHide?.(ev)
+                }}
+                onProposeEdit={(ev) => {
+                  closeDialog()
+                  onProposeEdit?.(ev)
+                }}
+              />
+            </div>
           ))
         )}
       </dialog>

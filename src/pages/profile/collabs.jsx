@@ -12,7 +12,8 @@ import Checkbox from '@atoms/input/Checkbox'
 import { Select } from '@atoms/select'
 import { Identicon } from '@atoms/identicons'
 import { walletPreview } from '@utils/string'
-import Filters from './filters'
+import Filters, { FILTERS_TEXT, VIEW_MODE_STEP } from './filters'
+import Tour from '@components/tour'
 import styles from '@style'
 import filterStyles from '@components/activity/filters.module.scss'
 import layoutStyles from './collabs.module.scss'
@@ -38,6 +39,23 @@ const flattenCollabTokens = (data) =>
     .flat()
 
 // Remount the feed when the profile changes.
+const TOUR = [
+  {
+    target: 'filters',
+    text: `OBJKTs minted through this user's collab contracts. ${FILTERS_TEXT}`,
+    align: 'right',
+  },
+  {
+    target: 'collab-filter',
+    text: 'Show OBJKTs from one or more of their collabs.',
+  },
+  {
+    target: 'unverified',
+    text: 'Include OBJKTs not yet signed by every collaborator.',
+  },
+  VIEW_MODE_STEP,
+]
+
 export default function Collabs() {
   const context = useOutletContext()
   return <CollabsFeed key={context.address} {...context} />
@@ -98,6 +116,7 @@ function CollabsFeed({ showRestricted, address, overrideProtections }) {
 
   return (
     <>
+      <Tour name="collabs" steps={TOUR} />
       <Filters
         filter={filter}
         onChange={setFilter}
@@ -111,7 +130,7 @@ function CollabsFeed({ showRestricted, address, overrideProtections }) {
 
       <div className={layoutStyles.controls}>
         {collabOptions.length > 1 && (
-          <div className={layoutStyles.collabControl}>
+          <div className={layoutStyles.collabControl} data-tour="collab-filter">
             {collabOptions.length > COLLAB_DROPDOWN_THRESHOLD ? (
               <Select
                 label="Filter by collab"
@@ -192,7 +211,7 @@ function CollabsFeed({ showRestricted, address, overrideProtections }) {
       </div>
 
       {hasUnverifiedTokens ? (
-        <div className={styles.tools}>
+        <div className={styles.tools} data-tour="unverified">
           <Checkbox
             small
             checked={showUnverified}

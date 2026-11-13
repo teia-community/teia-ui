@@ -100,6 +100,16 @@ details[open] > .subscribe_toggle::after {
   }
 }
 
+// Day view is a mobile-only opt-in. Its label names the target view, so it
+// drops the on/off dot.
+.day_toggle {
+  display: none;
+
+  &::before {
+    content: none;
+  }
+}
+
 .subscribe_panel {
   position: absolute;
   right: 0;
@@ -137,6 +147,34 @@ details[open] > .subscribe_toggle::after {
   .header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .header_actions {
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  // Subscribe may wrap anywhere in the row, so open its panel from the
+  // row's left edge to keep it on screen.
+  .subscribe {
+    position: static;
+  }
+
+  .subscribe_panel {
+    left: 0;
+    right: auto;
+  }
+
+  .day_toggle {
+    display: inline-block;
+  }
+
+  // Sized to its label. Overrides the Button's `fit` (display: contents),
+  // whose full-width inner box would take a whole row.
+  .header .header_actions > .propose {
+    display: flex;
   }
 }
 

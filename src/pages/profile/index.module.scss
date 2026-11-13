@@ -50,6 +50,15 @@
 
   .info {
     grid-area: Details;
+    .identity {
+      width: fit-content;
+
+      &:focus-visible {
+        outline: 2px solid var(--text-color);
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
+    }
     .user {
       font-size: 24px;
       @include respond-to('desktop') {
@@ -74,6 +83,7 @@
   }
   .socials {
     display: flex;
+    width: fit-content;
     margin-top: 8px;
   }
   @include respond-to('desktop') {

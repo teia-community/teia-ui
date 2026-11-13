@@ -28,11 +28,17 @@
   .content {
     line-height: 1.9em;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, max-content));
+    // Phone: two equal columns; tablet+: wrapping auto-fit columns
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: center;
     align-items: start;
-    column-gap: 3.5rem;
+    column-gap: 1.5rem;
     row-gap: 2rem;
+
+    @include respond-to('tablet') {
+      grid-template-columns: repeat(auto-fit, minmax(230px, max-content));
+      column-gap: 3.5rem;
+    }
     pointer-events: all;
 
     width: 100%;

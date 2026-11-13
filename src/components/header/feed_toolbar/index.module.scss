@@ -4,18 +4,234 @@
 .toolbar {
   max-width: var(--max-width-internal);
   width: 100%;
-  height: 56px;
+  min-height: 56px;
   display: grid;
-  grid-template-rows: 1fr;
+  grid-auto-rows: minmax(56px, auto);
   gap: 0px 10px;
-  grid-template-areas: 'Feeds View-Mode Sort Filter';
+  align-items: center;
 
   @include respond-to('phone') {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'Sort Sort'
+      'Search Search'
+      'Toggles Toggles'
+      'View-Mode View-Mode';
   }
 
   @include respond-to('desktop') {
-    grid-template-columns: 2fr repeat(3, 1fr);
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas:
+      '. Sort .'
+      '. Search .'
+      'Toggles Toggles Toggles'
+      'View-Mode View-Mode View-Mode';
+  }
+}
+
+.sort_area {
+  grid-area: Sort;
+  display: flex;
+  flex-wrap: wrap;
+  // Below desktop the tabs wrap to two lines; spread them evenly.
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.5em 1.5em;
+
+  @include respond-to('desktop') {
+    justify-content: space-between;
+  }
+}
+
+.sort_selected {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.dice_label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.dice_scene {
+  --dice-size: 18px;
+  --dice-half: 9px;
+  width: var(--dice-size);
+  height: var(--dice-size);
+  perspective: 120px;
+  display: inline-block;
+}
+
+.dice_cube {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.dice_face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  background: var(--background-color);
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dice_cube {
+    transition: none;
+  }
+}
+
+.icon_label {
+  // One size for every tab icon (coins, orb, friends).
+  --tab-icon-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.tab_icon {
+  width: var(--tab-icon-size);
+  height: var(--tab-icon-size);
+  overflow: visible;
+}
+
+// Square icon slot (same size as the dice/orb); coins are clipped to it.
+.coins_box {
+  position: relative;
+  display: inline-block;
+  width: var(--tab-icon-size);
+  height: var(--tab-icon-size);
+  overflow: hidden;
+}
+
+.coin {
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  opacity: 0;
+  pointer-events: none;
+  animation: coin-drop 1400ms ease-in infinite;
+}
+
+.coin_face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: coin-spin 700ms linear infinite;
+}
+
+@keyframes coin-drop {
+  0% {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(var(--tab-icon-size) + 2px));
+    opacity: 0;
+  }
+}
+
+// Flip around the vertical axis so the coin reads as spinning.
+@keyframes coin-spin {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coin {
+    display: none;
+  }
+}
+
+.search_area {
+  grid-area: Search;
+}
+
+// Zero width + full min-width: fills the search column without widening it.
+.filters_area {
+  width: 0;
+  min-width: 100%;
+}
+
+// Mirrors the artist directory's hazard toggles.
+.toggles_area {
+  grid-area: Toggles;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+
+  @include respond-to('desktop') {
+    gap: 2.5rem;
+  }
+}
+
+// Doubled class beats the Input atom's own `.container label input` rules.
+// Mirrors the artist directory search bar.
+.search.search {
+  // Fills its grid column, which is sized by the sort tabs row above.
+  width: 100%;
+  margin: 0.5rem auto;
+  position: relative;
+
+  // Input atom always renders a label; placeholder does the job here.
+  label p {
+    display: none;
+  }
+
+  label input {
+    width: 100%;
+    // Right padding clears the Clear/Filters/Search controls.
+    padding: 0.6rem 12rem 0.6rem 0.9rem;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    text-align: center;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--border-color);
+    }
+  }
+}
+
+.search_actions {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: var(--font-size-small, 0.8rem);
+    white-space: nowrap;
   }
 }
 
@@ -32,12 +248,6 @@
   @include respond-to('phone') {
     justify-content: center;
   }
-}
-.feeds_area {
-  align-items: center;
-  display: flex;
-  justify-content: flex-start;
-  grid-area: Feeds;
 }
 // .feeds_dropdown {
 // }
@@ -69,15 +279,13 @@
   margin-bottom: 15px;
 }
 
-.feeds_dropdown {
-  width: 180px;
-}
 .view_mode_area {
   grid-area: View-Mode;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1em;
+  // No vertical padding: the grid row height already spaces it like the rows above.
+  padding: 0 1em;
   gap: 1.5em;
 }
 
