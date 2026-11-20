@@ -1,11 +1,12 @@
-import { memo, useMemo, useRef, useState } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styles from '@style'
 import { Document, Page, pdfjs } from 'react-pdf'
 import pdfWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 
-import { ImageComponent } from '../image'
+import type { PDFPageProxy } from 'pdfjs-dist'
+import { ImageComponent } from '@components/media-types/image'
 import { Button } from '@atoms/button'
 import { MediaTypeProps } from '@types'
 
@@ -17,6 +18,37 @@ const options = {
   standardFontDataUrl: 'standard_fonts/',
   // Never let pdf.js eval() code derived from PDF contents
   isEvalSupported: false,
+}
+
+function FittedPage({
+  pageNumber,
+  bounds,
+  className,
+  onRenderSuccess,
+}: {
+  pageNumber: number
+  bounds: { width: number; height: number }
+  className: string
+  onRenderSuccess?: () => void
+}) {
+  const [aspectRatio, setAspectRatio] = useState<number>()
+
+  return (
+    <Page
+      className={className}
+      pageNumber={pageNumber}
+      width={
+        aspectRatio
+          ? Math.min(bounds.width, bounds.height * aspectRatio)
+          : bounds.width
+      }
+      onLoadSuccess={(page: PDFPageProxy) => {
+        const viewport = page.getViewport({ scale: 1 })
+        setAspectRatio(viewport.width / viewport.height)
+      }}
+      onRenderSuccess={onRenderSuccess}
+    />
+  )
 }
 
 export const PdfComponent = memo(function ({
@@ -32,11 +64,22 @@ export const PdfComponent = memo(function ({
   const [loading, setLoading] = useState(displayView)
   const [showDocument, setShowDocument] = useState(true)
 
-  const [height, setHeight] = useState<number>()
+  const [bounds, setBounds] = useState<{ width: number; height: number }>()
 
   // const [loading, setLoading] = useState(displayView)
 
   const container = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const element = container.current
+    if (!element) return
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setBounds({ width, height })
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [displayView, showDocument])
 
   const file = useMemo(
     () => (previewUri ? previewUri : artifactUri),
@@ -70,13 +113,12 @@ export const PdfComponent = memo(function ({
   const onRender = () => {
     if (loading) {
       setLoading(false)
-      setHeight(container.current?.clientHeight)
     }
     setRenderedPageNumber(pageNumber)
   }
 
-  function onPassword(callback, reason) {
-    function callbackProxy(password) {
+  function onPassword(callback: (password: string) => void, reason: number) {
+    function callbackProxy(password: string | null) {
       // Cancel button handler
       if (password === null) {
         // password will be null if user clicks on cancel
@@ -107,7 +149,6 @@ export const PdfComponent = memo(function ({
         key={`img-${nft.token_id}`}
         artifactUri={displayUri}
         displayUri={displayUri}
-        previewUri={previewUri}
         displayView={false}
         nft={nft}
       />
@@ -129,7 +170,7 @@ export const PdfComponent = memo(function ({
   if (!displayView) return cover
 
   return (
-    <div ref={container} className={styles.container}>
+    <div className={styles.container}>
       {!showDocument ? (
         <Button
           onClick={() => {
@@ -139,30 +180,36 @@ export const PdfComponent = memo(function ({
           Reload PDF with password
         </Button>
       ) : (
-        <Document
-          file={file}
-          loading={cover}
-          onPassword={onPassword}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={onDocumentLoadError}
-          options={options}
-        >
-          {renderedPageNumber && renderedPageNumber !== pageNumber && (
-            <Page
-              key={`${renderedPageNumber}`}
-              className={styles.previous_page}
-              pageNumber={renderedPageNumber}
-              height={height}
-            />
-          )}
-          <Page
-            key={pageNumber}
-            className={styles.page}
-            pageNumber={pageNumber}
-            onRenderSuccess={onRender}
-            height={height}
-          />
-        </Document>
+        <div className={styles.stage} ref={container}>
+          <Document
+            file={file}
+            loading={cover}
+            onPassword={onPassword}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={onDocumentLoadError}
+            options={options}
+          >
+            {bounds &&
+              renderedPageNumber &&
+              renderedPageNumber !== pageNumber && (
+                <FittedPage
+                  key={`${renderedPageNumber}`}
+                  className={styles.previous_page}
+                  pageNumber={renderedPageNumber}
+                  bounds={bounds}
+                />
+              )}
+            {bounds && bounds.width > 0 && (
+              <FittedPage
+                key={pageNumber}
+                className={styles.page}
+                pageNumber={pageNumber}
+                onRenderSuccess={onRender}
+                bounds={bounds}
+              />
+            )}
+          </Document>
+        </div>
       )}
       {!loading && showDocument && (
         <div className={styles.pdfNav}>
