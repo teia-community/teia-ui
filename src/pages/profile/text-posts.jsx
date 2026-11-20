@@ -4,7 +4,10 @@ import { Loading } from '@atoms/loading'
 import { useUserStore } from '@context/userStore'
 import { useTextPostsByArtist } from '@data/swr'
 import { TextPostCard } from '@components/text/TextPostCard'
+import Tour from '@components/tour'
 import styles from './text-posts.module.scss'
+
+const TOUR = [{ target: 'posts', text: 'Text posts this user has written.' }]
 
 export default function TextPosts() {
   const { address } = useOutletContext()
@@ -44,7 +47,8 @@ export default function TextPosts() {
   }
 
   return (
-    <div className={styles.posts_list}>
+    <div className={styles.posts_list} data-tour="posts">
+      <Tour name="text" steps={TOUR} />
       {posts.map((nft) => (
         <TextPostCard key={nft.token_id} nft={nft} showBurn={isOwnProfile} />
       ))}

@@ -11,6 +11,7 @@ import {
 import Text from '@pages/text'
 import Calendar from '@pages/calendar'
 import CalendarEvent from '@pages/calendar/event'
+import Events from '@pages/events'
 import Community from '@pages/text/Community'
 import OfficialPosts from '@pages/text/OfficialPosts'
 import YourPosts from '@pages/text/YourPosts'
@@ -85,6 +86,8 @@ import {
 import Display from '@pages/profile'
 import BakerPage from '@pages/baker'
 import BakersPage from '@pages/bakers'
+import ArtistsPage from '@pages/artists'
+import ConfigureArtistCard from '@pages/artists/configure'
 import Collections from '@pages/profile/collections'
 import Creations from '@pages/profile/creations'
 import Collabs from '@pages/profile/collabs'
@@ -238,6 +241,7 @@ const router = createBrowserRouter(
         </Route>
         <Route path="calendar" element={<Calendar />} />
         <Route path="calendar/event/:id" element={<CalendarEvent />} />
+        <Route path="events" element={<Events />} />
         <Route path="text/*" element={<Text />}>
           <Route index element={<Community />} />
           <Route path="bulletin" element={<OfficialPosts />} />
@@ -256,6 +260,11 @@ const router = createBrowserRouter(
           <Route path="baker" element={<Baker />} />
         </Route>
         <Route path="bakers" element={<BakersPage />} />
+        <Route path="artist-directory" element={<ArtistsPage />} />
+        <Route
+          path="artist-directory/configure/:name"
+          element={<ConfigureArtistCard />}
+        />
         <Route path="baker/:address" element={<BakerPage />} />
         <Route path="subjkt/*" element={<Subjkt />} />
         <Route path="settings/*" element={<Settings />} />

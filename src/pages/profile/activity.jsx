@@ -6,7 +6,16 @@ import useActivityFilter from '@hooks/use-activity-filter'
 import useAutoLoadMore from '@hooks/use-auto-load-more'
 import { resolveActivityEvent, MARKET_FILTERS } from '@utils/activity'
 import { ActivityList, ActivityFilters } from '@components/activity'
+import Tour from '@components/tour'
 import styles from './activity.module.scss'
+
+const TOUR = [
+  {
+    target: 'activity-filters',
+    text: 'Filter by type of activity and by market.',
+  },
+  { target: 'activity-list', text: 'Their activity on Teia.' },
+]
 
 export default function Activity() {
   const { address } = useOutletContext()
@@ -63,24 +72,29 @@ export default function Activity() {
 
   return (
     <div className={styles.activity}>
-      <ActivityFilters active={type.active} onToggle={type.toggle} />
-      <ActivityFilters
-        active={market.active}
-        onToggle={market.toggle}
-        filters={MARKET_FILTERS}
-      />
+      <Tour name="activity" steps={TOUR} />
+      <div data-tour="activity-filters">
+        <ActivityFilters active={type.active} onToggle={type.toggle} />
+        <ActivityFilters
+          active={market.active}
+          onToggle={market.toggle}
+          filters={MARKET_FILTERS}
+        />
+      </div>
 
-      <ActivityList
-        rows={rows}
-        onLoadMore={loadMore}
-        isReachingEnd={isReachingEnd}
-        isLoadingMore={isLoadingMore}
-        emptyMessage={`No activity${
-          type.active.length > 0 || market.active.length > 0
-            ? ' for this filter'
-            : ''
-        } yet.`}
-      />
+      <div data-tour="activity-list">
+        <ActivityList
+          rows={rows}
+          onLoadMore={loadMore}
+          isReachingEnd={isReachingEnd}
+          isLoadingMore={isLoadingMore}
+          emptyMessage={`No activity${
+            type.active.length > 0 || market.active.length > 0
+              ? ' for this filter'
+              : ''
+          } yet.`}
+        />
+      </div>
     </div>
   )
 }

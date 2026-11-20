@@ -1,0 +1,209 @@
+@import '@styles/variables.scss';
+@import '@styles/layout.scss';
+
+.container {
+  width: 100%;
+  padding: 1rem;
+}
+
+.header {
+  padding-bottom: 1.5rem;
+}
+
+.header_top {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header_actions {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.headline {
+  margin: 0;
+}
+
+.intro {
+  color: var(--gray-50);
+  font-size: $font-small;
+  padding-top: 0.5rem;
+}
+
+.event_list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+
+  @include respond-to('desktop') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.error {
+  color: var(--error-color, crimson);
+}
+
+.event_card {
+  border: 1px solid var(--gray-20);
+  padding: 1rem;
+}
+
+.card_content {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.card_copy {
+  flex: 1;
+}
+
+.card_copy h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.card_copy p {
+  font-size: $font-small;
+  line-height: 1.4;
+}
+
+.subtitle {
+  color: var(--gray-50);
+  padding-top: 0.35rem;
+}
+
+.card_copy a {
+  display: inline-block;
+  font-size: $font-small;
+  padding-top: 0.75rem;
+  text-decoration: underline;
+}
+
+.preview {
+  align-self: flex-start;
+  border: 1px solid var(--gray-20);
+  cursor: pointer;
+  flex: 0 0 145px;
+  padding: 0;
+  position: relative;
+  text-align: left;
+}
+
+.preview img {
+  aspect-ratio: 16 / 10;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.preview span {
+  background: var(--background-color);
+  bottom: 0;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.4rem;
+  position: absolute;
+  right: 0;
+}
+
+.dialog {
+  background: transparent;
+  border: 0;
+  display: flex;
+  inset: 0;
+  height: 100%;
+  max-height: none;
+  max-width: none;
+  margin: 0;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: fixed;
+  width: 100%;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 70%);
+}
+
+.dialog_panel {
+  background: var(--background-color);
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+  margin: auto;
+  max-width: none;
+  overflow: hidden;
+  width: calc(100vw - 40px);
+}
+
+.dialog_header {
+  align-items: center;
+  background: var(--background-color);
+  display: flex;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+}
+
+.dialog_header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.dialog_summary {
+  flex: 1;
+  max-height: calc(100vh - 40px);
+  min-width: 0;
+  overflow: auto;
+  padding-right: 1rem;
+}
+
+.dialog_summary p,
+.dialog_summary span {
+  display: block;
+  font-size: $font-small;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.dialog_summary p {
+  color: inherit;
+  opacity: 0.75;
+  padding-top: 0.15rem;
+}
+
+.dialog_summary span {
+  padding-top: 0.15rem;
+}
+
+.dialog_header button {
+  cursor: pointer;
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+}
+
+.iframe {
+  background: white;
+  border: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+@include respond-to('phone') {
+  .card_content {
+    flex-direction: column-reverse;
+  }
+
+  .preview {
+    flex-basis: auto;
+    width: 100%;
+  }
+}

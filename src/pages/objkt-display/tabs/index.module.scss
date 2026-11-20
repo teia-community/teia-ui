@@ -180,17 +180,6 @@
   }
 }
 
-.history__royalties {
-  font-size: $font-small-mobile;
-  @include respond-to('desktop') {
-    font-size: $font-small;
-    margin-top: 20px;
-    padding-top: 10px;
-    width: 33.333333333%;
-    border-top: 1px solid var(--border-color);
-  }
-}
-
 .history__secondary {
   color: var(--secondary-color);
   margin-right: 1em;

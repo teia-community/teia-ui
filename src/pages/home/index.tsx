@@ -1,17 +1,13 @@
 // TODO (mel & xat) - best way to handle filter composition?
-import { Input } from '@atoms/input'
 import { Page } from '@atoms/layout'
-import { useState, FunctionComponent } from 'react'
-import {
-  createSearchParams,
-  useNavigate,
-  useOutlet,
-  useSearchParams,
-} from 'react-router-dom'
+import { FunctionComponent, useState } from 'react'
+import { useOutlet } from 'react-router-dom'
 import type { FeedType } from '@constants'
 import { useLocalSettings } from '@context/localSettingsStore'
+import { useModalStore } from '@context/modalStore'
+import { Hint } from '@components/tour'
 import * as FEEDS from './feeds'
-import SubjktsSearchResults from './subjkts-search-results'
+import Search from './search'
 
 const DefaultFeedComponent = FEEDS.RecentSalesFeed
 
@@ -41,54 +37,28 @@ export const feedComponentMap: FeedComponentMap = {
   Friends: FEEDS.FriendsFeed,
 }
 
+/** Points at the menu on every visit; hidden while the menu is open or once closed. */
+function ExploreHint() {
+  const [closed, setClosed] = useState(false)
+  const menuOpen = useModalStore((st) => !st.collapsed)
+
+  if (closed || menuOpen) return null
+  return (
+    <Hint target="menu" title="Explore More" onClose={() => setClosed(true)} />
+  )
+}
+
 export function Home({ isSearch = false }) {
   const outlet = useOutlet()
-  const [searchParams] = useSearchParams()
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '')
-  const navigate = useNavigate()
   const [startFeed] = useLocalSettings((st) => [st.startFeed])
   const FeedComponent = feedComponentMap[startFeed] || DefaultFeedComponent
 
   return (
     <Page feed={!isSearch} title="Home">
       <>
-        {isSearch && (
-          <Input
-            type="text"
-            name="Enter a search term and press enter:"
-            onChange={(value) => {
-              setSearchTerm(value as string)
-            }}
-            placeholder="Search ↵"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                navigate(
-                  {
-                    pathname: '/search',
-                    search: createSearchParams({
-                      term: searchTerm,
-                    }).toString(),
-                  },
-                  { replace: true }
-                )
-              }
-            }}
-            value={searchTerm}
-          />
-        )}
+        {!isSearch && !outlet && <ExploreHint />}
+        {isSearch ? <Search /> : outlet || <FeedComponent />}
       </>
-      <>
-        {isSearch && searchParams.get('term') ? <SubjktsSearchResults /> : null}
-      </>
-      {isSearch ? (
-        searchParams.get('term') ? (
-          <FEEDS.SearchFeed />
-        ) : (
-          <></>
-        )
-      ) : (
-        outlet || <FeedComponent />
-      )}
     </Page>
   )
 }

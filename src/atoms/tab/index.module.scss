@@ -46,6 +46,43 @@
   }
 }
 
+// Tab with a tour: "?" shows on hover, or on the active tab without hover
+// (touch screens).
+.tab_wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+// In the flow, so it pushes the following tabs aside instead of covering them.
+.tab_tour {
+  display: flex;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-width 0.2s ease-in-out, opacity 0.2s ease-in-out,
+    visibility 0.2s ease-in-out;
+
+  a {
+    padding: 0;
+    font-size: var(--font-size-small, 0.8rem);
+  }
+
+  .tab_wrap:hover & {
+    max-width: 2em;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (hover: none) {
+    .tab_wrap:has(.active) & {
+      max-width: 2em;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
 .line {
   align-self: flex-start;
 }

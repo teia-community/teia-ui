@@ -9,6 +9,10 @@ import { Button } from '@atoms/button'
 import { TeiaUserLink, IpfsLink, DefaultLink } from '@atoms/link'
 import { RenderMediaType } from '@components/media-types'
 import {
+  ResponsiveMasonry,
+  useMasonryColumns,
+} from '@components/responsive-masonry'
+import {
   useStorage,
   usePolls,
   useDaoTokenBalance,
@@ -185,6 +189,7 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
 
   // Get the vote poll method from the polls store
   const votePoll = usePollsStore((st) => st.votePoll)
+  const masonryColumns = useMasonryColumns()
 
   // Calculate the total and the maximum number of votes
   const votes = Object.values(poll.votes_count).map((value) => parseInt(value))
@@ -198,59 +203,91 @@ function PollVotesSummary({ poll, userVotedOption, canVote, callback }) {
     ? Math.pow(DAO_TOKEN_DECIMALS, 0.5)
     : 1
 
+  // Show artwork polls in the same masonry layout as the home feed
+  const isObjktPoll = Object.keys(poll.votes_count).every(
+    (option) => bytesToString(poll.options[option]).indexOf('OBJKT#') === 0
+  )
+  const OptionTag = isObjktPoll ? 'div' : 'li'
+  const optionColumns = Math.min(
+    masonryColumns,
+    Object.keys(poll.votes_count).length
+  )
+
+  const optionItems = Object.entries(poll.votes_count).map(
+    ([option, optionVotes]) => {
+      const votesLabel = showPercents
+        ? `${
+            totalVotes === 0 ? 0 : Math.round((100 * optionVotes) / totalVotes)
+          }%`
+        : `${Math.round(optionVotes / voteScaling)} vote${
+            parseInt(optionVotes) !== voteScaling ? 's' : ''
+          }`
+
+      return (
+        <OptionTag
+          key={option}
+          className={`${styles.poll_option} ${
+            parseInt(optionVotes) === maxVotes && maxVotes !== 0
+              ? styles.winner_option
+              : ''
+          }`}
+        >
+          <button onClick={() => setShowPercents(!showPercents)}>
+            {userVotedOption === option ? (
+              <div className={styles.poll_option_container}>
+                <span className={styles.user_vote}></span>
+                <PollOption
+                  option={bytesToString(poll.options[option])}
+                  votes={isObjktPoll ? votesLabel : undefined}
+                />
+                <span className={styles.user_vote}>{'\u2714'}</span>
+              </div>
+            ) : (
+              <PollOption
+                option={bytesToString(poll.options[option])}
+                votes={isObjktPoll ? votesLabel : undefined}
+              />
+            )}
+            {!isObjktPoll && <div>{votesLabel}</div>}
+          </button>
+
+          {canVote && (
+            <Button
+              onClick={() => votePoll(poll.id, option, null, callback)}
+              shadow_box
+              fit
+            >
+              Select
+            </Button>
+          )}
+        </OptionTag>
+      )
+    }
+  )
+
   return (
     <>
       <p>Options to vote:</p>
-      <ul className={styles.poll_options}>
-        {Object.entries(poll.votes_count).map(([option, optionVotes]) => (
-          <li
-            key={option}
-            className={`${styles.poll_option} ${
-              parseInt(optionVotes) === maxVotes && maxVotes !== 0
-                ? styles.winner_option
-                : ''
-            }`}
-          >
-            <button onClick={() => setShowPercents(!showPercents)}>
-              {userVotedOption === option ? (
-                <div className={styles.poll_option_container}>
-                  <span className={styles.user_vote}></span>
-                  <PollOption option={bytesToString(poll.options[option])} />
-                  <span className={styles.user_vote}>{'\u2714'}</span>
-                </div>
-              ) : (
-                <PollOption option={bytesToString(poll.options[option])} />
-              )}
-              <div>
-                {showPercents
-                  ? `${
-                      totalVotes === 0
-                        ? 0
-                        : Math.round((100 * optionVotes) / totalVotes)
-                    }%`
-                  : `${Math.round(optionVotes / voteScaling)} vote${
-                      parseInt(optionVotes) !== voteScaling ? 's' : ''
-                    }`}
-              </div>
-            </button>
-
-            {canVote && (
-              <Button
-                onClick={() => votePoll(poll.id, option, null, callback)}
-                shadow_box
-                fit
-              >
-                Select
-              </Button>
-            )}
-          </li>
-        ))}
-      </ul>
+      {isObjktPoll ? (
+        // Fewer options than columns: drop the empty columns and center
+        <div
+          className={styles.poll_options_masonry}
+          style={{
+            width: `${(100 * optionColumns) / masonryColumns}%`,
+          }}
+        >
+          <ResponsiveMasonry columns={optionColumns}>
+            {optionItems}
+          </ResponsiveMasonry>
+        </div>
+      ) : (
+        <ul className={styles.poll_options}>{optionItems}</ul>
+      )}
     </>
   )
 }
 
-function PollOption({ option }) {
+function PollOption({ option, votes }) {
   if (option.indexOf('http') >= 0) {
     return (
       <DefaultLink href={option.slice(option.indexOf('http'))}>
@@ -260,21 +297,28 @@ function PollOption({ option }) {
   } else if (option.indexOf('ipfs://') >= 0) {
     return <IpfsLink cid={option.split('ipfs://')[1]} />
   } else if (option.indexOf('OBJKT#') === 0) {
-    return <ObjktOption id={option.split('#')[1]} />
+    return <ObjktOption id={option.split('#')[1]} votes={votes} />
   } else {
     return <span>{option}</span>
   }
 }
 
-function ObjktOption({ id }) {
+function ObjktOption({ id, votes }) {
   const [objkt] = useObjkt(id)
+
+  const label = (
+    <div className={styles.poll_objkt_label}>
+      <span>{`OBJKT#${id}`}</span>
+      {votes && <span>{votes}</span>}
+    </div>
+  )
 
   return objkt ? (
     <div className={styles.poll_objkt_option}>
       <RenderMediaType nft={objkt} />
-      <span>{`OBJKT#${id}`}</span>
+      {label}
     </div>
   ) : (
-    <span>{`OBJKT#${id}`}</span>
+    label
   )
 }

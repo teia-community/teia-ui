@@ -1,0 +1,126 @@
+.spot {
+  position: fixed;
+  z-index: 1000;
+  border: 2px solid var(--text-color);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.pop {
+  position: fixed;
+  z-index: 1001;
+  width: 280px;
+  padding: 0.75rem;
+  border: 2px solid var(--text-color);
+  background: var(--background-color);
+  color: var(--text-color);
+
+  p {
+    margin: 0 0 0.5rem;
+    padding-right: 1rem;
+  }
+
+  // Arrow pointing up at the highlighted element.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 12px;
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid var(--text-color);
+    border-left: 2px solid var(--text-color);
+    background: var(--background-color);
+    transform: rotate(45deg);
+  }
+}
+
+// Hint: just a title, sized to fit.
+.hint {
+  width: auto;
+
+  p {
+    margin: 0;
+    padding-right: 1.5rem;
+    font-weight: bold;
+  }
+}
+
+.pop_right::before {
+  left: auto;
+  right: 12px;
+}
+
+// Popover sits above the target: arrow on the bottom edge, pointing down.
+.pop_above::before {
+  top: auto;
+  bottom: -7px;
+  border: 0;
+  border-right: 2px solid var(--text-color);
+  border-bottom: 2px solid var(--text-color);
+}
+
+.close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  line-height: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+
+  button:hover {
+    text-decoration: underline;
+  }
+}
+
+.help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4em;
+  height: 1.4em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: var(--font-size-small, 0.8rem);
+  user-select: none;
+  color: var(--gray-60);
+
+  &:hover {
+    color: var(--highlight-color);
+  }
+}
+
+.blink {
+  position: relative;
+  animation: blink 1s ease-in-out infinite;
+
+  // Two arcs (like a refresh icon) spinning around the circle.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 1px solid currentColor;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  50% {
+    color: var(--highlight-color);
+    opacity: 0.3;
+  }
+}

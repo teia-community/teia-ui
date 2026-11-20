@@ -11,6 +11,7 @@ import { validateAddress, ValidationResult } from '@taquito/utils'
 import Profile from './profile'
 import styles from '@style'
 import { Tabs } from '@atoms/tab'
+import Tour from '@components/tour'
 import Button from '@atoms/button/Button'
 import { Warning } from './warning'
 import { useLocalSettings } from '@context/localSettingsStore'
@@ -59,6 +60,28 @@ async function fetchUserInfo(addressOrSubjkt, type = 'user_address') {
 
   return user
 }
+const PROFILE_TOUR = [
+  { target: 'name', text: "The user's name: their SUBJKT, or alias." },
+  {
+    target: 'badges',
+    text: 'Roles in the Teia community, such as Moderator or TEIA Holder.',
+  },
+  { target: 'bio', text: 'A short bio the artist wrote about themselves.' },
+  {
+    target: 'address',
+    text: 'Their wallet address, or Tezos domain if they have one. Click to view on TzKT; the square copies it.',
+  },
+  {
+    target: 'socials',
+    text: 'Links the artist has added to their profile.',
+  },
+  { target: 'message', text: 'Send this artist a direct message.' },
+  {
+    target: 'tabs',
+    text: 'Browse their creations, collection, collabs, activity and more. Each tab has its own ? guide.',
+  },
+]
+
 export const useDisplayStore = create(
   subscribeWithSelector((get, set) => ({
     coreParticipants: undefined,
@@ -126,19 +149,20 @@ export default function Display() {
   }
 
   const TABS = [
-    { title: 'Creations', to: '' },
-    { title: 'Collection', to: 'collection' },
-    { title: 'Collabs', to: 'collabs' },
-    { title: 'Text', to: 'text' },
-    { title: 'Activity', to: 'activity' },
-    { title: 'Channels', to: 'channels' },
+    { title: 'Creations', to: '', tour: 'creations' },
+    { title: 'Collection', to: 'collection', tour: 'collection' },
+    { title: 'Collabs', to: 'collabs', tour: 'collabs' },
+    { title: 'Text', to: 'text', tour: 'text' },
+    { title: 'Activity', to: 'activity', tour: 'activity' },
+    { title: 'Channels', to: 'channels', tour: 'channels' },
     {
       title: 'Comments',
       to: 'comments',
+      tour: 'comments',
       count: commentCount > 0 ? commentCount : undefined,
     },
-    { title: 'Copyrights', to: 'copyrights' },
-    { title: 'Curations', to: 'curations' },
+    { title: 'Copyrights', to: 'copyrights', tour: 'copyrights' },
+    { title: 'Curations', to: 'curations', tour: 'curations' },
   ]
 
   return (
@@ -152,10 +176,11 @@ export default function Display() {
         />
       ) : (
         <>
+          <Tour name="profile" steps={PROFILE_TOUR} />
           <Profile user={user} />
           {user.address.substr(0, 2) !== 'KT' && (
             <div className={styles.menu}>
-              <Tabs tabs={TABS} />
+              <Tabs tabs={TABS} tourTarget="tabs" />
 
               {/* <div className={styles.filter}>
           <Button

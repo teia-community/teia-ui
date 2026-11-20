@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router'
+import Tour from '@components/tour'
 import { fetchUserCopyrights, fetchCreatorAliases, fetchTokensMetadataBatch } from '@data/swr'
 import { Loading } from '@atoms/loading'
 import { copyrightThumbnail, retryThumbnail } from '../shared/thumbnail'
@@ -9,6 +10,13 @@ import RegisteredWorks from '../shared/RegisteredWorks'
 import AgreementViewer from '../shared/AgreementViewer'
 import styles from './index.module.scss'
 import sharedStyles from '../shared/index.module.scss'
+
+const TOUR = [
+  {
+    target: 'copyrights',
+    text: 'Copyright agreements this user has registered. Open one to see its clauses and the works it covers.',
+  },
+]
 
 export default function CopyrightDisplay() {
   const { address } = useOutletContext<{ address: string }>()
@@ -67,7 +75,8 @@ export default function CopyrightDisplay() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.bento}>
+      <Tour name="copyrights" steps={TOUR} />
+      <div className={styles.bento} data-tour="copyrights">
         {records.map((entry, idx) => {
           const isExpanded = expandedId === entry.id
           const clauses = entry.value.clauses

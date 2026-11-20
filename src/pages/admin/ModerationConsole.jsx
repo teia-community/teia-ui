@@ -6,7 +6,9 @@ import { ModeratorManagement } from '@components/moderators'
 import CommentsAdmin from './CommentsAdmin'
 import ChannelsAdmin from './ChannelsAdmin'
 import CalendarAdmin from './CalendarAdmin'
+import EventsAdmin from './EventsAdmin'
 import CurationsAdmin from './CurationsAdmin'
+import ProfilesAdmin from './ProfilesAdmin'
 import styles from '@style'
 
 const TABS = [
@@ -14,14 +16,17 @@ const TABS = [
   { key: 'poll', label: 'Poll comments' },
   { key: 'token', label: 'Token comments' },
   { key: 'calendar', label: 'Calendar' },
+  { key: 'events', label: 'Events' },
   { key: 'curations', label: 'Curations' },
+  { key: 'profiles', label: 'Profile cards' },
   { key: 'moderators', label: 'Moderators' },
 ]
 
 /**
  * Single moderation console for moderators + multisig users — the one place to
- * review channels, poll/token comments, calendar proposals and the moderator
- * set. Access is enforced by the RequireModerator route wrapper.
+ * review channels, poll/token comments, calendar and event proposals,
+ * curations, profile cards and the moderator set. Access is enforced by the
+ * RequireModerator route wrapper.
  */
 export default function ModerationConsole() {
   const [tab, setTab] = useState('channels')
@@ -54,7 +59,9 @@ export default function ModerationConsole() {
           {tab === 'poll' && <CommentsAdmin kind="poll" />}
           {tab === 'token' && <CommentsAdmin kind="token" />}
           {tab === 'calendar' && <CalendarAdmin />}
+          {tab === 'events' && <EventsAdmin />}
           {tab === 'curations' && <CurationsAdmin />}
+          {tab === 'profiles' && <ProfilesAdmin />}
           {tab === 'moderators' && (
             <ModeratorManagement
               contract={MODERATOR_CONTRACT}

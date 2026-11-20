@@ -14,13 +14,14 @@ export function RecentSalesFeed() {
       tokenPath="token"
       keyPath="token.token_id"
       maxItems={600}
+      paginate
       postProcessTokens={(tokens) =>
         uniqBy(uniqBy(tokens, 'token_id'), 'artist_address')
       }
       query={gql`
         ${BaseTokenFieldsFragment}
-        query getLatestSales($limit: Int!) {
-          events(limit: $limit, order_by: [{level: desc, opid: desc}], where: {token: {metadata_status: {_eq: "processed"}}, implements: {_eq: "SALE"}, fa2_address: {_eq: "${HEN_CONTRACT_FA2}"}}) {
+        query getLatestSales($limit: Int!, $offset: Int = 0, $filters: tokens_bool_exp!) {
+          events(limit: $limit, offset: $offset, order_by: [{level: desc, opid: desc}], where: {token: {metadata_status: {_eq: "processed"}, _and: [$filters]}, implements: {_eq: "SALE"}, fa2_address: {_eq: "${HEN_CONTRACT_FA2}"}}) {
             type
             timestamp
             token {

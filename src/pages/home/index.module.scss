@@ -41,3 +41,74 @@
   align-items: center;
   align-content: center;
 }
+
+.virtual_spacer {
+  position: relative;
+  width: 100%;
+}
+
+.virtual_row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.skeleton {
+  display: block;
+  flex-shrink: 0;
+  background-color: var(--gray-10);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.skeleton_name {
+  height: $font-small;
+  border-radius: 2px;
+}
+
+.skeleton_text {
+  height: $font-xsmall;
+  border-radius: 2px;
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+// Tabs atom left-aligns its row from tablet up; center it on the search page.
+.search_tabs {
+  width: 100%;
+
+  & > div > div:first-child {
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
+}
+
+// Tour target around the photosensitive / NSFW checkboxes.
+.hazard_group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+// Tour target wrapper around the search input.
+.search_input {
+  width: 100%;
+}
+
+// Same as TokenCollection's empty state, for the other search tabs.
+.empty_section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 2em 0;
+}

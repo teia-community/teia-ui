@@ -13,13 +13,18 @@ export function TagFeed({ tag, ...otherProps }) {
       maxItems={600}
       query={gql`
         ${BaseTokenFieldsFragment}
-        query getObjktsByTag($tag: String!, $limit: Int!) {
+        query getObjktsByTag(
+          $tag: String!
+          $limit: Int!
+          $filters: tokens_bool_exp!
+        ) {
           tokens(
             where: {
               tags: { tag: { _eq: $tag } },
               editions: { _neq: 0 },
               fa2_address: { _eq: "${HEN_CONTRACT_FA2}" },
-              metadata_status: { _eq: "processed" }
+              metadata_status: { _eq: "processed" },
+              _and: [$filters]
             }
             order_by: { minted_at: desc }
             limit: $limit

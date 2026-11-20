@@ -85,6 +85,27 @@
   }
 }
 
+.poll_options_masonry {
+  margin: 1em auto 0;
+
+  .poll_option {
+    min-width: 0;
+    margin-bottom: 16px;
+  }
+
+  .poll_objkt_option {
+    max-width: none;
+    max-height: none;
+    margin-bottom: 0;
+  }
+}
+
+.poll_objkt_label {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+
 .poll_option_container {
   display: flex;
   justify-content: center;
