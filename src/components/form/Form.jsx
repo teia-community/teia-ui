@@ -19,7 +19,7 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
     <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
       {fields.map((f) => {
         const value = f.watch ? watch(f.name) : null
-        return (
+        const field = (
           <FormFields
             key={f.name}
             register={register}
@@ -31,6 +31,19 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
             }}
             error={get(errors, f.name)}
           />
+        )
+        // `tour`: data-tour target for this field (see components/tour)
+        return f.tour ? (
+          <div
+            key={f.name}
+            data-tour={f.tour}
+            // checkbox labels are full width blocks: hug the label instead
+            style={f.type === 'checkbox' ? { width: 'fit-content' } : undefined}
+          >
+            {field}
+          </div>
+        ) : (
+          field
         )
       })}
       {children}
@@ -47,7 +60,12 @@ function Form({ fields, defaultValues, children, onSubmit, onReset }) {
         Clear Fields
       </Button>
 
-      <Button fit shadow_box disabled={Object.keys(errors).length > 0}>
+      <Button
+        fit
+        shadow_box
+        disabled={Object.keys(errors).length > 0}
+        data-tour="mint-submit"
+      >
         Submit
       </Button>
     </form>

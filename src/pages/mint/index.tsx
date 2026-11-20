@@ -6,6 +6,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, useFormState } from 'react-hook-form'
 import { Outlet } from 'react-router'
+import { TourLink } from '@components/tour'
 
 const TABS: TabOptions[] = [
   { title: 'Edit', to: '' },
@@ -59,7 +60,9 @@ export default function Mint() {
 
   return (
     <Page title="Mint">
-      <h1>MINT</h1>
+      <h1>
+        MINT <TourLink name="mint" title="How minting works" />
+      </h1>
       <Tabs tabs={tabs} />
       <FormProvider {...methods}>
         <AnimatePresence mode="sync">
