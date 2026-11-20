@@ -2,13 +2,8 @@
 @import '@styles/variables.scss';
 
 .container {
-  position: relative;
-  display: block;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 1;
-  min-height: 60vh;
-  max-height: $max-token-height;
+  width: 100%;
+  min-width: 0;
   // overflow: hidden;
 
   .pdfNav {
@@ -25,15 +20,25 @@
   }
 }
 
+.stage {
+  position: relative;
+  height: $max-token-height;
+  display: grid;
+  place-items: center;
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .previous_page {
   position: absolute !important;
   z-index: 50;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   // border: 10px solid pink;
   opacity: 1;
 }
 
 .page {
-  height: 100%;
+  width: fit-content;
+  margin: 0 auto;
 }
