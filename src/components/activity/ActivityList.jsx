@@ -4,7 +4,7 @@ import styles from './list.module.scss'
 
 /**
  * Activity List with "Load more" button.
- *
+ * `tourTarget`: `data-tour` target for the header row (see components/tour).
  */
 export function ActivityList({
   rows,
@@ -12,6 +12,7 @@ export function ActivityList({
   isReachingEnd,
   isLoadingMore,
   emptyMessage = 'No activity yet.',
+  tourTarget,
 }) {
   if (!rows.length) {
     return (
@@ -24,7 +25,7 @@ export function ActivityList({
   return (
     <>
       <div className={styles.scroll}>
-        <div className={styles.head}>
+        <div className={styles.head} data-tour={tourTarget}>
           <span>Event</span>
           <span>Item</span>
           <span>From</span>

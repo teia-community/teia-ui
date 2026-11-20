@@ -3,7 +3,10 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  // Hug the chips (centered by margin) so a tour highlight starts at the
+  // first chip, not the page edge.
+  width: fit-content;
+  margin: 0 auto 1rem;
 
   // Primary & Secondary Sales row
   & + & {
