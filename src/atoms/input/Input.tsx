@@ -112,7 +112,7 @@ function Input(
           max={max}
           maxLength={maxlength}
           defaultValue={defaultValue}
-          value={value || ''}
+          value={value ?? ''}
           onChange={handleInput}
           onBlur={onBlur}
           pattern={pattern}

@@ -10,7 +10,7 @@ import { useUserStore } from '@context/userStore'
 import { useObjktDisplayContext } from '..'
 import {
   SWAP_TEIA_FEE_DISCLOSURE,
-  maybeWarnLowSwapPrice,
+  SWAP_ZERO_PRICE_GAS_NOTICE,
   clampSwapAmountOnBlur,
   clampSwapPriceOnBlur,
 } from '@utils/postMintSwap'
@@ -43,11 +43,6 @@ export const Swap = () => {
 
   const onChange = (e) => setCurrency(e.target.value)
 
-  const checkPrice = (value) => {
-    console.debug(value)
-    maybeWarnLowSwapPrice(show, value)
-  }
-
   const proxyAdminAddress = nft.artist_profile?.is_split
     ? nft.artist_profile.split_contract.administrator_address
     : null
@@ -71,8 +66,9 @@ export const Swap = () => {
       return
     }
 
-    if (price == null || price < 0) {
-      show(`Please enter a price for the swap (current value: ${price})`)
+    // A blank price must not silently become a free listing now that 0 is allowed.
+    if (price === '' || price == null || price < 0) {
+      show(`Please enter a price for the swap (0 ꜩ is allowed)`)
       return
     }
 
@@ -139,12 +135,13 @@ export const Swap = () => {
                     initial={0}
                     onChange={setPrice}
                     onBlur={(e) => {
-                      const val = clampSwapPriceOnBlur(e.target.value)
-                      setPrice(val)
-                      checkPrice(val)
+                      setPrice(clampSwapPriceOnBlur(e.target.value))
                     }}
                     disabled={progress}
                   />
+                  {price !== '' && Number(price) === 0 && (
+                    <p>{SWAP_ZERO_PRICE_GAS_NOTICE}</p>
+                  )}
                 </div>
               </div>
               <Button shadow_box onClick={handleSubmit} fit disabled={progress}>
