@@ -248,9 +248,9 @@ export type ArtistProfile = {
 
 export type LocalSettingsContext = {
   /**The feed view mode */
-  viewMode: 'single' | 'masonry'
+  viewMode: 'single' | 'masonry' | 'list'
   /**Set the feed view mode */
-  setViewMode: (mode: 'single' | 'masonry') => void
+  setViewMode: (mode: 'single' | 'masonry' | 'list') => void
   /**Delete the localstorage for the feed view mode */
   // rmViewMode: () => void
   /**Utility function to toggle the view mode*/

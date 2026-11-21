@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import styles from '@style'
 import { DropDown, DropdownButton } from '@atoms/dropdown'
 import { IconToggle } from '@atoms/toggles'
-import { SingleViewIcon, MasonryIcon, ChevronIcon } from '@icons'
+import { SingleViewIcon, MasonryIcon, ListViewIcon, ChevronIcon } from '@icons'
 
 import { Button } from '@atoms/button'
 
@@ -134,6 +134,12 @@ export const FeedToolbar = ({ feeds_menu = false }) => {
           toggled={viewMode === 'masonry'}
           onClick={() => setViewMode('masonry')}
           icon={<MasonryIcon />}
+        />
+        <IconToggle
+          alt={'list view mode'}
+          toggled={viewMode === 'list'}
+          onClick={() => setViewMode('list')}
+          icon={<ListViewIcon />}
         />
       </div>
       {/* KEEP */}

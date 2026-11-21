@@ -150,3 +150,135 @@
     }
   }
 }
+
+// List view row. The grid template comes from --list-columns, set on the list
+// container in the token-collection module, so the header and the rows align.
+.list_row {
+  display: grid;
+  grid-template-columns: var(--list-columns);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--gray-10);
+  font-size: $font-small;
+
+  &:hover {
+    background-color: var(--gray-5);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.list_main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.list_thumb {
+  flex-shrink: 0;
+  display: block;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  background-color: var(--gray-10);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // Same protections the feed item applies, at thumbnail scale.
+  &.blur img {
+    filter: blur(0.5rem);
+  }
+
+  &.photo_protect img {
+    filter: blur(0.3em) brightness(0.2) grayscale(1);
+
+    &:hover {
+      filter: unset;
+    }
+  }
+}
+
+.list_title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.list_name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.list_token_id {
+  flex-shrink: 0;
+  color: var(--gray-50);
+  font-size: $font-xsmall;
+}
+
+.list_artist,
+.list_format,
+.list_editions,
+.list_date {
+  display: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.list_artist {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.list_format,
+.list_date {
+  color: var(--gray-50);
+  font-size: $font-xsmall;
+}
+
+.list_editions {
+  text-align: right;
+  color: var(--gray-50);
+}
+
+.list_price {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@include respond-to('tablet') {
+  .list_artist,
+  .list_editions {
+    display: block;
+  }
+}
+
+@include respond-to('desktop') {
+  .list_format,
+  .list_date {
+    display: block;
+  }
+}

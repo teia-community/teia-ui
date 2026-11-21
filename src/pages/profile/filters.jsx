@@ -1,5 +1,4 @@
 import { Button } from '@atoms/button'
-import { Container } from '@atoms/layout'
 import styles from '@style'
 
 function FilterButton({ type, children, isActive, onClick }) {
@@ -21,7 +20,7 @@ function FilterButton({ type, children, isActive, onClick }) {
 
 export default function Filters({ onChange, filter, items = [] }) {
   return (
-    <Container>
+    <div className={styles.filters_bar}>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         {items.map(({ type, label }) => (
           <FilterButton
@@ -33,6 +32,6 @@ export default function Filters({ onChange, filter, items = [] }) {
           />
         ))}
       </div>
-    </Container>
+    </div>
   )
 }
