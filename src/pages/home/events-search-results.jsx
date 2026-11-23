@@ -68,7 +68,9 @@ export default function EventsSearchResults({ term }) {
                     onClick={() => setSelectedEvent(event)}
                     aria-label={`Preview ${event.title}`}
                   >
-                    <img src={event.screenshot} alt="" loading="lazy" />
+                    {event.screenshot && (
+                      <img src={event.screenshot} alt="" loading="lazy" />
+                    )}
                     <span>Preview</span>
                   </button>
                 </div>
