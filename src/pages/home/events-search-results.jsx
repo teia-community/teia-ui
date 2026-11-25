@@ -68,8 +68,18 @@ export default function EventsSearchResults({ term }) {
                     onClick={() => setSelectedEvent(event)}
                     aria-label={`Preview ${event.title}`}
                   >
-                    {event.screenshot && (
+                    {event.screenshot ? (
                       <img src={event.screenshot} alt="" loading="lazy" />
+                    ) : (
+                      <div className={styles.preview_frame}>
+                        <iframe
+                          src={event.link}
+                          title={`${event.title} site preview`}
+                          aria-hidden="true"
+                          tabIndex={-1}
+                          loading="lazy"
+                        />
+                      </div>
                     )}
                     <span>Preview</span>
                   </button>

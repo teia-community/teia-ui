@@ -100,6 +100,21 @@
   width: 100%;
 }
 
+.preview_frame {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+// Render the site at 4x the card's width, then scale it down to fit.
+.preview_frame iframe {
+  border: 0;
+  height: 400%;
+  pointer-events: none;
+  transform: scale(0.25);
+  transform-origin: 0 0;
+  width: 400%;
+}
+
 .preview span {
   background: var(--background-color);
   bottom: 0;
