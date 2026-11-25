@@ -5,9 +5,30 @@ import { useOutlet } from 'react-router-dom'
 import type { FeedType } from '@constants'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { useModalStore } from '@context/modalStore'
-import { Hint } from '@components/tour'
+import Tour, { Hint } from '@components/tour'
 import * as FEEDS from './feeds'
-import Search from './search'
+import Search, { SEARCH_TOUR } from './search'
+
+const searchStep = (target: string) =>
+  SEARCH_TOUR.find((step) => step.target === target)
+
+// Shares the search and hazard steps with the search page's tour.
+const HOME_TOUR = [
+  {
+    target: 'feeds',
+    text: 'Pick a feed: recent sales, a random roll, new OBJKTs, or more from the dropdown.',
+  },
+  searchStep('search'),
+  {
+    target: 'filters',
+    text: 'Narrow your search by file type or year before you press Enter.',
+  },
+  searchStep('hazards'),
+  {
+    target: 'view-mode',
+    text: 'Show OBJKTs one at a time, or as a masonry grid.',
+  },
+]
 
 const DefaultFeedComponent = FEEDS.RecentSalesFeed
 
@@ -56,6 +77,7 @@ export function Home({ isSearch = false }) {
   return (
     <Page feed={!isSearch} title="Home">
       <>
+        {!isSearch && <Tour name="home" steps={HOME_TOUR} />}
         {!isSearch && !outlet && <ExploreHint />}
         {isSearch ? <Search /> : outlet || <FeedComponent />}
       </>

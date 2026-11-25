@@ -1,6 +1,12 @@
 @import '@styles/layout.scss';
 @import '@styles/variables.scss';
 
+.headline {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 40px 0 0;
+}
+
 .buttons {
   display: flex;
   flex-wrap: wrap;

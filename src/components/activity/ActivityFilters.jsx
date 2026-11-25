@@ -8,15 +8,17 @@ import styles from './filters.module.scss'
  *   active: string[],
  *   onToggle: (key: string) => void,
  *   filters?: { key: string, label: string }[],
- * }} props
+ *   tourTarget?: string,
+ * }} props `tourTarget`: `data-tour` target for the chips (see components/tour)
  */
 export function ActivityFilters({
   active,
   onToggle,
   filters = ACTIVITY_FILTERS,
+  tourTarget,
 }) {
   return (
-    <div className={styles.filters}>
+    <div className={styles.filters} data-tour={tourTarget}>
       {filters.map((f) => (
         <button
           key={f.key}

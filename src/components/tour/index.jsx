@@ -15,6 +15,8 @@ const PAD = 4 // spotlight outline sits this far outside the target
 export default function Tour({ name, steps }) {
   const [params, setParams] = useSearchParams()
   const [i, setI] = useState(0)
+  // +1 after Next, -1 after Back: which way to skip a missing target.
+  const [dir, setDir] = useState(1)
   const [rect, setRect] = useState(null)
   const active = params.get('tour') === name
   const step = steps[i]
@@ -23,17 +25,30 @@ export default function Tour({ name, steps }) {
     params.delete('tour')
     setParams(params)
     setI(0)
+    setDir(1)
+  }
+
+  const go = (d) => {
+    setDir(d)
+    setI(i + d)
   }
 
   useEffect(() => {
     if (!active) return setI(0)
-    const el = document.querySelector(`[data-tour="${step.target}"]`)
-    // Target not on the page (e.g. no previewable items): skip the step,
-    // or finish if it was the last one.
+    let el = document.querySelector(`[data-tour="${step.target}"]`)
+    // `display: contents` (e.g. a `fit` Button) has no box of its own:
+    // measure what it shows instead.
+    if (el && getComputedStyle(el).display === 'contents')
+      el = el.firstElementChild
+    // Target not on the page (e.g. no previewable items): skip the step in
+    // the direction we were going, or finish if it was the last one.
     if (!el) {
       setRect(null)
-      if (i < steps.length - 1) setI(i + 1)
-      else end()
+      const n = i + dir
+      if (n >= steps.length) end()
+      // Nothing to go back to: head forward again.
+      else if (n < 0) go(1)
+      else setI(n)
       return
     }
     const measure = () => setRect(el.getBoundingClientRect())
@@ -64,9 +79,9 @@ export default function Tour({ name, steps }) {
     const onKey = (e) => {
       if (e.target.closest?.('input, textarea, select, [contenteditable]'))
         return
-      if (e.key === 'ArrowLeft' && i > 0) setI(i - 1)
+      if (e.key === 'ArrowLeft' && i > 0) go(-1)
       else if (e.key === 'ArrowRight' && step.next !== false)
-        last ? end() : setI(i + 1)
+        last ? end() : go(1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -75,6 +90,10 @@ export default function Tour({ name, steps }) {
   if (!active || !rect) return null
 
   const viewport = document.documentElement.clientHeight
+  // Kept on screen, so it may sit left of the target: shift the arrow to
+  // still point at it (12px is its resting offset, see .pop::before).
+  const left = Math.max(16, Math.min(rect.left - PAD, window.innerWidth - 296))
+  const arrow = Math.min(rect.left - PAD - left + 12, 256)
 
   return (
     <>
@@ -107,12 +126,7 @@ export default function Tour({ name, steps }) {
                   document.documentElement.clientWidth - rect.right - PAD
                 ),
               }
-            : {
-                left: Math.max(
-                  16,
-                  Math.min(rect.left - PAD, window.innerWidth - 296)
-                ),
-              }),
+            : { left, '--arrow-left': `${arrow}px` }),
         }}
       >
         <button
@@ -126,12 +140,12 @@ export default function Tour({ name, steps }) {
         <p>{step.text}</p>
         <div className={styles.actions}>
           {i > 0 && (
-            <button type="button" onClick={() => setI(i - 1)}>
+            <button type="button" onClick={() => go(-1)}>
               Back
             </button>
           )}
           {step.next !== false && !last && (
-            <button type="button" onClick={() => setI(i + 1)}>
+            <button type="button" onClick={() => go(1)}>
               Next
             </button>
           )}
@@ -149,8 +163,9 @@ export default function Tour({ name, steps }) {
 /**
  * Standalone callout under the element marked `data-tour="<target>"`, its
  * arrow pointing up at it (right-aligned). No spotlight, no steps.
+ * `children` (e.g. buttons) go in an actions row under the title.
  */
-export function Hint({ target, title, onClose }) {
+export function Hint({ target, title, onClose, children }) {
   const [rect, setRect] = useState(null)
 
   useEffect(() => {
@@ -191,6 +206,7 @@ export function Hint({ target, title, onClose }) {
         <CloseIcon fill="var(--text-color)" width="10" />
       </button>
       <p>{title}</p>
+      {children && <div className={styles.actions}>{children}</div>}
     </div>
   )
 }

@@ -11,8 +11,26 @@ import { ReviewStage } from '@components/collab/create/ReviewStage'
 import styles from '@style'
 import classNames from 'classnames'
 import { Button, Secondary } from '@atoms/button'
+import Tour from '@components/tour'
 import { useUserStore } from '@context/userStore'
 import { COLLECTIONS_DAO_FEE_PERCENT } from '@constants'
+
+// Shared by the Create and Collections tabs; the fee step only exists on
+// Collections, so the Create tour skips it.
+const CREATE_TOUR = [
+  {
+    target: 'collab-fee',
+    text: 'A collection automatically gives the Teia DAO a share of its sales. Nobody needs to sign for it.',
+  },
+  {
+    target: 'collab-core',
+    text: 'Add each collaborator’s Tezos address and shares. Shares are proportions, so they don’t have to add up to 100.',
+  },
+  {
+    target: 'collab-next',
+    text: 'Next lets you add beneficiaries, people who get a share without being collaborators. Then review and sign to create the contract.',
+  },
+]
 
 export const CreateCollaboration = ({ isCollection = false }) => {
   const address = useUserStore((st) => st.address)
@@ -135,12 +153,16 @@ export const CreateCollaboration = ({ isCollection = false }) => {
     />
   ) : (
     <Container>
+      <Tour
+        name={isCollection ? 'collections' : 'collab-create'}
+        steps={CREATE_TOUR}
+      />
       {isCollection && (
         <Fragment>
           <h1 className={styles.mb1}>
             <strong>Collections Creation</strong>
           </h1>
-          <p className={styles.mb2}>
+          <p className={styles.mb2} data-tour="collab-fee">
             ⓘ The Teia multisig automatically receives a{' '}
             <strong>{COLLECTIONS_DAO_FEE_PERCENT}%</strong> share of this
             collection to help fund the Teia DAO. No signing required.
@@ -164,12 +186,16 @@ export const CreateCollaboration = ({ isCollection = false }) => {
       )}
 
       {showCollaboratorsTable && (
-        <CollaboratorTable
-          collaborators={editCollaborators ? collaborators : validCollaborators}
-          setCollaborators={setCollaborators}
-          minimalView={minimalView}
-          onEdit={() => setEditCollaborators(true)}
-        />
+        <div data-tour="collab-core">
+          <CollaboratorTable
+            collaborators={
+              editCollaborators ? collaborators : validCollaborators
+            }
+            setCollaborators={setCollaborators}
+            minimalView={minimalView}
+            onEdit={() => setEditCollaborators(true)}
+          />
+        </div>
       )}
 
       {!showCollaboratorsTable && (
@@ -185,6 +211,7 @@ export const CreateCollaboration = ({ isCollection = false }) => {
           threshold={0}
           collaborators={collaborators}
           onClick={() => setEditCollaborators(false)}
+          tourTarget="collab-next"
         />
       )}
 

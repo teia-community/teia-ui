@@ -39,6 +39,20 @@
   }
 }
 
+.view_tabs {
+  display: flex;
+
+  @media (max-width: 600px) {
+    flex: 1;
+  }
+}
+
+// "?" that starts the tour, right after the Social tab.
+.tour {
+  padding-left: 0.5rem;
+  align-self: center;
+}
+
 .view_chip {
   appearance: none;
   cursor: pointer;

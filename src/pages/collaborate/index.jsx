@@ -9,9 +9,9 @@ import { useCollabStore } from '@context/collabStore'
 import { useEffect } from 'react'
 /**@type {import('@atoms/tab/Tabs').TabOptions} */
 const TABS = [
-  { title: 'Manage', to: '' },
-  { title: 'Create', to: 'create' },
-  { title: 'Collections', to: 'collections' },
+  { title: 'Manage', to: '', tour: 'collab-manage' },
+  { title: 'Create', to: 'create', tour: 'collab-create' },
+  { title: 'Collections', to: 'collections', tour: 'collections' },
 ]
 
 const Collaborate = () => {

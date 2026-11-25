@@ -24,7 +24,7 @@ import UserSearchResults from './user-search-results'
 import ArtistsSearchResults from './artists-search-results'
 import EventsSearchResults from './events-search-results'
 
-const SEARCH_TOUR = [
+export const SEARCH_TOUR = [
   { target: 'search', text: 'Type a search term and press Enter.' },
   {
     target: 'filters',

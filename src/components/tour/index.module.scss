@@ -25,7 +25,7 @@
     content: '';
     position: absolute;
     top: -7px;
-    left: 12px;
+    left: var(--arrow-left, 12px);
     width: 12px;
     height: 12px;
     border-top: 2px solid var(--text-color);
@@ -43,6 +43,10 @@
     margin: 0;
     padding-right: 1.5rem;
     font-weight: bold;
+  }
+
+  .actions {
+    margin-top: 0.5rem;
   }
 }
 

@@ -11,11 +11,11 @@ export const CollabList = ({ description, collabs }) => {
   const componentStyle = classNames(styles.borderBottom, styles.mb3)
 
   return (
-    <div className={componentStyle}>
+    <div className={componentStyle} data-tour="collab-list">
       <div className={headerStyle}>
         {description && <p className={styles.mb1}>{description}</p>}
 
-        <div className={styles.mb2}>
+        <div className={styles.mb2} data-tour="collab-detail">
           <Button shadow_box onClick={() => setShowDetail(!showDetail)}>
             {showDetail ? 'less detail' : 'more detail'}
           </Button>
