@@ -3,7 +3,12 @@ import { memo } from 'react'
 import { validAddress } from '@utils/collab'
 import styles from '../index.module.scss'
 
-const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }) => {
+const AddCollaboratorsButton = ({
+  collaborators,
+  onClick,
+  threshold = 2,
+  tourTarget,
+}) => {
   const validCollaborators = collaborators.filter(
     (c) => !!c.shares && validAddress(c.address)
   )
@@ -15,6 +20,7 @@ const AddCollaboratorsButton = ({ collaborators, onClick, threshold = 2 }) => {
         disabled={validCollaborators.length < threshold}
         className={styles.btnSecondary}
         shadow_box
+        data-tour={tourTarget}
       >
         {validCollaborators.length === 0 ? 'Skip' : 'Next'}
       </Button>

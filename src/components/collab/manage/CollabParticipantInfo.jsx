@@ -71,6 +71,7 @@ export const CollabParticipantInfo = ({ collabData, expanded = false }) => {
           {contract_address !== proxyAddress && isAdmin && (
             <Button
               shadow_box
+              data-tour="collab-sign-in"
               onClick={() =>
                 useUserStore.setState({
                   proxyAddress: contract_address,

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Container } from '@atoms/layout'
 import { Button } from '@atoms/button'
+import Tour from '@components/tour'
 import styles from '@components/collab/index.module.scss'
 import { fetchGraphQL, getCollabsForAddress } from '@data/api'
 // import { Input } from '@atoms/input'
@@ -9,6 +10,21 @@ import { CollabList } from '@components/collab/manage/CollabList'
 import { useUserStore } from '@context/userStore'
 import { useCollabStore } from '@context/collabStore'
 import { shallow } from 'zustand/shallow'
+
+const MANAGE_TOUR = [
+  {
+    target: 'collab-list',
+    text: 'The collab contracts you are part of. Ones you administer are listed first.',
+  },
+  {
+    target: 'collab-detail',
+    text: 'Show each contract’s address, participants and beneficiaries.',
+  },
+  {
+    target: 'collab-sign-in',
+    text: 'Sign in as a contract you administer to mint and act on its behalf. Sign out to go back to your own wallet.',
+  },
+]
 
 export const CollabContractsOverview = ({ showAdminOnly = false }) => {
   const address = useUserStore((st) => st.address)
@@ -104,6 +120,7 @@ export const CollabContractsOverview = ({ showAdminOnly = false }) => {
 
   return (
     <Container>
+      <Tour name="collab-manage" steps={MANAGE_TOUR} />
       {originationOpHash && timerEndDate && (
         <p className={styles.mb3}>
           Collab contract creation in progress...{' '}
