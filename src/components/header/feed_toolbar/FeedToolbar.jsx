@@ -18,6 +18,7 @@ import { DEFAULT_START_FEED } from '@constants'
 import { Chips, EMPTY_FILTERS, YEARS, toggleIn } from '@pages/artists'
 import { FILETYPES } from '@pages/artists/ArtistCard'
 import artistStyles from '@pages/artists/index.module.scss'
+import { TourLink } from '@components/tour'
 
 // const MediaFilter = ({ label, tagline }) => {
 //   return (
@@ -421,7 +422,7 @@ const FeedSearch = ({ filters, setFilters }) => {
     setFilters((f) => ({ ...f, [key]: toggleIn(f[key], value) }))
 
   return (
-    <div className={styles.search_area}>
+    <div className={styles.search_area} data-tour="search">
       <Input
         className={styles.search}
         name="feed-search"
@@ -437,13 +438,18 @@ const FeedSearch = ({ filters, setFilters }) => {
               Clear
             </button>
           )}
-          <button type="button" onClick={() => setShowFilters((v) => !v)}>
+          <button
+            type="button"
+            data-tour="filters"
+            onClick={() => setShowFilters((v) => !v)}
+          >
             {showFilters ? '▴' : '▾'} Filters
             {activeCount ? ` (${activeCount})` : ''}
           </button>
           <button type="button" onClick={submit}>
             Search
           </button>
+          <TourLink name="home" title="How the home page works" />
         </div>
       </Input>
       {showFilters && (
@@ -499,7 +505,7 @@ export const FeedToolbar = ({ feeds_menu = false, hazards, filters }) => {
   return (
     <motion.div className={styles.toolbar}>
       {feeds_menu && (
-        <div className={styles.sort_area}>
+        <div className={styles.sort_area} data-tour="feeds">
           {[...sortFeedMap.entries()].map(([k, label]) => {
             const selected = currentLabel === label
             if (k === '/feed/random') {
@@ -613,7 +619,7 @@ export const FeedToolbar = ({ feeds_menu = false, hazards, filters }) => {
       </div>
       {feeds_menu && filters && <FeedSearch {...filters} />}
       {feeds_menu && hazards && (
-        <div className={styles.toggles_area}>
+        <div className={styles.toggles_area} data-tour="hazards">
           <Checkbox
             checked={hazards.showPhotosensitive}
             onCheck={hazards.setShowPhotosensitive}

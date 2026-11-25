@@ -175,6 +175,8 @@
 // Mirrors the artist directory's hazard toggles.
 .toggles_area {
   grid-area: Toggles;
+  // Shrink to the checkboxes so the tour highlight hugs them.
+  justify-self: center;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -281,6 +283,8 @@
 
 .view_mode_area {
   grid-area: View-Mode;
+  // Shrink to the icons so the tour highlight hugs them.
+  justify-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
