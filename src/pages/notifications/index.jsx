@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { bytesToString } from '@taquito/utils'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
+import Tour, { TourLink } from '@components/tour'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { POLLS_CONTRACT } from '@constants'
@@ -27,6 +28,31 @@ import AccessBadge from '@components/channels/AccessBadge'
 import CreateChannelModal from '@components/channels/CreateChannelModal'
 import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from './index.module.scss'
+
+const NOTIFICATIONS_TOUR = [
+  { target: 'notif-mark-read', text: 'Mark every notification as read.' },
+  {
+    target: 'notif-create-channel',
+    text: 'Start a channel: a group chat others can join.',
+  },
+  { target: 'notif-new-dm', text: 'Send someone a direct message.' },
+  { target: 'notif-browse', text: 'Find public channels to join.' },
+  {
+    target: 'notif-read-note',
+    text: 'Read and unread is remembered in this browser only.',
+  },
+  {
+    target: 'notif-public-note',
+    text: 'Messages and comments are public on the Tezos blockchain. Don’t share anything private.',
+  },
+  {
+    target: 'notif-dms',
+    text: 'Your direct messages, newest first. A dot marks unread.',
+  },
+  { target: 'notif-channels', text: 'Channels you are in.' },
+  { target: 'notif-polls', text: 'Comments on polls you created.' },
+  { target: 'notif-tokens', text: 'Comments on your OBJKTs.' },
+]
 
 function TokenRow({ tokenId, token, unread }) {
   const cover = token?.display_uri
@@ -215,37 +241,57 @@ export default function NotificationsCenter() {
 
   return (
     <Page title="Notifications">
+      <Tour name="notifications" steps={NOTIFICATIONS_TOUR} />
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.headline}>Notifications</h2>
+          <h2 className={styles.headline}>
+            Notifications{' '}
+            <TourLink name="notifications" title="How notifications work" />
+          </h2>
           {messageNotifications && unreadCount > 0 && (
             <span className={styles.totalBadge}>{unreadCount}</span>
           )}
           <div className={styles.headerActions}>
             {messageNotifications && unreadCount > 0 && (
-              <Button shadow_box onClick={handleMarkAllRead}>
+              <Button
+                shadow_box
+                onClick={handleMarkAllRead}
+                data-tour="notif-mark-read"
+              >
                 Mark all as read
               </Button>
             )}
-            <Button shadow_box onClick={() => setShowCreateChannel(true)}>
+            <Button
+              shadow_box
+              onClick={() => setShowCreateChannel(true)}
+              data-tour="notif-create-channel"
+            >
               Create Channel
             </Button>
-            <Button shadow_box onClick={() => setShowCreateDm(true)}>
+            <Button
+              shadow_box
+              onClick={() => setShowCreateDm(true)}
+              data-tour="notif-new-dm"
+            >
               New DM
             </Button>
-            <Link to="/inbox/channels" className={styles.browseLink}>
+            <Link
+              to="/inbox/channels"
+              className={styles.browseLink}
+              data-tour="notif-browse"
+            >
               Browse all channels
             </Link>
           </div>
         </div>
 
-        <p className={styles.infoNote}>
+        <p className={styles.infoNote} data-tour="notif-read-note">
           Read/unread status is stored on this device only. If you open Teia in
           another browser or on another computer, items may appear unread again
           — your messages and comments themselves are safe and stored on-chain.
         </p>
 
-        <p className={styles.infoNote}>
+        <p className={styles.infoNote} data-tour="notif-public-note">
           Messages, direct messages and comments are currently stored
           unencrypted on the Tezos blockchain. That means their contents are
           publicly readable on-chain by anyone. Treat them as public and
@@ -266,7 +312,7 @@ export default function NotificationsCenter() {
 
         <div className={styles.sections}>
           {messageNotifications && dmItems.length > 0 && (
-            <section className={styles.section}>
+            <section className={styles.section} data-tour="notif-dms">
               <h3 className={styles.sectionTitle}>
                 Direct Messages
                 {unreadDmCount > 0 && ` · ${unreadDmCount} new`}
@@ -297,7 +343,7 @@ export default function NotificationsCenter() {
           )}
 
           {messageNotifications && channelItems.length > 0 && (
-            <section className={styles.section}>
+            <section className={styles.section} data-tour="notif-channels">
               <h3 className={styles.sectionTitle}>
                 Channels
                 {unreadChannelCount > 0 && ` · ${unreadChannelCount} new`}
@@ -334,7 +380,7 @@ export default function NotificationsCenter() {
           )}
 
           {messageNotifications && pollEntries.length > 0 && (
-            <section className={styles.section}>
+            <section className={styles.section} data-tour="notif-polls">
               <h3 className={styles.sectionTitle}>
                 Poll comments
                 {unreadPollCount > 0 && ` · ${unreadPollCount} new`}
@@ -368,7 +414,7 @@ export default function NotificationsCenter() {
           )}
 
           {messageNotifications && tokenEntries.length > 0 && (
-            <section className={styles.section}>
+            <section className={styles.section} data-tour="notif-tokens">
               <h3 className={styles.sectionTitle}>
                 Artwork comments
                 {unreadTokenCount > 0 && ` · ${unreadTokenCount} new`}
