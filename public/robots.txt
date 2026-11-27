@@ -5,3 +5,6 @@ Disallow: /settings
 Disallow: /subjkt
 Disallow: /sync
 Disallow: /feed/lists
+User-agent: Reflectionbot
+Disallow: /
+
