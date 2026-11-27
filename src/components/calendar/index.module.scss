@@ -46,6 +46,8 @@
   --cal-daynum-h: 3em;
   --cal-bar-track: 22px;
   --cal-bar-h: 18px;
+  --cal-help-size: 10px;
+  --cal-help-gap: 6px;
 }
 
 .week {
@@ -111,9 +113,14 @@
   display: flex;
   align-items: center;
   height: var(--cal-bar-h, 18px);
+  // Grid items default to min-width: auto, which (once the expanded bar turns
+  // overflow visible) would stretch the bar to its full title width.
+  min-width: 0;
   margin-inline: 2px;
+  background: var(--bar-bg);
   overflow: hidden;
-  pointer-events: none;
+  // Clicking a bar opens its day popup scrolled to that event.
+  cursor: pointer;
 }
 
 .bar_hidden {
@@ -129,6 +136,86 @@
       transparent 3px 7px
     );
     pointer-events: none;
+  }
+}
+
+// Multi-day caps: the crisp edge marks the boundary, the fade points toward
+// the days the event continues into.
+.bar_start {
+  mask-image: linear-gradient(to right, #000 55%, rgb(0 0 0 / 25%));
+}
+
+.bar_end {
+  justify-content: flex-end;
+  mask-image: linear-gradient(to left, #000 55%, rgb(0 0 0 / 25%));
+}
+
+// The fade already signals continuation, so no ellipsis on caps.
+.bar_start .bar_title,
+.bar_end .bar_title {
+  text-overflow: clip;
+}
+
+// Expanded bar (hover on desktop, tapped on touch): grows past its cell, over
+// the neighbour, to make room for the "?" trigger, and drops the cap fade so
+// the trigger stays legible.
+@mixin bar-expanded {
+  z-index: 2;
+  // Paper (white in light mode) with ink text; the inset outline keeps it from
+  // vanishing into the page.
+  background: var(--background-color);
+  box-shadow: inset 0 0 0 1px var(--text-color);
+  justify-content: flex-start;
+  // Exactly the room the "?" takes: its width plus its gap.
+  margin-right: calc(-1 * (var(--cal-help-size) + var(--cal-help-gap)));
+  // Grows vertically too, centered, up to the full lane track.
+  height: calc(var(--cal-bar-h, 18px) + 4px);
+  overflow: visible;
+  mask-image: none;
+  transition: margin 0.15s ease-out, height 0.15s ease-out;
+
+  .bar_title {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-color);
+  }
+
+  .bar_help {
+    display: inline-flex;
+    color: var(--text-color);
+  }
+}
+
+.bar.bar_open {
+  @include bar-expanded;
+}
+
+@media (hover: hover) {
+  .bar:hover {
+    @include bar-expanded;
+  }
+}
+
+// Tour "?" sized to the bar, in the bar's paper ink (nested so it wins over
+// the tour module's .help regardless of stylesheet order).
+.bar .bar_help {
+  display: none;
+  flex-shrink: 0;
+  width: var(--cal-help-size);
+  height: var(--cal-help-size);
+  margin-right: var(--cal-help-gap);
+  padding: 0;
+  font-size: 8px;
+  line-height: 1;
+  background: none;
+  color: var(--background-color);
+  cursor: pointer;
+
+  // Tighter spinning ring than the tour's -4px, so it stays inside the bar.
+  // Inset counts from inside the 1px border: -3px gives a 14px ring with an
+  // even 1.5px gap (any tighter and subpixel rounding pulls it off-center).
+  &::before {
+    inset: -3px;
   }
 }
 
@@ -179,6 +266,20 @@
   color: var(--text-secondary);
 }
 
+// Event targeted from a bar click: brief outline so it's easy to spot.
+.dialog_focus .card {
+  animation: dialog_focus 1.6s ease-out;
+}
+
+@keyframes dialog_focus {
+  from {
+    box-shadow: 0 0 0 2px var(--text-color);
+  }
+  to {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
+
 .dialog_top {
   display: flex;
   align-items: center;
@@ -191,6 +292,103 @@
   color: var(--text-secondary);
   text-align: center;
   padding: var(--spacing, 1rem);
+}
+
+/* --------------------------------------------------------- day view --- */
+.week_picks {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.week_pick {
+  padding: 2px 6px;
+  border: 1px solid var(--border-color);
+  background: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+}
+
+.week_pick_selected {
+  color: var(--text-color);
+  border-color: var(--text-color);
+  font-weight: 700;
+}
+
+.week_strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.week_day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 4px 0;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-color);
+  font-family: inherit;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+}
+
+.week_day_name {
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+}
+
+.week_day_today {
+  border-color: var(--text-secondary);
+
+  .day_number {
+    font-weight: 700;
+  }
+}
+
+.week_day_selected {
+  border-color: var(--text-color);
+  background: var(--gray-15);
+
+  .day_number {
+    font-weight: 700;
+  }
+}
+
+// Event count; keeps its line height when empty so days line up.
+.week_day_count {
+  min-height: 1.2em;
+  font-size: var(--font-size-small);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.day_title {
+  font-size: var(--font-size);
+  font-weight: 600;
+  margin-bottom: var(--spacing, 1rem);
+}
+
+.dayview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-half, 0.5rem);
 }
 
 /* -------------------------------------------------- previous events --- */
@@ -262,6 +460,13 @@
 .card_title {
   font-size: 20px;
   margin: 0;
+}
+
+.teia_mark {
+  height: 1em;
+  width: auto;
+  margin-right: 0.3em;
+  vertical-align: -0.1em;
 }
 
 .card_title_link {

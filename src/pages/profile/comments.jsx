@@ -10,6 +10,15 @@ import { getTimeAgo } from '@utils/time'
 import { Identicon } from '@atoms/identicons'
 import styles from './comments.module.scss'
 import commentStyles from '@components/token-comments/index.module.scss'
+import Tour from '@components/tour'
+
+const TOUR = [
+  {
+    target: 'comments-header',
+    text: 'How many comments they have left. Switch between newest first and grouped by OBJKT.',
+  },
+  { target: 'comments', text: 'Comments this user has written on OBJKTs.' },
+]
 
 const tokenThumb = (token) => {
   const uri = token?.display_uri || token?.thumbnail_uri
@@ -62,7 +71,8 @@ export default function ProfileComments() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <Tour name="comments" steps={TOUR} />
+      <div className={styles.header} data-tour="comments-header">
         <span className={styles.count}>
           {visibleComments.length}{' '}
           {visibleComments.length === 1 ? 'comment' : 'comments'}
@@ -109,7 +119,10 @@ export default function ProfileComments() {
                   </span>
                 </span>
               </Link>
-              <div className={`${styles.commentList} ${styles.groupComments}`}>
+              <div
+                className={`${styles.commentList} ${styles.groupComments}`}
+                data-tour="comments"
+              >
                 {group.comments.map((c) => (
                   <ProfileCommentItem
                     key={c.id}
@@ -122,7 +135,7 @@ export default function ProfileComments() {
           )
         })
       ) : (
-        <div className={styles.commentList}>
+        <div className={styles.commentList} data-tour="comments">
           {visibleComments.map((c) => (
             <ProfileCommentItem
               key={c.id}

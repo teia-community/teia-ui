@@ -14,12 +14,12 @@ function MimeTypeFeed({ label, namespace, mimeTypes }) {
       postProcessTokens={(tokens) => uniqBy(tokens, 'artist_address')}
       query={gql`
         ${BaseTokenFieldsFragment}
-        query getTokensByMimeTypes($limit: Int!) {
+        query getTokensByMimeTypes($limit: Int!, $filters: tokens_bool_exp!) {
           tokens(where: { mime_type: {_in : [${mimeTypes
             .map((mimeType) => `"${mimeType}"`)
             .join(
               ', '
-            )}] }, editions : { _neq : 0 }, metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}}, order_by: { minted_at: desc }, limit: $limit) {
+            )}] }, editions : { _neq : 0 }, metadata_status: { _eq: "processed" }, fa2_address: { _eq: "${HEN_CONTRACT_FA2}"}, _and: [$filters]}, order_by: { minted_at: desc }, limit: $limit) {
               ...baseTokenFields
           }
         }

@@ -163,6 +163,13 @@ export default function CalendarEventCard({
             </span>
           )}
           <h2 className={styles.card_title}>
+            {event.teia_event && (
+              <img
+                src="/teia-frame.svg"
+                alt="Teia"
+                className={styles.teia_mark}
+              />
+            )}
             {linkToEvent && detailPath ? (
               <Link to={detailPath} className={styles.card_title_link}>
                 {title || 'Untitled event'}

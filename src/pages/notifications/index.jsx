@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { bytesToString } from '@taquito/utils'
 import { Page } from '@atoms/layout'
 import { Button } from '@atoms/button'
+import Tour, { TourLink } from '@components/tour'
 import { Loading } from '@atoms/loading'
 import { Identicon } from '@atoms/identicons'
 import { POLLS_CONTRACT } from '@constants'
@@ -27,6 +28,29 @@ import { ActivityBadge, ActivityFilters } from '@components/activity'
 import CreateChannelModal from '@components/channels/CreateChannelModal'
 import CreateDmModal from '@components/channels/CreateDmModal'
 import styles from './index.module.scss'
+
+const NOTIFICATIONS_TOUR = [
+  { target: 'notif-mark-read', text: 'Mark every notification as read.' },
+  {
+    target: 'notif-create-channel',
+    text: 'Start a channel: a group chat others can join.',
+  },
+  { target: 'notif-new-dm', text: 'Send someone a direct message.' },
+  { target: 'notif-browse', text: 'Find public channels to join.' },
+  {
+    target: 'notif-note',
+    text: 'Read and unread is remembered in this browser only, and messages are public on the Tezos blockchain. Open for details.',
+  },
+  {
+    target: 'notif-filters',
+    text: 'Show only DMs, channels, poll comments or artwork comments. Pick none to see everything.',
+  },
+  { target: 'notif-unread', text: 'Hide what you have already read.' },
+  {
+    target: 'notif-list',
+    text: 'Everything in one list, newest first. A dot marks unread.',
+  },
+]
 
 const NOTIFICATION_FILTERS = [
   { key: 'dm', label: 'DMs' },
@@ -281,9 +305,13 @@ export default function NotificationsCenter() {
 
   return (
     <Page title="Notifications">
+      <Tour name="notifications" steps={NOTIFICATIONS_TOUR} />
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.headline}>Notifications</h2>
+          <h2 className={styles.headline}>
+            Notifications{' '}
+            <TourLink name="notifications" title="How notifications work" />
+          </h2>
           {messageNotifications && unreadCount > 0 && (
             <span className={styles.totalBadge}>{unreadCount}</span>
           )}
@@ -292,6 +320,7 @@ export default function NotificationsCenter() {
               shadow_box
               onClick={handleMarkAllRead}
               disabled={unreadCount === 0}
+              data-tour="notif-mark-read"
             >
               Mark all as read
             </Button>
@@ -299,16 +328,26 @@ export default function NotificationsCenter() {
         </div>
 
         <div className={styles.secondaryActions}>
-          <button type="button" onClick={() => setShowCreateChannel(true)}>
+          <button
+            type="button"
+            onClick={() => setShowCreateChannel(true)}
+            data-tour="notif-create-channel"
+          >
             Create channel
           </button>
-          <button type="button" onClick={() => setShowCreateDm(true)}>
+          <button
+            type="button"
+            onClick={() => setShowCreateDm(true)}
+            data-tour="notif-new-dm"
+          >
             New DM
           </button>
-          <Link to="/inbox/channels">Browse all channels</Link>
+          <Link to="/inbox/channels" data-tour="notif-browse">
+            Browse all channels
+          </Link>
         </div>
 
-        <details className={styles.infoNote}>
+        <details className={styles.infoNote} data-tour="notif-note">
           <summary>
             Read status is kept on this device, and messages are public on-chain
           </summary>
@@ -339,6 +378,7 @@ export default function NotificationsCenter() {
                 active={kind.active}
                 onToggle={kind.toggle}
                 filters={NOTIFICATION_FILTERS}
+                tourTarget="notif-filters"
               />
               <button
                 type="button"
@@ -346,6 +386,7 @@ export default function NotificationsCenter() {
                   unreadOnly ? styles.unreadToggleActive : ''
                 }`}
                 onClick={() => setUnreadOnly((on) => !on)}
+                data-tour="notif-unread"
               >
                 Unread only
               </button>
@@ -363,7 +404,7 @@ export default function NotificationsCenter() {
               </div>
             )}
 
-            <div className={styles.list}>
+            <div className={styles.list} data-tour="notif-list">
               {visible.map((item) => (
                 <NotificationRow key={item.key} item={item} />
               ))}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Loading } from '@atoms/loading'
 import { Button } from '@atoms/button'
+import Tour, { TourLink } from '@components/tour'
 import useSettings from '@hooks/use-settings'
 import useActivityFilter from '@hooks/use-activity-filter'
 import useAutoLoadMore from '@hooks/use-auto-load-more'
@@ -33,6 +34,44 @@ const FEED_FILTERS = ACTIVITY_FILTERS.filter(
 )
 
 const VIEWS = ACTIVITY_FEEDS
+
+// Trades and Social each run their own tour once their data has loaded (the
+// filters and table aren't on the page before that).
+const TOURED_FEEDS = ['trades', 'social']
+
+const TRADES_TOUR = [
+  {
+    target: 'activity-views',
+    text: 'Pick a feed: trades, social posts, text, curations, calendar, copyright, wiki, polls, donations or the fountain.',
+  },
+  {
+    target: 'activity-types',
+    text: 'Show only some kinds of events. Pick several to combine them, or none to see everything.',
+  },
+  {
+    target: 'activity-markets',
+    text: 'Primary is the first sale by the artist. Secondary is a resale.',
+  },
+  {
+    target: 'activity-table',
+    text: 'Each row shows what happened, the item, who it went from and to, and the price. Click the time to see the transaction on tzkt.',
+  },
+]
+
+const SOCIAL_TOUR = [
+  {
+    target: 'activity-views',
+    text: 'Pick a feed: trades, social posts, text, curations, calendar, copyright, wiki, polls, donations or the fountain.',
+  },
+  {
+    target: 'activity-social-kinds',
+    text: 'Show only channel posts, poll comments or token comments. Pick none to see everything.',
+  },
+  {
+    target: 'activity-social-table',
+    text: 'Each row shows who posted, what they said and where. Click a link under Where to open it.',
+  },
+]
 
 /** Trade activity (sales/mints/listings/transfers) — the original feed. */
 export function TradesFeed() {
@@ -92,16 +131,19 @@ export function TradesFeed() {
 
   return (
     <>
+      <Tour name="activity" steps={TRADES_TOUR} />
       <ActivityControls sort={sort} onSortChange={setSort}>
         <ActivityFilters
           active={type.active}
           onToggle={type.toggle}
           filters={FEED_FILTERS}
+          tourTarget="activity-types"
         />
         <ActivityFilters
           active={market.active}
           onToggle={market.toggle}
           filters={MARKET_FILTERS}
+          tourTarget="activity-markets"
         />
       </ActivityControls>
 
@@ -110,6 +152,7 @@ export function TradesFeed() {
         onLoadMore={loadMore}
         isReachingEnd={isReachingEnd}
         isLoadingMore={isLoadingMore}
+        tourTarget="activity-table"
         emptyMessage={`No recent activity${
           type.active.length > 0 || market.active.length > 0
             ? ' for this filter'
@@ -163,11 +206,13 @@ export function SocialFeed() {
 
   return (
     <>
+      <Tour name="activity" steps={SOCIAL_TOUR} />
       <ActivityControls sort={sort} onSortChange={setSort}>
         <ActivityFilters
           active={kind.active}
           onToggle={kind.toggle}
           filters={SOCIAL_FILTERS}
+          tourTarget="activity-social-kinds"
         />
       </ActivityControls>
 
@@ -181,7 +226,10 @@ export function SocialFeed() {
       ) : (
         <>
           <div className={activityStyles.social_scroll}>
-            <div className={activityStyles.social_head}>
+            <div
+              className={activityStyles.social_head}
+              data-tour="activity-social-table"
+            >
               <span>Type</span>
               <span>Author</span>
               <span>Content</span>
@@ -237,7 +285,7 @@ export function GlobalActivityFeed() {
         Feed notifications are off by default. Go to your{' '}
         <Link to="/settings">settings</Link> to turn them on, if interested.
       </p>
-      <div className={styles.view_toggle}>
+      <div className={styles.view_toggle} data-tour="activity-views">
         {VIEWS.map((v) => (
           <NavLink
             key={v.key}
@@ -255,6 +303,11 @@ export function GlobalActivityFeed() {
             )}
           </NavLink>
         ))}
+        {TOURED_FEEDS.includes(currentKey) && (
+          <span className={styles.tour}>
+            <TourLink name="activity" title="How activity works" />
+          </span>
+        )}
       </div>
 
       <Outlet />

@@ -6,7 +6,22 @@ import styles from '@style'
 import { motion } from 'framer-motion'
 import { useMintStore } from '@context/mintStore'
 import { Button } from '@atoms/button'
+import Tour from '@components/tour'
+import { useState } from 'react'
 import useSettings from '@hooks/use-settings'
+
+// Continues the tour started on the Edit tab (see form/MintForm).
+const TOUR = [
+  {
+    target: 'mint-preview',
+    text: 'This is how your token will look. Go back to Edit to change anything.',
+  },
+  {
+    target: 'mint-button',
+    text: 'Mint asks your wallet to sign the transaction. A small fee applies.',
+  },
+]
+
 function isHTML(mimeType) {
   return (
     mimeType === MIMETYPE.ZIP ||
@@ -68,6 +83,7 @@ export const Preview = () => {
     st.editions,
     st.isMonoType,
   ])
+  const [settled, setSettled] = useState(false)
 
   const { ignoreUriMap } = useSettings()
   const token_tags = tags
@@ -90,64 +106,72 @@ export const Preview = () => {
     )
   }
 
+  // Tour sits outside motion.div (its transform would offset the tour's
+  // fixed positioning) and mounts once the slide-in ends, so it measures
+  // the preview where it comes to rest.
   return (
-    <motion.div
-      className={styles.container}
-      style={{ width: '100%' }}
-      initial={{ x: '20%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '20%' }}
-      transition={{ ease: 'easeInOut' }}
-    >
-      {isHTML(artifact.mimeType) && <HTMLWarning />}
-      <div className={styles.media}>
-        <RenderMediaType
-          displayView
-          nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
-          previewUri={artifact.reader}
-          previewDisplayUri={cover?.reader}
-        />
-      </div>
-      <div className={styles.info}>
-        <div className={styles.title}>
-          <strong>Title:</strong>
-          {title}
-        </div>
-        <Field title="Description" value={description} />
-        <Field title="License" value={license?.label} />
-        <Field title="Language" value={language?.label} />
-
-        {(photosensitiveSeizureWarning || nsfw) && (
-          <div className={styles.attributes}>
-            <strong>Attributes:</strong>
-            {nsfw && (
-              <span className={styles.label} title={'This artwork is NSFW'}>
-                NSFW
-              </span>
-            )}
-            {photosensitiveSeizureWarning && (
-              <span
-                className={styles.label}
-                title={'This artwork can cause seizures'}
-              >
-                Photo Sensitive Seizure Warning!
-              </span>
-            )}
-          </div>
-        )}
-        <Attribute title="Tags">
-          {token_tags?.length > 0 && <Tags tags={token_tags} />}
-        </Attribute>
-        <Attribute title="Editions">{editions}</Attribute>
-        <Attribute title="Royalties">{royalties}%</Attribute>
-      </div>
-      <Button
-        onClick={() => useMintStore.getState().mint(ignoreUriMap)}
-        shadow_box
-        fit
+    <>
+      {settled && <Tour name="mint" steps={TOUR} />}
+      <motion.div
+        className={styles.container}
+        style={{ width: '100%' }}
+        initial={{ x: '20%' }}
+        onAnimationComplete={() => setSettled(true)}
+        animate={{ x: 0 }}
+        exit={{ x: '20%' }}
+        transition={{ ease: 'easeInOut' }}
       >
-        Mint
-      </Button>
-    </motion.div>
+        {isHTML(artifact.mimeType) && <HTMLWarning />}
+        <div className={styles.media} data-tour="mint-preview">
+          <RenderMediaType
+            displayView
+            nft={{ mime_type: artifact.mimeType, is_mono_type: !!isMonoType }}
+            previewUri={artifact.reader}
+            previewDisplayUri={cover?.reader}
+          />
+        </div>
+        <div className={styles.info}>
+          <div className={styles.title}>
+            <strong>Title:</strong>
+            {title}
+          </div>
+          <Field title="Description" value={description} />
+          <Field title="License" value={license?.label} />
+          <Field title="Language" value={language?.label} />
+
+          {(photosensitiveSeizureWarning || nsfw) && (
+            <div className={styles.attributes}>
+              <strong>Attributes:</strong>
+              {nsfw && (
+                <span className={styles.label} title={'This artwork is NSFW'}>
+                  NSFW
+                </span>
+              )}
+              {photosensitiveSeizureWarning && (
+                <span
+                  className={styles.label}
+                  title={'This artwork can cause seizures'}
+                >
+                  Photo Sensitive Seizure Warning!
+                </span>
+              )}
+            </div>
+          )}
+          <Attribute title="Tags">
+            {token_tags?.length > 0 && <Tags tags={token_tags} />}
+          </Attribute>
+          <Attribute title="Editions">{editions}</Attribute>
+          <Attribute title="Royalties">{royalties}%</Attribute>
+        </div>
+        <Button
+          onClick={() => useMintStore.getState().mint(ignoreUriMap)}
+          shadow_box
+          fit
+          data-tour="mint-button"
+        >
+          Mint
+        </Button>
+      </motion.div>
+    </>
   )
 }

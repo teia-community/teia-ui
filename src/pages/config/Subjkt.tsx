@@ -5,6 +5,7 @@ import { Page } from '@atoms/layout'
 import { Input } from '@atoms/input'
 import { Button } from '@atoms/button'
 import { Identicon } from '@atoms/identicons'
+import Tour, { TourLink } from '@components/tour'
 import { fetchGraphQL } from '@data/api'
 import { uploadFileToIPFSProxy } from '@data/ipfs'
 import { useUserStore } from '@context/userStore'
@@ -34,6 +35,26 @@ const query_name_exist = gql`
     }
   }
 `
+
+const PROFILE_TOUR = [
+  {
+    target: 'profile-avatar',
+    text: 'Choose an avatar image. It shows next to your name across Teia.',
+  },
+  {
+    target: 'profile-username',
+    text: 'Your username. Letters, numbers, dot, dash and underscore only, and each name can belong to one wallet.',
+  },
+  { target: 'profile-description', text: 'A short bio, up to 500 characters.' },
+  {
+    target: 'profile-save',
+    text: 'Your profile is saved on-chain, so saving is a small Tezos transaction.',
+  },
+  {
+    target: 'profile-links',
+    text: 'Link your social accounts and website through TzKT Profiles.',
+  },
+]
 
 async function fetchTz(address: string) {
   const { errors, data } = await fetchGraphQL(query_tz, 'addressQuery', {
@@ -248,7 +269,11 @@ export const Subjkt = () => {
   return (
     !loading && (
       <Page>
-        <h1>Subjkt Settings</h1>
+        <Tour name="profile-edit" steps={PROFILE_TOUR} />
+        <h1>
+          Subjkt Settings{' '}
+          <TourLink name="profile-edit" title="How editing your profile works" />
+        </h1>
 
         <Line className={styles.title_line} />
         <div className={styles.subjkt_editor}>
@@ -258,9 +283,15 @@ export const Subjkt = () => {
               address={address}
               logo={preview || identicon}
             />
-            <input type="file" onChange={onFileChange} title="avatar file" />
+            <input
+              type="file"
+              onChange={onFileChange}
+              title="avatar file"
+              data-tour="profile-avatar"
+            />
           </div>
           <div className={styles.fields}>
+            <div data-tour="profile-username">
             <Input
               name="subjkt"
               value={subjkt}
@@ -274,6 +305,8 @@ export const Subjkt = () => {
               label="Username"
               pattern="^[A-Za-z0-9-._]*$"
             />
+            </div>
+            <div data-tour="profile-description">
             <Input
               name="description"
               value={description}
@@ -281,9 +314,10 @@ export const Subjkt = () => {
               placeholder="(Max length 500 characters)"
               label="Description"
             />
+            </div>
           </div>
         </div>
-        <Button shadow_box onClick={subjkt_config}>
+        <Button shadow_box onClick={subjkt_config} data-tour="profile-save">
           Save Profile
         </Button>
         <div style={{ display: 'inline' }}>
@@ -295,6 +329,7 @@ export const Subjkt = () => {
                 target="_blank"
                 href="https://profiles.tzkt.io"
                 rel="noreferrer"
+                data-tour="profile-links"
               >
                 TzKT Profiles
               </a>

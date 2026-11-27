@@ -216,3 +216,4 @@ export { ReactComponent as EnterAnav } from './svgs/enter_anav.svg'
 
 // SVGs Extras
 export { ReactComponent as DAOIcon } from './svgs/teia-dao.svg'
+export { ReactComponent as TwitterIcon } from './svgs/twitter.svg'

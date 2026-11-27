@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Footer } from '@components/footer'
 import { fadeIn } from '@utils/motion'
 import styles from '@style'
@@ -16,11 +18,16 @@ import { useMyPollNotifications } from '@data/messaging/poll-comments'
 import { useMyTokenNotifications } from '@data/messaging/token-comments'
 import { useFeedNotifications } from '@data/feed-notifications'
 import { useGateRoles } from '@data/roles'
+import Tour, { Hint } from '@components/tour'
 
 import { MenuItem } from './MenuItem'
+import { MENU_HELP } from './menuHelp'
 import { Toggle } from '@atoms/toggles'
 import { ThemeSelection } from '@atoms/select'
 import { shallow } from 'zustand/shallow'
+
+// Set once the "Want a tour?" prompt has been answered or closed.
+const TOUR_OFFERED_KEY = 'menu:tourOffered'
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea'
@@ -122,6 +129,20 @@ export const MainMenu = () => {
   const { data: gateRoles } = useGateRoles(address)
   const canModerate = Boolean(gateRoles?.canModerate)
 
+  const [, setParams] = useSearchParams()
+  const [offerTour, setOfferTour] = useState(
+    () => !window.localStorage.getItem(TOUR_OFFERED_KEY)
+  )
+  const answerTour = (yes) => {
+    window.localStorage.setItem(TOUR_OFFERED_KEY, '1')
+    setOfferTour(false)
+    if (yes)
+      setParams((params) => {
+        params.set('tour', 'menu')
+        return params
+      })
+  }
+
   // TODO: Search doesn't really make sense anymore? Does it? (commented out for now), will be reworked later on.
   const sections = [
     {
@@ -163,7 +184,9 @@ export const MainMenu = () => {
       title: 'Explore',
       items: [
         { label: 'Search', route: 'search' },
+        { label: 'Artist Directory', route: 'artist-directory' },
         { label: 'Activity', route: 'activity', badge: showActivityBadge },
+        { label: 'Events', route: 'events' },
         { label: 'Text', route: 'text' },
         { label: 'Curations', route: 'curations' },
         { label: 'Calendar', route: 'calendar' },
@@ -208,7 +231,7 @@ export const MainMenu = () => {
             )}
             <ul className={styles.menu_section_list}>
               {section.items.map((item) => (
-                <li key={item.label}>
+                <li key={item.label} data-tour={item.label}>
                   <MenuItem
                     className={`${styles.menu_label} ${
                       item.primary ? styles.menu_primary : ''
@@ -231,6 +254,36 @@ export const MainMenu = () => {
           </div>
         </section>
       </nav>
+      {/* On body: .menu's z-index and container containment would trap
+          and offset these fixed-position popovers. */}
+      {createPortal(
+        <>
+          <Tour
+            name="menu"
+            steps={sections.flatMap((section) =>
+              section.items.map((item) => ({
+                target: item.label,
+                text: MENU_HELP[item.label],
+              }))
+            )}
+          />
+          {offerTour && (
+            <Hint
+              target="menu"
+              title="Want a tour?"
+              onClose={() => answerTour(false)}
+            >
+              <button type="button" onClick={() => answerTour(false)}>
+                No thanks
+              </button>
+              <button type="button" onClick={() => answerTour(true)}>
+                Yes
+              </button>
+            </Hint>
+          )}
+        </>,
+        document.body
+      )}
       <Footer pin />
     </motion.div>
   )

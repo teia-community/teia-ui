@@ -1,7 +1,8 @@
 import uniqBy from 'lodash/uniqBy'
 import { gql } from 'graphql-request'
 import TokenCollection from '@atoms/token-collection'
-import Filters from './filters'
+import Filters, { FILTERS_TEXT, VIEW_MODE_STEP } from './filters'
+import Tour from '@components/tour'
 import { BaseTokenFieldsFragment } from '@data/api'
 
 import { useOutletContext } from 'react-router'
@@ -12,6 +13,15 @@ import {
   FILTER_SECONDARY,
   FILTER_NOT_FOR_SALE,
 } from '@constants'
+
+const TOUR = [
+  {
+    target: 'filters',
+    text: `OBJKTs this wallet holds. ${FILTERS_TEXT}`,
+    align: 'right',
+  },
+  VIEW_MODE_STEP,
+]
 
 export default function Collections() {
   const { showRestricted, overrideProtections, address } = useOutletContext()
@@ -31,6 +41,7 @@ export default function Collections() {
 
   return (
     <>
+      <Tour name="collection" steps={TOUR} />
       <Filters
         filter={filter}
         onChange={setFilter}

@@ -10,6 +10,7 @@ import { useUserStore } from '@context/userStore'
 import { useLocalSettings } from '@context/localSettingsStore'
 import { useMyInbox, findDmWith } from '@data/messaging/channels'
 import CreateDmModal from '@components/channels/CreateDmModal'
+import { TourLink } from '@components/tour'
 import styles from '@style'
 import { useDisplayStore } from '.'
 import ParticipantList from '@components/collab/manage/ParticipantList'
@@ -32,6 +33,22 @@ async function reverseRecord(address) {
   )
   return result?.data?.data?.reverseRecord?.domain?.name || ''
 }
+
+// Profile fields rendered as social links below (Bluesky is resolved separately).
+const SOCIALS = [
+  'twitter',
+  'discord',
+  'github',
+  'gitlab',
+  'site',
+  'email',
+  'reddit',
+  'mailchain',
+  'telegram',
+  'facebook',
+  'instagram',
+  'dns',
+]
 
 export default function Profile({ user }) {
   const navigate = useNavigate()
@@ -103,6 +120,9 @@ export default function Profile({ user }) {
 
   useEffect(() => loadBluesky(), [loadBluesky])
 
+  const hasSocials =
+    bluesky?.handle || SOCIALS.some((key) => user.extras?.profile?.[key])
+
   return (
     <div className={styles.container}>
       <div className={styles.profile}>
@@ -114,16 +134,38 @@ export default function Profile({ user }) {
           />
         </div>
         <div className={styles.info}>
-          <p className={styles.user}>{user.subjkt || user.alias}</p>
+          {/* One tab stop for name, badges and bio, so keyboard users can
+              land on (and see) who this profile belongs to. */}
+          <div
+            className={styles.identity}
+            role="group"
+            aria-label={user.subjkt || user.alias || user.address}
+            // Deliberate: a single focus stop for the identity block.
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+            tabIndex={0}
+          >
+            <p className={styles.user} data-tour="name">
+              {user.subjkt || user.alias}{' '}
+              <TourLink name="profile" title="How profiles work" />
+            </p>
 
-          <RoleBadges address={user.address} />
+            <RoleBadges address={user.address} tourTarget="badges" />
 
-          {user.description && <p>{user.description}</p>}
+            {user.description && <p data-tour="bio">{user.description}</p>}
+          </div>
 
           {coreParticipants && coreParticipants.length > 0 && (
             <ParticipantList title={false} participants={coreParticipants} />
           )}
-          <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
+          <div
+            data-tour="address"
+            style={{
+              display: 'flex',
+              width: 'fit-content',
+              gap: '1em',
+              alignItems: 'center',
+            }}
+          >
             <Button href={`https://tzkt.io/${user.address}`}>
               {reverseDomain ? reverseDomain : walletPreview(user.address)}
             </Button>
@@ -137,7 +179,10 @@ export default function Profile({ user }) {
             </p>
           )}
 
-          <div className={styles.socials}>
+          <div
+            className={styles.socials}
+            data-tour={hasSocials ? 'socials' : undefined}
+          >
             {bluesky?.handle && (
               <Button
                 alt={`User on Bluesky (@${bluesky.handle}), verified via on-chain signature`}
@@ -460,6 +505,7 @@ export default function Profile({ user }) {
           {!isOwnProfile && (
             <Button
               shadow_box
+              data-tour="message"
               onClick={handleMessageClick}
               style={{ marginTop: '1em' }}
             >

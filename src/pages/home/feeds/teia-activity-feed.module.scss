@@ -33,6 +33,24 @@
   gap: 0 1.4rem;
   margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-color);
+
+  @media (max-width: 600px) {
+    justify-content: center;
+  }
+}
+
+.view_tabs {
+  display: flex;
+
+  @media (max-width: 600px) {
+    flex: 1;
+  }
+}
+
+// "?" that starts the tour, right after the Social tab.
+.tour {
+  padding-left: 0.5rem;
+  align-self: center;
 }
 
 .view_chip {
@@ -50,6 +68,11 @@
 
   &:hover {
     color: var(--text-color);
+  }
+
+  @media (max-width: 600px) {
+    flex: 1;
+    text-align: center;
   }
 }
 
